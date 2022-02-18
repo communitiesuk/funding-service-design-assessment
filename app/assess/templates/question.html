@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{%- from 'govuk_frontend_jinja/components/inset-text/macro.html' import govukInsetText -%}
+{%- from "govuk_frontend_jinja/components/button/macro.html" import govukButton -%}
+
+{% block content %}
+  <div>
+        <h4 class="govuk-heading-s">{{ fund.name }}</h4>
+      <h1 class="govuk-heading-xl"><a href="{{ url_for('assess_bp.application',fund_id=fund.identifier, application_id=application.identifier) }}" class="govuk-link govuk-link--no-underline govuk-link--no-visited-state">Application #{{ application.identifier }}:</a></h1>
+      <h2 class="govuk-heading-m">Question {{question_id}} - {{ question.title }}</h2>
+  </div>
+<table class="govuk-table">
+  <tbody class="govuk-table__body">
+      {% for field in question.fields %}
+    <tr class="govuk-table__row">
+      <th scope="row" class="govuk-table__header govuk-!-width-one-third">{{ field.title }}</th>
+      <td class="govuk-table__cell govuk-!-width-two-thirds">{{ field.answer }}</td>
+    </tr>
+      {% endfor %}
+  </tbody>
+</table>
+<div class="govuk-button-group">
+  <button class="govuk-button" data-module="govuk-button">
+    Save Assessment
+  </button>
+
+    {% with next_question_id = question_id+1 %}
+  <a class="govuk-link govuk-link--no-visited-state" href="{{ url_for(
+                'application_question',
+                fund_id=fund.identifier,
+                application_id=application.identifier,
+                question_id=next_question_id)
+                }}">{% if final_question %} Return to summary {% else %}Next Question{% endif %}</a>
+    {% endwith %}
+</div>
+{% endblock %}

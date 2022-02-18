@@ -1,0 +1,13 @@
+{
+  "fund_name": "Funding Service Design",
+  "round_identifier": "1",
+  "opens": "2022-02-01T12:00:00.000Z",
+  "deadline": "2022-07-23T12:00:00.000Z",
+  "applications": [
+    {
+      "identifier": "1",
+      "submitted": "2022-02-23T12:00:00.000Z",
+      "fund_name": "Funding Service Design"
+    }
+  ]
+}

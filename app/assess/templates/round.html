@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{%- from 'govuk_frontend_jinja/components/inset-text/macro.html' import govukInsetText -%}
+{%- from "govuk_frontend_jinja/components/button/macro.html" import govukButton -%}
+
+{% block content %}
+  <div>
+      <h1 class="govuk-heading-xl">{{ fund.name }}</h1>
+      <h4 class="govuk-heading-m">Round: {{ round.identifier }}</h4>
+    <h2 class="govuk-heading-l">Please choose an application:</h2>
+  </div>
+        <ul class="govuk-list">
+      {% for application in round.applications %}
+          <li>
+            <a class="govuk-link govuk-body-lead" href="{{
+            url_for('assess_bp.application',
+            fund_id=round.fund_identifier,
+            application_id=application.identifier)
+            }}">{{ application.submitted }}</a>
+          </li>
+      {% endfor %}
+        </ul>
+{% endblock %}

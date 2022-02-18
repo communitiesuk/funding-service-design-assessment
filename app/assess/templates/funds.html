@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{%- from 'govuk_frontend_jinja/components/inset-text/macro.html' import govukInsetText -%}
+{%- from "govuk_frontend_jinja/components/button/macro.html" import govukButton -%}
+
+{% block content %}
+  <div>
+      <h1 class="govuk-heading-xl">Funds</h1>
+      <h4 class="govuk-heading-m">Please choose a fund:</h4>
+  </div>
+    {% if funds %}
+        <ul class="govuk-list">
+      {% for fund in funds %}
+          <li>
+            <a class="govuk-link govuk-body-lead" href="{{ url_for('assess_bp.fund',fund_id=fund.identifier) }}">{{ fund.name }}</a>
+          </li>
+      {% endfor %}
+        </ul>
+    {% else %}}
+        <p class="govuk-body-m">No funds available</p>
+    {% endif %}
+{% endblock %}
