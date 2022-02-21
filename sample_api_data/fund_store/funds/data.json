@@ -1,7 +1,6 @@
-{
-  "funds": [
-    {
-      "name": "Funding Service Design"
-    }
-  ]
-}
+[
+  {
+  "name": "Funding Service Design",
+  "identifier": "funding-service-design"
+  }
+]
