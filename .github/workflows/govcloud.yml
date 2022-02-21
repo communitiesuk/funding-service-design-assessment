@@ -19,7 +19,7 @@ jobs:
     secrets:
       CF_API: ${{secrets.CF_API}}
       CF_ORG: ${{secrets.CF_ORG}}
-      CF_SPACE: ${{secrets.CF_ORG}}
+      CF_SPACE: ${{secrets.CF_SPACE}}
       CF_USER: ${{secrets.CF_USER}}
       CF_PASSWORD: ${{secrets.CF_PASSWORD}}
 
