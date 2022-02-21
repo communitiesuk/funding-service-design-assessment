@@ -17,10 +17,10 @@ jobs:
     with:
       app_name: ${{github.repository}}
     secrets:
-      CF_API: ${{secret.CF_API}}
-      CF_ORG: ${{secret.CF_ORG}}
-      CF_SPACE: ${{secret.CF_ORG}}
-      CF_USER: ${{secret.CF_USER}}
-      CF_PASSWORD: ${{secret.CF_PASSWORD}}
+      CF_API: ${{secrets.CF_API}}
+      CF_ORG: ${{secrets.CF_ORG}}
+      CF_SPACE: ${{secrets.CF_ORG}}
+      CF_USER: ${{secrets.CF_USER}}
+      CF_PASSWORD: ${{secrets.CF_PASSWORD}}
 
         
