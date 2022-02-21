@@ -11,7 +11,7 @@ from tests.route_testing_conf import routes_and_test_content
 
 def test_flask_initiates(flask_test_client):
     """
-    GIVEN Our Flask Hello World Application
+    GIVEN Our Flask Application
     WHEN the '/' page (index) is requested (GET)
     THEN check that the get response is successful.
     If this test succeedes then our flask application
@@ -21,9 +21,9 @@ def test_flask_initiates(flask_test_client):
     assert response.status_code == 200
 
 
-def test_helloworld_homepage(flask_test_client):
+def test_assessment_hub_homepage(flask_test_client):
     """
-    GIVEN Our Flask Hello World Application
+    GIVEN Our Flask Assessment Hub Application
     WHEN the '/' page (index) is requested (GET)
     THEN check that the homepage (/) contains the phrase
     "Hello World".

@@ -11,8 +11,8 @@ from slugify import slugify
 
 # Fund Store Endpoints
 FUNDS_ENDPOINT = "funds"
-FUND_ENDPOINT = "fund/{fund_id}"
-ROUND_ENDPOINT = "fund/{fund_id}/round/{round_id}"
+FUND_ENDPOINT = "funds/{fund_id}"
+ROUND_ENDPOINT = "funds/{fund_id}/round/{round_id}"
 
 # Application Store Endpoints
 APPLICATIONS_ENDPOINT = "fund/{fund_id}"
@@ -94,8 +94,8 @@ class Application(object):
             fund_name=data.get("fund_name"),
             submission=data.get("submission")
         )
-        if "questions" in data["submission"]:
-            for question_data in data["submission"]["questions"]:
+        if application.submission and "questions" in application.submission:
+            for question_data in application.submission["questions"]:
                 question = Question.from_json(question_data)
                 application.add_question(question)
 
@@ -231,9 +231,9 @@ def get_local_data(path: str):
 def get_funds() -> List[Fund] | None:
     endpoint = FUND_STORE_API_ROOT + FUNDS_ENDPOINT
     response = get_data(endpoint)
-    if "funds" in response:
+    if len(response) > 0:
         funds = []
-        for fund in response["funds"]:
+        for fund in response:
             funds.append(Fund.from_json(fund))
         return funds
     return None

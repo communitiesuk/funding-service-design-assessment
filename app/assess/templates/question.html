@@ -24,7 +24,7 @@
   </button>
 
     {% with next_question_id = question_id+1 %}
-  <a class="govuk-link govuk-link--no-visited-state" href="{{ url_for(
+  <a class="govuk-button govuk-button--secondary" href="{{ url_for(
                 'application_question',
                 fund_id=fund.identifier,
                 application_id=application.identifier,
