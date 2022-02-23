@@ -13,7 +13,6 @@ from wtforms.validators import Email
 from wtforms.validators import URL
 from app.assess.data import get_fund, get_application
 from flask import url_for
-from app.assess.routes import assess_bp
 
 
 class AssessQuestionView(MethodView):
@@ -73,7 +72,7 @@ class AssessQuestionView(MethodView):
 
         return d
 
-    def get(self, fund_id: str, application_id: str, question_id: int):
+    def get(self, fund_id: str, round_id: str, application_id: str, question_id: int):
         question_index = int(question_id)-1
         self.set_fund(fund_id)
         if not self.fund:
@@ -86,7 +85,10 @@ class AssessQuestionView(MethodView):
             abort(404)
 
         if len(self.application.questions) <= question_index:
-            return redirect(url_for("assess_bp.application", fund_id=fund_id, application_id=application_id))
+            return redirect(url_for("assess_bp.application",
+                                    fund_id=fund_id,
+                                    round_id=round_id,
+                                    application_id=application_id))
         self.set_question(question_index)
         if not self.current_question:
             abort(404)
@@ -94,13 +96,14 @@ class AssessQuestionView(MethodView):
         return render_template(
             "question.html",
             fund=self.fund,
+            round_id=round_id,
             application=self.application,
             question=self.current_question,
             question_id=int(question_id),
             final_question=len(self.application.questions) == question_index+1
         )
 
-    def post(self, fund_id: str, application_id: str, question_id: int):
+    def post(self, fund_id: str, round_id: str, application_id: str, question_id: int):
         question_index = int(question_id)-1
         self.set_fund(fund_id)
         if not self.fund:
@@ -124,6 +127,7 @@ class AssessQuestionView(MethodView):
             return redirect(url_for(
                 "application_question",
                 fund_id=fund_id,
+                round_id=round_id,
                 application_id=application_id,
                 question_id=question_id+1)
             )
@@ -135,6 +139,7 @@ class AssessQuestionView(MethodView):
             "question.html",
             form=form,
             fund=self.fund,
+            round_id=round_id,
             application=self.application,
             question=self.current_question,
             question_id=int(question_id),

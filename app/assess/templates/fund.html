@@ -4,14 +4,19 @@
 
 {% block content %}
   <div>
+      <p class="govuk-heading-s"><a class="govuk-link govuk-link--no-underline govuk-link--no-visited-state" href="{{ url_for('assess_bp.funds') }}">Funds</a></p>
       <h1 class="govuk-heading-xl">{{ fund.name }}</h1>
-    <h2 class="govuk-heading-l">Please choose a round for this fund:</h2>
+    <p class="govuk-heading-m">Please choose a round:</p>
   </div>
+    {% if fund.rounds %}
         <ul class="govuk-list">
       {% for round in fund.rounds %}
           <li>
-            <a class="govuk-link govuk-body-lead" href="{{ url_for('assess_bp.fund_round',fund_id=fund.identifier,round_id=round.identifier) }}">{{ round.identifier }}</a>
+            <a class="govuk-button govuk-button--secondary" href="{{ url_for('assess_bp.fund_round',fund_id=fund.identifier,round_id=round.identifier) }}">{{ round.identifier }}</a>
           </li>
       {% endfor %}
         </ul>
+    {% else %}
+        <p class="govuk-body-lead">No rounds exist for this fund yet.</p>
+    {% endif %}
 {% endblock %}

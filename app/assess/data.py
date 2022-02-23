@@ -1,22 +1,22 @@
 import json
 import os
 from typing import List
-from app.config import FUND_STORE_API_ROOT
-from app.config import APPLICATION_STORE_API_ROOT
-from app.config import APPLICATION_ROOT
+from app.config import FUND_STORE_API_HOST
+from app.config import APPLICATION_STORE_API_HOST
+from app.config import FLASK_ROOT
 from datetime import datetime
 import requests
 from slugify import slugify
 
 
 # Fund Store Endpoints
-FUNDS_ENDPOINT = "funds"
-FUND_ENDPOINT = "funds/{fund_id}"
-ROUND_ENDPOINT = "funds/{fund_id}/round/{round_id}"
+FUNDS_ENDPOINT = "/funds/"
+FUND_ENDPOINT = "/funds/{fund_id}"
+ROUND_ENDPOINT = "/funds/{fund_id}/round/{round_id}"
 
 # Application Store Endpoints
-APPLICATIONS_ENDPOINT = "fund/{fund_id}"
-APPLICATION_ENDPOINT = "fund/{fund_id}/application/{application_id}"
+APPLICATIONS_ENDPOINT = "/fund/{fund_id}"
+APPLICATION_ENDPOINT = "/fund/{fund_id}/application/{application_id}"
 
 
 class QuestionField(object):
@@ -89,8 +89,8 @@ class Application(object):
     @staticmethod
     def from_json(data: dict):
         application = Application(
-            identifier=data.get("identifier"),
-            submitted=data.get("submitted"),
+            identifier=data.get("application_id"),
+            submitted=datetime.fromisoformat(data.get("submitted_time")),
             fund_name=data.get("fund_name"),
             submission=data.get("submission")
         )
@@ -215,21 +215,25 @@ class Fund(object):
 
 def get_data(endpoint: str):
     if endpoint[:4] == "http":
-        data = requests.get(endpoint)
+        response = requests.get(endpoint)
+        data = response.json()
+        print(data)
+
     else:
         data = get_local_data(endpoint)
     return data
 
 
 def get_local_data(path: str):
-    data_path = os.path.join(APPLICATION_ROOT, path, "data.json")
+    data_path = os.path.join(FLASK_ROOT, path, "data.json")
     fp = open(data_path)
     data = json.load(fp)
+    fp.close()
     return data
 
 
 def get_funds() -> List[Fund] | None:
-    endpoint = FUND_STORE_API_ROOT + FUNDS_ENDPOINT
+    endpoint = FUND_STORE_API_HOST + FUNDS_ENDPOINT
     response = get_data(endpoint)
     if len(response) > 0:
         funds = []
@@ -240,7 +244,7 @@ def get_funds() -> List[Fund] | None:
 
 
 def get_fund(fund_id: str) -> Fund | None:
-    endpoint = FUND_STORE_API_ROOT + FUND_ENDPOINT.format(
+    endpoint = FUND_STORE_API_HOST + FUND_ENDPOINT.format(
         fund_id=fund_id
     )
     response = get_data(endpoint)
@@ -255,11 +259,11 @@ def get_fund(fund_id: str) -> Fund | None:
 
 
 def get_round(fund_id: str, identifier: str) -> Round | None:
-    round_endpoint = FUND_STORE_API_ROOT + ROUND_ENDPOINT.format(
+    round_endpoint = FUND_STORE_API_HOST + ROUND_ENDPOINT.format(
         fund_id=fund_id, round_id=identifier
     )
     round_response = get_data(round_endpoint)
-    applications_endpoint = APPLICATION_STORE_API_ROOT + APPLICATIONS_ENDPOINT.format(
+    applications_endpoint = APPLICATION_STORE_API_HOST + APPLICATIONS_ENDPOINT.format(
         fund_id=fund_id
     )
     applications_response = get_data(applications_endpoint)
@@ -277,12 +281,12 @@ def get_round(fund_id: str, identifier: str) -> Round | None:
 
 
 def get_application(fund_id: str, identifier: str) -> Application | None:
-    application_endpoint = APPLICATION_STORE_API_ROOT + APPLICATION_ENDPOINT.format(
+    application_endpoint = APPLICATION_STORE_API_HOST + APPLICATION_ENDPOINT.format(
         fund_id=fund_id,
         application_id=identifier
     )
     application_response = get_data(application_endpoint)
-    if "submitted" in application_response and application_response["submitted"]:
+    if "submitted_time" in application_response and application_response["submitted_time"]:
         application = Application.from_json(application_response)
 
         return application
