@@ -99,7 +99,7 @@ jobs:
       - name: install dependencies
         run: source .venv/bin/activate && python -m pip install --upgrade pip && pip install -r requirements.txt
       - name: build static assets
-      - run: python build.py
+        run: python build.py
       - name: download previous build
         uses: actions/download-artifact@v2
       - name: Deploy to Gov PaaS
