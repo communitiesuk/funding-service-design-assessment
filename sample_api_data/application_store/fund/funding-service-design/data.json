@@ -1,11 +1,11 @@
 {
   "fund_name": "Funding Service Design",
-  "submitted_from": "2022-02-01T12:00:00.000Z",
-  "submitted_to": "2022-07-23T12:00:00.000Z",
+  "submitted_from": "2022-02-01T12:00:00.000",
+  "submitted_to": "2022-07-23T12:00:00.000",
   "applications": [
     {
-      "identifier": "1",
-      "submitted": "2022-02-23T12:00:00.000Z",
+      "application_id": "bd65600d-8669-4903-8a14-af88203add38",
+      "submitted_time": "2022-02-23T12:00:00.000",
       "fund_name": "Funding Service Design"
     }
   ]
