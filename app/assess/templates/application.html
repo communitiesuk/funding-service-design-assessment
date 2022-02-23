@@ -14,7 +14,7 @@
   </div>
 <p class="govuk-heading-m govuk-!-margin-top-7">Select a question:</p>
         <ol class="govuk-list govuk-list--number">
-      {% for question in application.submission.questions %}
+      {% for question in application.questions %}
           <li>
                 <a href="{{ url_for(
                 'application_question',
@@ -22,7 +22,7 @@
                 round_id=round.identifier,
                 application_id=application.identifier,
                 question_id=loop.index)
-                }}" class="govuk-body-lead govuk-link govuk-link--no-underline govuk-link--no-visited-state">{{ question.question }}</a>
+                }}" class="govuk-body-lead govuk-link govuk-link--no-underline govuk-link--no-visited-state">{{ question.title }}</a>
           </li>
       {% endfor %}
         </ol>

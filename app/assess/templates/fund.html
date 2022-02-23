@@ -12,7 +12,7 @@
         <ul class="govuk-list">
       {% for round in fund.rounds %}
           <li>
-            <a class="govuk-button govuk-button--secondary" href="{{ url_for('assess_bp.fund_round',fund_id=fund.identifier,round_id=round.identifier) }}">{{ round.identifier }}</a>
+            <a class="govuk-button govuk-button--secondary" href="{{ url_for('assess_bp.fund_round',fund_id=fund.identifier,round_id=round.identifier) }}">Round {{ round.identifier }}</a>
           </li>
       {% endfor %}
         </ul>

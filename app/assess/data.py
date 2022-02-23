@@ -12,11 +12,11 @@ from slugify import slugify
 # Fund Store Endpoints
 FUNDS_ENDPOINT = "/funds/"
 FUND_ENDPOINT = "/funds/{fund_id}"
-ROUND_ENDPOINT = "/funds/{fund_id}/round/{round_id}"
+ROUND_ENDPOINT = "/funds/{fund_id}/round/{round_number}"
 
 # Application Store Endpoints
-APPLICATIONS_ENDPOINT = "/fund/{fund_id}"
-APPLICATION_ENDPOINT = "/fund/{fund_id}/application/{application_id}"
+APPLICATIONS_ENDPOINT = "/fund/{fund_id}/applications?datetime_start={datetime_start}&datetime_end={datetime_end}"
+APPLICATION_ENDPOINT = "/fund/{fund_id}/applications?application_id={application_id}"
 
 
 class QuestionField(object):
@@ -77,25 +77,22 @@ class Application(object):
             identifier: str,
             submitted: datetime,
             fund_name: str,
-            submission: dict,
             questions: List[Question] = None,
     ):
         self.identifier = identifier
         self.submitted = submitted
         self.fund_name = fund_name
-        self.submission = submission
         self.questions = questions
 
     @staticmethod
     def from_json(data: dict):
         application = Application(
-            identifier=data.get("application_id"),
-            submitted=datetime.fromisoformat(data.get("submitted_time")),
-            fund_name=data.get("fund_name"),
-            submission=data.get("submission")
+            identifier=data.get("id"),
+            submitted=datetime.fromisoformat(data.get("date_submitted")),
+            fund_name=data.get("fund_name")
         )
-        if application.submission and "questions" in application.submission:
-            for question_data in application.submission["questions"]:
+        if "questions" in data:
+            for question_data in data["questions"]:
                 question = Question.from_json(question_data)
                 application.add_question(question)
 
@@ -116,16 +113,12 @@ class Round(object):
 
     def __init__(
             self,
-            fund_name: str,
             opens: datetime,
             deadline: datetime,
             identifier: str = None,
-            fund_identifier: str = None,
             applications: List[Application] = None
     ):
-        self.fund_name = fund_name
         self._identifier = identifier
-        self._fund_identifier = fund_identifier
         self.opens = opens
         self.deadline = deadline
         self.applications = applications
@@ -144,28 +137,13 @@ class Round(object):
     def identifier(self):
         del self._identifier
 
-    @property
-    def fund_identifier(self):
-        if self._fund_identifier:
-            return self._fund_identifier
-        return slugify(self.fund_name)
-
-    @fund_identifier.setter
-    def fund_identifier(self, value):
-        self._fund_identifier = value
-
-    @fund_identifier.deleter
-    def fund_identifier(self):
-        del self._fund_identifier
 
     @staticmethod
     def from_json(data: dict):
         return Round(
-            fund_name=data.get("fund_name"),
             opens=data.get("opens"),
             deadline=data.get("deadline"),
-            identifier=data.get("identifier"),
-            fund_identifier=data.get("fund_identifier")
+            identifier=str(data.get("round_identifer"))  # This is a temporary typo
         )
 
     def add_application(self, application: Application):
@@ -216,8 +194,12 @@ class Fund(object):
 def get_data(endpoint: str):
     if endpoint[:4] == "http":
         response = requests.get(endpoint)
-        data = response.json()
-        print(data)
+        if response.status_code == 200:
+            data = response.json()
+            print(data)
+        else:
+            return None
+            # raise Exception("API request for "+endpoint+" returned "+str(response.status_code))
 
     else:
         data = get_local_data(endpoint)
@@ -235,7 +217,7 @@ def get_local_data(path: str):
 def get_funds() -> List[Fund] | None:
     endpoint = FUND_STORE_API_HOST + FUNDS_ENDPOINT
     response = get_data(endpoint)
-    if len(response) > 0:
+    if response and len(response) > 0:
         funds = []
         for fund in response:
             funds.append(Fund.from_json(fund))
@@ -248,7 +230,7 @@ def get_fund(fund_id: str) -> Fund | None:
         fund_id=fund_id
     )
     response = get_data(endpoint)
-    if "name" in response:
+    if response and "name" in response:
         fund = Fund.from_json(response)
         if "rounds" in response and len(response["rounds"]) > 0:
             for fund_round in response["rounds"]:
@@ -260,18 +242,19 @@ def get_fund(fund_id: str) -> Fund | None:
 
 def get_round(fund_id: str, identifier: str) -> Round | None:
     round_endpoint = FUND_STORE_API_HOST + ROUND_ENDPOINT.format(
-        fund_id=fund_id, round_id=identifier
+        fund_id=fund_id, round_number=identifier
     )
     round_response = get_data(round_endpoint)
-    applications_endpoint = APPLICATION_STORE_API_HOST + APPLICATIONS_ENDPOINT.format(
-        fund_id=fund_id
-    )
-    applications_response = get_data(applications_endpoint)
-    if "fund_name" in round_response:
+    if round_response and "round_identifer" in round_response:  #This is a temporary typo
         fund_round = Round.from_json(round_response)
-        if "applications" in applications_response \
-                and len(applications_response["applications"]) > 0:
-            for application in applications_response["applications"]:
+        applications_endpoint = APPLICATION_STORE_API_HOST + APPLICATIONS_ENDPOINT.format(
+            fund_id=fund_id,
+            datetime_start=fund_round.opens,
+            datetime_end=fund_round.deadline
+        )
+        applications_response = get_data(applications_endpoint)
+        if applications_response and len(applications_response.items()) > 0:
+            for _, application in applications_response.items():
                 fund_round.add_application(
                     Application.from_json(application)
                 )
@@ -286,8 +269,8 @@ def get_application(fund_id: str, identifier: str) -> Application | None:
         application_id=identifier
     )
     application_response = get_data(application_endpoint)
-    if "submitted_time" in application_response and application_response["submitted_time"]:
-        application = Application.from_json(application_response)
+    if application_response and identifier in application_response:
+        application = Application.from_json(application_response[identifier])
 
         return application
     return None

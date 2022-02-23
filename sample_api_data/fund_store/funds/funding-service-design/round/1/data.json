@@ -1,9 +1,5 @@
 {
-  "fund_name": "Funding Service Design",
-  "identifier": "1",
+  "round_identifer": 1,
   "opens": "2022-02-01T12:00:00.000",
-  "deadline": "2022-07-23T12:00:00.000",
-  "eligibility": {
-    "maximium_project_cost": 100
-  }
+  "deadline": "2022-07-23T12:00:00.000"
 }
