@@ -11,6 +11,7 @@ from json2html import json2html
 from selenium.webdriver.chrome.webdriver import WebDriver
 from tests.utils import get_service
 from tests.utils import get_service_html_filepath
+from tests.route_testing_conf import known_routes_and_test_content
 
 
 def get_report_heading(service_dict: dict, route_rel: str):
@@ -96,7 +97,7 @@ def test_app(app):
 
 @pytest.mark.usefixtures("selenium_chrome_driver")
 @pytest.mark.usefixtures("live_server")
-class TestURLsWithChrome:
+class TestAccessibilityWithChrome:
     def test_homepage_accessible(self):
         """
         GIVEN Our Flask Application is running
@@ -112,6 +113,22 @@ class TestURLsWithChrome:
             len(results["violations"]) == 0
             or results["violations"][0]["impact"] == "minor"
         )
+
+    def test_known_routes_accessible(self):
+        """
+        GIVEN Our Flask Application is running
+        WHEN dictionary of known routes is requested (GET)
+        THEN check that each page returned conforms to WCAG standards
+        """
+        for route_rel, _ in known_routes_and_test_content.items():
+            results = run_axe_and_print_report(
+                driver=self.driver, route_rel=str(route_rel)
+            )
+            assert len(results["violations"]) <= 1
+            assert (
+                len(results["violations"]) == 0
+                or results["violations"][0]["impact"] == "minor"
+            )
 
     def test_unknown_page_returns_accessible_404(self):
         """

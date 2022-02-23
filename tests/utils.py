@@ -49,7 +49,7 @@ def get_service(service: dict):
     if not service:
         service = {
             "name": LOCAL_SERVICE_NAME,
-            "host": url_for("routes.index", _external=True),
+            "host": url_for("default_bp.index", _external=True),
         }
     else:
         if "name" not in service:

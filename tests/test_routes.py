@@ -7,10 +7,10 @@ from tests.route_testing_conf import routes_and_test_content
 
 def test_routes_status_code(flask_test_client):
     """
-    GIVEN Our Flask Hello World Application
+    GIVEN Our Flask Application
     WHEN a route is requested
     THEN check that the get response is successful
-    If this test succeedes then our flask application's
+    If this test succeeds then our flask application's
     routes are correctly initialised.
     """
     for route, _ in routes_and_test_content.items():
@@ -21,12 +21,12 @@ def test_routes_status_code(flask_test_client):
 
 def test_routes_content(flask_test_client):
     """
-    GIVEN Our Flask Hello World Application
+    GIVEN Our Flask Application
     WHEN a route is requested
     THEN check that the get response contains the
     expected content.
 
-    If this test succeedes then our flask application's
+    If this test succeeds then our flask application's
     routes are correctly initialised.
     """
     for route, should_contain_this in routes_and_test_content.items():
@@ -35,14 +35,14 @@ def test_routes_content(flask_test_client):
         assert should_contain_this in response.data
 
 
-def test_dodgy_url_returns_404(flask_test_client):
+def test_unknown_page_returns_404(flask_test_client):
     """
-    GIVEN Our Flask Hello World Application
-    WHEN a invalid route is requested
+    GIVEN Our Flask Application
+    WHEN an invalid route is requested
     THEN check that the get a 404 response
 
-    If this test succeedes then our flask application's
+    If this test succeeds then our flask application's
     routes are correctly initialised.
     """
-    response = flask_test_client.get("/rubbish", follow_redirects=True)
+    response = flask_test_client.get("/page-does-not-exist", follow_redirects=True)
     assert response.status_code == 404
