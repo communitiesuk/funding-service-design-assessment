@@ -143,7 +143,7 @@ class Round(object):
         return Round(
             opens=data.get("opens"),
             deadline=data.get("deadline"),
-            identifier=str(data.get("round_identifer"))  # This is a temporary typo
+            identifier=str(data.get("round_identifier"))
         )
 
     def add_application(self, application: Application):
@@ -245,7 +245,7 @@ def get_round(fund_id: str, identifier: str) -> Round | None:
         fund_id=fund_id, round_number=identifier
     )
     round_response = get_data(round_endpoint)
-    if round_response and "round_identifer" in round_response:  #This is a temporary typo
+    if round_response and "round_identifier" in round_response:
         fund_round = Round.from_json(round_response)
         applications_endpoint = APPLICATION_STORE_API_HOST + APPLICATIONS_ENDPOINT.format(
             fund_id=fund_id,

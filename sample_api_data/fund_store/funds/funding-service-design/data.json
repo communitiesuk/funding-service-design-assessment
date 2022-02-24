@@ -3,7 +3,7 @@
   "fund_identifier": "funding-service-design",
   "rounds": [
     {
-      "round_identifer": 1,
+      "round_identifier": 1,
       "opens": "2022-02-01T12:00:00.000",
       "deadline": "2022-07-23T12:00:00.000"
     }
