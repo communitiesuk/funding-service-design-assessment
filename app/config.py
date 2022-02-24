@@ -18,8 +18,8 @@ TESTING = FLASK_ENV == "test" or False
 """
 APIs Config
 """
-TEST_FUND_STORE_API_HOST = "sample_api_data/fund_store"
-TEST_APPLICATION_STORE_API_HOST = "sample_api_data/application_store"
+TEST_FUND_STORE_API_HOST = "fund_store"
+TEST_APPLICATION_STORE_API_HOST = "application_store"
 
 FUND_STORE_API_HOST = environ.get("FUND_STORE_API_HOST") or TEST_FUND_STORE_API_HOST
 APPLICATION_STORE_API_HOST = (
