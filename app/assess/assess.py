@@ -4,13 +4,10 @@ from flask import render_template
 from flask.views import MethodView
 from flask_wtf import FlaskForm
 from wtforms import HiddenField
-from wtforms import PasswordField
 from wtforms import RadioField
 from wtforms import StringField
 from wtforms import TextAreaField
 from wtforms.validators import DataRequired
-from wtforms.validators import Email
-from wtforms.validators import URL
 from app.assess.data import get_fund, get_application
 from flask import url_for
 
@@ -30,6 +27,26 @@ class AssessQuestionView(MethodView):
 
     def set_question(self, index: int):
         self.current_question = self.application.get_question(int(index))
+
+    def set_view(self, fund_id: str, round_id: int, application_id: str, question_id: int):
+        question_index = int(question_id) - 1
+
+        self.set_fund(fund_id)
+        if not self.fund:
+            abort(404)
+
+        self.set_application(
+            fund_id=fund_id,
+            application_id=application_id)
+        if not self.application:
+            abort(404)
+
+        if len(self.application.questions) <= question_index:
+            return None
+        self.set_question(question_index)
+        if not self.current_question:
+            abort(404)
+        return question_index
 
     def set_field_attributes(self, form):
         for field in self.current_question.fields:
@@ -72,26 +89,14 @@ class AssessQuestionView(MethodView):
 
         return d
 
-    def get(self, fund_id: str, round_id: str, application_id: str, question_id: int):
-        question_index = int(question_id)-1
-        self.set_fund(fund_id)
-        if not self.fund:
-            abort(404)
+    def get(self, fund_id: str, round_id: int, application_id: str, question_id: int):
+        question_index = self.set_view(fund_id, round_id, application_id, question_id)
 
-        self.set_application(
-            fund_id=fund_id,
-            application_id=application_id)
-        if not self.application:
-            abort(404)
-
-        if len(self.application.questions) <= question_index:
+        if question_index is None:
             return redirect(url_for("assess_bp.application",
                                     fund_id=fund_id,
                                     round_id=round_id,
                                     application_id=application_id))
-        self.set_question(question_index)
-        if not self.current_question:
-            abort(404)
 
         return render_template(
             "question.html",
@@ -103,22 +108,13 @@ class AssessQuestionView(MethodView):
             final_question=len(self.application.questions) == question_index+1
         )
 
-    def post(self, fund_id: str, round_id: str, application_id: str, question_id: int):
-        question_index = int(question_id)-1
-        self.set_fund(fund_id)
-        if not self.fund:
-            abort(404)
-
-        self.set_application(
-            fund_id=fund_id,
-            application_id=application_id)
-        if not self.application:
-            abort(404)
-
-        self.set_question(question_index)
-        if not self.current_question:
-            abort(404)
-
+    def post(self, fund_id: str, round_id: int, application_id: str, question_id: int):
+        question_index = self.set_view(fund_id, round_id, application_id, question_id)
+        if question_index is None:
+            return redirect(url_for("assess_bp.application",
+                                    fund_id=fund_id,
+                                    round_id=round_id,
+                                    application_id=application_id))
         form = self.form()
 
         print("This is the data : " + str(form.data))
@@ -129,7 +125,7 @@ class AssessQuestionView(MethodView):
                 fund_id=fund_id,
                 round_id=round_id,
                 application_id=application_id,
-                question_id=question_id+1)
+                question_id=question_index+1)
             )
         else:
             self.set_error_list(form)
@@ -150,26 +146,6 @@ class AssessQuestionView(MethodView):
         validators = []
         choices = []
 
-        if field.field_type == "WebsiteField":
-            validators.append(
-                URL(
-                    message=(
-                        "Please enter a valid web address eg."
-                        " https://www.yoursite.com"
-                    )
-                )
-            )
-
-        if field.field_type == "EmailAddressField":
-            validators.append(
-                Email(
-                    message=(
-                        "Please enter a valid email address eg."
-                        " you@somedomain.com"
-                    )
-                )
-            )
-
         if field.required:
             validators.append(DataRequired(field.required))
 
@@ -179,11 +155,7 @@ class AssessQuestionView(MethodView):
                 choices.append((choice["value"], choice["text"]))
 
         if field.field_type in [
-            "text",
             "TextField",
-            "EmailAddressField",
-            "TelephoneNumberField",
-            "WebsiteField",
         ]:
             f = StringField(field.label, validators=validators)
         elif field.field_type in ["YesNoField"]:
@@ -196,8 +168,6 @@ class AssessQuestionView(MethodView):
             f = RadioField(field.label, choices=choices, validators=validators)
         elif field.field_type in ["MultilineTextField"]:
             f = TextAreaField(field.label, validators=validators)
-        elif field.field_type == "password":
-            f = PasswordField(field.label)
         else:
             f = HiddenField(field.name)
 
