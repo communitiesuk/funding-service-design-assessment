@@ -4,9 +4,10 @@ from typing import List
 from app.config import FUND_STORE_API_HOST
 from app.config import APPLICATION_STORE_API_HOST
 from app.config import FLASK_ROOT
-from datetime import datetime
+from app.assess.models.fund import Fund
+from app.assess.models.round import Round
+from app.assess.models.application import Application
 import requests
-from slugify import slugify
 
 
 # Fund Store Endpoints
@@ -19,188 +20,15 @@ APPLICATIONS_ENDPOINT = "/fund/{fund_id}?datetime_start={datetime_start}&datetim
 APPLICATION_ENDPOINT = "/fund/{fund_id}?application_id={application_id}"
 
 
-class QuestionField(object):
-
-    def __init__(
-            self,
-            key: str,
-            title: str,
-            field_type: str,
-            answer: str,
-    ):
-        self.key = key
-        self.title = title
-        self.field_type = field_type
-        self.answer = answer
-
-    @staticmethod
-    def from_json(data: dict):
-        return QuestionField(
-            key=data.get("key"),
-            title=data.get("title"),
-            field_type=data.get("field_type"),
-            answer=data.get("answer")
-        )
-
-
-class Question(object):
-
-    def __init__(
-            self,
-            title: str,
-            fields: List[QuestionField] = None
-    ):
-        self.title = title
-        self.fields = fields
-
-    @staticmethod
-    def from_json(data: dict):
-        question = Question(
-            title=data.get("question")
-        )
-        if "fields" in data:
-            for field_data in data["fields"]:
-                field = QuestionField.from_json(field_data)
-                question.add_field(field)
-        return question
-
-    def add_field(self, field: QuestionField):
-        if not self.fields:
-            self.fields = []
-        self.fields.append(field)
-
-
-class Application(object):
-
-    def __init__(
-            self,
-            identifier: str,
-            submitted: datetime,
-            fund_name: str,
-            questions: List[Question] = None,
-    ):
-        self.identifier = identifier
-        self.submitted = submitted
-        self.fund_name = fund_name
-        self.questions = questions
-
-    @staticmethod
-    def from_json(data: dict):
-        application = Application(
-            identifier=data.get("id"),
-            submitted=datetime.fromisoformat(data.get("date_submitted")),
-            fund_name=data.get("fund_name")
-        )
-        if "questions" in data:
-            for question_data in data["questions"]:
-                question = Question.from_json(question_data)
-                application.add_question(question)
-
-        return application
-
-    def add_question(self, question: Question):
-        if not self.questions:
-            self.questions = []
-        self.questions.append(question)
-
-    def get_question(self, index: int):
-        if self.questions:
-            return self.questions[index]
-        return None
-
-
-class Round(object):
-
-    def __init__(
-            self,
-            opens: datetime,
-            deadline: datetime,
-            identifier: str = None,
-            applications: List[Application] = None
-    ):
-        self._identifier = identifier
-        self.opens = opens
-        self.deadline = deadline
-        self.applications = applications
-
-    @property
-    def identifier(self):
-        if self._identifier:
-            return self._identifier
-        return slugify(self.deadline)
-
-    @identifier.setter
-    def identifier(self, value):
-        self._identifier = value
-
-    @identifier.deleter
-    def identifier(self):
-        del self._identifier
-
-
-    @staticmethod
-    def from_json(data: dict):
-        return Round(
-            opens=data.get("opens"),
-            deadline=data.get("deadline"),
-            identifier=str(data.get("round_identifier"))
-        )
-
-    def add_application(self, application: Application):
-        if not self.applications:
-            self.applications = []
-        self.applications.append(application)
-
-
-class Fund(object):
-
-    def __init__(
-        self,
-        name: str,
-        identifier: str = None,
-        rounds: List[Round] = None,
-    ):
-        self.name = name
-        self.rounds = rounds
-        self._identifier = identifier
-
-    @property
-    def identifier(self):
-        if self._identifier:
-            return self._identifier
-        return slugify(self.name)
-
-    @identifier.setter
-    def identifier(self, value):
-        self._identifier = value
-
-    @identifier.deleter
-    def identifier(self):
-        del self._identifier
-
-    @staticmethod
-    def from_json(data: dict):
-        return Fund(
-            name=data.get("name"),
-            identifier=data.get("identifier")
-        )
-
-    def add_round(self, fund_round: Round):
-        if not self.rounds:
-            self.rounds = []
-        self.rounds.append(fund_round)
-
-
 def get_data(endpoint: str):
-    if endpoint[:4] == "http":
+    if endpoint[:8] == "https://":
         response = requests.get(endpoint)
         if response.status_code == 200:
             data = response.json()
             print(data)
         else:
-            return None
             # raise Exception("API request for "+endpoint+" returned "+str(response.status_code))
-
+            return None
     else:
         data = get_local_data(endpoint)
     return data
@@ -253,8 +81,8 @@ def get_round(fund_id: str, identifier: str) -> Round | None:
             datetime_end=fund_round.deadline
         )
         applications_response = get_data(applications_endpoint)
-        if applications_response and len(applications_response.items()) > 0:
-            for _, application in applications_response.items():
+        if applications_response and len(applications_response) > 0:
+            for application in applications_response:
                 fund_round.add_application(
                     Application.from_json(application)
                 )
