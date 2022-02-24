@@ -269,8 +269,8 @@ def get_application(fund_id: str, identifier: str) -> Application | None:
         application_id=identifier
     )
     application_response = get_data(application_endpoint)
-    if application_response and identifier in application_response:
-        application = Application.from_json(application_response[identifier])
+    if application_response and "id" in application_response:
+        application = Application.from_json(application_response)
 
         return application
     return None
