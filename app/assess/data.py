@@ -35,11 +35,19 @@ def get_data(endpoint: str):
 
 
 def get_local_data(path: str):
-    data_path = os.path.join(FLASK_ROOT, path, "data.json")
-    fp = open(data_path)
-    data = json.load(fp)
-    fp.close()
-    return data
+    accepted_paths = [
+        "sample_api_data/application_store/fund/funding-service-design?application_id=bd65600d-8669-4903-8a14-af88203add38",
+        "sample_api_data/application_store/fund/funding-service-design?datetime_start=2022-02-01T12:00:00.000&datetime_end=2022-07-23T12:00:00.000",
+        "sample_api_data/fund_store/funds",
+        "sample_api_data/fund_store/funds/funding-service-design",
+        "sample_api_data/fund_store/funds/funding-service-design/round/1",
+    ]
+    if path in accepted_paths:
+        data_path = os.path.join(FLASK_ROOT, path, "data.json")
+        fp = open(data_path)
+        data = json.load(fp)
+        fp.close()
+        return data
 
 
 def get_funds() -> List[Fund] | None:
