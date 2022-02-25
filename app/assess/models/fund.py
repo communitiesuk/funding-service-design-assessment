@@ -1,6 +1,8 @@
-from typing import List
-from slugify import slugify
 from dataclasses import dataclass
+from typing import List
+
+from slugify import slugify
+
 from .round import Round
 
 
