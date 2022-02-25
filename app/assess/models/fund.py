@@ -1,10 +1,11 @@
 from typing import List
-from .round import Round
+
 from slugify import slugify
+
+from .round import Round
 
 
 class Fund(object):
-
     def __init__(
         self,
         name: str,
@@ -31,10 +32,7 @@ class Fund(object):
 
     @staticmethod
     def from_json(data: dict):
-        return Fund(
-            name=data.get("name"),
-            identifier=data.get("identifier")
-        )
+        return Fund(name=data.get("name"), identifier=data.get("identifier"))
 
     def add_round(self, fund_round: Round):
         if not self.rounds:

@@ -1,11 +1,17 @@
+from app.assess.data import get_application
+from app.assess.data import get_fund
+from app.assess.data import get_funds
+from app.assess.data import get_round
+from app.config import ASSESSMENT_HUB_ROUTE
 from flask import abort
 from flask import Blueprint
 from flask import render_template
-from app.assess.data import get_fund, get_funds, get_round, get_application
-from app.config import ASSESSMENT_HUB_ROUTE
 
 assess_bp = Blueprint(
-    "assess_bp", __name__, url_prefix=ASSESSMENT_HUB_ROUTE, template_folder="templates"
+    "assess_bp",
+    __name__,
+    url_prefix=ASSESSMENT_HUB_ROUTE,
+    template_folder="templates",
 )
 
 
@@ -34,9 +40,7 @@ def fund_round(fund_id: str, round_id: str):
     if not fund:
         abort(404)
 
-    fund_round = get_round(
-        fund_id=fund_id,
-        identifier=round_id)
+    fund_round = get_round(fund_id=fund_id, identifier=round_id)
 
     if not fund_round:
         abort(404)
@@ -44,22 +48,25 @@ def fund_round(fund_id: str, round_id: str):
     return render_template("round.html", fund=fund, round=fund_round)
 
 
-@assess_bp.route("/<fund_id>/<round_id>/application/<application_id>", methods=["GET"])
+@assess_bp.route(
+    "/<fund_id>/<round_id>/application/<application_id>", methods=["GET"]
+)
 def application(fund_id: str, round_id: str, application_id: str):
     fund = get_fund(fund_id)
     if not fund:
         abort(404)
 
-    fund_round = get_round(
-        fund_id=fund_id,
-        identifier=round_id)
+    fund_round = get_round(fund_id=fund_id, identifier=round_id)
     if not fund_round:
         abort(404)
 
-    application = get_application(
-        fund_id=fund_id,
-        identifier=application_id)
+    application = get_application(fund_id=fund_id, identifier=application_id)
     if not application:
         abort(404)
 
-    return render_template("application.html", fund=fund, round=fund_round, application=application)
+    return render_template(
+        "application.html",
+        fund=fund,
+        round=fund_round,
+        application=application,
+    )

@@ -1,8 +1,4 @@
 {% extends "base.html" %}
-{%- from 'govuk_frontend_jinja/components/inset-text/macro.html' import govukInsetText -%}
-{%- from "govuk_frontend_jinja/components/button/macro.html" import govukButton -%}
-{%- from 'govuk_frontend_jinja/components/error-summary/macro.html' import govukErrorSummary -%}
-{% import "field.html" as field %}
 
 {% block content %}
   <div>
@@ -13,13 +9,6 @@
       <h1 class="govuk-heading-xl">Application</h1>
       <p class="govuk-body"><b>Application ID:</b> <a href="{{ url_for('assess_bp.application',fund_id=fund.identifier,round_id=round_id, application_id=application.identifier) }}" class="govuk-link govuk-link--no-underline govuk-link--no-visited-state">{{ application.identifier }}</a>
           <br /><b>Submitted:</b> {{ application.submitted.strftime('%d %b %Y') }} <b>{{ application.submitted.strftime('%H:%M %p') }}</b></p>
-
-    {% if form.errors %}
-        {{ govukErrorSummary({
-          "titleText": "Fix the following errors",
-          "errorList": form.error_list
-        }) }}
-    {% endif %}
       <p class="govuk-body govuk-!-font-size-36 govuk-!-margin-top-8">Question {{question_id}}:</p>
       <p class="govuk-body-lead govuk-!-margin-bottom-9"><b>{{ question.title }}</b></p>
   </div>
@@ -34,12 +23,6 @@
       </tbody>
     </table>
 <p class="govuk-body govuk-!-margin-top-9"></p>
-<p class="govuk-heading-l govuk-!-font-size-24 govuk-!-margin-top-9">Q{{question_id}} Assessment:</p>
-    <form action="" method="post" novalidate>
-        {{ form.csrf_token }}
-        {% for form_field in form %}
-            {{ field.render(form_field) }}
-        {% endfor %}
         <div class="govuk-button-group govuk-!-margin-top-9">
           <button class="govuk-button" data-module="govuk-button">
             Save Q{{question_id}} assessment
@@ -55,5 +38,4 @@
                         }}">{% if final_question %} Return to summary {% else %}Next Question{% endif %}</a>
             {% endwith %}
         </div>
-    </form>
 {% endblock %}

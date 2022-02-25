@@ -1,13 +1,14 @@
 import json
 import os
 from typing import List
-from app.config import FUND_STORE_API_HOST
-from app.config import APPLICATION_STORE_API_HOST
-from app.config import FLASK_ROOT
+
+import requests
+from app.assess.models.application import Application
 from app.assess.models.fund import Fund
 from app.assess.models.round import Round
-from app.assess.models.application import Application
-import requests
+from app.config import APPLICATION_STORE_API_HOST
+from app.config import FLASK_ROOT
+from app.config import FUND_STORE_API_HOST
 
 
 # Fund Store Endpoints
@@ -33,7 +34,9 @@ def get_data(endpoint: str):
 
 
 def get_local_data(endpoint: str):
-    api_data_json = os.path.join(FLASK_ROOT, "tests", "api_data", "endpoint_data.json")
+    api_data_json = os.path.join(
+        FLASK_ROOT, "tests", "api_data", "endpoint_data.json"
+    )
     fp = open(api_data_json)
     api_data = json.load(fp)
     fp.close()
@@ -53,9 +56,7 @@ def get_funds() -> List[Fund] | None:
 
 
 def get_fund(fund_id: str) -> Fund | None:
-    endpoint = FUND_STORE_API_HOST + FUND_ENDPOINT.format(
-        fund_id=fund_id
-    )
+    endpoint = FUND_STORE_API_HOST + FUND_ENDPOINT.format(fund_id=fund_id)
     response = get_data(endpoint)
     if response and "name" in response:
         fund = Fund.from_json(response)
@@ -74,26 +75,29 @@ def get_round(fund_id: str, identifier: str) -> Round | None:
     round_response = get_data(round_endpoint)
     if round_response and "round_identifier" in round_response:
         fund_round = Round.from_json(round_response)
-        applications_endpoint = APPLICATION_STORE_API_HOST + APPLICATIONS_ENDPOINT.format(
-            fund_id=fund_id,
-            datetime_start=fund_round.opens,
-            datetime_end=fund_round.deadline
+        applications_endpoint = (
+            APPLICATION_STORE_API_HOST
+            + APPLICATIONS_ENDPOINT.format(
+                fund_id=fund_id,
+                datetime_start=fund_round.opens,
+                datetime_end=fund_round.deadline,
+            )
         )
         applications_response = get_data(applications_endpoint)
         if applications_response and len(applications_response) > 0:
             for application in applications_response:
-                fund_round.add_application(
-                    Application.from_json(application)
-                )
+                fund_round.add_application(Application.from_json(application))
 
         return fund_round
     return None
 
 
 def get_application(fund_id: str, identifier: str) -> Application | None:
-    application_endpoint = APPLICATION_STORE_API_HOST + APPLICATION_ENDPOINT.format(
-        fund_id=fund_id,
-        application_id=identifier
+    application_endpoint = (
+        APPLICATION_STORE_API_HOST
+        + APPLICATION_ENDPOINT.format(
+            fund_id=fund_id, application_id=identifier
+        )
     )
     application_response = get_data(application_endpoint)
     if application_response and "id" in application_response:
@@ -101,5 +105,3 @@ def get_application(fund_id: str, identifier: str) -> Application | None:
 
         return application
     return None
-
-

@@ -4,20 +4,19 @@ Tests if known pages of the website contain expected content
 import os
 
 import pytest
-from tests.utils import print_html_page
-from tests.route_testing_conf import intro_routes_and_test_content
-from tests.route_testing_conf import assessment_form_test_routes
 from app.config import LOCAL_SERVICE_NAME
+from flask import url_for
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.errorhandler import NoSuchElementException
-from flask import url_for
+from tests.route_testing_conf import assessment_form_test_routes
+from tests.route_testing_conf import intro_routes_and_test_content
+from tests.utils import print_html_page
 
 
 @pytest.mark.usefixtures("selenium_chrome_driver")
 @pytest.mark.usefixtures("live_server")
 @pytest.mark.usefixtures("client_class")
 class TestContentWithChrome:
-
     def route_content_test(self, route_rel: str, content_dict: dict):
         url = url_for("default_bp.index", _external=True) + route_rel[1:]
         self.driver.get(url=url)
@@ -38,30 +37,26 @@ class TestContentWithChrome:
             found_element = None
             if name:
                 try:
-                    found_element = self.driver.find_element(
-                        By.NAME, name
-                    )
+                    found_element = self.driver.find_element(By.NAME, name)
                 except NoSuchElementException:
                     error_message = (
-                            "Element name '"
-                            + name
-                            + "' was not found in "
-                            + url
+                        "Element name '" + name + "' was not found in " + url
                     )
                 assert found_element is not None, error_message
             elif tag and contains:
                 try:
                     found_element = self.driver.find_element(
-                        By.XPATH, "//" + tag + "[contains(text(), '" + contains + "')]"
+                        By.XPATH,
+                        "//" + tag + "[contains(text(), '" + contains + "')]",
                     )
                 except NoSuchElementException:
                     error_message = (
-                            "Element tag '"
-                            + tag
-                            + "' with content '"
-                            + contains
-                            + "' was not found in "
-                            + url
+                        "Element tag '"
+                        + tag
+                        + "' with content '"
+                        + contains
+                        + "' was not found in "
+                        + url
                     )
                 assert found_element is not None, error_message
 

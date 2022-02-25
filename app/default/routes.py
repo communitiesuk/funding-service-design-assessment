@@ -1,6 +1,6 @@
+from app.config import ASSESSMENT_HUB_ROUTE
 from flask import Blueprint
 from flask import render_template
-from app.config import ASSESSMENT_HUB_ROUTE
 
 default_bp = Blueprint("default_bp", __name__, template_folder="templates")
 

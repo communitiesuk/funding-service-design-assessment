@@ -3,15 +3,16 @@ Tests if selected pages of the website are accessible when rendered,
 according to WCAG standards
 """
 import os
+
 import pytest
 from app.config import LOCAL_SERVICE_NAME
 from axe_selenium_python import Axe
 from json2html import json2html
 from selenium.webdriver.chrome.webdriver import WebDriver
+from tests.route_testing_conf import assessment_form_test_routes
+from tests.route_testing_conf import intro_routes_and_test_content
 from tests.utils import get_service
 from tests.utils import get_service_html_filepath
-from tests.route_testing_conf import intro_routes_and_test_content
-from tests.route_testing_conf import assessment_form_test_routes
 
 
 def get_report_heading(service_dict: dict, route_rel: str):

@@ -1,16 +1,16 @@
-from typing import List
-from .question import Question
 from datetime import datetime
+from typing import List
+
+from .question import Question
 
 
 class Application(object):
-
     def __init__(
-            self,
-            identifier: str,
-            submitted: datetime,
-            fund_name: str,
-            questions: List[Question] = None,
+        self,
+        identifier: str,
+        submitted: datetime,
+        fund_name: str,
+        questions: List[Question] = None,
     ):
         self.identifier = identifier
         self.submitted = submitted
@@ -22,7 +22,7 @@ class Application(object):
         application = Application(
             identifier=data.get("id"),
             submitted=datetime.fromisoformat(data.get("date_submitted")),
-            fund_name=data.get("fund_name")
+            fund_name=data.get("fund_name"),
         )
         if "questions" in data:
             for question_data in data["questions"]:
