@@ -25,13 +25,13 @@
     {
       "name": "Funding Service Design",
       "date_submitted": "2022-02-23T12:00:00.000",
-      "id": "bd65600d-8669-4903-8a14-af88203add38"
+      "id": "bd65600d"
     }
   ],
-  "application_store/fund/funding-service-design?application_id=bd65600d-8669-4903-8a14-af88203add38": {
+  "application_store/fund/funding-service-design?application_id=bd65600d": {
     "name": "Funding Service Design",
     "date_submitted": "2022-02-23T12:00:00.000",
-    "id": "bd65600d-8669-4903-8a14-af88203add38",
+    "id": "bd65600d",
     "questions": [
         {
             "question": "About you",

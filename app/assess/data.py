@@ -17,7 +17,12 @@ FUND_ENDPOINT = "/funds/{fund_id}"
 ROUND_ENDPOINT = "/funds/{fund_id}/round/{round_number}"
 
 # Application Store Endpoints
-APPLICATIONS_ENDPOINT = "/fund/{fund_id}?datetime_start={datetime_start}&datetime_end={datetime_end}"
+APPLICATIONS_ENDPOINT = "".join(
+    [
+        "/fund/{fund_id}?",
+        "datetime_start={datetime_start}&datetime_end={datetime_end}",
+    ]
+)
 APPLICATION_ENDPOINT = "/fund/{fund_id}?application_id={application_id}"
 
 

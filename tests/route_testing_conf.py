@@ -14,19 +14,23 @@ intro_routes_and_test_content = {
     "/assess/funding-service-design/1": [
         {"tag": "p", "name": None, "contains": "Please choose an application"}
     ],
-    "/assess/funding-service-design/1/application/bd65600d-8669-4903-8a14-af88203add38": [
+    "/assess/funding-service-design/1/application/bd65600d": [
         {
             "tag": "a",
             "name": None,
-            "contains": "bd65600d-8669-4903-8a14-af88203add38",
+            "contains": "bd65600d",
         }
     ],
 }
 
 
 def assessment_form_test_routes():
-    application_endpoint = "application_store/fund/funding-service-design?application_id=bd65600d-8669-4903-8a14-af88203add38"
-    question_page_root = "/assess/funding-service-design/1/application/bd65600d-8669-4903-8a14-af88203add38"
+    application_endpoint = (
+        "application_store/fund/funding-service-design?application_id=bd65600d"
+    )
+    question_page_root = (
+        "/assess/funding-service-design/1/application/bd65600d"
+    )
     application_form = get_local_data(application_endpoint)
     routes = {}
     for index, question in enumerate(application_form["questions"]):

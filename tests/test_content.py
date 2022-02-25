@@ -1,8 +1,6 @@
 """
 Tests if known pages of the website contain expected content
 """
-import os
-
 import pytest
 from app.config import LOCAL_SERVICE_NAME
 from flask import url_for

@@ -1,8 +1,8 @@
 [package]
-name = "funding-service-design-frontend"
+name = "funding-service-design-assessment"
 version = "0.1.1"
 description = "The funding service design frontend for the DLUHC."
-authors = ["Evoco Digital Services"]
+authors = ["Version One"]
 license = "MIT License"
 
 [tool.black]
