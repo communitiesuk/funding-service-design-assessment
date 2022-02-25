@@ -1,12 +1,12 @@
 from typing import List
-
+from dataclasses import dataclass
 from .question_field import QuestionField
 
 
-class Question(object):
-    def __init__(self, title: str, fields: List[QuestionField] = None):
-        self.title = title
-        self.fields = fields
+@dataclass
+class Question:
+    title: str
+    fields: List[QuestionField] = None
 
     @staticmethod
     def from_json(data: dict):

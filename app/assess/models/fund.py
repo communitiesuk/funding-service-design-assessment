@@ -1,20 +1,14 @@
 from typing import List
-
 from slugify import slugify
-
+from dataclasses import dataclass
 from .round import Round
 
 
-class Fund(object):
-    def __init__(
-        self,
-        name: str,
-        identifier: str = None,
-        rounds: List[Round] = None,
-    ):
-        self.name = name
-        self.rounds = rounds
-        self._identifier = identifier
+@dataclass
+class Fund:
+    name: str
+    _identifier: str = None
+    rounds: List[Round] = None
 
     @property
     def identifier(self):
@@ -32,7 +26,7 @@ class Fund(object):
 
     @staticmethod
     def from_json(data: dict):
-        return Fund(name=data.get("name"), identifier=data.get("identifier"))
+        return Fund(name=data.get("name"), _identifier=data.get("identifier"))
 
     def add_round(self, fund_round: Round):
         if not self.rounds:

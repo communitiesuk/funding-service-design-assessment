@@ -1,21 +1,15 @@
 from datetime import datetime
 from typing import List
-
+from dataclasses import dataclass
 from .question import Question
 
 
-class Application(object):
-    def __init__(
-        self,
-        identifier: str,
-        submitted: datetime,
-        fund_name: str,
-        questions: List[Question] = None,
-    ):
-        self.identifier = identifier
-        self.submitted = submitted
-        self.fund_name = fund_name
-        self.questions = questions
+@dataclass
+class Application:
+    identifier: str
+    submitted: datetime
+    fund_name: str
+    questions: List[Question] = None
 
     @staticmethod
     def from_json(data: dict):

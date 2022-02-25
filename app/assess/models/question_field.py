@@ -1,15 +1,12 @@
-class QuestionField(object):
-    def __init__(
-        self,
-        key: str,
-        title: str,
-        field_type: str,
-        answer: str,
-    ):
-        self.key = key
-        self.title = title
-        self.field_type = field_type
-        self.answer = answer
+from dataclasses import dataclass
+
+
+@dataclass
+class QuestionField:
+    key: str
+    title: str
+    field_type: str
+    answer: str
 
     @staticmethod
     def from_json(data: dict):

@@ -1,23 +1,17 @@
 from datetime import datetime
 from typing import List
-
+from dataclasses import dataclass
 from slugify import slugify
 
 from .application import Application
 
 
-class Round(object):
-    def __init__(
-        self,
-        opens: datetime,
-        deadline: datetime,
-        identifier: str = None,
-        applications: List[Application] = None,
-    ):
-        self._identifier = identifier
-        self.opens = opens
-        self.deadline = deadline
-        self.applications = applications
+@dataclass
+class Round:
+    opens: datetime
+    deadline: datetime
+    _identifier: str = None
+    applications: List[Application] = None
 
     @property
     def identifier(self):
@@ -38,7 +32,7 @@ class Round(object):
         return Round(
             opens=data.get("opens"),
             deadline=data.get("deadline"),
-            identifier=str(data.get("round_identifier")),
+            _identifier=str(data.get("round_identifier")),
         )
 
     def add_application(self, application: Application):
