@@ -26,7 +26,6 @@ def get_data(endpoint: str):
         if response.status_code == 200:
             data = response.json()
         else:
-            # raise Exception("API request for "+endpoint+" returned "+str(response.status_code))
             return None
     else:
         data = get_local_data(endpoint)

@@ -1,0 +1,48 @@
+{% import "components/custom/radios.html" as raw %}
+
+{% macro render(field) %}
+
+{% if field.errors %}
+
+            {{ raw.govukRadios({
+
+                'fieldset': {
+                    'legend': {
+                        'text': field.label,
+                        'classes': "govuk-label--s"
+                    }
+                },
+                'hint': {
+                    'text': field.hint
+                },
+                'idPrefix': field.id,
+                'name': field.name,
+                'choice_items': field.choice_items,
+                'value': field.value,
+                'classes': field.classes,
+                'errorMessage': {
+                    'text': field.errors.0
+                }
+            }) }}
+        {% else %}
+
+            {{ raw.govukRadios({
+
+                'fieldset': {
+                    'legend': {
+                        'text': field.label,
+                        'classes': "govuk-label--s"
+                    }
+                },
+                'hint': {
+                    'text': field.hint
+                },
+                'idPrefix': field.id,
+                'name': field.name,
+                'choice_items': field.choice_items,
+                'value': field.value,
+                'classes': field.classes,
+            }) }}
+        {% endif %}
+
+{% endmacro %}

@@ -7,6 +7,7 @@ from wtforms import HiddenField
 from wtforms import RadioField
 from wtforms import StringField
 from wtforms import TextAreaField
+from wtforms import SelectField
 from wtforms.validators import DataRequired
 from app.assess.data import get_fund, get_application
 from flask import url_for
@@ -41,15 +42,15 @@ class AssessQuestionView(MethodView):
         if not self.application:
             abort(404)
 
-        if len(self.application.questions) <= question_index:
+        if question_index < 0 or len(self.application.questions) <= question_index:
             return None
         self.set_question(question_index)
         if not self.current_question:
             abort(404)
         return question_index
 
-    def set_field_attributes(self, form):
-        for field in self.current_question.fields:
+    def set_assessor_field_attributes(self, form):
+        for field in self.current_question.assessor_fields:
             d_field = getattr(form, field.name)
             for attr in [
                 "label",
@@ -80,12 +81,12 @@ class AssessQuestionView(MethodView):
         class DynamicForm(FlaskForm):
             pass
 
-        for f in self.current_question.fields:
+        for f in self.current_question.assessor_fields:
 
-            setattr(DynamicForm, f.name, self.get_field(f))
+            setattr(DynamicForm, f.name, self.get_assessor_field(f))
 
         d = DynamicForm()
-        self.set_field_attributes(d)
+        self.set_assessor_field_attributes(d)
 
         return d
 
@@ -98,8 +99,11 @@ class AssessQuestionView(MethodView):
                                     round_id=round_id,
                                     application_id=application_id))
 
+        form = self.form()
+
         return render_template(
             "question.html",
+            form=form,
             fund=self.fund,
             round_id=round_id,
             application=self.application,
@@ -125,7 +129,7 @@ class AssessQuestionView(MethodView):
                 fund_id=fund_id,
                 round_id=round_id,
                 application_id=application_id,
-                question_id=question_index+1)
+                question_id=question_index+2)
             )
         else:
             self.set_error_list(form)
@@ -142,15 +146,14 @@ class AssessQuestionView(MethodView):
             final_question=len(self.application.questions) == question_index+1
         )
 
-    def get_field(self, field):
+    def get_assessor_field(self, field):
         validators = []
         choices = []
 
         if field.required:
             validators.append(DataRequired(field.required))
 
-        if hasattr(field, "choices"):
-            print(field.choices)
+        if field.choices and len(field.choices) > 0:
             for choice in field.choices:
                 choices.append((choice["value"], choice["text"]))
 
@@ -166,6 +169,8 @@ class AssessQuestionView(MethodView):
             )
         elif field.field_type in ["RadiosField"]:
             f = RadioField(field.label, choices=choices, validators=validators)
+        elif field.field_type in ["SelectField"]:
+            f = SelectField(field.label, choices=choices, validators=validators)
         elif field.field_type in ["MultilineTextField"]:
             f = TextAreaField(field.label, validators=validators)
         else:
