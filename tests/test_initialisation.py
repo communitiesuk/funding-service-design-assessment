@@ -6,7 +6,6 @@ of the test_routes.py test. These tests are marked
 the other tests. This saves time.
 This is the most basic set of tests.
 """
-from tests.route_testing_conf import routes_and_test_content
 
 
 def test_flask_initiates(flask_test_client):
@@ -19,15 +18,3 @@ def test_flask_initiates(flask_test_client):
     """
     response = flask_test_client.get("/", follow_redirects=True)
     assert response.status_code == 200
-
-
-def test_assessment_hub_homepage(flask_test_client):
-    """
-    GIVEN Our Flask Assessment Hub Application
-    WHEN the '/' page (index) is requested (GET)
-    THEN check that the homepage (/) contains the phrase
-    "Hello World".
-    """
-    response = flask_test_client.get("/", follow_redirects=True)
-    # We grab the expected content from routes_and_test_content
-    assert routes_and_test_content["/"] in response.data
