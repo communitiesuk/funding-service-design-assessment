@@ -62,8 +62,7 @@ def get_fund(fund_id: str) -> Fund | None:
         fund = Fund.from_json(response)
         if "rounds" in response and len(response["rounds"]) > 0:
             for fund_round in response["rounds"]:
-                new_round = Round.from_json(fund_round)
-                fund.add_round(new_round)
+                fund.add_round(Round.from_json(fund_round))
         return fund
     return None
 
