@@ -26,7 +26,6 @@ class AssessQuestionView(MethodView):
     def set_view(
         self,
         fund_id: str,
-        round_id: int,
         application_id: str,
         question_id: int,
     ):
@@ -53,20 +52,16 @@ class AssessQuestionView(MethodView):
     def get(
         self,
         fund_id: str,
-        round_id: int,
         application_id: str,
         question_id: int,
     ):
-        question_index = self.set_view(
-            fund_id, round_id, application_id, question_id
-        )
+        question_index = self.set_view(fund_id, application_id, question_id)
 
         if question_index is None:
             return redirect(
                 url_for(
                     "assess_bp.application",
                     fund_id=fund_id,
-                    round_id=round_id,
                     application_id=application_id,
                 )
             )
@@ -74,7 +69,6 @@ class AssessQuestionView(MethodView):
         return render_template(
             "question.html",
             fund=self.fund,
-            round_id=round_id,
             application=self.application,
             question=self.current_question,
             question_id=int(question_id),
@@ -85,19 +79,15 @@ class AssessQuestionView(MethodView):
     def post(
         self,
         fund_id: str,
-        round_id: int,
         application_id: str,
         question_id: int,
     ):
-        question_index = self.set_view(
-            fund_id, round_id, application_id, question_id
-        )
+        question_index = self.set_view(fund_id, application_id, question_id)
         if question_index is None:
             return redirect(
                 url_for(
                     "assess_bp.application",
                     fund_id=fund_id,
-                    round_id=round_id,
                     application_id=application_id,
                 )
             )
@@ -106,7 +96,6 @@ class AssessQuestionView(MethodView):
             url_for(
                 "application_question",
                 fund_id=fund_id,
-                round_id=round_id,
                 application_id=application_id,
                 question_id=question_index + 2,
             )

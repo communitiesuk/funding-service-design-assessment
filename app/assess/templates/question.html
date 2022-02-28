@@ -4,10 +4,9 @@
   <div>
       <p class="govuk-heading-s">
             Fund: <a href="{{ url_for('assess_bp.fund',fund_id=fund.identifier) }}" class="govuk-link govuk-link--no-underline govuk-link--no-visited-state">{{ fund.name }}</a>
-            <br />Round: <a href="{{ url_for('assess_bp.fund_round',fund_id=fund.identifier, round_id=round_id) }}" class="govuk-link govuk-link--no-underline govuk-link--no-visited-state">{{ round_id }}</a>
-        </p>
+      </p>
       <h1 class="govuk-heading-xl">Application</h1>
-      <p class="govuk-body"><b>Application ID:</b> <a href="{{ url_for('assess_bp.application',fund_id=fund.identifier,round_id=round_id, application_id=application.identifier) }}" class="govuk-link govuk-link--no-underline govuk-link--no-visited-state">{{ application.identifier }}</a>
+      <p class="govuk-body"><b>Application ID:</b> <a href="{{ url_for('assess_bp.application',fund_id=fund.identifier,application_id=application.identifier) }}" class="govuk-link govuk-link--no-underline govuk-link--no-visited-state">{{ application.identifier }}</a>
           <br /><b>Submitted:</b> {{ application.submitted.strftime('%d %b %Y') }} <b>{{ application.submitted.strftime('%H:%M %p') }}</b></p>
       <p class="govuk-body govuk-!-font-size-36 govuk-!-margin-top-8">Question {{question_id}}:</p>
       <p class="govuk-body-lead govuk-!-margin-bottom-9"><b>{{ question.title }}</b></p>
@@ -32,7 +31,6 @@
           <a class="govuk-button govuk-button--secondary" href="{{ url_for(
                         'application_question',
                         fund_id=fund.identifier,
-                        round_id=round_id,
                         application_id=application.identifier,
                         question_id=next_question_id)
                         }}">{% if final_question %} Return to summary {% else %}Next Question{% endif %}</a>

@@ -5,7 +5,6 @@ from typing import List
 import requests
 from app.assess.models.application import Application
 from app.assess.models.fund import Fund
-from app.assess.models.round import Round
 from app.config import APPLICATION_STORE_API_HOST
 from app.config import FLASK_ROOT
 from app.config import FUND_STORE_API_HOST
@@ -14,15 +13,9 @@ from app.config import FUND_STORE_API_HOST
 # Fund Store Endpoints
 FUNDS_ENDPOINT = "/funds/"
 FUND_ENDPOINT = "/funds/{fund_id}"
-ROUND_ENDPOINT = "/funds/{fund_id}/round/{round_number}"
 
 # Application Store Endpoints
-APPLICATIONS_ENDPOINT = "".join(
-    [
-        "/fund/{fund_id}?",
-        "datetime_start={datetime_start}&datetime_end={datetime_end}",
-    ]
-)
+APPLICATIONS_ENDPOINT = "/fund/{fund_id}"
 APPLICATION_ENDPOINT = "/fund/{fund_id}?application_id={application_id}"
 
 
@@ -65,34 +58,15 @@ def get_fund(fund_id: str) -> Fund | None:
     response = get_data(endpoint)
     if response and "name" in response:
         fund = Fund.from_json(response)
-        if "rounds" in response and len(response["rounds"]) > 0:
-            for fund_round in response["rounds"]:
-                fund.add_round(Round.from_json(fund_round))
-        return fund
-    return None
-
-
-def get_round(fund_id: str, identifier: str) -> Round | None:
-    round_endpoint = FUND_STORE_API_HOST + ROUND_ENDPOINT.format(
-        fund_id=fund_id, round_number=identifier
-    )
-    round_response = get_data(round_endpoint)
-    if round_response and "round_identifier" in round_response:
-        fund_round = Round.from_json(round_response)
         applications_endpoint = (
             APPLICATION_STORE_API_HOST
-            + APPLICATIONS_ENDPOINT.format(
-                fund_id=fund_id,
-                datetime_start=fund_round.opens,
-                datetime_end=fund_round.deadline,
-            )
+            + APPLICATIONS_ENDPOINT.format(fund_id=fund_id)
         )
         applications_response = get_data(applications_endpoint)
         if applications_response and len(applications_response) > 0:
             for application in applications_response:
-                fund_round.add_application(Application.from_json(application))
-
-        return fund_round
+                fund.add_application(Application.from_json(application))
+        return fund
     return None
 
 

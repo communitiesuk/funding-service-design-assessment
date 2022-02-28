@@ -3,14 +3,14 @@ from typing import List
 
 from slugify import slugify
 
-from .round import Round
+from .application import Application
 
 
 @dataclass
 class Fund:
     name: str
     _identifier: str = None
-    rounds: List[Round] = None
+    applications: List[Application] = None
 
     @property
     def identifier(self):
@@ -30,7 +30,7 @@ class Fund:
     def from_json(data: dict):
         return Fund(name=data.get("name"), _identifier=data.get("identifier"))
 
-    def add_round(self, fund_round: Round):
-        if not self.rounds:
-            self.rounds = []
-        self.rounds.append(fund_round)
+    def add_application(self, application: Application):
+        if not self.applications:
+            self.applications = []
+        self.applications.append(application)

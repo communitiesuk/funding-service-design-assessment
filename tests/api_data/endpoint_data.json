@@ -8,20 +8,10 @@
   "fund_store/funds/funding-service-design": {
     "name": "Funding Service Design",
     "fund_identifier": "funding-service-design",
-    "rounds": [
-      {
-        "round_identifier": 1,
-        "opens": "2022-02-01T12:00:00.000",
-        "deadline": "2022-07-23T12:00:00.000"
-      }
-    ]
-  },
-  "fund_store/funds/funding-service-design/round/1": {
-    "round_identifier": 1,
     "opens": "2022-02-01T12:00:00.000",
     "deadline": "2022-07-23T12:00:00.000"
   },
-  "application_store/fund/funding-service-design?datetime_start=2022-02-01T12:00:00.000&datetime_end=2022-07-23T12:00:00.000": [
+  "application_store/fund/funding-service-design": [
     {
       "name": "Funding Service Design",
       "date_submitted": "2022-02-23T12:00:00.000",
