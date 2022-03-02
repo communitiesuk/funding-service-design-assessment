@@ -6,10 +6,10 @@ import requests
 from app.assess.models.application import Application
 from app.assess.models.fund import Fund
 from app.assess.models.round import Round
-from app.config import FUND_STORE_API_HOST
-from app.config import ROUND_STORE_API_HOST
 from app.config import APPLICATION_STORE_API_HOST
 from app.config import FLASK_ROOT
+from app.config import FUND_STORE_API_HOST
+from app.config import ROUND_STORE_API_HOST
 
 
 # Fund Store Endpoints

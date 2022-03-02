@@ -15,7 +15,11 @@ intro_routes_and_test_content = {
         {"tag": "p", "name": None, "contains": "Please choose an application"}
     ],
     "/assess/funding-service-design/summer": [
-        {"tag": "p", "name": None, "contains": "No applications exist for this round yet."}
+        {
+            "tag": "p",
+            "name": None,
+            "contains": "No applications exist for this round yet.",
+        }
     ],
     "/assess/funding-service-design/spring/application/bd65600d": [
         {

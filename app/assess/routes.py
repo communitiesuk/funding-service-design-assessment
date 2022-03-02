@@ -47,10 +47,7 @@ def fund_round(fund_id: str, round_id: str):
     if not fund_round:
         abort(404)
 
-    return render_template(
-        "round.html",
-        fund=fund,
-        round=fund_round)
+    return render_template("round.html", fund=fund, round=fund_round)
 
 
 @assess_bp.route(
