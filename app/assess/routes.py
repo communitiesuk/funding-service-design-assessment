@@ -2,6 +2,7 @@ from app.assess.data import get_application
 from app.assess.data import get_fund
 from app.assess.data import get_funds
 from app.assess.data import get_round
+from app.assess.data import get_rounds
 from app.config import ASSESSMENT_HUB_ROUTE
 from flask import abort
 from flask import Blueprint
@@ -30,7 +31,9 @@ def fund(fund_id: str):
     if not fund:
         abort(404)
 
-    return render_template("fund.html", fund=fund)
+    rounds = get_rounds(fund_id)
+
+    return render_template("fund.html", fund=fund, rounds=rounds)
 
 
 @assess_bp.route("/<fund_id>/<round_id>/", methods=["GET"])
@@ -40,12 +43,14 @@ def fund_round(fund_id: str, round_id: str):
     if not fund:
         abort(404)
 
-    fund_round = get_round(fund_id=fund_id, identifier=round_id)
-
+    fund_round = get_round(fund_id=fund_id, round_id=round_id)
     if not fund_round:
         abort(404)
 
-    return render_template("round.html", fund=fund, round=fund_round)
+    return render_template(
+        "round.html",
+        fund=fund,
+        round=fund_round)
 
 
 @assess_bp.route(
@@ -56,7 +61,7 @@ def application(fund_id: str, round_id: str, application_id: str):
     if not fund:
         abort(404)
 
-    fund_round = get_round(fund_id=fund_id, identifier=round_id)
+    fund_round = get_round(fund_id=fund_id, round_id=round_id)
     if not fund_round:
         abort(404)
 

@@ -11,15 +11,21 @@ intro_routes_and_test_content = {
     "/assess/funding-service-design": [
         {"tag": "p", "name": None, "contains": "Please choose a round"}
     ],
-    "/assess/funding-service-design/1": [
+    "/assess/funding-service-design/spring": [
         {"tag": "p", "name": None, "contains": "Please choose an application"}
     ],
-    "/assess/funding-service-design/1/application/bd65600d": [
+    "/assess/funding-service-design/summer": [
+        {"tag": "p", "name": None, "contains": "No applications exist for this round yet."}
+    ],
+    "/assess/funding-service-design/spring/application/bd65600d": [
         {
             "tag": "a",
             "name": None,
             "contains": "bd65600d",
         }
+    ],
+    "/assess/funding-service-design/spring/application/bad-id": [
+        {"tag": "h1", "name": None, "contains": "Page not found"}
     ],
 }
 
@@ -29,7 +35,7 @@ def assessment_form_test_routes():
         "application_store/fund/funding-service-design?application_id=bd65600d"
     )
     question_page_root = (
-        "/assess/funding-service-design/1/application/bd65600d"
+        "/assess/funding-service-design/spring/application/bd65600d"
     )
     application_form = get_local_data(application_endpoint)
     routes = {}

@@ -65,12 +65,13 @@ You should see the following:
 
 # Configuration
 
-This service is designed to be an interface to two primary data stores: The *Fund Store* which holds data about different funds, and the *Application Store* which holds individual applications/submissions for each fund.
+This service is designed to be an interface to three primary data stores: The *Fund Store* which holds data about different funds, the *Round Store* which holds information about the rounds for each fund, and the *Application Store* which holds individual applications/submissions for each fund.
 
-The locations of the APIs for these two stores can be set using the FUND_STORE_API_ROOT and APPLICATION_STORE_API_ROOT environment variables. Set these to the respective locations for each API:
+The locations of the APIs for these two stores can be set using the FUND_STORE_API_HOST,  ROUND_STORE_API_HOST and APPLICATION_STORE_API_HOST environment variables. Set these to the respective locations for each API:
 
-    export FUND_STORE_API_ROOT="https://dluhc-fsd-fund-store-api.gov.uk"
-    export APPLICATION_STORE_API_ROOT="https://dluhc-fsd-application-store-api.gov.uk"
+    export FUND_STORE_API_HOST="https://dluhc-fsd-fund-store-api.gov.uk"
+    export ROUND_STORE_API_HOST="https://dluhc-fsd-round-store-api.gov.uk"
+    export APPLICATION_STORE_API_HOST="https://dluhc-fsd-application-store-api.gov.uk"
 
 # Pipelines
 

@@ -6,12 +6,12 @@
   <div>
       <p class="govuk-heading-s">
             Fund: <a href="{{ url_for('assess_bp.fund',fund_id=fund.identifier) }}" class="govuk-link govuk-link--no-underline govuk-link--no-visited-state">{{ fund.name }}</a>
-            <br />Round: <a href="{{ url_for('assess_bp.fund_round',fund_id=fund.identifier, round_id=round.identifier) }}" class="govuk-link govuk-link--no-underline govuk-link--no-visited-state">{{ round.identifier }}</a>
+            <br />Round: <a href="{{ url_for('assess_bp.fund_round',fund_id=fund.identifier, round_id=round.identifier) }}" class="govuk-link govuk-link--no-underline govuk-link--no-visited-state">{{ round.title }}</a>
         </p>
       <h1 class="govuk-heading-xl">Applications</h1>
-    <p class="govuk-heading-m">Please choose an application:</p>
   </div>
     {% if round.applications %}
+        <p class="govuk-heading-m">Please choose an application:</p>
         <ul class="govuk-list">
       {% for application in round.applications %}
           <li>

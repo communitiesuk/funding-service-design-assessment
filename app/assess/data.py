@@ -6,15 +6,19 @@ import requests
 from app.assess.models.application import Application
 from app.assess.models.fund import Fund
 from app.assess.models.round import Round
+from app.config import FUND_STORE_API_HOST
+from app.config import ROUND_STORE_API_HOST
 from app.config import APPLICATION_STORE_API_HOST
 from app.config import FLASK_ROOT
-from app.config import FUND_STORE_API_HOST
 
 
 # Fund Store Endpoints
 FUNDS_ENDPOINT = "/funds/"
 FUND_ENDPOINT = "/funds/{fund_id}"
-ROUND_ENDPOINT = "/funds/{fund_id}/round/{round_number}"
+
+# Round Store Endpoints
+ROUNDS_ENDPOINT = "/fund/{fund_id}"
+ROUND_ENDPOINT = "/fund/{fund_id}/{round_id}"
 
 # Application Store Endpoints
 APPLICATIONS_ENDPOINT = "".join(
@@ -45,6 +49,7 @@ def get_local_data(endpoint: str):
     fp = open(api_data_json)
     api_data = json.load(fp)
     fp.close()
+    print(endpoint)
     if endpoint in api_data:
         return api_data.get(endpoint)
 
@@ -72,12 +77,22 @@ def get_fund(fund_id: str) -> Fund | None:
     return None
 
 
-def get_round(fund_id: str, identifier: str) -> Round | None:
-    round_endpoint = FUND_STORE_API_HOST + ROUND_ENDPOINT.format(
-        fund_id=fund_id, round_number=identifier
+def get_rounds(fund_id: str) -> Fund | List:
+    endpoint = ROUND_STORE_API_HOST + ROUNDS_ENDPOINT.format(fund_id=fund_id)
+    response = get_data(endpoint)
+    rounds = []
+    if response and len(response) > 0:
+        for round_data in response:
+            rounds.append(Round.from_json(round_data))
+    return rounds
+
+
+def get_round(fund_id: str, round_id: str) -> Round | None:
+    round_endpoint = ROUND_STORE_API_HOST + ROUND_ENDPOINT.format(
+        fund_id=fund_id, round_id=round_id
     )
     round_response = get_data(round_endpoint)
-    if round_response and "round_identifier" in round_response:
+    if round_response and "round_id" in round_response:
         fund_round = Round.from_json(round_response)
         applications_endpoint = (
             APPLICATION_STORE_API_HOST
@@ -88,6 +103,7 @@ def get_round(fund_id: str, identifier: str) -> Round | None:
             )
         )
         applications_response = get_data(applications_endpoint)
+        print(applications_response)
         if applications_response and len(applications_response) > 0:
             for application in applications_response:
                 fund_round.add_application(Application.from_json(application))
