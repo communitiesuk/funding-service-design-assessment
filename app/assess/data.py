@@ -68,7 +68,7 @@ def get_funds() -> List[Fund] | None:
 def get_fund(fund_id: str) -> Fund | None:
     endpoint = FUND_STORE_API_HOST + FUND_ENDPOINT.format(fund_id=fund_id)
     response = get_data(endpoint)
-    if response and "name" in response:
+    if response and "fund_id" in response:
         fund = Fund.from_json(response)
         if "rounds" in response and len(response["rounds"]) > 0:
             for fund_round in response["rounds"]:

@@ -28,7 +28,9 @@ class Fund:
 
     @staticmethod
     def from_json(data: dict):
-        return Fund(name=data.get("name"), _identifier=data.get("identifier"))
+        return Fund(
+            name=data.get("fund_name"), _identifier=data.get("fund_id")
+        )
 
     def add_round(self, fund_round: Round):
         if not self.rounds:
