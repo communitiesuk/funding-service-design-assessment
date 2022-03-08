@@ -18,7 +18,7 @@ FUND_ENDPOINT = "/funds/{fund_id}"
 
 # Round Store Endpoints
 ROUNDS_ENDPOINT = "/fund/{fund_id}"
-ROUND_ENDPOINT = "/fund/{fund_id}/{round_id}"
+ROUND_ENDPOINT = "/fund/{fund_id}/round/{round_id}"
 
 # Application Store Endpoints
 APPLICATIONS_ENDPOINT = "".join(
