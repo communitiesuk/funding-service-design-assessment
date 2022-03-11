@@ -60,7 +60,8 @@ A local dev server will be created on
 Flask environment variables are configurable in .flaskenv
 
 You should see the following:
-![Preview of the end result](https://user-images.githubusercontent.com/56394038/155768587-907ea46a-ade5-475a-a901-acfde6160f66.png)
+
+![Preview of the end result](https://user-images.githubusercontent.com/65361824/153576751-9cb8799f-4737-40c4-9f6f-d38d4bcc188e.png)
 
 # Configuration
 
