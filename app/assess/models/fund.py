@@ -1,9 +1,8 @@
 from dataclasses import dataclass
 from typing import List
 
+from app.assess.models.round import Round
 from slugify import slugify
-
-from .round import Round
 
 
 @dataclass
