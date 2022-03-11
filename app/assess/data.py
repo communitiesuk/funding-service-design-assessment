@@ -49,7 +49,6 @@ def get_local_data(endpoint: str):
     fp = open(api_data_json)
     api_data = json.load(fp)
     fp.close()
-    print(endpoint)
     if endpoint in api_data:
         return api_data.get(endpoint)
 
@@ -103,7 +102,6 @@ def get_round(fund_id: str, round_id: str) -> Round | None:
             )
         )
         applications_response = get_data(applications_endpoint)
-        print(applications_response)
         if applications_response and len(applications_response) > 0:
             for application in applications_response:
                 fund_round.add_application(Application.from_json(application))
