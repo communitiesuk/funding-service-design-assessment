@@ -12,8 +12,6 @@ TEMPLATES_FOLDER = "templates"
 LOCAL_SERVICE_NAME = "local_flask"
 ASSESSMENT_HUB_ROUTE = "/assess"
 FLASK_ROOT = path.dirname(path.dirname(path.realpath(__file__)))
-FLASK_ENV = environ.get("FLASK_ENV")
-TESTING = FLASK_ENV == "test" or False
 
 """
 APIs Config
