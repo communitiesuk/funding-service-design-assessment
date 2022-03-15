@@ -74,6 +74,8 @@ The locations of the APIs for these two stores can be set using the FUND_STORE_A
 
 # Pipelines
 
+These are the current pipelines running on the repo:
+
 * Deploy to Gov PaaS - This is a simple pipeline to demonstrate capabilities.  Builds, tests and deploys a simple python application to the PaaS for evaluation in Dev and Test Only.
 
 # Testing
