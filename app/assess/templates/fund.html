@@ -7,20 +7,16 @@
       <p class="govuk-heading-s"><a class="govuk-link govuk-link--no-underline govuk-link--no-visited-state" href="{{ url_for('assess_bp.funds') }}">Funds</a></p>
       <h1 class="govuk-heading-xl">{{ fund.name }}</h1>
   </div>
-    {% if fund.applications %}
-        <p class="govuk-heading-m">Please choose an application:</p>
+    {% if rounds|length > 0 %}
+        <p class="govuk-heading-m">Please choose a round:</p>
         <ul class="govuk-list">
-      {% for application in fund.applications %}
+      {% for round in rounds %}
           <li>
-            <a class="govuk-link govuk-body-lead" href="{{
-            url_for('assess_bp.application',
-            fund_id=fund.identifier,
-            application_id=application.identifier)
-            }}">{{ application.submitted.strftime('%d %b %Y') }} <b>{{ application.submitted.strftime('%H:%M %p') }}</b> - {{ application.identifier }}</a>
+            <a class="govuk-button govuk-button--secondary" href="{{ url_for('assess_bp.fund_round',fund_id=fund.identifier,round_id=round.identifier) }}">{{ round.title }}</a>
           </li>
       {% endfor %}
         </ul>
     {% else %}
-        <p class="govuk-body-lead">No applications exist for this fund yet.</p>
+        <p class="govuk-body-lead">No rounds exist for this fund yet.</p>
     {% endif %}
 {% endblock %}
