@@ -16,7 +16,7 @@
       {% for application in round.applications %}
           <li>
             <a class="govuk-link govuk-body-lead" href="{{
-            url_for('assess_bp.application',
+            url_for('assess_bp.view_application',
             fund_id=fund.identifier,
             round_id=round.identifier,
             application_id=application.identifier)

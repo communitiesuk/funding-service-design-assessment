@@ -72,3 +72,10 @@ def application(fund_id: str, round_id: str, application_id: str):
         round=fund_round,
         application=application,
     )
+
+@assess_bp.route("/view_application/<fund_id>/<application_id>", methods=["GET"])
+def view_application(application_id, fund_id):
+
+    application_data = get_application(fund_id=fund_id, identifier=application_id)
+
+    return render_template("assesser_project_view.html", application_data=application_data)
