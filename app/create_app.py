@@ -69,12 +69,14 @@ def create_app() -> Flask:
 
     from app.default.routes import default_bp, not_found, internal_server_error
     from app.assess.routes import assess_bp
+    from app.assess2.routes import assessv2_bp
     from app.assess.assess import AssessQuestionView
 
     flask_app.register_error_handler(404, not_found)
     flask_app.register_error_handler(500, internal_server_error)
     flask_app.register_blueprint(default_bp)
     flask_app.register_blueprint(assess_bp)
+    flask_app.register_blueprint(assessv2_bp)
     flask_app.add_url_rule(
         "/".join(
             [
