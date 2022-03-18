@@ -1,9 +1,32 @@
 {% extends "base.html" %}
-{%- from 'govuk_frontend_jinja/components/inset-text/macro.html' import govukInsetText -%}
-{%- from "govuk_frontend_jinja/components/button/macro.html" import govukButton -%}
+{%- from 'govuk_frontend_jinja/components/details/macro.html' import govukDetails -%}
+{%- from 'govuk_frontend_jinja/components/back-link/macro.html' import govukBackLink -%}
+{%- from "govuk_frontend_jinja/components/table/macro.html" import govukTable -%}
 
 {% block content %}
-<h1>
-Data: {{application_data}}
-</h1>
+
+{{
+    govukBackLink({'href': url_for("assess_bp.fund_round", fund_id=fund_data.identifier, round_id=round_id)})
+}}
+
+<span class="govuk-caption-l">Project reference</span>
+<h1 class="govuk-heading-l">{{application_data.identifier}}</h1>
+
+{{ govukDetails({
+    'summaryText': fund_data.name,
+    'text': fund_data.description,
+    'open':False}) }}
+
+<p class="govuk-body-l">You have completed X of Y questions.</p>
+
+{{ govukTable({'caption': 'General assessment',
+'captionClasses': 'govuk-heading-l',
+'rows': [[{'text': 'January'},
+{'text': '£85', 'format': 'numeric'},
+{'text': '£95', 'format': 'numeric'}],
+[{'text': 'February'}, {'text': '£75', 'format': 'numeric'},
+{'text': '£55', 'format': 'numeric'}], [{'text': 'March'},
+{'text': '£165', 'format': 'numeric'}, {'text': '£125', 'format': 'numeric'}]]}) }}
+
+
 {% endblock %}
