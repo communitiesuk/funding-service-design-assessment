@@ -21,9 +21,9 @@ intro_routes_and_test_content = {
             "contains": "No applications exist for this round yet.",
         }
     ],
-    "/assess/funding-service-design/spring/application/bd65600d": [
+    "/assess/view_application/funding-service-design/spring/bd65600d": [
         {
-            "tag": "a",
+            "tag": "h1",
             "name": None,
             "contains": "bd65600d",
         }
