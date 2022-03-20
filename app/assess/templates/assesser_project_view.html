@@ -12,10 +12,16 @@
 <span class="govuk-caption-l">Project reference</span>
 <h1 class="govuk-heading-l">{{application_data.identifier}}</h1>
 
-{{ govukDetails({
-    'summaryText': fund_data.name,
-    'text': fund_data.description,
-    'open':False}) }}
+    {{ govukDetails({
+        'summaryText': fund_data.name,
+        'text': fund_data.description,
+        'id': "assessment-page-details",
+        'open':True}) }}
+
+        <script nonce="{{ csp_nonce() }}">
+            const details = document.getElementById("assessment-page-details");
+            details.removeAttribute("open");
+            </script>
 
 <p class="govuk-body-l">You have completed X of Y questions.</p>
 

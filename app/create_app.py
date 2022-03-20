@@ -48,7 +48,10 @@ def create_app() -> Flask:
 
     Compress(flask_app)
     Talisman(
-        flask_app, content_security_policy=csp, strict_transport_security=hss
+        flask_app,
+        content_security_policy=csp,
+        strict_transport_security=hss,
+        content_security_policy_nonce_in=["script-src"],
     )
 
     csrf = CSRFProtect()
