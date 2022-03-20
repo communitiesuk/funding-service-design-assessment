@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{%- from 'govuk_frontend_jinja/components/details/macro.html' import govukDetails -%}
+{%- from "govuk_frontend_jinja/components/table/macro.html" import govukTable -%}
+{%- from "govuk_frontend_jinja/components/tag/macro.html" import govukTag -%}
+
+
+
+{% block content %}
+
+
+
+<a href="{{url_for("assess_bp.fund_round", fund_id=fund_data.fund_id,
+round_id=round_data.round_name) }}" class="govuk-back-link">Back</a>
+
+<h1 class="govuk--l">{{fund_data.name}}</h1>
+
+
+
+{{ govukDetails({
+    'summaryText':"About",
+    'text': "description",
+    'open':False}) }}
+
+<p class="govuk-body-l">You have completed X of X questions.</p>
+
+<table class="govuk-table">
+  <thead class="govuk-table__head">
+    <tr class="govuk-table__row">
+      <th class="govuk-table__header" scope="col"> Question name </th>
+      <th class="govuk-table__header govuk-!-text-align-centre" scope="col"> Question status </th>
+    </tr>
+  </thead>
+  {% for question in questions_data %}
+  <tbody class="govuk-table__body">
+
+
+    <tr class="govuk-table__row ">
+      <td class="govuk-table__cell">
+        <code>{{question.title}} </code>
+      </td>
+      <td class="govuk-table__cell govuk-!-text-align-centre">
+        {{govukTag({
+          "text": "NOT STARTED",
+          "classes": "govuk-tag--grey"
+        })}}
+      </td>
+    </tr>
+
+  
+  {% endfor %}
+
+
+    
+
+  
+  </tbody>
+</table>
+
+{% endblock %}
