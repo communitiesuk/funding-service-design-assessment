@@ -11,9 +11,24 @@
       <h1 class="govuk-heading-xl">Applications</h1>
   </div>
     {% if round.applications %}
-        <p class="govuk-heading-m">Please choose an application:</p>
-        <ul class="govuk-list">
-      {% for application in round.applications %}
+    {% for application in round.applications %}
+    <ul class="govuk-list">
+     
+
+        <p class="govuk-heading-m">Please choose an application:  </p>
+
+          <li>
+          <a class="govuk-link govuk-body-lead"
+          href="{{url_for('assess_bp.application_assessment_view',
+           fund_id = fund.identifier,
+           round_id=round.identifier,
+           application_id = application.identifier
+         )}}"> Application view: 
+
+           {{ application.submitted.strftime('%d %b %Y') }} <b>{{ application.submitted.strftime('%H:%M %p') }}</b> - {{ application.identifier }} </a>
+  
+      </li>
+  
           <li>
             <a class="govuk-link govuk-body-lead" href="{{
             url_for('assess_bp.application',
@@ -22,6 +37,11 @@
             application_id=application.identifier)
             }}">{{ application.submitted.strftime('%d %b %Y') }} <b>{{ application.submitted.strftime('%H:%M %p') }}</b> - {{ application.identifier }}</a>
           </li>
+
+        
+
+
+
       {% endfor %}
         </ul>
     {% else %}
