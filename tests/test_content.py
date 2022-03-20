@@ -11,25 +11,6 @@ from tests.route_testing_conf import intro_routes_and_test_content
 from tests.utils import print_html_page
 
 
-@pytest.mark.usefixtures("live_server")
-def test_task_page_content(flask_test_client):
-    """
-    GIVEN Our Flask Application
-    WHEN the '/' page (index) is requested (GET)
-    THEN check that the get response is successful.
-    If this test succeeds then our flask application
-    is AT LEAST up and running without errors.
-    """
-    url = url_for(
-        "assess_bp.view_application",
-        fund_id="funding-service-design",
-        round_id="spring",
-        application_id="bd65600d",
-    )
-    response = flask_test_client.get(url, follow_redirects=True)
-    assert b"bd65600d" in response.data
-
-
 @pytest.mark.usefixtures("selenium_chrome_driver")
 @pytest.mark.usefixtures("live_server")
 @pytest.mark.usefixtures("client_class")
