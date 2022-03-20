@@ -24,6 +24,22 @@ def funds():
     return render_template("funds.html", funds=funds)
 
 
+@assess_bp.route("/status/<fund_id>/<round_id>/<application_id>", methods = ['GET', 'POST'])
+def application_assessment_view(fund_id, round_id, application_id):
+
+    fund_data = get_fund(fund_id)
+    round_data = get_rounds(round_id)
+    application_data = get_application(fund_id, application_id)
+    questions_data = application_data.questions
+
+    return render_template("assessment_view.html",
+     fund_data = fund_data, round_data=round_data, 
+     application_data = application_data,
+     questions_data = questions_data )
+
+
+
+
 @assess_bp.route("/<fund_id>/", methods=["GET"])
 def fund(fund_id: str):
 
