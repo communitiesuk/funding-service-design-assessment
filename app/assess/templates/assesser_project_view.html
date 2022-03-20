@@ -6,7 +6,7 @@
 {% block content %}
 
 {{
-    govukBackLink({'href': url_for("assess_bp.fund_round", fund_id=fund_data.identifier, round_id=round_id)})
+    govukBackLink({'href': url_for("assess_bp.fund_round", fund_id=fund_data.identifier, round_id=round_data.identifier)})
 }}
 
 <span class="govuk-caption-l">Project reference</span>
