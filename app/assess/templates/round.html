@@ -12,11 +12,8 @@
   </div>
     {% if round.applications %}
     {% for application in round.applications %}
+     <p class="govuk-heading-m">Please choose an application:  </p>
     <ul class="govuk-list">
-     
-
-        <p class="govuk-heading-m">Please choose an application:  </p>
-
           <li>
           <a class="govuk-link govuk-body-lead"
           href="{{url_for('assess_bp.application_assessment_view',
