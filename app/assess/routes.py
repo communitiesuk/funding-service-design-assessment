@@ -51,6 +51,30 @@ def fund_round(fund_id: str, round_id: str):
 
 
 @assess_bp.route(
+    "/<fund_id>/<round_id>/application/<application_id>", methods=["GET"]
+)
+def application(fund_id: str, round_id: str, application_id: str):
+    fund = get_fund(fund_id)
+    if not fund:
+        abort(404)
+
+    fund_round = get_round(fund_id=fund_id, round_id=round_id)
+    if not fund_round:
+        abort(404)
+
+    application = get_application(fund_id=fund_id, identifier=application_id)
+    if not application:
+        abort(404)
+
+    return render_template(
+        "application.html",
+        fund=fund,
+        round=fund_round,
+        application=application,
+    )
+
+
+@assess_bp.route(
     "/view_application/<fund_id>/<round_id>/<application_id>", methods=["GET"]
 )
 def view_application(application_id, fund_id, round_id):

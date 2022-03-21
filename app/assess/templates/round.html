@@ -20,6 +20,14 @@
             fund_id=fund.identifier,
             round_id=round.identifier,
             application_id=application.identifier)
+            }}">INDEV DESIGN : {{ application.submitted.strftime('%d %b %Y') }} <b>{{ application.submitted.strftime('%H:%M %p') }}</b> - {{ application.identifier }}</a>
+          </li>
+          <li>
+            <a class="govuk-link govuk-body-lead" href="{{
+            url_for('assess_bp.application',
+            fund_id=fund.identifier,
+            round_id=round.identifier,
+            application_id=application.identifier)
             }}">{{ application.submitted.strftime('%d %b %Y') }} <b>{{ application.submitted.strftime('%H:%M %p') }}</b> - {{ application.identifier }}</a>
           </li>
       {% endfor %}
