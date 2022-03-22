@@ -3,10 +3,11 @@
 <meta name="author" content="{{ service_meta_author }}">
 <!--[if gt IE 8]><!--><link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='govuk-frontend-4.0.0.min.css') }}" /><!--<![endif]-->
 <!--[if IE 8]><link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='govuk-frontend-ie8-4.0.0.min.css') }}" /><![endif]-->
-<noscript>
-    <style>
-        .noscriptHide {
-             display: None
-        }
-    </style>
+<script nonce="{{ csp_nonce() }}">
+    window.addEventListener('load', (event) => {
+        const details = document.getElementById("assessment-page-details");
+        details.removeAttribute("open");
+    });
+    </script>
+
 </noscript>

@@ -94,7 +94,7 @@ def view_application(application_id, fund_id, round_id):
         abort(404)
 
     return render_template(
-        "assesser_project_view.html",
+        "project_summary.html",
         application_data=application_data,
         fund_data=fund_data,
         round_data=round_data,

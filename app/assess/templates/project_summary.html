@@ -20,12 +20,6 @@
         'text': fund_data.description,
         'id': "assessment-page-details",
         'open':True}) }}
-
-        <script nonce="{{ csp_nonce() }}">
-            const details = document.getElementById("assessment-page-details");
-            details.removeAttribute("open");
-            </script>
-
 <p class="govuk-body-l">You have completed X of Y questions.</p>
 
 {{ govukTable({'caption': 'General assessment',
