@@ -26,7 +26,11 @@ def create_app() -> Flask:
 
     csp = {
         "default-src": "'self'",
-        "script-src": ["'self'"],
+        "script-src": [
+            "'self'",
+            "'sha256-+6WnXIl4mbFTCARd8N3COQmT3bJJmo32N8q8ZSQAIcU='",
+            "'sha256-l1eTVSK8DTnK8+yloud7wZUqFrI0atVo6VlC6PJvYaQ='",
+        ],
         "img-src": ["data:", "'self'"],
     }
 
