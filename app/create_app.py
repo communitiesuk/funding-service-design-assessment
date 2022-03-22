@@ -54,6 +54,7 @@ def create_app() -> Flask:
 
     csrf.init_app(flask_app)
 
+    # This is silently used by flask in the background.
     @flask_app.context_processor
     def inject_global_constants():
         return dict(
