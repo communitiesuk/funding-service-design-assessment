@@ -3,6 +3,10 @@ from app.assess.data import get_fund
 from app.assess.data import get_funds
 from app.assess.data import get_round
 from app.assess.data import get_rounds
+from app.assess.data import get_status_COMPLETED
+from app.assess.data import get_status_data
+from app.assess.data import get_status_NOT_COMPLETED
+from app.config import APPLICATION_STORE_API_HOST
 from app.config import ASSESSMENT_HUB_ROUTE
 from flask import abort
 from flask import Blueprint
@@ -78,7 +82,6 @@ def application(fund_id: str, round_id: str, application_id: str):
     "/view_application/<fund_id>/<round_id>/<application_id>", methods=["GET"]
 )
 def view_application(application_id, fund_id, round_id):
-
     fund_data = get_fund(fund_id)
     if not fund_data:
         abort(404)
@@ -93,9 +96,20 @@ def view_application(application_id, fund_id, round_id):
     if not application_data:
         abort(404)
 
+    status_data_ALL = get_status_data(
+        APPLICATION_STORE_API_HOST, application_id
+    )
+    status_NOT_COMPLETED = get_status_NOT_COMPLETED(status_data_ALL)
+    status_COMPLETED = get_status_COMPLETED(status_data_ALL)
+    if not status_data_ALL:
+        abort(404)
+
     return render_template(
         "project_summary.html",
         application_data=application_data,
         fund_data=fund_data,
         round_data=round_data,
+        status_data_ALL=status_data_ALL,
+        status_COMPLETED=status_COMPLETED,
+        status_NOT_COMPLETED=status_NOT_COMPLETED,
     )
