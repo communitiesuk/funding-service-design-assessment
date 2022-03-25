@@ -2,6 +2,7 @@
 {%- from 'govuk_frontend_jinja/components/details/macro.html' import govukDetails -%}
 {%- from 'govuk_frontend_jinja/components/back-link/macro.html' import govukBackLink -%}
 {%- from "govuk_frontend_jinja/components/table/macro.html" import govukTable -%}
+{%- from "govuk_frontend_jinja/components/tag/macro.html" import govukTag -%}
 
 {% block beforeContent %}
 {{
@@ -20,18 +21,38 @@
         'text': fund_data.description,
         'id': "assessment-page-details",
         'open':True}) }}
-<p class="govuk-body-l">You have completed X of Y questions.</p>
+
+<p class="govuk-body-l">
+   You have completed {{status_COMPLETED|length}}
+   of {{status_NOT_COMPLETED|length}} questions.
+  </p>
 
 {{ govukTable({'caption': 'General assessment',
 'captionClasses': 'govuk-heading-l',
-'rows': [[{'text': '_______'},
-{'text': '________', 'format': 'numeric'}],
-
-[{'text': '_______'}, {'text': '________', 'format': 'numeric'}],
-
-[{'text': '_______'},
-{'text': '________', 'format': 'numeric'}]]}) }}
-
-
+}) }}
+<table class="govuk-table">
+  <thead class="govuk-table__head">
+    <tr class="govuk-table__row">
+      <th class="govuk-table__header govuk-table__caption--m" scope="col">
+         Question  </th>
+      <th class="govuk-table__header govuk-table__caption--m" scope="col">
+        Status </th>
+    </tr>
+  </thead>
+  {% for question, status in status_data_ALL.items() %}
+  <tbody class="govuk-table__body">
+    <tr class="govuk-table__row">
+      <td class="govuk-table__cell">
+        {{question}}
+      </td>
+      <td class="govuk-table__cell">
+        <strong class="govuk-tag govuk-tag--grey">
+  {{status}}
+</strong>
+      </td>
+    </tr>
+  </tbody>
+  {% endfor %}
+</table>
 
 {% endblock %}
