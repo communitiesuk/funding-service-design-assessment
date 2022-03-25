@@ -3,9 +3,9 @@ from app.assess.data import get_fund
 from app.assess.data import get_funds
 from app.assess.data import get_round
 from app.assess.data import get_rounds
-from app.assess.data import get_status_COMPLETED
-from app.assess.data import get_status_data
-from app.assess.data import get_status_NOT_COMPLETED
+from app.assess.status import get_status_COMPLETED
+from app.assess.status import get_status_data
+from app.assess.status import get_status_NOT_COMPLETED
 from app.config import APPLICATION_STORE_API_HOST
 from app.config import ASSESSMENT_HUB_ROUTE
 from flask import abort
