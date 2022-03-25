@@ -191,9 +191,9 @@ def get_status_NOT_COMPLETED(statuses):
          "NOT STARTED".
     """
     return {
-        keys: values
-        for keys, values in statuses.items()
-        if (values == "NOT STARTED" or values == "IN PROGRESS")
+        question: status
+        for question, status in statuses.items()
+        if (status == "NOT STARTED" or status == "IN PROGRESS")
     }
 
 
@@ -212,7 +212,7 @@ def get_status_COMPLETED(statuses):
 
     """
     return {
-        keys: values
-        for keys, values in statuses.items()
-        if values == "COMPLETED"
+        question: status
+        for question, status in statuses.items()
+        if status == "COMPLETED"
     }
