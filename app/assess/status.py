@@ -69,11 +69,13 @@ def get_status_not_completed(statuses):
         Returns questions with status of "IN PROGRESS" or
          "NOT STARTED".
     """
-    return {
+    number_of_questions_not_completed = {
         question: status
         for question, status in statuses.items()
         if (status == "NOT STARTED" or status == "IN PROGRESS")
     }
+
+    return len(number_of_questions_not_completed)
 
 
 def get_status_completed(statuses):
@@ -90,8 +92,10 @@ def get_status_completed(statuses):
         Returns questions with status of "COMPLETED".
 
     """
-    return {
+    number_of_questions_completed = {
         question: status
         for question, status in statuses.items()
         if status == "COMPLETED"
     }
+
+    return len(number_of_questions_completed)
