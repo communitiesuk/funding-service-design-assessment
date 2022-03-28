@@ -11,6 +11,8 @@ class Application:
     submitted: datetime
     fund_name: str
     questions: List[Question] = None
+    status: str = "not started"
+    assessment_deadline: datetime = datetime.now()
 
     @staticmethod
     def from_json(data: dict):
@@ -18,6 +20,10 @@ class Application:
             identifier=data.get("id"),
             submitted=datetime.fromisoformat(data.get("date_submitted")),
             fund_name=data.get("fund_name"),
+            status=data.get("status"),
+            assessment_deadline=datetime.fromisoformat(
+                data.get("assessment_deadline")
+            ),
         )
         if "questions" in data:
             for question_data in data["questions"]:
