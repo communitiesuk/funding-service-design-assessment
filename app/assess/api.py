@@ -1,6 +1,6 @@
 from urllib.parse import urlencode
 
-from app.assess.data import get_data
+from app.assess.data import get_local_data
 from flask import Blueprint
 from flask import jsonify
 from flask import make_response
@@ -18,7 +18,7 @@ api_bp = Blueprint(
 def api(path):
 
     endpoint = str(path) + "?" + urlencode(request.args.to_dict())
-    result = get_data(endpoint)
+    result = get_local_data(endpoint)
     if not result:
         return make_response(jsonify({"message": "Not found"}), 404)
 
