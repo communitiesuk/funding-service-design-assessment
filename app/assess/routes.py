@@ -122,7 +122,7 @@ def view_application(application_id, fund_id, round_id):
         application_data=application_data,
         fund_data=fund_data,
         round_data=round_data,
-        status_data_ALL=status_data_all,
+        status_data_all=status_data_all,
         status_completed=status_completed,
         status_not_completed=status_not_completed,
     )
