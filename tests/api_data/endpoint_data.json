@@ -72,13 +72,144 @@
     {
       "name": "Funding Service Design",
       "date_submitted": "2022-02-23T12:00:00.000",
-      "id": "bd65600d"
+      "id": "fund-app123-a",
+      "assessment_deadline": "2022-06-23T12:00:00.000"
     }
   ],
-  "application_store/fund/funding-service-design?application_id=bd65600d": {
+  "application_store/search?id_contains=&order_by=&order_rev=&status_only=": [
+    {
+      "name": "Funding Service Design",
+      "date_submitted": "2022-02-23T12:00:00.000",
+      "id": "fund-app123-a",
+      "status": "completed",
+      "assessment_deadline": "2022-06-23T12:00:00.000"
+    },
+    {
+      "name": "Funding Service Design",
+      "date_submitted": "2022-02-23T12:00:00.000",
+      "id": "LUF-app789-a",
+      "status": "not started",
+      "assessment_deadline": "2022-06-23T12:00:00.000"
+    },
+    {
+      "name": "Funding Service Design",
+      "date_submitted": "2022-02-23T12:00:00.000",
+      "id": "fund-app456-a",
+      "status": "completed",
+      "assessment_deadline": "2022-06-23T12:00:00.000"
+    },
+    {
+      "name": "Funding Service Design",
+      "date_submitted": "2022-02-23T12:00:00.000",
+      "id": "COF-app789-a",
+      "status": "not started",
+      "assessment_deadline": "2022-06-23T12:00:00.000"
+    },
+    {
+      "name": "Funding Service Design",
+      "date_submitted": "2022-02-23T12:00:00.000",
+      "id": "fund-app789-a",
+      "status": "completed",
+      "assessment_deadline": "2022-06-23T12:00:00.000"
+    },
+    {
+      "name": "Bun Service Design",
+      "date_submitted": "2022-02-23T12:00:00.000",
+      "id": "BOF-app001-a",
+      "status": "completed",
+      "assessment_deadline": "2022-06-23T12:00:00.000"
+    }
+  ],
+  "application_store/search?id_contains=&order_by=&order_rev=&status_only=not+started": [
+    {
+      "name": "Funding Service Design",
+      "date_submitted": "2022-02-23T12:00:00.000",
+      "id": "LUF-app789-a",
+      "status": "not started",
+      "assessment_deadline": "2022-06-23T12:00:00.000"
+    },
+    {
+      "name": "Funding Service Design",
+      "date_submitted": "2022-02-23T12:00:00.000",
+      "id": "COF-app789-a",
+      "status": "not started",
+      "assessment_deadline": "2022-06-23T12:00:00.000"
+    }
+  ],
+  "application_store/search?id_contains=&status_only=completed": [
+    {
+      "name": "Funding Service Design",
+      "date_submitted": "2022-02-23T12:00:00.000",
+      "id": "fund-app123-a",
+      "status": "completed",
+      "assessment_deadline": "2022-06-23T12:00:00.000"
+    },
+    {
+      "name": "Funding Service Design",
+      "date_submitted": "2022-02-23T12:00:00.000",
+      "id": "fund-app456-a",
+      "status": "completed",
+      "assessment_deadline": "2022-06-23T12:00:00.000"
+    },
+    {
+      "name": "Funding Service Design",
+      "date_submitted": "2022-02-23T12:00:00.000",
+      "id": "fund-app789-a",
+      "status": "completed",
+      "assessment_deadline": "2022-06-23T12:00:00.000"
+    }
+  ],
+  "application_store/search?id_contains=&order_by=&order_rev=&status_only=completed": [
+    {
+      "name": "Funding Service Design",
+      "date_submitted": "2022-02-23T12:00:00.000",
+      "id": "fund-app123-a",
+      "status": "completed",
+      "assessment_deadline": "2022-06-23T12:00:00.000"
+    },
+    {
+      "name": "Funding Service Design",
+      "date_submitted": "2022-02-23T12:00:00.000",
+      "id": "fund-app456-a",
+      "status": "completed",
+      "assessment_deadline": "2022-06-23T12:00:00.000"
+    },
+    {
+      "name": "Funding Service Design",
+      "date_submitted": "2022-02-23T12:00:00.000",
+      "id": "fund-app789-a",
+      "status": "completed",
+      "assessment_deadline": "2022-06-23T12:00:00.000"
+    }
+  ],
+  "application_store/search?id_contains=fun&order_by=&order_rev=&status_only=completed": [
+    {
+      "name": "Funding Service Design",
+      "date_submitted": "2022-02-23T12:00:00.000",
+      "id": "fund-app789-a",
+      "status": "completed",
+      "assessment_deadline": "2022-06-23T12:00:00.000"
+    },
+    {
+      "name": "Funding Service Design",
+      "date_submitted": "2022-02-23T12:00:00.000",
+      "id": "fund-app456-a",
+      "status": "completed",
+      "assessment_deadline": "2022-06-23T12:00:00.000"
+    },
+    {
+      "name": "Funding Service Design",
+      "date_submitted": "2022-02-23T12:00:00.000",
+      "id": "fund-app123-a",
+      "status": "completed",
+      "assessment_deadline": "2022-06-23T12:00:00.000"
+    }
+  ],
+  "application_store/fund/funding-service-design?application_id=fund-app123-a": {
     "name": "Funding Service Design",
     "date_submitted": "2022-02-23T12:00:00.000",
-    "id": "bd65600d",
+    "assessment_deadline": "2022-06-23T12:00:00.000",
+    "id": "fund-app123-a",
     "questions": [
         {
             "question": "About you",
