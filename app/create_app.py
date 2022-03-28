@@ -1,4 +1,6 @@
+from app.assets import compile_static_assets
 from flask import Flask
+from flask_assets import Environment
 from flask_compress import Compress
 from flask_talisman import Talisman
 from flask_wtf.csrf import CSRFProtect
@@ -8,7 +10,10 @@ from jinja2 import PrefixLoader
 
 
 def create_app() -> Flask:
-    flask_app = Flask(__name__, static_url_path="/assets")
+
+    flask_app = Flask(
+        __name__, static_url_path="/assets", static_folder="static/dist"
+    )
 
     flask_app.config.from_pyfile("config.py")
 
@@ -71,31 +76,43 @@ def create_app() -> Flask:
             service_meta_author="DLUHC",
         )
 
-    from app.default.routes import default_bp, not_found, internal_server_error
-    from app.assess.routes import assess_bp
-    from app.assess.assess import AssessQuestionView
-
-    flask_app.register_error_handler(404, not_found)
-    flask_app.register_error_handler(500, internal_server_error)
-    flask_app.register_blueprint(default_bp)
-    flask_app.register_blueprint(assess_bp)
-    flask_app.add_url_rule(
-        "/".join(
-            [
-                flask_app.config["ASSESSMENT_HUB_ROUTE"],
-                "<fund_id>",
-                "<round_id>",
-                "application",
-                "<application_id>",
-                "question",
-                "<question_id>",
-            ]
+    with flask_app.app_context():
+        from app.default.routes import (
+            default_bp,
+            not_found,
+            internal_server_error,
         )
-        + "/",
-        view_func=AssessQuestionView.as_view("application_question"),
-    )
+        from app.assess.routes import assess_bp
+        from app.assess.api import api_bp
+        from app.assess.assess import AssessQuestionView
 
-    return flask_app
+        flask_app.register_error_handler(404, not_found)
+        flask_app.register_error_handler(500, internal_server_error)
+        flask_app.register_blueprint(default_bp)
+        flask_app.register_blueprint(assess_bp)
+        flask_app.register_blueprint(api_bp)
+        flask_app.add_url_rule(
+            "/".join(
+                [
+                    flask_app.config["ASSESSMENT_HUB_ROUTE"],
+                    "<fund_id>",
+                    "<round_id>",
+                    "application",
+                    "<application_id>",
+                    "question",
+                    "<question_id>",
+                ]
+            )
+            + "/",
+            view_func=AssessQuestionView.as_view("application_question"),
+        )
+
+        # Bundle and compile assets
+        assets = Environment()
+        assets.init_app(flask_app)
+        compile_static_assets(assets)
+
+        return flask_app
 
 
 app = create_app()

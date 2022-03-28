@@ -12,6 +12,13 @@ TEMPLATES_FOLDER = "templates"
 LOCAL_SERVICE_NAME = "local_flask"
 ASSESSMENT_HUB_ROUTE = "/assess"
 FLASK_ROOT = path.dirname(path.dirname(path.realpath(__file__)))
+FLASK_ENV = environ.get("FLASK_ENV") or "development"
+
+"""
+Assets
+"""
+ASSETS_DEBUG = FLASK_ENV == "development"
+ASSETS_AUTO_BUILD = True
 
 """
 APIs Config
@@ -29,4 +36,10 @@ ROUND_STORE_API_HOST = (
 APPLICATION_STORE_API_HOST = (
     environ.get("APPLICATION_STORE_API_HOST")
     or TEST_APPLICATION_STORE_API_HOST
+)
+
+APPLICATION_STORE_API_HOST_PUBLIC = (
+    environ.get("APPLICATION_STORE_API_HOST_PUBLIC")
+    or environ.get("APPLICATION_STORE_API_HOST")
+    or "/api/" + TEST_APPLICATION_STORE_API_HOST
 )
