@@ -1,60 +1,85 @@
+import glob
 import os
 import shutil
 import urllib.request
 import zipfile
 
 
-def build_assets():
+def build_govuk_assets():
 
-    if os.path.exists("app/static"):
-
-        print(
-            "Assets already built."
-            "If you require a rebuild manually run build.build_assets"
-        )
-
-        return True
-
-    # Download zips using "url"
-    print("Downloading static file zip.")
-
-    url = (
+    DIST_ROOT = "./app/static/dist"
+    GOVUK_DIR = "/govuk-frontend"
+    GOVUK_URL = (
         "https://github.com/alphagov/govuk-frontend/"
         "releases/download/v4.0.0/release-v4.0.0.zip"
     )
+    ZIP_FILE = "./govuk_frontend.zip"
+    DIST_PATH = DIST_ROOT + GOVUK_DIR
+    ASSETS_DIR = "/assets"
+    ASSETS_PATH = DIST_PATH + ASSETS_DIR
 
+    # Checks if GovUK Frontend Assets already built
+    if os.path.exists(DIST_PATH):
+        print(
+            "GovUK Frontend assets already built."
+            "If you require a rebuild manually run build.build_govuk_assets"
+        )
+        return True
+
+    # Download zips from GOVUK_URL
     # There is a known problem on Mac where one must manually
     # run the script "Install Certificates.command" found
     # in the python application folder for this to work.
-    urllib.request.urlretrieve(url, "./govuk_frontend.zip")  # nosec
 
-    print("Deleting old app/static")
+    print("Downloading static file zip.")
+    urllib.request.urlretrieve(GOVUK_URL, ZIP_FILE)  # nosec
 
     # Attempts to delete the old files, states if
-    # one doesnt exist.
+    # one doesn't exist.
+
+    print("Deleting old " + DIST_PATH)
     try:
-        shutil.rmtree("app/static")
+        shutil.rmtree(DIST_PATH)
     except FileNotFoundError:
-        print("No old app/static to remove.")
+        print("No old " + DIST_PATH + " to remove.")
 
-    print("Unzipping file to app/static...")
+    # Extract the previously downloaded zip to DIST_PATH
 
-    # Extracts the previously downloaded zip to /app/static
-    with zipfile.ZipFile("./govuk_frontend.zip", "r") as zip_ref:
-        zip_ref.extractall("./app/static")
+    print("Unzipping file to " + DIST_PATH + "...")
+    with zipfile.ZipFile(ZIP_FILE, "r") as zip_ref:
+        zip_ref.extractall(DIST_PATH)
 
-    print("Moving files from app/static/assets to app/static")
+    # Move files from ASSETS_PATH to DIST_PATH
 
-    for file_to_move in os.listdir("./app/static/assets"):
-        shutil.move("./app/static/assets/" + file_to_move, "app/static")
+    print("Moving files from " + ASSETS_PATH + " to " + DIST_PATH)
+    for file_to_move in os.listdir(ASSETS_PATH):
+        shutil.move("/".join([ASSETS_PATH, file_to_move]), DIST_PATH)
 
-    print("Deleting app/static/assets")
+    # Update relative paths
 
-    # Deletes temp. files.
-    shutil.rmtree("./app/static/assets")
-    os.remove("./govuk_frontend.zip")
+    print("Updating relative paths in css files to " + GOVUK_DIR)
+    cwd = os.getcwd()
+    os.chdir(DIST_PATH)
+    for css_file in glob.glob("*.css"):
+
+        # Read in the file
+        with open(css_file, "r") as file:
+            filedata = file.read()
+
+        # Replace the target string
+        filedata = filedata.replace(ASSETS_DIR, ASSETS_DIR + GOVUK_DIR)
+
+        # Write the file out again
+        with open(css_file, "w") as file:
+            file.write(filedata)
+    os.chdir(cwd)
+
+    # Delete temp files
+    print("Deleting " + ASSETS_PATH)
+    shutil.rmtree(ASSETS_PATH)
+    os.remove(ZIP_FILE)
 
 
 if __name__ == "__main__":
 
-    build_assets()
+    build_govuk_assets()
