@@ -28,7 +28,7 @@ APPLICATIONS_ENDPOINT = "".join(
         "datetime_start={datetime_start}&datetime_end={datetime_end}",
     ]
 )
-APPLICATION_SEARCH_ENDPOINT = "/search?{params}"
+APPLICATION_SEARCH_ENDPOINT = "/search/?{params}"
 APPLICATION_ENDPOINT = "/fund/{fund_id}?application_id={application_id}"
 
 

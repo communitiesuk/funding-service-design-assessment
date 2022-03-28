@@ -76,7 +76,7 @@
       "assessment_deadline": "2022-06-23T12:00:00.000"
     }
   ],
-  "application_store/search?id_contains=&order_by=&order_rev=&status_only=": [
+  "application_store/search/?id_contains=&order_by=&order_rev=&status_only=": [
     {
       "name": "Funding Service Design",
       "date_submitted": "2022-02-23T12:00:00.000",
@@ -120,7 +120,7 @@
       "assessment_deadline": "2022-06-23T12:00:00.000"
     }
   ],
-  "application_store/search?id_contains=&order_by=&order_rev=&status_only=not+started": [
+  "application_store/search/?id_contains=&order_by=&order_rev=&status_only=not+started": [
     {
       "name": "Funding Service Design",
       "date_submitted": "2022-02-23T12:00:00.000",
@@ -136,7 +136,7 @@
       "assessment_deadline": "2022-06-23T12:00:00.000"
     }
   ],
-  "application_store/search?id_contains=&status_only=completed": [
+  "application_store/search/?id_contains=&status_only=completed": [
     {
       "name": "Funding Service Design",
       "date_submitted": "2022-02-23T12:00:00.000",
@@ -159,7 +159,7 @@
       "assessment_deadline": "2022-06-23T12:00:00.000"
     }
   ],
-  "application_store/search?id_contains=&order_by=&order_rev=&status_only=completed": [
+  "application_store/search/?id_contains=&order_by=&order_rev=&status_only=completed": [
     {
       "name": "Funding Service Design",
       "date_submitted": "2022-02-23T12:00:00.000",
@@ -182,7 +182,7 @@
       "assessment_deadline": "2022-06-23T12:00:00.000"
     }
   ],
-  "application_store/search?id_contains=fun&order_by=&order_rev=&status_only=completed": [
+  "application_store/search/?id_contains=fun&order_by=&order_rev=&status_only=completed": [
     {
       "name": "Funding Service Design",
       "date_submitted": "2022-02-23T12:00:00.000",
