@@ -1,6 +1,7 @@
 import json
 import os
 from typing import List
+from urllib.parse import urlencode
 
 import requests
 from app.assess.models.application import Application
@@ -27,6 +28,7 @@ APPLICATIONS_ENDPOINT = "".join(
         "datetime_start={datetime_start}&datetime_end={datetime_end}",
     ]
 )
+APPLICATION_SEARCH_ENDPOINT = "/search?{params}"
 APPLICATION_ENDPOINT = "/fund/{fund_id}?application_id={application_id}"
 
 
@@ -107,6 +109,22 @@ def get_round(fund_id: str, round_id: str) -> Round | None:
                 fund_round.add_application(Application.from_json(application))
 
         return fund_round
+    return None
+
+
+def get_applications(params: dict) -> List[Application] | None:
+    applications_endpoint = (
+        APPLICATION_STORE_API_HOST
+        + APPLICATION_SEARCH_ENDPOINT.format(params=urlencode(params))
+    )
+    print(applications_endpoint)
+    applications_response = get_data(applications_endpoint)
+    if applications_response and len(applications_response) > 0:
+        applications = []
+        for application_data in applications_response:
+            applications.append(Application.from_json(application_data))
+
+        return applications
     return None
 
 
