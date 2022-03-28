@@ -55,19 +55,19 @@ def get_local_status_data(endpoint, application_id):
 
 
 def get_status_not_completed(statuses):
-    """_summary_: Given function returns
-    "IN PROGRESS" or "NOT STARTED" status
-    only from all the questions/statuses retrived
-    from get_status_data
-    function.
+    """_summary_: Given function returns the length
+    of status for "IN PROGRESS" or "NOT STARTED"
+     only from all the questions/statuses retrived
+     from get_status_data
+     function.
 
-    Args:
-        statuses: Takes an instance of get_status_data
-        function.
+     Args:
+         statuses: Takes an instance of get_status_data
+         function.
 
-    Returns:
-        Returns questions with status of "IN PROGRESS" or
-         "NOT STARTED".
+     Returns:
+         Returns questions with status of "IN PROGRESS" or
+          "NOT STARTED".
     """
     number_of_questions_not_completed = {
         question: status
@@ -79,8 +79,8 @@ def get_status_not_completed(statuses):
 
 
 def get_status_completed(statuses):
-    """_summary_:Given function returns
-    "COMPLETED" status only from all the
+    """_summary_:Given function returns the length
+    of status "COMPLETED" only from all the
      questions/statuses retrived from get_status_data
     function.
 
