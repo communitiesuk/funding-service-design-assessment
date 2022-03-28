@@ -21,11 +21,11 @@ intro_routes_and_test_content = {
             "contains": "No applications exist for this round yet.",
         }
     ],
-    "/assess/view_application/funding-service-design/spring/bd65600d": [
+    "/assess/view_application/funding-service-design/spring/fund-app123-a": [
         {
             "tag": "h1",
             "name": None,
-            "contains": "bd65600d",
+            "contains": "fund-app123-a",
         }
     ],
     "/assess/funding-service-design/spring/application/bad-id": [
@@ -35,11 +35,14 @@ intro_routes_and_test_content = {
 
 
 def assessment_form_test_routes():
-    application_endpoint = (
-        "application_store/fund/funding-service-design?application_id=bd65600d"
+    application_endpoint = "".join(
+        [
+            "application_store/fund/funding-service-design",
+            "?application_id=fund-app123-a",
+        ]
     )
     question_page_root = (
-        "/assess/funding-service-design/spring/application/bd65600d"
+        "/assess/funding-service-design/spring/application/fund-app123-a"
     )
     application_form = get_local_data(application_endpoint)
     routes = {}
