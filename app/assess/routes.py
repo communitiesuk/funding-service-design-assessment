@@ -112,8 +112,8 @@ def view_application(application_id, fund_id, round_id):
     status_data_ALL = get_status_data(
         APPLICATION_STORE_API_HOST, application_id
     )
-    status_not_completed = get_status_not_completed(status_data_ALL)
-    status_completed = get_status_completed(status_data_ALL)
+    status_NOT_COMPLETED = get_status_not_completed(status_data_ALL)
+    status_COMPLETED = get_status_completed(status_data_ALL)
     if not status_data_ALL:
         abort(404)
 
@@ -123,6 +123,6 @@ def view_application(application_id, fund_id, round_id):
         fund_data=fund_data,
         round_data=round_data,
         status_data_ALL=status_data_ALL,
-        status_completed=status_completed,
-        status_not_completed=status_not_completed,
+        status_COMPLETED=status_COMPLETED,
+        status_NOT_COMPLETED=status_NOT_COMPLETED,
     )
