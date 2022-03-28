@@ -1,12 +1,16 @@
+from app.assess.data import APPLICATION_SEARCH_ENDPOINT
 from app.assess.data import get_application
+from app.assess.data import get_applications
 from app.assess.data import get_fund
 from app.assess.data import get_funds
 from app.assess.data import get_round
 from app.assess.data import get_rounds
+from app.config import APPLICATION_STORE_API_HOST_PUBLIC
 from app.config import ASSESSMENT_HUB_ROUTE
 from flask import abort
 from flask import Blueprint
 from flask import render_template
+from flask import request
 
 assess_bp = Blueprint(
     "assess_bp",
@@ -22,6 +26,35 @@ def funds():
     funds = get_funds()
 
     return render_template("funds.html", funds=funds)
+
+
+@assess_bp.route("/landing/", methods=["GET"])
+def landing():
+
+    search_params = {
+        "id_contains": "",
+        "order_by": "",
+        "order_rev": "",
+        "status_only": "",
+    }
+
+    for key, value in request.args.items():
+        if key in search_params:
+            search_params.update({key: value})
+
+    applications = get_applications(params=search_params)
+
+    return render_template(
+        "landing.html",
+        applications=applications,
+        search_params=search_params,
+        application_search_endpoint="".join(
+            [
+                APPLICATION_STORE_API_HOST_PUBLIC,
+                APPLICATION_SEARCH_ENDPOINT.replace("{params}", ""),
+            ]
+        ),
+    )
 
 
 @assess_bp.route("/<fund_id>/", methods=["GET"])
