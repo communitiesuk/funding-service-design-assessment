@@ -18,11 +18,13 @@ class Application:
     def from_json(data: dict):
         application = Application(
             identifier=data.get("id"),
-            submitted=datetime.fromisoformat(data.get("date_submitted")),
+            submitted=datetime.fromisoformat(
+                data.get("date_submitted", "1970-01-01")
+            ),
             fund_name=data.get("fund_name"),
             status=data.get("status"),
             assessment_deadline=datetime.fromisoformat(
-                data.get("assessment_deadline")
+                data.get("assessment_deadline", "1970-01-01")
             ),
         )
         if "questions" in data:
