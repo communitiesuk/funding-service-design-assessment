@@ -35,7 +35,6 @@ def get_data(endpoint: str):
         response = requests.get(endpoint)
         if response.status_code == 200:
             data = response.json()
-            print(data)
         else:
             return None
     else:
