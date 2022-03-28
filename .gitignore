@@ -128,12 +128,17 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
+# IntelliJ
 .idea
-app/static
-govuk_components
 
-# Hello world security FS-387 files
+# VS Code
+.vscode/settings.json
+
+# Mac files
 .bash_profile
 .DS_Store
 app/.DS_Store
-.vscode/settings.json
+
+# GovUK Frontend
+app/static/govuk-frontend
+govuk_components
