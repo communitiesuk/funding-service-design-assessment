@@ -55,7 +55,6 @@ def get_local_data(endpoint: str):
 
 def get_funds() -> List[Fund] | None:
     endpoint = FUND_STORE_API_HOST + FUNDS_ENDPOINT
-    # print(endpoint)
     response = get_data(endpoint)
     if response and len(response) > 0:
         funds = []
