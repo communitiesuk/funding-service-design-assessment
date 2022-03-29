@@ -48,8 +48,8 @@
       <td class="govuk-table__cell">
         <strong class="govuk-tag
         {% if status == 'NOT STARTED' %}govuk-tag--grey
-        {% elif status == 'IN PROGRESS' %}govuk-tag--grey
-        {% elif status == 'COMPLETED' %}govuk-tag--blue
+        {% elif status == 'IN PROGRESS' %}govuk-tag--yellow
+        {% elif status == 'COMPLETED' %}govuk-tag
         {%endif%}">
         {{ status }}
       </strong>
