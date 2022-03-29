@@ -25,7 +25,7 @@
 
 <p class="govuk-body-l">
    You have completed {{status_completed}}
-   of {{status_not_completed}} questions.
+   of {{status_not_completed+status_completed}} questions.
   </p>
   <h1 class="govuk-heading-l">General assessment</h1>
 
@@ -44,11 +44,15 @@
       <td class="govuk-table__cell">
         {{question}}
       </td>
-      <td class="govuk-table__cell">
-        <strong class="govuk-tag govuk-tag--grey">
-  {{status}}
-</strong>
 
+      <td class="govuk-table__cell">
+        <strong class="govuk-tag
+        {% if status == 'NOT STARTED' %}govuk-tag--grey
+        {% elif status == 'IN PROGRESS' %}govuk-tag--grey
+        {% elif status == 'COMPLETED' %}govuk-tag--blue
+        {%endif%}">
+        {{ status }}
+      </strong>
       </td>
     </tr>
 
