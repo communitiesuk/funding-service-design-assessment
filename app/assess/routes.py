@@ -4,9 +4,8 @@ from app.assess.data import get_funds
 from app.assess.data import get_round
 from app.assess.data import get_rounds
 from app.assess.status import get_status_completed
-from app.assess.status import get_status_data
 from app.assess.status import get_status_not_completed
-from app.config import APPLICATION_STORE_API_HOST
+from app.assess.status import get_statuses
 from app.config import ASSESSMENT_HUB_ROUTE
 from flask import abort
 from flask import Blueprint
@@ -109,9 +108,7 @@ def view_application(application_id, fund_id, round_id):
     if not application_data:
         abort(404)
 
-    status_data_all = get_status_data(
-        APPLICATION_STORE_API_HOST, application_id
-    )
+    status_data_all = get_statuses(application_id)
     status_not_completed = get_status_not_completed(status_data_all)
     status_completed = get_status_completed(status_data_all)
     if not status_data_all:
