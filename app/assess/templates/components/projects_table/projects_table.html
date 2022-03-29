@@ -83,7 +83,7 @@
 
                 <td class="govuk-table__cell"><a href="{{url_for('assess_bp.view_application',application_id=application.identifier, fund_id='funding-service-design',round_id='spring')}}" class="govuk-link">{{ application.identifier }}</a></td>
 
-              <td class="govuk-table__cell">{{ application.status }}</td>
+                <td class="govuk-table__cell"><strong class="govuk-tag {% if application.status == 'not started' %}govuk-tag--grey{% elif application.status == 'not started' %}govuk-tag--blue{%endif%}">{{ application.status }}</strong></td>
 
               <td class="govuk-table__cell">{{ application.assessment_deadline.strftime('%d %b %Y') }}</td>
 
