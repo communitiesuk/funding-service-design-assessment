@@ -82,6 +82,7 @@
     "questions": [
         {
             "question": "About you",
+            "status": "COMPLETED",
             "fields": [
                 {
                     "key": "applicant_name",
@@ -113,6 +114,7 @@
         {
             "category": "kfFsQz",
             "question": "About your organisation",
+            "status": "COMPLETED",
             "fields": [
                 {
                     "key": "org_name",
@@ -150,6 +152,7 @@
         {
             "category": "cxVIPK",
             "question": "About your organisation",
+            "status": "COMPLETED",
             "fields": [
                 {
                     "key": "org_accountant",
@@ -186,6 +189,7 @@
         },
         {
             "question": "Choose your country",
+            "status": "COMPLETED",
             "fields": [
                 {
                     "key": "country",
@@ -198,6 +202,7 @@
         },
         {
             "question": "England",
+            "status": "IN PROGRESS",
             "fields": [
                 {
                     "key": "local_authority",
@@ -211,6 +216,7 @@
         {
             "category": null,
             "question": "Declaration",
+            "status": "NOT STARTED",
             "fields": [
                 {
                     "key": "declaration",

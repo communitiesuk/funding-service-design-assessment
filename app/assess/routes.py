@@ -3,6 +3,10 @@ from app.assess.data import get_fund
 from app.assess.data import get_funds
 from app.assess.data import get_round
 from app.assess.data import get_rounds
+from app.assess.status import get_status_completed
+from app.assess.status import get_status_data
+from app.assess.status import get_status_not_completed
+from app.config import APPLICATION_STORE_API_HOST
 from app.config import ASSESSMENT_HUB_ROUTE
 from flask import abort
 from flask import Blueprint
@@ -78,7 +82,19 @@ def application(fund_id: str, round_id: str, application_id: str):
     "/view_application/<fund_id>/<round_id>/<application_id>", methods=["GET"]
 )
 def view_application(application_id, fund_id, round_id):
+    """_summary_:
+    GIVEN route is a front end for General assessment of the
+    applications, questions & its statuses
 
+    Args:
+        application_id: Takes an application ID.
+        fund_id: Takes a fund ID.
+        round_id: Takes a round ID.
+
+    Returns:
+        Returns question name, its status & number of questions are
+        completed & not completed.
+    """
     fund_data = get_fund(fund_id)
     if not fund_data:
         abort(404)
@@ -93,9 +109,20 @@ def view_application(application_id, fund_id, round_id):
     if not application_data:
         abort(404)
 
+    status_data_all = get_status_data(
+        APPLICATION_STORE_API_HOST, application_id
+    )
+    status_not_completed = get_status_not_completed(status_data_all)
+    status_completed = get_status_completed(status_data_all)
+    if not status_data_all:
+        abort(404)
+
     return render_template(
         "project_summary.html",
         application_data=application_data,
         fund_data=fund_data,
         round_data=round_data,
+        status_data_all=status_data_all,
+        status_completed=status_completed,
+        status_not_completed=status_not_completed,
     )
