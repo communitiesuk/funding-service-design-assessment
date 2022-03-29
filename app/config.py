@@ -17,7 +17,7 @@ FLASK_ENV = environ.get("FLASK_ENV") or "development"
 """
 Assets
 """
-ASSETS_DEBUG = FLASK_ENV == "development"
+ASSETS_DEBUG = False
 ASSETS_AUTO_BUILD = True
 
 """
