@@ -109,10 +109,10 @@ def view_application(application_id, fund_id, round_id):
         abort(404)
 
     status_data_all = get_statuses(application_id)
-    status_not_completed = get_status_not_completed(status_data_all)
-    status_completed = get_status_completed(status_data_all)
     if not status_data_all:
         abort(404)
+    status_not_completed = get_status_not_completed(status_data_all)
+    status_completed = get_status_completed(status_data_all)
 
     return render_template(
         "project_summary.html",
