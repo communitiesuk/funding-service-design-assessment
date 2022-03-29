@@ -1,14 +1,14 @@
+from app.assess.data import APPLICATION_ENDPOINT
 from app.assess.data import get_data
 from app.config import APPLICATION_STORE_API_HOST
 
-STATUS_ENDPOINT = (
-    "/fund/funding-service-design?application_id={application_id}"
-)
+STATUS_FUND_ID = "funding-service-design"
 
 
 def get_statuses(application_id):
     """_summary_: Function is set up to retrive
-     the data with get_data() function from application store.
+    the data from application store with
+    get_data() function.
 
     Args:
         application_id: Takes an application_id.
@@ -16,8 +16,8 @@ def get_statuses(application_id):
     Returns:
         Returns a dictionary of questions & their statuses.
     """
-    status_endpoint = APPLICATION_STORE_API_HOST + STATUS_ENDPOINT.format(
-        application_id=application_id
+    status_endpoint = APPLICATION_STORE_API_HOST + APPLICATION_ENDPOINT.format(
+        application_id=application_id, fund_id=STATUS_FUND_ID
     )
     api_data = get_data(status_endpoint)
     if application_id in api_data.get("id"):
