@@ -1,9 +1,9 @@
 {
   "fund_store/funds/": [
     {
-    "fund_name": "Funding Service Design",
-    "fund_id": "funding-service-design",
-    "fund_description": "An example fund for testing the funding service"
+      "fund_name": "Funding Service Design",
+      "fund_id": "funding-service-design",
+      "fund_description": "An example fund for testing the funding service"
     }
   ],
   "fund_store/funds/funding-service-design": {
@@ -13,61 +13,72 @@
   },
   "round_store/fund/funding-service-design": [
     {
-        "fund_id": "funding-service-design",
-        "round_title": "Spring",
-        "round_id": "spring",
-        "eligibility_criteria": {"maximum_project_cost": 1000000},
-        "opens": "2022-02-01T00:00:01",
-        "deadline": "2022-06-01T00:00:00",
-        "application_url": "https://funding-service-design-form-runner.london.cloudapps.digital/funding-application"
-
-    },
-    {
-        "fund_id": "funding-service-design",
-        "round_title": "Summer",
-        "round_id": "summer",
-        "eligibility_criteria": {"maximum_project_cost": 1000000},
-        "opens": "2022-06-01T00:00:01",
-        "deadline": "2022-08-31T00:00:00",
-        "application_url": "https://funding-service-design-form-runner.london.cloudapps.digital/funding-application"
-    },
-    {
-        "fund_id": "funding-service-design",
-        "round_title": "Autumn",
-        "round_id": "autumn",
-        "eligibility_criteria": {"maximum_project_cost": 10000000},
-        "opens": "2022-09-01T00:00:01",
-        "deadline": "2022-11-30T00:00:00",
-        "application_url": "https://funding-service-design-form-runner.london.cloudapps.digital/funding-application"
-    }
-  ],
-  "round_store/fund/funding-service-design/round/spring": {
       "fund_id": "funding-service-design",
       "round_title": "Spring",
       "round_id": "spring",
-      "eligibility_criteria": {"maximum_project_cost": 1000000},
+      "eligibility_criteria": {
+        "maximum_project_cost": 1000000
+      },
       "opens": "2022-02-01T00:00:01",
       "deadline": "2022-06-01T00:00:00",
       "application_url": "https://funding-service-design-form-runner.london.cloudapps.digital/funding-application"
-  },
-  "round_store/fund/funding-service-design/round/summer": {
+    },
+    {
       "fund_id": "funding-service-design",
       "round_title": "Summer",
       "round_id": "summer",
-      "eligibility_criteria": {"maximum_project_cost": 1000000},
+      "eligibility_criteria": {
+        "maximum_project_cost": 1000000
+      },
       "opens": "2022-06-01T00:00:01",
       "deadline": "2022-08-31T00:00:00",
       "application_url": "https://funding-service-design-form-runner.london.cloudapps.digital/funding-application"
     },
-  "round_store/fund/funding-service-design/round/autumn": {
+    {
       "fund_id": "funding-service-design",
       "round_title": "Autumn",
       "round_id": "autumn",
-      "eligibility_criteria": {"maximum_project_cost": 10000000},
+      "eligibility_criteria": {
+        "maximum_project_cost": 10000000
+      },
       "opens": "2022-09-01T00:00:01",
       "deadline": "2022-11-30T00:00:00",
       "application_url": "https://funding-service-design-form-runner.london.cloudapps.digital/funding-application"
+    }
+  ],
+  "round_store/fund/funding-service-design/round/spring": {
+    "fund_id": "funding-service-design",
+    "round_title": "Spring",
+    "round_id": "spring",
+    "eligibility_criteria": {
+      "maximum_project_cost": 1000000
     },
+    "opens": "2022-02-01T00:00:01",
+    "deadline": "2022-06-01T00:00:00",
+    "application_url": "https://funding-service-design-form-runner.london.cloudapps.digital/funding-application"
+  },
+  "round_store/fund/funding-service-design/round/summer": {
+    "fund_id": "funding-service-design",
+    "round_title": "Summer",
+    "round_id": "summer",
+    "eligibility_criteria": {
+      "maximum_project_cost": 1000000
+    },
+    "opens": "2022-06-01T00:00:01",
+    "deadline": "2022-08-31T00:00:00",
+    "application_url": "https://funding-service-design-form-runner.london.cloudapps.digital/funding-application"
+  },
+  "round_store/fund/funding-service-design/round/autumn": {
+    "fund_id": "funding-service-design",
+    "round_title": "Autumn",
+    "round_id": "autumn",
+    "eligibility_criteria": {
+      "maximum_project_cost": 10000000
+    },
+    "opens": "2022-09-01T00:00:01",
+    "deadline": "2022-11-30T00:00:00",
+    "application_url": "https://funding-service-design-form-runner.london.cloudapps.digital/funding-application"
+  },
   "application_store/fund/funding-service-design?datetime_start=2022-02-01T00:00:01&datetime_end=2022-06-01T00:00:00": [
     {
       "name": "Funding Service Design",
@@ -90,7 +101,7 @@
       "fund_id": "funding-service-design",
       "date_submitted": "2022-02-23T12:00:00.000",
       "id": "LUF-app789-a",
-      "status": "NOT STARTED",
+      "status": "NOT_STARTED",
       "assessment_deadline": "2022-06-23T12:00:00.000"
     },
     {
@@ -106,7 +117,7 @@
       "fund_id": "funding-service-design",
       "date_submitted": "2022-02-23T12:00:00.000",
       "id": "COF-app789-a",
-      "status": "NOT STARTED",
+      "status": "NOT_STARTED",
       "assessment_deadline": "2022-06-23T12:00:00.000"
     },
     {
@@ -132,7 +143,7 @@
       "fund_id": "funding-service-design",
       "date_submitted": "2022-02-23T12:00:00.000",
       "id": "LUF-app789-a",
-      "status": "NOT STARTED",
+      "status": "NOT_STARTED",
       "assessment_deadline": "2022-06-23T12:00:00.000"
     },
     {
@@ -140,7 +151,7 @@
       "fund_id": "funding-service-design",
       "date_submitted": "2022-02-23T12:00:00.000",
       "id": "COF-app789-a",
-      "status": "NOT STARTED",
+      "status": "NOT_STARTED",
       "assessment_deadline": "2022-06-23T12:00:00.000"
     }
   ],
@@ -227,315 +238,165 @@
     "fund_id": "funding-service-design",
     "date_submitted": "2022-02-23T12:00:00.000",
     "assessment_deadline": "2022-06-23T12:00:00.000",
-    "status": "NOT STARTED",
+    "status": "NOT_STARTED",
     "id": "fund-app123-a",
     "questions": [
-        {
-            "question": "About you",
-            "status": "COMPLETED",
-            "fields": [
-                {
-                    "key": "applicant_name",
-                    "title": "Applicant name",
-                    "type": "text",
-                    "answer": "e"
-                },
-                {
-                    "key": "email-about-you",
-                    "title": "Email",
-                    "type": "text",
-                    "answer": "e2e@w"
-                },
-                {
-                    "key": "applicant_telephone_number",
-                    "title": "Telephone number",
-                    "type": "text",
-                    "answer": "1"
-                },
-                {
-                    "key": "NXTkod",
-                    "title": "Website",
-                    "type": "text",
-                    "answer": "http://www.error.com"
-                }
-            ],
-            "index": 0
-        },
-        {
-            "category": "kfFsQz",
-            "question": "About your organisation",
-            "status": "COMPLETED",
-            "fields": [
-                {
-                    "key": "org_name",
-                    "title": "Organisation name",
-                    "type": "text",
-                    "answer": "sa"
-                },
-                {
-                    "key": "org_address",
-                    "title": "Organisation address",
-                    "type": "text",
-                    "answer": "sas, asa, as, as"
-                },
-                {
-                    "key": "org_type",
-                    "title": "Type of organisation",
-                    "type": "list",
-                    "answer": "Limited Company"
-                },
-                {
-                    "key": "delivered_before",
-                    "title": "Have you delivered projects like this before?",
-                    "type": "list",
-                    "answer": true
-                },
-                {
-                    "key": "evidence_of_prev_projects",
-                    "title": "Upload evidence to support your answer",
-                    "type": "file",
-                    "answer": null
-                }
-            ],
-            "index": 0
-        },
-        {
-            "category": "cxVIPK",
-            "question": "About your organisation",
-            "status": "COMPLETED",
-            "fields": [
-                {
-                    "key": "org_accountant",
-                    "title": "Your Accountant",
-                    "type": "text",
-                    "answer": "as"
-                },
-                {
-                    "key": "uoDsSL",
-                    "title": "Responsible person",
-                    "type": "text",
-                    "answer": "as"
-                },
-                {
-                    "key": "cFmoxP",
-                    "title": "Do you have endorsements to support your application?",
-                    "type": "list",
-                    "answer": false
-                },
-                {
-                    "key": "QKxzxf",
-                    "title": "Who is endorsing your application?",
-                    "type": "text",
-                    "answer": "weqwe"
-                },
-                {
-                    "key": "ymIxKr",
-                    "title": "Upload evidence to support your answer",
-                    "type": "file",
-                    "answer": null
-                }
-            ],
-            "index": 0
-        },
-        {
-            "question": "Choose your country",
-            "status": "COMPLETED",
-            "fields": [
-                {
-                    "key": "country",
-                    "title": "What country is your project in",
-                    "type": "list",
-                    "answer": "england"
-                }
-            ],
-            "index": 0
-        },
-        {
-            "question": "England",
-            "status": "IN PROGRESS",
-            "fields": [
-                {
-                    "key": "local_authority",
-                    "title": "What local authority is your project in?",
-                    "type": "list",
-                    "answer": "Adur and Worthing Borough Council"
-                }
-            ],
-            "index": 0
-        },
-        {
-            "category": null,
-            "question": "Declaration",
-            "status": "NOT STARTED",
-            "fields": [
-                {
-                    "key": "declaration",
-                    "title": "Declaration",
-                    "type": "boolean",
-                    "answer": true
-                }
-            ]
-        }
+      {
+        "question": "About you",
+        "status": "COMPLETED",
+        "fields": [
+          {
+            "key": "applicant_name",
+            "title": "Applicant name",
+            "type": "text",
+            "answer": "e"
+          },
+          {
+            "key": "email-about-you",
+            "title": "Email",
+            "type": "text",
+            "answer": "e2e@w"
+          },
+          {
+            "key": "applicant_telephone_number",
+            "title": "Telephone number",
+            "type": "text",
+            "answer": "1"
+          },
+          {
+            "key": "NXTkod",
+            "title": "Website",
+            "type": "text",
+            "answer": "http://www.error.com"
+          }
+        ],
+        "index": 0
+      },
+      {
+        "category": "kfFsQz",
+        "question": "About your organisation",
+        "status": "COMPLETED",
+        "fields": [
+          {
+            "key": "org_name",
+            "title": "Organisation name",
+            "type": "text",
+            "answer": "sa"
+          },
+          {
+            "key": "org_address",
+            "title": "Organisation address",
+            "type": "text",
+            "answer": "sas, asa, as, as"
+          },
+          {
+            "key": "org_type",
+            "title": "Type of organisation",
+            "type": "list",
+            "answer": "Limited Company"
+          },
+          {
+            "key": "delivered_before",
+            "title": "Have you delivered projects like this before?",
+            "type": "list",
+            "answer": true
+          },
+          {
+            "key": "evidence_of_prev_projects",
+            "title": "Upload evidence to support your answer",
+            "type": "file",
+            "answer": null
+          }
+        ],
+        "index": 0
+      },
+      {
+        "category": "cxVIPK",
+        "question": "About your organisation",
+        "status": "COMPLETED",
+        "fields": [
+          {
+            "key": "org_accountant",
+            "title": "Your Accountant",
+            "type": "text",
+            "answer": "as"
+          },
+          {
+            "key": "uoDsSL",
+            "title": "Responsible person",
+            "type": "text",
+            "answer": "as"
+          },
+          {
+            "key": "cFmoxP",
+            "title": "Do you have endorsements to support your application?",
+            "type": "list",
+            "answer": false
+          },
+          {
+            "key": "QKxzxf",
+            "title": "Who is endorsing your application?",
+            "type": "text",
+            "answer": "weqwe"
+          },
+          {
+            "key": "ymIxKr",
+            "title": "Upload evidence to support your answer",
+            "type": "file",
+            "answer": null
+          }
+        ],
+        "index": 0
+      },
+      {
+        "question": "Choose your country",
+        "status": "COMPLETED",
+        "fields": [
+          {
+            "key": "country",
+            "title": "What country is your project in",
+            "type": "list",
+            "answer": "england"
+          }
+        ],
+        "index": 0
+      },
+      {
+        "question": "England",
+        "status": "IN PROGRESS",
+        "fields": [
+          {
+            "key": "local_authority",
+            "title": "What local authority is your project in?",
+            "type": "list",
+            "answer": "Adur and Worthing Borough Council"
+          }
+        ],
+        "index": 0
+      },
+      {
+        "category": null,
+        "question": "Declaration",
+        "status": "NOT STARTED",
+        "fields": [
+          {
+            "key": "declaration",
+            "title": "Declaration",
+            "type": "boolean",
+            "answer": true
+          }
+        ]
+      }
     ],
     "metadata": {
-        "paymentSkipped": false
+      "paymentSkipped": false
     }
   },
-
-"application_store/fund/status/funding-service-design?application_id=bd65600d": {
-    "name": "Funding Service Design",
-    "date_submitted": "2022-02-23T12:00:00.000",
-    "id": "bd65600d",
-    "questions": [
-        {
-            "question": "About you",
-            "status": "COMPLETED",
-            "fields": [
-                {
-                    "key": "applicant_name",
-                    "title": "Applicant name",
-                    "type": "text",
-                    "answer": "e"
-                },
-                {
-                    "key": "email-about-you",
-                    "title": "Email",
-                    "type": "text",
-                    "answer": "e2e@w"
-                },
-                {
-                    "key": "applicant_telephone_number",
-                    "title": "Telephone number",
-                    "type": "text",
-                    "answer": "1"
-                },
-                {
-                    "key": "NXTkod",
-                    "title": "Website",
-                    "type": "text",
-                    "answer": "http://www.error.com"
-                }
-            ],
-            "index": 0
-        },
-        {
-            "category": "kfFsQz",
-            "question": "About your organisation",
-            "status": "COMPLETED",
-            "fields": [
-                {
-                    "key": "org_name",
-                    "title": "Organisation name",
-                    "type": "text",
-                    "answer": "sa"
-                },
-                {
-                    "key": "org_address",
-                    "title": "Organisation address",
-                    "type": "text",
-                    "answer": "sas, asa, as, as"
-                },
-                {
-                    "key": "org_type",
-                    "title": "Type of organisation",
-                    "type": "list",
-                    "answer": "Limited Company"
-                },
-                {
-                    "key": "delivered_before",
-                    "title": "Have you delivered projects like this before?",
-                    "type": "list",
-                    "answer": true
-                },
-                {
-                    "key": "evidence_of_prev_projects",
-                    "title": "Upload evidence to support your answer",
-                    "type": "file",
-                    "answer": null
-                }
-            ],
-            "index": 0
-        },
-        {
-            "category": "cxVIPK",
-            "question": "About your organisation",
-            "status": "COMPLETED",
-            "fields": [
-                {
-                    "key": "org_accountant",
-                    "title": "Your Accountant",
-                    "type": "text",
-                    "answer": "as"
-                },
-                {
-                    "key": "uoDsSL",
-                    "title": "Responsible person",
-                    "type": "text",
-                    "answer": "as"
-                },
-                {
-                    "key": "cFmoxP",
-                    "title": "Do you have endorsements to support your application?",
-                    "type": "list",
-                    "answer": false
-                },
-                {
-                    "key": "QKxzxf",
-                    "title": "Who is endorsing your application?",
-                    "type": "text",
-                    "answer": "weqwe"
-                },
-                {
-                    "key": "ymIxKr",
-                    "title": "Upload evidence to support your answer",
-                    "type": "file",
-                    "answer": null
-                }
-            ],
-            "index": 0
-        },
-        {
-            "question": "Choose your country",
-            "status": "COMPLETED",
-            "fields": [
-                {
-                    "key": "country",
-                    "title": "What country is your project in",
-                    "type": "list",
-                    "answer": "england"
-                }
-            ],
-            "index": 0
-        },
-        {
-            "question": "England",
-            "status": "IN PROGRESS",
-            "fields": [
-                {
-                    "key": "local_authority",
-                    "title": "What local authority is your project in?",
-                    "type": "list",
-                    "answer": "Adur and Worthing Borough Council"
-                }
-            ],
-            "index": 0
-        },
-        {
-            "category": null,
-            "question": "Declaration",
-            "status": "NOT STARTED",
-            "fields": [
-                {
-                    "key": "declaration",
-                    "title": "Declaration",
-                    "type": "boolean",
-                    "answer": true
-                }
-            ]
-        }
-    ],
-    "metadata": {
-        "paymentSkipped": false
-    }
+  "application_store/fund/status/funding-service-design?application_id=fund-app123-a": {
+    "About you": "COMPLETED",
+    "About your organisation": "COMPLETED",
+    "Choose your country": "COMPLETED",
+    "England": "IN PROGRESS",
+    "Declaration": "NOT STARTED"
   }
 }
