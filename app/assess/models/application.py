@@ -12,7 +12,7 @@ class Application:
     fund_name: str
     fund_id: str
     questions: List[Question] = None
-    status: str = "NOT STARTED"
+    status: str = "NOT_STARTED"
     assessment_deadline: datetime = datetime.now()
 
     @staticmethod
@@ -35,6 +35,10 @@ class Application:
                 application.add_question(question)
 
         return application
+
+    @property
+    def status_display(self):
+        return self.status.replace("_", " ")
 
     def add_question(self, question: Question):
         if not self.questions:
