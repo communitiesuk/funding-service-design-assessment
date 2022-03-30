@@ -146,12 +146,13 @@ def get_application(fund_id: str, identifier: str) -> Application | None:
 
 
 def get_questions(application_id, fund_id):
-    """_summary_: Function is set up to retrive
+    """_summary_: Function is set up to retrieve
     the data from application store with
     get_data() function.
 
     Args:
         application_id: Takes an application_id.
+        fund_id: Takes a fund_id
 
     Returns:
         Returns a dictionary of questions & their statuses.
@@ -159,8 +160,7 @@ def get_questions(application_id, fund_id):
     status_endpoint = APPLICATION_STORE_API_HOST + STATUS_ENDPOINT.format(
         application_id=application_id, fund_id=fund_id
     )
-    application_response = get_data(status_endpoint)
-    if application_response and "id" in application_response:
-        questions = application_response.get("questions")
-        data = {data.get("question"): data.get("status") for data in questions}
+    questions = get_data(status_endpoint)
+    if questions:
+        data = {title: status for title, status in questions.items()}
         return data
