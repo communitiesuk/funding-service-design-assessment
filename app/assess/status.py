@@ -18,4 +18,12 @@ def get_status(questions):
     status["COMPLETED"] = sum(
         value == "COMPLETED" for value in questions.values()
     )
+    status["TOTAL"] = sum(
+        (
+            (value == "NOT STARTED")
+            + (value == "IN PROGRESS")
+            + (value == "COMPLETED")
+        )
+        for value in questions.values()
+    )
     return status

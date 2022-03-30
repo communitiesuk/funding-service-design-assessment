@@ -109,6 +109,7 @@ def view_application(application_id, fund_id, round_id):
 
     questions_data = get_questions(application_id)
     status_data = get_status(questions_data)
+    print(status_data)
 
     return render_template(
         "project_summary.html",
