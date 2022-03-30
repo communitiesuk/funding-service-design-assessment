@@ -31,9 +31,6 @@ def create_app() -> Flask:
 
     csp = {
         "default-src": "'self'",
-        "connect-src": [
-            flask_app.config.get("APPLICATION_STORE_API_HOST_PUBLIC"),
-        ],
         "script-src": [
             "'self'",
             "'sha256-+6WnXIl4mbFTCARd8N3COQmT3bJJmo32N8q8ZSQAIcU='",
@@ -41,6 +38,19 @@ def create_app() -> Flask:
         ],
         "img-src": ["data:", "'self'"],
     }
+
+    if str(
+        flask_app.config.get(
+            "".join(["APPLICATION_STORE", "_API_HOST_PUBLIC"])
+        )
+    ).startswith("https://"):
+        csp.update(
+            {
+                "connect-src": [
+                    flask_app.config.get("APPLICATION_STORE_API_HOST_PUBLIC"),
+                ],
+            }
+        )
 
     hss = {
         "Strict-Transport-Security": (
