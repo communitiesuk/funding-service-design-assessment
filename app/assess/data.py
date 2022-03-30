@@ -31,7 +31,6 @@ APPLICATION_ENDPOINT = "/fund/{fund_id}?application_id={application_id}"
 
 # Status endpoints
 STATUS_ENDPOINT = "/fund/status/{fund_id}?application_id={application_id}"
-STATUS = "/status/"
 
 
 def get_data(endpoint: str):
