@@ -28,7 +28,7 @@ APPLICATIONS_ENDPOINT = "".join(
         "datetime_start={datetime_start}&datetime_end={datetime_end}",
     ]
 )
-APPLICATION_SEARCH_ENDPOINT = "/search/?{params}"
+APPLICATION_SEARCH_ENDPOINT = "/search?{params}"
 APPLICATION_ENDPOINT = "/fund/{fund_id}?application_id={application_id}"
 
 
@@ -117,7 +117,6 @@ def get_applications(params: dict) -> List[Application] | None:
         APPLICATION_STORE_API_HOST
         + APPLICATION_SEARCH_ENDPOINT.format(params=urlencode(params))
     )
-    print(applications_endpoint)
     applications_response = get_data(applications_endpoint)
     if applications_response and len(applications_response) > 0:
         applications = []
