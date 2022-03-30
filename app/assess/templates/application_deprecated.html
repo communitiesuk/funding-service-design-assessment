@@ -9,7 +9,7 @@
             <br />Round: <a href="{{ url_for('assess_bp.fund_round',fund_id=fund.identifier, round_id=round.identifier) }}" class="govuk-link govuk-link--no-underline govuk-link--no-visited-state">{{ round.title }}</a>
         </p>
       <h1 class="govuk-heading-xl">Application</h1>
-      <p class="govuk-body"><b>Application ID:</b> <a href="{{ url_for('assess_bp.application_summary',fund_id=fund.identifier, round_id=round.identifier, application_id=application.identifier) }}" class="govuk-link govuk-link--no-underline govuk-link--no-visited-state">{{ application.identifier }}</a>
+      <p class="govuk-body"><b>Application ID:</b> <a href="{{ url_for('assess_bp.application_deprecated',fund_id=fund.identifier, round_id=round.identifier, application_id=application.identifier) }}" class="govuk-link govuk-link--no-underline govuk-link--no-visited-state">{{ application.identifier }}</a>
           <br /><b>Submitted:</b> {{ application.submitted.strftime('%d %b %Y') }} <b>{{ application.submitted.strftime('%H:%M %p') }}</b></p>
   </div>
 <p class="govuk-heading-m govuk-!-margin-top-7">Select a question:</p>

@@ -133,7 +133,7 @@ def application(application_id, fund_id):
         abort(404)
 
     return render_template(
-        "project_summary.html",
+        "application.html",
         application_data=application_data,
         fund_data=fund_data,
     )
@@ -142,7 +142,7 @@ def application(application_id, fund_id):
 @assess_bp.route(
     "/<fund_id>/<round_id>/application/<application_id>", methods=["GET"]
 )
-def application_summary(fund_id: str, round_id: str, application_id: str):
+def application_deprecated(fund_id: str, round_id: str, application_id: str):
     """
     DEPRECATED summary page for an application
     :param fund_id:
@@ -163,7 +163,7 @@ def application_summary(fund_id: str, round_id: str, application_id: str):
         abort(404)
 
     return render_template(
-        "application_summary.html",
+        "application_deprecated.html",
         fund=fund,
         round=fund_round,
         application=application,
