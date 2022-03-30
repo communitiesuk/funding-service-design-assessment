@@ -157,6 +157,16 @@ AssessFrontend.FilteredFetchTable.prototype.formatContent = function(col, data) 
 		let date = new Date(data[responseKey]);
 		let date_els = date.toDateString().split(" ")
 		return [date_els[2], date_els[1], date_els[3]].join(" ");
+	} else if (responseType == "status") {
+		if (data[responseKey] == 'completed') {
+			return `<strong class="govuk-tag">${data[responseKey]}</strong>`
+		} else if (data[responseKey] == 'assessing') {
+			return `<strong class="govuk-tag govuk-tag--blue">${data[responseKey]}</strong>`
+		} else {
+			return `<strong class="govuk-tag govuk-tag--grey">${data[responseKey]}</strong>`
+		}
+	} else if (responseType == "id") {
+		return `<a href="/assess/application/${data.fund_id}/${data[responseKey]}" class="govuk-link">${data[responseKey]}</a>`
 	} else {
 		return data[responseKey];
 	}
@@ -169,7 +179,7 @@ AssessFrontend.FilteredFetchTable.prototype.addRow = function(data) {
 		let col = this.headings[i];
 		let td = tr.insertCell();
 		td.className = "govuk-table__cell";
-		td.innerText = this.formatContent(col, data);
+		td.innerHTML = this.formatContent(col, data);
 	}
 };
 
