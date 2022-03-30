@@ -32,7 +32,7 @@ APPLICATION_SEARCH_ENDPOINT = "/search?{params}"
 APPLICATION_ENDPOINT = "/fund/{fund_id}?application_id={application_id}"
 
 # Status endpoints
-STATUS_ENDPOINT = "/fund/status/{fund_id}?application_id={application_id}"
+STATUS_ENDPOINT = "/fund/status/{application_id}"
 
 
 def get_data(endpoint: str):
@@ -158,9 +158,10 @@ def get_questions(application_id, fund_id):
         Returns a dictionary of questions & their statuses.
     """
     status_endpoint = APPLICATION_STORE_API_HOST + STATUS_ENDPOINT.format(
-        application_id=application_id, fund_id=fund_id
+        application_id=application_id
     )
     questions = get_data(status_endpoint)
+    print(status_endpoint)
     if questions:
         data = {title: status for title, status in questions.items()}
         return data
