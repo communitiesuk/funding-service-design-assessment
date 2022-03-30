@@ -31,6 +31,9 @@ APPLICATIONS_ENDPOINT = "".join(
 APPLICATION_SEARCH_ENDPOINT = "/search?{params}"
 APPLICATION_ENDPOINT = "/fund/{fund_id}?application_id={application_id}"
 
+# Status endpoints
+STATUS_ENDPOINT = "/fund/status/{fund_id}?application_id={application_id}"
+
 
 def get_data(endpoint: str):
     if endpoint[:8] == "https://":
@@ -140,3 +143,24 @@ def get_application(fund_id: str, identifier: str) -> Application | None:
 
         return application
     return None
+
+
+def get_questions(application_id, fund_id):
+    """_summary_: Function is set up to retrive
+    the data from application store with
+    get_data() function.
+
+    Args:
+        application_id: Takes an application_id.
+
+    Returns:
+        Returns a dictionary of questions & their statuses.
+    """
+    status_endpoint = APPLICATION_STORE_API_HOST + STATUS_ENDPOINT.format(
+        application_id=application_id, fund_id=fund_id
+    )
+    application_response = get_data(status_endpoint)
+    if application_response and "id" in application_response:
+        questions = application_response.get("questions")
+        data = {data.get("question"): data.get("status") for data in questions}
+        return data
