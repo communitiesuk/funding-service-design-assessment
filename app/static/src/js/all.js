@@ -6,17 +6,17 @@ AssessFrontend.initAll = function (options) {
   // Defaults to the entire document if nothing is set.
   let scope = typeof options.scope !== 'undefined' ? options.scope : document;
 
-  let $collapsibleDetails = scope.querySelectorAll(".govuk-details");
-  AssessFrontend.nodeListForEach($collapsibleDetails, function ($collapsible) {
+  let collapsibleDetails = scope.querySelectorAll(".govuk-details");
+  AssessFrontend.nodeListForEach(collapsibleDetails, function (collapsible) {
     new AssessFrontend.Collapsible({
-      collapsible: $collapsible
+      collapsible: collapsible
     });
   });
 
-  let $filteredFetchTables = scope.querySelectorAll('[data-module="fsd-filtered-fetch-table"]');
-  AssessFrontend.nodeListForEach($filteredFetchTables, function ($container) {
+  let filteredFetchTables = scope.querySelectorAll('[data-module="fsd-filtered-fetch-table"]');
+  AssessFrontend.nodeListForEach(filteredFetchTables, function (container) {
     new AssessFrontend.FilteredFetchTable({
-      container: $container
+      container: container
     });
   });
 }
