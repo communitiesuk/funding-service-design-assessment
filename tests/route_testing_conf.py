@@ -21,7 +21,7 @@ intro_routes_and_test_content = {
             "contains": "No applications exist for this round yet.",
         }
     ],
-    "/assess/view_application/funding-service-design/spring/fund-app123-a": [
+    "/assess/application/funding-service-design/fund-app123-a": [
         {
             "tag": "h1",
             "name": None,
@@ -30,6 +30,60 @@ intro_routes_and_test_content = {
     ],
     "/assess/funding-service-design/spring/application/bad-id": [
         {"tag": "h1", "name": None, "contains": "Page not found"}
+    ],
+    "/assess/landing/": [
+        {
+            "tag": "p",
+            "name": None,
+            "contains": "Your assessments",
+        },
+        {
+            "tag": "a",
+            "name": None,
+            "contains": "All",
+        },
+        {
+            "tag": "a",
+            "name": None,
+            "contains": "Completed",
+        },
+        {
+            "tag": "a",
+            "name": None,
+            "contains": "Assessing",
+        },
+        {
+            "tag": "a",
+            "name": None,
+            "contains": "Not Started",
+        },
+        {
+            "tag": "a",
+            "name": None,
+            "contains": "fund-app123-a",
+        },
+        {
+            "tag": "strong",
+            "name": None,
+            "contains": "COMPLETED",
+        },
+    ],
+    "/assess/landing/?status_only=completed": [
+        {
+            "tag": "p",
+            "name": None,
+            "contains": "Your assessments",
+        },
+        {
+            "tag": "a",
+            "name": None,
+            "contains": "fund-app123-a",
+        },
+        {
+            "tag": "strong",
+            "name": None,
+            "contains": "COMPLETED",
+        },
     ],
 }
 
