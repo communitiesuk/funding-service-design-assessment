@@ -24,8 +24,8 @@
 
 
 <p class="govuk-body-l">
-   You have completed {{status_data["COMPLETED"]}}
-   of {{status_data['NOT STARTED'] + status_data['IN PROGRESS'] + status_data['COMPLETED'] }} questions.
+   You have completed {{status_data.get("COMPLETED")}}
+   of {{status_data.get('TOTAL')}} questions.
   </p>
 
   <h1 class="govuk-heading-l">General assessment</h1>
