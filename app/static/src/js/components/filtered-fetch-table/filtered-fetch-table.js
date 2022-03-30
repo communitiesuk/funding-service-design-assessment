@@ -158,10 +158,12 @@ AssessFrontend.FilteredFetchTable.prototype.formatContent = function(col, data) 
 		let date_els = date.toDateString().split(" ")
 		return [date_els[2], date_els[1], date_els[3]].join(" ");
 	} else if (responseType == "status") {
-		if (data[responseKey] == 'completed') {
-			return `<strong class="govuk-tag">${data[responseKey]}</strong>`
-		} else if (data[responseKey] == 'assessing') {
-			return `<strong class="govuk-tag govuk-tag--blue">${data[responseKey]}</strong>`
+		if (data[responseKey] == 'COMPLETED') {
+			return `<strong class="govuk-tag">COMPLETED</strong>`
+		} else if (data[responseKey] == 'ASSESSING') {
+			return `<strong class="govuk-tag govuk-tag--blue">ASSESSING</strong>`
+		} else if (data[responseKey] == 'NOT_STARTED') {
+			return `<strong class="govuk-tag govuk-tag--grey">NOT STARTED</strong>`
 		} else {
 			return `<strong class="govuk-tag govuk-tag--grey">${data[responseKey]}</strong>`
 		}
@@ -192,11 +194,6 @@ AssessFrontend.FilteredFetchTable.prototype.addRows = function() {
 AssessFrontend.FilteredFetchTable.prototype.setLoading = function() {
 	this.loading = true;
 	this.results = [];
-	let tr = this.body.insertRow(0)
-	tr.id = "filtered-table-rows-loading"
-	let td = tr.insertCell()
-	td.colSpan = this.cols;
-	td.innerText = "Updating...";
 };
 
 AssessFrontend.FilteredFetchTable.prototype.setDoneLoading = function() {
