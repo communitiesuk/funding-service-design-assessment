@@ -1,12 +1,10 @@
 from app.assess.data import get_application
 from app.assess.data import get_fund
 from app.assess.data import get_funds
+from app.assess.data import get_questions
 from app.assess.data import get_round
 from app.assess.data import get_rounds
-from app.assess.status import get_status_completed
-from app.assess.status import get_status_data
-from app.assess.status import get_status_not_completed
-from app.config import APPLICATION_STORE_API_HOST
+from app.assess.status import get_status
 from app.config import ASSESSMENT_HUB_ROUTE
 from flask import abort
 from flask import Blueprint
@@ -109,20 +107,13 @@ def view_application(application_id, fund_id, round_id):
     if not application_data:
         abort(404)
 
-    status_data_all = get_status_data(
-        APPLICATION_STORE_API_HOST, application_id
-    )
-    status_not_completed = get_status_not_completed(status_data_all)
-    status_completed = get_status_completed(status_data_all)
-    if not status_data_all:
-        abort(404)
-
+    questions_data = get_questions(application_id, fund_id)
+    status_data = get_status(questions_data)
     return render_template(
         "project_summary.html",
         application_data=application_data,
         fund_data=fund_data,
         round_data=round_data,
-        status_data_all=status_data_all,
-        status_completed=status_completed,
-        status_not_completed=status_not_completed,
+        questions_data=questions_data,
+        status_data=status_data,
     )
