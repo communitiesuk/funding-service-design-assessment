@@ -1,30 +1,30 @@
 {% from "govuk_frontend_jinja/components/input/macro.html" import govukInput %}
 
 
-{% macro render(applications, q, application_search_endpoint) -%}
+{% macro render(applications, query, application_search_endpoint) -%}
 <div data-module="fsd-filtered-fetch-table" data-endpoint="{{ application_search_endpoint }}">
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
       <p class="govuk-body">
           <span class="govuk-!-font-weight-bold">Showing:</span>
           &nbsp;
-            <a class="govuk-link govuk-link--no-visited-state fsd-table-filter-link" href="{{ url_for('assess_bp.landing') }}" data-filter-key="status_only" data-filter-value="" data-params="" {% if not q.status_only %}aria-selected="true"{% endif %}>All</a>
+            <a class="govuk-link govuk-link--no-visited-state fsd-table-filter-link" role="option" href="{{ url_for('assess_bp.landing') }}" data-filter-key="status_only" data-filter-value="" data-params="" {% if not query.status_only %}aria-selected="true"{% endif %}>All</a>
           &nbsp;
-            <a class="govuk-link govuk-link--no-visited-state fsd-table-filter-link" href="?id_contains={{q.id_contains}}&status_only=completed" data-filter-key="status_only" data-filter-value="completed" data-params="id_contains={{q.id_contains}}&status_only=completed" {% if q.status_only == "completed""" %}aria-selected="true"{% endif %}>Completed</a>
+            <a class="govuk-link govuk-link--no-visited-state fsd-table-filter-link" role="option" href="?id_contains={{query.id_contains}}&status_only=completed" data-filter-key="status_only" data-filter-value="completed" data-params="id_contains={{query.id_contains}}&status_only=completed" {% if query.status_only == "completed""" %}aria-selected="true"{% endif %}>Completed</a>
           &nbsp;
-            <a class="govuk-link govuk-link--no-visited-state fsd-table-filter-link" href="?id_contains={{q.id_contains}}&status_only=assessing" data-filter-key="status_only" data-filter-value="assessing" data-params="id_contains={{q.id_contains}}&status_only=assessing" {% if q.status_only == "assessing" %}aria-selected="true"{% endif %}>Assessing</a>
+            <a class="govuk-link govuk-link--no-visited-state fsd-table-filter-link" role="option" href="?id_contains={{query.id_contains}}&status_only=assessing" data-filter-key="status_only" data-filter-value="assessing" data-params="id_contains={{query.id_contains}}&status_only=assessing" {% if query.status_only == "assessing" %}aria-selected="true"{% endif %}>Assessing</a>
           &nbsp;
-            <a class="govuk-link govuk-link--no-visited-state fsd-table-filter-link" href="?id_contains={{q.id_contains}}&status_only=not started" data-filter-key="status_only" data-filter-value="not started" data-params="id_contains={{q.id_contains}}&status_only=not started" {% if q.status_only == "not started" %}aria-selected="true"{% endif %}>Not Started</a>
+            <a class="govuk-link govuk-link--no-visited-state fsd-table-filter-link" role="option" href="?id_contains={{query.id_contains}}&status_only=not started" data-filter-key="status_only" data-filter-value="not started" data-params="id_contains={{query.id_contains}}&status_only=not started" {% if query.status_only == "not started" %}aria-selected="true"{% endif %}>Not Started</a>
       </p>
   </div>
   <div class="govuk-grid-column-one-third">
     <form method="get" class="fsd-table-search-form" data-search-key="id_contains">
         <div class="govuk-form-group fsd-assess-search-input">
           <div class="govuk-input__wrapper">
-            <input class="govuk-input govuk-input--width-10" id="project-search" name="id_contains" type="text" spellcheck="false" placeholder="Search ref" value="{{q.id_contains}}">
-            <input type="hidden" name="order_by" value="{{q.order_by}}"/>
-            <input type="hidden" name="order_rev" value="{{q.order_rev}}"/>
-            <input type="hidden" name="status_only" value="{{q.status_only}}"/>
+            <input class="govuk-input govuk-input--width-10" id="project-search" name="id_contains" type="text" spellcheck="false" title="Search applications by ID" aria-label="Search applications" placeholder="Search ref" value="{{query.id_contains}}">
+            <input type="hidden" name="order_by" value="{{query.order_by}}"/>
+            <input type="hidden" name="order_rev" value="{{query.order_rev}}"/>
+            <input type="hidden" name="status_only" value="{{query.status_only}}"/>
             <div class="govuk-input__suffix" aria-hidden="true">
                 <button type="submit" data-module="gem-track-click" enterkeyhint="search">
                     <svg width="27" height="27" viewBox="0 0 27 27" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
@@ -43,32 +43,32 @@
   <thead class="govuk-table__head">
     <tr class="govuk-table__row">
 
-      <th scope="col" class="govuk-table__header fsd-table-sort-button" data-response-key="id" data-sort-key="id" aria-sort="{% if q.order_by == 'id' %}{% if q.order_rev == '1' %}ascending{% else %}descending{% endif %}{% else %}none{% endif %}">
+      <th scope="col" class="govuk-table__header fsd-table-sort-button" data-response-key="id" data-sort-key="id" data-response-type="id" aria-sort="{% if query.order_by == 'id' %}{% if query.order_rev == '1' %}ascending{% else %}descending{% endif %}{% else %}none{% endif %}">
           <form method="get" class="fsd-table-filter-form" data-sort-key="id" >
-              <input type="hidden" name="id_contains" value="{{q.id_contains}}"/>
+              <input type="hidden" name="id_contains" value="{{query.id_contains}}"/>
               <input type="hidden" name="order_by" value="id"/>
-              <input type="hidden" name="order_rev" value="{% if q.order_by == 'id' %}{% if q.order_rev == '1' %}0{% else %}1{% endif %}{% else %}{% endif %}"/>
-              <input type="hidden" name="status_only" value="{{q.status_only}}"/>
+              <input type="hidden" name="order_rev" value="{% if query.order_by == 'id' %}{% if query.order_rev == '1' %}0{% else %}1{% endif %}{% else %}{% endif %}"/>
+              <input type="hidden" name="status_only" value="{{query.status_only}}"/>
               <button type="submit">Project ref</button>
           </form>
       </th>
 
-      <th scope="col" class="govuk-table__header fsd-table-sort-button" data-response-key="status" data-sort-key="status" aria-sort="{% if q.order_by == 'status' %}{% if q.order_rev == '1' %}ascending{% else %}descending{% endif %}{% else %}none{% endif %}">
+      <th scope="col" class="govuk-table__header fsd-table-sort-button" data-response-key="status" data-sort-key="status" data-response-type="status" aria-sort="{% if query.order_by == 'status' %}{% if query.order_rev == '1' %}ascending{% else %}descending{% endif %}{% else %}none{% endif %}">
           <form method="get" class="fsd-table-filter-form" data-sort-key="status">
-              <input type="hidden" name="id_contains" value="{{q.id_contains}}"/>
+              <input type="hidden" name="id_contains" value="{{query.id_contains}}"/>
               <input type="hidden" name="order_by" value="status"/>
-              <input type="hidden" name="order_rev" value="{% if q.order_by == 'status' %}{% if q.order_rev == '1' %}0{% else %}1{% endif %}{% else %}{% endif %}"/>
-              <input type="hidden" name="status_only" value="{{q.status_only}}"/>
+              <input type="hidden" name="order_rev" value="{% if query.order_by == 'status' %}{% if query.order_rev == '1' %}0{% else %}1{% endif %}{% else %}{% endif %}"/>
+              <input type="hidden" name="status_only" value="{{query.status_only}}"/>
               <button type="submit">Status</button>
           </form>
       </th>
 
-      <th scope="col" class="govuk-table__header fsd-table-sort-button" data-response-key="assessment_deadline" data-sort-key="assessment_deadline" data-response-type="date" aria-sort="{% if q.order_by == 'deadline' %}{% if q.order_rev == '1' %}ascending{% else %}descending{% endif %}{% else %}none{% endif %}">
+      <th scope="col" class="govuk-table__header fsd-table-sort-button" data-response-key="assessment_deadline" data-sort-key="assessment_deadline" data-response-type="date" aria-sort="{% if query.order_by == 'deadline' %}{% if query.order_rev == '1' %}ascending{% else %}descending{% endif %}{% else %}none{% endif %}">
           <form method="get" class="fsd-table-filter-form" data-sort-key="assessment_deadline">
-              <input type="hidden" name="id_contains" value="{{q.id_contains}}"/>
+              <input type="hidden" name="id_contains" value="{{query.id_contains}}"/>
               <input type="hidden" name="order_by" value="assessment_deadline"/>
-              <input type="hidden" name="order_rev" value="{% if q.order_by == 'assessment_deadline' %}{% if q.order_rev == '1' %}0{% else %}1{% endif %}{% else %}{% endif %}"/>
-              <input type="hidden" name="status_only" value="{{q.status_only}}"/>
+              <input type="hidden" name="order_rev" value="{% if query.order_by == 'assessment_deadline' %}{% if query.order_rev == '1' %}0{% else %}1{% endif %}{% else %}{% endif %}"/>
+              <input type="hidden" name="status_only" value="{{query.status_only}}"/>
               <button type="submit">Due date</button>
           </form>
       </th>
@@ -81,9 +81,9 @@
         {% for application in applications %}
             <tr class="govuk-table__row">
 
-                <td class="govuk-table__cell"><a href="{{url_for('assess_bp.view_application',application_id=application.identifier, fund_id='funding-service-design',round_id='spring')}}" class="govuk-link">{{ application.identifier }}</a></td>
+                <td class="govuk-table__cell"><a href="{{url_for('assess_bp.application',application_id=application.identifier, fund_id=application.fund_id)}}" class="govuk-link">{{ application.identifier }}</a></td>
 
-                <td class="govuk-table__cell"><strong class="govuk-tag {% if application.status == 'not started' %}govuk-tag--grey{% elif application.status == 'not started' %}govuk-tag--blue{%endif%}">{{ application.status }}</strong></td>
+                <td class="govuk-table__cell"><strong class="govuk-tag {% if application.status == 'NOT STARTED' %}govuk-tag--grey{% elif application.status == 'assessing' %}govuk-tag--blue{%endif%}">{{ application.status }}</strong></td>
 
               <td class="govuk-table__cell">{{ application.assessment_deadline.strftime('%d %b %Y') }}</td>
 
