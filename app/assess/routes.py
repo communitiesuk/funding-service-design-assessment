@@ -107,10 +107,8 @@ def view_application(application_id, fund_id, round_id):
     if not application_data:
         abort(404)
 
-    questions_data = get_questions(application_id)
+    questions_data = get_questions(application_id, fund_id)
     status_data = get_status(questions_data)
-    print(status_data)
-
     return render_template(
         "project_summary.html",
         application_data=application_data,
