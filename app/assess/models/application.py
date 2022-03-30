@@ -10,8 +10,9 @@ class Application:
     identifier: str
     submitted: datetime
     fund_name: str
+    fund_id: str
     questions: List[Question] = None
-    status: str = "not started"
+    status: str = "NOT STARTED"
     assessment_deadline: datetime = datetime.now()
 
     @staticmethod
@@ -22,6 +23,7 @@ class Application:
                 data.get("date_submitted", "1970-01-01")
             ),
             fund_name=data.get("fund_name"),
+            fund_id=data.get("fund_id"),
             status=data.get("status"),
             assessment_deadline=datetime.fromisoformat(
                 data.get("assessment_deadline", "1970-01-01")
