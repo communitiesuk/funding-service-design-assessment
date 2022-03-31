@@ -9,13 +9,22 @@
       <p class="govuk-heading-s"><a class="govuk-link govuk-link--no-visited-state" href="{{ url_for('assess_bp.landing') }}">View your tasks</a></p>
       <div class="govuk-grid-row">
             <div class="govuk-grid-column-one-third">
-                  <p class="govuk-heading-m"><strong class="govuk-tag govuk-tag--grey">NOT STARTED</strong> {{todo_summary.not_started}}</p>
+                  <div class="fsd-callout-todo">
+                        <div class="govuk-heading-m fsd-callout-number" name="todo-summary-not-started">{{todo_summary.not_started}}</div>
+                        <div class="fsd-callout-tag fsd-callout-tag--grey"><strong class="govuk-tag govuk-tag--grey">NOT STARTED</strong> </div>
+                  </div>
             </div>
             <div class="govuk-grid-column-one-third">
-                  <p class="govuk-heading-m"><strong class="govuk-tag govuk-tag--blue">ASSESSING</strong> {{todo_summary.assessing}}</p>
+                  <div class="fsd-callout-todo">
+                        <div class="govuk-heading-m fsd-callout-number" name="todo-summary-assessing">{{todo_summary.assessing}}</div>
+                        <div class="fsd-callout-tag fsd-callout-tag--blue"><strong class="govuk-tag govuk-tag--blue">ASSESSING</strong></div>
+                  </div>
             </div>
             <div class="govuk-grid-column-one-third">
-                  <p class="govuk-heading-m"><strong class="govuk-tag">COMPLETED</strong> {{todo_summary.completed}}</p>
+                  <div class="fsd-callout-todo">
+                        <div class="govuk-heading-m fsd-callout-number" name="todo-summary-completed">{{todo_summary.completed}}</div>
+                        <div class="fsd-callout-tag"><strong class="govuk-tag">COMPLETED</strong> </div>
+                  </div>
             </div>
       </div>
 <br /><br />

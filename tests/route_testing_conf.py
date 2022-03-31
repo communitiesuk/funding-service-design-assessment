@@ -63,6 +63,21 @@ intro_routes_and_test_content = {
             "contains": "fund-app123-a",
         },
         {
+            "tag": "div",
+            "name": "todo-summary-not-started",
+            "contains": "2",
+        },
+        {
+            "tag": "div",
+            "name": "todo-summary-assessing",
+            "contains": "0",
+        },
+        {
+            "tag": "div",
+            "name": "todo-summary-completed",
+            "contains": "4",
+        },
+        {
             "tag": "strong",
             "name": None,
             "contains": "COMPLETED",
