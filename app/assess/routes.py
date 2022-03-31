@@ -6,6 +6,7 @@ from app.assess.data import get_funds
 from app.assess.data import get_questions
 from app.assess.data import get_round
 from app.assess.data import get_rounds
+from app.assess.data import get_todo_summary
 from app.assess.status import get_status
 from app.config import APPLICATION_STORE_API_HOST_PUBLIC
 from app.config import ASSESSMENT_HUB_ROUTE
@@ -60,10 +61,13 @@ def landing():
     # Get from application store
     applications = get_applications(params=search_params)
 
+    todo_summary = get_todo_summary()
+
     return render_template(
         "landing.html",
         applications=applications,
         search_params=search_params,
+        todo_summary=todo_summary,
         application_search_endpoint="".join(
             [
                 APPLICATION_STORE_API_HOST_PUBLIC,

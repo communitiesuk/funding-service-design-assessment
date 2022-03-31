@@ -130,6 +130,44 @@ def get_applications(params: dict) -> List[Application] | None:
     return None
 
 
+def get_todo_summary() -> dict | None:
+    applications_endpoint = (
+        APPLICATION_STORE_API_HOST
+        + APPLICATION_SEARCH_ENDPOINT.format(params="")
+    )
+    applications = get_data(applications_endpoint)
+    if applications and len(applications) > 0:
+        todo_summary = {}
+        todo_summary.update(
+            {
+                "completed": len(
+                    [
+                        1
+                        for application in applications
+                        if application["status"] == "COMPLETED"
+                    ]
+                ),
+                "assessing": len(
+                    [
+                        1
+                        for application in applications
+                        if application["status"] == "ASSESSING"
+                    ]
+                ),
+                "not_started": len(
+                    [
+                        1
+                        for application in applications
+                        if application["status"] == "NOT_STARTED"
+                    ]
+                ),
+            }
+        )
+
+        return todo_summary
+    return None
+
+
 def get_application(fund_id: str, identifier: str) -> Application | None:
     application_endpoint = (
         APPLICATION_STORE_API_HOST
