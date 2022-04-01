@@ -21,25 +21,97 @@ intro_routes_and_test_content = {
             "contains": "No applications exist for this round yet.",
         }
     ],
-    "/assess/view_application/funding-service-design/spring/bd65600d": [
+    "/assess/application/funding-service-design/fund-app123-a": [
         {
             "tag": "h1",
             "name": None,
-            "contains": "bd65600d",
+            "contains": "fund-app123-a",
         }
     ],
     "/assess/funding-service-design/spring/application/bad-id": [
         {"tag": "h1", "name": None, "contains": "Page not found"}
     ],
+    "/assess/landing/": [
+        {
+            "tag": "p",
+            "name": None,
+            "contains": "Your assessments",
+        },
+        {
+            "tag": "a",
+            "name": None,
+            "contains": "All",
+        },
+        {
+            "tag": "a",
+            "name": None,
+            "contains": "Completed",
+        },
+        {
+            "tag": "a",
+            "name": None,
+            "contains": "Assessing",
+        },
+        {
+            "tag": "a",
+            "name": None,
+            "contains": "Not Started",
+        },
+        {
+            "tag": "a",
+            "name": None,
+            "contains": "fund-app123-a",
+        },
+        {
+            "tag": "div",
+            "name": "todo-summary-not-started",
+            "contains": "2",
+        },
+        {
+            "tag": "div",
+            "name": "todo-summary-assessing",
+            "contains": "0",
+        },
+        {
+            "tag": "div",
+            "name": "todo-summary-completed",
+            "contains": "4",
+        },
+        {
+            "tag": "strong",
+            "name": None,
+            "contains": "COMPLETED",
+        },
+    ],
+    "/assess/landing/?status_only=completed": [
+        {
+            "tag": "p",
+            "name": None,
+            "contains": "Your assessments",
+        },
+        {
+            "tag": "a",
+            "name": None,
+            "contains": "fund-app123-a",
+        },
+        {
+            "tag": "strong",
+            "name": None,
+            "contains": "COMPLETED",
+        },
+    ],
 }
 
 
 def assessment_form_test_routes():
-    application_endpoint = (
-        "application_store/fund/funding-service-design?application_id=bd65600d"
+    application_endpoint = "".join(
+        [
+            "application_store/fund/funding-service-design",
+            "?application_id=fund-app123-a",
+        ]
     )
     question_page_root = (
-        "/assess/funding-service-design/spring/application/bd65600d"
+        "/assess/funding-service-design/spring/application/fund-app123-a"
     )
     application_form = get_local_data(application_endpoint)
     routes = {}

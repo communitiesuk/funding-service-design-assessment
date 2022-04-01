@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{%- from 'govuk_frontend_jinja/components/inset-text/macro.html' import govukInsetText -%}
+{%- from "govuk_frontend_jinja/components/button/macro.html" import govukButton -%}
+{% import 'components/projects_table/projects_table.html' as projects_table-%}
+
+{% block content %}
+      <p class="govuk-heading-s">Morning Jane Doe</p>
+      <h1 class="govuk-heading-xl">This Week</h1>
+      <p class="govuk-heading-s"><a class="govuk-link govuk-link--no-visited-state" href="{{ url_for('assess_bp.landing') }}">View your tasks</a></p>
+      <div class="govuk-grid-row">
+            <div class="govuk-grid-column-one-third">
+                  <div class="fsd-callout-todo">
+                        <div class="govuk-heading-m fsd-callout-number" name="todo-summary-not-started">{{todo_summary.not_started}}</div>
+                        <div class="fsd-callout-tag fsd-callout-tag--grey"><strong class="govuk-tag govuk-tag--grey">NOT STARTED</strong> </div>
+                  </div>
+            </div>
+            <div class="govuk-grid-column-one-third">
+                  <div class="fsd-callout-todo">
+                        <div class="govuk-heading-m fsd-callout-number" name="todo-summary-assessing">{{todo_summary.assessing}}</div>
+                        <div class="fsd-callout-tag fsd-callout-tag--blue"><strong class="govuk-tag govuk-tag--blue">ASSESSING</strong></div>
+                  </div>
+            </div>
+            <div class="govuk-grid-column-one-third">
+                  <div class="fsd-callout-todo">
+                        <div class="govuk-heading-m fsd-callout-number" name="todo-summary-completed">{{todo_summary.completed}}</div>
+                        <div class="fsd-callout-tag"><strong class="govuk-tag">COMPLETED</strong> </div>
+                  </div>
+            </div>
+      </div>
+<br /><br />
+      <p class="govuk-heading-l">Your assessments</p>
+      {{ projects_table.render(applications,search_params,application_search_endpoint) }}
+{% endblock %}

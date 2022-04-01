@@ -41,6 +41,15 @@ class TestContentWithChrome:
                         "Element name '" + name + "' was not found in " + url
                     )
                 assert found_element is not None, error_message
+                if contains and type(contains) == str:
+                    text = found_element.text
+                    error_message = (
+                        "Element name '"
+                        + name
+                        + "' does not contain "
+                        + contains
+                    )
+                    assert contains == text, error_message
             elif tag and contains:
                 try:
                     found_element = self.driver.find_element(

@@ -9,21 +9,22 @@ def get_status(questions):
         Returns dictionary of statuses
     """
     status = {}
-    status["NOT STARTED"] = sum(
-        value == "NOT STARTED" for value in questions.values()
-    )
-    status["IN PROGRESS"] = sum(
-        value == "IN PROGRESS" for value in questions.values()
-    )
-    status["COMPLETED"] = sum(
-        value == "COMPLETED" for value in questions.values()
-    )
-    status["TOTAL"] = sum(
-        (
-            (value == "NOT STARTED")
-            + (value == "IN PROGRESS")
-            + (value == "COMPLETED")
+    if questions:
+        status["NOT STARTED"] = sum(
+            value == "NOT STARTED" for value in questions.values()
         )
-        for value in questions.values()
-    )
+        status["IN PROGRESS"] = sum(
+            value == "IN PROGRESS" for value in questions.values()
+        )
+        status["COMPLETED"] = sum(
+            value == "COMPLETED" for value in questions.values()
+        )
+        status["TOTAL"] = sum(
+            (
+                (value == "NOT STARTED")
+                + (value == "IN PROGRESS")
+                + (value == "COMPLETED")
+            )
+            for value in questions.values()
+        )
     return status
