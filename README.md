@@ -66,7 +66,7 @@ You should see the following:
 
 This service is designed to be an interface to three primary data stores: The *Fund Store* which holds data about different funds, the *Round Store* which holds information about the rounds for each fund, and the *Application Store* which holds individual applications/submissions for each fund.
 
-The locations of the APIs for these three stores can be set using the FUND_STORE_API_HOST,  ROUND_STORE_API_HOST and APPLICATION_STORE_API_HOST environment variables. Set these to the respective locations for each API:
+The locations of the APIs for these three stores can be set using the FUND_STORE_API_HOST,  ROUND_STORE_API_HOST and APPLICATION_STORE_API_HOST environment variables. Set these to the respective locations for each API host you want to use eg.:
 
     export FUND_STORE_API_HOST="https://dluhc-fsd-fund-store-api.gov.uk"
     export ROUND_STORE_API_HOST="https://dluhc-fsd-round-store-api.gov.uk"

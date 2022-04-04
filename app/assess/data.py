@@ -1,6 +1,7 @@
 import json
 import os
 from typing import List
+from urllib.parse import urlencode
 
 import requests
 from app.assess.models.application import Application
@@ -27,10 +28,11 @@ APPLICATIONS_ENDPOINT = "".join(
         "datetime_start={datetime_start}&datetime_end={datetime_end}",
     ]
 )
+APPLICATION_SEARCH_ENDPOINT = "/search?{params}"
 APPLICATION_ENDPOINT = "/fund/{fund_id}?application_id={application_id}"
 
 # Status endpoints
-STATUS_ENDPOINT = "/fund/status/{fund_id}?application_id={application_id}"
+STATUS_ENDPOINT = "/fund/status/{application_id}"
 
 
 def get_data(endpoint: str):
@@ -113,6 +115,59 @@ def get_round(fund_id: str, round_id: str) -> Round | None:
     return None
 
 
+def get_applications(params: dict) -> List[Application] | None:
+    applications_endpoint = (
+        APPLICATION_STORE_API_HOST
+        + APPLICATION_SEARCH_ENDPOINT.format(params=urlencode(params))
+    )
+    applications_response = get_data(applications_endpoint)
+    if applications_response and len(applications_response) > 0:
+        applications = []
+        for application_data in applications_response:
+            applications.append(Application.from_json(application_data))
+
+        return applications
+    return None
+
+
+def get_todo_summary() -> dict | None:
+    applications_endpoint = (
+        APPLICATION_STORE_API_HOST
+        + APPLICATION_SEARCH_ENDPOINT.format(params="")
+    )
+    applications = get_data(applications_endpoint)
+    if applications and len(applications) > 0:
+        todo_summary = {}
+        todo_summary.update(
+            {
+                "completed": len(
+                    [
+                        1
+                        for application in applications
+                        if application["status"] == "COMPLETED"
+                    ]
+                ),
+                "assessing": len(
+                    [
+                        1
+                        for application in applications
+                        if application["status"] == "ASSESSING"
+                    ]
+                ),
+                "not_started": len(
+                    [
+                        1
+                        for application in applications
+                        if application["status"] == "NOT_STARTED"
+                    ]
+                ),
+            }
+        )
+
+        return todo_summary
+    return None
+
+
 def get_application(fund_id: str, identifier: str) -> Application | None:
     application_endpoint = (
         APPLICATION_STORE_API_HOST
@@ -129,21 +184,22 @@ def get_application(fund_id: str, identifier: str) -> Application | None:
 
 
 def get_questions(application_id, fund_id):
-    """_summary_: Function is set up to retrive
+    """_summary_: Function is set up to retrieve
     the data from application store with
     get_data() function.
 
     Args:
         application_id: Takes an application_id.
+        fund_id: Takes a fund_id
 
     Returns:
         Returns a dictionary of questions & their statuses.
     """
     status_endpoint = APPLICATION_STORE_API_HOST + STATUS_ENDPOINT.format(
-        application_id=application_id, fund_id=fund_id
+        application_id=application_id
     )
-    application_response = get_data(status_endpoint)
-    if application_response and "id" in application_response:
-        questions = application_response.get("questions")
-        data = {data.get("question"): data.get("status") for data in questions}
+    questions = get_data(status_endpoint)
+    print(status_endpoint)
+    if questions:
+        data = {title: status for title, status in questions.items()}
         return data

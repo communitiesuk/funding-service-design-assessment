@@ -73,7 +73,7 @@ class AssessQuestionView(MethodView):
         if question_index is None:
             return redirect(
                 url_for(
-                    "assess_bp.application",
+                    "assess_bp.application_deprecated",
                     fund_id=fund_id,
                     round_id=round_id,
                     application_id=application_id,
@@ -104,7 +104,7 @@ class AssessQuestionView(MethodView):
         if question_index is None:
             return redirect(
                 url_for(
-                    "assess_bp.application",
+                    "assess_bp.application_deprecated",
                     fund_id=fund_id,
                     round_id=round_id,
                     application_id=application_id,
