@@ -43,7 +43,12 @@
   <tbody class="govuk-table__body">
     <tr class="govuk-table__row">
       <td class="govuk-table__cell">
-        {{question}}
+      <a href="{{ url_for(
+        'application_question',
+        fund_id=fund_data.identifier,
+        application_id=application_data.identifier,
+        question_id=1)
+        }}" class="govuk-body-lead govuk-link govuk-link--no-underline govuk-link--no-visited-state">{{ question }}</a>
       </td>
 
       <td class="govuk-table__cell">
