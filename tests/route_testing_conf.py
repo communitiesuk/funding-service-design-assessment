@@ -111,7 +111,7 @@ def assessment_form_test_routes():
         ]
     )
     question_page_root = (
-        "/assess/funding-service-design/spring/application/fund-app123-a"
+        "/assess/funding-service-design/application/fund-app123-a"
     )
     application_form = get_local_data(application_endpoint)
     routes = {}

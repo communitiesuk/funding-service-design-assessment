@@ -76,11 +76,12 @@ class TestContentWithChrome:
         for route_rel, content_dict in intro_routes_and_test_content.items():
             self.route_content_test(route_rel, content_dict)
 
-    # def test_assessment_form_routes_content(self, client):
-    #     """
-    #     GIVEN Our Flask Application is running
-    #     WHEN dictionary of known routes is requested (GET)
-    #     THEN check that each page returned conforms to WCAG standards
-    #     """
-    #     for route_rel, content_dict in assessment_form_test_routes().items():
-    #         self.route_content_test(route_rel, content_dict)
+    def test_assessment_form_routes_content(self, client):
+        """
+        GIVEN Our Flask Application is running
+        WHEN dictionary of known routes is requested (GET)
+        THEN check that each page returned conforms to WCAG standards
+        """
+        for route_rel, content_dict in assessment_form_test_routes().items():
+            print(f'ROUTE RELL IS!!!!!!!!!!!!! {route_rel}')
+            self.route_content_test(route_rel, content_dict)
