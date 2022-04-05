@@ -23,3 +23,24 @@ class Question:
         if not self.fields:
             self.fields = []
         self.fields.append(field)
+
+
+@dataclass
+class QuestionAnswerPage:
+    @staticmethod
+    def get_questions(page_title, questions_page):
+        questions = []
+        for data in questions_page:
+            if page_title == data.title:
+                for field in data.fields:
+                    questions.append(field.title)
+        return tuple(questions)
+
+    @staticmethod
+    def get_answers(page_title, answers_page):
+        answers = []
+        for data in answers_page:
+            if page_title == data.title:
+                for field in data.fields:
+                    answers.append(field.answer)
+        return tuple(answers)

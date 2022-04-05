@@ -6,15 +6,19 @@
 
 {% block beforeContent %}
 {{
-  govukBackLink({'href': url_for("assess_bp.landing")})
-}}
-{% endblock %}
+    govukBackLink({
+    'href': url_for("assess_bp.application",
+    fund_id = fund_data.identifier,
+    application_id= application_data.identifier)
+  })
+  }}
 
+{% endblock %}
 
 {% block content %}
 
 <span class="govuk-caption-l">Project reference</span>
-<h1 class="govuk-heading-l">{{application_data.identifier}}</h1>
+<h1 class="govuk-heading-m">{{application_data.identifier}}</h1>
 
     {{ govukDetails({
         'summaryText': fund_data.name,
@@ -23,47 +27,35 @@
         'open':True}) }}
 
 
-<p class="govuk-body-l">
-   You have completed {{status_data.get("COMPLETED")}}
-   of {{status_data.get('TOTAL')}} questions.
-  </p>
+ <h1 class="govuk-heading-l">{{page_title}}</h1>
 
-  <h1 class="govuk-heading-l">General assessment</h1>
 
 <table class="govuk-table">
+
   <thead class="govuk-table__head">
     <tr class="govuk-table__row">
       <th class="govuk-table__header govuk-table__caption--m" scope="col">
          Question </th>
       <th class="govuk-table__header govuk-table__caption--m" scope="col">
-        Status </th>
+        Answer </th>
     </tr>
   </thead>
-  {% for question, status in questions_data.items() %}
-  <tbody class="govuk-table__body">
-    <tr class="govuk-table__row">
-      <td class="govuk-table__cell">
-        <a class='govuk-link'
-        href="{{url_for('assess_bp.view_question_answers_by_page',
-        application_id=application_data.identifier,
-        fund_id=fund_data.identifier,
-        page_title=question)}}">
-        {{question}}
-        </a>
-      </td>
 
-      <td class="govuk-table__cell">
-        <strong class="govuk-tag
-        {% if status == 'NOT STARTED' %}govuk-tag--grey
-        {% elif status == 'IN PROGRESS' %}govuk-tag--blue
-        {%endif%}">
-        {{ status }}
-      </strong>
+   <tbody class="govuk-table__body">
+    {% if questions %}
+    {% for question, answer in zip(questions,answers) %}
+
+    <tr class="govuk-table__row">
+    <td class="govuk-table__cell">
+        {{question}}
+    </td>
+    <td class="govuk-table__cell">
+        {{ answer }}
       </td>
     </tr>
-
+    {% endfor %}
+    {% endif %}
   </tbody>
-  {% endfor %}
-</table>
 
+</table>
 {% endblock %}

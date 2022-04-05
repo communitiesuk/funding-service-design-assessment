@@ -1,9 +1,11 @@
 from app.assess.data import APPLICATION_SEARCH_ENDPOINT
+from app.assess.data import get_answers_tuple
 from app.assess.data import get_application
 from app.assess.data import get_applications
 from app.assess.data import get_fund
 from app.assess.data import get_funds
-from app.assess.data import get_questions
+from app.assess.data import get_questions_and_statuses
+from app.assess.data import get_questions_tuple
 from app.assess.data import get_round
 from app.assess.data import get_rounds
 from app.assess.data import get_todo_summary
@@ -131,14 +133,14 @@ def application(application_id, fund_id):
     fund_data = get_fund(fund_id)
     if not fund_data:
         abort(404)
-
     application_data = get_application(
         fund_id=fund_id, identifier=application_id
     )
+
     if not application_data:
         abort(404)
 
-    questions_data = get_questions(application_id, fund_id)
+    questions_data = get_questions_and_statuses(application_id, fund_id)
     status_data = get_status(questions_data)
 
     return render_template(
@@ -178,4 +180,32 @@ def application_deprecated(fund_id: str, round_id: str, application_id: str):
         fund=fund,
         round=fund_round,
         application=application,
+    )
+
+
+@assess_bp.route(
+    "application/<application_id>/<fund_id>/questions-answers/<page_title>",
+    methods=["GET"],
+)
+def view_question_answers_by_page(application_id, fund_id, page_title):
+    fund_data = get_fund(fund_id)
+    if not fund_data:
+        abort(404)
+    application_data = get_application(
+        fund_id=fund_id, identifier=application_id
+    )
+    if not application_data:
+        abort(404)
+
+    questions = get_questions_tuple(application_id, fund_id, page_title)
+    answers = get_answers_tuple(application_id, fund_id, page_title)
+
+    return render_template(
+        "questions_answers_page.html",
+        application_data=application_data,
+        fund_data=fund_data,
+        page_title=page_title,
+        questions=questions,
+        answers=answers,
+        zip=zip,
     )
