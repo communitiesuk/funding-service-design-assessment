@@ -16,7 +16,6 @@ class Question:
             for field_data in data["fields"]:
                 field = QuestionField.from_json(field_data)
                 question.add_field(field)
-        # print(question)
         return question
 
     def add_field(self, field: QuestionField):
