@@ -49,3 +49,11 @@ class Application:
         if self.questions:
             return self.questions[index]
         return None
+
+    def get_question_field(self, page_title):
+        fields = []
+        for question in self.questions:
+            if page_title == question.title:
+                for field in question.fields:
+                    fields.append(field)
+        return fields

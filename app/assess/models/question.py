@@ -16,31 +16,10 @@ class Question:
             for field_data in data["fields"]:
                 field = QuestionField.from_json(field_data)
                 question.add_field(field)
-
+        # print(question)
         return question
 
     def add_field(self, field: QuestionField):
         if not self.fields:
             self.fields = []
         self.fields.append(field)
-
-
-@dataclass
-class QuestionAnswerPage:
-    @staticmethod
-    def get_questions(page_title, questions_page):
-        questions = []
-        for data in questions_page:
-            if page_title == data.title:
-                for field in data.fields:
-                    questions.append(field.title)
-        return tuple(questions)
-
-    @staticmethod
-    def get_answers(page_title, answers_page):
-        answers = []
-        for data in answers_page:
-            if page_title == data.title:
-                for field in data.fields:
-                    answers.append(field.answer)
-        return tuple(answers)

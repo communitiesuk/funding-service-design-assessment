@@ -6,7 +6,6 @@ from urllib.parse import urlencode
 import requests
 from app.assess.models.application import Application
 from app.assess.models.fund import Fund
-from app.assess.models.question import QuestionAnswerPage
 from app.assess.models.round import Round
 from app.config import APPLICATION_STORE_API_HOST
 from app.config import FLASK_ROOT
@@ -202,49 +201,3 @@ def get_questions_and_statuses(application_id, fund_id):
     if questions:
         data = {title: status for title, status in questions.items()}
         return data
-
-
-def get_questions_tuple(
-    identifier: str, fund_id: str, page_title: str
-) -> Application:
-    """
-    _summary_: Function retrieves all questions in a tuple from
-        given page title
-    Args:
-        identifier: Takes an application id/ identifier
-        fund_id: Takes a fund id
-        page_title: Takes a questions page title
-    Returns:
-        returns a tuple of questions
-    """
-    application_response = get_application(
-        identifier=identifier, fund_id=fund_id
-    )
-    data_from_questions_page = application_response.questions
-    questions = QuestionAnswerPage.get_questions(
-        page_title=page_title, questions_page=data_from_questions_page
-    )
-    return questions
-
-
-def get_answers_tuple(
-    identifier: str, fund_id: str, page_title: str
-) -> Application:
-    """
-    _summary_: Function retrieves all questions in a tuple from
-        given page title
-    Args:
-        identifier (str):Takes an application_id/ identifier
-        fund_id (str): Takes a fund id
-        page_title (str): Takes a question page title
-    Returns:
-        Application: Return a tuple of answers from application
-    """
-    application_response = get_application(
-        identifier=identifier, fund_id=fund_id
-    )
-    data_from_questions_page = application_response.questions
-    answers = QuestionAnswerPage.get_answers(
-        page_title=page_title, answers_page=data_from_questions_page
-    )
-    return answers

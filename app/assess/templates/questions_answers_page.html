@@ -9,7 +9,7 @@
     govukBackLink({
     'href': url_for("assess_bp.application",
     fund_id = fund_data.identifier,
-    application_id= application_data.identifier)
+    application_id= application.identifier)
   })
   }}
 
@@ -18,7 +18,7 @@
 {% block content %}
 
 <span class="govuk-caption-l">Project reference</span>
-<h1 class="govuk-heading-m">{{application_data.identifier}}</h1>
+<h1 class="govuk-heading-m">{{application.identifier}}</h1>
 
     {{ govukDetails({
         'summaryText': fund_data.name,
@@ -42,20 +42,19 @@
   </thead>
 
    <tbody class="govuk-table__body">
-    {% if questions %}
-    {% for question, answer in zip(questions,answers) %}
+    {% for f in fields %}
 
     <tr class="govuk-table__row">
     <td class="govuk-table__cell">
-        {{question}}
+        {{f.title}}
     </td>
     <td class="govuk-table__cell">
-        {{ answer }}
+        {{ f.answer }}
       </td>
     </tr>
     {% endfor %}
-    {% endif %}
-  </tbody>
 
+  </tbody>
 </table>
+
 {% endblock %}
