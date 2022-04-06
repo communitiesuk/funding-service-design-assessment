@@ -53,7 +53,7 @@ class Application:
     def get_question_field(self, page_title):
         fields = []
         for question in self.questions:
-            if page_title == question.title:
+            if question.title == page_title:
                 for field in question.fields:
                     fields.append(field)
         return fields
