@@ -97,7 +97,7 @@ def create_app() -> Flask:
         )
         from app.assess.routes import assess_bp
         from app.assess.api import api_bp
-        from app.assess.assess import AssessQuestionView
+        from app.assess.views.assess import AssessQuestionView
 
         flask_app.register_error_handler(404, not_found)
         flask_app.register_error_handler(500, internal_server_error)
@@ -109,6 +109,7 @@ def create_app() -> Flask:
                 [
                     flask_app.config["ASSESSMENT_HUB_ROUTE"],
                     "<fund_id>",
+                    "<round_id>",
                     "application",
                     "<application_id>",
                     "question",

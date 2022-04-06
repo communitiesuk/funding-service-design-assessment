@@ -22,17 +22,13 @@ ROUNDS_ENDPOINT = "/fund/{fund_id}"
 ROUND_ENDPOINT = "/fund/{fund_id}/round/{round_id}"
 
 # Application Store Endpoints
-APPLICATIONS_ENDPOINT = "".join(
-    [
-        "/fund/{fund_id}?",
-        "datetime_start={datetime_start}&datetime_end={datetime_end}",
-    ]
+APPLICATION_ENDPOINT = (
+    "/application?fund_id={fund_id}&application_id={application_id}"
 )
-APPLICATION_SEARCH_ENDPOINT = "/search?{params}"
-APPLICATION_ENDPOINT = "/fund/{fund_id}?application_id={application_id}"
+STATUS_ENDPOINT = "/application/{application_id}/status"
 
-# Status endpoints
-STATUS_ENDPOINT = "/fund/status/{application_id}"
+APPLICATION_SEARCH_ENDPOINT = "/applications?{params}"
+APPLICATIONS_FOR_FUND_ENDPOINT = "/applications?fund_id={fund_id}&datetime_start={datetime_start}&datetime_end={datetime_end}"
 
 
 def get_data(endpoint: str):
@@ -100,7 +96,7 @@ def get_round(fund_id: str, round_id: str) -> Round | None:
         fund_round = Round.from_json(round_response)
         applications_endpoint = (
             APPLICATION_STORE_API_HOST
-            + APPLICATIONS_ENDPOINT.format(
+            + APPLICATIONS_FOR_FUND_ENDPOINT.format(
                 fund_id=fund_id,
                 datetime_start=fund_round.opens,
                 datetime_end=fund_round.deadline,

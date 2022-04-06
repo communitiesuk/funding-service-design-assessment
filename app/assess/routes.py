@@ -58,7 +58,6 @@ def landing():
         if key in search_params:
             search_params.update({key: value})
 
-    # Get from application store
     applications = get_applications(params=search_params)
 
     todo_summary = get_todo_summary()
@@ -75,6 +74,46 @@ def landing():
             ]
         ),
     )
+
+
+@assess_bp.route("/application/<fund_id>/<application_id>", methods=["GET"])
+def application(application_id, fund_id):
+
+    """
+    Application summary page
+    Shows information about the fund, application ID
+    and all the application questions and their assessment status
+    :param application_id:
+    :param fund_id:
+    :return:
+    """
+
+    fund_data = get_fund(fund_id)
+    if not fund_data:
+        abort(404)
+
+    application_data = get_application(
+        fund_id=fund_id, identifier=application_id
+    )
+    if not application_data:
+        abort(404)
+
+    questions_data = get_questions(application_id, fund_id)
+    status_data = get_status(questions_data)
+
+    return render_template(
+        "application.html",
+        application_data=application_data,
+        fund_data=fund_data,
+        questions_data=questions_data,
+        status_data=status_data,
+    )
+
+
+"""
+ Legacy
+ The following routes serve information relating to a fund and a fund round and are not shown in the assessor views
+"""
 
 
 @assess_bp.route("/<fund_id>/", methods=["GET"])
@@ -115,67 +154,3 @@ def fund_round(fund_id: str, round_id: str):
         abort(404)
 
     return render_template("round.html", fund=fund, round=fund_round)
-
-
-@assess_bp.route("/application/<fund_id>/<application_id>", methods=["GET"])
-def application(application_id, fund_id):
-
-    """
-    Application summary page
-    Shows information about the fund, application ID
-    and all the application questions and their assessment status
-    :param application_id:
-    :param fund_id:
-    :return:
-    """
-    fund_data = get_fund(fund_id)
-    if not fund_data:
-        abort(404)
-
-    application_data = get_application(
-        fund_id=fund_id, identifier=application_id
-    )
-    if not application_data:
-        abort(404)
-
-    questions_data = get_questions(application_id, fund_id)
-    status_data = get_status(questions_data)
-
-    return render_template(
-        "application.html",
-        application_data=application_data,
-        fund_data=fund_data,
-        questions_data=questions_data,
-        status_data=status_data,
-    )
-
-
-@assess_bp.route(
-    "/<fund_id>/<round_id>/application/<application_id>", methods=["GET"]
-)
-def application_deprecated(fund_id: str, round_id: str, application_id: str):
-    """
-    DEPRECATED summary page for an application
-    :param fund_id:
-    :param round_id:
-    :param application_id:
-    :return:
-    """
-    fund = get_fund(fund_id)
-    if not fund:
-        abort(404)
-
-    fund_round = get_round(fund_id=fund_id, round_id=round_id)
-    if not fund_round:
-        abort(404)
-
-    application = get_application(fund_id=fund_id, identifier=application_id)
-    if not application:
-        abort(404)
-
-    return render_template(
-        "application_deprecated.html",
-        fund=fund,
-        round=fund_round,
-        application=application,
-    )

@@ -83,5 +83,4 @@ class TestContentWithChrome:
         THEN check that each page returned conforms to WCAG standards
         """
         for route_rel, content_dict in assessment_form_test_routes().items():
-            print(f'ROUTE RELL IS!!!!!!!!!!!!! {route_rel}')
             self.route_content_test(route_rel, content_dict)

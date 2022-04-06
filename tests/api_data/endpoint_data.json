@@ -79,15 +79,16 @@
     "deadline": "2022-11-30T00:00:00",
     "application_url": "https://funding-service-design-form-runner.london.cloudapps.digital/funding-application"
   },
-  "application_store/fund/funding-service-design?datetime_start=2022-02-01T00:00:01&datetime_end=2022-06-01T00:00:00": [
-    {
-      "name": "Funding Service Design",
-      "date_submitted": "2022-02-23T12:00:00.000",
-      "id": "fund-app123-a",
-      "assessment_deadline": "2022-06-23T12:00:00.000"
-    }
-  ],
-  "application_store/fund/funding-service-design?application_id=fund-app123-a": {
+
+
+  "application_store/application/fund-app123-a/status": {
+    "About you": "COMPLETED",
+    "About your organisation": "COMPLETED",
+    "Choose your country": "COMPLETED",
+    "England": "IN PROGRESS",
+    "Declaration": "NOT STARTED"
+  },
+  "application_store/application?fund_id=funding-service-design&application_id=fund-app123-a": {
     "name": "Funding Service Design",
     "fund_id": "funding-service-design",
     "date_submitted": "2022-02-23T12:00:00.000",
@@ -246,14 +247,7 @@
       "paymentSkipped": false
     }
   },
-  "application_store/fund/status/fund-app123-a": {
-    "About you": "COMPLETED",
-    "About your organisation": "COMPLETED",
-    "Choose your country": "COMPLETED",
-    "England": "IN PROGRESS",
-    "Declaration": "NOT STARTED"
-  },
-  "application_store/search?id_contains=&order_by=&order_rev=&status_only=": [
+  "application_store/applications?": [
     {
       "name": "Funding Service Design",
       "fund_id": "funding-service-design",
@@ -303,7 +297,15 @@
       "assessment_deadline": "2022-06-23T12:00:00.000"
     }
   ],
-  "application_store/search?": [
+  "application_store/applications?fund_id=funding-service-design&datetime_start=2022-02-01T00:00:01&datetime_end=2022-06-01T00:00:00": [
+    {
+      "name": "Funding Service Design",
+      "date_submitted": "2022-02-23T12:00:00.000",
+      "id": "fund-app123-a",
+      "assessment_deadline": "2022-06-23T12:00:00.000"
+    }
+  ],
+  "application_store/applications?id_contains=&order_by=&order_rev=&status_only=": [
     {
       "name": "Funding Service Design",
       "fund_id": "funding-service-design",
@@ -353,7 +355,7 @@
       "assessment_deadline": "2022-06-23T12:00:00.000"
     }
   ],
-  "application_store/search?id_contains=&order_by=&order_rev=&status_only=not+started": [
+  "application_store/applications?id_contains=&order_by=&order_rev=&status_only=not+started": [
     {
       "name": "Funding Service Design",
       "fund_id": "funding-service-design",
@@ -371,7 +373,7 @@
       "assessment_deadline": "2022-06-23T12:00:00.000"
     }
   ],
-  "application_store/search?id_contains=&status_only=completed": [
+  "application_store/applications?id_contains=&status_only=completed": [
     {
       "name": "Funding Service Design",
       "fund_id": "funding-service-design",
@@ -397,7 +399,7 @@
       "assessment_deadline": "2022-06-23T12:00:00.000"
     }
   ],
-  "application_store/search?id_contains=&order_by=&order_rev=&status_only=completed": [
+  "application_store/applications?id_contains=&order_by=&order_rev=&status_only=completed": [
     {
       "name": "Funding Service Design",
       "fund_id": "funding-service-design",
@@ -423,7 +425,7 @@
       "assessment_deadline": "2022-06-23T12:00:00.000"
     }
   ],
-  "application_store/search?id_contains=fun&order_by=&order_rev=&status_only=completed": [
+  "application_store/applications?id_contains=fun&order_by=&order_rev=&status_only=completed": [
     {
       "name": "Funding Service Design",
       "fund_id": "funding-service-design",

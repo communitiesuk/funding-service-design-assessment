@@ -20,7 +20,9 @@
         'summaryText': fund_data.name,
         'text': fund_data.description,
         'id': "assessment-page-details",
-        'open':True}) }}
+        'open':True
+      }) 
+    }}
 
 
 <p class="govuk-body-l">
@@ -46,6 +48,7 @@
       <a href="{{ url_for(
         'application_question',
         fund_id=fund_data.identifier,
+        round_id='spring',
         application_id=application_data.identifier,
         question_id=loop.index)
         }}" class="govuk-body-lead govuk-link govuk-link--no-underline govuk-link--no-visited-state">{{ question }}</a>

@@ -83,7 +83,7 @@ intro_routes_and_test_content = {
             "contains": "COMPLETED",
         },
     ],
-    "/assess/landing/?status_only=completed": [
+    "/assess/landing?status_only=completed": [
         {
             "tag": "p",
             "name": None,
@@ -104,14 +104,9 @@ intro_routes_and_test_content = {
 
 
 def assessment_form_test_routes():
-    application_endpoint = "".join(
-        [
-            "application_store/fund/funding-service-design",
-            "?application_id=fund-app123-a",
-        ]
-    )
+    application_endpoint = "application_store/application?fund_id=funding-service-design&application_id=fund-app123-a"
     question_page_root = (
-        "/assess/funding-service-design/application/fund-app123-a"
+        "/assess/funding-service-design/spring/application/fund-app123-a"
     )
     application_form = get_local_data(application_endpoint)
     routes = {}

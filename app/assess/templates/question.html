@@ -1,75 +1,45 @@
-{% extends "base.html" %} 
+{% extends "base.html" %} {% block content %} 
+{% import 'components/answer_view.html' as answer_view %}
 
-{% block content %}
-
-<div class="govuk-width-container">
-  <a href="{{url_for(
+<a
+  href="{{url_for(
   'assess_bp.application', 
   application_id=application.identifier,
   fund_id=fund.identifier,
-  )
- }}" class="govuk-back-link govuk-!-margin-bottom-2">Back to <b>{{ fund.identifier }}</b></a>
-    <div class="govuk-grid-row">
-      <div class="govuk-grid-column-two-thirds">
-        <p class="govuk-body govuk-!-margin-bottom-0">Project Reference</p>
-        <h2 class="govuk-heading-m govuk-!-padding-top-0 govuk-!-margin-bottom-4">
-          {{ application.identifier }}
-        </h2>
-        <h1 class="govuk-body-lead govuk-!-font-size-36 govuk-!-margin-bottom-2">
-          <b>{{ question.title }}</b>
-        </h1>
-        <details class="govuk-details govuk-!-margin-bottom-4" data-module="govuk-details">
-          <summary class="govuk-details__summary">
-            <span class="govuk-details__summary-text">
-              {% if summary %} 
-                {{ summary }} 
-              {% else %} 
-                Question guidance 
-              {% endif %}
-            </span>
-          </summary>
-          <div class="govuk-details__text">
-            Question guidance here.
-          </div>
-        </details>
+  )}}"
+  class="govuk-back-link govuk-!-margin-bottom-6">
+    Back to <b>{{ fund.identifier }}</b>
+</a>
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <p class="govuk-body govuk-!-margin-bottom-0">Project Reference</p>
+    <h2 class="govuk-heading-m govuk-!-padding-top-0 govuk-!-margin-bottom-4">
+      {{ application.identifier }}:{{round.identifier }}
+    </h2>
+    <h1 class="govuk-heading-l govuk-!-margin-bottom-3">
+      <b>{{ question.title }}</b>
+    </h1>
 
-      <div>
-        <p class="govuk-body">
-          <b>Insert question content here:</b>
-          <br />
-          Lorem Ipsum is simply dummy text of the printing and typesetting
-          industry. Lorem Ipsum has been the industry's standard dummy text ever
-          since the 1500s, when an unknown printer took a galley of type and
-          scrambled it to make a type specimen book. It has survived not only
-          five centuries, but also the leap into electronic typesetting,
-          remaining essentially unchanged. It was popularised in the 1960s with
-          the release of Letraset sheets containing Lorem Ipsum passages, and
-          more recently with desktop publishing software like Aldus PageMaker
-          including versions of Lorem Ipsum.
-        </p>
-        <table class="govuk-table">
-          <tbody class="govuk-table__body">
-            {% for field in question.fields %}
-            <tr class="govuk-table__row">
-              <th
-                scope="row"
-                class="govuk-table__header govuk-!-width-one-third"
-                name="qfield_key_{{field.key}}"
-              >
-                {{ field.title }}
-              </th>
-              <td
-                class="govuk-table__cell govuk-!-width-two-thirds"
-                name="qfield_answer_{{field.key}}"
-              >
-                {{ field.answer }}
-              </td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
+    <details
+      class="govuk-details govuk-!-margin-bottom-4"
+      data-module="govuk-details"
+    >
+      <summary class="govuk-details__summary">
+        <span class="govuk-details__summary-text govuk-!-font-size-16">
+          {% if summary %} {{ summary }} {% else %} Help my with guidance on
+          scoring this section {% endif %}
+        </span>
+      </summary>
+      <div class="govuk-details__text">
+        Lorem Ipsum is simply dummy text of the printing and typesetting
+        industry. Lorem Ipsum has been the industry's standard dummy text ever
+        since the 1500s, when an unknown printer took a galley of type and
+        scrambled it to make a type specimen book.
       </div>
-    </div>
+    </details>
+
+    {{ answer_view.render(question) }}
+  </div>
 </div>
 
 {% endblock %}
