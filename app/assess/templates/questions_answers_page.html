@@ -42,14 +42,14 @@
   </thead>
 
    <tbody class="govuk-table__body">
-    {% for f in fields %}
+    {% for question in fields %}
 
     <tr class="govuk-table__row">
     <td class="govuk-table__cell">
-        {{f.title}}
+        {{question.title}}
     </td>
     <td class="govuk-table__cell">
-        {{ f.answer }}
+        {{ question.answer }}
       </td>
     </tr>
     {% endfor %}
