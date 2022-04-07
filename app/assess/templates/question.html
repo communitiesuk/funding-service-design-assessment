@@ -1,5 +1,6 @@
 {% extends "base.html" %} {% block content %} 
-{% import 'components/answer_view.html' as answer_view %}
+{% import 'components/answer_view_table.html' as answer_view_table %}
+{% import 'components/answer_view_text.html' as answer_view_text %}
 
 <a
   href="{{url_for(
@@ -7,7 +8,7 @@
   application_id=application.identifier,
   fund_id=fund.identifier,
   )}}"
-  class="govuk-back-link govuk-!-margin-bottom-6">
+  class="govuk-back-link govuk-!-margin-bottom-7">
     Back to <b>{{ fund.identifier }}</b>
 </a>
 <div class="govuk-grid-row">
@@ -16,16 +17,16 @@
     <h2 class="govuk-heading-m govuk-!-padding-top-0 govuk-!-margin-bottom-4">
       {{ application.identifier }}:{{round.identifier }}
     </h2>
-    <h1 class="govuk-heading-l govuk-!-margin-bottom-3">
+    <h1 class="govuk-heading-l govuk-!-margin-bottom-2">
       <b>{{ question.title }}</b>
     </h1>
 
     <details
-      class="govuk-details govuk-!-margin-bottom-4"
+      class="govuk-details govuk-!-margin-bottom-5"
       data-module="govuk-details"
     >
       <summary class="govuk-details__summary">
-        <span class="govuk-details__summary-text govuk-!-font-size-16">
+        <span class="govuk-details__summary-text govuk-!-font-size-14">
           {% if summary %} {{ summary }} {% else %} Help my with guidance on
           scoring this section {% endif %}
         </span>
@@ -38,7 +39,7 @@
       </div>
     </details>
 
-    {{ answer_view.render(question) }}
+    {{ answer_view_text.render(question) }}
   </div>
 </div>
 

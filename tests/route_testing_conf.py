@@ -104,7 +104,7 @@ intro_routes_and_test_content = {
 
 
 def assessment_form_test_routes():
-    application_endpoint = "application_store/application?fund_id=funding-service-design&application_id=fund-app123-a"
+    application_endpoint = "application_store/application/fund-app123-a"
     question_page_root = (
         "/assess/funding-service-design/spring/application/fund-app123-a"
     )

@@ -11,6 +11,7 @@ class Application:
     submitted: datetime
     fund_name: str
     fund_id: str
+    round_id: str
     questions: List[Question] = None
     status: str = "NOT_STARTED"
     assessment_deadline: datetime = datetime.now()
@@ -24,6 +25,7 @@ class Application:
             ),
             fund_name=data.get("fund_name"),
             fund_id=data.get("fund_id"),
+            round_id=data.get("round_id"),
             status=data.get("status"),
             assessment_deadline=datetime.fromisoformat(
                 data.get("assessment_deadline", "1970-01-01")

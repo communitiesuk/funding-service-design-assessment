@@ -1,6 +1,6 @@
 from app.assess.data import get_application
 from app.assess.data import get_fund
-from app.assess.data import get_round
+from app.assess.data import get_round_with_applications
 from flask import abort
 from flask import redirect
 from flask import render_template
@@ -20,10 +20,10 @@ class AssessQuestionView(MethodView):
         self.fund = get_fund(fund_id)
 
     def set_round(self, fund_id: str, round_id: str):
-        self.round = get_round(fund_id, round_id)
+        self.round = get_round_with_applications(fund_id, round_id)
 
-    def set_application(self, fund_id: str, application_id: str):
-        self.application = get_application(fund_id, application_id)
+    def set_application(self, application_id: str):
+        self.application = get_application(application_id)
 
     def set_question(self, index: int):
         self.current_question = self.application.get_question(int(index))
@@ -45,7 +45,7 @@ class AssessQuestionView(MethodView):
         if not self.round:
             abort(404)
 
-        self.set_application(fund_id=fund_id, application_id=application_id)
+        self.set_application(application_id=application_id)
         if not self.application:
             abort(404)
 

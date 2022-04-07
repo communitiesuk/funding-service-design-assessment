@@ -48,7 +48,7 @@
       <a href="{{ url_for(
         'application_question',
         fund_id=fund_data.identifier,
-        round_id='spring',
+        round_id=application_data.round_id,
         application_id=application_data.identifier,
         question_id=loop.index)
         }}" class="govuk-body-lead govuk-link govuk-link--no-underline govuk-link--no-visited-state">{{ question }}</a>

@@ -1,10 +1,10 @@
-from app.assess.data import APPLICATION_SEARCH_ENDPOINT
+from app.assess.data import APPLICATIONS_ENDPOINT
 from app.assess.data import get_application
 from app.assess.data import get_applications
 from app.assess.data import get_fund
 from app.assess.data import get_funds
 from app.assess.data import get_questions
-from app.assess.data import get_round
+from app.assess.data import get_round_with_applications
 from app.assess.data import get_rounds
 from app.assess.data import get_todo_summary
 from app.assess.status import get_status
@@ -67,10 +67,10 @@ def landing():
         applications=applications,
         search_params=search_params,
         todo_summary=todo_summary,
-        application_search_endpoint="".join(
+        APPLICATIONS_ENDPOINT="".join(
             [
                 APPLICATION_STORE_API_HOST_PUBLIC,
-                APPLICATION_SEARCH_ENDPOINT.replace("{params}", ""),
+                APPLICATIONS_ENDPOINT.replace("{params}", ""),
             ]
         ),
     )
@@ -93,7 +93,7 @@ def application(application_id, fund_id):
         abort(404)
 
     application_data = get_application(
-        fund_id=fund_id, identifier=application_id
+        application_id=application_id
     )
     if not application_data:
         abort(404)
@@ -149,7 +149,7 @@ def fund_round(fund_id: str, round_id: str):
     if not fund:
         abort(404)
 
-    fund_round = get_round(fund_id=fund_id, round_id=round_id)
+    fund_round = get_round_with_applications(fund_id=fund_id, round_id=round_id)
     if not fund_round:
         abort(404)
 
