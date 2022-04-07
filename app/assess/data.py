@@ -24,7 +24,7 @@ ROUND_ENDPOINT = "/fund/{fund_id}/round/{round_id}"
 # Application Store Endpoints
 APPLICATION_ENDPOINT = "/application/{application_id}"
 STATUS_ENDPOINT = "/application/{application_id}/status"
-APPLICATIONS_ENDPOINT = "/applications?{params}"
+APPLICATIONS_ENDPOINT = "/applications/search?{params}"
 
 
 def get_data(endpoint: str):
