@@ -192,7 +192,7 @@ def view_question_answers_by_page(application_id, fund_id, page_title):
     application = get_application(fund_id=fund_id, identifier=application_id)
     if not application:
         abort(404)
-    fields = application.get_question_field(page_title=page_title)
+    fields = application.get_question_fields(page_title=page_title)
 
     return render_template(
         "questions_answers_page.html",

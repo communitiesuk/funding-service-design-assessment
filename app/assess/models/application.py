@@ -50,7 +50,7 @@ class Application:
             return self.questions[index]
         return None
 
-    def get_question_field(self, page_title):
+    def get_question_fields(self, page_title):
         fields = []
         for question in self.questions:
             if question.title == page_title:
