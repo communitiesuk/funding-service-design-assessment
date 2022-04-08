@@ -21,14 +21,14 @@ intro_routes_and_test_content = {
             "contains": "No applications exist for this round yet.",
         }
     ],
-    "/assess/application/funding-service-design/fund-app123-a": [
+    "/assess/application/fund-app123-a": [
         {
             "tag": "h1",
             "name": None,
             "contains": "fund-app123-a",
         }
     ],
-    "/assess/funding-service-design/spring/application/bad-id": [
+    "/assess/application/bad-id": [
         {"tag": "h1", "name": None, "contains": "Page not found"}
     ],
     "/assess/landing/": [
@@ -105,9 +105,7 @@ intro_routes_and_test_content = {
 
 def assessment_form_test_routes():
     application_endpoint = "application_store/application/fund-app123-a"
-    question_page_root = (
-        "/assess/funding-service-design/spring/application/fund-app123-a"
-    )
+    question_page_root = "/assess/application/fund-app123-a"
     application_form = get_local_data(application_endpoint)
     routes = {}
     for index, question in enumerate(application_form["questions"]):

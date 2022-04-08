@@ -42,12 +42,23 @@ class Application:
     def status_display(self):
         return self.status.replace("_", " ")
 
+    def questions_count_by_status(self, status) -> int:
+        return sum(question.status == status for question in self.questions)
+
+    @property
+    def question_status_summary(self) -> dict:
+        statuses = ["COMPLETED", "NOT STARTED", "IN PROGRESS"]
+        summary = {}
+        for status in statuses:
+            summary.update({status: self.questions_count_by_status(status)})
+        return summary
+
     def add_question(self, question: Question):
         if not self.questions:
             self.questions = []
         self.questions.append(question)
 
-    def get_question(self, index: int):
+    def get_question(self, index: int) -> Question | None:
         if self.questions:
             return self.questions[index]
         return None

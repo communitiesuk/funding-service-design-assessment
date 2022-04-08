@@ -23,7 +23,7 @@ ROUND_ENDPOINT = "/fund/{fund_id}/round/{round_id}"
 
 # Application Store Endpoints
 APPLICATION_ENDPOINT = "/application/{application_id}"
-APPLICATION_STATUS_ENPOINT = "/application/{application_id}/status"
+APPLICATION_STATUS_ENDPOINT = "/application/{application_id}/status"
 APPLICATIONS_SEARCH_ENDPOINT = "/applications/search?{params}"
 
 
@@ -157,32 +157,50 @@ def get_todo_summary() -> dict | None:
     return None
 
 
-def get_application(application_id: str) -> Application | None:
-    application_endpoint = APPLICATION_STORE_API_HOST + APPLICATION_ENDPOINT.format(application_id=application_id)
+def get_application(identifier: str) -> Application | None:
+    application_endpoint = (
+        APPLICATION_STORE_API_HOST
+        + APPLICATION_ENDPOINT.format(application_id=identifier)
+    )
     application_response = get_data(application_endpoint)
     if application_response and "id" in application_response:
         application = Application.from_json(application_response)
+
         return application
     return None
 
 
-def get_questions(application_id, fund_id):
+def get_application_status(application_id: str) -> Application | None:
+    application_status_endpoint = (
+        APPLICATION_STORE_API_HOST
+        + APPLICATION_STATUS_ENDPOINT.format(application_id=application_id)
+    )
+    print(application_status_endpoint)
+    application_status_response = get_data(application_status_endpoint)
+    if application_status_response and "id" in application_status_response:
+        application = Application.from_json(application_status_response)
+
+        return application
+    return None
+
+
+def get_questions(application_id):
     """_summary_: Function is set up to retrieve
     the data from application store with
     get_data() function.
 
     Args:
         application_id: Takes an application_id.
-        fund_id: Takes a fund_id
 
     Returns:
         Returns a dictionary of questions & their statuses.
     """
-    status_endpoint = APPLICATION_STORE_API_HOST + APPLICATION_STATUS_ENPOINT.format(
-        application_id=application_id
+    status_endpoint = (
+        APPLICATION_STORE_API_HOST
+        + APPLICATION_STATUS_ENDPOINT.format(application_id=application_id)
     )
+
     questions = get_data(status_endpoint)
-    print(status_endpoint)
     if questions:
         data = {title: status for title, status in questions.items()}
         return data
