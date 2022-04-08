@@ -1,4 +1,4 @@
-from app.assess.data import APPLICATIONS__SEARCH_ENDPOINT
+from app.assess.data import APPLICATIONS_SEARCH_ENDPOINT
 from app.assess.data import get_application
 from app.assess.data import get_applications
 from app.assess.data import get_fund
@@ -67,10 +67,10 @@ def landing():
         applications=applications,
         search_params=search_params,
         todo_summary=todo_summary,
-        APPLICATIONS__SEARCH_ENDPOINT="".join(
+        APPLICATIONS_SEARCH_ENDPOINT="".join(
             [
                 APPLICATION_STORE_API_HOST_PUBLIC,
-                APPLICATIONS__SEARCH_ENDPOINT.replace("{params}", ""),
+                APPLICATIONS_SEARCH_ENDPOINT.replace("{params}", ""),
             ]
         ),
     )
