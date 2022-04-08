@@ -23,7 +23,7 @@ ROUND_ENDPOINT = "/fund/{fund_id}/round/{round_id}"
 
 # Application Store Endpoints
 APPLICATION_ENDPOINT = "/application/{application_id}"
-STATUS_ENDPOINT = "/application/{application_id}/status"
+APPLICATION_STATUS_ENPOINT = "/application/{application_id}/status"
 APPLICATIONS_ENDPOINT = "/applications/search?{params}"
 
 
@@ -178,7 +178,7 @@ def get_questions(application_id, fund_id):
     Returns:
         Returns a dictionary of questions & their statuses.
     """
-    status_endpoint = APPLICATION_STORE_API_HOST + STATUS_ENDPOINT.format(
+    status_endpoint = APPLICATION_STORE_API_HOST + APPLICATION_STATUS_ENPOINT.format(
         application_id=application_id
     )
     questions = get_data(status_endpoint)
