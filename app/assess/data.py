@@ -50,7 +50,7 @@ def get_local_data(endpoint: str):
         return api_data.get(endpoint)
 
 
-def call_get_applications(params: dict):
+def call_search_applications(params: dict):
     applications_endpoint = (
         APPLICATION_STORE_API_HOST
         + APPLICATIONS_SEARCH_ENDPOINT.format(params=urlencode(params))
@@ -99,7 +99,7 @@ def get_round_with_applications(fund_id: str, round_id: str) -> Round | None:
     round_response = get_data(round_endpoint)
     if round_response and "round_id" in round_response:
         fund_round = Round.from_json(round_response)
-        applications_response = call_get_applications({
+        applications_response = call_search_applications({
             "fund_id": fund_id,
             "datetime_start": fund_round.opens,
             "datetime_end": fund_round.deadline,
@@ -113,7 +113,7 @@ def get_round_with_applications(fund_id: str, round_id: str) -> Round | None:
 
 
 def get_applications(params: dict) -> List[Application] | None:
-    applications_response = call_get_applications(params)
+    applications_response = call_search_applications(params)
     if applications_response and len(applications_response) > 0:
         applications = []
         for application_data in applications_response:
@@ -124,7 +124,7 @@ def get_applications(params: dict) -> List[Application] | None:
 
 
 def get_todo_summary() -> dict | None:
-    applications = call_get_applications("")
+    applications = call_search_applications("")
     if applications and len(applications) > 0:
         todo_summary = {}
         todo_summary.update(
