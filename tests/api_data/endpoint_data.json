@@ -80,11 +80,39 @@
     "application_url": "https://funding-service-design-form-runner.london.cloudapps.digital/funding-application"
   },
   "application_store/application/fund-app123-a/status": {
-    "About you": "COMPLETED",
-    "About your organisation": "COMPLETED",
-    "Choose your country": "COMPLETED",
-    "England": "IN PROGRESS",
-    "Declaration": "NOT STARTED"
+    "fund_name": "Funding Service Design",
+    "round_id": "spring",
+    "fund_id": "funding-service-design",
+    "date_submitted": "2022-02-23T12:00:00.000",
+    "assessment_deadline": "2022-06-23T12:00:00.000",
+    "status": "NOT_STARTED",
+    "id": "fund-app123-a",
+    "questions": [
+      {
+        "question": "About you",
+        "status": "COMPLETED"
+      },
+      {
+        "question": "About your organisation",
+        "status": "COMPLETED"
+      },
+      {
+        "question": "About your organisation",
+        "status": "COMPLETED"
+      },
+      {
+        "question": "Choose your country",
+        "status": "COMPLETED"
+      },
+      {
+        "question": "England",
+        "status": "IN PROGRESS"
+      },
+      {
+        "question": "Declaration",
+        "status": "NOT STARTED"
+      }
+    ]
   },
   "application_store/application/fund-app123-a": {
     "fund_name": "Funding Service Design",

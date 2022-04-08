@@ -108,8 +108,6 @@ def create_app() -> Flask:
             "/".join(
                 [
                     flask_app.config["ASSESSMENT_HUB_ROUTE"],
-                    "<fund_id>",
-                    "<round_id>",
                     "application",
                     "<application_id>",
                     "question",
