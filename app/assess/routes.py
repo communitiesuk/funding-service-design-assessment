@@ -1,11 +1,4 @@
-from app.assess.data import APPLICATIONS_SEARCH_ENDPOINT
-from app.assess.data import get_application_status
-from app.assess.data import get_applications
-from app.assess.data import get_fund
-from app.assess.data import get_funds
-from app.assess.data import get_round_with_applications
-from app.assess.data import get_rounds
-from app.assess.data import get_todo_summary
+from app.assess.data import *
 from app.config import APPLICATION_STORE_API_HOST_PUBLIC
 from app.config import ASSESSMENT_HUB_ROUTE
 from flask import abort
@@ -92,10 +85,6 @@ def application(application_id):
     fund = get_fund(application.fund_id)
     if not fund:
         abort(404)
-
-    # application_summary = get_application_summary()
-    # questions_data = get_questions(application_id, fund_id)
-    # status_data = get_status(questions_data)
 
     return render_template(
         "application.html", application=application, fund=fund

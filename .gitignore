@@ -142,3 +142,9 @@ app/.DS_Store
 # GovUK Frontend
 app/static/govuk-frontend
 govuk_components
+
+# Test output
+axe_reports
+
+# Build output
+html
