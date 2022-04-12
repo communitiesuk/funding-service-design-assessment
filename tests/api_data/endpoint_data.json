@@ -79,7 +79,7 @@
     "deadline": "2022-11-30T00:00:00",
     "application_url": "https://funding-service-design-form-runner.london.cloudapps.digital/funding-application"
   },
-  "application_store/application/fund-app123-a/status": {
+  "application_store/applications/fund-app123-a/status": {
     "round_id": "spring",
     "fund_id": "funding-service-design",
     "date_submitted": "2022-02-23T12:00:00.000",
@@ -113,7 +113,7 @@
       }
     ]
   },
-  "application_store/application/fund-app123-a": {
+  "application_store/applications/fund-app123-a": {
     "round_id": "spring",
     "fund_id": "funding-service-design",
     "date_submitted": "2022-02-23T12:00:00.000",

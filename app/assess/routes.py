@@ -61,7 +61,7 @@ def landing():
         applications_endpoint="".join(
             [
                 APPLICATION_STORE_API_HOST_PUBLIC,
-                APPLICATIONS_SEARCH_ENDPOINT.replace("{params}", ""),
+                APPLICATION_SEARCH_ENDPOINT.replace("{params}", ""),
             ]
         ),
     )

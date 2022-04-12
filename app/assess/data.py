@@ -22,9 +22,9 @@ ROUNDS_ENDPOINT = "/fund/{fund_id}"
 ROUND_ENDPOINT = "/fund/{fund_id}/round/{round_id}"
 
 # Application Store Endpoints
-APPLICATION_ENDPOINT = "/application/{application_id}"
-APPLICATION_STATUS_ENDPOINT = "/application/{application_id}/status"
-APPLICATIONS_SEARCH_ENDPOINT = "/applications/search?{params}"
+APPLICATION_ENDPOINT = "/applications/{application_id}"
+APPLICATION_STATUS_ENDPOINT = "/applications/{application_id}/status"
+APPLICATION_SEARCH_ENDPOINT = "/applications/search?{params}"
 
 
 def get_data(endpoint: str):
@@ -53,7 +53,7 @@ def get_local_data(endpoint: str):
 def call_search_applications(params: dict):
     applications_endpoint = (
         APPLICATION_STORE_API_HOST
-        + APPLICATIONS_SEARCH_ENDPOINT.format(params=urlencode(params))
+        + APPLICATION_SEARCH_ENDPOINT.format(params=urlencode(params))
     )
     applications_response = get_data(applications_endpoint)
     return applications_response
