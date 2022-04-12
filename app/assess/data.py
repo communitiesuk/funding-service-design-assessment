@@ -22,17 +22,9 @@ ROUNDS_ENDPOINT = "/fund/{fund_id}"
 ROUND_ENDPOINT = "/fund/{fund_id}/round/{round_id}"
 
 # Application Store Endpoints
-APPLICATIONS_ENDPOINT = "".join(
-    [
-        "/fund/{fund_id}?",
-        "datetime_start={datetime_start}&datetime_end={datetime_end}",
-    ]
-)
-APPLICATION_SEARCH_ENDPOINT = "/search?{params}"
-APPLICATION_ENDPOINT = "/fund/{fund_id}?application_id={application_id}"
-
-# Status endpoints
-STATUS_ENDPOINT = "/fund/status/{application_id}"
+APPLICATION_ENDPOINT = "/application/{application_id}"
+APPLICATION_STATUS_ENDPOINT = "/application/{application_id}/status"
+APPLICATIONS_SEARCH_ENDPOINT = "/applications/search?{params}"
 
 
 def get_data(endpoint: str):
@@ -56,6 +48,15 @@ def get_local_data(endpoint: str):
     fp.close()
     if endpoint in api_data:
         return api_data.get(endpoint)
+
+
+def call_search_applications(params: dict):
+    applications_endpoint = (
+        APPLICATION_STORE_API_HOST
+        + APPLICATIONS_SEARCH_ENDPOINT.format(params=urlencode(params))
+    )
+    applications_response = get_data(applications_endpoint)
+    return applications_response
 
 
 def get_funds() -> List[Fund] | None:
@@ -91,22 +92,18 @@ def get_rounds(fund_id: str) -> Fund | List:
     return rounds
 
 
-def get_round(fund_id: str, round_id: str) -> Round | None:
+def get_round_with_applications(fund_id: str, round_id: str) -> Round | None:
     round_endpoint = ROUND_STORE_API_HOST + ROUND_ENDPOINT.format(
         fund_id=fund_id, round_id=round_id
     )
     round_response = get_data(round_endpoint)
     if round_response and "round_id" in round_response:
         fund_round = Round.from_json(round_response)
-        applications_endpoint = (
-            APPLICATION_STORE_API_HOST
-            + APPLICATIONS_ENDPOINT.format(
-                fund_id=fund_id,
-                datetime_start=fund_round.opens,
-                datetime_end=fund_round.deadline,
-            )
-        )
-        applications_response = get_data(applications_endpoint)
+        applications_response = call_search_applications({
+            "fund_id": fund_id,
+            "datetime_start": fund_round.opens,
+            "datetime_end": fund_round.deadline,
+        })
         if applications_response and len(applications_response) > 0:
             for application in applications_response:
                 fund_round.add_application(Application.from_json(application))
@@ -116,11 +113,7 @@ def get_round(fund_id: str, round_id: str) -> Round | None:
 
 
 def get_applications(params: dict) -> List[Application] | None:
-    applications_endpoint = (
-        APPLICATION_STORE_API_HOST
-        + APPLICATION_SEARCH_ENDPOINT.format(params=urlencode(params))
-    )
-    applications_response = get_data(applications_endpoint)
+    applications_response = call_search_applications(params)
     if applications_response and len(applications_response) > 0:
         applications = []
         for application_data in applications_response:
@@ -131,11 +124,7 @@ def get_applications(params: dict) -> List[Application] | None:
 
 
 def get_todo_summary() -> dict | None:
-    applications_endpoint = (
-        APPLICATION_STORE_API_HOST
-        + APPLICATION_SEARCH_ENDPOINT.format(params="")
-    )
-    applications = get_data(applications_endpoint)
+    applications = call_search_applications("")
     if applications and len(applications) > 0:
         todo_summary = {}
         todo_summary.update(
@@ -168,12 +157,10 @@ def get_todo_summary() -> dict | None:
     return None
 
 
-def get_application(fund_id: str, identifier: str) -> Application | None:
+def get_application(identifier: str) -> Application | None:
     application_endpoint = (
         APPLICATION_STORE_API_HOST
-        + APPLICATION_ENDPOINT.format(
-            fund_id=fund_id, application_id=identifier
-        )
+        + APPLICATION_ENDPOINT.format(application_id=identifier)
     )
     application_response = get_data(application_endpoint)
     if application_response and "id" in application_response:
@@ -183,23 +170,37 @@ def get_application(fund_id: str, identifier: str) -> Application | None:
     return None
 
 
-def get_questions(application_id, fund_id):
+def get_application_status(application_id: str) -> Application | None:
+    application_status_endpoint = (
+        APPLICATION_STORE_API_HOST
+        + APPLICATION_STATUS_ENDPOINT.format(application_id=application_id)
+    )
+    print(application_status_endpoint)
+    application_status_response = get_data(application_status_endpoint)
+    if application_status_response and "id" in application_status_response:
+        application = Application.from_json(application_status_response)
+
+        return application
+    return None
+
+
+def get_questions(application_id):
     """_summary_: Function is set up to retrieve
     the data from application store with
     get_data() function.
 
     Args:
         application_id: Takes an application_id.
-        fund_id: Takes a fund_id
 
     Returns:
         Returns a dictionary of questions & their statuses.
     """
-    status_endpoint = APPLICATION_STORE_API_HOST + STATUS_ENDPOINT.format(
-        application_id=application_id
+    status_endpoint = (
+        APPLICATION_STORE_API_HOST
+        + APPLICATION_STATUS_ENDPOINT.format(application_id=application_id)
     )
+
     questions = get_data(status_endpoint)
-    print(status_endpoint)
     if questions:
         data = {title: status for title, status in questions.items()}
         return data

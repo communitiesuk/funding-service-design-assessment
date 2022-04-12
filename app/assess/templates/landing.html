@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {%- from 'govuk_frontend_jinja/components/inset-text/macro.html' import govukInsetText -%}
 {%- from "govuk_frontend_jinja/components/button/macro.html" import govukButton -%}
-{% import 'components/projects_table/projects_table.html' as projects_table-%}
+{% import 'components/applications_table.html' as applications_table-%}
 
 {% block content %}
       <p class="govuk-heading-s">Morning Jane Doe</p>
@@ -29,5 +29,5 @@
       </div>
 <br /><br />
       <p class="govuk-heading-l">Your assessments</p>
-      {{ projects_table.render(applications,search_params,application_search_endpoint) }}
+      {{ applications_table.render(applications,search_params,applications_endpoint) }}
 {% endblock %}

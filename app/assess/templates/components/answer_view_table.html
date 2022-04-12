@@ -1,0 +1,23 @@
+{% macro render(question) -%}
+<table class="govuk-table">
+  <tbody class="govuk-table__body">
+    {% for field in question.fields %}
+    <tr class="govuk-table__row">
+      <th
+        scope="row"
+        class="govuk-table__header govuk-!-width-one-third"
+        name="qfield_key_{{field.key}}"
+      >
+        {{ field.title }}
+      </th>
+      <td
+        class="govuk-table__cell govuk-!-width-two-thirds"
+        name="qfield_answer_{{field.key}}"
+      >
+        {{ field.answer }}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{%- endmacro %}

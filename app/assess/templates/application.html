@@ -14,44 +14,42 @@
 {% block content %}
 
 <span class="govuk-caption-l">Project reference</span>
-<h1 class="govuk-heading-l">{{application_data.identifier}}</h1>
+<h1 class="govuk-heading-l">{{application.identifier}}</h1>
 
     {{ govukDetails({
-        'summaryText': fund_data.name,
-        'text': fund_data.description,
+        'summaryText': fund.name,
+        'text': fund.description,
         'id': "assessment-page-details",
-        'open':True}) }}
+        'open':True
+      })
+    }}
 
 
 <p class="govuk-body-l">
-   You have completed {{status_data.get("COMPLETED")}}
-   of {{status_data.get('TOTAL')}} questions.
+   You have completed {{application.question_status_summary.get("COMPLETED")}}
+   of {{application.questions|length}} questions.
   </p>
 
-  <h1 class="govuk-heading-l">General assessment</h1>
+  <p class="govuk-heading-xl">General assessment</p>
 
 <table class="govuk-table">
-  <thead class="govuk-table__head">
-    <tr class="govuk-table__row">
-      <th class="govuk-table__header govuk-table__caption--m" scope="col">
-         Question </th>
-      <th class="govuk-table__header govuk-table__caption--m" scope="col">
-        Status </th>
-    </tr>
-  </thead>
-  {% for question, status in questions_data.items() %}
+  {% for question in application.questions %}
   <tbody class="govuk-table__body">
     <tr class="govuk-table__row">
       <td class="govuk-table__cell">
-        {{question}}
+      <a href="{{ url_for(
+        'application_question',
+        application_id=application.identifier,
+        question_id=loop.index)
+        }}" class="govuk-link govuk-link--no-underline govuk-link--no-visited-state">{{ question.title }}</a>
       </td>
 
       <td class="govuk-table__cell">
         <strong class="govuk-tag
-        {% if status == 'NOT STARTED' %}govuk-tag--grey
-        {% elif status == 'IN PROGRESS' %}govuk-tag--blue
+        {% if question.status == 'NOT STARTED' %}govuk-tag--grey
+        {% elif question.status == 'IN PROGRESS' %}govuk-tag--blue
         {%endif%}">
-        {{ status }}
+        {{ question.status }}
       </strong>
       </td>
     </tr>
