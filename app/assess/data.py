@@ -18,8 +18,8 @@ FUNDS_ENDPOINT = "/funds/"
 FUND_ENDPOINT = "/funds/{fund_id}"
 
 # Round Store Endpoints
-ROUNDS_ENDPOINT = "/fund/{fund_id}"
-ROUND_ENDPOINT = "/fund/{fund_id}/round/{round_id}"
+ROUNDS_ENDPOINT = "/funds/{fund_id}"
+ROUND_ENDPOINT = "/funds/{fund_id}/rounds/{round_id}"
 
 # Application Store Endpoints
 APPLICATION_ENDPOINT = "/applications/{application_id}"
@@ -99,11 +99,13 @@ def get_round_with_applications(fund_id: str, round_id: str) -> Round | None:
     round_response = get_data(round_endpoint)
     if round_response and "round_id" in round_response:
         fund_round = Round.from_json(round_response)
-        applications_response = call_search_applications({
-            "fund_id": fund_id,
-            "datetime_start": fund_round.opens,
-            "datetime_end": fund_round.deadline,
-        })
+        applications_response = call_search_applications(
+            {
+                "fund_id": fund_id,
+                "datetime_start": fund_round.opens,
+                "datetime_end": fund_round.deadline,
+            }
+        )
         if applications_response and len(applications_response) > 0:
             for application in applications_response:
                 fund_round.add_application(Application.from_json(application))
