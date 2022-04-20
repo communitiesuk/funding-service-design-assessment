@@ -104,7 +104,7 @@ intro_routes_and_test_content = {
 
 
 def assessment_form_test_routes():
-    application_endpoint = "application_store/application/fund-app123-a"
+    application_endpoint = "application_store/applications/fund-app123-a"
     question_page_root = "/assess/application/fund-app123-a"
     application_form = get_local_data(application_endpoint)
     routes = {}
