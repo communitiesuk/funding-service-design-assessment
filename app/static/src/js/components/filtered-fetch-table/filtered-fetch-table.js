@@ -168,7 +168,7 @@ AssessFrontend.FilteredFetchTable.prototype.formatContent = function(col, data) 
 			return `<strong class="govuk-tag govuk-tag--grey">${data[responseKey]}</strong>`
 		}
 	} else if (responseType == "id") {
-		return `<a href="/assess/application/${data[responseKey]}" class="govuk-link">${data[responseKey]}</a>`
+		return `<a href="/assess/application/${data[responseKey]}" class="govuk-link fsd-application-link">${data[responseKey]}</a>`
 	} else {
 		return data[responseKey];
 	}

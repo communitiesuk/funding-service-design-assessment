@@ -81,7 +81,7 @@
         {% for application in applications %}
             <tr class="govuk-table__row">
 
-                <td class="govuk-table__cell"><a href="{{url_for('assess_bp.application',application_id=application.identifier)}}" class="govuk-link">{{ application.identifier }}</a></td>
+                <td class="govuk-table__cell"><a href="{{url_for('assess_bp.application',application_id=application.identifier)}}" class="govuk-link fsd-application-link">{{ application.identifier }}</a></td>
 
                 <td class="govuk-table__cell"><strong class="govuk-tag {% if application.status == 'NOT_STARTED' %}govuk-tag--grey{% elif application.status == 'ASSESSING' %}govuk-tag--blue{%endif%}">{{ application.status_display }}</strong></td>
 
