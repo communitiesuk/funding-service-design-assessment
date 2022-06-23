@@ -1,4 +1,5 @@
 from app.assess.data import *
+from app.assess.question_parser_utils import question_to_table_view
 from app.config import APPLICATION_STORE_API_HOST_PUBLIC
 from app.config import ASSESSMENT_HUB_ROUTE
 from flask import abort
@@ -26,6 +27,41 @@ def funds():
 
     return render_template("funds.html", funds=funds)
 
+@assess_bp.route("/fragments/text_area_2", methods=["GET"])
+def text_area_2():
+    """
+    Page showing available funds
+    from fund store
+    :return:
+    """
+
+    question_data = {
+            "question": "About your project",
+            "fields": [
+                {
+                    "key": "about-your-project-capital-expenditure",
+                    "title": "Capital expenditure",
+                    "type": "text",
+                    "answer": "£10"
+                },
+                {
+                    "key": "about-your-project-revenue",
+                    "title": "Revenue",
+                    "type": "text",
+                    "answer": "£4"
+                },
+                {
+                    "key": "about-your-project-subsidy",
+                    "title": "Subsidy",
+                    "type": "text",
+                    "answer": "£5"
+                }
+            ]
+        }
+
+    row_dict = question_to_table_view(question_data, with_total=True, numeric_answers=True)
+
+    return render_template("text_area_2.html", question_data=question_data, row_dict=row_dict)
 
 @assess_bp.route("/landing/", methods=["GET"])
 def landing():

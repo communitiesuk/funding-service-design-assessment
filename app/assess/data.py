@@ -1,6 +1,6 @@
 import json
 import os
-from typing import List
+from typing import List, Union
 from urllib.parse import urlencode
 
 import requests
@@ -59,7 +59,7 @@ def call_search_applications(params: dict):
     return applications_response
 
 
-def get_funds() -> List[Fund] | None:
+def get_funds() -> Union[List[Fund],None]:
     endpoint = FUND_STORE_API_HOST + FUNDS_ENDPOINT
     response = get_data(endpoint)
     if response and len(response) > 0:
@@ -70,7 +70,7 @@ def get_funds() -> List[Fund] | None:
     return None
 
 
-def get_fund(fund_id: str) -> Fund | None:
+def get_fund(fund_id: str) -> Union[Fund,None]:
     endpoint = FUND_STORE_API_HOST + FUND_ENDPOINT.format(fund_id=fund_id)
     response = get_data(endpoint)
     if response and "fund_id" in response:
@@ -82,7 +82,7 @@ def get_fund(fund_id: str) -> Fund | None:
     return None
 
 
-def get_rounds(fund_id: str) -> Fund | List:
+def get_rounds(fund_id: str) -> Union[Fund,List]:
     endpoint = ROUND_STORE_API_HOST + ROUNDS_ENDPOINT.format(fund_id=fund_id)
     response = get_data(endpoint)
     rounds = []
@@ -92,7 +92,7 @@ def get_rounds(fund_id: str) -> Fund | List:
     return rounds
 
 
-def get_round_with_applications(fund_id: str, round_id: str) -> Round | None:
+def get_round_with_applications(fund_id: str, round_id: str) -> Union[Round,None]:
     round_endpoint = ROUND_STORE_API_HOST + ROUND_ENDPOINT.format(
         fund_id=fund_id, round_id=round_id
     )
