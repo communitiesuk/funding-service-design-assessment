@@ -141,7 +141,7 @@ def fund_round(fund_id: str, round_id: str):
     return render_template("round.html", fund=fund, round=fund_round)
 
 
-@assess_bp.route("/fragments/text_input")
+@assess_bp.route("/fragments/text_input/")
 def text_input():
     """
     Render html page with json contains question & answer.
@@ -197,10 +197,10 @@ def text_input():
             }
         ],
     }
-    name = QuestionField.get_question_fields(input_text_name)
-    email = QuestionField.get_question_fields(input_text_email)
-    address = QuestionField.get_question_fields(input_text_address)
 
     return render_template(
-        "example_text_input.html", name=name, email=email, address=address
+        "example_text_input.html",
+        name=input_text_name,
+        email=input_text_email,
+        address=input_text_address,
     )
