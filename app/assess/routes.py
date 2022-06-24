@@ -147,7 +147,7 @@ def text_input():
     Render html page with json of question & answers & page title.
     """
 
-    input_text_json = {
+    input_text_name = {
         "name": "Digital Form Builder - Runner text-input-form",
         "questions": [
             {
@@ -157,40 +157,50 @@ def text_input():
                         "key": "oLfixk",
                         "title": "Your name",
                         "type": "text",
-                        "answer": "Harry The Great",
+                        "answer": "Steve",
                     },
-                    {
-                        "key": "npenre",
-                        "title": "Your phone number",
-                        "type": "text",
-                        "answer": "01234567890",
-                    },
+                ],
+            }
+        ],
+    }
+
+    input_text_email = {
+        "name": "Digital Form Builder - Runner text-input-form",
+        "questions": [
+            {
+                "question": "First page",
+                "fields": [
                     {
                         "key": "CAKCpJ",
                         "title": "Your email address",
                         "type": "text",
                         "answer": "example@example.com",
                     },
+                ],
+            }
+        ],
+    }
+
+    input_text_address = {
+        "name": "Digital Form Builder - Runner text-input-form",
+        "questions": [
+            {
+                "question": "First page",
+                "fields": [
                     {
                         "key": "gOgMvi",
                         "title": "Your UK address",
                         "type": "text",
                         "answer": "99 evoco, example street, London, UB5 5FF",
                     },
-                    {
-                        "key": "suITII",
-                        "title": "Assessor comment",
-                        "type": "text",
-                        "answer": "testing text area",
-                    },
                 ],
             }
         ],
-        "metadata": {"paymentSkipped": False},
     }
-    text_template = QuestionField.get_question_fields(input_text_json)
-    page_title = QuestionField.get_page_title(input_text_json)
+    name = QuestionField.get_question_fields(input_text_name)
+    email = QuestionField.get_question_fields(input_text_email)
+    address = QuestionField.get_question_fields(input_text_address)
 
     return render_template(
-        "text_input.html", page_title=page_title, json=text_template
+        "example_text_input.html", name=name, email=email, address=address
     )
