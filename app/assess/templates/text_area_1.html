@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{%- from "govuk_frontend_jinja/components/table/macro.html" import govukTable -%}
+
+{% block content %}
+
+    <h1 class="govuk-heading-l">{{ data_dict["title"] }}</h1>
+
+    {% for i in data_dict["answers"] %}
+    <div class="govuk-!-padding-bottom-6">
+        <h3 class="govuk-heading-s">{{ i["title"] }}</h3>
+        <p class="govuk-body">{{ i["answer"] }}</p>
+    </div>
+    {% endfor %}
+    
+{% endblock %}

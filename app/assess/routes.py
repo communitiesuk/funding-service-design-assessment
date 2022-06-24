@@ -27,6 +27,53 @@ def funds():
     return render_template("funds.html", funds=funds)
 
 
+@assess_bp.route("/fragments/text_area_1", methods=["GET"])
+def text_area_1():
+    """
+    Page showing fragment of text_area_1
+    :return:
+    """
+
+    question_data = {
+        "question": "About your organisation",
+        "fields": [
+            {
+                "key": "application-name",
+                "title": "Applicant name",
+                "type": "text",
+                "answer": "Bobby Bob"
+            },
+            {
+                "key": "applicant-email",
+                "title": "Email",
+                "type": "text",
+                "answer": "a@example.com"
+            },
+            {
+                "key": "applicant-telephone-number",
+                "title": "Telephone number",
+                "type": "text",
+                "answer": "01632 960 000"
+            },
+            {
+                "key": "applicant-website",
+                "title": "Website",
+                "type": "text",
+                "answer": "https://www.onedirection.com"
+            }
+        ]
+    }
+
+    data_dict = {}
+    
+    data_dict["title"] = question_data["question"]
+
+    data_dict["answers"] = [{"title" : data_dict["title"], "answer" : data_dict["answer"]}  
+                            for data_dict in question_data["fields"]]
+
+    return render_template("text_area_1.html", data_dict = data_dict)
+
+
 @assess_bp.route("/landing/", methods=["GET"])
 def landing():
     """
