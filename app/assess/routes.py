@@ -144,7 +144,7 @@ def fund_round(fund_id: str, round_id: str):
 @assess_bp.route("/fragments/text_input")
 def text_input():
     """
-    Render html page with json of question & answers & page title.
+    Render html page with json contains question & answer.
     """
 
     input_text_name = {
