@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% from "components/text_input_template.html" import textInput as text %}
+
+{{ text(name) }}
+{{ text(email) }}
+{{ text(address) }}
+
+{% endblock %}
