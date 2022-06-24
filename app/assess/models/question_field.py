@@ -18,14 +18,8 @@ class QuestionField:
         )
 
     @staticmethod
-    def get_page_title(json):
-        for page in json["questions"]:
-            return page["question"]
-
-    @staticmethod
     def get_question_fields(json):
-        fields = []
         for pages in json["questions"]:
             for page in pages["fields"]:
-                fields.append(page)
-        return fields
+                print(page)
+                return page
