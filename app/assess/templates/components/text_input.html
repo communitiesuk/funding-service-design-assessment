@@ -6,8 +6,11 @@
       <tbody class="govuk-table__body">
         <tr class="govuk-table__row">
           <th scope="row" class="govuk-table__header govuk-!-width-one-half">
-            {{ json.title }}</th>
-          <td class="govuk-table__cell">{{ json.answer }}</td>
+            {{textInputFunc(json).title}}
+          </th>
+          <td class="govuk-table__cell">
+            {{textInputFunc(json).answer}}
+          </td>
         </tr>
       </tbody>
     </table>
