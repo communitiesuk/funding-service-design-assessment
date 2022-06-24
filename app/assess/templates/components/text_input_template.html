@@ -1,79 +1,21 @@
-<!--------------- Section for back-link --------------->
-{% macro backLink(value) %}
-
-{%- from "govuk_frontend_jinja/components/back-link/macro.html" import govukBackLink -%}
-
-{{ govukBackLink
-  ({ "text": value,
-   href: "{{ value }}"
-}) }}
-
-{% endmacro %}
-
-
-<!--------------- Section for question-page title --------------->
-{% macro pageTitle(json) %}
-
-<div>
-  <h1 class="govuk-heading-l govuk-!-margin-top-4 govuk-!-margin-bottom-9">
-    {{ json }}
-  </h1>
-</div>
-
-{% endmacro %}
-
-
-<!--------------- Section for question and answers --------------->
-{% macro questionsAnswers(json) %}
+{% macro textInput(json) %}
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-three-quarters">
     <table class="govuk-table">
-
       <tbody class="govuk-table__body">
-        {% for fields in json %}
-        {% if "Assessor" not in fields.title %}
         <tr class="govuk-table__row">
           <th scope="row" class="govuk-table__header govuk-!-width-one-half">
-            {{ fields.title }}</th>
-          <td class="govuk-table__cell">{{ fields.answer }}</td>
+            {{ json.title }}</th>
+          <td class="govuk-table__cell">{{ json.answer }}</td>
         </tr>
-        {% endif %}
-        {% endfor %} 
       </tbody>
-
     </table>
   </div>
+
+
   <div class="govuk-grid-column-one-quarter">
   </div>
 </div>
-
-{% endmacro %}
-
-
-<!--------------- Section for assessor comments --------------->
-{% macro assessorSection(json) %}
-
-{%- from "govuk_frontend_jinja/components/button/macro.html" import govukButton -%}
-
-<div class="govuk-form-group">
-  {% for fields in json %}
-  {% if "Assessor" in fields.title %}
-  <h1 class="govuk-label-wrapper">
-    <label class="govuk-label govuk-label--m" for="two-thirds">
-      <tr class="govuk-table__row">
-        <th scope="row" class="govuk-table__header govuk-!-width-one-half">
-          {{ fields.title }}</th>
-      </tr>
-    </label>
-  </h1>
-  <textarea class="govuk-textarea govuk-!-width-two-thirds"" name=" two-thirds" rows="5" id="two-thirds"
-    aria-describedby="more-detail-hint">{{ fields.answer }}</textarea>
-  {% endif %} {% endfor %}
-</div>
-
-{{ govukButton({
-  "text": "Add comment"
-}) }}
 
 {% endmacro %}
