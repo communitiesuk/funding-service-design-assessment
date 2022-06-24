@@ -1,3 +1,4 @@
+from app.assess.models.question_field import QuestionField
 from app.assets import compile_static_assets
 from flask import Flask
 from flask_assets import Environment
@@ -28,6 +29,11 @@ def create_app() -> Flask:
 
     flask_app.jinja_env.trim_blocks = True
     flask_app.jinja_env.lstrip_blocks = True
+
+    # -- set global func for question fields - Being used inside text_input.html --#
+    flask_app.jinja_env.globals.update(
+        textInputFunc=QuestionField.get_question_fields
+    )
 
     csp = {
         "default-src": "'self'",
