@@ -21,5 +21,4 @@ class QuestionField:
     def get_question_fields(json):
         for pages in json["questions"]:
             for page in pages["fields"]:
-                print(page)
                 return page
