@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% from "components/text_input_template.html" import backLink as backLink %}
+{% from "components/text_input_template.html" import pageTitle as title %}
+{% from "components/text_input_template.html" import questionsAnswers as questions %}
+{% from "components/text_input_template.html" import assessorSection as assessor %}
+
+{{ backLink("Back to la-la-land") }}
+{{ title(page_title) }}
+{{ questions(json) }}
+{{ assessor(json) }}
+
+{% endblock %}
