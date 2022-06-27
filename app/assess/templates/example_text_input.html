@@ -1,11 +1,10 @@
 {% extends "base.html" %}
+{% from "components/text_input.html" import textInput as text %}
 
 {% block content %}
 
-{% from "components/text_input.html" import textInput as text %}
+{{ text(name.title, name.answer) }}
+{{ text(address.title, address.answer)}}
 
-{{ text(name) }}
-{{ text(email) }}
-{{ text(address) }}
 
 {% endblock %}
