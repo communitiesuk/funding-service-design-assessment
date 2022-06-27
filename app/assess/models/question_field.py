@@ -16,9 +16,3 @@ class QuestionField:
             field_type=data.get("field_type"),
             answer=data.get("answer"),
         )
-
-    @staticmethod
-    def get_question_fields(json):
-        for pages in json["questions"]:
-            for page in pages["fields"]:
-                return page

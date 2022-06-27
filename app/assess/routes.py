@@ -1,3 +1,5 @@
+from uuid import NAMESPACE_URL
+
 from app.assess.data import *
 from app.assess.models.question_field import QuestionField
 from app.config import APPLICATION_STORE_API_HOST_PUBLIC
@@ -177,8 +179,12 @@ def text_input():
         ],
     }
 
-    name = QuestionField.get_question_fields(input_text_name)
-    address = QuestionField.get_question_fields(input_text_address)
+    name = QuestionField.from_json(
+        input_text_name["questions"][0]["fields"][0]
+    )
+    address = QuestionField.from_json(
+        input_text_address["questions"][0]["fields"][0]
+    )
 
     return render_template(
         "example_text_input.html",
