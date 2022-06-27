@@ -1,4 +1,4 @@
-{% macro textInput(json) %}
+{% macro textInput(key,value) %}
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-three-quarters">
@@ -6,10 +6,10 @@
       <tbody class="govuk-table__body">
         <tr class="govuk-table__row">
           <th scope="row" class="govuk-table__header govuk-!-width-one-half">
-            {{textInputFunc(json).title}}
+           {{key}}
           </th>
           <td class="govuk-table__cell">
-            {{textInputFunc(json).answer}}
+            {{value}}
           </td>
         </tr>
       </tbody>
