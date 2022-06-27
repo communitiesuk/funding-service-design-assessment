@@ -148,10 +148,8 @@ def text_input():
     """
 
     input_text_name = {
-        "name": "Digital Form Builder - Runner text-input-form",
         "questions": [
             {
-                "question": "First page",
                 "fields": [
                     {
                         "key": "oLfixk",
@@ -164,28 +162,9 @@ def text_input():
         ],
     }
 
-    input_text_email = {
-        "name": "Digital Form Builder - Runner text-input-form",
-        "questions": [
-            {
-                "question": "First page",
-                "fields": [
-                    {
-                        "key": "CAKCpJ",
-                        "title": "Your email address",
-                        "type": "text",
-                        "answer": "example@example.com",
-                    },
-                ],
-            }
-        ],
-    }
-
     input_text_address = {
-        "name": "Digital Form Builder - Runner text-input-form",
         "questions": [
             {
-                "question": "First page",
                 "fields": [
                     {
                         "key": "gOgMvi",
@@ -198,9 +177,11 @@ def text_input():
         ],
     }
 
+    name = QuestionField.get_question_fields(input_text_name)
+    address = QuestionField.get_question_fields(input_text_address)
+
     return render_template(
         "example_text_input.html",
-        name=input_text_name,
-        email=input_text_email,
-        address=input_text_address,
+        name=name,
+        address=address,
     )
