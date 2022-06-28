@@ -1,5 +1,5 @@
 from app.assess.data import *
-from app.assess.question_parser_utils import question_to_table_view
+from app.assess.question_parser_utils import question_to_table_view, format_selection_fragment_dict
 from app.config import APPLICATION_STORE_API_HOST_PUBLIC
 from app.config import ASSESSMENT_HUB_ROUTE
 from flask import abort
@@ -62,6 +62,72 @@ def text_area_2():
     row_dict = question_to_table_view(question_data, with_total=True, numeric_answers=True)
 
     return render_template("text_area_2.html", question_data=question_data, row_dict=row_dict)
+
+
+@assess_bp.route("/fragments/selection", methods=["GET"])
+def selection_fragment():
+    """
+    Fragment to display selection type answers
+    """
+
+    # this would be passed to route
+    example_selection_fragment = {
+            "question": "Declarations",
+            "fields": [
+                # Radio answer
+                {
+                    "key": "declarations-state-aid",
+                    "title": "Would funding your organisation be classed as State Aid?",
+                    "type": "list",
+                    "answer": "False"
+                },
+                {
+                    "key": "declarations-environmental",
+                    "title": "Does your application comply with all relevant environmental standards?",
+                    "type": "list",
+                    "answer": "True"
+                },
+                # Checkbox answer
+                {
+                    "key": "who-is-endorsing-your-application",
+                    "title": "Who is endorsing your application?",
+                    "type": "list",
+                    "answer": "['Member of parliament (MP)']"
+                },
+                {
+                    "key": "about-your-project-policy-aims",
+                    "title": "Which policy aims will your project deliver against?",
+                    "type": "list",
+                    "answer": "['regeneration', 'Level up skills', 'Fight climate change']"
+                },
+                # select list answer (selected '1')
+                {
+                    "key": "your-project-sector",
+                    "title": "Project sector",
+                    "type": "list",
+                    "answer": "1"
+                },
+                {
+                    "key": "rDyIBy",
+                    "title": "Risk Level",
+                    "type": "list",
+                    "answer": "medium"
+                },
+                {
+                    "key": "XBxwLy",
+                    "title": "Categorise your risk",
+                    "type": "list",
+                    "answer": "reputational risk"
+                }
+            ]
+        }
+
+    question_title = example_selection_fragment["question"]
+    selection_fragment_answers = format_selection_fragment_dict(example_selection_fragment)
+
+
+    return render_template("components/selection_fragment.html", selection_fragment_answers=selection_fragment_answers, question_title=question_title)
+
 
 @assess_bp.route("/landing/", methods=["GET"])
 def landing():
