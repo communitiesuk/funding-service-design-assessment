@@ -68,11 +68,11 @@ def text_area_2():
 @assess_bp.route("/fragments/selection", methods=["GET"])
 def selection_fragment():
     """
-    Fragment to display selection type answers
+    An example route showing passing data from select type answers (radio, checkbox, select)
+    through to a base template that utilises the 'structured_question' formated template.
     """
 
-    # this would be passed to route
-    example_assessment_store_data = {
+    example_assessment_store_data_for_selection_type_data = {
             "question": "Declarations",
             "fields": [
                 # Radio answer
@@ -122,12 +122,18 @@ def selection_fragment():
                 }
             ]
         }
+    # could collect different answer types here to pass to base page such as 
+    # selection type (radio, checkbox), free-text, monetary etc
+    select_type_data = Question.from_json(example_assessment_store_data_for_selection_type_data)
+    standardised_select_type_data = standardise_question_data(select_type_data)
 
-    question_data = Question.from_json(example_assessment_store_data)
-    standardised_question_data = standardise_question_data(question_data)
+    page_data = {
+        "select_type_data": standardised_select_type_data,
+        "freetext_type_data": "",
+    }
 
 
-    return render_template("fragments_base.html", standardised_application_data=standardised_question_data, question_title=question_data.title)
+    return render_template("fragments_base.html", data=page_data)
 
 
 @assess_bp.route("/landing/", methods=["GET"])

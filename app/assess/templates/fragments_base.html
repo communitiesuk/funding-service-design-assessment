@@ -5,7 +5,9 @@
 
 <h2 class="govuk-heading-l">{{question_title}}</h3>
 
-{% for key, values in standardised_application_data.items() %}
+
+<!-- handle selection type data here by passing it into structured_question template -->
+{% for key, values in data["select_type_data"].items() %}
     {{ structured_question(key, values) }}
 {% endfor %}
 
