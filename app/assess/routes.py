@@ -1,3 +1,4 @@
+# flake8: noqa
 from app.assess.data import *
 from app.config import APPLICATION_STORE_API_HOST_PUBLIC
 from app.config import ASSESSMENT_HUB_ROUTE
@@ -138,3 +139,9 @@ def fund_round(fund_id: str, round_id: str):
         abort(404)
 
     return render_template("round.html", fund=fund, round=fund_round)
+
+
+@assess_bp.route("/fragments/upload_documents/")
+def upload_documents():
+
+    return render_template("example_upload_documents.html")
