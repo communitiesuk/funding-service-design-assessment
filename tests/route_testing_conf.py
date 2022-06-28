@@ -109,14 +109,19 @@ intro_routes_and_test_content = {
         {
             "tag": "h3",
             "name": None,
-            "contains": "Would funding your organisation be classed as State Aid?",
+            "contains": (
+                "Would funding your organisation be classed as State Aid?"
+            ),
         },
         {
             "tag": "h3",
             "name": None,
-            "contains": "Does your application comply with all relevant environmental standards?",
+            "contains": (
+                "Does your application comply with all relevant environmental"
+                " standards?"
+            ),
         },
-    ]
+    ],
 }
 
 

@@ -1,4 +1,5 @@
 from app.assess.data import *
+from app.assess.models.question import Question
 from app.assess.question_parser_utils import standardise_question_data
 from app.config import APPLICATION_STORE_API_HOST_PUBLIC
 from app.config import ASSESSMENT_HUB_ROUTE
@@ -6,7 +7,6 @@ from flask import abort
 from flask import Blueprint
 from flask import render_template
 from flask import request
-from app.assess.models.question import Question
 
 assess_bp = Blueprint(
     "assess_bp",
@@ -32,70 +32,83 @@ def funds():
 @assess_bp.route("/fragments/selection", methods=["GET"])
 def selection_fragment():
     """
-    An example route showing passing data from select type answers (radio, checkbox, select)
-    through to a base template that utilises the 'structured_question' formated template.
+    An example route showing passing data from select type
+    answers (radio, checkbox, select) through to a base
+    template that utilises the 'structured_question'
+    formated template.
     """
 
     example_assessment_store_data_for_selection_type_data = {
-            "question": "Declarations",
-            "fields": [
-                # Radio answer
-                {
-                    "key": "declarations-state-aid",
-                    "title": "Would funding your organisation be classed as State Aid?",
-                    "type": "list",
-                    "answer": "False"
-                },
-                {
-                    "key": "declarations-environmental",
-                    "title": "Does your application comply with all relevant environmental standards?",
-                    "type": "list",
-                    "answer": "True"
-                },
-                # Checkbox answer
-                {
-                    "key": "who-is-endorsing-your-application",
-                    "title": "Who is endorsing your application?",
-                    "type": "list",
-                    "answer": "['Member of parliament (MP)']"
-                },
-                {
-                    "key": "about-your-project-policy-aims",
-                    "title": "Which policy aims will your project deliver against?",
-                    "type": "list",
-                    "answer": "['regeneration', 'Level up skills', 'Fight climate change']"
-                },
-                # select list answer (selected '1')
-                {
-                    "key": "your-project-sector",
-                    "title": "Project sector",
-                    "type": "list",
-                    "answer": "1"
-                },
-                {
-                    "key": "rDyIBy",
-                    "title": "Risk Level",
-                    "type": "list",
-                    "answer": "medium"
-                },
-                {
-                    "key": "XBxwLy",
-                    "title": "Categorise your risk",
-                    "type": "list",
-                    "answer": "reputational risk"
-                }
-            ]
-        }
-    # could collect different answer types here to pass to base page such as 
+        "question": "Declarations",
+        "fields": [
+            # Radio answer
+            {
+                "key": "declarations-state-aid",
+                "title": (
+                    "Would funding your organisation be classed as State Aid?"
+                ),
+                "type": "list",
+                "answer": "False",
+            },
+            {
+                "key": "declarations-environmental",
+                "title": (
+                    "Does your application comply with all relevant"
+                    " environmental standards?"
+                ),
+                "type": "list",
+                "answer": "True",
+            },
+            # Checkbox answer
+            {
+                "key": "who-is-endorsing-your-application",
+                "title": "Who is endorsing your application?",
+                "type": "list",
+                "answer": "['Member of parliament (MP)']",
+            },
+            {
+                "key": "about-your-project-policy-aims",
+                "title": (
+                    "Which policy aims will your project deliver against?"
+                ),
+                "type": "list",
+                "answer": (
+                    "['regeneration', 'Level up skills', 'Fight climate"
+                    " change']"
+                ),
+            },
+            # select list answer (selected '1')
+            {
+                "key": "your-project-sector",
+                "title": "Project sector",
+                "type": "list",
+                "answer": "1",
+            },
+            {
+                "key": "rDyIBy",
+                "title": "Risk Level",
+                "type": "list",
+                "answer": "medium",
+            },
+            {
+                "key": "XBxwLy",
+                "title": "Categorise your risk",
+                "type": "list",
+                "answer": "reputational risk",
+            },
+        ],
+    }
+    # could collect different answer types here to pass to base page such as
     # selection type (radio, checkbox), free-text, monetary etc
-    select_type_data = Question.from_json(example_assessment_store_data_for_selection_type_data)
+    select_type_data = Question.from_json(
+        example_assessment_store_data_for_selection_type_data
+    )
     standardised_select_type_data = standardise_question_data(select_type_data)
 
     page_data = {
         "select_type_data": standardised_select_type_data,
         "freetext_type_data": "",
     }
-
 
     return render_template("fragments_base.html", data=page_data)
 
