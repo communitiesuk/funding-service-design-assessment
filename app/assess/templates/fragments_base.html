@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% from "components/structured_question_fragment.html" import structuredQuestion as structured_question %}
+
+{% block content %}
+
+<h2 class="govuk-heading-l">{{question_title}}</h3>
+
+{% for key, values in standardised_application_data.items() %}
+    {{ structured_question(key, values) }}
+{% endfor %}
+
+{% endblock %}

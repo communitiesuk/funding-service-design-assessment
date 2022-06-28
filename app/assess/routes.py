@@ -1,11 +1,12 @@
 from app.assess.data import *
-from app.assess.question_parser_utils import question_to_table_view, format_selection_fragment_dict
+from app.assess.question_parser_utils import question_to_table_view, standardise_question_data
 from app.config import APPLICATION_STORE_API_HOST_PUBLIC
 from app.config import ASSESSMENT_HUB_ROUTE
 from flask import abort
 from flask import Blueprint
 from flask import render_template
 from flask import request
+from app.assess.models.question import Question
 
 assess_bp = Blueprint(
     "assess_bp",
@@ -71,7 +72,7 @@ def selection_fragment():
     """
 
     # this would be passed to route
-    example_selection_fragment = {
+    example_assessment_store_data = {
             "question": "Declarations",
             "fields": [
                 # Radio answer
@@ -122,11 +123,11 @@ def selection_fragment():
             ]
         }
 
-    question_title = example_selection_fragment["question"]
-    selection_fragment_answers = format_selection_fragment_dict(example_selection_fragment)
+    question_data = Question.from_json(example_assessment_store_data)
+    standardised_question_data = standardise_question_data(question_data)
 
 
-    return render_template("fragment_base.html", selection_fragment_answers=selection_fragment_answers, question_title=question_title)
+    return render_template("fragments_base.html", standardised_application_data=standardised_question_data, question_title=question_data.title)
 
 
 @assess_bp.route("/landing/", methods=["GET"])

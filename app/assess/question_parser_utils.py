@@ -1,7 +1,6 @@
 import re
 import ast
 
-
 def remove_currency_symbols(currency_str):
 
     return re.sub("[,$£]", "", currency_str)
@@ -30,10 +29,10 @@ def question_to_table_view(question_data : dict, numeric_answers = False, with_t
     return return_dict
 
 
-def format_selection_fragment_dict(question_data : dict) -> dict:
+def standardise_question_data(question) -> dict:
 
     """
-    Standardise the template input formt to a list
+    Standardise the question data to provide a standardised input for templates
 
     ast.literal_eval: Safely evaluate an expression node or a string
     containing a Python literal or container display. The string or
@@ -43,15 +42,15 @@ def format_selection_fragment_dict(question_data : dict) -> dict:
     """
     return_dict = {}
 
-    for field in question_data["fields"]:
-        answer = field["answer"]
+    for question_field in question.fields:
+        answer = question_field.answer
         try:
             if type(ast.literal_eval(answer)) == list:
-                return_dict[field["title"]] = ast.literal_eval(answer)
+                return_dict[question_field.title] = ast.literal_eval(answer)
                 continue
         except (ValueError, SyntaxError) as e:
             # literal_eval cannot parse string values
             pass
-        return_dict[field["title"]] = [answer]
+        return_dict[question_field.title] = [answer]
 
     return return_dict
