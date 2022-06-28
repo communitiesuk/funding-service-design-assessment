@@ -1,6 +1,4 @@
-{% extends "base.html" %}
-
-{% block content %}
+{% macro selectionFragment(selection_fragment_answers, question_title) %}
 
 <h2 class="govuk-heading-l">{{question_title}}</h3>
 
@@ -15,4 +13,4 @@
 </div>
 {% endfor %}
 
-{% endblock %}
+{% endmacro %}

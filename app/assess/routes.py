@@ -126,7 +126,7 @@ def selection_fragment():
     selection_fragment_answers = format_selection_fragment_dict(example_selection_fragment)
 
 
-    return render_template("components/selection_fragment.html", selection_fragment_answers=selection_fragment_answers, question_title=question_title)
+    return render_template("fragment_base.html", selection_fragment_answers=selection_fragment_answers, question_title=question_title)
 
 
 @assess_bp.route("/landing/", methods=["GET"])
