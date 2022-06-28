@@ -104,17 +104,17 @@ intro_routes_and_test_content = {
         {
             "tag": "h3",
             "name": None,
+            "contains": "Declarations",
+        },
+        {
+            "tag": "h3",
+            "name": None,
             "contains": "Would funding your organisation be classed as State Aid?",
         },
         {
             "tag": "h3",
             "name": None,
             "contains": "Does your application comply with all relevant environmental standards?",
-        },
-        {
-            "tag": "h2",
-            "name": None,
-            "contains": "Declarations",
         },
     ]
 }
