@@ -2,7 +2,7 @@ async-generator==1.10
 attrs==21.4.0
 axe-selenium-python==2.1.6
 bandit==1.7.1
-black==21.12b0
+black==22.3.0
 Brotli==1.0.9
 certifi==2021.10.8
 cffi==1.15.0
