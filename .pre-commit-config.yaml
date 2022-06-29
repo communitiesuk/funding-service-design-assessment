@@ -11,6 +11,8 @@ repos:
     rev: 3.9.2
     hooks:
     - id: flake8
+      args:
+        - --per-file-ignores=./app/assess/routes.py:F405,F403
 -   repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.3.0
     hooks:
