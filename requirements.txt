@@ -47,8 +47,12 @@ markupsafe==2.1.1
     # via
     #   jinja2
     #   wtforms
+pyscss==1.4.0
+    # via -r requirements.in
 requests==2.28.1
     # via -r requirements.in
+six==1.16.0
+    # via pyscss
 urllib3==1.26.9
     # via requests
 webassets==2.0
