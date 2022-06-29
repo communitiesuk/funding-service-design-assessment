@@ -1,0 +1,9 @@
+govuk-frontend-jinja
+Flask-WTF
+flask-talisman
+Flask-SeaSurf
+Flask-Compress
+Flask-Assets
+Flask
+requests
+WTForms
