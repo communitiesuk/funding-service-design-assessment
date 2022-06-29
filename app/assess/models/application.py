@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from datetime import datetime
-from typing import List, Union
+from typing import List
+from typing import Union
 
 from .question import Question
 
@@ -58,7 +59,7 @@ class Application:
             self.questions = []
         self.questions.append(question)
 
-    def get_question(self, index: int) -> Union[Question,None]:
+    def get_question(self, index: int) -> Union[Question, None]:
         if self.questions:
             return self.questions[index]
         return None

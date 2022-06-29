@@ -66,6 +66,7 @@ def print_axe_report(results: dict, service_dict: dict, route_rel: str):
     f.write(results_with_title)
     f.close()
 
+
 @pytest.mark.accessibility
 @pytest.mark.usefixtures("selenium_chrome_driver")
 @pytest.mark.usefixtures("live_server")
@@ -94,6 +95,7 @@ def run_axe_and_print_report(
 @pytest.mark.app(debug=False)
 def test_app(app):
     assert not app.debug, "Ensure the app not in debug mode"
+
 
 @pytest.mark.accessibility
 @pytest.mark.usefixtures("selenium_chrome_driver")
