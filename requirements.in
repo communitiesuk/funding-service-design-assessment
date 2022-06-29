@@ -7,3 +7,4 @@ Flask-Assets
 Flask
 requests
 WTForms
+python-scss
