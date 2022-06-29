@@ -144,4 +144,4 @@ def fund_round(fund_id: str, round_id: str):
 @assess_bp.route("/fragments/upload_documents/")
 def upload_documents():
 
-    return render_template("example_upload_documents.html")
+    return render_template("macros/example_upload_documents.html")
