@@ -1,4 +1,3 @@
-from app.assess.models.question_field import QuestionField
 from app.assets import compile_static_assets
 from flask import Flask
 from flask_assets import Environment
