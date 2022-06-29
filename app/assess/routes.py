@@ -1,5 +1,4 @@
-from uuid import NAMESPACE_URL
-
+# flake8: noqa
 from app.assess.data import *
 from app.assess.models.question_field import QuestionField
 from app.config import APPLICATION_STORE_API_HOST_PUBLIC
@@ -187,7 +186,7 @@ def text_input():
     )
 
     return render_template(
-        "example_text_input.html",
+        "macros/example_text_input.html",
         name=name,
         address=address,
     )
