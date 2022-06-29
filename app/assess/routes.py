@@ -1,5 +1,6 @@
 # flake8: noqa
 from app.assess.data import *
+from app.assess.models.question_field import QuestionField
 from app.config import APPLICATION_STORE_API_HOST_PUBLIC
 from app.config import ASSESSMENT_HUB_ROUTE
 from flask import abort
@@ -143,5 +144,39 @@ def fund_round(fund_id: str, round_id: str):
 
 @assess_bp.route("/fragments/upload_documents/")
 def upload_documents():
+    uploaded_file_json = {
+        "name": "Digital Form Builder - Runner test-form-",
+        "questions": [
+            {
+                "question": "Upload documents page",
+                "fields": [
+                    {
+                        "key": "ocdeay",
+                        "title": "Python language page",
+                        "type": "file",
+                        "answer": "https://en.wikipedia.org/wiki/Python_(programming_language)",
+                    },
+                    {
+                        "key": "ocdeayx",
+                        "title": "JavaScript language page",
+                        "type": "file",
+                        "answer": "https://en.wikipedia.org/wiki/JavaScript",
+                    },
+                    {
+                        "key": "ocdeayy",
+                        "title": "C ++ language page",
+                        "type": "file",
+                        "answer": "https://en.wikipedia.org/wiki/C%2B%2B",
+                    },
+                ],
+            }
+        ],
+    }
 
-    return render_template("macros/example_upload_documents.html")
+    json = uploaded_file_json["questions"][0]["fields"][0]
+
+    return render_template(
+        "macros/example_upload_documents.html",
+        title=json["title"],
+        url=json["answer"],
+    )
