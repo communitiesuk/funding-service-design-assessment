@@ -1,6 +1,6 @@
 import json
 import os
-from typing import List
+from typing import Dict, List
 from typing import Union
 from urllib.parse import urlencode
 
@@ -117,7 +117,7 @@ def get_round_with_applications(
     return None
 
 
-def get_applications(params: dict) -> List[Application] | None:
+def get_applications(params: dict) -> Union[List[Application],None]:
     applications_response = call_search_applications(params)
     if applications_response and len(applications_response) > 0:
         applications = []
@@ -128,7 +128,7 @@ def get_applications(params: dict) -> List[Application] | None:
     return None
 
 
-def get_todo_summary() -> dict | None:
+def get_todo_summary() -> Union[Dict,None]:
     applications = call_search_applications("")
     if applications and len(applications) > 0:
         todo_summary = {}
@@ -162,7 +162,7 @@ def get_todo_summary() -> dict | None:
     return None
 
 
-def get_application(identifier: str) -> Application | None:
+def get_application(identifier: str) -> Union[Application,None]:
     application_endpoint = (
         APPLICATION_STORE_API_HOST
         + APPLICATION_ENDPOINT.format(application_id=identifier)
@@ -175,7 +175,7 @@ def get_application(identifier: str) -> Application | None:
     return None
 
 
-def get_application_status(application_id: str) -> Application | None:
+def get_application_status(application_id: str) -> Union[Application,None]:
     application_status_endpoint = (
         APPLICATION_STORE_API_HOST
         + APPLICATION_STATUS_ENDPOINT.format(application_id=application_id)
