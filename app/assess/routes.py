@@ -1,6 +1,6 @@
 # flake8 : noqa
 from app.assess.data import *
-from app.assess.question_parser_utils import question_to_table_view
+from app.assess.models.total_table import TotalMoneyTableView
 from app.config import APPLICATION_STORE_API_HOST_PUBLIC
 from app.config import ASSESSMENT_HUB_ROUTE
 from flask import abort
@@ -56,14 +56,12 @@ def total_table_view():
         ],
     }
 
-    row_dict = question_to_table_view(
-        question_data, with_total=True, numeric_answers=True
-    )
+    question_model = TotalMoneyTableView.from_question_json(question_data)
 
     return render_template(
         "total_table.html",
         question_data=question_data,
-        row_dict=row_dict,
+        row_dict=question_model.row_dict(),
     )
 
 
