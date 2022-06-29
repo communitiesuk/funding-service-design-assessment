@@ -144,6 +144,10 @@ def fund_round(fund_id: str, round_id: str):
 
 @assess_bp.route("/fragments/upload_documents/")
 def upload_documents():
+    """
+    Render html page with json contains title & answer/url.
+    """
+    
     uploaded_file_json = {
         "name": "Digital Form Builder - Runner test-form-",
         "questions": [
