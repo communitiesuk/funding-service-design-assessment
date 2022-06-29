@@ -1,16 +1,18 @@
-from dataclasses import dataclass
 import re
-from typing import Dict, List
+from dataclasses import dataclass
+from typing import Dict
+from typing import List
 
 
 def remove_currency_symbols(currency_str):
 
     return re.sub("[,$£]", "", currency_str)
 
+
 @dataclass
 class TotalMoneyTableView:
 
-    total : int
+    total: int
     table_elements: List[Dict[str, int]]
     prefix: str = "£"
 
@@ -38,4 +40,15 @@ class TotalMoneyTableView:
 
     def row_dict(self):
 
-        return { "rows" : [*self.table_elements["rows"], [{"text": "Total"}, {"text": f"{self.prefix}{self.total}", "format": "numeric"}]] }
+        return {
+            "rows": [
+                *self.table_elements["rows"],
+                [
+                    {"text": "Total"},
+                    {
+                        "text": f"{self.prefix}{self.total}",
+                        "format": "numeric",
+                    },
+                ],
+            ]
+        }
