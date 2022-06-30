@@ -8,7 +8,6 @@ certifi==2021.10.8
 cffi==1.15.0
 cfgv==3.3.1
 charset-normalizer==2.0.11
-chromedriver-py==100.0.4896.60
 click==8.0.3
 cryptography==36.0.1
 cssmin==0.2.0
@@ -77,6 +76,7 @@ typing_extensions==4.0.1
 urllib3==1.26.8
 virtualenv==20.13.0
 webassets==2.0
+webdriver-manager==3.7.0
 Werkzeug==2.0.2
 wsproto==1.0.0
 WTForms==3.0.1
