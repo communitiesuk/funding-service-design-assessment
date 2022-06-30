@@ -100,8 +100,8 @@ def selection_fragment():
             },
         ],
     }
-    # could collect different answer types here to pass to base page such as
-    # selection type (radio, checkbox), free-text, monetary etc
+    # collect different answer types here to pass to base template such as
+    # selection type (radio, checkbox), free-text, table etc
     structured_question_data = StructuredQuestionView.from_question_json(
         example_assessment_store_data_for_selection_type_data
     )
@@ -139,11 +139,6 @@ def total_table_view():
     }
 
     question_model = TotalMoneyTableView.from_question_json(question_data)
-
-    # page_data = {
-    #     "select_type_data": question_model,
-    #     "freetext_type_data": "",
-    # }
 
     return render_template(
         "total_table.html",
