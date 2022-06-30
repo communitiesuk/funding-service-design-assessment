@@ -2,7 +2,7 @@
 Tests if known pages of the website contain expected content
 """
 import pytest
-from app.config import LOCAL_SERVICE_NAME
+from config import Config
 from flask import url_for
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.errorhandler import NoSuchElementException
@@ -22,7 +22,7 @@ class TestContentWithChrome:
         print_html_page(
             html=source,
             service_dict={
-                "name": LOCAL_SERVICE_NAME,
+                "name": Config.LOCAL_SERVICE_NAME,
                 "host": "",
             },
             route_rel=route_rel,

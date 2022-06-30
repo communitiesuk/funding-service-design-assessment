@@ -1,4 +1,4 @@
-from app.config import ASSESSMENT_HUB_ROUTE
+from config import Config
 from flask import Blueprint
 from flask import render_template
 
@@ -8,7 +8,7 @@ default_bp = Blueprint("default_bp", __name__, template_folder="templates")
 @default_bp.route("/")
 def index():
     return render_template(
-        "index.html", assessment_url=ASSESSMENT_HUB_ROUTE + "/landing/"
+        "index.html", assessment_url=Config.ASSESSMENT_HUB_ROUTE + "/landing/"
     )
 
 
