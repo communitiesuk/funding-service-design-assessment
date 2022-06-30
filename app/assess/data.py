@@ -9,10 +9,7 @@ import requests
 from app.assess.models.application import Application
 from app.assess.models.fund import Fund
 from app.assess.models.round import Round
-from app.config import APPLICATION_STORE_API_HOST
-from app.config import FLASK_ROOT
-from app.config import FUND_STORE_API_HOST
-from app.config import ROUND_STORE_API_HOST
+from config import Config
 
 
 # Fund Store Endpoints
@@ -43,7 +40,7 @@ def get_data(endpoint: str):
 
 def get_local_data(endpoint: str):
     api_data_json = os.path.join(
-        FLASK_ROOT, "tests", "api_data", "endpoint_data.json"
+        Config.FLASK_ROOT, "tests", "api_data", "endpoint_data.json"
     )
     fp = open(api_data_json)
     api_data = json.load(fp)
@@ -54,7 +51,7 @@ def get_local_data(endpoint: str):
 
 def call_search_applications(params: dict):
     applications_endpoint = (
-        APPLICATION_STORE_API_HOST
+        Config.APPLICATION_STORE_API_HOST
         + APPLICATION_SEARCH_ENDPOINT.format(params=urlencode(params))
     )
     applications_response = get_data(applications_endpoint)
@@ -62,7 +59,7 @@ def call_search_applications(params: dict):
 
 
 def get_funds() -> Union[List[Fund], None]:
-    endpoint = FUND_STORE_API_HOST + FUNDS_ENDPOINT
+    endpoint = Config.FUND_STORE_API_HOST + FUNDS_ENDPOINT
     response = get_data(endpoint)
     if response and len(response) > 0:
         funds = []
@@ -73,7 +70,7 @@ def get_funds() -> Union[List[Fund], None]:
 
 
 def get_fund(fund_id: str) -> Union[Fund, None]:
-    endpoint = FUND_STORE_API_HOST + FUND_ENDPOINT.format(fund_id=fund_id)
+    endpoint = Config.FUND_STORE_API_HOST + FUND_ENDPOINT.format(fund_id=fund_id)
     response = get_data(endpoint)
     if response and "fund_id" in response:
         fund = Fund.from_json(response)
@@ -85,7 +82,7 @@ def get_fund(fund_id: str) -> Union[Fund, None]:
 
 
 def get_rounds(fund_id: str) -> Union[Fund, List]:
-    endpoint = ROUND_STORE_API_HOST + ROUNDS_ENDPOINT.format(fund_id=fund_id)
+    endpoint = Config.ROUND_STORE_API_HOST + ROUNDS_ENDPOINT.format(fund_id=fund_id)
     response = get_data(endpoint)
     rounds = []
     if response and len(response) > 0:
@@ -97,7 +94,7 @@ def get_rounds(fund_id: str) -> Union[Fund, List]:
 def get_round_with_applications(
     fund_id: str, round_id: str
 ) -> Union[Round, None]:
-    round_endpoint = ROUND_STORE_API_HOST + ROUND_ENDPOINT.format(
+    round_endpoint = Config.ROUND_STORE_API_HOST + ROUND_ENDPOINT.format(
         fund_id=fund_id, round_id=round_id
     )
     round_response = get_data(round_endpoint)
@@ -165,7 +162,7 @@ def get_todo_summary() -> Union[Dict, None]:
 
 def get_application(identifier: str) -> Union[Application, None]:
     application_endpoint = (
-        APPLICATION_STORE_API_HOST
+        Config.APPLICATION_STORE_API_HOST
         + APPLICATION_ENDPOINT.format(application_id=identifier)
     )
     application_response = get_data(application_endpoint)
@@ -178,7 +175,7 @@ def get_application(identifier: str) -> Union[Application, None]:
 
 def get_application_status(application_id: str) -> Union[Application, None]:
     application_status_endpoint = (
-        APPLICATION_STORE_API_HOST
+        Config.APPLICATION_STORE_API_HOST
         + APPLICATION_STATUS_ENDPOINT.format(application_id=application_id)
     )
     print(application_status_endpoint)
@@ -202,7 +199,7 @@ def get_questions(application_id):
         Returns a dictionary of questions & their statuses.
     """
     status_endpoint = (
-        APPLICATION_STORE_API_HOST
+        Config.APPLICATION_STORE_API_HOST
         + APPLICATION_STATUS_ENDPOINT.format(application_id=application_id)
     )
 
