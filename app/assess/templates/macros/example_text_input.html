@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% from "macros/text_input.html" import textInput as text %}
+
+{% block content %}
+
+{{ text(name.title, name.answer) }}
+{{ text(address.title, address.answer)}}
+
+
+{% endblock %}
