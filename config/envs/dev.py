@@ -5,5 +5,5 @@ from fsd_utils import configclass
 
 
 @configclass
-class Dev(DefaultConfig):
+class DevConfig(DefaultConfig):
     FSD_LOG_LEVEL = logging.INFO
