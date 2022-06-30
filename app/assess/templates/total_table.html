@@ -1,0 +1,8 @@
+{%- from 'macros/total_table_macro.html' import total_table -%}
+{% extends "base.html" %}
+
+{%block content%}
+
+{{total_table(question_data, row_dict)}}
+
+{% endblock %}
