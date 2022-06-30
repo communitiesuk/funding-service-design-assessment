@@ -179,6 +179,7 @@ def fund_round(fund_id: str, round_id: str):
     return render_template("round.html", fund=fund, round=fund_round)
 
 
+
 @assess_bp.route("/fragments/upload_documents/")
 def upload_documents():
     """
@@ -197,14 +198,63 @@ def upload_documents():
                         "type": "file",
                         "answer": "https://en.wikipedia.org/wiki/Python_(programming_language)",
                     }
+                ]
+            }
+        ]
+    }
+                    
+    json_fields = uploaded_file_json["questions"][0]["fields"][0]
+    attachment_file_json = QuestionField.from_json(json_fields)
+
+    return render_template(
+        "macros/example_upload_documents.html", file=attachment_file_json)         
+
+@assess_bp.route("/fragments/text_input/")
+def text_input():
+    """
+    Render html page with json contains question & answer.
+    """
+
+    input_text_name = {
+        "questions": [
+            {
+                "fields": [
+                    {
+                        "key": "oLfixk",
+                        "title": "Your name",
+                        "type": "text",
+                        "answer": "Steve",
+                    },
+
                 ],
             }
         ],
     }
 
-    json_fields = uploaded_file_json["questions"][0]["fields"][0]
-    attachment_file_json = QuestionField.from_json(json_fields)
+    input_text_address = {
+        "questions": [
+            {
+                "fields": [
+                    {
+                        "key": "gOgMvi",
+                        "title": "Your UK address",
+                        "type": "text",
+                        "answer": "99 evoco, example street, London, UB5 5FF",
+                    },
+                ],
+            }
+        ],
+    }
+
+    name = QuestionField.from_json(
+        input_text_name["questions"][0]["fields"][0]
+    )
+    address = QuestionField.from_json(
+        input_text_address["questions"][0]["fields"][0]
+    )
 
     return render_template(
-        "macros/example_upload_documents.html", file=attachment_file_json
+        "macros/example_text_input.html",
+        name=name,
+        address=address,
     )
