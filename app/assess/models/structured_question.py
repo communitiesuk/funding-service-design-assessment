@@ -10,7 +10,7 @@ from .question import Question
 class StructuredQuestionView:
 
     """
-    Provide a standardised data input for question data using the 
+    Provide a standardised data input for question data using the
     'structured view' template.
 
     ast.literal_eval: Safely evaluate an expression node or a string
