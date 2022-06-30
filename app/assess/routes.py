@@ -2,8 +2,7 @@
 from app.assess.data import *
 from app.assess.models.question_field import QuestionField
 from app.assess.models.total_table import TotalMoneyTableView
-from app.config import APPLICATION_STORE_API_HOST_PUBLIC
-from app.config import ASSESSMENT_HUB_ROUTE
+from config import Config
 from flask import abort
 from flask import Blueprint
 from flask import render_template
@@ -12,7 +11,7 @@ from flask import request
 assess_bp = Blueprint(
     "assess_bp",
     __name__,
-    url_prefix=ASSESSMENT_HUB_ROUTE,
+    url_prefix=Config.ASSESSMENT_HUB_ROUTE,
     template_folder="templates",
 )
 
@@ -99,7 +98,7 @@ def landing():
         todo_summary=todo_summary,
         applications_endpoint="".join(
             [
-                APPLICATION_STORE_API_HOST_PUBLIC,
+                Config.APPLICATION_STORE_API_HOST_PUBLIC,
                 APPLICATION_SEARCH_ENDPOINT.replace("{params}", ""),
             ]
         ),
