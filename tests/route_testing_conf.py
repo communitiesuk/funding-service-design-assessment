@@ -102,7 +102,7 @@ intro_routes_and_test_content = {
     ],
     "/assess/fragments/selection": [
         {
-            "tag": "h3",
+            "tag": "h2",
             "name": None,
             "contains": "Declarations",
         },

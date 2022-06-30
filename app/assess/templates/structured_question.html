@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% from "macros/structured_question_macro.html" import structuredQuestion as structured_question %}
+
+{% block content %}
+
+<!-- handle selection type data here by passing it into structured_question template -->
+{{ structured_question(data["structured_question_data"]) }}
+
+{% endblock %}

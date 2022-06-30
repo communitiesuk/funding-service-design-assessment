@@ -1,7 +1,6 @@
 # flake8 : noqa
 from app.assess.data import *
-from app.assess.models.question import Question
-from app.assess.question_parser_utils import standardise_question_data
+from app.assess.models.structured_question import StructuredQuestionView
 from app.assess.models.total_table import TotalMoneyTableView
 from app.config import APPLICATION_STORE_API_HOST_PUBLIC
 from app.config import ASSESSMENT_HUB_ROUTE
@@ -42,6 +41,7 @@ def selection_fragment():
 
     example_assessment_store_data_for_selection_type_data = {
         "question": "Declarations",
+        "status": "completed",
         "fields": [
             # Radio answer
             {
@@ -102,17 +102,15 @@ def selection_fragment():
     }
     # could collect different answer types here to pass to base page such as
     # selection type (radio, checkbox), free-text, monetary etc
-    select_type_data = Question.from_json(
+    structured_question_data = StructuredQuestionView.from_question_json(
         example_assessment_store_data_for_selection_type_data
     )
-    standardised_select_type_data = standardise_question_data(select_type_data)
 
-    page_data = {
-        "select_type_data": standardised_select_type_data,
-        "freetext_type_data": "",
-    }
+    data = {"structured_question_data": structured_question_data}
 
-    return render_template("fragments_base.html", data=page_data)
+    return render_template("structured_question.html", data=data)
+
+
 @assess_bp.route("/fragments/total_table_view", methods=["GET"])
 def total_table_view():
 
@@ -141,6 +139,11 @@ def total_table_view():
     }
 
     question_model = TotalMoneyTableView.from_question_json(question_data)
+
+    # page_data = {
+    #     "select_type_data": question_model,
+    #     "freetext_type_data": "",
+    # }
 
     return render_template(
         "total_table.html",

@@ -1,7 +1,8 @@
 {% macro structuredQuestion(select_type_data) %}
-<!-- select_type_data is in the format: key -> string, values -> list -->
 
-{% for key, values in select_type_data.items() %}
+<h2 class="govuk-heading-l">{{select_type_data["title"]}}</h3>
+
+{% for key, values in select_type_data["answers_per_question"].items() %}
 <h3 class="govuk-body govuk-!-font-weight-bold">
     {{key}}
 </h3>
