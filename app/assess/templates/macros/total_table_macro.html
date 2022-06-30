@@ -1,0 +1,11 @@
+{%- from 'govuk_frontend_jinja/components/table/macro.html' import govukTable -%}
+
+{% macro total_table(question_data, row_dict) %}
+
+<h2 class="govuk-heading-l">{{question_data["question"]}}</h3>
+
+{{
+    govukTable(row_dict)
+}}
+
+{%endmacro%}
