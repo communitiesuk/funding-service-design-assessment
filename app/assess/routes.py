@@ -156,7 +156,7 @@ def upload_documents():
                 "fields": [
                     {
                         "key": "ocdeay",
-                        "title": "Python language information & courses",
+                        "title": "Python language - Introduction & courses",
                         "type": "file",
                         "answer": "https://en.wikipedia.org/wiki/Python_(programming_language)",
                     }
@@ -165,10 +165,9 @@ def upload_documents():
         ],
     }
 
-    json = uploaded_file_json["questions"][0]["fields"][0]
+    json_fields = uploaded_file_json["questions"][0]["fields"][0]
+    attachment_file_json = QuestionField.from_json(json_fields)
 
     return render_template(
-        "macros/example_upload_documents.html",
-        title=json["title"],
-        url=json["answer"],
+        "macros/example_upload_documents.html", file=attachment_file_json
     )
