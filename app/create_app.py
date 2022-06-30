@@ -18,9 +18,6 @@ def create_app() -> Flask:
 
     flask_app.config.from_object("config.Config")
 
-    print("app flask_env", flask_app.config.get("FLASK_ENV"))
-    print("app debug", flask_app.debug)
-
     flask_app.jinja_loader = ChoiceLoader(
         [
             PackageLoader("app"),
