@@ -1,5 +1,5 @@
-# flake8 : noqa
 from app.assess.data import *
+from app.assess.models.question_field import QuestionField
 from app.assess.models.structured_question import StructuredQuestionView
 from app.assess.models.total_table import TotalMoneyTableView
 from app.config import APPLICATION_STORE_API_HOST_PUBLIC
@@ -143,6 +143,56 @@ def total_table_view():
         "total_table.html",
         question_data=question_data,
         row_dict=question_model.row_dict(),
+    )
+
+
+@assess_bp.route("/fragments/text_input")
+def text_input():
+    """
+    Render html page with json contains question & answer.
+    """
+
+    input_text_name = {
+        "questions": [
+            {
+                "fields": [
+                    {
+                        "key": "oLfixk",
+                        "title": "Your name",
+                        "type": "text",
+                        "answer": "Steve",
+                    },
+                ],
+            }
+        ],
+    }
+
+    input_text_address = {
+        "questions": [
+            {
+                "fields": [
+                    {
+                        "key": "gOgMvi",
+                        "title": "Your UK address",
+                        "type": "text",
+                        "answer": "99 evoco, example street, London, UB5 5FF",
+                    },
+                ],
+            }
+        ],
+    }
+
+    name = QuestionField.from_json(
+        input_text_name["questions"][0]["fields"][0]
+    )
+    address = QuestionField.from_json(
+        input_text_address["questions"][0]["fields"][0]
+    )
+
+    return render_template(
+        "macros/example_text_input.html",
+        name=name,
+        address=address,
     )
 
 
