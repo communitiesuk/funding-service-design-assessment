@@ -147,7 +147,7 @@ def upload_documents():
     """
     Render html page with json contains title & answer/url.
     """
-    
+
     uploaded_file_json = {
         "name": "Digital Form Builder - Runner test-form-",
         "questions": [
@@ -156,22 +156,10 @@ def upload_documents():
                 "fields": [
                     {
                         "key": "ocdeay",
-                        "title": "Python language page",
+                        "title": "Python language information & courses",
                         "type": "file",
                         "answer": "https://en.wikipedia.org/wiki/Python_(programming_language)",
-                    },
-                    {
-                        "key": "ocdeayx",
-                        "title": "JavaScript language page",
-                        "type": "file",
-                        "answer": "https://en.wikipedia.org/wiki/JavaScript",
-                    },
-                    {
-                        "key": "ocdeayy",
-                        "title": "C ++ language page",
-                        "type": "file",
-                        "answer": "https://en.wikipedia.org/wiki/C%2B%2B",
-                    },
+                    }
                 ],
             }
         ],
