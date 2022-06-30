@@ -1,11 +1,9 @@
 {% extends "base.html" %}
-{% from "components/structured_question_fragment.html" import structuredQuestion as structured_question %}
+{% from "macros/structured_question_fragment.html" import structuredQuestion as structured_question %}
 
 {% block content %}
 
 <!-- handle selection type data here by passing it into structured_question template -->
-{% for key, values in data["select_type_data"].items() %}
-    {{ structured_question(key, values) }}
-{% endfor %}
+{{ structured_question(data["select_type_data"]) }}
 
 {% endblock %}
