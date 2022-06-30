@@ -2,7 +2,6 @@
 from app.assess.data import *
 from app.assess.models.question_field import QuestionField
 from app.assess.models.total_table import TotalMoneyTableView
-
 from app.config import APPLICATION_STORE_API_HOST_PUBLIC
 from app.config import ASSESSMENT_HUB_ROUTE
 from flask import abort
