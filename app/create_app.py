@@ -15,7 +15,11 @@ def create_app() -> Flask:
         __name__, static_url_path="/assets", static_folder="static/dist"
     )
 
-    flask_app.config.from_pyfile("config.py")
+    # flask_app.config.from_pyfile("config.py")
+    flask_app.config.from_object("config.Config")
+
+    print("app flask_env", flask_app.config.get("FLASK_ENV"))
+    print("app debug", flask_app.debug)
 
     flask_app.jinja_loader = ChoiceLoader(
         [
@@ -70,6 +74,7 @@ def create_app() -> Flask:
         content_security_policy=csp,
         strict_transport_security=hss,
         content_security_policy_nonce_in=["script-src"],
+        # force_https=False  # temp fix for unit testing
     )
 
     csrf = CSRFProtect()
