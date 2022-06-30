@@ -39,7 +39,7 @@ def selection_fragment():
     formated template.
     """
 
-    example_assessment_store_data_for_selection_type_data = {
+    example_assessment_store_data_for_select_type_data = {
         "question": "Declarations",
         "status": "completed",
         "fields": [
@@ -101,12 +101,11 @@ def selection_fragment():
         ],
     }
     # collect different answer types here to pass to base template such as
-    # selection type (radio, checkbox), free-text, table etc
-    structured_question_data = StructuredQuestionView.from_question_json(
-        example_assessment_store_data_for_selection_type_data
+    # select type (radio, checkbox), free-text, table etc
+    select_type_data = StructuredQuestionView.from_question_json(
+        example_assessment_store_data_for_select_type_data
     )
-
-    data = {"structured_question_data": structured_question_data}
+    data = {"structured_question_data": select_type_data}
 
     return render_template("structured_question.html", data=data)
 
