@@ -1,7 +1,7 @@
 # flake8: noqa
 import os
 
-FLASK_ENV = os.environ.get("FLASK_ENV")
+FLASK_ENV = os.getenv("FLASK_ENV")
 
 if not FLASK_ENV:
     raise KeyError("FLASK_ENV does not exist in environ")
