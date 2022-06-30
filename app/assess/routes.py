@@ -1,6 +1,8 @@
+# flake8 : noqa
 from app.assess.data import *
 from app.assess.models.question import Question
 from app.assess.question_parser_utils import standardise_question_data
+from app.assess.models.total_table import TotalMoneyTableView
 from app.config import APPLICATION_STORE_API_HOST_PUBLIC
 from app.config import ASSESSMENT_HUB_ROUTE
 from flask import abort
@@ -111,6 +113,40 @@ def selection_fragment():
     }
 
     return render_template("fragments_base.html", data=page_data)
+@assess_bp.route("/fragments/total_table_view", methods=["GET"])
+def total_table_view():
+
+    question_data = {
+        "question": "About your project",
+        "fields": [
+            {
+                "key": "about-your-project-capital-expenditure",
+                "title": "Capital expenditure",
+                "type": "text",
+                "answer": "£10",
+            },
+            {
+                "key": "about-your-project-revenue",
+                "title": "Revenue",
+                "type": "text",
+                "answer": "£4",
+            },
+            {
+                "key": "about-your-project-subsidy",
+                "title": "Subsidy",
+                "type": "text",
+                "answer": "£5",
+            },
+        ],
+    }
+
+    question_model = TotalMoneyTableView.from_question_json(question_data)
+
+    return render_template(
+        "total_table.html",
+        question_data=question_data,
+        row_dict=question_model.row_dict(),
+    )
 
 
 @assess_bp.route("/landing/", methods=["GET"])
