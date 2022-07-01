@@ -193,7 +193,7 @@ def upload_documents():
                 "fields": [
                     {
                         "key": "ocdeay",
-                        "title": "Python language - Introduction & courses",
+                        "title": "Python language - Introduction & course",
                         "type": "file",
                         "answer": "https://en.wikipedia.org/wiki/Python_(programming_language)",
                     }
