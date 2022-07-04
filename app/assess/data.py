@@ -10,6 +10,7 @@ from app.assess.models.application import Application
 from app.assess.models.fund import Fund
 from app.assess.models.round import Round
 from config import Config
+from flask import current_app
 
 
 # Fund Store Endpoints
@@ -70,7 +71,9 @@ def get_funds() -> Union[List[Fund], None]:
 
 
 def get_fund(fund_id: str) -> Union[Fund, None]:
-    endpoint = Config.FUND_STORE_API_HOST + FUND_ENDPOINT.format(fund_id=fund_id)
+    endpoint = Config.FUND_STORE_API_HOST + FUND_ENDPOINT.format(
+        fund_id=fund_id
+    )
     response = get_data(endpoint)
     if response and "fund_id" in response:
         fund = Fund.from_json(response)
@@ -82,7 +85,9 @@ def get_fund(fund_id: str) -> Union[Fund, None]:
 
 
 def get_rounds(fund_id: str) -> Union[Fund, List]:
-    endpoint = Config.ROUND_STORE_API_HOST + ROUNDS_ENDPOINT.format(fund_id=fund_id)
+    endpoint = Config.ROUND_STORE_API_HOST + ROUNDS_ENDPOINT.format(
+        fund_id=fund_id
+    )
     response = get_data(endpoint)
     rounds = []
     if response and len(response) > 0:
@@ -178,7 +183,7 @@ def get_application_status(application_id: str) -> Union[Application, None]:
         Config.APPLICATION_STORE_API_HOST
         + APPLICATION_STATUS_ENDPOINT.format(application_id=application_id)
     )
-    print(application_status_endpoint)
+    current_app.logger.debug(application_status_endpoint)
     application_status_response = get_data(application_status_endpoint)
     if application_status_response and "id" in application_status_response:
         application = Application.from_json(application_status_response)
