@@ -1,3 +1,4 @@
+import logging
 import os
 from pathlib import Path
 
@@ -20,6 +21,8 @@ class DefaultConfig:
     ASSESSMENT_HUB_ROUTE = "/assess"
     FLASK_ROOT = str(Path(__file__).parent.parent.parent)
     FLASK_ENV = os.environ.get("FLASK_ENV") or "development"
+
+    FSD_LOG_LEVEL = logging.WARN
 
     """
     Assets

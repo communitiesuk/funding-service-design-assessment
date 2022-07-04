@@ -7,13 +7,17 @@ if not FLASK_ENV:
     raise KeyError("FLASK_ENV does not exist in environ")
 
 match FLASK_ENV:
+    case "unit_test":
+        from config.envs.unit_test import (
+            UnitTestConfig as Config,
+        )
     case "development":
         from config.envs.development import (
             DevelopmentConfig as Config,
         )
-    case "unit_test":
-        from config.envs.unit_test import (
-            UnitTestConfig as Config,
+    case "dev":
+        from config.envs.dev import (
+            DevConfig as Config,
         )
     case "test":
         from config.envs.test import (
