@@ -100,7 +100,7 @@ intro_routes_and_test_content = {
             "contains": "COMPLETED",
         },
     ],
-    "/assess/fragments/selection": [
+    "/assess/fragments/structured_question": [
         {
             "tag": "h2",
             "name": None,

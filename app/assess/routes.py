@@ -1,6 +1,6 @@
 from app.assess.data import *
+from app.assess.models.question import Question
 from app.assess.models.question_field import QuestionField
-from app.assess.models.structured_question import StructuredQuestionView
 from app.assess.models.total_table import TotalMoneyTableView
 from app.config import APPLICATION_STORE_API_HOST_PUBLIC
 from app.config import ASSESSMENT_HUB_ROUTE
@@ -30,7 +30,7 @@ def funds():
     return render_template("funds.html", funds=funds)
 
 
-@assess_bp.route("/fragments/selection", methods=["GET"])
+@assess_bp.route("/fragments/structured_question", methods=["GET"])
 def selection_fragment():
     """
     An example route showing passing data from select type
@@ -102,12 +102,15 @@ def selection_fragment():
     }
     # collect different answer types here to pass to base template such as
     # select type (radio, checkbox), free-text, table etc
-    select_type_data = StructuredQuestionView.from_question_json(
+    question = Question.from_json(
         example_assessment_store_data_for_select_type_data
     )
-    data = {"structured_question_data": select_type_data}
+    structured_question_data = question.as_structured_question()
+    question_data = {"structured_question_data": structured_question_data}
 
-    return render_template("structured_question.html", data=data)
+    return render_template(
+        "structured_question.html", title=question.title, data=question_data
+    )
 
 
 @assess_bp.route("/fragments/total_table_view", methods=["GET"])
