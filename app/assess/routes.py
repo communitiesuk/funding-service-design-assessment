@@ -179,7 +179,6 @@ def fund_round(fund_id: str, round_id: str):
     return render_template("round.html", fund=fund, round=fund_round)
 
 
-
 @assess_bp.route("/fragments/upload_documents/")
 def upload_documents():
     """
@@ -198,16 +197,18 @@ def upload_documents():
                         "type": "file",
                         "answer": "https://en.wikipedia.org/wiki/Python_(programming_language)",
                     }
-                ]
+                ],
             }
-        ]
+        ],
     }
-                    
+
     json_fields = uploaded_file_json["questions"][0]["fields"][0]
     attachment_file_json = QuestionField.from_json(json_fields)
 
     return render_template(
-        "macros/example_upload_documents.html", file=attachment_file_json)         
+        "macros/example_upload_documents.html", file=attachment_file_json
+    )
+
 
 @assess_bp.route("/fragments/text_input/")
 def text_input():
@@ -225,7 +226,6 @@ def text_input():
                         "type": "text",
                         "answer": "Steve",
                     },
-
                 ],
             }
         ],
