@@ -1,6 +1,8 @@
 import json
 import os
+from typing import Dict
 from typing import List
+from typing import Union
 from urllib.parse import urlencode
 
 import requests
@@ -59,7 +61,7 @@ def call_search_applications(params: dict):
     return applications_response
 
 
-def get_funds() -> List[Fund] | None:
+def get_funds() -> Union[List[Fund], None]:
     endpoint = FUND_STORE_API_HOST + FUNDS_ENDPOINT
     response = get_data(endpoint)
     if response and len(response) > 0:
@@ -70,7 +72,7 @@ def get_funds() -> List[Fund] | None:
     return None
 
 
-def get_fund(fund_id: str) -> Fund | None:
+def get_fund(fund_id: str) -> Union[Fund, None]:
     endpoint = FUND_STORE_API_HOST + FUND_ENDPOINT.format(fund_id=fund_id)
     response = get_data(endpoint)
     if response and "fund_id" in response:
@@ -82,7 +84,7 @@ def get_fund(fund_id: str) -> Fund | None:
     return None
 
 
-def get_rounds(fund_id: str) -> Fund | List:
+def get_rounds(fund_id: str) -> Union[Fund, List]:
     endpoint = ROUND_STORE_API_HOST + ROUNDS_ENDPOINT.format(fund_id=fund_id)
     response = get_data(endpoint)
     rounds = []
@@ -92,7 +94,9 @@ def get_rounds(fund_id: str) -> Fund | List:
     return rounds
 
 
-def get_round_with_applications(fund_id: str, round_id: str) -> Round | None:
+def get_round_with_applications(
+    fund_id: str, round_id: str
+) -> Union[Round, None]:
     round_endpoint = ROUND_STORE_API_HOST + ROUND_ENDPOINT.format(
         fund_id=fund_id, round_id=round_id
     )
@@ -114,7 +118,7 @@ def get_round_with_applications(fund_id: str, round_id: str) -> Round | None:
     return None
 
 
-def get_applications(params: dict) -> List[Application] | None:
+def get_applications(params: dict) -> Union[List[Application], None]:
     applications_response = call_search_applications(params)
     if applications_response and len(applications_response) > 0:
         applications = []
@@ -125,7 +129,7 @@ def get_applications(params: dict) -> List[Application] | None:
     return None
 
 
-def get_todo_summary() -> dict | None:
+def get_todo_summary() -> Union[Dict, None]:
     applications = call_search_applications("")
     if applications and len(applications) > 0:
         todo_summary = {}
@@ -159,7 +163,7 @@ def get_todo_summary() -> dict | None:
     return None
 
 
-def get_application(identifier: str) -> Application | None:
+def get_application(identifier: str) -> Union[Application, None]:
     application_endpoint = (
         APPLICATION_STORE_API_HOST
         + APPLICATION_ENDPOINT.format(application_id=identifier)
@@ -172,7 +176,7 @@ def get_application(identifier: str) -> Application | None:
     return None
 
 
-def get_application_status(application_id: str) -> Application | None:
+def get_application_status(application_id: str) -> Union[Application, None]:
     application_status_endpoint = (
         APPLICATION_STORE_API_HOST
         + APPLICATION_STATUS_ENDPOINT.format(application_id=application_id)
