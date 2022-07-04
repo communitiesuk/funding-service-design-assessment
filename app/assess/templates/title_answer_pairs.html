@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{%- from "govuk_frontend_jinja/components/table/macro.html" import govukTable -%}
+{% from "macros/title_answer_pairs.html" import TitleAnswerPairs %}
+
+{% block content %}
+
+{{ TitleAnswerPairs(data_dict) }}
+
+{% endblock %}
