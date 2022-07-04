@@ -5,6 +5,7 @@ from flask_assets import Environment
 from flask_compress import Compress
 from flask_talisman import Talisman
 from flask_wtf.csrf import CSRFProtect
+from fsd_utils import logging
 from jinja2 import ChoiceLoader
 from jinja2 import PackageLoader
 from jinja2 import PrefixLoader
@@ -31,6 +32,8 @@ def create_app() -> Flask:
     flask_app.jinja_env.lstrip_blocks = True
 
     Compress(flask_app)
+
+    logging.init_app(flask_app)
 
     # Configure application security with Talisman
     Talisman(flask_app, **Config.TALISMAN_SETTINGS)
