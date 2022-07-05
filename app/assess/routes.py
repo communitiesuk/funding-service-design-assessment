@@ -359,3 +359,84 @@ def fund_round(fund_id: str, round_id: str):
         abort(404)
 
     return render_template("round.html", fund=fund, round=fund_round)
+
+
+@assess_bp.route("/fragments/upload_documents/")
+def upload_documents():
+    """
+    Render html page with json contains title & answer/url.
+    """
+
+    uploaded_file_json = {
+        "name": "Digital Form Builder - Runner test-form-",
+        "questions": [
+            {
+                "question": "Upload documents page",
+                "fields": [
+                    {
+                        "key": "ocdeay",
+                        "title": "Python language - Introduction & course",
+                        "type": "file",
+                        "answer": "https://en.wikipedia.org/wiki/Python_(programming_language)",
+                    }
+                ],
+            }
+        ],
+    }
+
+    json_fields = uploaded_file_json["questions"][0]["fields"][0]
+    file_metadata = QuestionField.from_json(json_fields)
+
+    return render_template(
+        "macros/example_upload_documents.html", file_metadata=file_metadata
+    )
+
+
+@assess_bp.route("/fragments/text_input/")
+def text_input():
+    """
+    Render html page with json contains question & answer.
+    """
+
+    input_text_name = {
+        "questions": [
+            {
+                "fields": [
+                    {
+                        "key": "oLfixk",
+                        "title": "Your name",
+                        "type": "text",
+                        "answer": "Steve",
+                    },
+                ],
+            }
+        ],
+    }
+
+    input_text_address = {
+        "questions": [
+            {
+                "fields": [
+                    {
+                        "key": "gOgMvi",
+                        "title": "Your UK address",
+                        "type": "text",
+                        "answer": "99 evoco, example street, London, UB5 5FF",
+                    },
+                ],
+            }
+        ],
+    }
+
+    name = QuestionField.from_json(
+        input_text_name["questions"][0]["fields"][0]
+    )
+    address = QuestionField.from_json(
+        input_text_address["questions"][0]["fields"][0]
+    )
+
+    return render_template(
+        "macros/example_text_input.html",
+        name=name,
+        address=address,
+    )
