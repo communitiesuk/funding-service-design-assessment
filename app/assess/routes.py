@@ -203,10 +203,10 @@ def upload_documents():
     }
 
     json_fields = uploaded_file_json["questions"][0]["fields"][0]
-    attachment_file_json = QuestionField.from_json(json_fields)
+    file_metadata = QuestionField.from_json(json_fields)
 
     return render_template(
-        "macros/example_upload_documents.html", file=attachment_file_json
+        "macros/example_upload_documents.html", file=file_metadata
     )
 
 
