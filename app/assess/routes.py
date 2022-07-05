@@ -206,7 +206,7 @@ def upload_documents():
     file_metadata = QuestionField.from_json(json_fields)
 
     return render_template(
-        "macros/example_upload_documents.html", file=file_metadata
+        "macros/example_upload_documents.html", file_metadata=file_metadata
     )
 
 
