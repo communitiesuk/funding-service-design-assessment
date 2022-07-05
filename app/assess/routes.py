@@ -111,6 +111,53 @@ def selection_fragment():
     return render_template(
         "structured_question.html", title=question.title, data=question_data
     )
+@assess_bp.route("/fragments/title_answer_pairs", methods=["GET"])
+def text_area_1():
+    """
+    Page showing fragment of text_area_1
+    :return:
+    """
+
+    question_data = {
+        "question": "About your organisation",
+        "fields": [
+            {
+                "key": "application-name",
+                "title": "Applicant name",
+                "type": "text",
+                "answer": "Bobby Bob",
+            },
+            {
+                "key": "applicant-email",
+                "title": "Email",
+                "type": "text",
+                "answer": "a@example.com",
+            },
+            {
+                "key": "applicant-telephone-number",
+                "title": "Telephone number",
+                "type": "text",
+                "answer": "01632 960 000",
+            },
+            {
+                "key": "applicant-website",
+                "title": "Website",
+                "type": "text",
+                "answer": "https://www.onedirection.com",
+            },
+        ],
+    }
+
+    data_dict = {}
+
+    data_dict["title"] = question_data["question"]
+
+    data_dict["answers"] = [
+        {"title": data_dict["title"], "answer": data_dict["answer"]}
+        for data_dict in question_data["fields"]
+    ]
+
+    return render_template("title_answer_pairs.html", data_dict=data_dict)
 
 
 @assess_bp.route("/fragments/total_table_view", methods=["GET"])
@@ -139,7 +186,7 @@ def total_table_view():
             },
         ],
     }
-
+            
     question_model = TotalMoneyTableView.from_question_json(question_data)
 
     return render_template(
