@@ -1,3 +1,4 @@
+import ast
 from dataclasses import dataclass
 from typing import List
 
@@ -26,3 +27,20 @@ class Question:
         if not self.fields:
             self.fields = []
         self.fields.append(field)
+
+    def as_structured_question(self):
+        answers_per_question_field = {}
+        for question_field in self.fields:
+            answer = question_field.answer
+            try:
+                if type(ast.literal_eval(answer)) == list:
+                    answers_per_question_field[
+                        question_field.title
+                    ] = ast.literal_eval(answer)
+                    continue
+            except (ValueError, SyntaxError):
+                # literal_eval cannot parse string values
+                pass
+            answers_per_question_field[question_field.title] = [answer]
+
+        return answers_per_question_field

@@ -32,13 +32,14 @@ Clone the repository
     .venv\Scripts\activate.bat
 
 ### Install dependencies
+
 From the top-level directory enter the command to install pip and the dependencies of the project
 
     python3 -m pip install --upgrade pip && pip install -r requirements-dev.txt
 
 NOTE: requirements-dev.txt and requirements.txt are updated using [pip-tools pip-compile](https://github.com/jazzband/pip-tools)
 To update requirements please manually add the dependencies in the .in files (not the requirements.txt files)
-Then run:
+Then run (in the following order):
 
     pip-compile requirements.in
 

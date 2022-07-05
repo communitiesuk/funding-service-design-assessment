@@ -1,5 +1,5 @@
-# flake8: noqa
 from app.assess.data import *
+from app.assess.models.question import Question
 from app.assess.models.question_field import QuestionField
 from app.assess.models.total_table import TotalMoneyTableView
 from config import Config
@@ -29,6 +29,89 @@ def funds():
     return render_template("funds.html", funds=funds)
 
 
+@assess_bp.route("/fragments/structured_question", methods=["GET"])
+def selection_fragment():
+    """
+    An example route showing passing data from select type
+    answers (radio, checkbox, select) through to a base
+    template that utilises the 'structured_question'
+    macro.
+    """
+
+    example_assessment_store_data_for_select_type_data = {
+        "question": "Declarations",
+        "status": "completed",
+        "fields": [
+            # Radio answer
+            {
+                "key": "declarations-state-aid",
+                "title": (
+                    "Would funding your organisation be classed as State Aid?"
+                ),
+                "type": "list",
+                "answer": "False",
+            },
+            {
+                "key": "declarations-environmental",
+                "title": (
+                    "Does your application comply with all relevant"
+                    " environmental standards?"
+                ),
+                "type": "list",
+                "answer": "True",
+            },
+            # Checkbox answer
+            {
+                "key": "who-is-endorsing-your-application",
+                "title": "Who is endorsing your application?",
+                "type": "list",
+                "answer": "['Member of parliament (MP)']",
+            },
+            {
+                "key": "about-your-project-policy-aims",
+                "title": (
+                    "Which policy aims will your project deliver against?"
+                ),
+                "type": "list",
+                "answer": (
+                    "['regeneration', 'Level up skills', 'Fight climate"
+                    " change']"
+                ),
+            },
+            # select list answer (selected '1')
+            {
+                "key": "your-project-sector",
+                "title": "Project sector",
+                "type": "list",
+                "answer": "1",
+            },
+            {
+                "key": "rDyIBy",
+                "title": "Risk Level",
+                "type": "list",
+                "answer": "medium",
+            },
+            {
+                "key": "XBxwLy",
+                "title": "Categorise your risk",
+                "type": "list",
+                "answer": "reputational risk",
+            },
+        ],
+    }
+    # collect different answer types here to pass to base template such as
+    # select type (radio, checkbox), free-text, table etc
+    question = Question.from_json(
+        example_assessment_store_data_for_select_type_data
+    )
+    structured_question_data = question.as_structured_question()
+    template_data = {"structured_question_data": structured_question_data}
+
+    return render_template(
+        "structured_question.html", title=question.title, data=template_data
+    )
+
+    
 @assess_bp.route("/fragments/title_answer_pairs", methods=["GET"])
 def text_area_1():
     """
@@ -111,6 +194,56 @@ def total_table_view():
         "total_table.html",
         question_data=question_data,
         row_dict=question_model.row_dict(),
+    )
+
+
+@assess_bp.route("/fragments/text_input")
+def text_input():
+    """
+    Render html page with json contains question & answer.
+    """
+
+    input_text_name = {
+        "questions": [
+            {
+                "fields": [
+                    {
+                        "key": "oLfixk",
+                        "title": "Your name",
+                        "type": "text",
+                        "answer": "Steve",
+                    },
+                ],
+            }
+        ],
+    }
+
+    input_text_address = {
+        "questions": [
+            {
+                "fields": [
+                    {
+                        "key": "gOgMvi",
+                        "title": "Your UK address",
+                        "type": "text",
+                        "answer": "99 evoco, example street, London, UB5 5FF",
+                    },
+                ],
+            }
+        ],
+    }
+
+    name = QuestionField.from_json(
+        input_text_name["questions"][0]["fields"][0]
+    )
+    address = QuestionField.from_json(
+        input_text_address["questions"][0]["fields"][0]
+    )
+
+    return render_template(
+        "macros/example_text_input.html",
+        name=name,
+        address=address,
     )
 
 
@@ -227,51 +360,32 @@ def fund_round(fund_id: str, round_id: str):
     return render_template("round.html", fund=fund, round=fund_round)
 
 
-@assess_bp.route("/fragments/text_input/")
-def text_input():
+@assess_bp.route("/fragments/upload_documents/")
+def upload_documents():
     """
-    Render html page with json contains question & answer.
+    Render html page with json contains title & answer/url.
     """
 
-    input_text_name = {
+    uploaded_file_json = {
+        "name": "Digital Form Builder - Runner test-form-",
         "questions": [
             {
+                "question": "Upload documents page",
                 "fields": [
                     {
-                        "key": "oLfixk",
-                        "title": "Your name",
-                        "type": "text",
-                        "answer": "Steve",
-                    },
+                        "key": "ocdeay",
+                        "title": "Python language - Introduction & course",
+                        "type": "file",
+                        "answer": "https://en.wikipedia.org/wiki/Python_(programming_language)",
+                    }
                 ],
             }
         ],
     }
 
-    input_text_address = {
-        "questions": [
-            {
-                "fields": [
-                    {
-                        "key": "gOgMvi",
-                        "title": "Your UK address",
-                        "type": "text",
-                        "answer": "99 evoco, example street, London, UB5 5FF",
-                    },
-                ],
-            }
-        ],
-    }
-
-    name = QuestionField.from_json(
-        input_text_name["questions"][0]["fields"][0]
-    )
-    address = QuestionField.from_json(
-        input_text_address["questions"][0]["fields"][0]
-    )
+    json_fields = uploaded_file_json["questions"][0]["fields"][0]
+    file_metadata = QuestionField.from_json(json_fields)
 
     return render_template(
-        "macros/example_text_input.html",
-        name=name,
-        address=address,
+        "macros/example_upload_documents.html", file_metadata=file_metadata
     )

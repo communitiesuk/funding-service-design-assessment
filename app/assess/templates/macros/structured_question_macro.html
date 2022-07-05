@@ -1,0 +1,15 @@
+{% macro structuredQuestion(select_type_data) %}
+
+{% for key, values in select_type_data.items() %}
+<h3 class="govuk-heading-s">
+    {{key}}
+</h3>
+{% for value in values %}
+<p class="govuk-body">
+    {{value}}
+</p>
+{% endfor %}
+
+{% endfor %}
+
+{% endmacro %}

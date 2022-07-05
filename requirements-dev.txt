@@ -32,7 +32,7 @@ certifi==2022.6.15
     #   -r requirements.txt
     #   requests
     #   urllib3
-cffi==1.15.0
+cffi==1.15.1
     # via cryptography
 cfgv==3.3.1
     # via pre-commit
@@ -197,6 +197,8 @@ pre-commit==2.19.0
     # via -r requirements-dev.in
 py==1.11.0
     # via pytest
+pybrowsers==0.4.1
+    # via webdriver-manager
 pycparser==2.21
     # via cffi
 pygments==2.12.0
