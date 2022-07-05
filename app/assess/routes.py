@@ -228,6 +228,37 @@ def fund_round(fund_id: str, round_id: str):
     return render_template("round.html", fund=fund, round=fund_round)
 
 
+@assess_bp.route("/fragments/upload_documents/")
+def upload_documents():
+    """
+    Render html page with json contains title & answer/url.
+    """
+
+    uploaded_file_json = {
+        "name": "Digital Form Builder - Runner test-form-",
+        "questions": [
+            {
+                "question": "Upload documents page",
+                "fields": [
+                    {
+                        "key": "ocdeay",
+                        "title": "Python language - Introduction & course",
+                        "type": "file",
+                        "answer": "https://en.wikipedia.org/wiki/Python_(programming_language)",
+                    }
+                ],
+            }
+        ],
+    }
+
+    json_fields = uploaded_file_json["questions"][0]["fields"][0]
+    file_metadata = QuestionField.from_json(json_fields)
+
+    return render_template(
+        "macros/example_upload_documents.html", file_metadata=file_metadata
+    )
+
+
 @assess_bp.route("/fragments/text_input/")
 def text_input():
     """
