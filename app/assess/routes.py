@@ -106,10 +106,10 @@ def selection_fragment():
         example_assessment_store_data_for_select_type_data
     )
     structured_question_data = question.as_structured_question()
-    question_data = {"structured_question_data": structured_question_data}
+    template_data = {"structured_question_data": structured_question_data}
 
     return render_template(
-        "structured_question.html", title=question.title, data=question_data
+        "structured_question.html", title=question.title, data=template_data
     )
 @assess_bp.route("/fragments/title_answer_pairs", methods=["GET"])
 def text_area_1():
