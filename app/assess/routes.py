@@ -36,7 +36,7 @@ def selection_fragment():
     An example route showing passing data from select type
     answers (radio, checkbox, select) through to a base
     template that utilises the 'structured_question'
-    formated template.
+    macro.
     """
 
     example_assessment_store_data_for_select_type_data = {
