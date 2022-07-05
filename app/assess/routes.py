@@ -111,6 +111,8 @@ def selection_fragment():
     return render_template(
         "structured_question.html", title=question.title, data=template_data
     )
+
+    
 @assess_bp.route("/fragments/title_answer_pairs", methods=["GET"])
 def text_area_1():
     """
