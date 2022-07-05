@@ -10,6 +10,8 @@ async-generator==1.10
     #   trio-websocket
 attrs==21.4.0
     # via
+    #   -r requirements.txt
+    #   jsonschema
     #   outcome
     #   pytest
     #   trio
@@ -34,6 +36,10 @@ cffi==1.15.1
     # via cryptography
 cfgv==3.3.1
     # via pre-commit
+chardet==4.0.0
+    # via
+    #   -r requirements.txt
+    #   prance
 charset-normalizer==2.1.0
     # via
     #   -r requirements.txt
@@ -42,45 +48,69 @@ click==8.1.3
     # via
     #   -r requirements.txt
     #   black
+    #   clickclick
     #   flask
     #   pip-tools
     #   safety
-cryptography==37.0.4
+clickclick==20.10.2
+    # via
+    #   -r requirements.txt
+    #   connexion
+commonmark==0.9.1
+    # via
+    #   -r requirements.txt
+    #   rich
+connexion==2.14.0
+    # via -r requirements.txt
+cryptography==37.0.2
     # via
     #   pyopenssl
     #   urllib3
 cssmin==0.2.0
     # via -r requirements.txt
+deepdiff==5.8.1
+    # via -r requirements-dev.in
 distlib==0.3.4
     # via virtualenv
-dparse==0.5.1
-    # via safety
-filelock==3.7.1
-    # via virtualenv
-flask==2.1.2
+dnspython==2.2.1
     # via
     #   -r requirements.txt
+    #   email-validator
+dparse==0.5.1
+    # via safety
+email-validator==1.2.1
+    # via -r requirements.txt
+filelock==3.7.1
+    # via virtualenv
+flask==2.1.1
+    # via
+    #   -r requirements.txt
+    #   connexion
     #   flask-assets
     #   flask-compress
-    #   flask-seasurf
     #   flask-wtf
+    #   funding-service-design-utils
     #   pytest-flask
 flask-assets==2.0
     # via -r requirements.txt
-flask-compress==1.12
+flask-compress==1.10.1
     # via -r requirements.txt
-flask-seasurf==1.1.1
+flask-talisman==0.8.1
     # via -r requirements.txt
-flask-talisman==1.0.0
+flask-wtf==1.0.0
     # via -r requirements.txt
-flask-wtf==1.0.1
+funding-service-design-utils @ git+https://github.com/communitiesuk/funding-service-design-utils.git@main
     # via -r requirements.txt
 gitdb==4.0.9
     # via gitpython
 gitpython==3.1.27
     # via bandit
-govuk-frontend-jinja==2.2.0
+govuk-frontend-jinja==2.0.0
     # via -r requirements.txt
+gunicorn==20.1.0
+    # via
+    #   -r requirements.txt
+    #   funding-service-design-utils
 h11==0.13.0
     # via wsproto
 identify==2.5.1
@@ -88,14 +118,20 @@ identify==2.5.1
 idna==3.3
     # via
     #   -r requirements.txt
+    #   email-validator
     #   requests
     #   trio
     #   urllib3
+inflection==0.5.1
+    # via
+    #   -r requirements.txt
+    #   connexion
 iniconfig==1.1.1
     # via pytest
 itsdangerous==2.1.2
     # via
     #   -r requirements.txt
+    #   connexion
     #   flask
     #   flask-wtf
 jinja2==3.1.2
@@ -103,10 +139,17 @@ jinja2==3.1.2
     #   -r requirements.txt
     #   flask
     #   govuk-frontend-jinja
+    #   swagger-ui-bundle
 jsmin==3.0.1
     # via -r requirements.txt
 json2html==1.3.0
     # via -r requirements-dev.in
+jsonschema==4.6.1
+    # via
+    #   -r requirements.txt
+    #   connexion
+    #   openapi-schema-validator
+    #   openapi-spec-validator
 markupsafe==2.1.1
     # via
     #   -r requirements.txt
@@ -116,11 +159,21 @@ mypy-extensions==0.4.3
     # via black
 nodeenv==1.7.0
     # via pre-commit
+openapi-schema-validator==0.2.3
+    # via
+    #   -r requirements.txt
+    #   openapi-spec-validator
+openapi-spec-validator==0.4.0
+    # via -r requirements.txt
+ordered-set==4.1.0
+    # via deepdiff
 outcome==1.2.0
     # via trio
 packaging==21.3
     # via
+    #   -r requirements.txt
     #   build
+    #   connexion
     #   dparse
     #   pytest
     #   safety
@@ -138,6 +191,8 @@ platformdirs==2.5.2
     #   virtualenv
 pluggy==1.0.0
     # via pytest
+prance==0.21.8.0
+    # via -r requirements.txt
 pre-commit==2.19.0
     # via -r requirements-dev.in
 py==1.11.0
@@ -146,10 +201,20 @@ pybrowsers==0.4.1
     # via webdriver-manager
 pycparser==2.21
     # via cffi
+pygments==2.12.0
+    # via
+    #   -r requirements.txt
+    #   rich
 pyopenssl==22.0.0
     # via urllib3
 pyparsing==3.0.9
-    # via packaging
+    # via
+    #   -r requirements.txt
+    #   packaging
+pyrsistent==0.18.1
+    # via
+    #   -r requirements.txt
+    #   jsonschema
 pyscss==1.4.0
     # via -r requirements.txt
 pysocks==1.7.1
@@ -158,38 +223,92 @@ pytest==7.1.2
     # via
     #   -r requirements-dev.in
     #   axe-selenium-python
+    #   pytest-base-url
     #   pytest-env
     #   pytest-flask
+    #   pytest-html
+    #   pytest-metadata
+    #   pytest-mock
+    #   pytest-selenium
+    #   pytest-variables
+pytest-base-url==2.0.0
+    # via pytest-selenium
 pytest-env==0.6.2
     # via -r requirements-dev.in
 pytest-flask==1.2.0
     # via -r requirements-dev.in
+pytest-html==3.1.1
+    # via pytest-selenium
+pytest-metadata==2.0.1
+    # via pytest-html
+pytest-mock==3.7.0
+    # via -r requirements-dev.in
+pytest-selenium==2.0.1
+    # via -r requirements-dev.in
+pytest-variables==2.0.0
+    # via pytest-selenium
 python-dotenv==0.20.0
-    # via webdriver-manager
+    # via
+    #   -r requirements.txt
+    #   funding-service-design-utils
+    #   webdriver-manager
+python-json-logger==2.0.2
+    # via
+    #   -r requirements.txt
+    #   funding-service-design-utils
+pytz==2022.1
+    # via
+    #   -r requirements.txt
+    #   funding-service-design-utils
 pyyaml==6.0
     # via
+    #   -r requirements.txt
     #   bandit
+    #   clickclick
+    #   connexion
     #   dparse
+    #   funding-service-design-utils
+    #   openapi-spec-validator
     #   pre-commit
 requests==2.28.1
     # via
     #   -r requirements.txt
+    #   connexion
+    #   prance
+    #   pytest-base-url
+    #   pytest-selenium
     #   safety
     #   webdriver-manager
+rich==12.4.4
+    # via
+    #   -r requirements.txt
+    #   funding-service-design-utils
 ruamel-yaml==0.17.21
-    # via safety
+    # via
+    #   -r requirements.txt
+    #   prance
 ruamel-yaml-clib==0.2.6
-    # via ruamel-yaml
-safety==2.0.0
+    # via
+    #   -r requirements.txt
+    #   ruamel-yaml
+safety==1.10.3
     # via -r requirements-dev.in
-selenium==4.3.0
+selenium==4.2.0
     # via
     #   -r requirements-dev.in
     #   axe-selenium-python
+    #   pytest-selenium
+semver==2.13.0
+    # via
+    #   -r requirements.txt
+    #   prance
 six==1.16.0
     # via
     #   -r requirements.txt
+    #   flask-talisman
+    #   prance
     #   pyscss
+    #   tenacity
     #   virtualenv
 smmap==5.0.0
     # via gitdb
@@ -199,6 +318,10 @@ sortedcontainers==2.4.0
     # via trio
 stevedore==3.5.0
     # via bandit
+swagger-ui-bundle==0.0.9
+    # via -r requirements.txt
+tenacity==6.3.1
+    # via pytest-selenium
 toml==0.10.2
     # via
     #   dparse
@@ -226,11 +349,12 @@ webassets==2.0
     # via
     #   -r requirements.txt
     #   flask-assets
-webdriver-manager==3.8.0
+webdriver-manager==3.7.0
     # via -r requirements-dev.in
 werkzeug==2.1.2
     # via
     #   -r requirements.txt
+    #   connexion
     #   flask
     #   pytest-flask
 wheel==0.37.1

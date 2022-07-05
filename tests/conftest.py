@@ -48,7 +48,8 @@ def app():
     @pytest.mark.uses_fixture('live_server')
     :return: An instance of the Flask app.
     """
-    yield create_app()
+    with create_app().app_context():
+        yield create_app()
 
 
 @pytest.fixture()

@@ -1,5 +1,5 @@
 """Compile static assets."""
-from flask import current_app as app
+from config import Config
 from flask_assets import Bundle
 
 
@@ -26,6 +26,6 @@ def compile_static_assets(assets):
 
     assets.register("default_styles", default_style_bundle)
     assets.register("main_js", default_js_bundle)
-    if app.config["FLASK_ENV"] == "development":
+    if Config.FLASK_ENV == "development":
         default_style_bundle.build()
         default_js_bundle.build()

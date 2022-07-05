@@ -33,7 +33,11 @@ Clone the repository
 
 ### Install dependencies
 
-requirements-dev.txt and requirements.txt are updated using [pip-tools pip-compile](https://github.com/jazzband/pip-tools)
+From the top-level directory enter the command to install pip and the dependencies of the project
+
+    python3 -m pip install --upgrade pip && pip install -r requirements-dev.txt
+
+NOTE: requirements-dev.txt and requirements.txt are updated using [pip-tools pip-compile](https://github.com/jazzband/pip-tools)
 To update requirements please manually add the dependencies in the .in files (not the requirements.txt files)
 Then run (in the following order):
 
@@ -41,16 +45,15 @@ Then run (in the following order):
 
     pip-compile requirements-dev.in
 
-From the top-level directory enter the command to install pip and the dependencies of the project
-
-    python3 -m pip install --upgrade pip && pip install -r requirements-dev.txt
-
 ## How to use
 Enter the virtual environment as described above, then:
 
-### Create static files
+### Build GovUK Assets
 
-If you would like to manually download the static files and extract them then run
+This build step imports assets required for the GovUK template and styling components.
+It also builds customised swagger files which slightly clean the layout provided by the vanilla SwaggerUI 3.52.0 (which is included in dependency swagger-ui-bundle==0.0.9) are located at /swagger/custom/3_52_0.
+
+Before first usage, the vanilla bundle needs to be imported and overwritten with the modified files. To do this run:
 
     python3 build.py
 
@@ -58,27 +61,40 @@ Developer note: If you receive a certification error when running the above comm
 consider if you need to run the Python
 'Install Certificates.command' which is a file located in your globally installed Python directory. For more info see [StackOverflow](https://stackoverflow.com/questions/52805115/certificate-verify-failed-unable-to-get-local-issuer-certificate)
 
-Then run:
+### Run Flask
+
+Run:
 
     flask run
 
 A local dev server will be created on
 
-    http://127.0.0.1:5000/
+    http://localhost:5000
 
-Flask environment variables are configurable in .flaskenv
+Flask environment variables are configurable in `.flaskenv`
 
 You should see the following:
 ![Preview of the end result](https://user-images.githubusercontent.com/56394038/155768587-907ea46a-ade5-475a-a901-acfde6160f66.png)
 
+### Run with Gunicorn
+
+In deployed environments the service is run with gunicorn. You can run the service locally with gunicorn to test
+
+First set the FLASK_ENV environment you wish to test eg:
+
+    export FLASK_ENV=dev
+
+Then run gunicorn using the following command:
+
+    gunicorn wsgi:app -c run/gunicorn/local.py
+
 # Configuration
 
-This service is designed to be an interface to three primary data stores: The *Fund Store* which holds data about different funds, the *Round Store* which holds information about the rounds for each fund, and the *Application Store* which holds individual applications/submissions for each fund.
+This service is designed to be an interface to two primary data stores: The *Fund Store* which holds data about different funds and their rounds, and the *Application Store* which holds individual applications/submissions for each fund.
 
-The locations of the APIs for these three stores can be set using the FUND_STORE_API_HOST,  ROUND_STORE_API_HOST and APPLICATION_STORE_API_HOST environment variables. Set these to the respective locations for each API host you want to use eg.:
+The locations of the APIs for these stores can be set using the FUND_STORE_API_HOST and APPLICATION_STORE_API_HOST environment variables. Set these to the respective locations for each API host you want to use eg.:
 
     export FUND_STORE_API_HOST="https://dluhc-fsd-fund-store-api.gov.uk"
-    export ROUND_STORE_API_HOST="https://dluhc-fsd-round-store-api.gov.uk"
     export APPLICATION_STORE_API_HOST="https://dluhc-fsd-application-store-api.gov.uk"
 
 # Pipelines
@@ -108,8 +124,6 @@ Performance tests are stored in a separate repository which is then run in the p
 
 This repo comes with a .pre-commit-config.yaml, if you wish to use this do
 the following while in your virtual enviroment:
-
-    pip install pre-commit black
 
     pre-commit install
 
