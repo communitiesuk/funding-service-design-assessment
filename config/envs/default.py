@@ -25,6 +25,22 @@ class DefaultConfig:
     FSD_LOG_LEVEL = logging.WARN
 
     """
+    External APIs
+    """
+    # Fund Store Endpoints
+    FUNDS_ENDPOINT = "/funds/"
+    FUND_ENDPOINT = "/funds/{fund_id}"
+
+    # Round Store Endpoints
+    ROUNDS_ENDPOINT = "/funds/{fund_id}"
+    ROUND_ENDPOINT = "/funds/{fund_id}/rounds/{round_id}"
+
+    # Application Store Endpoints
+    APPLICATION_ENDPOINT = "/applications/{application_id}"
+    APPLICATION_STATUS_ENDPOINT = "/applications/{application_id}/status"
+    APPLICATION_SEARCH_ENDPOINT = "/applications?{params}"
+
+    """
     Assets
     """
     ASSETS_DEBUG = False

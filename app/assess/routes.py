@@ -104,7 +104,7 @@ def total_table_view():
             },
         ],
     }
-            
+
     question_model = TotalMoneyTableView.from_question_json(question_data)
 
     return render_template(
@@ -148,7 +148,7 @@ def landing():
         applications_endpoint="".join(
             [
                 Config.APPLICATION_STORE_API_HOST_PUBLIC,
-                APPLICATION_SEARCH_ENDPOINT.replace("{params}", ""),
+                Config.APPLICATION_SEARCH_ENDPOINT.replace("{params}", ""),
             ]
         ),
     )

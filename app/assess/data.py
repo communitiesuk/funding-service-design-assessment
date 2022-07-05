@@ -13,20 +13,6 @@ from config import Config
 from flask import current_app
 
 
-# Fund Store Endpoints
-FUNDS_ENDPOINT = "/funds/"
-FUND_ENDPOINT = "/funds/{fund_id}"
-
-# Round Store Endpoints
-ROUNDS_ENDPOINT = "/funds/{fund_id}"
-ROUND_ENDPOINT = "/funds/{fund_id}/rounds/{round_id}"
-
-# Application Store Endpoints
-APPLICATION_ENDPOINT = "/applications/{application_id}"
-APPLICATION_STATUS_ENDPOINT = "/applications/{application_id}/status"
-APPLICATION_SEARCH_ENDPOINT = "/applications?{params}"
-
-
 def get_data(endpoint: str):
     if endpoint[:8] == "https://":
         response = requests.get(endpoint)
@@ -53,14 +39,14 @@ def get_local_data(endpoint: str):
 def call_search_applications(params: dict):
     applications_endpoint = (
         Config.APPLICATION_STORE_API_HOST
-        + APPLICATION_SEARCH_ENDPOINT.format(params=urlencode(params))
+        + Config.APPLICATION_SEARCH_ENDPOINT.format(params=urlencode(params))
     )
     applications_response = get_data(applications_endpoint)
     return applications_response
 
 
 def get_funds() -> Union[List[Fund], None]:
-    endpoint = Config.FUND_STORE_API_HOST + FUNDS_ENDPOINT
+    endpoint = Config.FUND_STORE_API_HOST + Config.FUNDS_ENDPOINT
     response = get_data(endpoint)
     if response and len(response) > 0:
         funds = []
@@ -71,7 +57,7 @@ def get_funds() -> Union[List[Fund], None]:
 
 
 def get_fund(fund_id: str) -> Union[Fund, None]:
-    endpoint = Config.FUND_STORE_API_HOST + FUND_ENDPOINT.format(
+    endpoint = Config.FUND_STORE_API_HOST + Config.FUND_ENDPOINT.format(
         fund_id=fund_id
     )
     response = get_data(endpoint)
@@ -85,7 +71,7 @@ def get_fund(fund_id: str) -> Union[Fund, None]:
 
 
 def get_rounds(fund_id: str) -> Union[Fund, List]:
-    endpoint = Config.ROUND_STORE_API_HOST + ROUNDS_ENDPOINT.format(
+    endpoint = Config.ROUND_STORE_API_HOST + Config.ROUNDS_ENDPOINT.format(
         fund_id=fund_id
     )
     response = get_data(endpoint)
@@ -99,8 +85,9 @@ def get_rounds(fund_id: str) -> Union[Fund, List]:
 def get_round_with_applications(
     fund_id: str, round_id: str
 ) -> Union[Round, None]:
-    round_endpoint = Config.ROUND_STORE_API_HOST + ROUND_ENDPOINT.format(
-        fund_id=fund_id, round_id=round_id
+    round_endpoint = (
+        Config.ROUND_STORE_API_HOST
+        + Config.ROUND_ENDPOINT.format(fund_id=fund_id, round_id=round_id)
     )
     round_response = get_data(round_endpoint)
     if round_response and "round_id" in round_response:
@@ -168,7 +155,7 @@ def get_todo_summary() -> Union[Dict, None]:
 def get_application(identifier: str) -> Union[Application, None]:
     application_endpoint = (
         Config.APPLICATION_STORE_API_HOST
-        + APPLICATION_ENDPOINT.format(application_id=identifier)
+        + Config.APPLICATION_ENDPOINT.format(application_id=identifier)
     )
     application_response = get_data(application_endpoint)
     if application_response and "id" in application_response:
@@ -181,7 +168,9 @@ def get_application(identifier: str) -> Union[Application, None]:
 def get_application_status(application_id: str) -> Union[Application, None]:
     application_status_endpoint = (
         Config.APPLICATION_STORE_API_HOST
-        + APPLICATION_STATUS_ENDPOINT.format(application_id=application_id)
+        + Config.APPLICATION_STATUS_ENDPOINT.format(
+            application_id=application_id
+        )
     )
     current_app.logger.debug(application_status_endpoint)
     application_status_response = get_data(application_status_endpoint)
@@ -205,7 +194,9 @@ def get_questions(application_id):
     """
     status_endpoint = (
         Config.APPLICATION_STORE_API_HOST
-        + APPLICATION_STATUS_ENDPOINT.format(application_id=application_id)
+        + Config.APPLICATION_STATUS_ENDPOINT.format(
+            application_id=application_id
+        )
     )
 
     questions = get_data(status_endpoint)

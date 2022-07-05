@@ -14,7 +14,9 @@ from jinja2 import PrefixLoader
 def create_app() -> Flask:
 
     flask_app = Flask(
-        __name__, static_url_path="/assets", static_folder="static/dist"
+        "Assessment Frontend",
+        static_url_path="/assets",
+        static_folder="static/dist",
     )
 
     flask_app.config.from_object("config.Config")
