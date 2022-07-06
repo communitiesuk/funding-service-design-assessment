@@ -22,7 +22,7 @@ class Application:
         application = Application(
             identifier=data.get("id"),
             submitted=datetime.fromisoformat(
-                data.get("date_submitted", "1970-01-01")
+                str(data.get("date_submitted", "1970-01-01"))
             ),
             fund_name=data.get("fund_name"),
             fund_id=data.get("fund_id"),
