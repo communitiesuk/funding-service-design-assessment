@@ -1,5 +1,4 @@
 """Compile static assets."""
-from config import Config
 from flask_assets import Bundle
 from webassets.exceptions import BuildError
 
@@ -27,15 +26,14 @@ def compile_static_assets(assets, flask_app):
 
     assets.register("default_styles", default_style_bundle)
     assets.register("main_js", default_js_bundle)
-    if Config.FLASK_ENV == "development":
-        try:
-            default_style_bundle.build()
-            default_js_bundle.build()
-        except BuildError as e:
-            raise BuildError(
-                "Nothing to build - tried looking for files to build in paths"
-                f" relative to the STATIC_FOLDER ({flask_app.static_folder})."
-                " Please check the static folder exists and expected static"
-                " files exist at the relative paths, defined here in the"
-                f" contents of the bundle object -> {e}."
-            )
+    try:
+        default_style_bundle.build()
+        default_js_bundle.build()
+    except BuildError as e:
+        raise BuildError(
+            "Nothing to build - tried looking for static files to build in"
+            " paths relative to the STATIC_FOLDER"
+            f" ({flask_app.static_folder}). Please check the static folder"
+            " exists and expected static files exist at the relative paths,"
+            f" defined here in the contents of the bundle object -> {e}."
+        )
