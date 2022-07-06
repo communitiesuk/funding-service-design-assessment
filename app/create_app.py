@@ -1,9 +1,11 @@
 from app.assets import compile_static_assets
+from config import Config
 from flask import Flask
 from flask_assets import Environment
 from flask_compress import Compress
 from flask_talisman import Talisman
 from flask_wtf.csrf import CSRFProtect
+from fsd_utils.logging import logging
 from jinja2 import ChoiceLoader
 from jinja2 import PackageLoader
 from jinja2 import PrefixLoader
@@ -12,10 +14,12 @@ from jinja2 import PrefixLoader
 def create_app() -> Flask:
 
     flask_app = Flask(
-        __name__, static_url_path="/assets", static_folder="static/dist"
+        "Assessment Frontend",
+        static_url_path="/assets",
+        static_folder="static/dist",
     )
 
-    flask_app.config.from_pyfile("config.py")
+    flask_app.config.from_object("config.Config")
 
     flask_app.jinja_loader = ChoiceLoader(
         [
@@ -29,48 +33,12 @@ def create_app() -> Flask:
     flask_app.jinja_env.trim_blocks = True
     flask_app.jinja_env.lstrip_blocks = True
 
-    csp = {
-        "default-src": "'self'",
-        "script-src": [
-            "'self'",
-            "'sha256-+6WnXIl4mbFTCARd8N3COQmT3bJJmo32N8q8ZSQAIcU='",
-            "'sha256-l1eTVSK8DTnK8+yloud7wZUqFrI0atVo6VlC6PJvYaQ='",
-        ],
-        "img-src": ["data:", "'self'"],
-    }
-
-    if str(
-        flask_app.config.get(
-            "".join(["APPLICATION_STORE", "_API_HOST_PUBLIC"])
-        )
-    ).startswith("https://"):
-        csp.update(
-            {
-                "connect-src": [
-                    flask_app.config.get("APPLICATION_STORE_API_HOST_PUBLIC"),
-                ],
-            }
-        )
-
-    hss = {
-        "Strict-Transport-Security": (
-            "max-age=31536000; includeSubDomains; preload"
-        ),
-        "X-Content-Type-Options": "nosniff",
-        "X-Frame-Options": "SAMEORIGIN",
-        "X-XSS-Protection": "1; mode=block",
-        "Feature_Policy": (
-            "microphone 'none'; camera 'none'; geolocation 'none'"
-        ),
-    }
-
     Compress(flask_app)
-    Talisman(
-        flask_app,
-        content_security_policy=csp,
-        strict_transport_security=hss,
-        content_security_policy_nonce_in=["script-src"],
-    )
+
+    logging.init_app(flask_app)
+
+    # Configure application security with Talisman
+    Talisman(flask_app, **Config.TALISMAN_SETTINGS)
 
     csrf = CSRFProtect()
 
@@ -107,7 +75,7 @@ def create_app() -> Flask:
         flask_app.add_url_rule(
             "/".join(
                 [
-                    flask_app.config["ASSESSMENT_HUB_ROUTE"],
+                    Config.ASSESSMENT_HUB_ROUTE,
                     "application",
                     "<application_id>",
                     "question",

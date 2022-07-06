@@ -48,7 +48,8 @@ def app():
     @pytest.mark.uses_fixture('live_server')
     :return: An instance of the Flask app.
     """
-    yield create_app()
+    with create_app().app_context():
+        yield create_app()
 
 
 @pytest.fixture()
@@ -71,7 +72,6 @@ def selenium_chrome_driver(request, live_server):
     @pytest.mark.uses_fixture('selenium_chrome_driver')
     :return: A selenium chrome driver.
     """
-    live_server.start()
 
     service_object = Service(ChromeDriverManager().install())
     chrome_options = Options()
