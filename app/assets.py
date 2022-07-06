@@ -1,6 +1,7 @@
 """Compile static assets."""
 from config import Config
 from flask_assets import Bundle
+from webassets.exceptions import BuildError
 
 
 def compile_static_assets(assets):
@@ -27,5 +28,9 @@ def compile_static_assets(assets):
     assets.register("default_styles", default_style_bundle)
     assets.register("main_js", default_js_bundle)
     if Config.FLASK_ENV == "development":
-        default_style_bundle.build()
-        default_js_bundle.build()
+        try:
+            default_style_bundle.build()
+            default_js_bundle.build()
+        except BuildError:
+            print("Nothing to build")
+            pass

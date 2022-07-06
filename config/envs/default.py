@@ -15,7 +15,7 @@ class DefaultConfig:
     SESSION_COOKIE_NAME = (
         os.environ.get("SESSION_COOKIE_NAME") or "session_cookie"
     )
-    STATIC_FOLDER = "static"
+    STATIC_FOLDER = "app/static"
     TEMPLATES_FOLDER = "templates"
     LOCAL_SERVICE_NAME = "local_flask"
     ASSESSMENT_HUB_ROUTE = "/assess"
@@ -40,6 +40,9 @@ class DefaultConfig:
     APPLICATION_STATUS_ENDPOINT = "/applications/{application_id}/status"
     APPLICATION_SEARCH_ENDPOINT = "/applications?{params}"
 
+    #Assesment store endpoints
+    ASSESSMENT_SCORE_JUST_ENDPOINT = "{host}/assessments/{assessment_id}/sub_criterias/{sub_criteria_id}/scores"
+
     """
     Assets
     """
@@ -52,6 +55,7 @@ class DefaultConfig:
     TEST_FUND_STORE_API_HOST = "fund_store"
     TEST_ROUND_STORE_API_HOST = "round_store"
     TEST_APPLICATION_STORE_API_HOST = "application_store"
+    TEST_ASSESSMENT_STORE_API_HOST = "assessment_store"
 
     FUND_STORE_API_HOST = (
         os.environ.get("FUND_STORE_API_HOST") or TEST_FUND_STORE_API_HOST
@@ -68,6 +72,11 @@ class DefaultConfig:
         os.environ.get("APPLICATION_STORE_API_HOST_PUBLIC")
         or os.environ.get("APPLICATION_STORE_API_HOST")
         or "/api/" + TEST_APPLICATION_STORE_API_HOST
+    )
+
+    ASSESSMENT_STORE_API_HOST = (
+        os.environ.get("ASSESSMENT_STORE_API_HOST")
+        or TEST_ASSESSMENT_STORE_API_HOST
     )
 
     """Content Security Policy"""

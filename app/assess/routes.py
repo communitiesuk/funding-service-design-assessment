@@ -2,6 +2,7 @@ from app.assess.data import *
 from app.assess.models.question import Question
 from app.assess.models.question_field import QuestionField
 from app.assess.models.total_table import TotalMoneyTableView
+from app.assess.data import submit_score_and_justification
 from config import Config
 from flask import abort
 from flask import Blueprint
@@ -202,8 +203,14 @@ def sub_crit_scoring():
 
     if form.validate_on_submit():
 
-        print(form.score.data)
-        print(form.justification.data)
+        score = int(form.score.data)
+        just = form.justification.data
+
+        assessment_id = "test_assess_id"
+        person_id = "test_person_id"
+        sub_crit_id = "test_sub_crit_id"
+
+        submit_score_and_justification(score=score, assessment_id=assessment_id, person_id=person_id, justification=just,sub_crit_id=sub_crit_id)
         scores_submitted = True
 
     else:

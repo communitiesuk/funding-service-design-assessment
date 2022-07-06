@@ -16,7 +16,7 @@ def create_app() -> Flask:
     flask_app = Flask(
         "Assessment Frontend",
         static_url_path="/assets",
-        static_folder="static/dist",
+        static_folder="/static/dist",
     )
 
     flask_app.config.from_object("config.Config")
@@ -85,11 +85,6 @@ def create_app() -> Flask:
             + "/",
             view_func=AssessQuestionView.as_view("application_question"),
         )
-
-        # Bundle and compile assets
-        assets = Environment()
-        assets.init_app(flask_app)
-        compile_static_assets(assets)
 
         return flask_app
 

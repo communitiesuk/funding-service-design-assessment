@@ -5,12 +5,15 @@ from typing import List
 from typing import Union
 from urllib.parse import urlencode
 
+from config import Config
+
 import requests
 from app.assess.models.application import Application
 from app.assess.models.fund import Fund
 from app.assess.models.round import Round
 from config import Config
 from flask import current_app
+from flask import jsonify
 
 
 def get_data(endpoint: str):
@@ -106,6 +109,16 @@ def get_round_with_applications(
         return fund_round
     return None
 
+def submit_score_and_justification(assessment_id, person_id, score, justification, sub_crit_id):
+
+    data_dict = {"score":score, "justification":justification, "person_id":person_id}
+    url = Config.ASSESSMENT_SCORE_JUST_ENDPOINT.format(host=Config.ASSESSMENT_STORE_API_HOST,assessment_id=assessment_id, sub_criteria_id=sub_crit_id)
+    response = requests.post(url, json=data_dict)
+    print(response.content)
+    if response.status_code == 200:
+        return True
+    else:
+        return False
 
 def get_applications(params: dict) -> Union[List[Application], None]:
     applications_response = call_search_applications(params)
