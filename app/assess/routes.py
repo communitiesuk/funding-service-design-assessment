@@ -8,6 +8,7 @@ from flask import abort
 from flask import Blueprint
 from flask import render_template
 from flask import request
+from app.assess.forms.scores_and_justifications import JustScoreForm
 
 assess_bp = Blueprint(
     "assess_bp",
@@ -28,7 +29,6 @@ def funds():
     funds = get_funds()
 
     return render_template("funds.html", funds=funds)
-
 
 @assess_bp.route("/fragments/title_answer_pairs", methods=["GET"])
 def text_area_1():
@@ -114,6 +114,22 @@ def total_table_view():
         row_dict=question_model.row_dict(),
     )
 
+@assess_bp.route("/fragments/sub_criteria_scoring", methods=["POST","GET"])
+def sub_crit_scoring():
+
+    form = JustScoreForm()
+
+    if form.validate_on_submit():
+
+        print(form.score.data)
+        print(form.justification.data)
+        scores_submitted = True
+
+    else:
+
+        scores_submitted = False
+
+    return render_template("scores_justification.html",scores_submitted=scores_submitted, form=form)
 
 @assess_bp.route("/landing/", methods=["GET"])
 def landing():

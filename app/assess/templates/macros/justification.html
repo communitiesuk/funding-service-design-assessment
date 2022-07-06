@@ -1,0 +1,9 @@
+{%- from 'govuk_frontend_jinja/components/textarea/macro.html' import govukTextarea -%}
+
+{% macro justification(text_area_id) %}
+
+<h2 class="govuk-heading-l">Explain your reasoning for this score</h2>
+
+{{govukTextarea({'name':text_area_id, 'id':text_area_id, 'label':text_area_id, 'required' : True})}}
+
+{% endmacro %}

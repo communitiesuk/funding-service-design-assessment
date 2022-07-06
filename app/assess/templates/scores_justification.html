@@ -1,0 +1,28 @@
+{% from "macros/scores.html" import scores%}
+{% from "macros/justification.html" import justification%}
+{%- from "govuk_frontend_jinja/components/button/macro.html" import govukButton -%}
+{%- from "govuk_frontend_jinja/components/notification-banner/macro.html" import govukNotificationBanner -%}
+{% extends "base.html" %}
+
+{%block content%}
+
+<form method="POST" action="#">
+
+{% if scores_submitted%}
+
+{{govukNotificationBanner({'text': 'Your score was submitted.'})}}
+
+{%endif%}
+
+{{ form.csrf_token }}
+
+{{scores(form.score.id)}}
+
+{{justification(form.justification.id)}}
+
+{{govukButton({'text': 'Submit', 'type':'submit'})}}
+
+</form>
+
+
+{% endblock %}

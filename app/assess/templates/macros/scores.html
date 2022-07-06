@@ -1,0 +1,11 @@
+{%- from 'govuk_frontend_jinja/components/radios/macro.html' import govukRadios -%}
+
+{% macro scores(score_radio_id) %}
+
+<h2 class="govuk-heading-l">Based on the comments, score this section</h2>
+
+{{govukRadios({'id' : score_radio_id, 'name': score_radio_id, 'items': [{'value': 1, 'text': '1', 'hint': {
+    'text':'Wow'},
+}, {'value': 2, 'text': '2'}, {'value': 3, 'text': '3'}, {'value': 4, 'text': '4'}, {'value': 5, 'text': '5'}]})}}
+
+{% endmacro %}
