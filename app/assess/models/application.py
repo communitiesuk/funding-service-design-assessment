@@ -22,14 +22,14 @@ class Application:
         application = Application(
             identifier=data.get("id"),
             submitted=datetime.fromisoformat(
-                str(data.get("date_submitted", "1970-01-01"))
+                "1970-01-01"
             ),
             fund_name=data.get("fund_name"),
             fund_id=data.get("fund_id"),
             round_id=data.get("round_id"),
             status=data.get("status"),
             assessment_deadline=datetime.fromisoformat(
-                data.get("assessment_deadline", "1970-01-01")
+                "1970-01-01"
             ),
         )
         if "questions" in data:
