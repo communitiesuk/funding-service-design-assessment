@@ -11,6 +11,7 @@ applications:
     FUND_STORE_API_HOST: https://funding-service-design-fund-store-dev.london.cloudapps.digital
     ROUND_STORE_API_HOST: https://funding-service-design-round-store-dev.london.cloudapps.digital
     APPLICATION_STORE_API_HOST: https://funding-service-design-application-store-dev.london.cloudapps.digital
+    ASSESSMENT_STORE_API_HOST: https://funding-service-design-assessment-store-dev.london.cloudapps.digital
 
 - name: funding-service-design-assessment-test
   memory: 64M
