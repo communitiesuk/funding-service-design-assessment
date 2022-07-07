@@ -15,7 +15,8 @@ class DefaultConfig:
     SESSION_COOKIE_NAME = (
         os.environ.get("SESSION_COOKIE_NAME") or "session_cookie"
     )
-    STATIC_FOLDER = "static"
+    STATIC_FOLDER = "app/static/dist"
+    STATIC_URL_PATH = "/assets"
     TEMPLATES_FOLDER = "templates"
     LOCAL_SERVICE_NAME = "local_flask"
     ASSESSMENT_HUB_ROUTE = "/assess"
