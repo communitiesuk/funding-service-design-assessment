@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% from "macros/comments_macro.html" import uploadComments as comment %}
+
+{% block content %}
+{{ comment(comment_metadata) }}
+
+{% endblock %}
+
+
