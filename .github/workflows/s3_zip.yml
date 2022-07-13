@@ -11,6 +11,10 @@ jobs:
   deploy_dev:
     runs-on: ubuntu-latest
     steps:
+
+      - name: Set env
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+
       - name: checkout code
         uses: actions/checkout@v2
 
@@ -33,10 +37,12 @@ jobs:
           files: './'
           dest: ./zip/${{github.ref_name}}.zip
 
-      - uses: ThiagoAnunciacao/s3cmd-sync-action@v0.2.5
+      - uses: shallwefootball/s3-upload-action@master
+        name: Upload S3
+        id: S3
         with:
-          AWS_ACCESS_KEY_ID: ${{ secrets.PAAS_AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.PAAS_AWS_SECRET_ACCESS_KEY }}
-          AWS_S3_BUCKET: ${{ secrets.PAAS_AWS_BUCKET }}
-          S3CMD_SOURCE_DIR: './zip'
+          aws_key_id: ${{ secrets.PAAS_AWS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.PAAS_AWS_SECRET_ACCESS_KEY}}
+          aws_bucket: ${{ secrets.PAAS_AWS_BUCKET }}
+          source_dir: './zip'
 
