@@ -31,8 +31,8 @@ jobs:
 
       - uses: vimtor/action-zip@v1
         with:
-          files: ./
-          dest: ${GITHUB_REF#refs/*/}.zip
+          files: './'
+          dest: './${GITHUB_REF#refs/*/}.zip'
 
       - uses: shallwefootball/s3-upload-action@master
         name: Upload S3
