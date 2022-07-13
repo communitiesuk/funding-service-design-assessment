@@ -1,0 +1,45 @@
+name: Upload to S3
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+
+    paths-ignore:
+      - '**/README.md'
+
+jobs:
+  deploy_dev:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.10.x
+
+      - name: create python env
+        run: python -m venv .venv
+
+      - name: install dependencies
+        run: source .venv/bin/activate && python -m pip install --upgrade pip && pip install -r requirements.txt
+
+      - name: build static assets
+        run: python build.py
+
+      - uses: vimtor/action-zip@v1
+        with:
+          files: ./
+          dest: ${GITHUB_REF#refs/*/}.zip
+
+      - uses: shallwefootball/s3-upload-action@master
+        name: Upload S3
+        id: S3
+        with:
+          aws_key_id: ${{ secrets.paas_AWS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.paas_AWS_SECRET_ACCESS_KEY}}
+          aws_bucket: ${{ secrets.paas_AWS_BUCKET }}
+          source_dir: './${GITHUB_REF#refs/*/}.zip'
+          destination_dir: ''
