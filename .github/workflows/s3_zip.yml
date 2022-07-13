@@ -38,8 +38,8 @@ jobs:
         name: Upload S3
         id: S3
         with:
-          aws_key_id: ${{ secrets.paas_AWS_KEY_ID }}
-          aws_secret_access_key: ${{ secrets.paas_AWS_SECRET_ACCESS_KEY}}
-          aws_bucket: ${{ secrets.paas_AWS_BUCKET }}
+          aws_key_id: ${{ secrets.PAAS_AWS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.PAAS_AWS_SECRET_ACCESS_KEY}}
+          aws_bucket: ${{ secrets.PAAS_AWS_BUCKET }}
           source_dir: './${GITHUB_REF#refs/*/}.zip'
           destination_dir: ''
