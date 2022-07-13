@@ -32,7 +32,7 @@ jobs:
       - uses: vimtor/action-zip@v1
         with:
           files: './'
-          dest: './cool.zip'
+          dest: './zip/cool.zip'
 
       - uses: shallwefootball/s3-upload-action@master
         name: Upload S3
@@ -41,5 +41,5 @@ jobs:
           aws_key_id: ${{ secrets.PAAS_AWS_KEY_ID }}
           aws_secret_access_key: ${{ secrets.PAAS_AWS_SECRET_ACCESS_KEY}}
           aws_bucket: ${{ secrets.PAAS_AWS_BUCKET }}
-          source_dir: './cool.zip'
-          destination_dir: ''
+          source_dir: './zip'
+          destination_dir: '/'
