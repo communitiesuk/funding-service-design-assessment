@@ -13,13 +13,11 @@ from jinja2 import PrefixLoader
 
 def create_app() -> Flask:
 
-    flask_app = Flask(
-        "Assessment Frontend",
-        static_url_path="/assets",
-        static_folder="/static/dist",
-    )
+    flask_app = Flask("Assessment Frontend")
 
     flask_app.config.from_object("config.Config")
+    flask_app.static_url_path = flask_app.config.get("STATIC_URL_PATH")
+    flask_app.static_folder = flask_app.config.get("STATIC_FOLDER")
 
     flask_app.jinja_loader = ChoiceLoader(
         [
@@ -85,6 +83,11 @@ def create_app() -> Flask:
             + "/",
             view_func=AssessQuestionView.as_view("application_question"),
         )
+
+        # Bundle and compile assets
+        assets = Environment()
+        assets.init_app(flask_app)
+        compile_static_assets(assets, flask_app)
 
         return flask_app
 
