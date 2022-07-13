@@ -112,7 +112,7 @@ def get_round_with_applications(
 def submit_score_and_justification(assessment_id, person_id, score, justification, sub_crit_id):
 
     data_dict = {"score":score, "justification":justification, "person_id":person_id}
-    url = Config.ASSESSMENT_SCORE_JUST_ENDPOINT.format(host=Config.ASSESSMENT_STORE_API_HOST,assessment_id=assessment_id, sub_criteria_id=sub_crit_id)
+    url = Config.ASSESSMENT_SCORE_JUST_ENDPOINT.format(assessment_id=assessment_id, sub_criteria_id=sub_crit_id)
     response = requests.post(url, json=data_dict)
     print(response.content)
     if response.status_code == 200:
