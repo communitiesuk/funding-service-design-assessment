@@ -1,25 +1,21 @@
 {% macro uploadComments() %}
 
-<div class="govuk-width-container">
-    <main class="govuk-main-wrapper">
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-three-quarters">
 
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-two-thirds">
-                <div class="govuk-form-group">
-                    <h1 class="govuk-label-wrapper"><label class="govuk-label govuk-label--m" for="more-detail">
-                        Add a comment
-                      </label>
-                    </h1>
-
-                    <textarea class="govuk-textarea" id="more-detail" name="more-detail" rows="5" aria-describedby="more-detail-hint"></textarea>
-                  </div>
-                  <button class="govuk-button" data-module="govuk-button">
-                    Submit
-                  </button>
-            </div>
-        </div>
-
-    </main>
-</div>
+        <div class="govuk-form-group">
+            <h1 class="govuk-label-wrapper"><label class="govuk-label govuk-label--m" for="more-detail">
+                Add a comment
+              </label>
+            </h1>
+        
+            <textarea class="govuk-textarea" id="more-detail" name="more-detail" rows="5" aria-describedby="more-detail-hint"></textarea>
+          </div>
+          <button class="govuk-button" data-module="govuk-button">
+            Submit
+          </button>        
+      
+    </div> 
+  </div>
 
 {% endmacro %}
