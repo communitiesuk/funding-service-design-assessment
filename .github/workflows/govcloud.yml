@@ -51,6 +51,11 @@ jobs:
         run: source .venv/bin/activate && python -m pip install --upgrade pip && pip install -r requirements.txt
       - name: build static assets
         run: python build.py
+      - name: 'Upload repo'
+        uses: actions/upload-artifact@v2
+        with:
+          name: assesssment-repo
+          path: /home/runner/work/funding-service-design-assessment/
       - name: Deploy to Gov PaaS
         uses: citizen-of-planet-earth/cf-cli-action@v2
         with:
