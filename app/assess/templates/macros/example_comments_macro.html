@@ -1,7 +1,8 @@
 {% extends "base.html" %}
-{% from "macros/comments_macro.html" import uploadComments as comment %}
+{% from "macros/comments_macro.html" import uploadComments as upload %}
 
 {% block content %}
-{{ comment(comment_metadata) }}
+
+{{ upload() }}
 
 {% endblock %}
