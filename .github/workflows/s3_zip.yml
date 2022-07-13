@@ -37,17 +37,10 @@ jobs:
           files: './'
           dest: ./zip/${{github.ref_name}}.zip
 
-      - uses: keithweaver/aws-s3-github-action@v1.0.0
-        with:
-          command: cp
-          source: ./zip/${{github.ref_name}}.zip
-          destination: s3://${{ secrets.PAAS_AWS_BUCKET }}/
-          aws_access_key_id: ${{ secrets.PAAS_AWS_ACCESS_KEY_ID }}
-          aws_secret_access_key: ${{ secrets.PAAS_AWS_SECRET_ACCESS_KEY }}
-
       - uses: ThiagoAnunciacao/s3cmd-sync-action@v0.2.5
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.PAAS_AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.PAAS_AWS_SECRET_ACCESS_KEY }}
           AWS_S3_BUCKET: ${{ secrets.PAAS_AWS_BUCKET }}
+          S3CMD_SOURCE_DIR: './zip'
 
