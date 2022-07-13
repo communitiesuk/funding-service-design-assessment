@@ -392,24 +392,11 @@ def upload_documents():
 
 
 @assess_bp.route("/comments/", methods=["GET"])
-def comments_component():
-    """To be updated when we have a clear picture of the json:
-
-    Route would potentially receives a json with some ids & comments
-    which would be rendered through jinja macro (comments_macro.html)
+def comments():
+    """
+    example route to call macro for text area field 
     """
 
-    form_metadata = {
-        "assessment_id": "12345-a",
-        "person_id": "12345-c",
-        "subcriteria_id": "12345-b",
-        "comment": (
-            "Id venenatis a condimentum vitae. Leo a diam sollicitudin tempor"
-            " id eu nisl. Arcu cursus vitae congue mauris rhoncus aenean."
-        ),
-    }
-    comment_metadata = form_metadata.get("comment")
     return render_template(
         "macros/example_comments_macro.html",
-        comment_metadata=comment_metadata,
     )
