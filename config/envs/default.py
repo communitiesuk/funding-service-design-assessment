@@ -77,11 +77,6 @@ class DefaultConfig:
         or "/api/" + TEST_APPLICATION_STORE_API_HOST
     )
 
-    ASSESSMENT_STORE_API_HOST = (
-        os.environ.get("ASSESSMENT_STORE_API_HOST")
-        or TEST_ASSESSMENT_STORE_API_HOST
-    )
-
     """Content Security Policy"""
     SECURE_CSP = {
         "default-src": "'self'",
