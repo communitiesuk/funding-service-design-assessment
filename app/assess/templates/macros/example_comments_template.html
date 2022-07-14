@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-{%- from "govuk_frontend_jinja/components/button/macro.html" import govukButton -%}
 
 {% from "macros/comments_box.html" import uploadComments as upload %}
 {% from "macros/display_comments.html" import displayComments as display %}
@@ -11,11 +10,6 @@
 
 {{ form.csrf_token }}
 {{ upload(form.comment.id) }}
-
-{{ govukButton({
-    "text": "Submit",
-    "type": "submit"
-  }) }}
 
 </form>
 
