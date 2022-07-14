@@ -46,4 +46,4 @@ jobs:
 
       - name: Copy files to the test website with the AWS CLI
         run: |
-          aws s3 sync ./zip/${{ github.event.repository.name }}-${{github.ref_name}}.zip s3://${{ secrets.PAAS_AWS_BUCKET }}/
+          aws s3 sync ./zip s3://${{ secrets.PAAS_AWS_BUCKET }}
