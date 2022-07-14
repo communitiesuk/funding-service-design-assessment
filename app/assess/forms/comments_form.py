@@ -8,4 +8,3 @@ class CommentsForm(FlaskForm):
     
         comment = TextAreaField("Comment",validators = [length(max=200)])
         
-        
