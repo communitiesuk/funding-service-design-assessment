@@ -1,0 +1,25 @@
+{%- from 'govuk_frontend_jinja/components/textarea/macro.html' import govukTextarea -%}
+{%- from "govuk_frontend_jinja/components/button/macro.html" import govukButton -%}
+
+
+{% macro uploadComments(comment) %}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-three-quarters">
+
+        {{ govukTextarea({
+    "name": comment,
+    "id": comment,
+    "label": {
+      "text": "Add a comment",
+      "classes": "govuk-label--s",
+      isPageHeading: true
+    },
+  }) }}
+
+    </div>
+</div>
+
+
+{% endmacro %}
+
