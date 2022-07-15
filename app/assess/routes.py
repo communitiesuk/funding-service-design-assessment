@@ -1,4 +1,5 @@
 from app.assess.data import *
+from app.assess.forms.comments_form import CommentsForm
 from app.assess.models.question import Question
 from app.assess.models.question_field import QuestionField
 from app.assess.models.total_table import TotalMoneyTableView
@@ -7,6 +8,7 @@ from flask import abort
 from flask import Blueprint
 from flask import render_template
 from flask import request
+
 
 assess_bp = Blueprint(
     "assess_bp",
@@ -111,7 +113,7 @@ def selection_fragment():
         "structured_question.html", title=question.title, data=template_data
     )
 
-    
+
 @assess_bp.route("/fragments/title_answer_pairs", methods=["GET"])
 def text_area_1():
     """
@@ -376,7 +378,7 @@ def upload_documents():
                         "key": "ocdeay",
                         "title": "Python language - Introduction & course",
                         "type": "file",
-                        "answer": "https://en.wikipedia.org/wiki/Python_(programming_language)",
+                        "answer": "https://en.wikipedia.org/wiki/Python_(programming_language)",  # noqa
                     }
                 ],
             }
@@ -389,3 +391,21 @@ def upload_documents():
     return render_template(
         "macros/example_upload_documents.html", file_metadata=file_metadata
     )
+
+
+@assess_bp.route("/comments/", methods=["GET", "POST"])
+def comments():
+    """
+    example route to call macro for text area field
+    """
+    form = CommentsForm()
+
+    if form.validate_on_submit():
+        comment_data = form.comment.data
+        return render_template(
+            "macros/example_comments_template.html",
+            form=form,
+            comment_data=comment_data,
+        )
+
+    return render_template("macros/example_comments_template.html", form=form)

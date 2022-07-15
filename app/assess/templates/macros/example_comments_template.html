@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% from "macros/comments_box.html" import uploadComments as upload %}
+{% from "macros/display_comments.html" import displayComments as display %}
+
+{% block content %}
+
+{{display(comment_data)}}
+<form method="POST" >
+
+{{ form.csrf_token }}
+{{ upload(form.comment.id) }}
+
+</form>
+
+{% endblock %}
