@@ -3,11 +3,13 @@ from app.assess.forms.comments_form import CommentsForm
 from app.assess.models.question import Question
 from app.assess.models.question_field import QuestionField
 from app.assess.models.total_table import TotalMoneyTableView
+from app.assess.data import submit_score_and_justification
 from config import Config
 from flask import abort
 from flask import Blueprint
 from flask import render_template
 from flask import request
+from app.assess.forms.scores_and_justifications import JustScoreForm
 
 
 assess_bp = Blueprint(
@@ -29,7 +31,6 @@ def funds():
     funds = get_funds()
 
     return render_template("funds.html", funds=funds)
-
 
 @assess_bp.route("/fragments/structured_question", methods=["GET"])
 def selection_fragment():
@@ -198,6 +199,28 @@ def total_table_view():
         row_dict=question_model.row_dict(),
     )
 
+@assess_bp.route("/fragments/sub_criteria_scoring", methods=["POST","GET"])
+def sub_crit_scoring():
+
+    form = JustScoreForm()
+
+    if form.validate_on_submit():
+
+        score = int(form.score.data)
+        just = form.justification.data
+
+        assessment_id = "test_assess_id"
+        person_id = "test_person_id"
+        sub_crit_id = "test_sub_crit_id"
+
+        submit_score_and_justification(score=score, assessment_id=assessment_id, person_id=person_id, justification=just,sub_crit_id=sub_crit_id)
+        scores_submitted = True
+
+    else:
+
+        scores_submitted = False
+
+    return render_template("scores_justification.html",scores_submitted=scores_submitted, form=form)
 
 @assess_bp.route("/fragments/text_input")
 def text_input():

@@ -74,6 +74,8 @@ def build_govuk_assets():
             file.write(filedata)
     os.chdir(cwd)
 
+
+
     # Delete temp files
     print("Deleting " + ASSETS_PATH)
     shutil.rmtree(ASSETS_PATH)
