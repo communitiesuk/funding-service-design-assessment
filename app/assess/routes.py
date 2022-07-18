@@ -1,15 +1,15 @@
 from app.assess.data import *
+from app.assess.data import submit_score_and_justification
 from app.assess.forms.comments_form import CommentsForm
+from app.assess.forms.scores_and_justifications import JustScoreForm
 from app.assess.models.question import Question
 from app.assess.models.question_field import QuestionField
 from app.assess.models.total_table import TotalMoneyTableView
-from app.assess.data import submit_score_and_justification
 from config import Config
 from flask import abort
 from flask import Blueprint
 from flask import render_template
 from flask import request
-from app.assess.forms.scores_and_justifications import JustScoreForm
 
 
 assess_bp = Blueprint(
@@ -31,6 +31,7 @@ def funds():
     funds = get_funds()
 
     return render_template("funds.html", funds=funds)
+
 
 @assess_bp.route("/fragments/structured_question", methods=["GET"])
 def selection_fragment():
@@ -160,6 +161,7 @@ def text_area_1():
         {"title": data_dict["title"], "answer": data_dict["answer"]}
         for data_dict in question_data["fields"]
     ]
+    print(data_dict)
 
     return render_template("title_answer_pairs.html", data_dict=data_dict)
 
@@ -199,7 +201,8 @@ def total_table_view():
         row_dict=question_model.row_dict(),
     )
 
-@assess_bp.route("/fragments/sub_criteria_scoring", methods=["POST","GET"])
+
+@assess_bp.route("/fragments/sub_criteria_scoring", methods=["POST", "GET"])
 def sub_crit_scoring():
 
     form = JustScoreForm()
@@ -213,14 +216,25 @@ def sub_crit_scoring():
         person_id = "test_person_id"
         sub_crit_id = "test_sub_crit_id"
 
-        submit_score_and_justification(score=score, assessment_id=assessment_id, person_id=person_id, justification=just,sub_crit_id=sub_crit_id)
+        submit_score_and_justification(
+            score=score,
+            assessment_id=assessment_id,
+            person_id=person_id,
+            justification=just,
+            sub_crit_id=sub_crit_id,
+        )
         scores_submitted = True
 
     else:
 
         scores_submitted = False
 
-    return render_template("scores_justification.html",scores_submitted=scores_submitted, form=form)
+    return render_template(
+        "scores_justification.html",
+        scores_submitted=scores_submitted,
+        form=form,
+    )
+
 
 @assess_bp.route("/fragments/text_input")
 def text_input():
@@ -432,3 +446,38 @@ def comments():
         )
 
     return render_template("macros/example_comments_template.html", form=form)
+
+
+sub_crit_flow_data = {
+    "criteria_id": "string",
+    "round_id": "string",
+    "sub_criteria_id": "string",
+    "sub_criteria_title": "string",
+    "sections": [
+        {
+            "section_name": "Project Benefits",
+            "section_description": "About the project benefits",
+        },
+        {
+            "section_name": "Project aims",
+            "section_description": "About the project aims",
+        },
+    ],
+}
+
+
+@assess_bp.route("/flow_page/")
+def flow_page_indexing(num: int = 0):
+
+    num = request.args.get("num")
+    if not num:
+        num = 0
+
+    sections_list = sub_crit_flow_data["sections"]
+    # total_sections = len(sections_list)
+
+    return render_template(
+        "macros/example_flow_page_indexing.html",
+        section_list=sections_list,
+        num=int(num),
+    )
