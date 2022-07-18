@@ -11,7 +11,7 @@
     "fund_id": "funding-service-design",
     "fund_description": "An example fund for testing the funding service"
   },
-  "fund_store/funds/funding-service-design/rounds": [
+  "round_store/funds/funding-service-design": [
     {
       "fund_id": "funding-service-design",
       "round_title": "Spring",
