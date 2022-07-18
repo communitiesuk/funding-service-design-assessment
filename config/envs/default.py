@@ -35,10 +35,7 @@ class DefaultConfig:
 
     # Round Store Endpoints
 
-    ROUNDS_ENDPOINT = (
-        CommonConfig.FUND_ENDPOINT  # CommonConfig.ROUNDS_ENDPOINT
-        # test data expects /funds/id/,fund store uses /funds/id/rounds/
-    )
+    ROUNDS_ENDPOINT = CommonConfig.ROUNDS_ENDPOINT
     ROUND_ENDPOINT = CommonConfig.ROUND_ENDPOINT
 
     # Application Store Endpoints
@@ -57,7 +54,6 @@ class DefaultConfig:
     """
 
     FUND_STORE_API_HOST = CommonConfig.FUND_STORE_API_HOST
-    ROUND_STORE_API_HOST = CommonConfig.ROUND_STORE_API_HOST
     APPLICATION_STORE_API_HOST = CommonConfig.APPLICATION_STORE_API_HOST
 
     APPLICATION_STORE_API_HOST_PUBLIC = (
