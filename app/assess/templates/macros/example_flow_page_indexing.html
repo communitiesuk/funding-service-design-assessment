@@ -1,20 +1,35 @@
-{% extends "base.html" %}
+{% extends "base.html" %} {% block content %}
 
 
 
-{% block content %}
 
-<p>
-
-    {{ section_list[num]['section_name'] }}
-</p>
-
-<a href="{{url_for('assess_bp.flow_page_indexing', num = 1) }}">
-
-    <button  class="govuk-button" data-module="govuk-button">
-        Next
-      </button>
+{% if page_index > total_sections-1 %}
+<h1 class="govuk-heading-l"> Summary page </h1>
+<a
+  href="{{url_for('assess_bp.flow_page_indexing', page_index=page_index-1 ) }}">
+  Previous
 </a>
+
+<a href="{{url_for('assess_bp.flow_page_indexing', page_index=page_index+1) }}">
+  Next
+</a>
+
+{% else %}
+
+<h1 class="govuk-heading-l">{{ section_list[page_index]['section_name'] }}</h1>
+
+
+<a
+  href="{{url_for('assess_bp.flow_page_indexing', page_index=page_index-1 ) }}">
+  Previous
+</a>
+
+<a href="{{url_for('assess_bp.flow_page_indexing', page_index=page_index+1) }}">
+  Next
+</a>
+
+
+{% endif %}
 
 
 {% endblock %}
