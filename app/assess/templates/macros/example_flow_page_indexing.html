@@ -3,28 +3,32 @@
 
 
 
-{% if page_index > total_sections-1 %}
+{% if page_index > (sections|length - 1) %}
 <h1 class="govuk-heading-l"> Summary page </h1>
-<a
-  href="{{url_for('assess_bp.flow_page_indexing', page_index=page_index-1 ) }}">
-  Previous
-</a>
 
-<a href="{{url_for('assess_bp.flow_page_indexing', page_index=page_index+1) }}">
+    <a class="govuk-link govuk-link--no-underline"
+   href="{{url_for('assess_bp.flow_page_indexing', page_index=page_index-1 ) }}">
+   Previous
+   </a>  
+
+
+<a class="govuk-link govuk-link--no-underline"
+href="{{url_for('assess_bp.flow_page_indexing', page_index=page_index+1) }}">
   Next
 </a>
 
 {% else %}
 
-<h1 class="govuk-heading-l">{{ section_list[page_index]['section_name'] }}</h1>
+<h1 class="govuk-heading-l">{{ sections[page_index]['section_name'] }}</h1>
 
 
-<a
+<a class="govuk-link govuk-link--no-underline"
   href="{{url_for('assess_bp.flow_page_indexing', page_index=page_index-1 ) }}">
   Previous
 </a>
 
-<a href="{{url_for('assess_bp.flow_page_indexing', page_index=page_index+1) }}">
+<a class="govuk-link govuk-link--no-underline"
+href="{{url_for('assess_bp.flow_page_indexing', page_index=page_index+1) }}">
   Next
 </a>
 
