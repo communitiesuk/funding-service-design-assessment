@@ -63,11 +63,5 @@ class DefaultConfig:
     FUND_STORE_API_HOST = CommonConfig.FUND_STORE_API_HOST
     APPLICATION_STORE_API_HOST = CommonConfig.APPLICATION_STORE_API_HOST
 
-    APPLICATION_STORE_API_HOST_PUBLIC = (
-        os.environ.get("APPLICATION_STORE_API_HOST_PUBLIC")
-        or os.environ.get("APPLICATION_STORE_API_HOST")
-        or "/api/" + CommonConfig.TEST_APPLICATION_STORE_API_HOST
-    )
-
     TALISMAN_SETTINGS = CommonConfig.TALISMAN_SETTINGS
 
