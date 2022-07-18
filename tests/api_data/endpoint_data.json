@@ -1,5 +1,5 @@
 {
-  "fund_store/funds/": [
+  "fund_store/funds": [
     {
       "fund_name": "Funding Service Design",
       "fund_id": "funding-service-design",
