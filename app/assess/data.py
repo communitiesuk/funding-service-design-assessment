@@ -74,7 +74,6 @@ def get_rounds(fund_id: str) -> Union[Fund, List]:
     endpoint = Config.FUND_STORE_API_HOST + Config.ROUNDS_ENDPOINT.format(
         fund_id=fund_id
     )
-    print("Getting rounds from", endpoint)
     response = get_data(endpoint)
 
     rounds = []
