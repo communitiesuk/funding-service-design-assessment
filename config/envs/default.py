@@ -70,3 +70,4 @@ class DefaultConfig:
     )
 
     TALISMAN_SETTINGS = CommonConfig.TALISMAN_SETTINGS
+
