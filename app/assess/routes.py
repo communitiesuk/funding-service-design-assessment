@@ -467,17 +467,20 @@ sub_crit_flow_data = {
 
 
 @assess_bp.route("/flow_page/")
-def flow_page_indexing(num: int = 0):
-
-    num = request.args.get("num")
-    if not num:
-        num = 0
-
+def flow_page_indexing(page_index: int = 0):
     sections_list = sub_crit_flow_data["sections"]
-    # total_sections = len(sections_list)
-
+    total_sections = len(sections_list)
+    
+    page_index = request.args.get("page_index")
+   
+    if not page_index or page_index < str(0):
+        page_index = int(0)
+    elif page_index > str(total_sections):
+        page_index = int(total_sections)
+    
     return render_template(
         "macros/example_flow_page_indexing.html",
         section_list=sections_list,
-        num=int(num),
+        page_index=int(page_index),
+        total_sections = total_sections
     )
