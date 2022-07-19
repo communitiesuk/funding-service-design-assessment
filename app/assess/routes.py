@@ -10,6 +10,7 @@ from flask import abort
 from flask import Blueprint
 from flask import render_template
 from flask import request
+from tests.api_data.sub_crit_flow_data import sub_crit_flow_data
 
 
 assess_bp = Blueprint(
@@ -153,6 +154,8 @@ def text_area_1():
         ],
     }
 
+    # data_dict functionality to be reviwed or deleted by Gio
+
     data_dict = {}
 
     data_dict["title"] = question_data["question"]
@@ -161,9 +164,12 @@ def text_area_1():
         {"title": data_dict["title"], "answer": data_dict["answer"]}
         for data_dict in question_data["fields"]
     ]
-    print(data_dict)
 
-    return render_template("title_answer_pairs.html", data_dict=data_dict)
+    return render_template(
+        "title_answer_pairs.html",
+        data_dict=data_dict,
+        question_data=question_data,
+    )
 
 
 @assess_bp.route("/fragments/total_table_view", methods=["GET"])
@@ -448,35 +454,17 @@ def comments():
     return render_template("macros/example_comments_template.html", form=form)
 
 
-sub_crit_flow_data = {
-    "criteria_id": "string",
-    "round_id": "string",
-    "sub_criteria_id": "string",
-    "sub_criteria_title": "string",
-    "sections": [
-        {
-            "section_name": "Project Benefits",
-            "section_description": "About the project benefits",
-        },
-        {
-            "section_name": "Project aims",
-            "section_description": "About the project aims",
-        },
-    ],
-}
-
-
 @assess_bp.route("/flow_page/")
 def flow_page_indexing(page_index: int = 0):
     sections = sub_crit_flow_data["sections"]
-        
+
     page_index = request.args.get("page_index")
-   
-    if not page_index or page_index < str(0):
+
+    if not page_index or page_index <= str(0):
         page_index = int(0)
     elif page_index > str(len(sections)):
         page_index = int(len(sections))
-    
+
     return render_template(
         "macros/example_flow_page_indexing.html",
         sections=sections,

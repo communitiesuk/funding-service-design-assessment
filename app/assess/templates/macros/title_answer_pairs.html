@@ -1,9 +1,13 @@
-{% macro TitleAnswerPairs(data_dict) %}
+{% macro TitleAnswer(metadata) %}
+<h1 class="govuk-!-padding-bottom-1 govuk-!-padding-top-3 govuk-heading-m">
 
-<h1 class="govuk-heading-l">{{ data_dict["title"] }}</h1>
+    {{ metadata['question'] }}
+</h1>
 
-    {% for i in data_dict["answers"] %}
-    <div class="govuk-!-padding-bottom-6">
+
+    {% for i in metadata['fields'] %}
+
+    <div class="govuk-!-padding-bottom-3">
         <h3 class="govuk-heading-s">{{ i["title"] }}</h3>
         <p class="govuk-body">{{ i["answer"] }}</p>
     </div>
