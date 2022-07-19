@@ -2,6 +2,7 @@ from app.assess.data import *
 from app.assess.data import submit_score_and_justification
 from app.assess.forms.comments_form import CommentsForm
 from app.assess.forms.scores_and_justifications import JustScoreForm
+from app.assess.models.assessment_flow import AssessmentFlow
 from app.assess.models.question import Question
 from app.assess.models.question_field import QuestionField
 from app.assess.models.total_table import TotalMoneyTableView
@@ -456,17 +457,13 @@ def comments():
 
 @assess_bp.route("/flow_page/")
 def flow_page_indexing(page_index: int = 0):
+    
     sections = sub_crit_flow_data["sections"]
-
-    page_index = request.args.get("page_index")
-
-    if not page_index or page_index <= str(0):
-        page_index = int(0)
-    elif page_index > str(len(sections)):
-        page_index = int(len(sections))
-
+    index_args = request.args.get("page_index")
+    page_index = AssessmentFlow.get_page_index(index_args, sections)
+    
     return render_template(
         "macros/example_flow_page_indexing.html",
         sections=sections,
-        page_index=int(page_index),
+        page_index=page_index,
     )
