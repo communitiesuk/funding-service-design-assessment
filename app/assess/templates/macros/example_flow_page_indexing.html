@@ -4,7 +4,7 @@
 
  <a href="{{url_for('assess_bp.flow_page_indexing', page_index=0 ) }}" class="govuk-back-link">Back to <span class="govuk-body govuk-!-font-weight-bold"> overall assessment</span></a>
 
-{% if page_index > (sections|length - 1) %}
+{% if page_index == sections|length  %}
 
 <h1 class="govuk-heading-l"> Benefits, outcomes and outputs </h1>
 {% else %}
