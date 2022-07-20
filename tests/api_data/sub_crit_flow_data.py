@@ -10,6 +10,7 @@ sub_crit_flow_data = {
             "questions": [
                 {
                     "question": "Local resident",
+                    "macro_type": "text",
                     "status": "COMPLETED",
                     "fields": [
                         {
@@ -165,7 +166,7 @@ sub_crit_flow_data = {
             "section_description": "About the project aims",
             "questions": [
                 {
-                    "question": "Visitors",
+                    "question": "Levelling up skills",
                     "status": "COMPLETED",
                     "fields": [
                         {
