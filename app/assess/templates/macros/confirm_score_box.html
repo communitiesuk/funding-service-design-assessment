@@ -1,0 +1,25 @@
+{%- from 'govuk_frontend_jinja/components/textarea/macro.html' import govukTextarea -%}
+{%- from "govuk_frontend_jinja/components/button/macro.html" import govukButton -%}
+
+{% macro uploadComments(comment) %}
+
+        {{ govukTextarea({
+    "name": comment,
+    "id": comment,
+    "label": {
+      "text": "Explain your reasoning for this score",
+      "classes": "govuk-label--s",
+      isPageHeading: true
+    },
+    "hint": {
+        "text": "This will be seen by the applicants"
+      }
+
+  }) }}
+
+  {{ govukButton({
+    "text": "Confirm score",
+    "type": "submit"
+  }) }}
+
+{% endmacro %}
