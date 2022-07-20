@@ -1,4 +1,8 @@
 .grey-background{
+    background-color: #f3f2f1;
+}
+
+.light-blue-background{
     background-color: #f2f6fa;
 }
 
@@ -8,3 +12,33 @@
     padding-right: 20px;
   }
 
+.padding-all{
+    padding: 40px;
+}
+
+
+.comment-heading {
+    color: #005ea5;
+    font-size: 1.5rem;
+    line-height: 1.25;
+}
+
+
+
+// TO BE CONTINUED 
+
+.govuk-grid-row {
+  margin-right: -15px;
+  margin-left: -15px;
+}
+
+
+.govuk-main-wrapper {
+    padding-top: 40px;
+    padding-bottom: 40px;
+}
+
+.s15-sticky-layout {
+  display: grid;
+  grid-gap: 30px;
+}
