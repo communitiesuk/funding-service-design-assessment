@@ -43,10 +43,13 @@ class DefaultConfig:
     APPLICATION_STATUS_ENDPOINT = CommonConfig.APPLICATION_STATUS_ENDPOINT
     APPLICATION_SEARCH_ENDPOINT = CommonConfig.APPLICATION_SEARCH_ENDPOINT
 
-    #Assesment store endpoints
-    ASSESSMENT_STORE_API_HOST = os.environ.get("ASSESSMENT_STORE_API_HOST") or "ASSESSMENT_STORE_API_HOST"
+    # Assesment store endpoints
+    ASSESSMENT_STORE_API_HOST = CommonConfig.ASSESSMENT_STORE_API_HOST
 
-    ASSESSMENT_SCORE_JUST_ENDPOINT = ASSESSMENT_STORE_API_HOST+"/assessments/{assessment_id}/sub_criterias/{sub_criteria_id}/scores"
+    ASSESSMENT_SCORE_JUST_ENDPOINT = (
+        ASSESSMENT_STORE_API_HOST
+        + "/assessments/{assessment_id}/sub_criterias/{sub_criteria_id}/scores"
+    )
 
     """
     Assets
@@ -57,11 +60,6 @@ class DefaultConfig:
     """
     APIs Config
     """
-    TEST_FUND_STORE_API_HOST = "fund_store"
-    TEST_ROUND_STORE_API_HOST = "round_store"
-    TEST_APPLICATION_STORE_API_HOST = "application_store"
-    TEST_ASSESSMENT_STORE_API_HOST = "assessment_store"
-
     FUND_STORE_API_HOST = CommonConfig.FUND_STORE_API_HOST
     APPLICATION_STORE_API_HOST = CommonConfig.APPLICATION_STORE_API_HOST
 
