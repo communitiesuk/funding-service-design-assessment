@@ -1,0 +1,35 @@
+{%- from "govuk_frontend_jinja/components/tabs/macro.html" import govukTabs -%}
+
+{% macro tabs(section_name) %}
+
+{% set pastDayHtml %}
+<h2 class="govuk-heading-l">{{section_name}}</h2>
+<a href=""></a>
+{% endset -%}
+
+{% set pastWeekHtml %}
+<h2 class="govuk-heading-l"></h2>
+<a href=""></a>
+
+{% endset -%}
+
+{{ govukTabs({
+  "items": [
+    {
+      "label": "Comments summary",
+      "id": "section_name",
+      "panel": {
+        "html": commentsSummaryHtml
+      }
+    },
+    {
+      "label": "Assessment criteria",
+      "id": "past-week",
+      "panel": {
+        "html": assessmentCriteriaHtml
+      }
+    },
+  ]
+}) }}
+
+{% endmacro %}
