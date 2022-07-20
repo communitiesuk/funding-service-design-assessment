@@ -1,35 +1,54 @@
 {%- from "govuk_frontend_jinja/components/tabs/macro.html" import govukTabs -%}
 
-{% macro tabs(section_name) %}
+{% macro tabs(titles, criteria) %}
 
-{% set pastDayHtml %}
-<h2 class="govuk-heading-l">{{section_name}}</h2>
-<a href=""></a>
-{% endset -%}
+<div class="govuk-tabs govuk-body" data-module="govuk-tabs">
 
-{% set pastWeekHtml %}
-<h2 class="govuk-heading-l"></h2>
-<a href=""></a>
+    <h2 class="govuk-tabs__title">
+        Contents
+    </h2>
 
-{% endset -%}
 
-{{ govukTabs({
-  "items": [
-    {
-      "label": "Comments summary",
-      "id": "section_name",
-      "panel": {
-        "html": commentsSummaryHtml
-      }
-    },
-    {
-      "label": "Assessment criteria",
-      "id": "past-week",
-      "panel": {
-        "html": assessmentCriteriaHtml
-      }
-    },
-  ]
-}) }}
+
+    <ul class="govuk-tabs__list">
+        <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
+            <a class="govuk-tabs__tab" href="#{{titles}}">
+                Comment summary
+            </a>
+        </li>
+
+        <li class="govuk-tabs__list-item">
+            <a class="govuk-tabs__tab" href="#{{criteria}}">
+                Assessment criteria
+            </a>
+        </li>
+    </ul>
+
+
+
+    <div class="govuk-tabs__panel" id="{{titles}}">
+
+        {% for title  in titles %}
+        <h2 class="govuk-heading-m govuk-!-margin-top-5 comment-heading">{{ title['section_name'] }}</h2>
+
+        <div class="grey-background padding-all">
+            <a class="govuk-link--no-underline govuk-link--no-visited-state" href="">
+                Add a comment </a>
+
+        </div>
+        {% endfor %}
+
+    </div>
+
+
+    <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="{{criteria}}">
+        <h2 class="govuk-heading-l">{{criteria}}</h2>
+    </div>
+
+
+
+
+
+</div>
 
 {% endmacro %}
