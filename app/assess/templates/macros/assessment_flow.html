@@ -19,7 +19,7 @@
   {% for question_titles in sections[page_index]['questions'] %}
   <ul>
     <li class="govuk-body">
-      <a class="govuk-link--no-underline govuk-link--no-visited-state" href="#">
+      <a class="govuk-link--no-underline govuk-link--no-visited-state" href="#{{ question_titles }}">
         {{ question_titles['question'] }}
       </a>
     </li>
@@ -28,10 +28,15 @@
 
   <hr class="govuk-section-break govuk-section-break--visible govuk-!-margin-bottom-3">
 
+
   {% for fields in sections[page_index]['questions'] %}
+  <span id="{{ fields }}">
   {{ TitleAnswer(fields) }}
   <hr class="govuk-section-break govuk-section-break--visible govuk-!-margin-bottom-3">
+  </span>
+
   {% endfor %}
+
 
 </div>
 
