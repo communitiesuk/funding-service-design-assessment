@@ -1,6 +1,9 @@
 {% extends "base.html" %}
 {% from "macros/title_answer_pairs.html" import TitleAnswer %}
 {% from "macros/comments_box.html" import uploadComments as commentBox %}
+{% from "macros/tabs.html" import tabs %}
+{% from "macros/scores.html" import scores %}
+{% from "macros/confirm_scores_box.html" import confirmScores %}
 
 {% block content %}
 
@@ -9,13 +12,27 @@
     overall assessment</span></a>
 
 {% if index_args == sections|length  %}
-<h1 class="govuk-heading-l"> Benefits, outcomes and outputs </h1>
+
+<main class="govuk-main-wrapper--auto-spacing">
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-one-half">
+    <h2 class="govuk-heading-m"> Benefits, outcomes and outputs </h2>
+    {{ tabs(sections, "criteria") }}
+  </div>
+  <div class="govuk-grid-column-one-half">
+    {{scores(section_name)}}
+    {{confirmScores(section_name, url_for('assess_bp.flow_page_indexing', page_index=0) )}}
+   
+  </div>
+</div>
+</main>
+
 
 {% else %}
 <h1 class="govuk-heading-l">{{ section_name }}</h1>
 
 
-<div class="grey-background padding-top-left-right">
+<div class="light-blue-background padding-top-left-right">
   {% for question_titles in sections[page_index]['questions'] %}
   <ul>
     <li class="govuk-body">
