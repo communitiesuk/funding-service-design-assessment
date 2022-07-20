@@ -27,6 +27,19 @@ class DefaultConfig:
     ASSESSMENT_HUB_ROUTE = "/assess"
 
     """
+    APIs Config
+    """
+    FUND_STORE_API_HOST = CommonConfig.FUND_STORE_API_HOST
+    APPLICATION_STORE_API_HOST = CommonConfig.APPLICATION_STORE_API_HOST
+    ASSESSMENT_STORE_API_HOST = CommonConfig.ASSESSMENT_STORE_API_HOST
+
+    APPLICATION_STORE_API_HOST_PUBLIC = (
+        os.environ.get("APPLICATION_STORE_API_HOST_PUBLIC")
+        or os.environ.get("APPLICATION_STORE_API_HOST")
+        or "/api/" + CommonConfig.TEST_APPLICATION_STORE_API_HOST
+    )
+
+    """
     External APIs
     """
     # Fund Store Endpoints
@@ -44,7 +57,6 @@ class DefaultConfig:
     APPLICATION_SEARCH_ENDPOINT = CommonConfig.APPLICATION_SEARCH_ENDPOINT
 
     # Assesment store endpoints
-    ASSESSMENT_STORE_API_HOST = CommonConfig.ASSESSMENT_STORE_API_HOST
 
     ASSESSMENT_SCORE_JUST_ENDPOINT = (
         ASSESSMENT_STORE_API_HOST
@@ -56,17 +68,5 @@ class DefaultConfig:
     """
     ASSETS_DEBUG = False
     ASSETS_AUTO_BUILD = True
-
-    """
-    APIs Config
-    """
-    FUND_STORE_API_HOST = CommonConfig.FUND_STORE_API_HOST
-    APPLICATION_STORE_API_HOST = CommonConfig.APPLICATION_STORE_API_HOST
-
-    APPLICATION_STORE_API_HOST_PUBLIC = (
-        os.environ.get("APPLICATION_STORE_API_HOST_PUBLIC")
-        or os.environ.get("APPLICATION_STORE_API_HOST")
-        or "/api/" + CommonConfig.TEST_APPLICATION_STORE_API_HOST
-    )
 
     TALISMAN_SETTINGS = CommonConfig.TALISMAN_SETTINGS
