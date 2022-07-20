@@ -1,7 +1,7 @@
 {%- from 'govuk_frontend_jinja/components/textarea/macro.html' import govukTextarea -%}
 {%- from "govuk_frontend_jinja/components/button/macro.html" import govukButton -%}
 
-{% macro uploadComments(comment) %}
+{% macro confirmScores(comment, url) %}
 
         {{ govukTextarea({
     "name": comment,
@@ -19,7 +19,8 @@
 
   {{ govukButton({
     "text": "Confirm score",
-    "type": "submit"
+    "type": "submit",
+    "href": url
   }) }}
 
 {% endmacro %}
