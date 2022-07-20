@@ -457,9 +457,9 @@ def comments():
 
 @assess_bp.route("/flow_page/")
 def flow_page_indexing(page_index: int = 0):
-    
+
     sections = sub_crit_flow_data["sections"]
-    
+   
     index_args = request.args.get("page_index")
     if not index_args:
         index_args = 0
