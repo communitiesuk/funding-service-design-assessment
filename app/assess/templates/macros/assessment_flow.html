@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% from "macros/title_answer_pairs.html" import TitleAnswer %}
+{% from "macros/comments_box.html" import uploadComments as commentBox %}
+
+{% block content %}
+
+<a href="{{url_for('assess_bp.flow_page_indexing', page_index=0 ) }}"
+  class="govuk-back-link govuk-body govuk-!-margin-bottom-7">Back to <span class="govuk-body govuk-!-font-weight-bold">
+    overall assessment</span></a>
+
+{% if index_args == sections|length  %}
+<h1 class="govuk-heading-l"> Benefits, outcomes and outputs </h1>
+
+{% else %}
+<h1 class="govuk-heading-l">{{ section_name }}</h1>
+
+
+<div class="grey-background padding-top-left-right">
+  {% for question_titles in sections[page_index]['questions'] %}
+  <ul>
+    <li class="govuk-body">
+      <a class="govuk-link--no-underline govuk-link--no-visited-state" href="#">
+        {{ question_titles['question'] }}
+      </a>
+    </li>
+  </ul>
+  {% endfor %}
+
+  <hr class="govuk-section-break govuk-section-break--visible govuk-!-margin-bottom-3">
+
+  {% for fields in sections[page_index]['questions'] %}
+  {{ TitleAnswer(fields) }}
+  {% endfor %}
+
+</div>
+
+<div class="govuk-!-margin-top-9">
+  {{commentBox()}}
+</div>
+
+
+{% if page_index > 0 %}
+
+<div class="govuk-form-group govuk-!-margin-top-7">
+  <div style="display: flex; justify-content: space-between;" class="pagination-links govuk-!-margin-top-7">
+    <a class="govuk-link--no-visited-state govuk-link--no-underline"
+      href="{{url_for('assess_bp.flow_page_indexing', page_index=page_index-1 ) }}">
+      <span class="govuk-!-font-size-24 govuk-!-font-weight-bold">Previous</span>
+    </a>
+
+    <a class="govuk-link--no-visited-state govuk-link--no-underline govuk-!-text-align-right  govuk-!-margin-left-9"
+      href="{{url_for('assess_bp.flow_page_indexing', page_index=page_index+1) }}">
+      <span class="govuk-!-font-size-24 govuk-!-font-weight-bold">Next</span>
+    </a>
+  </div>
+</div>
+
+{% else %}
+
+<div class="govuk-form-group govuk-!-margin-top-7">
+  <div style="display: flex; justify-content: space-between;" class="pagination-links govuk-!-margin-top-7">
+    <a class="govuk-link--no-visited-state govuk-link--no-underline govuk-!-text-align-right  govuk-!-margin-left-9"
+      href="{{url_for('assess_bp.flow_page_indexing', page_index=page_index+1) }}">
+      <span class="govuk-!-font-size-24 govuk-!-font-weight-bold">Next</span>
+    </a>
+  </div>
+</div>
+
+{% endif %}
+
+{% endif %}
+
+{% endblock %}

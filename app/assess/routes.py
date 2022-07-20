@@ -467,7 +467,7 @@ def flow_page_indexing(page_index: int = 0):
     section_name = AssessmentFlow.get_section_name(sub_crit_flow_data, page_index)
  
     return render_template(
-        "macros/example_flow_page_indexing.html",
+        "macros/assessment_flow.html",
         sections=sections,
         page_index=page_index,
         index_args = int(index_args),
