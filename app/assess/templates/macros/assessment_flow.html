@@ -30,11 +30,12 @@
 
   {% for fields in sections[page_index]['questions'] %}
   {{ TitleAnswer(fields) }}
+  <hr class="govuk-section-break govuk-section-break--visible govuk-!-margin-bottom-3">
   {% endfor %}
 
 </div>
 
-<div class="govuk-!-margin-top-9">
+<div class="govuk-!-margin-top-7">
   {{commentBox()}}
 </div>
 
