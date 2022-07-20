@@ -2,10 +2,20 @@
 
 {% macro scores(score_radio_id) %}
 
-<h2 class="govuk-heading-l">Based on the comments, score this section</h2>
+<h2 class="govuk-heading-s">Based on the comments, score this section</h2>
+<div class="govuk-body">
+    <p> Select one of the options from the list to score this section.</p>
+    <p> Use the comments and the assessment criteria to help you make a decision.</p>
 
-{{govukRadios({'id' : score_radio_id, 'name': score_radio_id, 'items': [{'value': 1, 'text': '1', 'hint': {
-    'text':'Wow'},
-}, {'value': 2, 'text': '2'}, {'value': 3, 'text': '3'}, {'value': 4, 'text': '4'}, {'value': 5, 'text': '5'}]})}}
+</div>
+
+{{govukRadios({'id' : score_radio_id, 'name': score_radio_id, 
+'items': 
+[
+{'value': 5, 'text': '5 Strong', 'hint': {'text':'What a strong answer looks like'},},
+{'value': 4, 'text': '4 Good', 'hint':{'text': 'What a good answer looks like'},}, {'value': 3, 'text': '3 Satisfactory', 'hint':{'text': 'What a satisfactory answer looks like'},},
+ {'value': 2, 'text': '2 Partial', 'hint':{'text': 'What a partial answer looks like'},},
+ {'value': 1, 'text': '1 Poor', 'hint':{'text': 'What a poor answer looks like'}, }]})}}
+
 
 {% endmacro %}
