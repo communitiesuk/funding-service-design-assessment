@@ -16,21 +16,44 @@
 <span class="govuk-caption-l">Project reference</span>
 <h1 class="govuk-heading-l">{{application.identifier}}</h1>
 
-    {{ govukDetails({
-        'summaryText': fund.name,
-        'text': fund.description,
-        'id': "assessment-page-details",
-        'open':True
-      })
-    }}
+{{
+  govukDetails({
+    'summaryText': fund.name,
+    'text': fund.description,
+    'id': "assessment-page-details",
+    'open':True
+  })
+}}
+
+
+<p class="govuk-body-l govuk-!-font-weight-bold">
+  Status: 
+  {% set completed_count = application.question_status_summary.get("COMPLETED") %}
+   
+  {% if completed_count == 0 %}
+  <strong class="govuk-tag govuk-tag--grey">
+    Not Started
+  </strong>
+  {% endif %}
+  {% if completed_count > 0 and completed_count < application.questions|length %}
+  <strong class="govuk-tag govuk-tag--blue">
+    In Progress
+  </strong>
+  {% endif %}
+  {% if completed_count == application.questions|length %}
+  <strong class="govuk-tag govuk-tag--green">
+    Complete
+  </strong>
+  {% endif %}
+</p>
 
 
 <p class="govuk-body-l">
    You have completed {{application.question_status_summary.get("COMPLETED")}}
    of {{application.questions|length}} questions.
-  </p>
+</p>
 
-  <p class="govuk-heading-xl">General assessment</p>
+<p class="govuk-heading-xl">General assessment</p>
 
 <table class="govuk-table">
   {% for question in application.questions %}
