@@ -459,11 +459,17 @@ def comments():
 def flow_page_indexing(page_index: int = 0):
     
     sections = sub_crit_flow_data["sections"]
-    index_args = request.args.get("page_index")
-    page_index = AssessmentFlow.get_page_index(index_args, sections)
     
+    index_args = request.args.get("page_index")
+    if not index_args:
+        index_args = 0
+    page_index = AssessmentFlow.get_page_index(index_args, sections)
+    section_name = AssessmentFlow.get_section_name(sub_crit_flow_data, page_index)
+ 
     return render_template(
         "macros/example_flow_page_indexing.html",
         sections=sections,
         page_index=page_index,
+        index_args = int(index_args),
+        section_name = section_name
     )
