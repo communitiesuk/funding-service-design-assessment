@@ -11,7 +11,7 @@ from flask import abort
 from flask import Blueprint
 from flask import render_template
 from flask import request
-from tests.api_data.sub_crit_flow_data import sub_crit_flow_data
+from tests.api_data.sub_crit_flow_data import assessment_flow_data
 
 
 assess_bp = Blueprint(
@@ -458,18 +458,22 @@ def comments():
 @assess_bp.route("/flow_page/")
 def flow_page_indexing(page_index: int = 0):
 
-    sections = sub_crit_flow_data["sections"]
-   
+    sections = assessment_flow_data["sections"]
+
     index_args = request.args.get("page_index")
     if not index_args:
         index_args = 0
     page_index = AssessmentFlow.get_page_index(index_args, sections)
-    section_name = AssessmentFlow.get_section_name(sub_crit_flow_data, page_index)
- 
+
+    assessment = AssessmentFlow.as_json(assessment_flow_data, page_index)
+    section_name = assessment.section_name
+    questions = assessment.questions
+
     return render_template(
         "macros/assessment_flow.html",
         sections=sections,
         page_index=page_index,
-        index_args = int(index_args),
-        section_name = section_name
+        index_args=int(index_args),
+        section_name=section_name,
+        questions=questions,
     )
