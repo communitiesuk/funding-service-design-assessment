@@ -8,7 +8,7 @@
 
 {% block content %}
 
-<a href="{{url_for('assess_bp.flow_page_indexing', page_index=0 ) }}"
+<a href="{{url_for('assess_bp.assessment_flow', page_index=0 ) }}"
   class="govuk-back-link govuk-body govuk-!-margin-bottom-7">Back to <span class="govuk-body govuk-!-font-weight-bold">
     overall assessment</span></a>
 
@@ -21,7 +21,7 @@
 
   <div class="govuk-grid-column-one-half">
     {{scores(section_name)}}
-    {{confirmScores(section_name, url_for('assess_bp.flow_page_indexing', page_index=0) )}}
+    {{confirmScores(section_name, url_for('assess_bp.assessment_flow', page_index=0) )}}
   </div>
 </div>
 
@@ -60,12 +60,12 @@
 <div class="govuk-form-group govuk-!-margin-top-7">
   <div style="display: flex; justify-content: space-between;" class="pagination-links govuk-!-margin-top-7">
     <a class="govuk-link--no-visited-state govuk-link--no-underline"
-      href="{{url_for('assess_bp.flow_page_indexing', page_index=page_index-1 ) }}">
+      href="{{url_for('assess_bp.assessment_flow', page_index=page_index-1 ) }}">
       <span class="govuk-!-font-size-24 govuk-!-font-weight-bold">Previous</span>
     </a>
 
     <a class="govuk-link--no-visited-state govuk-link--no-underline govuk-!-text-align-right  govuk-!-margin-left-9"
-      href="{{url_for('assess_bp.flow_page_indexing', page_index=page_index+1) }}">
+      href="{{url_for('assess_bp.assessment_flow', page_index=page_index+1) }}">
       <span class="govuk-!-font-size-24 govuk-!-font-weight-bold">Next</span>
     </a>
   </div>
@@ -76,7 +76,7 @@
 <div class="govuk-form-group govuk-!-margin-top-7">
   <div style="display: flex; justify-content: space-between;" class="pagination-links govuk-!-margin-top-7">
     <a class="govuk-link--no-visited-state govuk-link--no-underline govuk-!-text-align-right  govuk-!-margin-left-9"
-      href="{{url_for('assess_bp.flow_page_indexing', page_index=page_index+1) }}">
+      href="{{url_for('assess_bp.assessment_flow', page_index=page_index+1) }}">
       <span class="govuk-!-font-size-24 govuk-!-font-weight-bold">Next</span>
     </a>
   </div>
