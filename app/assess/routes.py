@@ -470,7 +470,7 @@ def assessment_flow(page_index: int = 0):
     questions = assessment.questions
 
     return render_template(
-        "macros/assessment_flow.html",
+        "assessment_flow.html",
         sections=sections,
         page_index=page_index,
         index_args=int(index_args),

@@ -12,7 +12,7 @@
   class="govuk-back-link govuk-body govuk-!-margin-bottom-7">Back to <span class="govuk-body govuk-!-font-weight-bold">
     overall assessment</span></a>
 
-{% if index_args == sections|length  %}
+{% if index_args == sections|length %}
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-one-half govuk-!-padding-right-2">
     <h2 class="govuk-heading-m"> Benefits, outcomes and outputs </h2>
@@ -39,13 +39,10 @@
   </ul>
   {% endfor %}
 
-  <hr class="govuk-section-break govuk-section-break--visible govuk-!-margin-bottom-3">
-
-
   {% for fields in questions %}
-  <span id="{{ fields }}">
-  {{ TitleAnswer(fields) }}
   <hr class="govuk-section-break govuk-section-break--visible govuk-!-margin-bottom-3">
+  <span id="{{ fields }}">
+    {{ TitleAnswer(fields) }}
   </span>
   {% endfor %}
 </div>
