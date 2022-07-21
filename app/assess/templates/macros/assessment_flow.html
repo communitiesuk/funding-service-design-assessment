@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% from "macros/title_answer_pairs.html" import TitleAnswer %}
 {% from "macros/comments_box.html" import uploadComments as commentBox %}
+{% from "macros/display_comments.html" import displayComments %}
 {% from "macros/tabs.html" import tabs %}
 {% from "macros/scores.html" import scores %}
 {% from "macros/confirm_scores_box.html" import confirmScores %}
@@ -12,32 +13,27 @@
     overall assessment</span></a>
 
 {% if index_args == sections|length  %}
-
-<main class="govuk-main-wrapper--auto-spacing">
 <div class="govuk-grid-row">
-  <div class="govuk-grid-column-one-half">
+  <div class="govuk-grid-column-one-half govuk-!-padding-right-2">
     <h2 class="govuk-heading-m"> Benefits, outcomes and outputs </h2>
     {{ tabs(sections, "criteria") }}
   </div>
+
   <div class="govuk-grid-column-one-half">
     {{scores(section_name)}}
     {{confirmScores(section_name, url_for('assess_bp.flow_page_indexing', page_index=0) )}}
-   
   </div>
 </div>
-</main>
-
 
 {% else %}
 <h1 class="govuk-heading-l">{{ section_name }}</h1>
 
-
 <div class="light-blue-background padding-top-left-right">
-  {% for question_titles in sections[page_index]['questions'] %}
+  {% for question in questions %}
   <ul>
     <li class="govuk-body">
-      <a class="govuk-link--no-underline govuk-link--no-visited-state" href="#{{ question_titles }}">
-        {{ question_titles['question'] }}
+      <a class="govuk-link--no-underline govuk-link--no-visited-state" href="#{{ question }}">
+        {{ question['question'] }}
       </a>
     </li>
   </ul>
@@ -46,10 +42,12 @@
   <hr class="govuk-section-break govuk-section-break--visible govuk-!-margin-bottom-3">
 
 
-  {% for fields in sections[page_index]['questions'] %}
+  {% for fields in questions %}
   <span id="{{ fields }}">
   {{ TitleAnswer(fields) }}
+
   <hr class="govuk-section-break govuk-section-break--visible govuk-!-margin-bottom-3">
+
   </span>
 
   {% endfor %}
@@ -58,6 +56,8 @@
 </div>
 
 <div class="govuk-!-margin-top-7">
+
+
   {{commentBox()}}
 </div>
 
