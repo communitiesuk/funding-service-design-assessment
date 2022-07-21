@@ -99,7 +99,7 @@ flask-talisman==0.8.1
     # via -r requirements.txt
 flask-wtf==1.0.0
     # via -r requirements.txt
-funding-service-design-utils @ git+https://github.com/communitiesuk/funding-service-design-utils.git@main
+funding-service-design-utils @ git+https://github.com/communitiesuk/funding-service-design-utils.git@fs-1169-common-config
     # via -r requirements.txt
 gitdb==4.0.9
     # via gitpython
@@ -197,14 +197,16 @@ pre-commit==2.19.0
     # via -r requirements-dev.in
 py==1.11.0
     # via pytest
-pybrowsers==0.4.1
-    # via webdriver-manager
 pycparser==2.21
     # via cffi
 pygments==2.12.0
     # via
     #   -r requirements.txt
     #   rich
+pyjwt==2.4.0
+    # via
+    #   -r requirements.txt
+    #   funding-service-design-utils
 pyopenssl==22.0.0
     # via urllib3
 pyparsing==3.0.9

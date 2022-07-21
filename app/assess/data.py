@@ -74,10 +74,11 @@ def get_fund(fund_id: str) -> Union[Fund, None]:
 
 
 def get_rounds(fund_id: str) -> Union[Fund, List]:
-    endpoint = Config.ROUND_STORE_API_HOST + Config.ROUNDS_ENDPOINT.format(
+    endpoint = Config.FUND_STORE_API_HOST + Config.ROUNDS_ENDPOINT.format(
         fund_id=fund_id
     )
     response = get_data(endpoint)
+
     rounds = []
     if response and len(response) > 0:
         for round_data in response:
@@ -88,9 +89,8 @@ def get_rounds(fund_id: str) -> Union[Fund, List]:
 def get_round_with_applications(
     fund_id: str, round_id: str
 ) -> Union[Round, None]:
-    round_endpoint = (
-        Config.ROUND_STORE_API_HOST
-        + Config.ROUND_ENDPOINT.format(fund_id=fund_id, round_id=round_id)
+    round_endpoint = Config.FUND_STORE_API_HOST + Config.ROUND_ENDPOINT.format(
+        fund_id=fund_id, round_id=round_id
     )
     round_response = get_data(round_endpoint)
     if round_response and "round_id" in round_response:
