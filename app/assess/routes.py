@@ -456,7 +456,7 @@ def comments():
 
 
 @assess_bp.route("/flow_page/")
-def flow_page_indexing(page_index: int = 0):
+def assessment_flow(page_index: int = 0):
 
     sections = assessment_flow_data["sections"]
 
