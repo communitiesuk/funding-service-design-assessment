@@ -1,4 +1,4 @@
-sub_crit_flow_data = {
+assessment_flow_data = {
     "criteria_id": "string",
     "round_id": "string",
     "sub_criteria_id": "string",
