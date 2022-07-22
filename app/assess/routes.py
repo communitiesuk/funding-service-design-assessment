@@ -456,16 +456,15 @@ def comments():
 
 
 @assess_bp.route("/flow_page/")
-def assessment_flow(page_index: int = 0):
+def assessment_flow(index: int = 0):
 
-    sections = assessment_flow_data["sections"]
-
-    index_args = request.args.get("page_index")
-    if not index_args:
-        index_args = 0
-    page_index = AssessmentFlow.get_page_index(index_args, sections)
-
+    index = request.args.get("index")
+    if not index:
+        index = 0
+        
+    page_index = AssessmentFlow.process_index(index, assessment_flow_data)
     assessment = AssessmentFlow.as_json(assessment_flow_data, page_index)
+    sections = assessment.sections
     section_name = assessment.section_name
     questions = assessment.questions
 
@@ -473,7 +472,7 @@ def assessment_flow(page_index: int = 0):
         "assessment_flow.html",
         sections=sections,
         page_index=page_index,
-        index_args=int(index_args),
+        index=int(index),
         section_name=section_name,
         questions=questions,
     )
