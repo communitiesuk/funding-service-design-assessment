@@ -41,10 +41,16 @@ class DefaultConfig:
     APPLICATION_STATUS_ENDPOINT = "/applications/{application_id}/status"
     APPLICATION_SEARCH_ENDPOINT = "/applications?{params}"
 
-    #Assesment store endpoints
-    ASSESSMENT_STORE_API_HOST = os.environ.get("ASSESSMENT_STORE_API_HOST") or "ASSESSMENT_STORE_API_HOST"
+    # Assesment store endpoints
+    ASSESSMENT_STORE_API_HOST = (
+        os.environ.get("ASSESSMENT_STORE_API_HOST")
+        or "ASSESSMENT_STORE_API_HOST"
+    )
 
-    ASSESSMENT_SCORE_JUST_ENDPOINT = ASSESSMENT_STORE_API_HOST+"/assessments/{assessment_id}/sub_criterias/{sub_criteria_id}/scores"
+    ASSESSMENT_SCORE_JUST_ENDPOINT = (
+        ASSESSMENT_STORE_API_HOST
+        + "/assessments/{assessment_id}/sub_criterias/{sub_criteria_id}/scores"
+    )
 
     """
     Assets

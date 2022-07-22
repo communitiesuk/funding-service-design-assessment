@@ -1,15 +1,17 @@
 from app.assess.data import *
+from app.assess.data import submit_score_and_justification
 from app.assess.forms.comments_form import CommentsForm
+from app.assess.forms.scores_and_justifications import JustScoreForm
+from app.assess.models.assessment_flow import AssessmentFlow
 from app.assess.models.question import Question
 from app.assess.models.question_field import QuestionField
 from app.assess.models.total_table import TotalMoneyTableView
-from app.assess.data import submit_score_and_justification
 from config import Config
 from flask import abort
 from flask import Blueprint
 from flask import render_template
 from flask import request
-from app.assess.forms.scores_and_justifications import JustScoreForm
+from tests.api_data.sub_crit_flow_data import assessment_flow_data
 
 
 assess_bp = Blueprint(
@@ -31,6 +33,7 @@ def funds():
     funds = get_funds()
 
     return render_template("funds.html", funds=funds)
+
 
 @assess_bp.route("/fragments/structured_question", methods=["GET"])
 def selection_fragment():
@@ -152,6 +155,8 @@ def text_area_1():
         ],
     }
 
+    # data_dict functionality to be reviwed or deleted by Gio
+
     data_dict = {}
 
     data_dict["title"] = question_data["question"]
@@ -161,7 +166,11 @@ def text_area_1():
         for data_dict in question_data["fields"]
     ]
 
-    return render_template("title_answer_pairs.html", data_dict=data_dict)
+    return render_template(
+        "title_answer_pairs.html",
+        data_dict=data_dict,
+        question_data=question_data,
+    )
 
 
 @assess_bp.route("/fragments/total_table_view", methods=["GET"])
@@ -199,7 +208,8 @@ def total_table_view():
         row_dict=question_model.row_dict(),
     )
 
-@assess_bp.route("/fragments/sub_criteria_scoring", methods=["POST","GET"])
+
+@assess_bp.route("/fragments/sub_criteria_scoring", methods=["POST", "GET"])
 def sub_crit_scoring():
 
     form = JustScoreForm()
@@ -213,14 +223,25 @@ def sub_crit_scoring():
         person_id = "test_person_id"
         sub_crit_id = "test_sub_crit_id"
 
-        submit_score_and_justification(score=score, assessment_id=assessment_id, person_id=person_id, justification=just,sub_crit_id=sub_crit_id)
+        submit_score_and_justification(
+            score=score,
+            assessment_id=assessment_id,
+            person_id=person_id,
+            justification=just,
+            sub_crit_id=sub_crit_id,
+        )
         scores_submitted = True
 
     else:
 
         scores_submitted = False
 
-    return render_template("scores_justification.html",scores_submitted=scores_submitted, form=form)
+    return render_template(
+        "scores_justification.html",
+        scores_submitted=scores_submitted,
+        form=form,
+    )
+
 
 @assess_bp.route("/fragments/text_input")
 def text_input():
@@ -432,3 +453,26 @@ def comments():
         )
 
     return render_template("macros/example_comments_template.html", form=form)
+
+
+@assess_bp.route("/flow_page/")
+def assessment_flow(index: int = 0):
+
+    index = request.args.get("index")
+    if not index:
+        index = 0
+        
+    page_index = AssessmentFlow.process_index(index, assessment_flow_data)
+    assessment = AssessmentFlow.as_json(assessment_flow_data, page_index)
+    sections = assessment.sections
+    section_name = assessment.section_name
+    questions = assessment.questions
+
+    return render_template(
+        "assessment_flow.html",
+        sections=sections,
+        page_index=page_index,
+        index=int(index),
+        section_name=section_name,
+        questions=questions,
+    )
