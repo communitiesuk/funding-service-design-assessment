@@ -461,7 +461,7 @@ def assessment_flow(index: int = 0):
     index = request.args.get("index")
     if not index:
         index = 0
-        
+
     page_index = AssessmentFlow.process_index(index, assessment_flow_data)
     assessment = AssessmentFlow.as_json(assessment_flow_data, page_index)
     sections = assessment.sections
