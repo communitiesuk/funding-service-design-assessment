@@ -50,7 +50,6 @@ class AssessmentFlow:
     def get_fields(data, page_index):
         fields = []
         get_fields = AssessmentFlow.get_questions(data, page_index)
-
         for field in get_fields:
             fields.append(field["fields"])
         return fields
@@ -60,6 +59,4 @@ class AssessmentFlow:
         sections = AssessmentFlow.get_sections(data)
         if int(index) > int(len(sections) - 1):
             index = int(len(sections) - 1)
-
         return int(index)
-    
