@@ -1,8 +1,6 @@
 {%- from 'govuk_frontend_jinja/components/radios/macro.html' import govukRadios -%}
 
-{% macro scores(score_radio_id) %}
-
-
+{% macro scores() %}
 
 <div class="govuk-form-group">
     <fieldset class="govuk-fieldset">
@@ -15,7 +13,7 @@
         <div class="govuk-radios" data-module="govuk-radios">
 
             <div class="govuk-radios__item">
-                <input class="govuk-radios__input" id="strong" name="strong" type="radio"
+                <input class="govuk-radios__input" id="strong" name="assessment-score" type="radio"
                     value="strong">
                 <label class="govuk-label govuk-radios__label" for="strong">
                     5 Strong
@@ -33,7 +31,7 @@
             </div>
 
             <div class="govuk-radios__item">
-                <input class="govuk-radios__input" id="good" name="good" type="radio"
+                <input class="govuk-radios__input" id="good" name="assessment-score" type="radio"
                     value="good">
                 <label class="govuk-label govuk-radios__label" for="good">
                     4 Good
@@ -51,7 +49,7 @@
             </div>
 
             <div class="govuk-radios__item">
-                <input class="govuk-radios__input" id="satisfactory" name="satisfactory" type="radio"
+                <input class="govuk-radios__input" id="satisfactory" name="assessment-score" type="radio"
                     value="satisfactory">
                 <label class="govuk-label govuk-radios__label" for="satisfactory">
                     3 Satisfactory
@@ -69,7 +67,7 @@
             </div>
 
             <div class="govuk-radios__item">
-                <input class="govuk-radios__input" id="partial" name="partial" type="radio"
+                <input class="govuk-radios__input" id="partial" name="assessment-score" type="radio"
                     value="partial">
                 <label class="govuk-label govuk-radios__label" for="partial">
                     2 Partial
@@ -87,7 +85,7 @@
             </div>
 
             <div class="govuk-radios__item">
-                <input class="govuk-radios__input" id="poor" name="poor" type="radio"
+                <input class="govuk-radios__input" id="poor" name="assessment-score" type="radio"
                     value="poor">
                 <label class="govuk-label govuk-radios__label" for="poor">
                     1 Poor
@@ -107,4 +105,5 @@
 
     </fieldset>
 </div>
+
 {% endmacro %}
