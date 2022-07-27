@@ -5,7 +5,7 @@ applications:
   buildpacks:
   - https://github.com/cloudfoundry/python-buildpack.git
   command: gunicorn wsgi:app -c run/gunicorn/devtest.py
-  routes: 
+  routes:
     - route: assessment.dev.fundingservice.co.uk
   env:
     FLASK_ENV: dev
@@ -19,5 +19,7 @@ applications:
   buildpacks:
   - https://github.com/cloudfoundry/python-buildpack.git
   command: gunicorn wsgi:app -c run/gunicorn/devtest.py
+  routes:
+    - route: assessment.test.fundingservice.co.uk
   env:
-    FLASK_ENV: dev
+    FLASK_ENV: test
