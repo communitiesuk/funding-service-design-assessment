@@ -1,10 +1,13 @@
 {% extends "base.html" %}
+
+
 {% from "macros/title_answer_pairs.html" import TitleAnswer %}
 {% from "macros/comments_box.html" import uploadComments as commentBox %}
 {% from "macros/display_comments.html" import displayComments %}
 {% from "macros/tabs.html" import tabs %}
 {% from "macros/scores.html" import scores %}
 {% from "macros/confirm_scores_box.html" import confirmScores %}
+{% from "macros/assessment_criteria_detail.html" import detailsText as assessment_criteria %}
 
 {% block content %}
 
@@ -26,8 +29,24 @@
 </div>
 
 {% else %}
-<h1 class="govuk-heading-l">{{ section_name }}</h1>
 
+<h1 class="govuk-heading-l">{{ section_name }} </h1>
+<span class="govuk-body-l govuk-!-margin-bottom-4">
+  Section {{index+1}} of {{sections|length}}:
+</span>
+
+<div class="govuk-inset-text">
+  <p>This assessment criteria is made up of 2 questions. You must leave a comment against each section. Your comments
+    will be saved as you go through the assessment. </p>
+
+  <p>In the final section, you must enter a score based on your comments. This must reflect how well the applicant has
+    met the assessment criteria.</p>
+</div>
+
+{{assessment_criteria()}}
+
+
+<h2 class="govuk-heading govuk-heading-m">Applicant's answer</h2>
 <div class="light-blue-background padding-top-left-right">
   {% for question in questions %}
   <ul>
