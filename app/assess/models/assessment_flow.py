@@ -42,8 +42,8 @@ class AssessmentFlow:
     def get_question(data, page_index):
         get_questions = AssessmentFlow.get_questions(data, page_index)
         question = []
-        for q in get_questions:
-            question.append(q["question"])
+        for questions in get_questions:
+            question.append(questions["question"])
         return question
 
     @staticmethod
