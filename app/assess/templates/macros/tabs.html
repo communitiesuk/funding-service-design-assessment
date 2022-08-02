@@ -1,46 +1,45 @@
 {%- from "govuk_frontend_jinja/components/tabs/macro.html" import govukTabs -%}
 
-{% macro tabs(titles, criteria) %}
+{% macro tabs(titles) %}
 
-<div class="govuk-tabs govuk-body" data-module="govuk-tabs">
 
+<div class="govuk-tabs" data-module="govuk-tabs">
     <h2 class="govuk-tabs__title">
         Contents
     </h2>
-
     <ul class="govuk-tabs__list">
         <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
-            <a class="govuk-tabs__tab" href="#{{titles}}">
-                Comments summary</a>
+            <a class="govuk-tabs__tab" href="#comments-summary">
+                Comments summary
+            </a>
         </li>
-
         <li class="govuk-tabs__list-item">
-            <a class="govuk-tabs__tab" href="#{{criteria}}">
-                Assessment criteria </a>
+            <a class="govuk-tabs__tab" href="#assessment-criteria">
+                Assessment criteria
+            </a>
         </li>
     </ul>
 
-    <div class="govuk-tabs__panel" id="{{titles}}">
+    <div class="govuk-tabs__panel" id="comments-summary">
         {% for title  in titles %}
         <h2 class="govuk-heading-m govuk-!-margin-top-5 comment-heading">{{ title['section_name'] }}</h2>
 
         <div class="grey-background padding-all">
-            <a class="govuk-link--no-underline govuk-link--no-visited-state" href="">
+            <a class="govuk-link--no-underline govuk-link--no-visited-state govuk-body" href="#">
                 Add a comment </a>
         </div>
         {% endfor %}
-
         <div class="grey-background padding-all">
-            <a class="govuk-link--no-underline govuk-link--no-visited-state" href="">
+            <a class="govuk-link--no-underline govuk-link--no-visited-state govuk-body" href="">
                 Add a comment </a>
         </div>
     </div>
 
 
-    <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="{{criteria}}">
-        <h2 class="govuk-heading-l">{{criteria}}</h2>
+    <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="assessment-criteria">
+        <p class="govuk-body"> Based on recent discussion, this is likely to become guidance around completing an
+            assessment, whilst the scoring guidance is found directly alongside the scoring panel on the right. </p>
     </div>
-
 
 </div>
 
