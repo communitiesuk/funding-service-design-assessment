@@ -8,3 +8,4 @@ from fsd_utils import configclass
 class UnitTestConfig(DefaultConfig):
     DefaultConfig.TALISMAN_SETTINGS["force_https"] = False
     FSD_LOG_LEVEL = logging.DEBUG
+    USE_LOCAL_DATA = "True"

@@ -13,19 +13,19 @@ from app.assess.models.fund import Fund
 from app.assess.models.round import Round
 from config import Config
 from flask import current_app
-from flask import jsonify
 
 
 def get_data(endpoint: str):
-    if endpoint[:8] == "https://":
-        response = requests.get(endpoint)
-        if response.status_code == 200:
-            data = response.json()
-        else:
-            return None
+    if Config.USE_LOCAL_DATA:
+       return get_local_data(endpoint)
     else:
-        data = get_local_data(endpoint)
-    return data
+       response = requests.get(endpoint)
+       if response.status_code == 200:
+            return response.json()
+       else:
+            current_app.logger.error(f"Unexpected response from assessment store {response.status_code} {response.content}")
+            return None 
+
 
 
 def get_local_data(endpoint: str):

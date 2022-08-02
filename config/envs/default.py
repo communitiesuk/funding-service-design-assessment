@@ -1,3 +1,4 @@
+from distutils.util import strtobool
 import logging
 import os
 from pathlib import Path
@@ -90,7 +91,7 @@ class DefaultConfig:
     }
 
     """Talisman Config"""
-
+    USE_LOCAL_DATA = USE_LOCAL_DATA = strtobool(os.getenv("USE_LOCAL_DATA", "False"))
     # Security headers and other policies
     FSD_REFERRER_POLICY = "strict-origin-when-cross-origin"
     FSD_SESSION_COOKIE_SAMESITE = "Lax"
