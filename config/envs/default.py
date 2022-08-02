@@ -131,7 +131,7 @@ class DefaultConfig:
         "content_security_policy": SECURE_CSP,
         "content_security_policy_report_uri": None,
         "content_security_policy_report_only": False,
-        "content_security_policy_nonce_in": None,
+        "content_security_policy_nonce_in": ["script-src"],
         "referrer_policy": FSD_REFERRER_POLICY,
         "session_cookie_secure": True,
         "session_cookie_http_only": True,
