@@ -63,11 +63,4 @@ class DefaultConfig:
     ASSETS_DEBUG = False
     ASSETS_AUTO_BUILD = True
 
-    """
-    APIs Config
-    """
-    FUND_STORE_API_HOST = CommonConfig.FUND_STORE_API_HOST
-    APPLICATION_STORE_API_HOST = CommonConfig.APPLICATION_STORE_API_HOST
-
     TALISMAN_SETTINGS = CommonConfig.TALISMAN_SETTINGS
-
