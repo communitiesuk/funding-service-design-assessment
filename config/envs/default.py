@@ -1,4 +1,3 @@
-import os
 from pathlib import Path
 
 from fsd_utils import CommonConfig
@@ -25,6 +24,13 @@ class DefaultConfig:
     TEMPLATES_FOLDER = "templates"
     LOCAL_SERVICE_NAME = "local_flask"
     ASSESSMENT_HUB_ROUTE = "/assess"
+
+    """
+    APIs Config
+    """
+    FUND_STORE_API_HOST = CommonConfig.FUND_STORE_API_HOST
+    APPLICATION_STORE_API_HOST = CommonConfig.APPLICATION_STORE_API_HOST
+    ASSESSMENT_STORE_API_HOST = CommonConfig.ASSESSMENT_STORE_API_HOST
 
     """
     External APIs
