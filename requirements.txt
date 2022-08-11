@@ -10,6 +10,8 @@ brotli==1.0.9
     # via flask-compress
 certifi==2022.6.15
     # via requests
+cffi==1.15.1
+    # via cryptography
 chardet==4.0.0
     # via prance
 charset-normalizer==2.1.0
@@ -24,6 +26,8 @@ commonmark==0.9.1
     # via rich
 connexion==2.14.0
     # via -r requirements.in
+cryptography==37.0.4
+    # via pyjwt
 cssmin==0.2.0
     # via -r requirements.in
 dnspython==2.2.1
@@ -46,7 +50,7 @@ flask-talisman==0.8.1
     # via -r requirements.in
 flask-wtf==1.0.0
     # via -r requirements.in
-funding-service-design-utils @ git+https://github.com/communitiesuk/funding-service-design-utils.git@main
+funding-service-design-utils @ https://github.com/communitiesuk/funding-service-design-utils/archive/refs/tags/0.0.11.tar.gz
     # via -r requirements.in
 govuk-frontend-jinja==2.0.0
     # via -r requirements.in
@@ -87,8 +91,12 @@ packaging==21.3
     # via connexion
 prance==0.21.8.0
     # via -r requirements.in
+pycparser==2.21
+    # via cffi
 pygments==2.12.0
     # via rich
+pyjwt[crypto]==2.4.0
+    # via funding-service-design-utils
 pyparsing==3.0.9
     # via packaging
 pyrsistent==0.18.1

@@ -19,11 +19,15 @@ class Application:
 
     @staticmethod
     def from_json(data: dict):
+        if data.get("date_submitted"):
+            submitted = datetime.fromisoformat(
+                data.get("date_submitted", "1970-01-01")
+            )
+        else:
+            submitted = None
         application = Application(
             identifier=data.get("id"),
-            submitted=datetime.fromisoformat(
-                data.get("date_submitted", "1970-01-01")
-            ),
+            submitted=submitted,
             fund_name=data.get("fund_name"),
             fund_id=data.get("fund_id"),
             round_id=data.get("round_id"),

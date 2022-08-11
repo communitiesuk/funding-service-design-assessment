@@ -132,7 +132,7 @@ dmypy.json
 .idea
 
 # VS Code
-.vscode/settings.json
+.vscode/
 
 # Mac files
 .bash_profile
@@ -148,4 +148,3 @@ axe_reports
 
 # Build output
 html
-.vscode/launch.json
