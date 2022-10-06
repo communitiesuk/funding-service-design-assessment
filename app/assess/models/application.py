@@ -19,7 +19,8 @@ class Application:
 
     @staticmethod
     def from_json(data: dict):
-        if data.get("date_submitted"):
+        date_submitted = data.get("date_submitted")
+        if date_submitted and date_submitted != "null":
             submitted = datetime.fromisoformat(
                 data.get("date_submitted", "1970-01-01")
             )
