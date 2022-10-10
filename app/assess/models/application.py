@@ -19,7 +19,7 @@ class Application:
 
     @staticmethod
     def from_json(data: dict):
-        if data.get("date_submitted"):
+        if data.get("date_submitted") is not None:
             submitted = datetime.fromisoformat(
                 data.get("date_submitted", "1970-01-01")
             )
