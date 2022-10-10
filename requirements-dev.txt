@@ -94,7 +94,7 @@ flask==2.1.1
     #   pytest-flask
 flask-assets==2.0
     # via -r requirements.txt
-flask-compress==1.10.1
+flask-compress==1.13
     # via -r requirements.txt
 flask-talisman==0.8.1
     # via -r requirements.txt
