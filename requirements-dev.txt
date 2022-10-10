@@ -96,7 +96,7 @@ flask-assets==2.0
     # via -r requirements.txt
 flask-compress==1.10.1
     # via -r requirements.txt
-flask-talisman==0.8.1
+flask-talisman==1.0.0
     # via -r requirements.txt
 flask-wtf==1.0.0
     # via -r requirements.txt
@@ -304,7 +304,6 @@ semver==2.13.0
 six==1.16.0
     # via
     #   -r requirements.txt
-    #   flask-talisman
     #   prance
     #   pyscss
     #   tenacity
