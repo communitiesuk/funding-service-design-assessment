@@ -35,6 +35,7 @@ jobs:
           path: /home/runner/work/funding-service-design-assessment/funding-service-design-assessment/axe_reports/*.html
           retention-days: 5
   deploy_dev:
+    if: ${{ github.actor != 'dependabot[bot]' }}
     needs: testing
     runs-on: ubuntu-latest
     environment: Dev
