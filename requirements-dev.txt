@@ -81,6 +81,8 @@ dnspython==2.2.1
     #   email-validator
 email-validator==1.2.1
     # via -r requirements.txt
+exceptiongroup==1.0.0
+    # via pytest
 filelock==3.7.1
     # via virtualenv
 flask==2.1.1
@@ -194,8 +196,6 @@ prance==0.21.8.0
     # via -r requirements.txt
 pre-commit==2.19.0
     # via -r requirements-dev.in
-py==1.11.0
-    # via pytest
 pycparser==2.21
     # via
     #   -r requirements.txt
@@ -222,7 +222,7 @@ pyscss==1.4.0
     # via -r requirements.txt
 pysocks==1.7.1
     # via urllib3
-pytest==7.1.2
+pytest==7.2.0
     # via
     #   -r requirements-dev.in
     #   axe-selenium-python
