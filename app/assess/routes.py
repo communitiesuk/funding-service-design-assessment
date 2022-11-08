@@ -1,5 +1,5 @@
 from app.assess.data import *
-from app.assess.data import submit_score_and_justification
+from app.assess.data import submit_score_and_justification, get_application_overviews
 from app.assess.forms.comments_form import CommentsForm
 from app.assess.forms.scores_and_justifications import JustScoreForm
 from app.assess.models.question import Question
@@ -294,34 +294,11 @@ def landing():
     of applications and their statuses
     """
 
-    # Initialise empty search params
-    search_params = {
-        "id_contains": "",
-        "order_by": "",
-        "order_rev": "",
-        "status_only": "",
-    }
-
-    # Add request arg search params to dict
-    for key, value in request.args.items():
-        if key in search_params:
-            search_params.update({key: value})
-
-    applications = get_applications(params=search_params)
-
-    todo_summary = get_todo_summary()
+    application_overviews = get_application_overviews(Config.COF_FUND_ID, Config.COF_ROUND2_ID)
 
     return render_template(
         "landing.html",
-        applications=applications,
-        search_params=search_params,
-        todo_summary=todo_summary,
-        applications_endpoint="".join(
-            [
-                Config.APPLICATION_STORE_API_HOST,
-                Config.APPLICATION_SEARCH_ENDPOINT.replace("{params}", ""),
-            ]
-        ),
+        application_overviews=application_overviews
     )
 
 
