@@ -4,9 +4,13 @@
 {% import 'components/applications_table.html' as applications_table-%}
 
 {% block content %}
-      <p class="govuk-heading-s">Morning Jane Doe</p>
-      <h1 class="govuk-heading-xl">This Week</h1>
-      <h2>Due date placeholder</h2>
+<p class="govuk-heading-xl">Assessor dashboard</p>
+<h1 class="govuk-heading-l">All assessments</h1>
+<h2 class="govuk-heading-m">Due date: 
+            <span class="govuk-body-l">
+                  {{assessment_deadline}}
+            </span>
+      </h2>
       <p class="govuk-heading-s"><a class="govuk-link govuk-link--no-visited-state" href="{{ url_for('assess_bp.landing') }}">View your tasks</a></p>
 <br /><br />
       <p class="govuk-heading-l">Your assessments</p>

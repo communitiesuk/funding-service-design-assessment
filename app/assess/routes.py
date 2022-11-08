@@ -295,10 +295,12 @@ def landing():
     """
 
     application_overviews = get_application_overviews(Config.COF_FUND_ID, Config.COF_ROUND2_ID)
+    assessment_deadline = get_fund(Config.COF_FUND_ID).deadline
 
     return render_template(
         "landing.html",
-        application_overviews=application_overviews
+        application_overviews=application_overviews,
+        assessment_deadline=assessment_deadline
     )
 
 

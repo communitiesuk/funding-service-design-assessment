@@ -9,6 +9,7 @@ class Fund:
     name: str
     identifier: str
     description: str
+    deadline: str
     rounds: List[Round] = None
 
     @staticmethod
@@ -17,6 +18,7 @@ class Fund:
             name=data.get("fund_name"),
             identifier=data.get("fund_id"),
             description=data.get("fund_description"),
+            deadline=data.get("deadline"),
         )
 
     def add_round(self, fund_round: Round):

@@ -2,10 +2,8 @@
 
 
 {% macro render(application_overviews) -%}
-<div data-module="fsd-filtered-fetch-table" data-endpoint="{{ application_search_endpoint }}">
-<div class="govuk-grid-row">
 
-
+<div data-module="fsd-filtered-fetch-table" data-endpoint="{{ application_search_endpoint }}"></div>
 <table class="govuk-table" data-module="sortable-table">
 
   <thead class="govuk-table__head">
@@ -61,6 +59,5 @@
     {% endif %}
   </tbody>
 </table>
-</div>
 
 {%- endmacro %}
