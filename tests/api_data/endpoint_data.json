@@ -452,5 +452,31 @@
       "status": "COMPLETED",
       "assessment_deadline": "2022-06-23T12:00:00.000"
     }
+  ],
+  "assessment_store/application_overviews/47aef2f5-3fcb-4d45-acb5-f0152b5f03c4/c603d114-5364-4474-a0c4-c41cbf4d3bbd": [
+    {
+      "application_short_id": "fund-app789-a",
+      "workflow_status": "IN PROGRESS",
+      "application_id":"123123123-123123123",
+      "type_of_application":"Pub",
+      "project_name":"Save the Dog and Duck",
+      "funding_amount_requested":"10000"
+    },
+    {
+      "application_short_id": "fund-abc-123-a",
+      "workflow_status": "COMPLETED",
+      "application_id":"234234234-123123123",
+      "type_of_application":"Park",
+      "project_name":"Save the rugby pitch",
+      "funding_amount_requested":"25000"
+    },
+    {
+      "application_short_id": "fund-app789-a",
+      "workflow_status": "NOT STARTED",
+      "application_id":"789789789-879789",
+      "type_of_application":"Community Centre",
+      "project_name":"Save the village hall",
+      "funding_amount_requested":"12345"
+    }
   ]
 }

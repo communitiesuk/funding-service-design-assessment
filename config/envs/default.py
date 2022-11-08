@@ -51,6 +51,7 @@ class DefaultConfig:
 
     # Assesment store endpoints
     ASSESSMENT_STORE_API_HOST = CommonConfig.ASSESSMENT_STORE_API_HOST
+    APPLICATION_OVERVIEW_ENDPOINT = "/application_overviews/{fund_id}/{round_id}"
 
     ASSESSMENT_SCORE_JUST_ENDPOINT = (
         ASSESSMENT_STORE_API_HOST
@@ -64,3 +65,7 @@ class DefaultConfig:
     ASSETS_AUTO_BUILD = True
 
     TALISMAN_SETTINGS = CommonConfig.TALISMAN_SETTINGS
+
+    # TODO move into common config
+    COF_FUND_ID = "47aef2f5-3fcb-4d45-acb5-f0152b5f03c4"
+    COF_ROUND2_ID = "c603d114-5364-4474-a0c4-c41cbf4d3bbd"
