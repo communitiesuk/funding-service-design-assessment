@@ -74,7 +74,12 @@ def build_govuk_assets():
             file.write(filedata)
     os.chdir(cwd)
 
-
+    # Copy css
+    os.makedirs("./app/static/dist/styles")
+    shutil.copyfile(
+        "app/static/src/styles/landing.css",
+        "./app/static/dist/styles/landing.css",
+    )
 
     # Delete temp files
     print("Deleting " + ASSETS_PATH)

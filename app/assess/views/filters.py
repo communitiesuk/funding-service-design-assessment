@@ -14,3 +14,8 @@ def datetime_format(value):
         .lower()
     )
     return formatted_time
+
+
+def all_caps_to_human(word):
+    if word:
+        return word.capitalize()

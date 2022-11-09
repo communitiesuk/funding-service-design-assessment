@@ -6,12 +6,8 @@
 {% block content %}
 <p class="govuk-heading-xl">Assessor dashboard</p>
 <h1 class="govuk-heading-l">All assessments</h1>
-<h2 class="govuk-heading-m">Due date:
-            <span class="govuk-body-l">
-                  {{ assessment_deadline|datetime_format }}
-            </span>
-      </h2>
+<h2 class="govuk-heading-m dashboard-deadline ">Due date: <span class="govuk-body-l">{{ assessment_deadline|datetime_format }}</span></h2>
+
 <br /><br />
-      <p class="govuk-heading-l">Your assessments</p>
       {{ applications_table.render(application_overviews) }}
 {% endblock %}

@@ -1,3 +1,4 @@
+from app.assess.views.filters import all_caps_to_human
 from app.assess.views.filters import datetime_format
 from app.assets import compile_static_assets
 from config import Config
@@ -34,6 +35,7 @@ def create_app() -> Flask:
     flask_app.jinja_env.trim_blocks = True
     flask_app.jinja_env.lstrip_blocks = True
     flask_app.jinja_env.filters["datetime_format"] = datetime_format
+    flask_app.jinja_env.filters["all_caps_to_human"] = all_caps_to_human
 
     Compress(flask_app)
 

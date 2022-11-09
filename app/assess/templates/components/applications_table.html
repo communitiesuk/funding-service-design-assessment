@@ -46,8 +46,11 @@
                 <td class="govuk-table__cell">{{overview.project_name}}</td>
                 <td class="govuk-table__cell">{{overview.type_of_application}}</td>
                 <td class="govuk-table__cell">{{ "£%.2f"|format(overview.funding_amount_requested | int) }}</td>
-                <td class="govuk-table__cell">{{overview.workflow_status}}</td>
-
+                {% if overview.workflow_status ==  "NOT STARTED" %}
+                  <td class="govuk-table__cell"><span class="not-started-tag">{{overview.workflow_status | all_caps_to_human}}</span></td>
+                {% else %}
+                  <td class="govuk-table__cell">{{overview.workflow_status | all_caps_to_human}}</td>
+                {% endif %}
             </tr>
         {% endfor %}
     {% else %}
