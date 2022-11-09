@@ -1,5 +1,7 @@
+from os import getenv
 from pathlib import Path
 
+from distutils.util import strtobool
 from fsd_utils import CommonConfig
 from fsd_utils import configclass
 
@@ -51,7 +53,9 @@ class DefaultConfig:
 
     # Assesment store endpoints
     ASSESSMENT_STORE_API_HOST = CommonConfig.ASSESSMENT_STORE_API_HOST
-    APPLICATION_OVERVIEW_ENDPOINT = "/application_overviews/{fund_id}/{round_id}"
+    APPLICATION_OVERVIEW_ENDPOINT = (
+        "/application_overviews/{fund_id}/{round_id}"
+    )
 
     ASSESSMENT_SCORE_JUST_ENDPOINT = (
         ASSESSMENT_STORE_API_HOST
@@ -69,3 +73,5 @@ class DefaultConfig:
     # TODO move into common config
     COF_FUND_ID = "47aef2f5-3fcb-4d45-acb5-f0152b5f03c4"
     COF_ROUND2_ID = "c603d114-5364-4474-a0c4-c41cbf4d3bbd"
+
+    USE_LOCAL_DATA = strtobool(getenv("USE_LOCAL_DATA", "False"))

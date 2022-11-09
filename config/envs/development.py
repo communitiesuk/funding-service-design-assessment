@@ -8,3 +8,4 @@ class DevelopmentConfig(DefaultConfig):
         DefaultConfig.ASSESSMENT_STORE_API_HOST
         + "/assessments/{assessment_id}/sub_criterias/{sub_criteria_id}/scores"
     )
+    USE_LOCAL_DATA = True

@@ -14,14 +14,16 @@ from flask import current_app
 
 
 def get_data(endpoint: str):
-    if endpoint[:8] == "https://":
+    if Config.USE_LOCAL_DATA:
+        current_app.logger.info(f"Fetching local data from '{endpoint}'.")
+        data = get_local_data(endpoint)
+    else:
+        current_app.logger.info(f"Fetching data from '{endpoint}'.")
         response = requests.get(endpoint)
         if response.status_code == 200:
             data = response.json()
         else:
             return None
-    else:
-        data = get_local_data(endpoint)
     return data
 
 
