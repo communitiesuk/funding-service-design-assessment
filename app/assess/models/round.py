@@ -15,7 +15,6 @@ class Round:
     opens: str
     title: str
     short_name: str
-    eligibility_criteria: dict
     applications: List[Application] = None
 
     @classmethod
@@ -31,17 +30,16 @@ class Round:
 
     @staticmethod
     def from_json(data: dict):
-        eligibility_criteria = {}
-        if "eligibility_criteria" in data:
-            for key, value in data["eligibility_criteria"].items():
-                eligibility_criteria.update({key: value})
+        # eligibility_criteria = {}
+        # if "eligibility_criteria" in data:
+        #     for key, value in data["eligibility_criteria"].items():
+        #         eligibility_criteria.update({key: value})
         return Round(
             title=data.get("title"),
             id=data.get("id"),
             fund_id=data.get("fund_id"),
             opens=data.get("opens"),
             deadline=data.get("deadline"),
-            eligibility_criteria=eligibility_criteria,
         )
 
     def add_application(self, application: Application):
