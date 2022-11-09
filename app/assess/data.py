@@ -48,14 +48,11 @@ def call_search_applications(params: dict):
 
 
 def get_application_overviews(fund_id, round_id):
-    params = {"fund_id": fund_id, "round_id": round_id}
-    print(params)
     overviews_endpoint = (
         Config.ASSESSMENT_STORE_API_HOST
     ) + Config.APPLICATION_OVERVIEW_ENDPOINT.format(
         fund_id=fund_id, round_id=round_id
     )
-    print(overviews_endpoint)
 
     overviews_response = get_data(overviews_endpoint)
     return overviews_response
@@ -77,8 +74,8 @@ def get_fund(fund_id: str) -> Union[Fund, None]:
         fund_id=fund_id
     )
     response = get_data(endpoint)
-    if response and "fund_id" in response:
-        fund = Fund.from_json(response)
+    if len(response) > 0:
+        fund = Fund.from_json(response[0])
         if "rounds" in response and len(response["rounds"]) > 0:
             for fund_round in response["rounds"]:
                 fund.add_round(Round.from_json(fund_round))
@@ -103,9 +100,7 @@ def get_round(fund_id: str, round_id: str) -> Union[Round, None]:
     round_endpoint = Config.FUND_STORE_API_HOST + Config.ROUND_ENDPOINT.format(
         fund_id=fund_id, round_id=round_id
     )
-    print(round_endpoint)
     round_response = get_data(round_endpoint)
-    print(round_response)
     if len(round_response) > 0:
         round = Round.from_dict(round_response[0])
         return round
@@ -122,7 +117,7 @@ def get_round_with_applications(
             {
                 "fund_id": fund_id,
                 "datetime_start": fund_round.opens,
-                "datetime_end": fund_round.deadline,
+                "datetime_end": fund_round.short_name,
             }
         )
         if applications_response and len(applications_response) > 0:

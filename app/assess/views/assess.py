@@ -22,9 +22,7 @@ class AssessQuestionView(MethodView):
             abort(404)
 
     def set_round(self, round_id: str):
-        self.round = get_round_with_applications(
-            self.fund.identifier, round_id
-        )
+        self.round = get_round_with_applications(self.fund.id, round_id)
         if not self.round:
             abort(404)
 

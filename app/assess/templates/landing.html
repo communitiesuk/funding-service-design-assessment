@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {%- from 'govuk_frontend_jinja/components/inset-text/macro.html' import govukInsetText -%}
 {%- from "govuk_frontend_jinja/components/button/macro.html" import govukButton -%}
-{% import 'components/applications_table.html' as applications_table-%}
+{% import 'components/application_overviews_table.html' as application_overviews_table-%}
 
 {% block content %}
 <p class="govuk-heading-xl">Assessor dashboard</p>
@@ -9,5 +9,5 @@
 <h2 class="govuk-heading-m dashboard-deadline ">Due date: <span class="govuk-body-l">{{ assessment_deadline|datetime_format }}</span></h2>
 
 <br /><br />
-      {{ applications_table.render(application_overviews) }}
+      {{ application_overviews_table.render(application_overviews) }}
 {% endblock %}
