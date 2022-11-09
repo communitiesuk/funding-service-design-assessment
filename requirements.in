@@ -37,3 +37,5 @@ connexion
 swagger-ui-bundle
 openapi-spec-validator
 prance
+
+git+https://github.com/SergeyPirogov/webdriver_manager@dc73f4a27e8f40cd81dc4718a3f26c22ede29586
