@@ -1,3 +1,4 @@
+from app.assess.views.filters import datetime_format
 from app.assets import compile_static_assets
 from config import Config
 from flask import Flask
@@ -32,6 +33,7 @@ def create_app() -> Flask:
 
     flask_app.jinja_env.trim_blocks = True
     flask_app.jinja_env.lstrip_blocks = True
+    flask_app.jinja_env.filters["datetime_format"] = datetime_format
 
     Compress(flask_app)
 

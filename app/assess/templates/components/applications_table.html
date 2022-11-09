@@ -13,22 +13,22 @@
           Ref
       </th>
 
-      
+
       <th scope="col" class="govuk-table__header">
             Project name
       </th>
 
-      
+
       <th scope="col" class="govuk-table__header">
         Asset type
       </th>
 
-      
+
       <th scope="col" class="govuk-table__header">
         Total funding requested
       </th>
 
-      
+
       <th scope="col" class="govuk-table__header">
         Status
       </th>
@@ -45,7 +45,7 @@
 
                 <td class="govuk-table__cell">{{overview.project_name}}</td>
                 <td class="govuk-table__cell">{{overview.type_of_application}}</td>
-                <td class="govuk-table__cell">{{overview.funding_amount_requested}}</td>
+                <td class="govuk-table__cell">{{ "£%.2f"|format(overview.funding_amount_requested | int) }}</td>
                 <td class="govuk-table__cell">{{overview.workflow_status}}</td>
 
             </tr>

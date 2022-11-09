@@ -22,7 +22,7 @@
       },
       "opens": "2022-02-01T00:00:01",
       "deadline": "2022-06-01T00:00:00",
-      "assessment_deadline": "2023-02-28T00:00:00",
+      "assessment_deadline": "2023-02-28 12:00:00",
       "application_url": "https://funding-service-design-form-runner.london.cloudapps.digital/funding-application",
       "assessment_criteria_weighting": [
         {
@@ -42,7 +42,7 @@
       },
       "opens": "2022-06-01T00:00:01",
       "deadline": "2022-08-31T00:00:00",
-      "assessment_deadline": "2023-03-30T00:00:00",
+      "assessment_deadline": "2023-02-28 12:00:00",
       "application_url": "https://funding-service-design-form-runner.london.cloudapps.digital/funding-application",
       "assessment_criteria_weighting": [
         {
@@ -62,7 +62,7 @@
       },
       "opens": "2022-09-01T00:00:01",
       "deadline": "2022-11-30T00:00:00",
-      "assessment_deadline": "2023-01-30T00:00:00",
+      "assessment_deadline": "2023-02-28 12:00:00",
       "application_url": "https://funding-service-design-form-runner.london.cloudapps.digital/funding-application",
       "assessment_criteria_weighting": [
         {
