@@ -73,7 +73,7 @@
       ]
     }
   ],
-  "fund_store/funds/funding-service-design/rounds/spring": [{
+  "fund_store/funds/funding-service-design/rounds/spring": {
     "fund_id": "funding-service-design",
     "title": "Spring",
     "id": "spring",
@@ -92,8 +92,8 @@
         "value": 0.25
       }
     ]
-  }],
-  "fund_store/funds/funding-service-design/rounds/summer": [{
+  },
+  "fund_store/funds/funding-service-design/rounds/summer":{
     "fund_id": "funding-service-design",
     "title": "Summer",
     "id": "summer",
@@ -112,8 +112,8 @@
         "value": 0.25
       }
     ]
-  }],
-  "fund_store/funds/funding-service-design/rounds/autumn": [{
+  },
+  "fund_store/funds/funding-service-design/rounds/autumn": {
     "fund_id": "funding-service-design",
     "round_title": "Autumn",
     "round_id": "autumn",
@@ -132,7 +132,7 @@
         "value": 0.25
       }
     ]
-  }],
+  },
 
   "application_store/applications/123123123-123123123/status": {
     "fund_id": "47aef2f5-3fcb-4d45-acb5-f0152b5f03c4",
@@ -556,7 +556,7 @@
         "short_name": "COF"
       }
   ],
-  "fund_store/funds/47aef2f5-3fcb-4d45-acb5-f0152b5f03c4/rounds/c603d114-5364-4474-a0c4-c41cbf4d3bbd": [
+  "fund_store/funds/47aef2f5-3fcb-4d45-acb5-f0152b5f03c4/rounds/c603d114-5364-4474-a0c4-c41cbf4d3bbd":
     {
       "assessment_criteria_weighting": [
         {
@@ -602,5 +602,5 @@
         "maximum_project_cost": 1000000
       }
     }
-  ]
+
 }

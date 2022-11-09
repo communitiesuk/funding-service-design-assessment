@@ -101,8 +101,8 @@ def get_round(fund_id: str, round_id: str) -> Union[Round, None]:
         fund_id=fund_id, round_id=round_id
     )
     round_response = get_data(round_endpoint)
-    if len(round_response) > 0:
-        round = Round.from_dict(round_response[0])
+    if round_response and "assessment_deadline" in round_response:
+        round = Round.from_dict(round_response)
         return round
     return None
 
