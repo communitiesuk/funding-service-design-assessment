@@ -14,71 +14,125 @@
   "fund_store/funds/funding-service-design/rounds": [
     {
       "fund_id": "funding-service-design",
-      "round_title": "Spring",
-      "round_id": "spring",
+      "title": "Spring",
+      "id": "spring",
+      "short_name": "SPR",
       "eligibility_criteria": {
         "maximum_project_cost": 1000000
       },
       "opens": "2022-02-01T00:00:01",
       "deadline": "2022-06-01T00:00:00",
-      "application_url": "https://funding-service-design-form-runner.london.cloudapps.digital/funding-application"
+      "assessment_deadline": "2023-02-28T00:00:00",
+      "application_url": "https://funding-service-design-form-runner.london.cloudapps.digital/funding-application",
+      "assessment_criteria_weighting": [
+        {
+          "id": "123",
+          "name": "one",
+          "value": 0.25
+        }
+      ]
     },
     {
       "fund_id": "funding-service-design",
-      "round_title": "Summer",
-      "round_id": "summer",
+      "title": "Summer",
+      "id": "summer",
+      "short_name": "SUM",
       "eligibility_criteria": {
         "maximum_project_cost": 1000000
       },
       "opens": "2022-06-01T00:00:01",
       "deadline": "2022-08-31T00:00:00",
-      "application_url": "https://funding-service-design-form-runner.london.cloudapps.digital/funding-application"
+      "assessment_deadline": "2023-03-30T00:00:00",
+      "application_url": "https://funding-service-design-form-runner.london.cloudapps.digital/funding-application",
+      "assessment_criteria_weighting": [
+        {
+          "id": "123",
+          "name": "one",
+          "value": 0.25
+        }
+      ]
     },
     {
       "fund_id": "funding-service-design",
       "round_title": "Autumn",
       "round_id": "autumn",
+      "short_name": "AUT",
       "eligibility_criteria": {
         "maximum_project_cost": 10000000
       },
       "opens": "2022-09-01T00:00:01",
       "deadline": "2022-11-30T00:00:00",
-      "application_url": "https://funding-service-design-form-runner.london.cloudapps.digital/funding-application"
+      "assessment_deadline": "2023-01-30T00:00:00",
+      "application_url": "https://funding-service-design-form-runner.london.cloudapps.digital/funding-application",
+      "assessment_criteria_weighting": [
+        {
+          "id": "123",
+          "name": "one",
+          "value": 0.25
+        }
+      ]
     }
   ],
-  "fund_store/funds/funding-service-design/rounds/spring": {
+  "fund_store/funds/funding-service-design/rounds/spring": [{
     "fund_id": "funding-service-design",
-    "round_title": "Spring",
-    "round_id": "spring",
+    "title": "Spring",
+    "id": "spring",
+    "short_name": "SPR",
     "eligibility_criteria": {
       "maximum_project_cost": 1000000
     },
     "opens": "2022-02-01T00:00:01",
     "deadline": "2022-06-01T00:00:00",
-    "application_url": "https://funding-service-design-form-runner.london.cloudapps.digital/funding-application"
-  },
-  "fund_store/funds/funding-service-design/rounds/summer": {
+    "assessment_deadline": "2023-02-28T00:00:00",
+    "application_url": "https://funding-service-design-form-runner.london.cloudapps.digital/funding-application",
+    "assessment_criteria_weighting": [
+      {
+        "id": "123",
+        "name": "one",
+        "value": 0.25
+      }
+    ]
+  }],
+  "fund_store/funds/funding-service-design/rounds/summer": [{
     "fund_id": "funding-service-design",
-    "round_title": "Summer",
-    "round_id": "summer",
+    "title": "Summer",
+    "id": "summer",
+    "short_name": "SUM",
     "eligibility_criteria": {
       "maximum_project_cost": 1000000
     },
     "opens": "2022-06-01T00:00:01",
     "deadline": "2022-08-31T00:00:00",
-    "application_url": "https://funding-service-design-form-runner.london.cloudapps.digital/funding-application"
-  },
-  "fund_store/funds/funding-service-design/rounds/autumn": {
+    "assessment_deadline": "2023-03-30T00:00:00",
+    "application_url": "https://funding-service-design-form-runner.london.cloudapps.digital/funding-application",
+    "assessment_criteria_weighting": [
+      {
+        "id": "123",
+        "name": "one",
+        "value": 0.25
+      }
+    ]
+  }],
+  "fund_store/funds/funding-service-design/rounds/autumn": [{
     "fund_id": "funding-service-design",
     "round_title": "Autumn",
     "round_id": "autumn",
+    "short_name": "AUT",
     "eligibility_criteria": {
       "maximum_project_cost": 10000000
     },
     "opens": "2022-09-01T00:00:01",
     "deadline": "2022-11-30T00:00:00",
-    "application_url": "https://funding-service-design-form-runner.london.cloudapps.digital/funding-application"
-  },
+    "assessment_deadline": "2023-01-30T00:00:00",
+    "application_url": "https://funding-service-design-form-runner.london.cloudapps.digital/funding-application",
+    "assessment_criteria_weighting": [
+      {
+        "id": "123",
+        "name": "one",
+        "value": 0.25
+      }
+    ]
+  }],
   "application_store/applications/fund-app123-a/status": {
     "round_id": "spring",
     "fund_id": "funding-service-design",
@@ -479,15 +533,59 @@
       "funding_amount_requested":"12345"
     }
   ],
-  "fund_store/funds/47aef2f5-3fcb-4d45-acb5-f0152b5f03c4": {
-    "fund_id": "47aef2f5-3fcb-4d45-acb5-f0152b5f03c4",
-    "round_title": "Spring",
-    "round_id": "c603d114-5364-4474-a0c4-c41cbf4d3bbd",
-    "eligibility_criteria": {
-      "maximum_project_cost": 1000000
-    },
-    "opens": "01-03-2022",
-    "deadline": "01-05-2022",
-    "application_url": "https://funding-service-design-form-runner.london.cloudapps.digital/funding-application"
-  }
+  "fund_store/funds/47aef2f5-3fcb-4d45-acb5-f0152b5f03c4": [
+      {
+        "description": "The Community Ownership Fund is a £150 million fund over 4 years to support community groups across England, Wales, Scotland and Northern Ireland to take ownership of assets which are at risk of being lost to the community.",
+        "id": "47aef2f5-3fcb-4d45-acb5-f0152b5f03c4",
+        "name": "Community Ownership Fund",
+        "short_name": "COF"
+      }
+  ],
+  "fund_store/funds/47aef2f5-3fcb-4d45-acb5-f0152b5f03c4/rounds/c603d114-5364-4474-a0c4-c41cbf4d3bbd": [
+    {
+      "assessment_criteria_weighting": [
+        {
+          "id": "e2fd30d2-9207-421c-b8b3-c961bcee138b",
+          "name": "Strategic case",
+          "value": 0.3
+        },
+        {
+          "id": "e557773a-74c9-43ee-a52c-88ccae279d08",
+          "name": "Management case",
+          "value": 0.3
+        },
+        {
+          "id": "9e282cdb-6c42-4430-9563-dc4995b59bdd",
+          "name": "Potential to delivery community benefits",
+          "value": 0.3
+        },
+        {
+          "id": "6020db6c-df67-4932-a2f3-2e9dd1934164",
+          "name": "Added value to the community",
+          "value": 0.1
+        }
+      ],
+      "assessment_deadline": "2023-03-30 12:00:00",
+      "contact_details": {
+        "email_address": "COF@levellingup.gov.uk",
+        "phone": "",
+        "text_phone": ""
+      },
+      "deadline": "2022-12-14 11:59:00",
+      "fund_id": "47aef2f5-3fcb-4d45-acb5-f0152b5f03c4",
+      "id": "c603d114-5364-4474-a0c4-c41cbf4d3bbd",
+      "opens": "2022-10-04 12:00:00",
+      "short_name": "R2W2",
+      "support_availability": {
+        "closed": "Easter Sunday, Christmas Day, Boxing Day and New Year’s Day",
+        "days": "Monday to Friday",
+        "time": "9am to 5pm"
+      },
+      "title": "Round 2 Window 2",
+
+      "eligibility_criteria": {
+        "maximum_project_cost": 1000000
+      }
+    }
+  ]
 }

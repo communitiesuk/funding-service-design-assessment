@@ -1,5 +1,5 @@
+import inspect
 from dataclasses import dataclass
-from datetime import datetime
 from typing import List
 
 from .application import Application
@@ -7,13 +7,27 @@ from .application import Application
 
 @dataclass
 class Round:
-    title: str
-    identifier: str
+    id: str
+    assessment_criteria_weighting: list
+    assessment_deadline: str
+    deadline: str
     fund_id: str
-    opens: datetime
-    deadline: datetime
+    opens: str
+    title: str
+    short_name: str
     eligibility_criteria: dict
     applications: List[Application] = None
+
+    @classmethod
+    def from_dict(cls, d: dict):
+        # Filter unknown fields from JSON dictionary
+        return cls(
+            **{
+                k: v
+                for k, v in d.items()
+                if k in inspect.signature(cls).parameters
+            }
+        )
 
     @staticmethod
     def from_json(data: dict):
@@ -22,8 +36,8 @@ class Round:
             for key, value in data["eligibility_criteria"].items():
                 eligibility_criteria.update({key: value})
         return Round(
-            title=data.get("round_title"),
-            identifier=data.get("round_id"),
+            title=data.get("title"),
+            id=data.get("id"),
             fund_id=data.get("fund_id"),
             opens=data.get("opens"),
             deadline=data.get("deadline"),

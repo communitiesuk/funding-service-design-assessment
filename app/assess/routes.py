@@ -1,5 +1,6 @@
 from app.assess.data import *
-from app.assess.data import submit_score_and_justification, get_application_overviews
+from app.assess.data import get_application_overviews
+from app.assess.data import submit_score_and_justification
 from app.assess.forms.comments_form import CommentsForm
 from app.assess.forms.scores_and_justifications import JustScoreForm
 from app.assess.models.question import Question
@@ -9,7 +10,6 @@ from config import Config
 from flask import abort
 from flask import Blueprint
 from flask import render_template
-from flask import request
 
 
 assess_bp = Blueprint(
@@ -294,13 +294,17 @@ def landing():
     of applications and their statuses
     """
 
-    application_overviews = get_application_overviews(Config.COF_FUND_ID, Config.COF_ROUND2_ID)
-    assessment_deadline = get_fund(Config.COF_FUND_ID).deadline
+    application_overviews = get_application_overviews(
+        Config.COF_FUND_ID, Config.COF_ROUND2_ID
+    )
+    assessment_deadline = get_round(
+        Config.COF_FUND_ID, Config.COF_ROUND2_ID
+    ).assessment_deadline
 
     return render_template(
         "landing.html",
         application_overviews=application_overviews,
-        assessment_deadline=assessment_deadline
+        assessment_deadline=assessment_deadline,
     )
 
 
