@@ -137,7 +137,7 @@ def submit_score_and_justification(
         "justification": justification,
         "person_id": person_id,
     }
-    url = Config.ASSESSMENT_SCORE_JUST_ENDPOINT.format(
+    url = Config.ASSESSMENT_SCORES_ENDPOINT.format(
         assessment_id=assessment_id, sub_criteria_id=sub_crit_id
     )
     response = requests.post(url, json=data_dict)
