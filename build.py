@@ -81,6 +81,27 @@ def build_govuk_assets():
         "./app/static/dist/styles/landing.css",
     )
 
+    # Copy moj stuff
+
+    os.makedirs("./app/static/dist/stylesheets")
+    shutil.copyfile(
+        "app/static/src/stylesheets/moj-frontend-ie8.min.css",
+        "./app/static/dist/stylesheets/moj-frontend-ie8.min.css",
+    )
+    shutil.copyfile(
+        "app/static/src/stylesheets/moj-frontend.min.css",
+        "./app/static/dist/stylesheets/moj-frontend.min.css",
+    )
+    os.makedirs("./app/static/dist/javascript")
+    shutil.copyfile(
+        "app/static/src/javascript/moj-frontend.min.js",
+        "./app/static/dist/javascript/moj-frontend.min.js",
+    )
+    shutil.copyfile(
+        "app/static/src/javascript/jquery-3.6.0.min.js",
+        "./app/static/dist/javascript/jquery-3.6.0.min.js",
+    )
+
     # Delete temp files
     print("Deleting " + ASSETS_PATH)
     shutil.rmtree(ASSETS_PATH)

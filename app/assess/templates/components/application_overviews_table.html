@@ -4,7 +4,14 @@
 {% macro render(application_overviews) -%}
 <!--
 <div data-module="fsd-filtered-fetch-table" data-endpoint="{{ application_search_endpoint }}"></div> -->
-<table class="govuk-table" data-module="moj-sortable-table">
+Filter Status:
+<a href="javascript:;" id="in_progress_filter" class="filter-span" data-value="Not started">Not started</a> |
+<a href="javascript:;" id="in_progress_filter" class="filter-span" data-value="In progress">In progress</a> |
+<a href="javascript:;"  id="in_progress_filter" class="filter-span" data-value="Completed">Completed</a> |
+<a href="javascript:;" id="in_progress_filter" class="filter-span" data-value="All">All</a>
+<br/>
+Search: <input class="govuk-input" id="search_box"/>
+<table class="govuk-table" data-module="moj-sortable-table" id="overview_table">
 
   <thead class="govuk-table__head">
     <tr class="govuk-table__row">
@@ -47,9 +54,9 @@
                 <td class="govuk-table__cell">{{overview.type_of_application}}</td>
                 <td class="govuk-table__cell">{{ "£%.2f"|format(overview.funding_amount_requested | int) }}</td>
                 {% if overview.workflow_status ==  "NOT STARTED" %}
-                  <td class="govuk-table__cell"><span class="not-started-tag">{{overview.workflow_status | all_caps_to_human}}</span></td>
+                  <td class="govuk-table__cell status_col"><span class="not-started-tag">{{overview.workflow_status | all_caps_to_human}}</span></td>
                 {% else %}
-                  <td class="govuk-table__cell">{{overview.workflow_status | all_caps_to_human}}</td>
+                  <td class="govuk-table__cell status_col">{{overview.workflow_status | all_caps_to_human}}</td>
                 {% endif %}
             </tr>
         {% endfor %}
@@ -72,8 +79,28 @@
   nonce="{{ csp_nonce() }}"
 ></script>
 <script nonce="{{ csp_nonce() }}"  src="{{ url_for('static', filename='javascript/moj-frontend.min.js') }}"></script>
-<script nonce="{{ csp_nonce() }}" hash="sha256-bhyBXL9pVXmONqYU0zC4tGLHyo1DT/oTdferhgC1Gtk=">
+<script nonce="{{ csp_nonce() }}">
   window.MOJFrontend.initAll();
+
+  $(document).ready(function(){
+    $("#search_box").on("keyup", function() {
+      var value = $(this).val().toLowerCase();
+      $("#overview_table tbody tr").filter(function() {
+        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+      });
+    });
+
+    $("a.filter-span").on("click", function(){
+      var value = $(this).attr('data-value').toLowerCase();
+      if (value === "all"){
+        $("#overview_table tbody tr").show();
+      } else {
+        $("#overview_table tbody tr").filter(function() {
+          $(this).toggle($(this).children(".status_col").text().toLowerCase().indexOf(value) > -1)
+        });
+      }
+    })
+  });
 </script>
 
 {%- endmacro %}

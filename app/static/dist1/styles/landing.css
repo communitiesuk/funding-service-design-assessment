@@ -1,0 +1,14 @@
+.dashboard-deadline {
+    background: #f3f2f1;
+    width: 24%;
+    text-align: center;
+    padding: 1%;
+}
+
+.not-started-tag {
+    color: #144E81;
+    background-color: #c7dbed;
+    line-height: 1.1;
+    font-weight: 400;
+    padding: 2.5px;
+}
