@@ -117,7 +117,7 @@ def get_round_with_applications(
             {
                 "fund_id": fund_id,
                 "datetime_start": fund_round.opens,
-                "datetime_end": fund_round.short_name,
+                "datetime_end": fund_round.deadline,
             }
         )
         if applications_response and len(applications_response) > 0:
