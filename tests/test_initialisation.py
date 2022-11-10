@@ -21,7 +21,7 @@ def test_flask_initiates(flask_test_client):
 
 
 def testHealthcheckRoute(flask_test_client):
-    expected_result = {"checks": [{"check_running": "OK"}]}
+    expected_result = {"checks": [{"check_flask_running": "OK"}]}
 
     result = flask_test_client.get("/healthcheck")
     assert result.status_code == 200, "Unexpected status code"

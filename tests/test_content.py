@@ -6,7 +6,6 @@ from config import Config
 from flask import url_for
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.errorhandler import NoSuchElementException
-from tests.route_testing_conf import assessment_form_test_routes
 from tests.route_testing_conf import intro_routes_and_test_content
 from tests.utils import print_html_page
 
@@ -28,6 +27,7 @@ class TestContentWithChrome:
             route_rel=route_rel,
         )
         for content_item in content_dict:
+            print(f"Testing {route_rel}")
             error_message = ""
             tag = content_item.get("tag")
             name = content_item.get("name")
@@ -76,11 +76,13 @@ class TestContentWithChrome:
         for route_rel, content_dict in intro_routes_and_test_content.items():
             self.route_content_test(route_rel, content_dict)
 
-    def test_assessment_form_routes_content(self, client):
-        """
-        GIVEN Our Flask Application is running
-        WHEN dictionary of known routes is requested (GET)
-        THEN check that each page returned conforms to WCAG standards
-        """
-        for route_rel, content_dict in assessment_form_test_routes().items():
-            self.route_content_test(route_rel, content_dict)
+
+# TODO reinstate this with correct values once design finalised
+# def test_assessment_form_routes_content(self, client):
+#     """
+#     GIVEN Our Flask Application is running
+#     WHEN dictionary of known routes is requested (GET)
+#     THEN check that each page returned conforms to WCAG standards
+#     """
+#     for route_rel, content_dict in assessment_form_test_routes().items():
+#         self.route_content_test(route_rel, content_dict)

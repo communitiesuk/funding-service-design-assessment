@@ -5,26 +5,25 @@ from typing import List
 from typing import Union
 from urllib.parse import urlencode
 
-from config import Config
-
 import requests
 from app.assess.models.application import Application
 from app.assess.models.fund import Fund
 from app.assess.models.round import Round
 from config import Config
 from flask import current_app
-from flask import jsonify
 
 
 def get_data(endpoint: str):
-    if endpoint[:8] == "https://":
+    if Config.USE_LOCAL_DATA:
+        current_app.logger.info(f"Fetching local data from '{endpoint}'.")
+        data = get_local_data(endpoint)
+    else:
+        current_app.logger.info(f"Fetching data from '{endpoint}'.")
         response = requests.get(endpoint)
         if response.status_code == 200:
             data = response.json()
         else:
             return None
-    else:
-        data = get_local_data(endpoint)
     return data
 
 
@@ -48,6 +47,17 @@ def call_search_applications(params: dict):
     return applications_response
 
 
+def get_application_overviews(fund_id, round_id):
+    overviews_endpoint = (
+        Config.ASSESSMENT_STORE_API_HOST
+    ) + Config.APPLICATION_OVERVIEW_ENDPOINT.format(
+        fund_id=fund_id, round_id=round_id
+    )
+
+    overviews_response = get_data(overviews_endpoint)
+    return overviews_response
+
+
 def get_funds() -> Union[List[Fund], None]:
     endpoint = Config.FUND_STORE_API_HOST + Config.FUNDS_ENDPOINT
     response = get_data(endpoint)
@@ -64,8 +74,8 @@ def get_fund(fund_id: str) -> Union[Fund, None]:
         fund_id=fund_id
     )
     response = get_data(endpoint)
-    if response and "fund_id" in response:
-        fund = Fund.from_json(response)
+    if len(response) > 0:
+        fund = Fund.from_json(response[0])
         if "rounds" in response and len(response["rounds"]) > 0:
             for fund_round in response["rounds"]:
                 fund.add_round(Round.from_json(fund_round))
@@ -86,14 +96,22 @@ def get_rounds(fund_id: str) -> Union[Fund, List]:
     return rounds
 
 
-def get_round_with_applications(
-    fund_id: str, round_id: str
-) -> Union[Round, None]:
+def get_round(fund_id: str, round_id: str) -> Union[Round, None]:
     round_endpoint = Config.FUND_STORE_API_HOST + Config.ROUND_ENDPOINT.format(
         fund_id=fund_id, round_id=round_id
     )
     round_response = get_data(round_endpoint)
-    if round_response and "round_id" in round_response:
+    if round_response and "assessment_deadline" in round_response:
+        round = Round.from_dict(round_response)
+        return round
+    return None
+
+
+def get_round_with_applications(
+    fund_id: str, round_id: str
+) -> Union[Round, None]:
+    round_response = get_round(fund_id, round_id)
+    if round_response:
         fund_round = Round.from_json(round_response)
         applications_response = call_search_applications(
             {
@@ -109,16 +127,26 @@ def get_round_with_applications(
         return fund_round
     return None
 
-def submit_score_and_justification(assessment_id, person_id, score, justification, sub_crit_id):
 
-    data_dict = {"score":score, "justification":justification, "person_id":person_id}
-    url = Config.ASSESSMENT_SCORE_JUST_ENDPOINT.format(assessment_id=assessment_id, sub_criteria_id=sub_crit_id)
+def submit_score_and_justification(
+    assessment_id, person_id, score, justification, sub_crit_id
+):
+
+    data_dict = {
+        "score": score,
+        "justification": justification,
+        "person_id": person_id,
+    }
+    url = Config.ASSESSMENT_SCORES_ENDPOINT.format(
+        assessment_id=assessment_id, sub_criteria_id=sub_crit_id
+    )
     response = requests.post(url, json=data_dict)
     print(response.content)
     if response.status_code == 200:
         return True
     else:
         return False
+
 
 def get_applications(params: dict) -> Union[List[Application], None]:
     applications_response = call_search_applications(params)

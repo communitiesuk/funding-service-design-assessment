@@ -7,16 +7,18 @@ from app.assess.models.round import Round
 @dataclass
 class Fund:
     name: str
-    identifier: str
+    id: str
     description: str
+    short_name: str
     rounds: List[Round] = None
 
     @staticmethod
     def from_json(data: dict):
         return Fund(
-            name=data.get("fund_name"),
-            identifier=data.get("fund_id"),
-            description=data.get("fund_description"),
+            name=data.get("name"),
+            id=data.get("id"),
+            description=data.get("description"),
+            short_name=data.get("short_name"),
         )
 
     def add_round(self, fund_round: Round):
