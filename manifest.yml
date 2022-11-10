@@ -25,5 +25,7 @@ applications:
     - route: assessment.test.fundingservice.co.uk
   env:
     FLASK_ENV: test
+    ASSESSMENT_STORE_API_HOST: https://funding-service-design-assessment-store-test.london.cloudapps.digital
+    FUND_STORE_API_HOST: https://funding-service-design-fund-store-test.london.cloudapps.digital
   health-check-http-endpoint: /healthcheck
   health-check-type: http
