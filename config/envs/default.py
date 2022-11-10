@@ -68,7 +68,45 @@ class DefaultConfig:
     ASSETS_DEBUG = False
     ASSETS_AUTO_BUILD = True
 
-    TALISMAN_SETTINGS = CommonConfig.TALISMAN_SETTINGS
+    # TODO reinstate secure settings
+    # TALISMAN_SETTINGS = CommonConfig.TALISMAN_SETTINGS
+    # Content Security Policy
+    SECURE_CSP = {
+        "default-src": "'self'",
+        "script-src": [
+            "'self'",
+            "'sha256-+6WnXIl4mbFTCARd8N3COQmT3bJJmo32N8q8ZSQAIcU='",
+            "'sha256-l1eTVSK8DTnK8+yloud7wZUqFrI0atVo6VlC6PJvYaQ='",
+            "'sha256-bhyBXL9pVXmONqYU0zC4tGLHyo1DT/oTdferhgC1Gtk='",
+            "'sha256-mWb4da+NTy9q386BUtnJIL4Z9Z4vQWJVGOof4mBCvMw='",
+        ],
+        "connect-src": "",  # APPLICATION_STORE_API_HOST_PUBLIC,
+        "img-src": ["data:", "'self'"],
+    }
+    TALISMAN_SETTINGS = {
+        "feature_policy": CommonConfig.FSD_FEATURE_POLICY,
+        "permissions_policy": CommonConfig.FSD_PERMISSIONS_POLICY,
+        "document_policy": CommonConfig.FSD_DOCUMENT_POLICY,
+        "force_https": FORCE_HTTPS,
+        "force_https_permanent": False,
+        "force_file_save": False,
+        "frame_options": "SAMEORIGIN",
+        "frame_options_allow_from": None,
+        "strict_transport_security": True,
+        "strict_transport_security_preload": True,
+        "strict_transport_security_max_age": CommonConfig.ONE_YEAR_IN_SECS,
+        "strict_transport_security_include_subdomains": True,
+        "content_security_policy": SECURE_CSP,
+        "content_security_policy_report_uri": None,
+        "content_security_policy_report_only": False,
+        "content_security_policy_nonce_in": None,
+        "referrer_policy": CommonConfig.FSD_REFERRER_POLICY,
+        "session_cookie_secure": True,
+        "session_cookie_http_only": True,
+        "session_cookie_samesite": CommonConfig.FSD_SESSION_COOKIE_SAMESITE,
+        "x_content_type_options": True,
+        "x_xss_protection": True,
+    }
 
     COF_FUND_ID = CommonConfig.COF_FUND_ID
     COF_ROUND2_ID = CommonConfig.COF_ROUND_2_ID
