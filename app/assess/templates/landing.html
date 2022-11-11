@@ -9,5 +9,5 @@
 <h2 class="govuk-heading-m dashboard-deadline ">Due date: <span class="govuk-body-l">{{ assessment_deadline|datetime_format }}</span></h2>
 
 <br /><br />
-      {{ application_overviews_table.render(application_overviews) }}
+      {{ application_overviews_table.render(application_overviews, query) }}
 {% endblock %}

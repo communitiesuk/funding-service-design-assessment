@@ -39,6 +39,7 @@ def compile_static_assets(assets, flask_app):
         "../src/js/helpers.js",
         "../src/js/all.js",
         "../src/js/components/*/*.js",
+        "../src/js/search-filter.js",
         filters="jsmin",
         output="js/main.min.js",
     )
