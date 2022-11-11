@@ -68,7 +68,22 @@ class DefaultConfig:
     ASSETS_DEBUG = False
     ASSETS_AUTO_BUILD = True
 
+    TALISMAN_SETTINGS = SECURE_CSP = {
+        "default-src": "'self'",
+        "script-src": [
+            "'self'",
+            "'sha256-+6WnXIl4mbFTCARd8N3COQmT3bJJmo32N8q8ZSQAIcU='",
+            "'sha256-l1eTVSK8DTnK8+yloud7wZUqFrI0atVo6VlC6PJvYaQ='",
+            "'sha256-mWb4da+NTy9q386BUtnJIL4Z9Z4vQWJVGOof4mBCvMw='",
+            "'sha256-+6WnXIl4mbFTCARd8N3COQmT3bJJmo32N8q8ZSQAIcU='",
+            "'sha256-l1eTVSK8DTnK8+yloud7wZUqFrI0atVo6VlC6PJvYaQ='",
+            "'ha256-mWb4da+NTy9q386BUtnJIL4Z9Z4vQWJVGOof4mBCvMw='",
+        ],
+        # "connect-src": "",
+        "img-src": ["data:", "'self'"],
+    }
     TALISMAN_SETTINGS = CommonConfig.TALISMAN_SETTINGS
+    TALISMAN_SETTINGS["content_security_policy"] = SECURE_CSP
 
     # TODO move into common config
     COF_FUND_ID = "47aef2f5-3fcb-4d45-acb5-f0152b5f03c4"
