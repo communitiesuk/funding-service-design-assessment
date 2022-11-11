@@ -4,7 +4,23 @@
 {% macro render(application_overviews) -%}
 
 <div data-module="fsd-filtered-fetch-table" data-endpoint="{{ application_search_endpoint }}"></div>
-<table class="govuk-table" data-module="sortable-table">
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-one-third">
+    <form method="get" class="fsd-table-search-form" data-search-key="id_contains">
+      <div class="govuk-form-group fsd-assess-search-input">
+        <label class="govuk-label" for="event-name">Search</label>
+        <div class="govuk-input__wrapper">
+                   
+          <input class="govuk-input govuk-input--width-10" type="text" spellcheck="false" aria-label="Search applications" id="myInput" name="id_contains" placeholder="Search for names..">
+        </div>
+      </div>
+    </form>
+  </div>
+
+</div>
+
+<table class="govuk-table" data-module="sortable-table", id="myTable">
+
 
   <thead class="govuk-table__head">
     <tr class="govuk-table__row">
