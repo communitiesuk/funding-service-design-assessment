@@ -304,7 +304,6 @@ def landing():
         if key in search_params:
             search_params.update({key: value})
 
-
     application_overviews = get_application_overviews(
         Config.COF_FUND_ID, Config.COF_ROUND2_ID, search_params
     )
@@ -318,6 +317,7 @@ def landing():
         assessment_deadline=assessment_deadline,
         query=search_params
     )
+    
 
 @assess_bp.route("/application/<application_id>", methods=["GET"])
 def application(application_id):
