@@ -306,7 +306,7 @@ def landing():
 
 
     application_overviews = get_application_overviews(
-        Config.COF_FUND_ID, Config.COF_ROUND2_ID
+        Config.COF_FUND_ID, Config.COF_ROUND2_ID, search_params
     )
     assessment_deadline = get_round(
         Config.COF_FUND_ID, Config.COF_ROUND2_ID

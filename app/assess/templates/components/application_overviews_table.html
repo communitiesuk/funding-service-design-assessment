@@ -9,9 +9,11 @@
     <form method="get" class="fsd-table-search-form" data-search-key="id_contains">
       <div class="govuk-form-group fsd-assess-search-input">
         <label class="govuk-label" for="event-name">Search</label>
-        <div class="govuk-input__wrapper">
-                   
+        <div class="govuk-input__wrapper">                   
           <input class="govuk-input govuk-input--width-10" type="text" spellcheck="false" aria-label="Search applications" id="application_search" name="id_contains" placeholder="Search for names..", value="{{query.id_contains}}">
+          <button class="govuk-button" data-module="govuk-button">
+            Save and continue
+          </button>
         </div>
       </div>
     </form>
@@ -78,8 +80,4 @@
     {% endif %}
   </tbody>
 </table>
-
-<script src="{{url_for('static', filename='js/search-filter.js')}}" ></script>
-
-
 {%- endmacro %}
