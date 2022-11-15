@@ -296,7 +296,7 @@ def landing():
     """
 
     search_params = {
-        "id_contains": "",       
+        "search_term": "",
     }
 
     # Add request arg search params to dict
@@ -318,7 +318,6 @@ def landing():
         assessment_deadline=assessment_deadline,
         query=search_params
     )
-
 
 @assess_bp.route("/application/<application_id>", methods=["GET"])
 def application(application_id):

@@ -601,6 +601,15 @@
       "eligibility_criteria": {
         "maximum_project_cost": 1000000
       }
-    }
-
+    },
+    "assessment_store/application_overviews/47aef2f5-3fcb-4d45-acb5-f0152b5f03c4/c603d114-5364-4474-a0c4-c41cbf4d3bbd?search_term=fund-abc": [
+      {
+        "application_short_id": "fund-abc-123-a",
+        "workflow_status": "COMPLETED",
+        "application_id":"234234234-123123123",
+        "type_of_application":"Park",
+        "project_name":"Save the rugby pitch",
+        "funding_amount_requested":"25000"
+      }      
+    ]
 }

@@ -12,3 +12,10 @@
     font-weight: 400;
     padding: 2.5px;
 }
+
+.search--button {
+    color: #fff;
+    background-color: #1d70b8;
+    width: 40px;
+    height: 40px;
+}
