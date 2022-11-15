@@ -12,10 +12,20 @@ class TestDataOperations:
     def test_get_application_overviews(self):
 
         with self.test_app.app_context():
+            params = { "search_term":"" } 
             result = get_application_overviews(
-                DefaultConfig.COF_FUND_ID, DefaultConfig.COF_ROUND2_ID
+                DefaultConfig.COF_FUND_ID, DefaultConfig.COF_ROUND2_ID, params
             )
         assert 3 == len(result), "wrong number of application overviews"
+
+    def test_get_application_overviews_search(self):
+
+        with self.test_app.app_context():
+            params = { "search_term":"fund-abc" } 
+            result = get_application_overviews(
+                DefaultConfig.COF_FUND_ID, DefaultConfig.COF_ROUND2_ID, params
+            )
+        assert 1 == len(result), "wrong number of application overviews"
 
     def test_get_round(self, flask_test_client):
 
