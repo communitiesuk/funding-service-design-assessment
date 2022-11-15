@@ -54,7 +54,7 @@ def get_application_overviews(fund_id, round_id, params):
         fund_id=fund_id, round_id=round_id
     ) +  urlencode(params)
 
-    overviews_response = get_data(overviews_endpoint)    
+    overviews_response = get_data(overviews_endpoint)
     return overviews_response
 
 
