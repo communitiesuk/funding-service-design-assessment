@@ -18,10 +18,19 @@ class TestDataOperations:
             )
         assert 3 == len(result), "wrong number of application overviews"
 
-    def test_get_application_overviews_search(self):
+    def test_get_application_overviews_search_ref(self):
 
         with self.test_app.app_context():
             params = { "search_term":"fund-abc" } 
+            result = get_application_overviews(
+                DefaultConfig.COF_FUND_ID, DefaultConfig.COF_ROUND2_ID, params
+            )
+        assert 1 == len(result), "wrong number of application overviews"
+     
+    def test_get_application_overviews_search_project_name(self):
+
+        with self.test_app.app_context():
+            params = { "search_term":"Save the village" } 
             result = get_application_overviews(
                 DefaultConfig.COF_FUND_ID, DefaultConfig.COF_ROUND2_ID, params
             )
