@@ -80,6 +80,10 @@ def build_govuk_assets():
         "app/static/src/styles/landing.css",
         "./app/static/dist/styles/landing.css",
     )
+    shutil.copyfile(
+        "app/static/src/styles/govuk-overrides.css",
+        "./app/static/dist/styles/govuk-overrides.css",
+    )
 
     # Delete temp files
     print("Deleting " + ASSETS_PATH)
