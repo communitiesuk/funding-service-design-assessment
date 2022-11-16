@@ -54,7 +54,7 @@ class DefaultConfig:
     # Assesment store endpoints
     ASSESSMENT_STORE_API_HOST = CommonConfig.ASSESSMENT_STORE_API_HOST
     APPLICATION_OVERVIEW_ENDPOINT = (
-       "/application_overviews/{fund_id}/{round_id}?"
+        "/application_overviews/{fund_id}/{round_id}?{params}"
     )
 
     ASSESSMENT_SCORES_ENDPOINT = (

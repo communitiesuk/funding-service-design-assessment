@@ -8,6 +8,5 @@
 <h1 class="govuk-heading-l">All assessments</h1>
 <h2 class="govuk-heading-m dashboard-deadline ">Due date: <span class="govuk-body-l">{{ assessment_deadline|datetime_format }}</span></h2>
 
-<br /><br />
-      {{ application_overviews_table.render(application_overviews, query) }}
+      {{ application_overviews_table.render(application_overviews, query_params, asset_types, assessment_statuses) }}
 {% endblock %}

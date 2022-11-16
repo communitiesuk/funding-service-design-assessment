@@ -4,4 +4,4 @@ from fsd_utils import configclass
 
 @configclass
 class DevConfig(DefaultConfig):
-    pass
+    USE_LOCAL_DATA = True

@@ -144,7 +144,7 @@
     "questions": [
       {
         "question": "About you",
-        "status": "COMPLETED"
+        "status": "qa-ready"
       }
     ]
   },
@@ -158,19 +158,19 @@
     "questions": [
       {
         "question": "About you",
-        "status": "COMPLETED"
+        "status": "qa-ready"
       },
       {
         "question": "About your organisation",
-        "status": "COMPLETED"
+        "status": "qa-ready"
       },
       {
         "question": "About your organisation",
-        "status": "COMPLETED"
+        "status": "qa-ready"
       },
       {
         "question": "Choose your country",
-        "status": "COMPLETED"
+        "status": "qa-ready"
       },
       {
         "question": "England",
@@ -192,7 +192,7 @@
     "questions": [
       {
         "question": "About you",
-        "status": "COMPLETED",
+        "status": "qa-ready",
         "fields": [
           {
             "key": "applicant_name",
@@ -224,7 +224,7 @@
       {
         "category": "kfFsQz",
         "question": "About your organisation",
-        "status": "COMPLETED",
+        "status": "qa-ready",
         "fields": [
           {
             "key": "org_name",
@@ -262,7 +262,7 @@
       {
         "category": "cxVIPK",
         "question": "About your organisation",
-        "status": "COMPLETED",
+        "status": "qa-ready",
         "fields": [
           {
             "key": "org_accountant",
@@ -299,7 +299,7 @@
       },
       {
         "question": "Choose your country",
-        "status": "COMPLETED",
+        "status": "qa-ready",
         "fields": [
           {
             "key": "country",
@@ -341,210 +341,32 @@
       "paymentSkipped": false
     }
   },
-  "application_store/applications?": [
+
+
+
+  "assessment_store/application_overviews/47aef2f5-3fcb-4d45-acb5-f0152b5f03c4/c603d114-5364-4474-a0c4-c41cbf4d3bbd?search_term=&search_in=project_name%2Capplication_short_id&asset_type=all&status=all": [
     {
-      "fund_id": "funding-service-design",
-      "date_submitted": "2022-02-23T12:00:00.000",
-      "id": "fund-app123-a",
-      "status": "COMPLETED",
-      "assessment_deadline": "2022-06-23T12:00:00.000"
-    },
-    {
-      "fund_id": "funding-service-design",
-      "date_submitted": "2022-02-23T12:00:00.000",
-      "id": "LUF-app789-a",
-      "status": "NOT_STARTED",
-      "assessment_deadline": "2022-06-23T12:00:00.000"
-    },
-    {
-      "fund_id": "funding-service-design",
-      "date_submitted": "2022-02-23T12:00:00.000",
-      "id": "fund-app456-a",
-      "status": "COMPLETED",
-      "assessment_deadline": "2022-06-23T12:00:00.000"
-    },
-    {
-      "fund_id": "funding-service-design",
-      "date_submitted": "2022-02-23T12:00:00.000",
-      "id": "COF-app789-a",
-      "status": "NOT_STARTED",
-      "assessment_deadline": "2022-06-23T12:00:00.000"
-    },
-    {
-      "fund_id": "funding-service-design",
-      "date_submitted": "2022-02-23T12:00:00.000",
-      "id": "fund-app789-a",
-      "status": "COMPLETED",
-      "assessment_deadline": "2022-06-23T12:00:00.000"
-    },
-    {
-      "fund_id": "funding-service-design",
-      "date_submitted": "2022-02-23T12:00:00.000",
-      "id": "BOF-app001-a",
-      "status": "COMPLETED",
-      "assessment_deadline": "2022-06-23T12:00:00.000"
-    }
-  ],
-  "application_store/applications?fund_id=funding-service-design&datetime_start=2022-02-01T00%3A00%3A01&datetime_end=2022-06-01T00%3A00%3A00": [
-    {
-      "fund_id": "funding-service-design",
-      "date_submitted": "2022-02-23T12:00:00.000",
-      "id": "fund-app123-a",
-      "assessment_deadline": "2022-06-23T12:00:00.000"
-    }
-  ],
-  "application_store/applications?id_contains=&order_by=&order_rev=&status_only=": [
-    {
-      "fund_id": "funding-service-design",
-      "date_submitted": "2022-02-23T12:00:00.000",
-      "id": "fund-app123-a",
-      "status": "COMPLETED",
-      "assessment_deadline": "2022-06-23T12:00:00.000"
-    },
-    {
-      "fund_id": "funding-service-design",
-      "date_submitted": "2022-02-23T12:00:00.000",
-      "id": "LUF-app789-a",
-      "status": "NOT_STARTED",
-      "assessment_deadline": "2022-06-23T12:00:00.000"
-    },
-    {
-      "fund_id": "funding-service-design",
-      "date_submitted": "2022-02-23T12:00:00.000",
-      "id": "fund-app456-a",
-      "status": "COMPLETED",
-      "assessment_deadline": "2022-06-23T12:00:00.000"
-    },
-    {
-      "fund_id": "funding-service-design",
-      "date_submitted": "2022-02-23T12:00:00.000",
-      "id": "COF-app789-a",
-      "status": "NOT_STARTED",
-      "assessment_deadline": "2022-06-23T12:00:00.000"
-    },
-    {
-      "fund_id": "funding-service-design",
-      "date_submitted": "2022-02-23T12:00:00.000",
-      "id": "fund-app789-a",
-      "status": "COMPLETED",
-      "assessment_deadline": "2022-06-23T12:00:00.000"
-    },
-    {
-      "fund_id": "funding-service-design",
-      "date_submitted": "2022-02-23T12:00:00.000",
-      "id": "BOF-app001-a",
-      "status": "COMPLETED",
-      "assessment_deadline": "2022-06-23T12:00:00.000"
-    }
-  ],
-  "application_store/applications?id_contains=&order_by=&order_rev=&status_only=not+started": [
-    {
-      "fund_id": "funding-service-design",
-      "date_submitted": "2022-02-23T12:00:00.000",
-      "id": "LUF-app789-a",
-      "status": "NOT_STARTED",
-      "assessment_deadline": "2022-06-23T12:00:00.000"
-    },
-    {
-      "fund_id": "funding-service-design",
-      "date_submitted": "2022-02-23T12:00:00.000",
-      "id": "COF-app789-a",
-      "status": "NOT_STARTED",
-      "assessment_deadline": "2022-06-23T12:00:00.000"
-    }
-  ],
-  "application_store/applications?id_contains=&status_only=completed": [
-    {
-      "fund_id": "funding-service-design",
-      "date_submitted": "2022-02-23T12:00:00.000",
-      "id": "fund-app123-a",
-      "status": "COMPLETED",
-      "assessment_deadline": "2022-06-23T12:00:00.000"
-    },
-    {
-      "fund_id": "funding-service-design",
-      "date_submitted": "2022-02-23T12:00:00.000",
-      "id": "fund-app456-a",
-      "status": "COMPLETED",
-      "assessment_deadline": "2022-06-23T12:00:00.000"
-    },
-    {
-      "fund_id": "funding-service-design",
-      "date_submitted": "2022-02-23T12:00:00.000",
-      "id": "fund-app789-a",
-      "status": "COMPLETED",
-      "assessment_deadline": "2022-06-23T12:00:00.000"
-    }
-  ],
-  "application_store/applications?id_contains=&order_by=&order_rev=&status_only=completed": [
-    {
-      "fund_id": "funding-service-design",
-      "date_submitted": "2022-02-23T12:00:00.000",
-      "id": "fund-app123-a",
-      "status": "COMPLETED",
-      "assessment_deadline": "2022-06-23T12:00:00.000"
-    },
-    {
-      "fund_id": "funding-service-design",
-      "date_submitted": "2022-02-23T12:00:00.000",
-      "id": "fund-app456-a",
-      "status": "COMPLETED",
-      "assessment_deadline": "2022-06-23T12:00:00.000"
-    },
-    {
-      "fund_id": "funding-service-design",
-      "date_submitted": "2022-02-23T12:00:00.000",
-      "id": "fund-app789-a",
-      "status": "COMPLETED",
-      "assessment_deadline": "2022-06-23T12:00:00.000"
-    }
-  ],
-  "application_store/applications?id_contains=fun&order_by=&order_rev=&status_only=completed": [
-    {
-      "fund_id": "funding-service-design",
-      "date_submitted": "2022-02-23T12:00:00.000",
-      "id": "fund-app789-a",
-      "status": "COMPLETED",
-      "assessment_deadline": "2022-06-23T12:00:00.000"
-    },
-    {
-      "fund_id": "funding-service-design",
-      "date_submitted": "2022-02-23T12:00:00.000",
-      "id": "fund-app456-a",
-      "status": "COMPLETED",
-      "assessment_deadline": "2022-06-23T12:00:00.000"
-    },
-    {
-      "fund_id": "funding-service-design",
-      "date_submitted": "2022-02-23T12:00:00.000",
-      "id": "fund-app123-a",
-      "status": "COMPLETED",
-      "assessment_deadline": "2022-06-23T12:00:00.000"
-    }
-  ],
-  "assessment_store/application_overviews/47aef2f5-3fcb-4d45-acb5-f0152b5f03c4/c603d114-5364-4474-a0c4-c41cbf4d3bbd?search_term=": [
-    {
-      "application_short_id": "fund-app789-a",
-      "workflow_status": "IN PROGRESS",
+      "application_short_id": "COF-R2W2-IRNWPB",
+      "workflow_status": "in-progress",
       "application_id":"123123123-123123123",
-      "type_of_application":"Pub",
+      "type_of_application":"pub",
       "project_name":"Save the Dog and Duck",
       "funding_amount_requested":"10000"
     },
     {
-      "application_short_id": "fund-abc-123-a",
-      "workflow_status": "COMPLETED",
+      "application_short_id": "COF-R2W2-AJTRIB",
+      "workflow_status": "qa-ready",
       "application_id":"234234234-123123123",
-      "type_of_application":"Park",
+      "type_of_application":"sporting",
       "project_name":"Save the rugby pitch",
       "funding_amount_requested":"25000"
     },
     {
-      "application_short_id": "fund-app789-a",
-      "workflow_status": "NOT STARTED",
+      "application_short_id": "COF-R2W2-BMEQLK",
+      "workflow_status": "not-started",
       "application_id":"789789789-879789",
-      "type_of_application":"Community Centre",
-      "project_name":"Save the village hall",
+      "type_of_application":"community-centre",
+      "project_name":"Save our village hall",
       "funding_amount_requested":"12345"
     }
   ],
@@ -602,24 +424,77 @@
         "maximum_project_cost": 1000000
       }
     },
-    "assessment_store/application_overviews/47aef2f5-3fcb-4d45-acb5-f0152b5f03c4/c603d114-5364-4474-a0c4-c41cbf4d3bbd?search_term=fund-abc": [
+    "assessment_store/application_overviews/47aef2f5-3fcb-4d45-acb5-f0152b5f03c4/c603d114-5364-4474-a0c4-c41cbf4d3bbd?search_term=AJTRIB&search_in=project_name%2Capplication_short_id&asset_type=all&status=all": [
       {
-        "application_short_id": "fund-abc-123-a",
-        "workflow_status": "COMPLETED",
+        "application_short_id": "COF-R2W2-AJTRIB",
+        "workflow_status": "qa-ready",
         "application_id":"234234234-123123123",
-        "type_of_application":"Park",
+        "type_of_application":"sporting",
         "project_name":"Save the rugby pitch",
         "funding_amount_requested":"25000"
-      }      
+      }
     ],
-    "assessment_store/application_overviews/47aef2f5-3fcb-4d45-acb5-f0152b5f03c4/c603d114-5364-4474-a0c4-c41cbf4d3bbd?search_term=Save+the+village": [
+    "assessment_store/application_overviews/47aef2f5-3fcb-4d45-acb5-f0152b5f03c4/c603d114-5364-4474-a0c4-c41cbf4d3bbd?search_term=Save+our+village&search_in=project_name%2Capplication_short_id&asset_type=all&status=all": [
       {
-        "application_short_id": "fund-app789-a",
-        "workflow_status": "NOT STARTED",
+        "application_short_id": "COF-R2W2-BMEQLK",
+        "workflow_status": "not-started",
         "application_id":"789789789-879789",
-        "type_of_application":"Community Centre",
-        "project_name":"Save the village hall",
+        "type_of_application":"community-centre",
+        "project_name":"Save our village hall",
         "funding_amount_requested":"12345"
-      }      
+      }
+    ],
+    "assessment_store/application_overviews/47aef2f5-3fcb-4d45-acb5-f0152b5f03c4/c603d114-5364-4474-a0c4-c41cbf4d3bbd?search_term=&search_in=project_name%2Capplication_short_id&asset_type=all&status=qa-ready":
+    [
+        {
+          "application_short_id": "COF-R2W2-AJTRIB",
+          "workflow_status": "qa-ready",
+          "application_id":"234234234-123123123",
+          "type_of_application":"sporting",
+          "project_name":"Save the rugby pitch",
+          "funding_amount_requested":"25000"
+        }
+    ],
+    "assessment_store/application_overviews/47aef2f5-3fcb-4d45-acb5-f0152b5f03c4/c603d114-5364-4474-a0c4-c41cbf4d3bbd?search_term=&search_in=project_name%2Capplication_short_id&asset_type=pub&status=all":
+    [
+        {
+          "application_short_id": "COF-R2W2-IRNWPB",
+          "workflow_status": "in-progress",
+          "application_id":"123123123-123123123",
+          "type_of_application":"pub",
+          "project_name":"Save the Dog and Duck",
+          "funding_amount_requested":"10000"
+        }
+    ],
+    "assessment_store/application_overviews/47aef2f5-3fcb-4d45-acb5-f0152b5f03c4/c603d114-5364-4474-a0c4-c41cbf4d3bbd?search_term=&search_in=project_name%2Capplication_short_id&asset_type=sporting&status=all":
+    [
+        {
+          "application_short_id": "COF-R2W2-AJTRIB",
+          "workflow_status": "qa-ready",
+          "application_id":"234234234-123123123",
+          "type_of_application":"sporting",
+          "project_name":"Save the rugby pitch",
+          "funding_amount_requested":"25000"
+        }
+    ],
+    "assessment_store/application_overviews/47aef2f5-3fcb-4d45-acb5-f0152b5f03c4/c603d114-5364-4474-a0c4-c41cbf4d3bbd?search_term=&search_in=project_name%2Capplication_short_id&asset_type=all&status=in-progress": [
+      {
+        "application_short_id": "COF-R2W2-IRNWPB",
+        "workflow_status": "in-progress",
+        "application_id":"123123123-123123123",
+        "type_of_application":"pub",
+        "project_name":"Save the Dog and Duck",
+        "funding_amount_requested":"10000"
+      }
+    ],
+    "assessment_store/application_overviews/47aef2f5-3fcb-4d45-acb5-f0152b5f03c4/c603d114-5364-4474-a0c4-c41cbf4d3bbd?search_term=&search_in=project_name%2Capplication_short_id&asset_type=community-centre&status=not-started": [
+      {
+        "application_short_id": "COF-R2W2-BMEQLK",
+        "workflow_status": "not-started",
+        "application_id":"789789789-879789",
+        "type_of_application":"community-centre",
+        "project_name":"Save our village hall",
+        "funding_amount_requested":"12345"
+      }
     ]
 }
