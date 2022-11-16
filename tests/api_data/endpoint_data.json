@@ -144,7 +144,7 @@
     "questions": [
       {
         "question": "About you",
-        "status": "COMPLETED"
+        "status": "qa-ready"
       }
     ]
   },
@@ -158,19 +158,19 @@
     "questions": [
       {
         "question": "About you",
-        "status": "COMPLETED"
+        "status": "qa-ready"
       },
       {
         "question": "About your organisation",
-        "status": "COMPLETED"
+        "status": "qa-ready"
       },
       {
         "question": "About your organisation",
-        "status": "COMPLETED"
+        "status": "qa-ready"
       },
       {
         "question": "Choose your country",
-        "status": "COMPLETED"
+        "status": "qa-ready"
       },
       {
         "question": "England",
@@ -192,7 +192,7 @@
     "questions": [
       {
         "question": "About you",
-        "status": "COMPLETED",
+        "status": "qa-ready",
         "fields": [
           {
             "key": "applicant_name",
@@ -224,7 +224,7 @@
       {
         "category": "kfFsQz",
         "question": "About your organisation",
-        "status": "COMPLETED",
+        "status": "qa-ready",
         "fields": [
           {
             "key": "org_name",
@@ -262,7 +262,7 @@
       {
         "category": "cxVIPK",
         "question": "About your organisation",
-        "status": "COMPLETED",
+        "status": "qa-ready",
         "fields": [
           {
             "key": "org_accountant",
@@ -299,7 +299,7 @@
       },
       {
         "question": "Choose your country",
-        "status": "COMPLETED",
+        "status": "qa-ready",
         "fields": [
           {
             "key": "country",
@@ -355,7 +355,7 @@
     },
     {
       "application_short_id": "COF-R2W2-AJTRIB",
-      "workflow_status": "ready-to-moderate",
+      "workflow_status": "qa-ready",
       "application_id":"234234234-123123123",
       "type_of_application":"sporting",
       "project_name":"Save the rugby pitch",
@@ -427,7 +427,7 @@
     "assessment_store/application_overviews/47aef2f5-3fcb-4d45-acb5-f0152b5f03c4/c603d114-5364-4474-a0c4-c41cbf4d3bbd?search_term=AJTRIB&search_in=project_name%2Capplication_short_id&asset_type=all&status=all": [
       {
         "application_short_id": "COF-R2W2-AJTRIB",
-        "workflow_status": "COMPLETED",
+        "workflow_status": "qa-ready",
         "application_id":"234234234-123123123",
         "type_of_application":"sporting",
         "project_name":"Save the rugby pitch",
@@ -444,11 +444,11 @@
         "funding_amount_requested":"12345"
       }
     ],
-    "assessment_store/application_overviews/47aef2f5-3fcb-4d45-acb5-f0152b5f03c4/c603d114-5364-4474-a0c4-c41cbf4d3bbd?search_term=&search_in=project_name%2Capplication_short_id&asset_type=all&status=completed":
+    "assessment_store/application_overviews/47aef2f5-3fcb-4d45-acb5-f0152b5f03c4/c603d114-5364-4474-a0c4-c41cbf4d3bbd?search_term=&search_in=project_name%2Capplication_short_id&asset_type=all&status=qa-ready":
     [
         {
           "application_short_id": "COF-R2W2-AJTRIB",
-          "workflow_status": "COMPLETED",
+          "workflow_status": "qa-ready",
           "application_id":"234234234-123123123",
           "type_of_application":"sporting",
           "project_name":"Save the rugby pitch",
@@ -459,7 +459,7 @@
     [
         {
           "application_short_id": "COF-R2W2-IRNWPB",
-          "workflow_status": "IN PROGRESS",
+          "workflow_status": "in-progress",
           "application_id":"123123123-123123123",
           "type_of_application":"pub",
           "project_name":"Save the Dog and Duck",
@@ -470,7 +470,7 @@
     [
         {
           "application_short_id": "COF-R2W2-AJTRIB",
-          "workflow_status": "COMPLETED",
+          "workflow_status": "qa-ready",
           "application_id":"234234234-123123123",
           "type_of_application":"sporting",
           "project_name":"Save the rugby pitch",
