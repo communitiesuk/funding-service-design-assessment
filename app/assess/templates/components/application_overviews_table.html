@@ -2,21 +2,40 @@
 
 
 {% macro render(application_overviews, query_params, asset_types, assessment_statuses) -%}
-
 <div class="govuk-grid-row">
-  <div class="govuk-grid-column-one-third">
-    <form method="get" class="fsd-table-search-form" data-search-key="search_term">
-      <div class="govuk-form-group">
-        <label class="govuk-label" for="event-name">Search</label>
-        <div class="govuk-input__wrapper">                   
-          <input class="govuk-input govuk-input--width-10" type="text" s, assessment_statusespellcheck="false" aria-label="Search applications" id="application_search" name="search_term" placeholder="Search..", value="{{query_params['search_term']}}">
-          <button class="search--button" type="submit">
-            <svg class="gem-c-search__icon" width="27" height="27" viewBox="0 0 27 27" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
-              <circle cx="12.0161" cy="11.0161" r="8.51613" stroke="currentColor" stroke-width="3"></circle>
-              <line x1="17.8668" y1="17.3587" x2="26.4475" y2="25.9393" stroke="currentColor" stroke-width="3"></line>
-            </svg>
-          </button>
-        </div>
+  <div class="govuk-grid-column-two-thirds">
+    <form method="get">
+      <div class="govuk-form-group govuk-!-display-inline-block govuk-!-padding-right-2">
+            <div>
+                  <label class="govuk-label" for="event-name">
+                    Search reference or project name
+                  </label>
+                  <input class="govuk-input govuk-input--width-20" type="text" s, assessment_statusespellcheck="false" aria-label="Search applications" id="application_search" name="search_term" placeholder="Search..", value="{{query_params['search_term']}}">
+            </div>
+      </div>
+      <div class="govuk-form-group govuk-!-display-inline-block" govuk-!-padding-right-2">
+            <label class="govuk-label" for="sort">
+            Filter by asset type
+            </label>
+            <select class="govuk-select" name="asset_type">
+
+                  {% for item in asset_types %}
+                        <option value='{{ item }}' {% if query_params.asset_type == item %} selected=""{%endif%}>{{asset_types[item]}}</option>
+                  {% endfor %}
+
+            </select>
+      </div>
+
+      <div class="govuk-form-group govuk-!-display-inline-block govuk-!-padding-right-2">
+            <label class="govuk-label" for="sort">
+            Filter by status
+            </label>
+            <select class="govuk-select" name="status">
+                  {% for item in assessment_statuses %}
+                        <option value='{{ item }}' {% if query_params.status == item %} selected=""{%endif%}>{{assessment_statuses[item]}}</option>
+                  {% endfor %}
+            </select>
+            <button class="govuk-button search-button" type="submit">Search</button>
       </div>
     </form>
   </div>

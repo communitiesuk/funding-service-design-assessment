@@ -298,7 +298,10 @@ def landing():
     """
 
     search_params = {
-        "search_term": "", "asset_type":"all", "status": "all",
+        "search_term": "",
+        "search_in": "project_name,application_short_id",
+        "asset_type": "all",
+        "status": "all",
     }
 
     # Add request arg search params to dict
