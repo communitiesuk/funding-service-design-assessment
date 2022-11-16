@@ -61,7 +61,7 @@ class TestDataOperations:
                 "search_term": "",
                 "search_in": "project_name,application_short_id",
                 "asset_type": "all",
-                "status": "completed",
+                "status": "qa-ready",
             }
             result = get_application_overviews(
                 DefaultConfig.COF_FUND_ID, DefaultConfig.COF_ROUND2_ID, params
