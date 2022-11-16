@@ -1,6 +1,7 @@
 from app.assess.data import *
 from app.assess.data import get_application_overviews
 from app.assess.data import submit_score_and_justification
+from app.assess.display_value_mappings import asset_types
 from app.assess.forms.comments_form import CommentsForm
 from app.assess.forms.scores_and_justifications import JustScoreForm
 from app.assess.models.question import Question
