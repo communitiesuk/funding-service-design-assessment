@@ -42,6 +42,16 @@
 
 </div>
 
+{% if not application_overviews %}
+<p class="govuk-body">
+  <strong>No matching results.</strong>
+</p>
+<p class="govuk-body">Improve your results by:</p>
+<ul class="govuk-list govuk-list--bullet">
+  <li>removing filters</li>
+  <li>double-checking your spelling</li>
+</ul>
+{% else %}
 <table class="govuk-table" id="application_overviews_table">
 
 
@@ -75,8 +85,7 @@
     </tr>
   </thead>
 
-  <tbody class="govuk-table__body">
-    {% if application_overviews %}
+  <tbody class="govuk-table__body">    
         {% for overview in application_overviews %}
             <tr class="govuk-table__row">
 
@@ -91,14 +100,8 @@
                   <td class="govuk-table__cell">{{assessment_statuses[overview.workflow_status]}}</td>
                 {% endif %}
             </tr>
-        {% endfor %}
-    {% else %}
-            <tr class="govuk-table__row">
-
-              <td class="govuk-table__cell" colspan="3">No applications found</td>
-
-            </tr>
-    {% endif %}
+        {% endfor %}    
   </tbody>
 </table>
+{% endif %}
 {%- endmacro %}
