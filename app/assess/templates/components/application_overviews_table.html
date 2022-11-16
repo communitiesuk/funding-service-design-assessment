@@ -1,10 +1,30 @@
 {% from "govuk_frontend_jinja/components/input/macro.html" import govukInput %}
 
 
-{% macro render(application_overviews) -%}
+{% macro render(application_overviews, query) -%}
 
-<div data-module="fsd-filtered-fetch-table" data-endpoint="{{ application_search_endpoint }}"></div>
-<table class="govuk-table" data-module="sortable-table">
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-one-third">
+    <form method="get" class="fsd-table-search-form" data-search-key="search_term">
+      <div class="govuk-form-group">
+        <label class="govuk-label" for="event-name">Search</label>
+        <div class="govuk-input__wrapper">                   
+          <input class="govuk-input govuk-input--width-10" type="text" spellcheck="false" aria-label="Search applications" id="application_search" name="search_term" placeholder="Search..", value="{{query.search_term}}">
+          <button class="search--button" type="submit">
+            <svg class="gem-c-search__icon" width="27" height="27" viewBox="0 0 27 27" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+              <circle cx="12.0161" cy="11.0161" r="8.51613" stroke="currentColor" stroke-width="3"></circle>
+              <line x1="17.8668" y1="17.3587" x2="26.4475" y2="25.9393" stroke="currentColor" stroke-width="3"></line>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+</div>
+
+<table class="govuk-table" id="application_overviews_table">
+
 
   <thead class="govuk-table__head">
     <tr class="govuk-table__row">
@@ -62,5 +82,4 @@
     {% endif %}
   </tbody>
 </table>
-
 {%- endmacro %}

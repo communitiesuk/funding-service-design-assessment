@@ -47,12 +47,12 @@ def call_search_applications(params: dict):
     return applications_response
 
 
-def get_application_overviews(fund_id, round_id):
+def get_application_overviews(fund_id, round_id, params):
     overviews_endpoint = (
         Config.ASSESSMENT_STORE_API_HOST
     ) + Config.APPLICATION_OVERVIEW_ENDPOINT.format(
         fund_id=fund_id, round_id=round_id
-    )
+    ) +  urlencode(params)
 
     overviews_response = get_data(overviews_endpoint)
     return overviews_response

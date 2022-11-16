@@ -10,6 +10,7 @@ from config import Config
 from flask import abort
 from flask import Blueprint
 from flask import render_template
+from flask import request
 
 
 assess_bp = Blueprint(
@@ -294,8 +295,17 @@ def landing():
     of applications and their statuses
     """
 
+    search_params = {
+        "search_term": "",
+    }
+
+    # Add request arg search params to dict
+    for key, value in request.args.items():
+        if key in search_params:
+            search_params.update({key: value})
+
     application_overviews = get_application_overviews(
-        Config.COF_FUND_ID, Config.COF_ROUND2_ID
+        Config.COF_FUND_ID, Config.COF_ROUND2_ID, search_params
     )
     assessment_deadline = get_round(
         Config.COF_FUND_ID, Config.COF_ROUND2_ID
@@ -305,6 +315,7 @@ def landing():
         "landing.html",
         application_overviews=application_overviews,
         assessment_deadline=assessment_deadline,
+        query=search_params
     )
 
 
