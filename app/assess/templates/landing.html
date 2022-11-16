@@ -24,8 +24,10 @@
                   <label class="govuk-label" for="sort">
                   Filter by status
                   </label>
-                  <select class="govuk-select" id="filter-status" name="sort">
-                  <option value="All" href="#all" selected="">Not yet implemented</option>
+                  <select class="govuk-select" name="status">
+                        {% for item in assessment_statuses %}
+                              <option value='{{ item }}' {% if query_params.status == item %} selected=""{%endif%}>{{assessment_statuses[item]}}</option>
+                        {% endfor %}
                   </select>
             </div>
             <div class="govuk-form-group govuk-!-display-inline-block">
@@ -38,6 +40,11 @@
                               <option value='{{ item }}' {% if query_params.asset_type == item %} selected=""{%endif%}>{{asset_types[item]}}</option>
                         {% endfor %}
 
-<br /><br />
-      {{ application_overviews_table.render(application_overviews, query) }}
+                  </select>
+                  <input type="submit" value="Apply"/>
+            </div>
+      </form>
+    </div>
+    </div>
+      {{ application_overviews_table.render(application_overviews, asset_types, assessment_statuses, query_params) }}
 {% endblock %}

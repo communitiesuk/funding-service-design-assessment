@@ -13,3 +13,10 @@ asset_types = {
     "theatre": "Theatre",
     "other": "Other",
 }
+
+assessment_statuses = {
+    "all": "All",
+    "not-started": "Not Started",
+    "in-progress": "In Progress",
+    "ready-to-moderate": "Ready to Moderate",
+}

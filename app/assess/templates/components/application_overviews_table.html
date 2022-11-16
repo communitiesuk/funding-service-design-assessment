@@ -1,7 +1,7 @@
 {% from "govuk_frontend_jinja/components/input/macro.html" import govukInput %}
 
 
-{% macro render(application_overviews, query) -%}
+{% macro render(application_overviews, query_params, asset_types, assessment_statuses) -%}
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-one-third">
@@ -9,7 +9,7 @@
       <div class="govuk-form-group">
         <label class="govuk-label" for="event-name">Search</label>
         <div class="govuk-input__wrapper">                   
-          <input class="govuk-input govuk-input--width-10" type="text" spellcheck="false" aria-label="Search applications" id="application_search" name="search_term" placeholder="Search..", value="{{query.search_term}}">
+          <input class="govuk-input govuk-input--width-10" type="text" s, assessment_statusespellcheck="false" aria-label="Search applications" id="application_search" name="search_term" placeholder="Search..", value="{{query_params['search_term']}}">
           <button class="search--button" type="submit">
             <svg class="gem-c-search__icon" width="27" height="27" viewBox="0 0 27 27" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
               <circle cx="12.0161" cy="11.0161" r="8.51613" stroke="currentColor" stroke-width="3"></circle>
@@ -67,9 +67,9 @@
                 <td class="govuk-table__cell">{{asset_types[overview.type_of_application]}}</td>
                 <td class="govuk-table__cell">{{ "£%.2f"|format(overview.funding_amount_requested | int) }}</td>
                 {% if overview.workflow_status ==  "NOT STARTED" %}
-                  <td class="govuk-table__cell"><span class="not-started-tag">{{overview.workflow_status | all_caps_to_human}}</span></td>
+                  <td class="govuk-table__cell"><span class="not-started-tag">{{assessment_statuses[overview.workflow_status]}}</span></td>
                 {% else %}
-                  <td class="govuk-table__cell">{{overview.workflow_status | all_caps_to_human}}</td>
+                  <td class="govuk-table__cell">{{assessment_statuses[overview.workflow_status]}}</td>
                 {% endif %}
             </tr>
         {% endfor %}

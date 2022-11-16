@@ -12,10 +12,11 @@ class TestDataOperations:
     def test_get_application_overviews(self):
 
         with self.test_app.app_context():
-            params = { "search_term":"" } 
+            params = { "search_term":"", "asset_type": "all", "status": "all" } 
             result = get_application_overviews(
                 DefaultConfig.COF_FUND_ID, DefaultConfig.COF_ROUND2_ID, params
             )
+        assert result, "No result returned"
         assert 3 == len(result), "wrong number of application overviews"
 
     def test_get_application_overviews_search_ref(self):

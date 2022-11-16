@@ -1,6 +1,7 @@
 from app.assess.data import *
 from app.assess.data import get_application_overviews
 from app.assess.data import submit_score_and_justification
+from app.assess.display_value_mappings import assessment_statuses
 from app.assess.display_value_mappings import asset_types
 from app.assess.forms.comments_form import CommentsForm
 from app.assess.forms.scores_and_justifications import JustScoreForm
@@ -297,7 +298,7 @@ def landing():
     """
 
     search_params = {
-        "search_term": "",
+        "search_term": "", "asset_type":"all", "status": "all",
     }
 
     # Add request arg search params to dict
@@ -316,7 +317,9 @@ def landing():
         "landing.html",
         application_overviews=application_overviews,
         assessment_deadline=assessment_deadline,
-        query=search_params
+        query_params=search_params,
+        asset_types=asset_types,
+        assessment_statuses=assessment_statuses,
     )
 
 
