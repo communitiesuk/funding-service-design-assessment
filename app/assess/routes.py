@@ -304,10 +304,11 @@ def landing():
         "status": "all",
     }
 
-    # Add request arg search params to dict
-    for key, value in request.args.items():
-        if key in search_params:
-            search_params.update({key: value})
+    if "clear_filters" not in request.args:
+        # Add request arg search params to dict
+        for key, value in request.args.items():
+            if key in search_params:
+                search_params.update({key: value})
 
     application_overviews = get_application_overviews(
         Config.COF_FUND_ID, Config.COF_ROUND2_ID, search_params

@@ -37,7 +37,11 @@
             </select>
             <button class="govuk-button search-button" type="submit">Search</button>
       </div>
-    </form>
+
+    <div class="govuk-form-group govuk-!-display-inline-block">
+          <a class="govuk-link govuk-link--no-visited-state" href="{{url_for('assess_bp.landing', clear_filters=true)}}">Clear Filters</a>
+    </div>
+  </form>
   </div>
 
 </div>
@@ -85,7 +89,7 @@
     </tr>
   </thead>
 
-  <tbody class="govuk-table__body">    
+  <tbody class="govuk-table__body">
         {% for overview in application_overviews %}
             <tr class="govuk-table__row">
 
@@ -100,7 +104,7 @@
                   <td class="govuk-table__cell">{{assessment_statuses[overview.workflow_status]}}</td>
                 {% endif %}
             </tr>
-        {% endfor %}    
+        {% endfor %}
   </tbody>
 </table>
 {% endif %}
