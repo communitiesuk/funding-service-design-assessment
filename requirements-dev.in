@@ -2,6 +2,7 @@
 bandit
 black
 deepdiff
+invoke
 pip-tools
 pre-commit
 pytest

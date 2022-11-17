@@ -13,13 +13,11 @@
     padding: 2.5px;
 }
 
-.search--button {
+.search-button {
     color: #fff;
     background-color: #1d70b8;
-    width: 40px;
-    height: 40px;
-    padding: 0px;
-    border: none;
+    margin-bottom: 0;
+    margin-left: 8px;
 }
 
 .search-input {
