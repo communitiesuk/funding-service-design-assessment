@@ -8,17 +8,17 @@
     <form method="get">
       <div class="govuk-form-group govuk-!-display-inline-block govuk-!-padding-right-2">
             <div>
-                  <label class="govuk-label" for="event-name">
+                  <label class="govuk-label" for="application_search">
                     Search reference or project name
                   </label>
-                  <input class="govuk-input govuk-input--width-20" type="text" s, assessment_statusespellcheck="false" aria-label="Search applications" id="application_search" name="search_term" placeholder="Search..", value="{{query_params['search_term']}}">
+                  <input class="govuk-input govuk-input--width-20" type="text" s, assessment_statusespellcheck="false" aria-label="Search reference or project name" id="application_search" name="search_term" placeholder="Search..", value="{{query_params['search_term']}}">
             </div>
       </div>
       <div class="govuk-form-group govuk-!-display-inline-block" govuk-!-padding-right-2">
-            <label class="govuk-label" for="sort">
+            <label class="govuk-label" for="filter_asset_type">
             Filter by asset type
             </label>
-            <select class="govuk-select" name="asset_type">
+            <select class="govuk-select" id = "filter_asset_type" name="asset_type">
 
                   {% for item in asset_types %}
                         <option value='{{ item }}' {% if query_params.asset_type == item %} selected=""{%endif%}>{{asset_types[item]}}</option>
@@ -28,21 +28,21 @@
       </div>
 
       <div class="govuk-form-group govuk-!-display-inline-block govuk-!-padding-right-2">
-            <label class="govuk-label" for="sort">
+            <label class="govuk-label" for="filter_status">
             Filter by status
             </label>
-            <select class="govuk-select" name="status">
+            <select class="govuk-select" name="status" id="filter_status">
                   {% for item in assessment_statuses %}
                         <option value='{{ item }}' {% if query_params.status == item %} selected=""{%endif%}>{{assessment_statuses[item]}}</option>
                   {% endfor %}
             </select>
-            <button class="govuk-button search-button" type="submit">Search</button>
+            <button class="govuk-button search-button" aria-lbel = "Search" type="submit">Search</button>
       </div>
   </form>
   </div>
   {% if show_clear_filters == true %}
   <p>
-    <a class="govuk-link govuk-link--no-visited-state" href="{{url_for('assess_bp.landing', clear_filters=true)}}">Clear Filters</a>
+    <a class="govuk-link govuk-link--no-visited-state" href="{{url_for('assess_bp.landing', clear_filters=true)}}" aria-label="Clear Filters">Clear Filters</a>
   </p>
   {%endif%}
 
@@ -107,7 +107,7 @@
                 <td class="govuk-table__cell">{{asset_types[overview.type_of_application]}}</td>
                 <td class="govuk-table__cell">{{ "£%.2f"|format(overview.funding_amount_requested | int) }}</td>
                 <td class="govuk-table__cell">{{ overview.location }}</td>
-                {% if overview.workflow_status ==  "NOT STARTED" %}
+                {% if overview.workflow_status ==  "not-started" %}
                   <td class="govuk-table__cell"><span class="not-started-tag">{{assessment_statuses[overview.workflow_status]}}</span></td>
                 {% else %}
                   <td class="govuk-table__cell">{{assessment_statuses[overview.workflow_status]}}</td>
