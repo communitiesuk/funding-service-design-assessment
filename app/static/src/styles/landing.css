@@ -20,6 +20,10 @@
     margin-left: 8px;
 }
 
+.search-button:hover {
+    background-color: #003078;
+}
+
 .search-input {
     width: 16em;
 }
