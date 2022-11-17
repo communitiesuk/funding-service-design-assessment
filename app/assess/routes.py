@@ -310,7 +310,7 @@ def landing():
         for key, value in request.args.items():
             if key in search_params:
                 search_params.update({key: value})
-        show_clear_filters = True
+                show_clear_filters = True
 
     application_overviews = get_application_overviews(
         Config.COF_FUND_ID, Config.COF_ROUND2_ID, search_params
