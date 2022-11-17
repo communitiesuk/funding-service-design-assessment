@@ -1,9 +1,10 @@
 {% from "govuk_frontend_jinja/components/input/macro.html" import govukInput %}
 
 
-{% macro render(application_overviews, query_params, asset_types, assessment_statuses) -%}
+{% macro render(application_overviews, query_params, asset_types, assessment_statuses, show_clear_filters) -%}
 <div class="govuk-grid-row">
-  <div class="govuk-grid-column-full">
+  <div class="govuk-grid-column-full search-bar-flex-container">
+    <div>
     <form method="get">
       <div class="govuk-form-group govuk-!-display-inline-block govuk-!-padding-right-2">
             <div>
@@ -37,11 +38,14 @@
             </select>
             <button class="govuk-button search-button" type="submit">Search</button>
       </div>
-
-    <div class="govuk-form-group govuk-!-display-inline-block">
-          <a class="govuk-link govuk-link--no-visited-state" href="{{url_for('assess_bp.landing', clear_filters=true)}}">Clear Filters</a>
-    </div>
   </form>
+  </div>
+  {% if show_clear_filters == true %}
+  <p>
+    <a class="govuk-link govuk-link--no-visited-state" href="{{url_for('assess_bp.landing', clear_filters=true)}}">Clear Filters</a>
+  </p>
+  {%endif%}
+
   </div>
 
 </div>
@@ -63,7 +67,7 @@
     <tr class="govuk-table__row">
 
       <th scope="col" class="govuk-table__header">
-          Ref
+          Reference
       </th>
 
 
@@ -78,7 +82,11 @@
 
 
       <th scope="col" class="govuk-table__header">
-        Total funding requested
+        Funding requested
+      </th>
+
+      <th scope="col" class="govuk-table__header">
+        Location
       </th>
 
 
@@ -98,6 +106,7 @@
                 <td class="govuk-table__cell"><a class="govuk-link" href="{{url_for('assess_bp.application',application_id=overview.application_id)}}">{{overview.project_name}}</a></td>
                 <td class="govuk-table__cell">{{asset_types[overview.type_of_application]}}</td>
                 <td class="govuk-table__cell">{{ "£%.2f"|format(overview.funding_amount_requested | int) }}</td>
+                <td class="govuk-table__cell">{{ overview.location }}</td>
                 {% if overview.workflow_status ==  "NOT STARTED" %}
                   <td class="govuk-table__cell"><span class="not-started-tag">{{assessment_statuses[overview.workflow_status]}}</span></td>
                 {% else %}

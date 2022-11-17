@@ -304,11 +304,13 @@ def landing():
         "status": "all",
     }
 
+    show_clear_filters = False
     if "clear_filters" not in request.args:
         # Add request arg search params to dict
         for key, value in request.args.items():
             if key in search_params:
                 search_params.update({key: value})
+        show_clear_filters = True
 
     application_overviews = get_application_overviews(
         Config.COF_FUND_ID, Config.COF_ROUND2_ID, search_params
@@ -324,6 +326,7 @@ def landing():
         query_params=search_params,
         asset_types=asset_types,
         assessment_statuses=assessment_statuses,
+        show_clear_filters=show_clear_filters,
     )
 
 

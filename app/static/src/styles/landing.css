@@ -23,3 +23,15 @@
 .search-input {
     width: 16em;
 }
+
+.search-bar-flex-container {
+    float: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end
+}
+
+.search-bar-flex-container p {
+    margin-bottom: 30px;
+    font-size: 1.1875rem;
+}
