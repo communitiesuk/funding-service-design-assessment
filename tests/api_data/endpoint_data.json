@@ -351,7 +351,8 @@
       "application_id":"123123123-123123123",
       "type_of_application":"pub",
       "project_name":"Save the Dog and Duck",
-      "funding_amount_requested":"10000"
+      "funding_amount_requested":"10000",
+      "location": "Wales"
     },
     {
       "application_short_id": "COF-R2W2-AJTRIB",
@@ -359,7 +360,8 @@
       "application_id":"234234234-123123123",
       "type_of_application":"sporting",
       "project_name":"Save the rugby pitch",
-      "funding_amount_requested":"25000"
+      "funding_amount_requested":"25000",
+      "location": "Scotland"
     },
     {
       "application_short_id": "COF-R2W2-BMEQLK",
@@ -367,7 +369,8 @@
       "application_id":"789789789-879789",
       "type_of_application":"community-centre",
       "project_name":"Save our village hall",
-      "funding_amount_requested":"12345"
+      "funding_amount_requested":"12345",
+      "location": "Northern Ireland"
     }
   ],
   "fund_store/funds/47aef2f5-3fcb-4d45-acb5-f0152b5f03c4": [
@@ -431,7 +434,8 @@
         "application_id":"234234234-123123123",
         "type_of_application":"sporting",
         "project_name":"Save the rugby pitch",
-        "funding_amount_requested":"25000"
+        "funding_amount_requested":"25000",
+        "location": "Scotland"
       }
     ],
     "assessment_store/application_overviews/47aef2f5-3fcb-4d45-acb5-f0152b5f03c4/c603d114-5364-4474-a0c4-c41cbf4d3bbd?search_term=Save+our+village&search_in=project_name%2Capplication_short_id&asset_type=all&status=all": [
@@ -441,7 +445,8 @@
         "application_id":"789789789-879789",
         "type_of_application":"community-centre",
         "project_name":"Save our village hall",
-        "funding_amount_requested":"12345"
+        "funding_amount_requested":"12345",
+        "location": "Northern Ireland"
       }
     ],
     "assessment_store/application_overviews/47aef2f5-3fcb-4d45-acb5-f0152b5f03c4/c603d114-5364-4474-a0c4-c41cbf4d3bbd?search_term=&search_in=project_name%2Capplication_short_id&asset_type=all&status=qa-ready":
@@ -452,7 +457,8 @@
           "application_id":"234234234-123123123",
           "type_of_application":"sporting",
           "project_name":"Save the rugby pitch",
-          "funding_amount_requested":"25000"
+          "funding_amount_requested":"25000",
+          "location": "Scotland"
         }
     ],
     "assessment_store/application_overviews/47aef2f5-3fcb-4d45-acb5-f0152b5f03c4/c603d114-5364-4474-a0c4-c41cbf4d3bbd?search_term=&search_in=project_name%2Capplication_short_id&asset_type=pub&status=all":
@@ -463,7 +469,8 @@
           "application_id":"123123123-123123123",
           "type_of_application":"pub",
           "project_name":"Save the Dog and Duck",
-          "funding_amount_requested":"10000"
+          "funding_amount_requested":"10000",
+          "location": "Wales"
         }
     ],
     "assessment_store/application_overviews/47aef2f5-3fcb-4d45-acb5-f0152b5f03c4/c603d114-5364-4474-a0c4-c41cbf4d3bbd?search_term=&search_in=project_name%2Capplication_short_id&asset_type=sporting&status=all":
@@ -474,7 +481,8 @@
           "application_id":"234234234-123123123",
           "type_of_application":"sporting",
           "project_name":"Save the rugby pitch",
-          "funding_amount_requested":"25000"
+          "funding_amount_requested":"25000",
+          "location": "Scotland"
         }
     ],
     "assessment_store/application_overviews/47aef2f5-3fcb-4d45-acb5-f0152b5f03c4/c603d114-5364-4474-a0c4-c41cbf4d3bbd?search_term=&search_in=project_name%2Capplication_short_id&asset_type=all&status=in-progress": [
@@ -484,7 +492,8 @@
         "application_id":"123123123-123123123",
         "type_of_application":"pub",
         "project_name":"Save the Dog and Duck",
-        "funding_amount_requested":"10000"
+        "funding_amount_requested":"10000",
+        "location": "Wales"
       }
     ],
     "assessment_store/application_overviews/47aef2f5-3fcb-4d45-acb5-f0152b5f03c4/c603d114-5364-4474-a0c4-c41cbf4d3bbd?search_term=&search_in=project_name%2Capplication_short_id&asset_type=community-centre&status=not-started": [
@@ -494,7 +503,8 @@
         "application_id":"789789789-879789",
         "type_of_application":"community-centre",
         "project_name":"Save our village hall",
-        "funding_amount_requested":"12345"
+        "funding_amount_requested":"12345",
+        "location": "Northern Ireland"
       }
     ]
 }

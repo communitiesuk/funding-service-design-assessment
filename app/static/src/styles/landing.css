@@ -13,15 +13,29 @@
     padding: 2.5px;
 }
 
-.search--button {
+.search-button {
     color: #fff;
     background-color: #1d70b8;
-    width: 40px;
-    height: 40px;
-    padding: 0px;
-    border: none;
+    margin-bottom: 0;
+    margin-left: 8px;
+}
+
+.search-button:hover {
+    background-color: #003078;
 }
 
 .search-input {
     width: 16em;
+}
+
+.search-bar-flex-container {
+    float: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end
+}
+
+.search-bar-flex-container p {
+    margin-bottom: 30px;
+    font-size: 1.1875rem;
 }

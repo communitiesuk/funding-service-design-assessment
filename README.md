@@ -61,6 +61,13 @@ Developer note: If you receive a certification error when running the above comm
 consider if you need to run the Python
 'Install Certificates.command' which is a file located in your globally installed Python directory. For more info see [StackOverflow](https://stackoverflow.com/questions/52805115/certificate-verify-failed-unable-to-get-local-issuer-certificate)
 
+### Copying Styles
+During development if you need to copy styles from `app/static/src/styles` to the `dist` dir, you can do this by running
+
+    invoke copy-styles
+
+This uses `invoke` and the tasks defined in `tasks.py` to just copy the contents of the source styles directory to dist, saving the time to reinstall the whole govuk bundle by running the full build as above.
+
 ### Run Flask
 
 Run:
