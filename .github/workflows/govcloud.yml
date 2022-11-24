@@ -97,7 +97,7 @@ jobs:
           allow_issue_writing: False
 
   deploy_test:
-    needs: security
+    needs: [security, run-shared-tests_dev]
     if: ${{ github.actor != 'dependabot[bot]' && github.ref == 'refs/heads/main' }}
     runs-on: ubuntu-latest
     environment: test
