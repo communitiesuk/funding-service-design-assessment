@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from app.assess.data import *
 from app.assess.data import get_application_overviews
 from app.assess.data import submit_score_and_justification
@@ -30,10 +32,43 @@ def funds():
     from fund store
     :return:
     """
-
     funds = get_funds()
-
     return render_template("funds.html", funds=funds)
+
+
+@assess_bp.route(
+    "/applications/{application_id}/sub_criteria/{sub_criteria_id}/scores",
+    methods=["POST", "GET"],
+)
+def application_sub_crit_scoring(application_id: str, sub_criteria_id: str):
+
+    form = JustScoreForm()
+    # call to assessment store to get the latest score if request = get
+    # latest_score = get_score_and_justification(
+    #     application_id, sub_criteria_id
+    # )
+
+    # call to assessment store to save score if request = post
+    if form.validate_on_submit():
+        score = int(form.score.data)
+        justification = form.justification.data
+        user_id = ""  # get this from authenticator? session cookie?
+        submit_score_and_justification(
+            score=score,
+            justification=justification,
+            application_id=application_id,
+            user_id=user_id,
+            timestamp=datetime.now(),
+            sub_criteria_id=sub_criteria_id,
+        )
+        scores_submitted = True
+    else:
+        scores_submitted = False
+    return render_template(
+        "scores_justification.html",
+        scores_submitted=scores_submitted,
+        form=form,
+    )
 
 
 @assess_bp.route("/fragments/structured_question", methods=["GET"])
@@ -226,7 +261,6 @@ def sub_crit_scoring():
             sub_crit_id=sub_crit_id,
         )
         scores_submitted = True
-
     else:
 
         scores_submitted = False

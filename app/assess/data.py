@@ -128,20 +128,36 @@ def get_round_with_applications(
     return None
 
 
-def submit_score_and_justification(
-    assessment_id, person_id, score, justification, sub_crit_id
-):
+def get_score_and_justification(application_id, sub_criteria_id):
+    url = Config.ASSESSMENT_SCORES_ENDPOINT.format(
+        application_id=application_id, sub_criteria_id=sub_criteria_id
+    )
+    response = requests.get(url)
+    current_app.logger.info(
+        "Response from Assessment Store:" + response.content
+    )
+    if response.status_code == 200:
+        return True
+    else:
+        return False
 
+
+def submit_score_and_justification(
+    score, justification, application_id, user_id, timestamp, sub_criteria_id
+):
     data_dict = {
         "score": score,
         "justification": justification,
-        "person_id": person_id,
+        "user_id": user_id,
+        "timestamp": timestamp,
     }
     url = Config.ASSESSMENT_SCORES_ENDPOINT.format(
-        assessment_id=assessment_id, sub_criteria_id=sub_crit_id
+        application_id=application_id, sub_criteria_id=sub_criteria_id
     )
     response = requests.post(url, json=data_dict)
-    print(response.content)
+    current_app.logger.info(
+        "Response from Assessment Store:" + response.content
+    )
     if response.status_code == 200:
         return True
     else:
