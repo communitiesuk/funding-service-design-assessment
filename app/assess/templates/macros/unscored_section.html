@@ -1,0 +1,29 @@
+{%- from "govuk_frontend_jinja/components/table/macro.html" import govukTable -%}
+
+{% macro unscoredSection(config) %}
+
+
+<h2 class="govuk-heading-l govuk-!-margin-top-8">{{ config['title'] }}</h2>
+
+{% set rows = [] %}
+
+{% for row in config['rows'] %}
+    {%
+        set _ = rows.append([
+            { 'html': '<a class="govuk-link" href="{}">{}</a>'.format(row['href'], row['name']) }
+        ])
+    %}
+{% endfor %}
+
+{{
+    govukTable({
+        "caption": "This section is not scored. Can be used for due diligence checks.",
+        "firstCellIsHeader":false,
+        "head": [[{ "text": "" }]],
+        "captionClasses": "govuk-body govuk-!-text-align-left govuk-!-font-weight-regular govuk-!-margin-bottom-4",
+        "rows": rows,
+    })
+}}
+
+
+{% endmacro %}

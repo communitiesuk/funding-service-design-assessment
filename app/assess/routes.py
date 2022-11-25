@@ -341,16 +341,25 @@ def application(application_id):
     :return:
     """
 
-    application = get_application_status(application_id=application_id)
-    if not application:
+    assessment = get_assessment(application_id)
+    if not assessment:
         abort(404)
 
-    fund = get_fund(application.fund_id)
+    config = get_assessment_config_mapping(
+        assessment["fund_id"], assessment["round_id"]
+    )
+    if not config:
+        abort(404)
+
+    fund = get_fund(assessment["fund_id"])
     if not fund:
         abort(404)
 
     return render_template(
-        "application.html", application=application, fund=fund
+        "application-section.html",
+        assessment=assessment,
+        fund=fund,
+        config=config,
     )
 
 

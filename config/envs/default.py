@@ -52,14 +52,20 @@ class DefaultConfig:
     APPLICATION_SEARCH_ENDPOINT = CommonConfig.APPLICATION_SEARCH_ENDPOINT
 
     # Assesment store endpoints
-    ASSESSMENT_STORE_API_HOST = CommonConfig.ASSESSMENT_STORE_API_HOST
-    APPLICATION_OVERVIEW_ENDPOINT = (
+    APPLICATION_OVERVIEW_ENDPOINT_FUND_ROUND_PARAMS = (
         "/application_overviews/{fund_id}/{round_id}?{params}"
+    )
+
+    APPLICATION_OVERVIEW_ENDPOINT_APPLICATION_ID = (
+        "/application_overviews/{application_id}"
     )
 
     ASSESSMENT_SCORES_ENDPOINT = (
         ASSESSMENT_STORE_API_HOST
         + "/assessments/{assessment_id}/sub_criterias/{sub_criteria_id}/scores"
+    )
+    ASSESSMENT_MAPPING_CONFIG_ENDPOINT = (
+        ASSESSMENT_STORE_API_HOST + "/config/{fund_id}/{round_id}"
     )
 
     """
