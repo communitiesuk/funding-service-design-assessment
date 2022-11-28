@@ -40,7 +40,7 @@ def funds():
 
 @login_requested
 @assess_bp.route(
-    "/assessments/{application_id}/sub_criteria/{sub_criteria_id}/scores",
+    "score/application_id/<application_id>/sub_criteria_id/<sub_criteria_id>",
     methods=["POST", "GET"],
 )
 def application_sub_crit_scoring(application_id: str, sub_criteria_id: str):
