@@ -15,7 +15,7 @@ class TestJinjaMacros(object):
             criteria_element=get_template_attribute(
                 "macros/criteria_element.html", "criteria_element"
             ),
-            subcriterias=[
+            sub_criterias=[
                 _CriteriaSubCriteria(
                     id="1",
                     name="Sub Criteria 1",
@@ -41,8 +41,13 @@ class TestJinjaMacros(object):
         # replacing new lines to more easily regex match the html
         rendered_html = rendered_html.replace("\n", "")
 
+        # write html to file
+        with open("test.html", "w") as f:
+            f.write(rendered_html)
+
         assert re.search(
-            r'<h3 class="example-class">\s+Example title</h3>', rendered_html
+            r'<h3 class="example-class">\S*Example title\S*</h3>',
+            rendered_html,
         ), "Title not found"
 
         assert re.search(
@@ -64,8 +69,8 @@ class TestJinjaMacros(object):
         ), "Should have 1 table body"
 
         assert (
-            len(re.findall(r"<tr.*?</tr>", rendered_html)) == 2
-        ), "Should have 2 table rows"
+            len(re.findall(r"<tr.*?</tr>", rendered_html)) == 4
+        ), "Should have 4 table rows"
 
     def test_section_macro(self, request_ctx):
         rendered_html = render_template_string(
@@ -84,7 +89,7 @@ class TestJinjaMacros(object):
         rendered_html = rendered_html.replace("\n", "")
 
         assert re.search(
-            r"<h2.*?Example title.*?</h2>", rendered_html
+            r"<h2.*\S*Example title\S*</h2>", rendered_html
         ), "Title not found"
 
         assert (
