@@ -135,8 +135,6 @@ def get_score_and_justification(application_id, sub_criteria_id):
         "sub_criteria_id": sub_criteria_id,
     }
     response = requests.get(url, params)
-    print(response)
-    print(response.json)
     current_app.logger.info(
         "Response from Assessment Store:" + response.content
     )
