@@ -1,39 +1,41 @@
 import re
 
+from app.assess.models.assessor_task_list import _CriteriaSubCriteria
+from app.assess.models.assessor_task_list import _SubCriteria
 from flask import get_template_attribute
 from flask import render_template_string
 
 
 class TestJinjaMacros(object):
-    def test_scored_section_macro(self, request_ctx):
+    def test_criteria_macro(self, request_ctx):
         rendered_html = render_template_string(
-            "{{scoredSection(config)}}",
-            scoredSection=get_template_attribute(
-                "macros/scored_section.html", "scoredSection"
+            "{{criteria_element(sub_criterias, name, name_classes,"
+            " total_criteria_score, total_criteria_score_possible,"
+            " weighting)}}",
+            criteria_element=get_template_attribute(
+                "macros/criteria_element.html", "criteria_element"
             ),
-            config={
-                "title": "Example title",
-                "title_classes": "example-class",
-                "weighting": 0.5,
-                "total_criteria_score": 0,
-                "total_criteria_score_possible": 0,
-                "sub_criteria_rows": [
-                    {
-                        "href": "/example/href/1",
-                        "name": "Example name 1",
-                        "theme_count": 1,
-                        "score": 1,
-                        "status": "Not started",
-                    },
-                    {
-                        "href": "/example/href/2",
-                        "name": "Example name 2",
-                        "theme_count": 2,
-                        "score": 2,
-                        "status": "Not started",
-                    },
-                ],
-            },
+            subcriterias=[
+                _CriteriaSubCriteria(
+                    id="1",
+                    name="Sub Criteria 1",
+                    status="Not started",
+                    theme_count=1,
+                    score=2,
+                ),
+                _CriteriaSubCriteria(
+                    id="2",
+                    name="Sub Criteria 2",
+                    status="Not started",
+                    theme_count=2,
+                    score=2,
+                ),
+            ],
+            name="Example title",
+            name_classes="example-class",
+            total_criteria_score=0,
+            total_criteria_score_possible=0,
+            weighting=0.5,
         )
 
         # replacing new lines to more easily regex match the html
@@ -62,35 +64,20 @@ class TestJinjaMacros(object):
         ), "Should have 1 table body"
 
         assert (
-            len(re.findall(r"<tr.*?</tr>", rendered_html)) == 4
-        ), "Should have 4 table rows"
+            len(re.findall(r"<tr.*?</tr>", rendered_html)) == 2
+        ), "Should have 2 table rows"
 
-        assert (
-            len(re.findall("govuk-tag--blue", rendered_html)) == 2
-        ), "Should have 2 blue tags"
-        assert (
-            len(re.findall(r'href="/example/href/\d', rendered_html)) == 2
-        ), "Should have 2 blue tags"
-
-    def test_unscored_section_macro(self, request_ctx):
+    def test_section_macro(self, request_ctx):
         rendered_html = render_template_string(
-            "{{unscoredSection(config)}}",
-            unscoredSection=get_template_attribute(
-                "macros/unscored_section.html", "unscoredSection"
+            "{{section_element(name, sub_criterias)}}",
+            section_element=get_template_attribute(
+                "macros/section_element.html", "section_element"
             ),
-            config={
-                "title": "Example title",
-                "rows": [
-                    {
-                        "href": "/section/1",
-                        "name": "Example name 1",
-                    },
-                    {
-                        "href": "/section/1",
-                        "name": "Example name 1",
-                    },
-                ],
-            },
+            name="Example title",
+            sub_criterias=[
+                _SubCriteria(id="1", name="Sub Criteria 1"),
+                _SubCriteria(id="2", name="Sub Criteria 2"),
+            ],
         )
 
         # replacing new lines to more easily regex match the html

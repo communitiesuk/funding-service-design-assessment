@@ -206,16 +206,16 @@ def get_application(identifier: str) -> Union[Application, None]:
     return None
 
 
-def get_assessment(application_id: str) -> Union[dict, None]:
+def get_assessor_task_list_state(application_id: str) -> Union[dict, None]:
     overviews_endpoint = (
         Config.ASSESSMENT_STORE_API_HOST
     ) + Config.APPLICATION_OVERVIEW_ENDPOINT_APPLICATION_ID.format(
         application_id=application_id
     )
 
-    assessment_record = get_data(overviews_endpoint)
+    metadata = get_data(overviews_endpoint)
 
-    return assessment_record
+    return metadata
 
 
 def get_questions(application_id):

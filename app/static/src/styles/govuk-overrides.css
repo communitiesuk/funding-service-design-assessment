@@ -6,3 +6,20 @@
 .govuk-table-no-bottom-border .govuk-table__body .govuk-table__row:last-child .govuk-table__cell {
     border-bottom: none;
   }
+
+.govuk-tag--scored-criteria {
+    text-size-adjust: 100%;
+    list-style-type: none;
+    border-spacing: 0;
+    border-collapse: collapse;
+    color: #144E81;
+    background-color: #e8f1f8;
+    line-height: 1.1;
+    padding: 2.5px;
+    font-weight: 400;
+    text-transform: none;
+  }
+
+.gov-uk-table__cell--align-right {
+    text-align: right;
+  }

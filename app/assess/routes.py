@@ -5,6 +5,7 @@ from app.assess.display_value_mappings import assessment_statuses
 from app.assess.display_value_mappings import asset_types
 from app.assess.forms.comments_form import CommentsForm
 from app.assess.forms.scores_and_justifications import JustScoreForm
+from app.assess.models.assessor_task_list import AssessorTaskList
 from app.assess.models.question import Question
 from app.assess.models.question_field import QuestionField
 from app.assess.models.total_table import TotalMoneyTableView
@@ -341,25 +342,21 @@ def application(application_id):
     :return:
     """
 
-    assessment = get_assessment(application_id)
-    if not assessment:
+    assessor_task_list_metadata = get_assessor_task_list_state(application_id)
+    if not assessor_task_list_metadata:
         abort(404)
 
-    config = get_assessment_config_mapping(
-        assessment["fund_id"], assessment["round_id"]
-    )
-    if not config:
-        abort(404)
-
-    fund = get_fund(assessment["fund_id"])
+    # maybe there's a better way to do this?..
+    fund = get_fund(assessor_task_list_metadata["fund_id"])
     if not fund:
         abort(404)
+    assessor_task_list_metadata["fund_name"] = fund.name
+
+    state = AssessorTaskList.from_json(assessor_task_list_metadata)
 
     return render_template(
         "application-section.html",
-        assessment=assessment,
-        fund=fund,
-        config=config,
+        state=state,
     )
 
 
