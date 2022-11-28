@@ -57,10 +57,7 @@ class DefaultConfig:
         "/application_overviews/{fund_id}/{round_id}?{params}"
     )
 
-    ASSESSMENT_SCORES_ENDPOINT = (
-        ASSESSMENT_STORE_API_HOST
-        + "/assessments/{assessment_id}/sub_criterias/{sub_criteria_id}/scores"
-    )
+    ASSESSMENT_SCORES_ENDPOINT = ASSESSMENT_STORE_API_HOST + "/scores"
 
     """
     Assets

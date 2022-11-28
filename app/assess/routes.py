@@ -13,8 +13,10 @@ from app.assess.models.total_table import TotalMoneyTableView
 from config import Config
 from flask import abort
 from flask import Blueprint
+from flask import g
 from flask import render_template
 from flask import request
+from fsd_utils.authentication.decorators import login_requested
 
 
 assess_bp = Blueprint(
@@ -36,23 +38,22 @@ def funds():
     return render_template("funds.html", funds=funds)
 
 
+@login_requested
 @assess_bp.route(
-    "/applications/{application_id}/sub_criteria/{sub_criteria_id}/scores",
+    "/assessments/{application_id}/sub_criteria/{sub_criteria_id}/scores",
     methods=["POST", "GET"],
 )
 def application_sub_crit_scoring(application_id: str, sub_criteria_id: str):
 
     form = JustScoreForm()
     # call to assessment store to get the latest score if request = get
-    # latest_score = get_score_and_justification(
-    #     application_id, sub_criteria_id
-    # )
+    latest_score = get_score_and_justification(application_id, sub_criteria_id)
 
     # call to assessment store to save score if request = post
     if form.validate_on_submit():
         score = int(form.score.data)
         justification = form.justification.data
-        user_id = ""  # get this from authenticator? session cookie?
+        user_id = g.account_id
         submit_score_and_justification(
             score=score,
             justification=justification,
@@ -68,6 +69,7 @@ def application_sub_crit_scoring(application_id: str, sub_criteria_id: str):
         "scores_justification.html",
         scores_submitted=scores_submitted,
         form=form,
+        latest_score=latest_score,
     )
 
 

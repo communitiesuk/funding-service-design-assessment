@@ -129,17 +129,21 @@ def get_round_with_applications(
 
 
 def get_score_and_justification(application_id, sub_criteria_id):
-    url = Config.ASSESSMENT_SCORES_ENDPOINT.format(
-        application_id=application_id, sub_criteria_id=sub_criteria_id
-    )
-    response = requests.get(url)
+    url = Config.ASSESSMENT_SCORES_ENDPOINT
+    params = {
+        "application_id": application_id,
+        "sub_criteria_id": sub_criteria_id,
+    }
+    response = requests.get(url, params)
+    print(response)
+    print(response.json)
     current_app.logger.info(
         "Response from Assessment Store:" + response.content
     )
     if response.status_code == 200:
-        return True
+        return response.json
     else:
-        return False
+        return None
 
 
 def submit_score_and_justification(
