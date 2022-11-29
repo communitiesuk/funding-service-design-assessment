@@ -2,8 +2,18 @@
 
 {% macro justification(text_area_id) %}
 
-<h2 class="govuk-heading-l">Explain your reasoning for this score</h2>
+<div class="govuk-form-group comments" name={{text_area_id}} id={{text_area_id}}>
+    <h2 class="govuk-label-wrapper">
+        <label class="govuk-label govuk-label--m">Add rationale for this
+            score</label>
+    </h2>
+    <div id="more-detail-hint" class="govuk-hint">
+        Explain why you think this score is justified based on the assessment
+        criteria
+    </div>
 
-{{govukTextarea({'name':text_area_id, 'id':text_area_id, 'label':text_area_id, 'required' : True})}}
+    <textarea class="govuk-textarea" id="justification" name="justification" value=""
+        rows="10" aria-describedby="more-detail-hint"></textarea>
+</div>
 
 {% endmacro %}

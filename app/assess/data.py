@@ -74,12 +74,16 @@ def get_fund(fund_id: str) -> Union[Fund, None]:
         fund_id=fund_id
     )
     response = get_data(endpoint)
-    if len(response) > 0:
-        fund = Fund.from_json(response[0])
-        if "rounds" in response and len(response["rounds"]) > 0:
-            for fund_round in response["rounds"]:
-                fund.add_round(Round.from_json(fund_round))
-        return fund
+    try:
+        if len(response) > 0:
+            fund = Fund.from_json(response[0])
+            if "rounds" in response and len(response["rounds"]) > 0:
+                for fund_round in response["rounds"]:
+                    fund.add_round(Round.from_json(fund_round))
+            return fund
+    except KeyError:
+        if type(response) == dict:
+            return response
     return None
 
 
@@ -135,11 +139,11 @@ def get_score_and_justification(application_id, sub_criteria_id):
         "sub_criteria_id": sub_criteria_id,
     }
     response = requests.get(url, params)
-    current_app.logger.info(
-        "Response from Assessment Store:" + response.content
-    )
+    # current_app.logger.info(
+    #     "Response from Assessment Store:" + response.content
+    # )
     if response.status_code == 200:
-        return response.json
+        return response.json()
     else:
         return None
 
@@ -152,14 +156,14 @@ def submit_score_and_justification(
         "justification": justification,
         "user_id": user_id,
         "timestamp": timestamp,
+        "application_id": application_id,
+        "sub_criteria_id": sub_criteria_id,
     }
-    url = Config.ASSESSMENT_SCORES_ENDPOINT.format(
-        application_id=application_id, sub_criteria_id=sub_criteria_id
-    )
+    url = Config.ASSESSMENT_SCORES_ENDPOINT
     response = requests.post(url, json=data_dict)
-    current_app.logger.info(
-        "Response from Assessment Store:" + response.content
-    )
+    # current_app.logger.info(
+    #     "Response from Assessment Store:" + response.content
+    # )
     if response.status_code == 200:
         return True
     else:

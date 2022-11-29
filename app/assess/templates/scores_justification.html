@@ -5,26 +5,136 @@
 {% extends "base.html" %}
 
 {%block content%}
+<div class="govuk-width-container ">
 
-<form method="POST" action="#">
+    <div class="govuk-phase-banner">
+        <p class="govuk-phase-banner__content">
+            <strong class="govuk-tag govuk-phase-banner__content__tag">
+                prototype
+            </strong>
+            <span class="govuk-phase-banner__text">
+                This is not a live service. This is a service currently being designed.
+            </span>
+        </p>
+    </div>
 
-{{ latest_score }}
+    <p class="sign-out govuk-!-text-align-right govuk-!-margin-top-3 govuk-!-margin-bottom-3"><a href="#"
+            class="govuk-link govuk-link--no-underline">Sign out</a></p>
 
-{% if scores_submitted%}
+    <div class="govuk-grid-row s26-headline-container">
+        <div class="s26-headline-info">
+            <div>
+                <h1 class="govuk-heading-l">Fund: <span>{{ fund['name'] }}</span></h1>
+                <h1 class="govuk-heading-l">Project reference: <span>LKMBNS</span></h1>
+            </div>
 
-{{govukNotificationBanner({'text': 'Your score was submitted.'})}}
+            <p class="govuk-body-l">Project name: <span>Save the White Swan, Dursley</span></p>
+            <p class="govuk-body-l">Total funding requested: <span>£98,400</span></p>
+            <p class="govuk-body-l">Submitted: <span>11/06/22</span></p>
+        </div>
+    </div>
 
-{%endif%}
+    <div class="govuk-grid-row">
 
-{{ form.csrf_token }}
+        <div class="s26-content-container">
 
-{{scores(form.score.id)}}
 
-{{justification(form.justification.id)}}
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-one-third">
+                    <a href="#" class="govuk-back-link">Back to <span class="govuk-!-font-weight-bold">assessment
+                            overview</span></a>
+                    <h1 class="govuk-heading-l scoring-heading">Score engagement</h1>
 
-{{govukButton({'text': 'Submit', 'type':'submit'})}}
+                </div>
+            </div>
 
-</form>
+            <div class="govuk-grid-column-full">
+
+                <div class="govuk-grid-column-one-third">
+
+                    <nav class="assessment-navigation">
+                        <ul class="govuk-list">
+                            <li><a class="govuk-link--no-visited-state"
+                                    href="/s26-assessment/commenting/community-engagement">Community
+                                    engagement</a></li>
+                            <li><a class="govuk-link--no-visited-state"
+                                    href="/s26-assessment/commenting/local-support">Local support</a></li>
+                        </ul>
+
+                        <ul class="govuk-list">
+                            <li>Score the subcriteria</li>
+                        </ul>
+                    </nav>
+                </div>
+
+                <div class="govuk-grid-column-two-thirds s26-scoring">
+
+                    {% if latest_score %}
+                    <div class="s26-score-group" id="anchor">
+                        <h2 class="govuk-heading-m">Current score: {{ latest_score['score'] }}</h2>
+                        <div>
+                            <p><strong>Rationale: </strong>{{ latest_score['justification'] }}</p>
+                            <p class="govuk-body-s"><strong>Your name</strong> (Assessor)
+                                {{ latest_score['user_id'] }}</p>
+                            <p class="govuk-body-s"> <strong>Date/time:</strong> {{ latest_score['timestamp'] }}</p>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <form method="POST">
+                        {{ form.csrf_token }}
+                        <div class="govuk-form-group">
+                            {% if latest_score %}
+                            <h2 class="govuk-heading-m">Rescore</h2>
+                            {% else %}
+                            <h2 class="govuk-heading-m">Score</h2>
+                            {% endif %}
+                            <p class="govuk-body">Based on the <a class="govuk-link govuk-link--no-visited-state"
+                                    href="#comments-heading">comments</a>, score this sub criteria against
+                                the&nbsp;<a class="govuk-link govuk-link--no-visited-state" href="#">assessment
+                                    criteria</a>.</p>
+                            <p class="govuk-body">You can rescore at any point.</p>
+
+                            {{scores(form.score.id)}}
+                            {{justification(form.justification.id)}}
+
+                        </div>
+                        {{govukButton({'text': 'Save score', 'type':'submit'})}}
+                    </form>
+
+
+                    <h2 class="govuk-heading govuk-heading-l" id="comments-heading">Comments</h2>
+                    <section class="comment-section">
+                        <h3 class="govuk-heading-m">Community engagement</h3>
+
+                        <p class="govuk-body-s">There are currently no comments&nbsp;for this section.
+                            <!--<a href="#" class="govuk-link govuk-link--no-visited-state">Add a comment</a>-->
+                        </p>
+
+                    </section>
+                    <section class="comment-section">
+                        <h3 class="govuk-heading-m">Local support</h3>
+
+                        <p class="govuk-body-s">There are currently no comments&nbsp;for this section.
+                            <!--<a href="#" class="govuk-link govuk-link--no-visited-state">Add a comment</a>-->
+                        </p>
+
+                    </section>
+
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+</body>
 
 
 {% endblock %}

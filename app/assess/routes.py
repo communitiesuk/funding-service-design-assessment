@@ -44,32 +44,37 @@ def funds():
     methods=["POST", "GET"],
 )
 def application_sub_crit_scoring(application_id: str, sub_criteria_id: str):
-
+    fund = get_fund(Config.COF_FUND_ID)
     form = JustScoreForm()
-    # call to assessment store to get the latest score if request = get
-    latest_score = get_score_and_justification(application_id, sub_criteria_id)
-
-    # call to assessment store to save score if request = post
     if form.validate_on_submit():
         score = int(form.score.data)
         justification = form.justification.data
-        user_id = g.account_id
+        try:
+            user_id = g.account_id
+        except AttributeError:
+            user_id = (  # TODO remove and force g.account_id after adding authentication # noqa
+                ""
+            )
         submit_score_and_justification(
             score=score,
             justification=justification,
             application_id=application_id,
             user_id=user_id,
-            timestamp=datetime.now(),
+            timestamp=datetime.now().strftime("%Y/%m/%d %H:%M:%S"),
             sub_criteria_id=sub_criteria_id,
         )
         scores_submitted = True
     else:
         scores_submitted = False
+
+    # call to assessment store to get the latest score if request = get
+    latest_score = get_score_and_justification(application_id, sub_criteria_id)
     return render_template(
         "scores_justification.html",
         scores_submitted=scores_submitted,
         form=form,
         latest_score=latest_score,
+        fund=fund,
     )
 
 

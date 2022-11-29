@@ -2,10 +2,45 @@
 
 {% macro scores(score_radio_id) %}
 
-<h2 class="govuk-heading-l">Based on the comments, score this section</h2>
+    <p>Select a score from the list:&nbsp;</p>
+    <div class="govuk-form-group" name={{score_radio_id}} id={{score_radio_id}}>
 
-{{govukRadios({'id' : score_radio_id, 'name': score_radio_id, 'items': [{'value': 1, 'text': '1', 'hint': {
-    'text':'Wow'},
-}, {'value': 2, 'text': '2'}, {'value': 3, 'text': '3'}, {'value': 4, 'text': '4'}, {'value': 5, 'text': '5'}]})}}
-
+        <div class="govuk-radios" data-module="govuk-radios">
+            <div class="govuk-radios__item">
+                <input class="govuk-radios__input" id="score-5" name="score"
+                    type="radio" value="5">
+                <label class="govuk-label govuk-radios__label" for="score">
+                    <span class="govuk-!-font-weight-bold">5</span> Strong
+                </label>
+            </div>
+            <div class="govuk-radios__item">
+                <input class="govuk-radios__input" id="score-4" name="score"
+                    type="radio" value="4">
+                <label class="govuk-label govuk-radios__label" for="score">
+                    <span class="govuk-!-font-weight-bold">4</span> Good
+                </label>
+            </div>
+            <div class="govuk-radios__item">
+                <input class="govuk-radios__input" id="score-3" name="score"
+                    type="radio" value="3">
+                <label class="govuk-label govuk-radios__label" for="score">
+                    <span class="govuk-!-font-weight-bold">3</span> Satisfactory
+                </label>
+            </div>
+            <div class="govuk-radios__item">
+                <input class="govuk-radios__input" id="score-2" name="score"
+                    type="radio" value="2">
+                <label class="govuk-label govuk-radios__label" for="score">
+                    <span class="govuk-!-font-weight-bold">2</span> Partial
+                </label>
+            </div>
+            <div class="govuk-radios__item">
+                <input class="govuk-radios__input" id="score-1" name="score"
+                    type="radio" value="1">
+                <label class="govuk-label govuk-radios__label" for="score">
+                    <span class="govuk-!-font-weight-bold">1</span> Poor
+                </label>
+            </div>
+        </div>
+    </div>
 {% endmacro %}
