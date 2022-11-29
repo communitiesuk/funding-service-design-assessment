@@ -64,9 +64,6 @@ class DefaultConfig:
         ASSESSMENT_STORE_API_HOST
         + "/assessments/{assessment_id}/sub_criterias/{sub_criteria_id}/scores"
     )
-    ASSESSMENT_MAPPING_CONFIG_ENDPOINT = (
-        ASSESSMENT_STORE_API_HOST + "/config/{fund_id}/{round_id}"
-    )
 
     """
     Assets
