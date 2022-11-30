@@ -299,7 +299,7 @@ def landing():
 
     search_params = {
         "search_term": "",
-        "search_in": "project_name,application_short_id",
+        "search_in": "project_name,short_id",
         "asset_type": "ALL",
         "status": "ALL",
     }
