@@ -19,8 +19,8 @@ class TestRoutes:
                 {
                     "search_term": "",
                     "search_in": "project_name,application_short_id",
-                    "asset_type": "all",
-                    "status": "all",
+                    "asset_type": "ALL",
+                    "status": "ALL",
                 },
             )
 
@@ -46,8 +46,8 @@ class TestRoutes:
                 {
                     "search_term": "",
                     "search_in": "project_name,application_short_id",
-                    "asset_type": "all",
-                    "status": "completed",
+                    "asset_type": "ALL",
+                    "status": "QA_COMPLETE",
                 },
             )
 
@@ -74,7 +74,7 @@ class TestRoutes:
                     "search_term": "",
                     "search_in": "project_name,application_short_id",
                     "asset_type": "pub",
-                    "status": "all",
+                    "status": "ALL",
                 },
             )
 
@@ -100,8 +100,8 @@ class TestRoutes:
                 {
                     "search_term": "hello",
                     "search_in": "project_name,application_short_id",
-                    "asset_type": "all",
-                    "status": "all",
+                    "asset_type": "ALL",
+                    "status": "ALL",
                 },
             )
 
@@ -133,8 +133,8 @@ class TestRoutes:
                 {
                     "search_term": "",
                     "search_in": "project_name,application_short_id",
-                    "asset_type": "all",
-                    "status": "all",
+                    "asset_type": "ALL",
+                    "status": "ALL",
                 },
             )
 
