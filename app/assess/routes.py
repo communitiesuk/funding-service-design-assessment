@@ -75,6 +75,8 @@ def application_sub_crit_scoring(application_id: str, sub_criteria_id: str):
         form=form,
         latest_score=latest_score,
         fund=fund,
+        application_id=application_id,
+        sub_criteria_id=sub_criteria_id,
     )
 
 

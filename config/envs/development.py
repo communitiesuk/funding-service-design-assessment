@@ -19,6 +19,6 @@ class DevelopmentConfig(DefaultConfig):
         "http://127.0.0.1:5002"
     )
     ASSESSMENT_STORE_API_HOST = (  # change in assessment store repo and adjust here accordingly # noqa
-        "http://127.0.0.1:5000"
+        "http://127.0.0.1:5001"
     )
     ASSESSMENT_SCORES_ENDPOINT = ASSESSMENT_STORE_API_HOST + "/score"

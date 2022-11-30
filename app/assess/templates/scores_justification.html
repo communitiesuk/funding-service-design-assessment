@@ -68,7 +68,6 @@
                 </div>
 
                 <div class="govuk-grid-column-two-thirds s26-scoring">
-
                     {% if latest_score %}
                     <div class="s26-score-group" id="anchor">
                         <h2 class="govuk-heading-m">Current score: {{ latest_score['score'] }}</h2>
@@ -81,6 +80,15 @@
                     </div>
                     {% endif %}
 
+                    {% if scores_submitted %}
+                    {{govukButton
+                        ({
+                            'text': 'Rescore',
+                            'type': 'submit',
+                            'href': url_for('assess_bp.application_sub_crit_scoring', application_id=application_id, sub_criteria_id=sub_criteria_id)
+                        })
+                    }}
+                    {% else %}
                     <form method="POST">
                         {{ form.csrf_token }}
                         <div class="govuk-form-group">
@@ -94,14 +102,16 @@
                                 the&nbsp;<a class="govuk-link govuk-link--no-visited-state" href="#">assessment
                                     criteria</a>.</p>
                             <p class="govuk-body">You can rescore at any point.</p>
-
                             {{scores(form.score.id)}}
                             {{justification(form.justification.id)}}
-
                         </div>
+                        {% if latest_score %}
+                        {{govukButton({'text': 'Rescore', 'type':'submit'})}}
+                        {% else %}
                         {{govukButton({'text': 'Save score', 'type':'submit'})}}
+                        {% endif %}
                     </form>
-
+                    {% endif %}
 
                     <h2 class="govuk-heading govuk-heading-l" id="comments-heading">Comments</h2>
                     <section class="comment-section">
