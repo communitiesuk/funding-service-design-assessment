@@ -1,5 +1,5 @@
 asset_types = {
-    "all": "All",
+    "ALL": "All",
     "community-centre": "Community centre",
     "cinema": "Cinema",
     "gallery": "Gallery",
@@ -15,11 +15,11 @@ asset_types = {
 }
 
 assessment_statuses = {
-    "all": "All",
-    "not-started": "Not Started",
-    "in-progress": "In Progress",
-    "qa-ready": "Ready for QA",
-    "qa-complete": "QA Complete",
-    "flagged": "Flagged",
-    "ineligible": "Ineligible",
+    "ALL": "All",
+    "NOT_STARTED": "Not Started",
+    "IN_PROGRESS": "In Progress",
+    "QA_READY": "Ready for QA",
+    "QA_COMPLETE": "QA Complete",
+    "FLAGGED": "Flagged",
+    "INELIGIBLE": "Ineligible",
 }

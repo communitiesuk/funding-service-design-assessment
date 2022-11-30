@@ -300,8 +300,8 @@ def landing():
     search_params = {
         "search_term": "",
         "search_in": "project_name,application_short_id",
-        "asset_type": "all",
-        "status": "all",
+        "asset_type": "ALL",
+        "status": "ALL",
     }
 
     show_clear_filters = False

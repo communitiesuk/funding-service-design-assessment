@@ -101,10 +101,10 @@
         {% for overview in application_overviews %}
             <tr class="govuk-table__row">
 
-                <td class="govuk-table__cell">{{overview.application_short_id[-6:]}}</a></td>
+                <td class="govuk-table__cell">{{overview.short_id[-6:]}}</a></td>
 
                 <td class="govuk-table__cell"><a class="govuk-link" href="{{url_for('assess_bp.application',application_id=overview.application_id)}}">{{overview.project_name}}</a></td>
-                <td class="govuk-table__cell">{{asset_types[overview.type_of_application]}}</td>
+                <td class="govuk-table__cell">{{asset_types[overview.asset_type]}}</td>
                 <td class="govuk-table__cell">{{ "£%.2f"|format(overview.funding_amount_requested | int) }}</td>
                 <td class="govuk-table__cell">{{ overview.location }}</td>
                 {% if overview.workflow_status ==  "not-started" %}
