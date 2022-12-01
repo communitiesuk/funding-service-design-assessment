@@ -69,14 +69,23 @@ def application_sub_crit_scoring(application_id: str, sub_criteria_id: str):
 
     # call to assessment store to get the latest score if request = get
     latest_score = get_score_and_justification(application_id, sub_criteria_id)
+    # TODO make COF_score_list extendable to other funds
+    COF_score_list = [
+        (5, "Strong"),
+        (4, "Good"),
+        (3, "Satisfactory"),
+        (2, "Partial"),
+        (1, "Poor"),
+    ]
     return render_template(
-        "scores_justification.html",
+        "sub_criteria.html",
         scores_submitted=scores_submitted,
         form=form,
         latest_score=latest_score,
         fund=fund,
         application_id=application_id,
         sub_criteria_id=sub_criteria_id,
+        COF_score_list=COF_score_list,
     )
 
 

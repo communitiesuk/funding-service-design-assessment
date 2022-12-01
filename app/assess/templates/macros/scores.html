@@ -1,46 +1,21 @@
 {%- from 'govuk_frontend_jinja/components/radios/macro.html' import govukRadios -%}
 
-{% macro scores(score_radio_id) %}
+{% macro scores(score_form_name, score_tuple) %}
 
     <p>Select a score from the list:&nbsp;</p>
-    <div class="govuk-form-group" name={{score_radio_id}} id={{score_radio_id}}>
+    <div class="govuk-form-group" name="score-div" id="score-div">
 
         <div class="govuk-radios" data-module="govuk-radios">
+            {% for i in score_tuple %}
             <div class="govuk-radios__item">
-                <input class="govuk-radios__input" id="score-5" name="score"
-                    type="radio" value="5">
-                <label class="govuk-label govuk-radios__label" for="score">
-                    <span class="govuk-!-font-weight-bold">5</span> Strong
+                <input class="govuk-radios__input" id={{"score-{}".format(i[0])}} name={{score_form_name}}
+                    type="radio" value={{i[0]}}>
+                <label class="govuk-label govuk-radios__label" for={{score_form_name}}>
+                    <span class="govuk-!-font-weight-bold">{{i[0]}}</span> {{i[1]}}
                 </label>
             </div>
-            <div class="govuk-radios__item">
-                <input class="govuk-radios__input" id="score-4" name="score"
-                    type="radio" value="4">
-                <label class="govuk-label govuk-radios__label" for="score">
-                    <span class="govuk-!-font-weight-bold">4</span> Good
-                </label>
-            </div>
-            <div class="govuk-radios__item">
-                <input class="govuk-radios__input" id="score-3" name="score"
-                    type="radio" value="3">
-                <label class="govuk-label govuk-radios__label" for="score">
-                    <span class="govuk-!-font-weight-bold">3</span> Satisfactory
-                </label>
-            </div>
-            <div class="govuk-radios__item">
-                <input class="govuk-radios__input" id="score-2" name="score"
-                    type="radio" value="2">
-                <label class="govuk-label govuk-radios__label" for="score">
-                    <span class="govuk-!-font-weight-bold">2</span> Partial
-                </label>
-            </div>
-            <div class="govuk-radios__item">
-                <input class="govuk-radios__input" id="score-1" name="score"
-                    type="radio" value="1">
-                <label class="govuk-label govuk-radios__label" for="score">
-                    <span class="govuk-!-font-weight-bold">1</span> Poor
-                </label>
-            </div>
+            {% endfor %}
+
         </div>
     </div>
 {% endmacro %}
