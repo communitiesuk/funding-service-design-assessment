@@ -11,7 +11,7 @@ from app.assess.models.sub_criteria import SubCriteria
 from app.assess.models.fund import Fund
 from app.assess.models.round import Round
 from config import Config
-from flask import current_app
+from flask import current_app, abort
 
 
 def get_data(endpoint: str):
@@ -246,6 +246,7 @@ def get_questions(application_id):
         data = {title: status for title, status in questions.items()}
         return data
 
+
 def get_sub_criteria(sub_criteria_id):
     """_summary_: Function is set up to retrieve
     the data from assessment store with
@@ -269,5 +270,9 @@ def get_sub_criteria(sub_criteria_id):
         )
     )
     sub_criteria_response = get_data(sub_criteria_endpoint)
-    if sub_criteria_response and "id" in sub_criteria_response :
-        return SubCriteria.from_filtered_dict(sub_criteria_response )
+    if sub_criteria_response and "id" in sub_criteria_response:
+        return SubCriteria.from_filtered_dict(sub_criteria_response)
+    else:
+        msg = f"sub_criteria: '{sub_criteria_id}' not found."
+        current_app.logger.warn(msg)
+        abort(404, description=msg)        

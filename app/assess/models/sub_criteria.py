@@ -2,13 +2,13 @@ import inspect
 from dataclasses import dataclass
 from app.assess.models.theme import Theme
 
+
 @dataclass
 class SubCriteria:
     id: str
     name: str
     score_submitted: bool
     themes: list[Theme]
-
 
     @classmethod
     def from_filtered_dict(cls, d: dict):

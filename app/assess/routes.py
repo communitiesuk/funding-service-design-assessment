@@ -37,29 +37,34 @@ def funds():
 
     return render_template("funds.html", funds=funds)
 
+
 @assess_bp.route("/sub_criteria/<sub_criteria_id>/<theme_id>", methods=["GET"])
-def display_sidebar(sub_criteria_id,theme_id):
+def display_sidebar(sub_criteria_id, theme_id):
     """
-    Page showing themes from assessment store
-    :return:
+    Page showing sub criteria and themes
     """
     on_summary = True if theme_id == "score" else False
-        
-    sub_criteria = get_sub_criteria(
-        sub_criteria_id=sub_criteria_id
-    )
+
+    sub_criteria = get_sub_criteria(sub_criteria_id=sub_criteria_id)
 
     themes: list[Theme] = [
-        Theme.from_filtered_dict(theme)
-        for theme in sub_criteria.themes
+        Theme.from_filtered_dict(theme) for theme in sub_criteria.themes
     ]
 
-    # would render a higher level page with first theme displaying by default
-    return render_template("sidebar.html",sub_criteria=sub_criteria,themes=themes,current_theme_id=theme_id,on_summary=on_summary)
+    # TODO: would render a higher level page with first theme displaying by default
+    return render_template(
+        "sidebar.html",
+        sub_criteria=sub_criteria,
+        themes=themes,
+        current_theme_id=theme_id,
+        on_summary=on_summary,
+    )
+
 
 @assess_bp.route("/sub_criteria", methods=["GET"])
 def display_base():
     None
+
 
 @assess_bp.route("/fragments/structured_question", methods=["GET"])
 def selection_fragment():

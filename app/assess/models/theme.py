@@ -1,11 +1,11 @@
 from dataclasses import dataclass
 import inspect
 
+
 @dataclass
 class Theme:
     id: str
     name: str
-
 
     @classmethod
     def from_filtered_dict(cls, d: dict):

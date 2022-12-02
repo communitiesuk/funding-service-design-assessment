@@ -142,10 +142,15 @@ class TestRoutes:
                 b"Assessor dashboard</p>" in response.data
             ), "Response does not contain expected heading"
 
-    @pytest.mark.parametrize("expected_strings", [b"general-information", b"activities", b"partnerships"])
+    @pytest.mark.parametrize(
+        "expected_strings",
+        [b"general-information", b"activities", b"partnerships"],
+    )
     def test_route_sidebar(self, flask_test_client, expected_strings):
 
-        response = flask_test_client.get("/assess/sub_criteria/1a2b3c4d/general-information")
+        response = flask_test_client.get(
+            "/assess/sub_criteria/1a2b3c4d/general-information"
+        )
 
         assert 200 == response.status_code, "Wrong status code on response"
 
