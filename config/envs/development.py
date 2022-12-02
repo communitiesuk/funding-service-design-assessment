@@ -1,3 +1,5 @@
+import logging
+
 from config.envs.default import DefaultConfig
 from fsd_utils import configclass
 
@@ -10,6 +12,12 @@ class DevelopmentConfig(DefaultConfig):
     )
 
     USE_LOCAL_DATA = True
+    FSD_LOG_LEVEL = logging.INFO
+
+    FUND_STORE_API_HOST = "fund_store"
+    ASSESSMENT_STORE_API_HOST = "assessment_store"
+    APPLICATION_STORE_API_HOST = "application_store"
+
     # USE_LOCAL_DATA = False
 
     # FUND_STORE_API_HOST =
