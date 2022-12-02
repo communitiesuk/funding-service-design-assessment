@@ -275,4 +275,4 @@ def get_sub_criteria(sub_criteria_id):
     else:
         msg = f"sub_criteria: '{sub_criteria_id}' not found."
         current_app.logger.warn(msg)
-        abort(404, description=msg)        
+        abort(404, description=msg)
