@@ -46,26 +46,34 @@ def funds():
 def application_sub_crit_scoring(application_id: str, sub_criteria_id: str):
     fund = get_fund(Config.COF_FUND_ID)
     form = JustScoreForm()
-    if form.validate_on_submit():
-        score = int(form.score.data)
-        justification = form.justification.data
-        try:
-            user_id = g.account_id
-        except AttributeError:
-            user_id = (  # TODO remove and force g.account_id after adding authentication # noqa
-                ""
+
+    score_error, justification_error, scores_submitted = False, False, False
+
+    if request.method == "POST":
+        if form.validate_on_submit():
+            score = int(form.score.data)
+            justification = form.justification.data
+            try:
+                user_id = g.account_id
+            except AttributeError:
+                user_id = (  # TODO remove and force g.account_id after adding authentication # noqa
+                    ""
+                )
+            submit_score_and_justification(
+                score=score,
+                justification=justification,
+                application_id=application_id,
+                user_id=user_id,
+                timestamp=datetime.now().strftime("%Y/%m/%d %H:%M:%S"),
+                sub_criteria_id=sub_criteria_id,
             )
-        submit_score_and_justification(
-            score=score,
-            justification=justification,
-            application_id=application_id,
-            user_id=user_id,
-            timestamp=datetime.now().strftime("%Y/%m/%d %H:%M:%S"),
-            sub_criteria_id=sub_criteria_id,
-        )
-        scores_submitted = True
-    else:
-        scores_submitted = False
+            scores_submitted = True
+            score_error, justification_error = False, False
+
+        else:
+            scores_submitted = False
+            score_error = True if not form.score.data else False
+            justification_error = True if not form.justification.data else False
 
     # call to assessment store to get the latest score if request = get
     latest_score = get_score_and_justification(application_id, sub_criteria_id)
@@ -86,6 +94,8 @@ def application_sub_crit_scoring(application_id: str, sub_criteria_id: str):
         application_id=application_id,
         sub_criteria_id=sub_criteria_id,
         COF_score_list=COF_score_list,
+        score_error = score_error,
+        justification_error = justification_error
     )
 
 

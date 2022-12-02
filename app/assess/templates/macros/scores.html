@@ -1,10 +1,14 @@
 {%- from 'govuk_frontend_jinja/components/radios/macro.html' import govukRadios -%}
 
-{% macro scores(score_form_name, score_tuple) %}
+{% macro scores(score_form_name, score_tuple, score_error) %}
 
-    <p>Select a score from the list:&nbsp;</p>
-    <div class="govuk-form-group" name="score-div" id="score-div">
-
+    <p class="govuk-body">Select a score from the list:&nbsp;</p>
+    <div class="govuk-form-group {% if score_error %}govuk-form-group--error{% endif %}" name="score-div" id="score-div">
+        {% if score_error %}
+        <p id="scores-error" class="govuk-error-message">
+            <span class="govuk-visually-hidden">Error:</span> Select a score
+          </p>
+        {% endif %}
         <div class="govuk-radios" data-module="govuk-radios">
             {% for i in score_tuple %}
             <div class="govuk-radios__item">
@@ -17,5 +21,6 @@
             {% endfor %}
 
         </div>
+        
     </div>
 {% endmacro %}

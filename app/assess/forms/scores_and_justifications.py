@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import RadioField, TextAreaField
-from wtforms.validators import AnyOf, DataRequired
+from wtforms.validators import AnyOf, DataRequired, InputRequired
 
 class JustScoreForm(FlaskForm):
     """

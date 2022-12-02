@@ -2,7 +2,7 @@
 {% from "macros/justification.html" import justification %}
 {%- from "govuk_frontend_jinja/components/button/macro.html" import govukButton -%}
 
-{% macro scores_justification(scores_submitted, form, latest_score, application_id, sub_criteria_id, COF_score_list) %}
+{% macro scores_justification(scores_submitted, form, latest_score, application_id, sub_criteria_id, COF_score_list, score_error, justification_error) %}
 
 <div class="govuk-grid-column-two-thirds s26-scoring">
     {% if latest_score %}
@@ -39,8 +39,8 @@
                 the&nbsp;<a class="govuk-link govuk-link--no-visited-state" href="#">assessment
                     criteria</a>.</p>
             <p class="govuk-body">You can rescore at any point.</p>
-            {{scores(form.score.id, COF_score_list)}}
-            {{justification(form.justification.id)}}
+            {{scores(form.score.id, COF_score_list, score_error)}}
+            {{justification(form.justification.id, justification_error)}}
         </div>
         {% if latest_score %}
         {{govukButton({'text': 'Rescore', 'type':'submit'})}}

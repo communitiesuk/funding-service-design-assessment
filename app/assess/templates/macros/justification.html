@@ -1,8 +1,8 @@
 {%- from 'govuk_frontend_jinja/components/textarea/macro.html' import govukTextarea -%}
 
-{% macro justification(justification_form_name) %}
+{% macro justification(justification_form_name, justification_error) %}
 
-<div class="govuk-form-group comments" name="just-text-area" id="just-text-area">
+<div class="govuk-form-group comments {% if justification_error %}govuk-form-group--error{% endif %}" name="just-text-area" id="just-text-area">
     <h2 class="govuk-label-wrapper">
         <label class="govuk-label govuk-label--m">Add rationale for this
             score</label>
@@ -11,7 +11,11 @@
         Explain why you think this score is justified based on the assessment
         criteria
     </div>
-
+    {% if justification_error %}
+    <p id="justification-error" class="govuk-error-message">
+        <span class="govuk-visually-hidden">Error:</span> Please provide rationale for this score
+      </p>
+    {% endif %}
     <textarea class="govuk-textarea" id="justification" name={{justification_form_name}} value=""
         rows="10" aria-describedby="more-detail-hint"></textarea>
 </div>
