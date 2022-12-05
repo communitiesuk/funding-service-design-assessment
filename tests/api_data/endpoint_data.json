@@ -506,5 +506,27 @@
         "funding_amount_requested":"12345",
         "location": "Northern Ireland"
       }
-    ]
+    ],
+    "assessment_store/sub_criteria_overview/1a2b3c4d": {
+      "id": "1a2b3c4d",
+      "name": "Engagement",
+      "score_submitted": "false",
+      "themes": [
+        {
+        "id": "general-information",
+        "name": "General information"
+        },
+        {
+        "id": "activities",
+        "name": "Activities"
+        },
+        {
+        "id": "partnerships",
+        "name": "Partnerships"
+        }
+      ]
+    }
 }
+
+
+

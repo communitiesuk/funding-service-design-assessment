@@ -1,5 +1,5 @@
+import pytest
 from unittest import mock
-
 from config import Config
 
 
@@ -141,3 +141,28 @@ class TestRoutes:
             assert (
                 b"Assessor dashboard</p>" in response.data
             ), "Response does not contain expected heading"
+
+    @pytest.mark.parametrize(
+        "expected_ids, expected_names",
+        [
+            (b"general-information", b"General information"),
+            (b"activities", b"Activities"),
+            (b"partnerships", b"Partnerships"),
+        ],
+    )
+    def test_route_sidebar(
+        self, flask_test_client, expected_ids, expected_names
+    ):
+
+        response = flask_test_client.get(
+            "/assess/sub_criteria/1a2b3c4d/general-information"
+        )
+
+        assert 200 == response.status_code, "Wrong status code on response"
+
+        assert (
+            expected_ids in response.data
+        ), "Response does not contain expected id"
+        assert (
+            expected_names in response.data
+        ), "Response does not contain expected name"
