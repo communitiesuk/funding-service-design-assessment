@@ -8,6 +8,7 @@ from app.assess.forms.scores_and_justifications import JustScoreForm
 from app.assess.models.assessor_task_list import AssessorTaskList
 from app.assess.models.question import Question
 from app.assess.models.question_field import QuestionField
+from app.assess.models.theme import Theme
 from app.assess.models.total_table import TotalMoneyTableView
 from config import Config
 from flask import abort
@@ -35,6 +36,34 @@ def funds():
     funds = get_funds()
 
     return render_template("funds.html", funds=funds)
+
+
+@assess_bp.route("/sub_criteria/<sub_criteria_id>/<theme_id>", methods=["GET"])
+def display_sidebar(sub_criteria_id, theme_id):
+    """
+    Page showing sub criteria and themes
+    """
+    on_summary = True if theme_id == "score" else False
+
+    sub_criteria = get_sub_criteria(sub_criteria_id=sub_criteria_id)
+
+    themes: list[Theme] = [
+        Theme.from_filtered_dict(theme) for theme in sub_criteria.themes
+    ]
+
+    # TODO: would render a higher level page with first theme displaying by default # noqa
+    return render_template(
+        "sidebar.html",
+        sub_criteria=sub_criteria,
+        themes=themes,
+        current_theme_id=theme_id,
+        on_summary=on_summary,
+    )
+
+
+@assess_bp.route("/sub_criteria", methods=["GET"])
+def display_base():
+    None
 
 
 @assess_bp.route("/fragments/structured_question", methods=["GET"])

@@ -9,7 +9,9 @@ import requests
 from app.assess.models.application import Application
 from app.assess.models.fund import Fund
 from app.assess.models.round import Round
+from app.assess.models.sub_criteria import SubCriteria
 from config import Config
+from flask import abort
 from flask import current_app
 
 
@@ -240,6 +242,37 @@ def get_questions(application_id):
     if questions:
         data = {title: status for title, status in questions.items()}
         return data
+
+
+def get_sub_criteria(sub_criteria_id):
+    """_summary_: Function is set up to retrieve
+    the data from assessment store with
+    get_data() function.
+
+    Args:
+        sub_criteria_id: Takes an sub_criteria id.
+
+    Returns:
+      {
+        "sub_criteria_id": "",
+        "sub_criteria_name": "",
+        "score_submitted": "",
+        "themes": []
+    }
+    """
+    sub_criteria_endpoint = (
+        Config.ASSESSMENT_STORE_API_HOST
+        + Config.SUB_CRITERIA_OVERVIEW_ENDPOINT.format(
+            sub_criteria_id=sub_criteria_id
+        )
+    )
+    sub_criteria_response = get_data(sub_criteria_endpoint)
+    if sub_criteria_response and "id" in sub_criteria_response:
+        return SubCriteria.from_filtered_dict(sub_criteria_response)
+    else:
+        msg = f"sub_criteria: '{sub_criteria_id}' not found."
+        current_app.logger.warn(msg)
+        abort(404, description=msg)
 
 
 def get_assessment_config_mapping(
