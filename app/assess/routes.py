@@ -5,10 +5,10 @@ from app.assess.display_value_mappings import assessment_statuses
 from app.assess.display_value_mappings import asset_types
 from app.assess.forms.comments_form import CommentsForm
 from app.assess.forms.scores_and_justifications import JustScoreForm
+from app.assess.models.assessor_task_list import AssessorTaskList
 from app.assess.models.question import Question
-from app.assess.models.sub_criteria import SubCriteria
-from app.assess.models.theme import Theme
 from app.assess.models.question_field import QuestionField
+from app.assess.models.theme import Theme
 from app.assess.models.total_table import TotalMoneyTableView
 from config import Config
 from flask import abort
@@ -51,7 +51,7 @@ def display_sidebar(sub_criteria_id, theme_id):
         Theme.from_filtered_dict(theme) for theme in sub_criteria.themes
     ]
 
-    # TODO: would render a higher level page with first theme displaying by default
+    # TODO: would render a higher level page with first theme displaying by default # noqa
     return render_template(
         "sidebar.html",
         sub_criteria=sub_criteria,
@@ -371,16 +371,21 @@ def application(application_id):
     :return:
     """
 
-    application = get_application_status(application_id=application_id)
-    if not application:
+    assessor_task_list_metadata = get_assessor_task_list_state(application_id)
+    if not assessor_task_list_metadata:
         abort(404)
 
-    fund = get_fund(application.fund_id)
+    # maybe there's a better way to do this?..
+    fund = get_fund(assessor_task_list_metadata["fund_id"])
     if not fund:
         abort(404)
+    assessor_task_list_metadata["fund_name"] = fund.name
+
+    state = AssessorTaskList.from_json(assessor_task_list_metadata)
 
     return render_template(
-        "application.html", application=application, fund=fund
+        "application-section.html",
+        state=state,
     )
 
 
