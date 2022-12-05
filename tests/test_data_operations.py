@@ -14,9 +14,9 @@ class TestDataOperations:
         with self.test_app.app_context():
             params = {
                 "search_term": "",
-                "search_in": "project_name,application_short_id",
-                "asset_type": "all",
-                "status": "all",
+                "search_in": "project_name,short_id",
+                "asset_type": "ALL",
+                "status": "ALL",
             }
             result = get_application_overviews(
                 DefaultConfig.COF_FUND_ID, DefaultConfig.COF_ROUND2_ID, params
@@ -29,9 +29,9 @@ class TestDataOperations:
         with self.test_app.app_context():
             params = {
                 "search_term": "AJTRIB",
-                "search_in": "project_name,application_short_id",
-                "asset_type": "all",
-                "status": "all",
+                "search_in": "project_name,short_id",
+                "asset_type": "ALL",
+                "status": "ALL",
             }
             result = get_application_overviews(
                 DefaultConfig.COF_FUND_ID, DefaultConfig.COF_ROUND2_ID, params
@@ -44,9 +44,9 @@ class TestDataOperations:
         with self.test_app.app_context():
             params = {
                 "search_term": "Save our village",
-                "search_in": "project_name,application_short_id",
-                "asset_type": "all",
-                "status": "all",
+                "search_in": "project_name,short_id",
+                "asset_type": "ALL",
+                "status": "ALL",
             }
             result = get_application_overviews(
                 DefaultConfig.COF_FUND_ID, DefaultConfig.COF_ROUND2_ID, params
@@ -59,9 +59,9 @@ class TestDataOperations:
         with self.test_app.app_context():
             params = {
                 "search_term": "",
-                "search_in": "project_name,application_short_id",
-                "asset_type": "all",
-                "status": "qa-ready",
+                "search_in": "project_name,short_id",
+                "asset_type": "ALL",
+                "status": "QA_READY",
             }
             result = get_application_overviews(
                 DefaultConfig.COF_FUND_ID, DefaultConfig.COF_ROUND2_ID, params
@@ -74,9 +74,9 @@ class TestDataOperations:
         with self.test_app.app_context():
             params = {
                 "search_term": "",
-                "search_in": "project_name,application_short_id",
+                "search_in": "project_name,short_id",
                 "asset_type": "pub",
-                "status": "all",
+                "status": "ALL",
             }
             result = get_application_overviews(
                 DefaultConfig.COF_FUND_ID, DefaultConfig.COF_ROUND2_ID, params
