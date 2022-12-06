@@ -1,12 +1,10 @@
-from datetime import datetime
-
 from app.assess.data import *
 from app.assess.data import get_application_overviews
 from app.assess.data import submit_score_and_justification
 from app.assess.display_value_mappings import assessment_statuses
 from app.assess.display_value_mappings import asset_types
 from app.assess.forms.comments_form import CommentsForm
-from app.assess.forms.scores_and_justifications import JustScoreForm
+from app.assess.forms.scores_and_justifications import ScoreForm
 from app.assess.models.question import Question
 from app.assess.models.question_field import QuestionField
 from app.assess.models.total_table import TotalMoneyTableView
@@ -45,7 +43,7 @@ def funds():
 )
 def application_sub_crit_scoring(application_id: str, sub_criteria_id: str):
     fund = get_fund(Config.COF_FUND_ID)
-    form = JustScoreForm()
+    form = ScoreForm()
 
     score_error, justification_error, scores_submitted = False, False, False
 
@@ -64,18 +62,17 @@ def application_sub_crit_scoring(application_id: str, sub_criteria_id: str):
                 justification=justification,
                 application_id=application_id,
                 user_id=user_id,
-                timestamp=datetime.now().strftime("%Y/%m/%d %H:%M:%S"),
                 sub_criteria_id=sub_criteria_id,
             )
             scores_submitted = True
-            score_error, justification_error = False, False
 
         else:
-            scores_submitted = False
             score_error = True if not form.score.data else False
-            justification_error = True if not form.justification.data else False
+            justification_error = (
+                True if not form.justification.data else False
+            )
 
-    # call to assessment store to get the latest score if request = get
+    # call to assessment store to get latest score
     latest_score = get_score_and_justification(application_id, sub_criteria_id)
     # TODO make COF_score_list extendable to other funds
     COF_score_list = [
@@ -94,8 +91,8 @@ def application_sub_crit_scoring(application_id: str, sub_criteria_id: str):
         application_id=application_id,
         sub_criteria_id=sub_criteria_id,
         COF_score_list=COF_score_list,
-        score_error = score_error,
-        justification_error = justification_error
+        score_error=score_error,
+        justification_error=justification_error,
     )
 
 

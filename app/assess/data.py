@@ -13,18 +13,26 @@ from config import Config
 from flask import current_app
 
 
-def get_data(endpoint: str):
+def get_data(endpoint: str, payload: Dict = None):
     if Config.USE_LOCAL_DATA:
         current_app.logger.info(f"Fetching local data from '{endpoint}'.")
-        data = get_local_data(endpoint)
+        return get_local_data(endpoint)
     else:
-        current_app.logger.info(f"Fetching data from '{endpoint}'.")
-        response = requests.get(endpoint)
-        if response.status_code == 200:
-            data = response.json()
+        if payload:
+            current_app.logger.info(
+                f"Fetching data from '{endpoint}', with payload: {payload}."
+            )
+            response = requests.get(endpoint, payload)
         else:
+            current_app.logger.info(f"Fetching data from '{endpoint}'.")
+            response = requests.get(endpoint)
+        if response.status_code == 200:
+            return response.json()
+        else:
+            current_app.logger.error(
+                f"Could not get data for endpoint '{endpoint}' "
+            )
             return None
-    return data
 
 
 def get_local_data(endpoint: str):
@@ -138,32 +146,28 @@ def get_score_and_justification(application_id, sub_criteria_id):
         "application_id": application_id,
         "sub_criteria_id": sub_criteria_id,
     }
-    response = requests.get(url, params)
-    # current_app.logger.info(
-    #     "Response from Assessment Store:" + response.content
-    # )
-    if response.status_code == 200:
-        return response.json()
-    else:
-        return None
+    response_json = get_data(url, params)
+    current_app.logger.info(
+        f"Response from Assessment Store: '{response_json}'."
+    )
+    return response_json
 
 
 def submit_score_and_justification(
-    score, justification, application_id, user_id, timestamp, sub_criteria_id
+    score, justification, application_id, user_id, sub_criteria_id
 ):
     data_dict = {
         "score": score,
         "justification": justification,
         "user_id": user_id,
-        "timestamp": timestamp,
         "application_id": application_id,
         "sub_criteria_id": sub_criteria_id,
     }
     url = Config.ASSESSMENT_SCORES_ENDPOINT
     response = requests.post(url, json=data_dict)
-    # current_app.logger.info(
-    #     "Response from Assessment Store:" + response.content
-    # )
+    current_app.logger.info(
+        f"Response from Assessment Store: '{response.json}'."
+    )
     if response.status_code == 200:
         return True
     else:
