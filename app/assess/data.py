@@ -164,7 +164,7 @@ def submit_score_and_justification(
     url = Config.ASSESSMENT_SCORES_ENDPOINT
     response = requests.post(url, json=data_dict)
     current_app.logger.info(
-        f"Response from Assessment Store: '{response.json}'."
+        f"Response from Assessment Store: '{response.json()}'."
     )
     if response.status_code == 200:
         return True
