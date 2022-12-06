@@ -3,55 +3,48 @@
 {%- from "govuk_frontend_jinja/components/table/macro.html" import govukTable -%}
 {%  from 'macros/section_element.html' import section_element -%}
 {%  from 'macros/criteria_element.html' import criteria_element -%}
-{% block beforeContent %}{{ govukBackLink({'href': url_for("assess_bp.landing")}) }}{% endblock %}
+{% block beforeContent %}{{ govukBackLink({'href': url_for("assess_bp.landing"), 'text': 'Back to assessment dashboard'}) }}{% endblock %}
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-full">
-            <div class="govuk-grid-column-two-thirds">
-                <h1>
-                    <p class="govuk-body-l govuk-!-margin-bottom-1">
-                        <strong>Fund:</strong> {{ state.fund_name }}
-                    </p>
-                    <p class="govuk-body-l govuk-!-margin-bottom-1">
-                        <strong>Project reference:</strong> {{ state.project_reference }}
-                    </p>
-                    <p class="govuk-body-l govuk-!-margin-bottom-1">
-                        <strong>Project name:</strong> Placeholder {# TODO: Get project name? #}
-                    </p>
-                    <p class="govuk-body-l govuk-!-margin-bottom-1">
-                        <strong>Submitted:</strong> {{ state.date_submitted | slash_separated_day_month_year }}
-                    </p>
-                </h1>
-                <div>
-                    <p class="govuk-body-l govuk-!-margin-top-1 govuk-!-margin-bottom-1">
-                        <strong>Assessment status: <span class="govuk-task-list__status--blue">{{ state.workflow_status | status_to_human }}</span></strong>
-                    </p>
-                    <p class="govuk-body-l">
-                        <strong>Overall total score:</strong> xx out of xx
-                    </p>
+    </div>
+    <div class="fsd-banner-background">
+        <div class="govuk-width-container">
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-full">
+                    <div class="govuk-grid-column-two-thirds">
+                        <h1 class="govuk-heading-xl fsd-banner-content">Fund: {{ state.fund_name }}</h1>
+                        <h2 class="govuk-heading-l fsd-banner-content">Project reference: {{ state.project_reference }}</h2>
+                        <h3 class="govuk-body-l fsd-banner-content fsd-banner-collapse-padding">Project name: {{ state.project_name }}</h3>
+                        <h3 class="govuk-body-l fsd-banner-content">Total funding requested: {{ state.funding_amount_requested }}</h3>
+                        <h3 class="govuk-body-l fsd-banner-content fsd-banner-collapse-padding">{{ state.workflow_status | status_to_human }}</h3>
+                    </div>
                 </div>
-                {% for section in state.sections %}{{ section_element(section.name, section.sub_criterias) }}{% endfor %}
-                <h2 class="govuk-heading-l govuk-!-margin-top-8">Score the application</h2>
-                <p class="govuk-body">
-                    Scored. Your comments and scores save as you go. You can edit until you submit for moderation.
-                </p>
-                <p class="govuk-body">You must assess all the questions in all the subcriteria.</p>
-                {% for criteria in state.criterias %}
-                    {% set name_classes = "govuk-heading-m govuk-!-margin-bottom-2" %}
-                    {% if loop.index > 0 %}
-                        {% set name_classes = "govuk-heading-m govuk-!-margin-bottom-2 govuk-!-margin-top-8" %}
-                    {% endif %}
-                    {{
-                    criteria_element(
-                    criteria.sub_criterias,
-                    criteria.name,
-                    name_classes,
-                    criteria.total_criteria_score,
-                    criteria.total_criteria_score_possible,
-                    criteria.weighting
-                    )
-                    }}
-                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <div class="govuk-width-container">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                <div class="govuk-grid-column-two-thirds">
+                    {% for section in state.sections %}{{ section_element(section.name, section.sub_criterias) }}{% endfor %}
+                    <h2 class="govuk-heading-l govuk-!-margin-top-8">Score the application</h2>
+                    <p class="govuk-body">Assess all responses under each sub criteria.</p>
+                    {% for criteria in state.criterias %}
+                        {% set name_classes = "govuk-heading-m govuk-!-margin-bottom-2" %}
+                        {% if loop.index > 0 %}
+                            {% set name_classes = "govuk-heading-m govuk-!-margin-bottom-2 govuk-!-margin-top-8" %}
+                        {% endif %}
+                        {{
+                        criteria_element(
+                        criteria.sub_criterias,
+                        criteria.name,
+                        name_classes,
+                        criteria.total_criteria_score,
+                        criteria.total_criteria_score_possible,
+                        criteria.weighting
+                        )
+                        }}
+                    {% endfor %}
+                </div>
             </div>
         </div>
     </div>

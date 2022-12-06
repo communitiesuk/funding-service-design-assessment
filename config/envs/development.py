@@ -11,12 +11,12 @@ class DevelopmentConfig(DefaultConfig):
         + "/assessments/{assessment_id}/sub_criterias/{sub_criteria_id}/scores"
     )
 
-    USE_LOCAL_DATA = True
+    USE_LOCAL_DATA = False
     FSD_LOG_LEVEL = logging.INFO
 
-    FUND_STORE_API_HOST = "fund_store"
-    ASSESSMENT_STORE_API_HOST = "assessment_store"
-    APPLICATION_STORE_API_HOST = "application_store"
+    FUND_STORE_API_HOST = "http://fund-store:8080"
+    ASSESSMENT_STORE_API_HOST = "http://assessment-store:8080"
+    APPLICATION_STORE_API_HOST = "http://application-store:8080"
 
     # USE_LOCAL_DATA = False
 

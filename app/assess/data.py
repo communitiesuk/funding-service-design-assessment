@@ -76,13 +76,11 @@ def get_fund(fund_id: str) -> Union[Fund, None]:
         fund_id=fund_id
     )
     response = get_data(endpoint)
-    if len(response) > 0:
-        fund = Fund.from_json(response[0])
-        if "rounds" in response and len(response["rounds"]) > 0:
-            for fund_round in response["rounds"]:
-                fund.add_round(Round.from_json(fund_round))
-        return fund
-    return None
+    fund = Fund.from_json(response)
+    if "rounds" in response and len(response["rounds"]) > 0:
+        for fund_round in response["rounds"]:
+            fund.add_round(Round.from_json(fund_round))
+    return fund
 
 
 def get_rounds(fund_id: str) -> Union[Fund, List]:
@@ -103,6 +101,7 @@ def get_round(fund_id: str, round_id: str) -> Union[Round, None]:
         fund_id=fund_id, round_id=round_id
     )
     round_response = get_data(round_endpoint)
+    current_app.logger.info(round_response)
     if round_response and "assessment_deadline" in round_response:
         round_dict = Round.from_dict(round_response)
         return round_dict
