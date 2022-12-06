@@ -1,28 +1,26 @@
 {% extends "base.html" %}
-{% from "macros/sub_criteria_sidebar.html" import sidebar %}
+{% from "macros/sub_criteria_navbar.html" import navbar %}
 
 {% block content %}
 
 
 <div class="govuk-width-container ">
-
     <div class="govuk-grid-row">
         <a href="../assessment-overview.html" class="govuk-back-link">Back to <span
-                class="govuk-!-font-weight-bold">assessment overview</span></a>
+                class="govuk-!-font-weight-bold">assessment overview</span>
+        </a>
     </div>
 
-    <div class="govuk-grid-row s26-headline-container">
+    <div class="govuk-grid-row">
         <div class="s26-headline-info">
             <div class="s26-heading-container">
                 <p class="govuk-heading-l">Fund: <span>Community Ownership Fund</span></p>
                 <p class="govuk-heading-l">Project reference: <span>LKMBNS</span></p>
             </div>
-
             <p class="govuk-body-l">Project name: <span>Save the White Swan, Dursley</span></p>
             <p class="govuk-body-l">Total funding requested: <span>£98,400</span></p>
         </div>
     </div>
-
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-one-third">
@@ -30,56 +28,57 @@
         </div>
     </div>
 
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <div class="govuk-grid-column-one-third">
+                {{ navbar(sub_criteria,themes) }}
+            </div>
+            <div class="govuk-grid-column-two-thirds">
+        <h2 class="govuk-heading-m">Community engagement</h2>
+        <h3 class="govuk-heading-s s26-response-title">Applicant's response</h3>
+        <div class="s26-template-answer">
+            <h2 class="govuk-heading-s"><strong>Tell us how you have engaged with the community about your intention to take ownership of the asset, and explain how this has shaped your project plans</strong></h2>
 
-  <div class="govuk-grid-column-full">
+            <p class="govuk-body">An online open meeting for local residents was held via the meeting platform Teams on 21st April
+                2021, where the Secretary set out the group’s aims and the ultimate goal of securing the future of
+                The White Horse through community purchase.
+                It was at this meeting that a proposed
+                framework and action plan (including the offering of community shares and bid to the
+                government’s Community Ownership Fund) was presented and discussed. This meeting was
+                followed by a two-week initial consultation period, when community members were issued with a
+                consultation questionnaire in order to gauge the community’s appetite for community ownership
+                of the pub, including interest in purchasing community shares. Members of the community were
+                asked if (and why) the pub was important to them, their views on community ownership of the
+                pub, and what services they would like to see made available.
+                The consultation responses also demonstrated that many households and individuals in the village
+                and surrounding areas are genuinely interested in investing in the pub. The opportunity to ‘pledge
+                in principle’ for community shares received an extremely positive response and resulted in pledges
+                totaling a value of over £150,000.
+            </p>
 
-    <div class="govuk-grid-column-one-third">
-        {{ sidebar(sub_criteria,themes) }}
-    </div>
+            <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+                Have you done any fundraising in the community?
+            </dt>
+            <dd class="govuk-summary-list__value">
+                Yes
+            </dd>
+            </div>
+            </dl>
+            <h2 class="govuk-heading-s"><strong>Describe your fundraising activities</strong></h2>
 
-    <div class="govuk-grid-column-two-thirds s26-question">
-      <h2 class="govuk-heading-m">Community engagement</h2>
-      <h3 class="govuk-heading-s s26-response-title">Applicant's response</h3>
-      <div class="s26-template-answer">
-        <p><strong>Tell us how you have engaged with the community about your intention to take ownership of the asset, and explain how this has shaped your project plans</strong></p>
+            <p class="govuk-body">Our funding will come from a number of sources, a community share offer will look to raise
+            £230,000 (this is achievable given the experience of other similar size and position community
+            pubs). Additional match funding (£230,000) will be applied for through the Community Ownership
+            Fund (COF). Other grants, donations and fundraising will be also sought.</p>
 
-        <p>An online open meeting for local residents was held via the meeting platform Teams on 21st April
-            2021, where the Secretary set out the group’s aims and the ultimate goal of securing the future of
-            The White Horse through community purchase.
-            It was at this meeting that a proposed
-            framework and action plan (including the offering of community shares and bid to the
-            government’s Community Ownership Fund) was presented and discussed. This meeting was
-            followed by a two-week initial consultation period, when community members were issued with a
-            consultation questionnaire in order to gauge the community’s appetite for community ownership
-            of the pub, including interest in purchasing community shares. Members of the community were
-            asked if (and why) the pub was important to them, their views on community ownership of the
-            pub, and what services they would like to see made available.
-            The consultation responses also demonstrated that many households and individuals in the village
-            and surrounding areas are genuinely interested in investing in the pub. The opportunity to ‘pledge
-            in principle’ for community shares received an extremely positive response and resulted in pledges
-            totaling a value of over £150,000.
-        </p>
-
-        <dl class="govuk-summary-list">
-        <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">
-            Have you done any fundraising in the community?
-        </dt>
-        <dd class="govuk-summary-list__value">
-            Yes
-        </dd>
         </div>
-        </dl>
-        <p><strong>Describe your fundraising activities</strong></p>
 
-        <p>Our funding will come from a number of sources, a community share offer will look to raise
-        £230,000 (this is achievable given the experience of other similar size and position community
-        pubs). Additional match funding (£230,000) will be applied for through the Community Ownership
-        Fund (COF). Other grants, donations and fundraising will be also sought.</p>
+        
+            </div>
+        </div>
+    </div>
+</div>
 
-      </div>
-
-      
-
-
-    {% endblock %}
+{% endblock %}

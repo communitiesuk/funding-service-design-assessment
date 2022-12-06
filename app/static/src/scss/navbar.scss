@@ -1,0 +1,19 @@
+.assessment-navigation {
+    margin-top: 8px;
+    border-top: 3px solid $govuk-link-colour;
+    ul:first-of-type {
+      margin-top: 20px;
+    }
+    ul:last-of-type {
+        border-top: 2px  $govuk-border-colour solid;
+        padding-top: 20px;
+    }
+    li:first-of-type {
+        margin-top: 20px;
+      }
+      li:last-of-type {
+          border-top: 2px  $govuk-border-colour solid;
+          padding-top: 20px;
+      }
+  }
+  
