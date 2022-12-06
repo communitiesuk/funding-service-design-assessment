@@ -53,7 +53,7 @@ def display_sidebar(sub_criteria_id, theme_id):
 
     # TODO: would render a higher level page with first theme displaying by default # noqa
     return render_template(
-        "sidebar.html",
+        "sub_criteria.html",
         sub_criteria=sub_criteria,
         themes=themes,
         current_theme_id=theme_id,
