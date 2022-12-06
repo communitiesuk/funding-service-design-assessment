@@ -1,0 +1,105 @@
+{% from "macros/scores_justification.html" import scores_justification %}
+{%- from "govuk_frontend_jinja/components/button/macro.html" import govukButton -%}
+{%- from "govuk_frontend_jinja/components/notification-banner/macro.html" import govukNotificationBanner -%}
+{% extends "base.html" %}
+
+{%block content%}
+<div class="govuk-width-container ">
+
+    <div class="govuk-phase-banner">
+        <p class="govuk-phase-banner__content">
+            <strong class="govuk-tag govuk-phase-banner__content__tag">
+                prototype
+            </strong>
+            <span class="govuk-phase-banner__text">
+                This is not a live service. This is a service currently being designed.
+            </span>
+        </p>
+    </div>
+
+    <p class="sign-out govuk-!-text-align-right govuk-!-margin-top-3 govuk-!-margin-bottom-3"><a href="#"
+            class="govuk-link govuk-link--no-underline">Sign out</a></p>
+
+    <div class="govuk-grid-row s26-headline-container">
+        <div class="s26-headline-info">
+            <div>
+                <h1 class="govuk-heading-l">Fund: <span>{{ fund['name'] }}</span></h1>
+                <h1 class="govuk-heading-l">Project reference: <span>LKMBNS</span></h1>
+            </div>
+
+            <p class="govuk-body-l">Project name: <span>Save the White Swan, Dursley</span></p>
+            <p class="govuk-body-l">Total funding requested: <span>£98,400</span></p>
+            <p class="govuk-body-l">Submitted: <span>11/06/22</span></p>
+        </div>
+    </div>
+
+    <div class="govuk-grid-row">
+
+        <div class="s26-content-container">
+
+
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-one-third">
+                    <a href="#" class="govuk-back-link">Back to <span class="govuk-!-font-weight-bold">assessment
+                            overview</span></a>
+                    <h1 class="govuk-heading-l scoring-heading">Score engagement</h1>
+
+                </div>
+            </div>
+
+            <div class="govuk-grid-column-full">
+
+                <div class="govuk-grid-column-one-third">
+
+                    <nav class="assessment-navigation">
+                        <ul class="govuk-list">
+                            <li><a class="govuk-link--no-visited-state"
+                                    href="/s26-assessment/commenting/community-engagement">Community
+                                    engagement</a></li>
+                            <li><a class="govuk-link--no-visited-state"
+                                    href="/s26-assessment/commenting/local-support">Local support</a></li>
+                        </ul>
+
+                        <ul class="govuk-list">
+                            <li>Score the subcriteria</li>
+                        </ul>
+                    </nav>
+                </div>
+
+{{scores_justification(scores_submitted, form, latest_score, application_id, sub_criteria_id, COF_score_list, score_error, justification_error)}}
+
+                    <h2 class="govuk-heading govuk-heading-l" id="comments-heading">Comments</h2>
+                    <section class="comment-section">
+                        <h3 class="govuk-heading-m">Community engagement</h3>
+
+                        <p class="govuk-body-s">There are currently no comments&nbsp;for this section.
+                            {# <a href="#" class="govuk-link govuk-link--no-visited-state">Add a comment</a> #}
+                        </p>
+
+                    </section>
+                    <section class="comment-section">
+                        <h3 class="govuk-heading-m">Local support</h3>
+
+                        <p class="govuk-body-s">There are currently no comments&nbsp;for this section.
+                            {# <a href="#" class="govuk-link govuk-link--no-visited-state">Add a comment</a> #}
+                        </p>
+
+                    </section>
+
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+</body>
+
+
+{% endblock %}

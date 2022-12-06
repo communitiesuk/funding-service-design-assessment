@@ -1,9 +1,10 @@
 from flask_wtf import FlaskForm
-from wtforms import RadioField, TextAreaField
-from wtforms.validators import AnyOf, DataRequired
+from wtforms import RadioField
+from wtforms import TextAreaField
+from wtforms.validators import DataRequired
 
 
-class JustScoreForm(FlaskForm):
+class ScoreForm(FlaskForm):
     """
     Given class is a form class model for search fund
     """
