@@ -10,3 +10,4 @@ def copy_styles(c):
     dist_path = "./app/static/dist/styles/"
 
     shutil.copytree(source_path, dist_path, dirs_exist_ok=True)
+    print("Copied styles from " + source_path + " to " + dist_path)

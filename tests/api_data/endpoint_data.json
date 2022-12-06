@@ -93,7 +93,7 @@
       }
     ]
   },
-  "fund_store/funds/funding-service-design/rounds/summer":{
+  "fund_store/funds/funding-service-design/rounds/summer": {
     "fund_id": "funding-service-design",
     "title": "Summer",
     "id": "summer",
@@ -133,7 +133,6 @@
       }
     ]
   },
-
   "application_store/applications/123123123-123123123/status": {
     "fund_id": "47aef2f5-3fcb-4d45-acb5-f0152b5f03c4",
     "round_id": "c603d114-5364-4474-a0c4-c41cbf4d3bbd",
@@ -341,170 +340,333 @@
       "paymentSkipped": false
     }
   },
-
-
-
-  "assessment_store/application_overviews/47aef2f5-3fcb-4d45-acb5-f0152b5f03c4/c603d114-5364-4474-a0c4-c41cbf4d3bbd?search_term=&search_in=project_name%2Capplication_short_id&asset_type=all&status=all": [
+  "assessment_store/application_overviews/47aef2f5-3fcb-4d45-acb5-f0152b5f03c4/c603d114-5364-4474-a0c4-c41cbf4d3bbd?search_term=&search_in=project_name%2Cshort_id&asset_type=ALL&status=ALL": [
     {
-      "application_short_id": "COF-R2W2-IRNWPB",
+      "short_id": "COF-R2W2-IRNWPB",
       "workflow_status": "in-progress",
-      "application_id":"123123123-123123123",
-      "type_of_application":"pub",
-      "project_name":"Save the Dog and Duck",
-      "funding_amount_requested":"10000",
+      "application_id": "123123123-123123123",
+      "type_of_application": "pub",
+      "project_name": "Save the Dog and Duck",
+      "funding_amount_requested": "10000",
       "location": "Wales"
     },
     {
-      "application_short_id": "COF-R2W2-AJTRIB",
+      "short_id": "COF-R2W2-AJTRIB",
       "workflow_status": "qa-ready",
-      "application_id":"234234234-123123123",
-      "type_of_application":"sporting",
-      "project_name":"Save the rugby pitch",
-      "funding_amount_requested":"25000",
+      "application_id": "234234234-123123123",
+      "type_of_application": "sporting",
+      "project_name": "Save the rugby pitch",
+      "funding_amount_requested": "25000",
       "location": "Scotland"
     },
     {
-      "application_short_id": "COF-R2W2-BMEQLK",
+      "short_id": "COF-R2W2-BMEQLK",
       "workflow_status": "not-started",
-      "application_id":"789789789-879789",
-      "type_of_application":"community-centre",
-      "project_name":"Save our village hall",
-      "funding_amount_requested":"12345",
+      "application_id": "789789789-879789",
+      "type_of_application": "community-centre",
+      "project_name": "Save our village hall",
+      "funding_amount_requested": "12345",
       "location": "Northern Ireland"
     }
   ],
   "fund_store/funds/47aef2f5-3fcb-4d45-acb5-f0152b5f03c4": [
-      {
-        "description": "The Community Ownership Fund is a £150 million fund over 4 years to support community groups across England, Wales, Scotland and Northern Ireland to take ownership of assets which are at risk of being lost to the community.",
-        "id": "47aef2f5-3fcb-4d45-acb5-f0152b5f03c4",
-        "name": "Community Ownership Fund",
-        "short_name": "COF"
-      }
-  ],
-  "fund_store/funds/47aef2f5-3fcb-4d45-acb5-f0152b5f03c4/rounds/c603d114-5364-4474-a0c4-c41cbf4d3bbd":
     {
-      "assessment_criteria_weighting": [
-        {
-          "id": "e2fd30d2-9207-421c-b8b3-c961bcee138b",
-          "name": "Strategic case",
-          "value": 0.3
-        },
-        {
-          "id": "e557773a-74c9-43ee-a52c-88ccae279d08",
-          "name": "Management case",
-          "value": 0.3
-        },
-        {
-          "id": "9e282cdb-6c42-4430-9563-dc4995b59bdd",
-          "name": "Potential to delivery community benefits",
-          "value": 0.3
-        },
-        {
-          "id": "6020db6c-df67-4932-a2f3-2e9dd1934164",
-          "name": "Added value to the community",
-          "value": 0.1
-        }
-      ],
-      "assessment_deadline": "2023-03-30 12:00:00",
-      "contact_details": {
-        "email_address": "COF@levellingup.gov.uk",
-        "phone": "",
-        "text_phone": ""
+      "description": "The Community Ownership Fund is a £150 million fund over 4 years to support community groups across England, Wales, Scotland and Northern Ireland to take ownership of assets which are at risk of being lost to the community.",
+      "id": "47aef2f5-3fcb-4d45-acb5-f0152b5f03c4",
+      "name": "Community Ownership Fund",
+      "short_name": "COF"
+    }
+  ],
+  "fund_store/funds/47aef2f5-3fcb-4d45-acb5-f0152b5f03c4/rounds/c603d114-5364-4474-a0c4-c41cbf4d3bbd": {
+    "assessment_criteria_weighting": [
+      {
+        "id": "e2fd30d2-9207-421c-b8b3-c961bcee138b",
+        "name": "Strategic case",
+        "value": 0.3
       },
-      "deadline": "2022-12-14 11:59:00",
-      "fund_id": "47aef2f5-3fcb-4d45-acb5-f0152b5f03c4",
-      "id": "c603d114-5364-4474-a0c4-c41cbf4d3bbd",
-      "opens": "2022-10-04 12:00:00",
-      "short_name": "R2W2",
-      "support_availability": {
-        "closed": "Easter Sunday, Christmas Day, Boxing Day and New Year’s Day",
-        "days": "Monday to Friday",
-        "time": "9am to 5pm"
+      {
+        "id": "e557773a-74c9-43ee-a52c-88ccae279d08",
+        "name": "Management case",
+        "value": 0.3
       },
-      "title": "Round 2 Window 2",
-
-      "eligibility_criteria": {
-        "maximum_project_cost": 1000000
+      {
+        "id": "9e282cdb-6c42-4430-9563-dc4995b59bdd",
+        "name": "Potential to delivery community benefits",
+        "value": 0.3
+      },
+      {
+        "id": "6020db6c-df67-4932-a2f3-2e9dd1934164",
+        "name": "Added value to the community",
+        "value": 0.1
       }
+    ],
+    "assessment_deadline": "2023-03-30 12:00:00",
+    "contact_details": {
+      "email_address": "COF@levellingup.gov.uk",
+      "phone": "",
+      "text_phone": ""
     },
-    "assessment_store/application_overviews/47aef2f5-3fcb-4d45-acb5-f0152b5f03c4/c603d114-5364-4474-a0c4-c41cbf4d3bbd?search_term=AJTRIB&search_in=project_name%2Capplication_short_id&asset_type=all&status=all": [
+    "deadline": "2022-12-14 11:59:00",
+    "fund_id": "47aef2f5-3fcb-4d45-acb5-f0152b5f03c4",
+    "id": "c603d114-5364-4474-a0c4-c41cbf4d3bbd",
+    "opens": "2022-10-04 12:00:00",
+    "short_name": "R2W2",
+    "support_availability": {
+      "closed": "Easter Sunday, Christmas Day, Boxing Day and New Year’s Day",
+      "days": "Monday to Friday",
+      "time": "9am to 5pm"
+    },
+    "title": "Round 2 Window 2",
+    "eligibility_criteria": {
+      "maximum_project_cost": 1000000
+    }
+  },
+  "assessment_store/application_overviews/47aef2f5-3fcb-4d45-acb5-f0152b5f03c4/c603d114-5364-4474-a0c4-c41cbf4d3bbd?search_term=AJTRIB&search_in=project_name%2Cshort_id&asset_type=ALL&status=ALL": [
+    {
+      "short_id": "COF-R2W2-AJTRIB",
+      "workflow_status": "qa-ready",
+      "application_id": "234234234-123123123",
+      "type_of_application": "sporting",
+      "project_name": "Save the rugby pitch",
+      "funding_amount_requested": "25000",
+      "location": "Scotland"
+    }
+  ],
+  "assessment_store/application_overviews/47aef2f5-3fcb-4d45-acb5-f0152b5f03c4/c603d114-5364-4474-a0c4-c41cbf4d3bbd?search_term=Save+our+village&search_in=project_name%2Cshort_id&asset_type=ALL&status=ALL": [
+    {
+      "short_id": "COF-R2W2-BMEQLK",
+      "workflow_status": "not-started",
+      "application_id": "789789789-879789",
+      "type_of_application": "community-centre",
+      "project_name": "Save our village hall",
+      "funding_amount_requested": "12345",
+      "location": "Northern Ireland"
+    }
+  ],
+  "assessment_store/application_overviews/47aef2f5-3fcb-4d45-acb5-f0152b5f03c4/c603d114-5364-4474-a0c4-c41cbf4d3bbd?search_term=&search_in=project_name%2Cshort_id&asset_type=ALL&status=QA_READY": [
+    {
+      "short_id": "COF-R2W2-AJTRIB",
+      "workflow_status": "qa-ready",
+      "application_id": "234234234-123123123",
+      "type_of_application": "sporting",
+      "project_name": "Save the rugby pitch",
+      "funding_amount_requested": "25000",
+      "location": "Scotland"
+    }
+  ],
+  "assessment_store/application_overviews/47aef2f5-3fcb-4d45-acb5-f0152b5f03c4/c603d114-5364-4474-a0c4-c41cbf4d3bbd?search_term=&search_in=project_name%2Cshort_id&asset_type=pub&status=ALL": [
+    {
+      "short_id": "COF-R2W2-IRNWPB",
+      "workflow_status": "in-progress",
+      "application_id": "123123123-123123123",
+      "type_of_application": "pub",
+      "project_name": "Save the Dog and Duck",
+      "funding_amount_requested": "10000",
+      "location": "Wales"
+    }
+  ],
+  "assessment_store/application_overviews/47aef2f5-3fcb-4d45-acb5-f0152b5f03c4/c603d114-5364-4474-a0c4-c41cbf4d3bbd?search_term=&search_in=project_name%2Cshort_id&asset_type=sporting&status=ALL": [
+    {
+      "short_id": "COF-R2W2-AJTRIB",
+      "workflow_status": "qa-ready",
+      "application_id": "234234234-123123123",
+      "type_of_application": "sporting",
+      "project_name": "Save the rugby pitch",
+      "funding_amount_requested": "25000",
+      "location": "Scotland"
+    }
+  ],
+  "assessment_store/application_overviews/47aef2f5-3fcb-4d45-acb5-f0152b5f03c4/c603d114-5364-4474-a0c4-c41cbf4d3bbd?search_term=&search_in=project_name%2Cshort_id&asset_type=ALL&status=IN_PROGRESS": [
+    {
+      "short_id": "COF-R2W2-IRNWPB",
+      "workflow_status": "in-progress",
+      "application_id": "123123123-123123123",
+      "type_of_application": "pub",
+      "project_name": "Save the Dog and Duck",
+      "funding_amount_requested": "10000",
+      "location": "Wales"
+    }
+  ],
+  "assessment_store/application_overviews/47aef2f5-3fcb-4d45-acb5-f0152b5f03c4/c603d114-5364-4474-a0c4-c41cbf4d3bbd?search_term=&search_in=project_name%2Cshort_id&asset_type=community-centre&status=NOT_STARTED": [
+    {
+      "short_id": "COF-R2W2-BMEQLK",
+      "workflow_status": "not-started",
+      "application_id": "789789789-879789",
+      "type_of_application": "community-centre",
+      "project_name": "Save our village hall",
+      "funding_amount_requested": "12345",
+      "location": "Northern Ireland"
+    }
+  ],
+  "assessment_store/sub_criteria_overview/1a2b3c4d": {
+    "id": "1a2b3c4d",
+    "name": "Engagement",
+    "score_submitted": "false",
+    "themes": [
       {
-        "application_short_id": "COF-R2W2-AJTRIB",
-        "workflow_status": "qa-ready",
-        "application_id":"234234234-123123123",
-        "type_of_application":"sporting",
-        "project_name":"Save the rugby pitch",
-        "funding_amount_requested":"25000",
-        "location": "Scotland"
-      }
-    ],
-    "assessment_store/application_overviews/47aef2f5-3fcb-4d45-acb5-f0152b5f03c4/c603d114-5364-4474-a0c4-c41cbf4d3bbd?search_term=Save+our+village&search_in=project_name%2Capplication_short_id&asset_type=all&status=all": [
+        "id": "general-information",
+        "name": "General information"
+      },
       {
-        "application_short_id": "COF-R2W2-BMEQLK",
-        "workflow_status": "not-started",
-        "application_id":"789789789-879789",
-        "type_of_application":"community-centre",
-        "project_name":"Save our village hall",
-        "funding_amount_requested":"12345",
-        "location": "Northern Ireland"
-      }
-    ],
-    "assessment_store/application_overviews/47aef2f5-3fcb-4d45-acb5-f0152b5f03c4/c603d114-5364-4474-a0c4-c41cbf4d3bbd?search_term=&search_in=project_name%2Capplication_short_id&asset_type=all&status=qa-ready":
-    [
-        {
-          "application_short_id": "COF-R2W2-AJTRIB",
-          "workflow_status": "qa-ready",
-          "application_id":"234234234-123123123",
-          "type_of_application":"sporting",
-          "project_name":"Save the rugby pitch",
-          "funding_amount_requested":"25000",
-          "location": "Scotland"
-        }
-    ],
-    "assessment_store/application_overviews/47aef2f5-3fcb-4d45-acb5-f0152b5f03c4/c603d114-5364-4474-a0c4-c41cbf4d3bbd?search_term=&search_in=project_name%2Capplication_short_id&asset_type=pub&status=all":
-    [
-        {
-          "application_short_id": "COF-R2W2-IRNWPB",
-          "workflow_status": "in-progress",
-          "application_id":"123123123-123123123",
-          "type_of_application":"pub",
-          "project_name":"Save the Dog and Duck",
-          "funding_amount_requested":"10000",
-          "location": "Wales"
-        }
-    ],
-    "assessment_store/application_overviews/47aef2f5-3fcb-4d45-acb5-f0152b5f03c4/c603d114-5364-4474-a0c4-c41cbf4d3bbd?search_term=&search_in=project_name%2Capplication_short_id&asset_type=sporting&status=all":
-    [
-        {
-          "application_short_id": "COF-R2W2-AJTRIB",
-          "workflow_status": "qa-ready",
-          "application_id":"234234234-123123123",
-          "type_of_application":"sporting",
-          "project_name":"Save the rugby pitch",
-          "funding_amount_requested":"25000",
-          "location": "Scotland"
-        }
-    ],
-    "assessment_store/application_overviews/47aef2f5-3fcb-4d45-acb5-f0152b5f03c4/c603d114-5364-4474-a0c4-c41cbf4d3bbd?search_term=&search_in=project_name%2Capplication_short_id&asset_type=all&status=in-progress": [
+        "id": "activities",
+        "name": "Activities"
+      },
       {
-        "application_short_id": "COF-R2W2-IRNWPB",
-        "workflow_status": "in-progress",
-        "application_id":"123123123-123123123",
-        "type_of_application":"pub",
-        "project_name":"Save the Dog and Duck",
-        "funding_amount_requested":"10000",
-        "location": "Wales"
-      }
-    ],
-    "assessment_store/application_overviews/47aef2f5-3fcb-4d45-acb5-f0152b5f03c4/c603d114-5364-4474-a0c4-c41cbf4d3bbd?search_term=&search_in=project_name%2Capplication_short_id&asset_type=community-centre&status=not-started": [
-      {
-        "application_short_id": "COF-R2W2-BMEQLK",
-        "workflow_status": "not-started",
-        "application_id":"789789789-879789",
-        "type_of_application":"community-centre",
-        "project_name":"Save our village hall",
-        "funding_amount_requested":"12345",
-        "location": "Northern Ireland"
+        "id": "partnerships",
+        "name": "Partnerships"
       }
     ]
+  },
+  "assessment_store/application_overviews/123123123-123123123": {
+    "criterias": [
+      {
+        "name": "Strategic case",
+        "sub_criterias": [
+          {
+            "id": "benefits",
+            "name": "Benefits",
+            "score": -1,
+            "status": "Not started",
+            "theme_count": 2
+          },
+          {
+            "id": "engagement",
+            "name": "Engagement",
+            "score": -1,
+            "status": "Not started",
+            "theme_count": 2
+          },
+          {
+            "id": "environmental_sustainability",
+            "name": "Environmental Sustainability",
+            "score": -1,
+            "status": "Not started",
+            "theme_count": 1
+          }
+        ],
+        "total_criteria_score": -1,
+        "total_criteria_score_possible": -1,
+        "weighting": 0.3
+      },
+      {
+        "name": "Management case",
+        "sub_criterias": [
+          {
+            "id": "funding_breakdown",
+            "name": "Funding breakdown",
+            "score": -1,
+            "status": "Not started",
+            "theme_count": 1
+          },
+          {
+            "id": "financial_and_risk_forecasts",
+            "name": "Financial and risk forecasts",
+            "score": -1,
+            "status": "Not started",
+            "theme_count": 3
+          },
+          {
+            "id": "skills_and_resources",
+            "name": "Skills and resources",
+            "score": -1,
+            "status": "Not started",
+            "theme_count": 3
+          },
+          {
+            "id": "representation_inclusiveness_and_integration",
+            "name": "Representation, inclusiveness and integration",
+            "score": -1,
+            "status": "Not started",
+            "theme_count": 2
+          },
+          {
+            "id": "business_plan",
+            "name": "Business plan",
+            "score": -1,
+            "status": "Not started",
+            "theme_count": 1
+          }
+        ],
+        "total_criteria_score": -1,
+        "total_criteria_score_possible": -1,
+        "weighting": 0.3
+      },
+      {
+        "name": "Potential to deliver community benefit",
+        "sub_criterias": [
+          {
+            "id": "community-benefits",
+            "name": "How the community benefits\t",
+            "score": -1,
+            "status": "Not started",
+            "theme_count": 2
+          }
+        ],
+        "total_criteria_score": -1,
+        "total_criteria_score_possible": -1,
+        "weighting": 0.3
+      },
+      {
+        "name": "Added value of the community asset",
+        "sub_criterias": [
+          {
+            "id": "value-to-the-community",
+            "name": "Value to the community",
+            "score": -1,
+            "status": "Not started",
+            "theme_count": 1
+          }
+        ],
+        "total_criteria_score": -1,
+        "total_criteria_score_possible": -1,
+        "weighting": 0.1
+      }
+    ],
+    "date_submitted": "2022-10-27T08:32:13.383999",
+    "fund_id": "47aef2f5-3fcb-4d45-acb5-f0152b5f03c4",
+    "project_name": "Restore the vintage community centre in Hereford",
+    "project_reference": "COF-R2W2-AWDZQF",
+    "sections": [
+      {
+        "name": "Organisation information",
+        "sub_criterias": [
+          {
+            "id": "org_info",
+            "name": "Organisation information"
+          },
+          {
+            "id": "applicant_info",
+            "name": "Applicant information"
+          }
+        ]
+      },
+      {
+        "name": "Project information",
+        "sub_criterias": [
+          {
+            "id": "project_info",
+            "name": "Project information"
+          },
+          {
+            "id": "asset_info",
+            "name": "Asset information"
+          }
+        ]
+      },
+      {
+        "name": "Check declarations",
+        "sub_criterias": [
+          {
+            "id": "declarations",
+            "name": "Declarations"
+          },
+          {
+            "id": "subsidy_control_and_state_aid",
+            "name": "Subsidy control and state aid"
+          }
+        ]
+      }
+    ],
+    "workflow_status": "NOT_STARTED"
+  }
 }

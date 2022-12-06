@@ -9,12 +9,18 @@ import requests
 from app.assess.models.application import Application
 from app.assess.models.fund import Fund
 from app.assess.models.round import Round
+from app.assess.models.sub_criteria import SubCriteria
 from config import Config
+from flask import abort
 from flask import current_app
 
 
-def get_data(endpoint: str, payload: Dict = None):
-    if Config.USE_LOCAL_DATA:
+def get_data(
+    endpoint: str,
+    use_local_data: bool = Config.USE_LOCAL_DATA,
+    payload: Dict = None,
+):
+    if use_local_data:
         current_app.logger.info(f"Fetching local data from '{endpoint}'.")
         return get_local_data(endpoint)
     else:
@@ -46,7 +52,7 @@ def get_local_data(endpoint: str):
         return api_data.get(endpoint)
 
 
-def call_search_applications(params: dict):
+def call_search_applications(params: dict | str):
     applications_endpoint = (
         Config.APPLICATION_STORE_API_HOST
         + Config.APPLICATION_SEARCH_ENDPOINT.format(params=urlencode(params))
@@ -58,7 +64,7 @@ def call_search_applications(params: dict):
 def get_application_overviews(fund_id, round_id, search_params):
     overviews_endpoint = (
         Config.ASSESSMENT_STORE_API_HOST
-    ) + Config.APPLICATION_OVERVIEW_ENDPOINT.format(
+    ) + Config.APPLICATION_OVERVIEW_ENDPOINT_FUND_ROUND_PARAMS.format(
         fund_id=fund_id, round_id=round_id, params=urlencode(search_params)
     )
 
@@ -112,8 +118,8 @@ def get_round(fund_id: str, round_id: str) -> Union[Round, None]:
     )
     round_response = get_data(round_endpoint)
     if round_response and "assessment_deadline" in round_response:
-        round = Round.from_dict(round_response)
-        return round
+        round_dict = Round.from_dict(round_response)
+        return round_dict
     return None
 
 
@@ -230,20 +236,16 @@ def get_application(identifier: str) -> Union[Application, None]:
     return None
 
 
-def get_application_status(application_id: str) -> Union[Application, None]:
-    application_status_endpoint = (
-        Config.APPLICATION_STORE_API_HOST
-        + Config.APPLICATION_STATUS_ENDPOINT.format(
-            application_id=application_id
-        )
+def get_assessor_task_list_state(application_id: str) -> Union[dict, None]:
+    overviews_endpoint = (
+        Config.ASSESSMENT_STORE_API_HOST
+    ) + Config.APPLICATION_OVERVIEW_ENDPOINT_APPLICATION_ID.format(
+        application_id=application_id
     )
-    current_app.logger.debug(application_status_endpoint)
-    application_status_response = get_data(application_status_endpoint)
-    if application_status_response and "id" in application_status_response:
-        application = Application.from_json(application_status_response)
 
-        return application
-    return None
+    metadata = get_data(overviews_endpoint)
+
+    return metadata
 
 
 def get_questions(application_id):
@@ -268,3 +270,51 @@ def get_questions(application_id):
     if questions:
         data = {title: status for title, status in questions.items()}
         return data
+
+
+def get_sub_criteria(sub_criteria_id):
+    """_summary_: Function is set up to retrieve
+    the data from assessment store with
+    get_data() function.
+
+    Args:
+        sub_criteria_id: Takes an sub_criteria id.
+
+    Returns:
+      {
+        "sub_criteria_id": "",
+        "sub_criteria_name": "",
+        "score_submitted": "",
+        "themes": []
+    }
+    """
+    sub_criteria_endpoint = (
+        Config.ASSESSMENT_STORE_API_HOST
+        + Config.SUB_CRITERIA_OVERVIEW_ENDPOINT.format(
+            sub_criteria_id=sub_criteria_id
+        )
+    )
+    sub_criteria_response = get_data(sub_criteria_endpoint)
+    if sub_criteria_response and "id" in sub_criteria_response:
+        return SubCriteria.from_filtered_dict(sub_criteria_response)
+    else:
+        msg = f"sub_criteria: '{sub_criteria_id}' not found."
+        current_app.logger.warn(msg)
+        abort(404, description=msg)
+
+
+def get_assessment_config_mapping(
+    fund_id: str, round_id: str
+) -> Union[Dict, None]:
+    assessment_mapping_endpoint = (
+        Config.ASSESSMENT_MAPPING_CONFIG_ENDPOINT.format(
+            fund_id=fund_id, round_id=round_id
+        )
+    )
+    current_app.logger.info(assessment_mapping_endpoint)
+    assessment_mapping_response = get_data(
+        assessment_mapping_endpoint, use_local_data=False
+    )
+    if assessment_mapping_response:
+        return assessment_mapping_response
+    return None

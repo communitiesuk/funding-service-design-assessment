@@ -4,6 +4,5 @@ from wtforms.validators import length
 
 
 class CommentsForm(FlaskForm):
-    
-        comment = TextAreaField("Comment",validators = [length(max=200)])
-        
+
+    comment = TextAreaField("Comment", validators=[length(max=10000)])

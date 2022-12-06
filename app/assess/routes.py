@@ -5,8 +5,10 @@ from app.assess.display_value_mappings import assessment_statuses
 from app.assess.display_value_mappings import asset_types
 from app.assess.forms.comments_form import CommentsForm
 from app.assess.forms.scores_and_justifications import ScoreForm
+from app.assess.models.assessor_task_list import AssessorTaskList
 from app.assess.models.question import Question
 from app.assess.models.question_field import QuestionField
+from app.assess.models.theme import Theme
 from app.assess.models.total_table import TotalMoneyTableView
 from config import Config
 from flask import abort
@@ -71,7 +73,6 @@ def application_sub_crit_scoring(application_id: str, sub_criteria_id: str):
             justification_error = (
                 True if not form.justification.data else False
             )
-
     # call to assessment store to get latest score
     latest_score = get_score_and_justification(application_id, sub_criteria_id)
     # TODO make COF_score_list extendable to other funds
@@ -94,6 +95,34 @@ def application_sub_crit_scoring(application_id: str, sub_criteria_id: str):
         score_error=score_error,
         justification_error=justification_error,
     )
+
+
+@assess_bp.route("/sub_criteria/<sub_criteria_id>/<theme_id>", methods=["GET"])
+def display_sidebar(sub_criteria_id, theme_id):
+    """
+    Page showing sub criteria and themes
+    """
+    on_summary = True if theme_id == "score" else False
+
+    sub_criteria = get_sub_criteria(sub_criteria_id=sub_criteria_id)
+
+    themes: list[Theme] = [
+        Theme.from_filtered_dict(theme) for theme in sub_criteria.themes
+    ]
+
+    # TODO: would render a higher level page with first theme displaying by default # noqa
+    return render_template(
+        "sidebar.html",
+        sub_criteria=sub_criteria,
+        themes=themes,
+        current_theme_id=theme_id,
+        on_summary=on_summary,
+    )
+
+
+@assess_bp.route("/sub_criteria", methods=["GET"])
+def display_base():
+    None
 
 
 @assess_bp.route("/fragments/structured_question", methods=["GET"])
@@ -358,9 +387,9 @@ def landing():
 
     search_params = {
         "search_term": "",
-        "search_in": "project_name,application_short_id",
-        "asset_type": "all",
-        "status": "all",
+        "search_in": "project_name,short_id",
+        "asset_type": "ALL",
+        "status": "ALL",
     }
 
     show_clear_filters = False
@@ -400,16 +429,21 @@ def application(application_id):
     :return:
     """
 
-    application = get_application_status(application_id=application_id)
-    if not application:
+    assessor_task_list_metadata = get_assessor_task_list_state(application_id)
+    if not assessor_task_list_metadata:
         abort(404)
 
-    fund = get_fund(application.fund_id)
+    # maybe there's a better way to do this?..
+    fund = get_fund(assessor_task_list_metadata["fund_id"])
     if not fund:
         abort(404)
+    assessor_task_list_metadata["fund_name"] = fund.name
+
+    state = AssessorTaskList.from_json(assessor_task_list_metadata)
 
     return render_template(
-        "application.html", application=application, fund=fund
+        "application-section.html",
+        state=state,
     )
 
 
