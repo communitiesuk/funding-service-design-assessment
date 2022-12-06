@@ -1,19 +1,79 @@
+$govuk-border-colour: #b1b4b6;
+$govuk-link-colour: #1d70b8;
+$govuk-text-colour:	#0b0c0c;
+$govuk-colour-white: #ffffff;
+
 .assessment-navigation {
     margin-top: 8px;
-    border-top: 3px solid $govuk-link-colour;
+    border-top: 3px $govuk-link-colour solid ;
     ul:first-of-type {
       margin-top: 20px;
     }
     ul:last-of-type {
-        border-top: 2px  $govuk-border-colour solid;
+        border-top: 2px $govuk-border-colour solid;
         padding-top: 20px;
     }
-    li:first-of-type {
-        margin-top: 20px;
-      }
-      li:last-of-type {
-          border-top: 2px  $govuk-border-colour solid;
-          padding-top: 20px;
-      }
+  }
+
+.theme {
+    margin-top: 8px;
+    padding-top: 20px;
+    border-top: 3px $govuk-border-colour solid;
+}
+
+.response-title {
+    margin-bottom: 0;
+    padding: 5px 5px 5px 20px;
+    background-color: $govuk-border-colour;
+    color: $govuk-text-colour;
+  }
+
+.template-answer {
+    border: 3px $govuk-border-colour solid;
+    padding: 25px 25px 4px;
+    background-color: govuk-colour("white");
+  }
+
+  
+.scoring-heading {
+    margin-bottom: 10px;
+}
+
+.headline-info, .content-container {
+    max-width: 1400px;
+    padding: 0 2em;
+    margin: auto;
+  
+    .sign-out {
+      margin-bottom: 10px;
+    }
+  
+    .task-list {
+      padding: 0px;
+    }
   }
   
+ .assessment-overview .headline-info {
+    .headline-container {
+        margin-bottom: 0px;
+      }
+    h1:first-child {
+      margin-bottom: 10px;
+    }
+    h1:last-child {
+      margin-bottom: 15px;
+    }
+  }
+
+.headline-container {
+    background-color: $govuk-link-colour;
+    margin: 0 0 30px;
+    padding: 40px 0;
+    * {
+      color: $govuk-colour-white;
+    }
+  
+    .lead-dashboard-heading {
+      margin-bottom: 20px;
+    }
+  }
