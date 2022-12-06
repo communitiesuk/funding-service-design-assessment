@@ -82,16 +82,14 @@ def get_fund(fund_id: str) -> Union[Fund, None]:
         fund_id=fund_id
     )
     response = get_data(endpoint)
-    try:
-        if len(response) > 0:
-            fund = Fund.from_json(response[0])
-            if "rounds" in response and len(response["rounds"]) > 0:
-                for fund_round in response["rounds"]:
-                    fund.add_round(Round.from_json(fund_round))
-            return fund
-    except KeyError:
-        if type(response) == dict:
-            return response
+    if type(response) == dict:
+        return response
+    if len(response) > 0:
+        fund = Fund.from_json(response[0])
+        if "rounds" in response and len(response["rounds"]) > 0:
+            for fund_round in response["rounds"]:
+                fund.add_round(Round.from_json(fund_round))
+        return fund
     return None
 
 
