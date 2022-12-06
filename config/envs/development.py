@@ -13,7 +13,6 @@ class DevelopmentConfig(DefaultConfig):
     # for local testing with flask run and USE_LOCAL_DATA = True:
     # USE_LOCAL_DATA = True
     FSD_LOG_LEVEL = logging.INFO
-
     # FUND_STORE_API_HOST = "fund_store"
     # ASSESSMENT_STORE_API_HOST = "assessment_store"
     # APPLICATION_STORE_API_HOST = "application_store"

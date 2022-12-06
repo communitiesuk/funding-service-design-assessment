@@ -10,7 +10,7 @@
           </p>
         {% endif %}
         <div class="govuk-radios" data-module="govuk-radios">
-            {% for score, description in score_tuple %}
+            {% for score, description in score_list %}
             <div class="govuk-radios__item">
                 <input class="govuk-radios__input" id={{"score-{}".format(score)}} name={{score_form_name}}
                     type="radio" value={{score}}>

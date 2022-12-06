@@ -2,7 +2,7 @@
 {% from "macros/justification.html" import justification %}
 {%- from "govuk_frontend_jinja/components/button/macro.html" import govukButton -%}
 
-{% macro scores_justification(scores_submitted, form, latest_score, application_id, sub_criteria_id, COF_score_list, score_error, justification_error) %}
+{% macro scores_justification(scores_submitted, form, score_list, latest_score, application_id, sub_criteria_id, COF_score_list, score_error, justification_error) %}
 
 <div class="govuk-grid-column-two-thirds s26-scoring">
     {% if latest_score %}
@@ -15,6 +15,28 @@
             <p class="govuk-body-s"> <strong>Date/time:</strong> {{ latest_score['date_created'] }}</p>
         </div>
     </div>
+
+    <details class="govuk-details govuk-!-margin-top-4" data-module="govuk-details">
+        <summary class="govuk-details__summary">
+          <span class="govuk-details__summary-text">
+            Score history
+          </span>
+        </summary>
+        <div class="govuk-details__text">
+          <div id="anchor">
+            {% if score_list %}
+            {% for score in score_list %}
+            <p><strong>Score: </strong>{{ score["score"] }}</p>
+            <p><strong>Rationale: </strong>{{ score["justification"] }}</p>
+            <p class="govuk-body-s"><strong>Your name: </strong> (Assessor) {{ score["user_id"] }}</p>
+            <p class="govuk-body-s"><strong>Date/time:</strong> {{ score["date_created"] }}</p>
+            <hr>
+            {% endfor %}
+            {% endif %}
+          </div>
+        </div>
+      </details>
+
     {% endif %}
 
     {% if scores_submitted %}
