@@ -66,6 +66,8 @@ class DefaultConfig:
         + "/assessments/{assessment_id}/sub_criterias/{sub_criteria_id}/scores"
     )
 
+    COMMENTS_ENDPOINT = "/comment/{application_id}/{sub_criteria_id}"
+
     """
     Assets
     """

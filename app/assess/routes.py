@@ -38,8 +38,8 @@ def funds():
     return render_template("funds.html", funds=funds)
 
 
-@assess_bp.route("/sub_criteria/<sub_criteria_id>/<theme_id>", methods=["GET"])
-def display_sidebar(sub_criteria_id, theme_id):
+@assess_bp.route("/sub_criteria/<sub_criteria_id>/<theme_id>/<application_id>", methods=["GET"])
+def display_sidebar(sub_criteria_id, theme_id, application_id):
     """
     Page showing sub criteria and themes
     """
@@ -51,13 +51,16 @@ def display_sidebar(sub_criteria_id, theme_id):
         Theme.from_filtered_dict(theme) for theme in sub_criteria.themes
     ]
 
+    comments = get_comments(application_id=application_id, sub_criteria_id=sub_criteria_id)
+
     # TODO: would render a higher level page with first theme displaying by default # noqa
     return render_template(
-        "sidebar.html",
+        "sub_criteria.html",
         sub_criteria=sub_criteria,
         themes=themes,
         current_theme_id=theme_id,
         on_summary=on_summary,
+        comments=comments,
     )
 
 
