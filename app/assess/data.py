@@ -11,8 +11,10 @@ from app.assess.models.fund import Fund
 from app.assess.models.round import Round
 from app.assess.models.sub_criteria import SubCriteria
 from config import Config
+from dateutil import parser
 from flask import abort
 from flask import current_app
+
 
 
 def get_data(
@@ -330,7 +332,15 @@ def get_comments(application_id: str, sub_criteria_id: str):
     Returns:
         Returns a dictionary of comments.
     """
-     comment_endpoint = (Config.ASSESSMENT_STORE_API_HOST + Config.COMMENTS_ENDPOINT.format(application_id=application_id, sub_criteria_id=sub_criteria_id))
+     comment_endpoint = (
+        Config.ASSESSMENT_STORE_API_HOST + 
+        Config.COMMENTS_ENDPOINT.format(application_id=application_id, sub_criteria_id=sub_criteria_id))
      current_app.logger.info(comment_endpoint)
-     comment_response = get_data(comment_endpoint);
+     comment_response = get_data(comment_endpoint)
+     
+     for comment in comment_response:
+        date_created = parser.parse(comment["timestamp"])
+        formated_date_created = date_created.strftime("%d/%m/%Y at %H:%M")
+        comment["timestamp"] = formated_date_created
+        
      return comment_response
