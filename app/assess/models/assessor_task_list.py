@@ -37,6 +37,7 @@ class AssessorTaskList:
     project_reference: str
     workflow_status: str
     date_submitted: str
+    funding_amount_requested: str
     sections: List[_Section]
     criterias: List[_Criteria]
 
@@ -48,6 +49,7 @@ class AssessorTaskList:
             project_name=json.get("project_name"),
             date_submitted=json.get("date_submitted"),
             workflow_status=json.get("workflow_status"),
+            funding_amount_requested=json.get("funding_amount_requested"),
             sections=[
                 _Section(
                     name=section["name"],
