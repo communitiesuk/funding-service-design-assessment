@@ -77,7 +77,7 @@ def application_sub_crit_scoring(application_id: str, sub_criteria_id: str):
     score_list = get_score_and_justification(
         application_id, sub_criteria_id, score_history=True
     )
-    latest_score = score_list.pop(0)
+    latest_score = score_list.pop(0) if len(score_list) > 0 else None
     # TODO make COF_score_list extendable to other funds
     COF_score_list = [
         (5, "Strong"),
