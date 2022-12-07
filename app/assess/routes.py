@@ -51,7 +51,7 @@ def display_sidebar(sub_criteria_id, theme_id, application_id):
         Theme.from_filtered_dict(theme) for theme in sub_criteria.themes
     ]
 
-    comments = get_comments(application_id=application_id, sub_criteria_id=sub_criteria_id)
+    comments = get_comments(application_id=1, sub_criteria_id=1)
 
     # TODO: would render a higher level page with first theme displaying by default # noqa
     return render_template(

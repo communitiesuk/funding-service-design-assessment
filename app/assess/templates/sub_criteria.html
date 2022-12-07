@@ -81,6 +81,11 @@
           <p class="govuk-hint">Summarise any thoughts you have on the information provided.</p>
           <p class="govuk-hint">You cannot edit or delete your comment once you have saved it.</p>
         </div>
+        {% if comments == None %}
+        <div class="govuk-body govuk-!-margin-top-6">
+            No comments have been left yet.
+            </div>
+        {% else %}
         {% for comment in comments %}
         <div class="s26-comment-group">
           <p class="govuk-body">{{comment.comment}}</p>
@@ -88,6 +93,7 @@
           <p class="govuk-body-s">{{comment.timestamp}}</p>
         </div>
         {% endfor %}
+        {% endif %}
       </div>
 </div>
 
