@@ -7,6 +7,11 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 
+# import platform
+
+# if platform.system() == "Darwin":
+#     multiprocessing.set_start_method("fork")
+
 multiprocessing.set_start_method("fork")  # Required on macOSX
 
 
