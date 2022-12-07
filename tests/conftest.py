@@ -1,5 +1,4 @@
 import multiprocessing
-import platform
 
 import pytest
 from app.create_app import create_app
@@ -8,8 +7,7 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 
-if platform.system() == "Darwin":
-    multiprocessing.set_start_method("fork")  # Required on macOSX
+multiprocessing.set_start_method("fork")  # Required on macOSX
 
 
 def post_driver(driver, path, params):
