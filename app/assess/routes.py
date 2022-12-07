@@ -300,7 +300,7 @@ def total_table_view():
 @assess_bp.route("/fragments/sub_criteria_scoring", methods=["POST", "GET"])
 def sub_crit_scoring():
 
-    form = JustScoreForm()
+    form = ScoreForm()
 
     if form.validate_on_submit():
 
