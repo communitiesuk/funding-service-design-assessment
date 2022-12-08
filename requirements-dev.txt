@@ -299,8 +299,6 @@ pytest-selenium==2.0.1
     # via -r requirements-dev.in
 pytest-variables==2.0.0
     # via pytest-selenium
-python-dateutil==2.8.2
-    # via -r requirements-dev.in
 python-dotenv==0.20.0
     # via
     #   -r requirements.txt
@@ -365,7 +363,6 @@ six==1.16.0
     #   flask-talisman
     #   prance
     #   pyscss
-    #   python-dateutil
     #   tenacity
     #   virtualenv
 smmap==5.0.0

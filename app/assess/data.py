@@ -1,5 +1,6 @@
 import json
 import os
+from datetime import datetime
 from typing import Dict
 from typing import List
 from typing import Union
@@ -11,7 +12,6 @@ from app.assess.models.fund import Fund
 from app.assess.models.round import Round
 from app.assess.models.sub_criteria import SubCriteria
 from config import Config
-from dateutil import parser
 from flask import abort
 from flask import current_app
 
@@ -157,9 +157,10 @@ def get_score_and_justification(
     response = get_data(url, params)
     current_app.logger.info(f"Response from Assessment Store: '{response}'.")
     for score in response:
-        date_created = parser.parse(score["date_created"])
+        date_created = datetime.fromisoformat(score["date_created"])
         formated_date_created = date_created.strftime("%d/%m/%Y at %H:%M")
         score["date_created"] = formated_date_created
+
     return response
 
 
