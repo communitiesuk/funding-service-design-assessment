@@ -1,6 +1,5 @@
 import json
 import os
-from datetime import datetime
 from typing import Dict
 from typing import List
 from typing import Union
@@ -10,6 +9,7 @@ import requests
 from app.assess.models.application import Application
 from app.assess.models.fund import Fund
 from app.assess.models.round import Round
+from app.assess.models.score import Score
 from app.assess.models.sub_criteria import SubCriteria
 from config import Config
 from flask import abort
@@ -156,12 +156,10 @@ def get_score_and_justification(
     }
     response = get_data(url, params)
     current_app.logger.info(f"Response from Assessment Store: '{response}'.")
-    for score in response:
-        date_created = datetime.fromisoformat(score["date_created"])
-        formated_date_created = date_created.strftime("%d/%m/%Y at %H:%M")
-        score["date_created"] = formated_date_created
 
-    return response
+    scores: list[Score] = [Score.from_dict(score) for score in response]
+
+    return scores
 
 
 def submit_score_and_justification(

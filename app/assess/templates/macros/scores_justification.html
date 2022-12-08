@@ -9,10 +9,10 @@
     <div class="s26-score-group" id="anchor">
         <h2 class="govuk-heading-m">Current score: {{ latest_score['score'] }}</h2>
         <div>
-            <p class="govuk-body-s"><strong>Rationale: </strong>{{ latest_score['justification'] }}</p>
+            <p class="govuk-body-s"><strong>Rationale: </strong>{{ latest_score.justification }}</p>
             <p class="govuk-body-s"><strong>Your name</strong> (Assessor)
-                {{ latest_score['user_id'] }}</p>
-            <p class="govuk-body-s"> <strong>Date/time:</strong> {{ latest_score['date_created'] }}</p>
+                {{ latest_score.user_id }}</p>
+            <p class="govuk-body-s"> <strong>Date/time:</strong> {{ latest_score.date_created|datetime_format("%d/%m/%Y at %H:%M") }}</p>
         </div>
     </div>
     {% if score_list %}
@@ -28,7 +28,7 @@
             <p><strong>Score: </strong>{{ score["score"] }}</p>
             <p><strong>Rationale: </strong>{{ score["justification"] }}</p>
             <p class="govuk-body-s"><strong>Your name: </strong> (Assessor) {{ score["user_id"] }}</p>
-            <p class="govuk-body-s"><strong>Date/time:</strong> {{ score["date_created"] }}</p>
+            <p class="govuk-body-s"><strong>Date/time:</strong> {{ score["date_created"]|datetime_format("%d/%m/%Y at %H:%M") }}</p>
             <hr>
             {% endfor %}
           </div>
