@@ -7,7 +7,7 @@ from app.assess.views.filters import status_to_human
 class TestFilters(object):
     def test_datetime(self):
         time_in = "2023-01-30 12:00:00"
-        result = datetime_format(time_in)
+        result = datetime_format(time_in, "%d %B %Y at %H:%M")
         assert "30 January 2023 at 12:00pm" == result, "Wrong format returned"
 
     def test_caps_to_human(self):
