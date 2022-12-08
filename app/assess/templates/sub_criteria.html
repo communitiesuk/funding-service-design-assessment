@@ -1,27 +1,28 @@
 {% extends "base.html" %}
+{%- from 'govuk_frontend_jinja/components/back-link/macro.html' import govukBackLink -%}
 {% from "macros/sub_criteria_navbar.html" import navbar %}
-
 {% block content %}
-
-
-<div class="govuk-width-container ">
-    <div class="govuk-grid-row">
-        <a href="../assessment-overview.html" class="govuk-back-link">Back to <span
-                class="govuk-!-font-weight-bold">assessment overview</span>
-        </a>
+    <div class="govuk-phase-banner flex-parent-element">
+        <p class="flex-parent-element flexed-element-margins-collapse govuk-!-text-align-left"><a href="{{ url_for("assess_bp.landing") }}" class="govuk-back-link">Back to <span class="govuk-!-font-weight-bold">assessment overview</span></a></p>
+        <p class="flex-parent-element flexed-element-margins-collapse govuk-!-text-align-right"><a href="#" class="govuk-link flexed-element-margins-collapse" style="text-align:right !important;">Sign out</a></p>
     </div>
-
-    <div class="govuk-grid-row headline-container">
-        <div class="headline-info">
-            <div class="heading-container">
-                <p class="govuk-heading-l">Fund: <span>{{fund}}</span></p>
-                <p class="govuk-heading-l">Project reference: <span>{{project_reference}}</span></p>
+    </div>
+    <div class="fsd-banner-background">
+        <div class="govuk-width-container">
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-full">
+                    <div class="govuk-grid-column-two-thirds">
+                        <h1 class="govuk-heading-xl fsd-banner-content">Fund: {{ fund }}</h1>
+                        <h2 class="govuk-heading-l fsd-banner-content">Project reference: {{ project_reference }}</h2>
+                        <h3 class="govuk-body-l fsd-banner-content fsd-banner-collapse-padding">Project name: {{ project_name }}</h3>
+                        <h3 class="govuk-body-l fsd-banner-content">Total funding requested: &pound;{{ "{:,.2f}".format(funding_amount_requested) }}</h3>
+                        <h3 class="govuk-body-l fsd-banner-content fsd-banner-collapse-padding">{{ workflow_status | status_to_human }}</h3>
+                    </div>
+                </div>
             </div>
-            <p class="govuk-body-l">Project name: <span>{{project_reference}}</span></p>
-            <p class="govuk-body-l">Total funding requested: <span>{{total_funding_requested}}</span></p>
         </div>
     </div>
-
+        <div class="govuk-width-container">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-one-third content-container">
             <h1 class="govuk-heading-l scoring-heading">{{sub_criteria.id}}</h1>
@@ -34,7 +35,7 @@
                 {{ navbar(sub_criteria,themes, current_theme_id, on_summary) }}
             </div>
             <div class="theme govuk-grid-column-two-thirds">
-                <h2 class="govuk-heading-m">{{current_theme_id}}</h2>
+                <h2 class="govuk-heading-m">{{current_theme_id|capitalize}}</h2>
                 <h3 class="govuk-heading-s response-title">Applicant's response</h3>
                 <div class="template-answer">
                     <h2 class="govuk-heading-s"><strong>Question One</strong></h2>
@@ -46,5 +47,4 @@
         </div>
     </div>
 </div>
-
 {% endblock %}
