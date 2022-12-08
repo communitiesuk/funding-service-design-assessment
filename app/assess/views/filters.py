@@ -16,11 +16,11 @@ def slash_separated_day_month_year(value: str):
     return parsed.strftime("%d/%m/%y")
 
 
-def datetime_format(value):
+def datetime_format(value, format):
     date_format = "%d %B %Y at %H:%M"
     am_pm_format = "%p"
     formatted_time = datetime.strptime(value, "%Y-%m-%d %X").strftime(
-        date_format
+        format
     )
     formatted_time = (
         formatted_time
