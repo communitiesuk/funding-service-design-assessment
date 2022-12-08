@@ -15,7 +15,6 @@ from flask import abort
 from flask import current_app
 
 
-
 def get_data(
     endpoint: str,
     use_local_data: bool = Config.USE_LOCAL_DATA,

@@ -90,7 +90,7 @@
         <div class="s26-comment-group">
           <p class="govuk-body">{{comment.comment}}</p>
           <p class="govuk-body-s">{{comment.full_name}}(Assessor) {{comment.email_address}}</p>
-          <p class="govuk-body-s">{{comment.timestamp|datetime_format("%d/%m/%Y at %H:%M")}}</p>
+          <p class="govuk-body-s">{{comment.date_created|datetime_format("%d/%m/%Y at %H:%M")}}</p>
         </div>
         {% endfor %}
         {% endif %}

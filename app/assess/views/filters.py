@@ -16,8 +16,7 @@ def slash_separated_day_month_year(value: str):
     return parsed.strftime("%d/%m/%y")
 
 
-def datetime_format(value, format):
-    date_format = "%d %B %Y at %H:%M"
+def datetime_format(value, format):   
     am_pm_format = "%p"
     formatted_time = datetime.strptime(value, "%Y-%m-%d %X").strftime(
         format
