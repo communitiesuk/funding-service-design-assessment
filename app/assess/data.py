@@ -9,24 +9,37 @@ import requests
 from app.assess.models.application import Application
 from app.assess.models.fund import Fund
 from app.assess.models.round import Round
+from app.assess.models.score import Score
 from app.assess.models.sub_criteria import SubCriteria
 from config import Config
 from flask import abort
 from flask import current_app
 
 
-def get_data(endpoint: str, use_local_data: bool = Config.USE_LOCAL_DATA):
+def get_data(
+    endpoint: str,
+    payload: Dict = None,
+    use_local_data: bool = Config.USE_LOCAL_DATA,
+):
     if use_local_data:
         current_app.logger.info(f"Fetching local data from '{endpoint}'.")
-        data = get_local_data(endpoint)
+        return get_local_data(endpoint)
     else:
-        current_app.logger.info(f"Fetching data from '{endpoint}'.")
-        response = requests.get(endpoint)
-        if response.status_code == 200:
-            data = response.json()
+        if payload:
+            current_app.logger.info(
+                f"Fetching data from '{endpoint}', with payload: {payload}."
+            )
+            response = requests.get(endpoint, payload)
         else:
+            current_app.logger.info(f"Fetching data from '{endpoint}'.")
+            response = requests.get(endpoint)
+        if response.status_code == 200:
+            return response.json()
+        else:
+            current_app.logger.error(
+                f"Could not get data for endpoint '{endpoint}' "
+            )
             return None
-    return data
 
 
 def get_local_data(endpoint: str):
@@ -76,6 +89,8 @@ def get_fund(fund_id: str) -> Union[Fund, None]:
         fund_id=fund_id
     )
     response = get_data(endpoint)
+    if type(response) == dict:
+        return response
     if len(response) > 0:
         fund = Fund.from_json(response[0])
         if "rounds" in response and len(response["rounds"]) > 0:
@@ -130,20 +145,38 @@ def get_round_with_applications(
     return None
 
 
-def submit_score_and_justification(
-    assessment_id, person_id, score, justification, sub_crit_id
+def get_score_and_justification(
+    application_id, sub_criteria_id, score_history=True
 ):
+    url = Config.ASSESSMENT_SCORES_ENDPOINT
+    params = {
+        "application_id": application_id,
+        "sub_criteria_id": sub_criteria_id,
+        "score_history": score_history,
+    }
+    response = get_data(url, params)
+    current_app.logger.info(f"Response from Assessment Store: '{response}'.")
 
+    scores: list[Score] = [Score.from_dict(score) for score in response]
+
+    return scores
+
+
+def submit_score_and_justification(
+    score, justification, application_id, user_id, sub_criteria_id
+):
     data_dict = {
         "score": score,
         "justification": justification,
-        "person_id": person_id,
+        "user_id": user_id,
+        "application_id": application_id,
+        "sub_criteria_id": sub_criteria_id,
     }
-    url = Config.ASSESSMENT_SCORES_ENDPOINT.format(
-        assessment_id=assessment_id, sub_criteria_id=sub_crit_id
-    )
+    url = Config.ASSESSMENT_SCORES_ENDPOINT
     response = requests.post(url, json=data_dict)
-    print(response.content)
+    current_app.logger.info(
+        f"Response from Assessment Store: '{response.json()}'."
+    )
     if response.status_code == 200:
         return True
     else:

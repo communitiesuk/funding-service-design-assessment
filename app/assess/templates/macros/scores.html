@@ -1,11 +1,26 @@
 {%- from 'govuk_frontend_jinja/components/radios/macro.html' import govukRadios -%}
 
-{% macro scores(score_radio_id) %}
+{% macro scores(score_form_name, score_list, score_error) %}
 
-<h2 class="govuk-heading-l">Based on the comments, score this section</h2>
+    <p class="govuk-body">Select a score from the list:&nbsp;</p>
+    <div class="govuk-form-group {% if score_error %}govuk-form-group--error{% endif %}" name="score-div" id="score-div">
+        {% if score_error %}
+        <p id="scores-error" class="govuk-error-message">
+            <span class="govuk-visually-hidden">Error:</span> Select a score
+          </p>
+        {% endif %}
+        <div class="govuk-radios" data-module="govuk-radios">
+            {% for score, description in score_list %}
+            <div class="govuk-radios__item">
+                <input class="govuk-radios__input" id={{"score-{}".format(score)}} name={{score_form_name}}
+                    type="radio" value={{score}}>
+                <label class="govuk-label govuk-radios__label" for={{score_form_name}}>
+                    <span class="govuk-!-font-weight-bold">{{score}}</span> {{description}}
+                </label>
+            </div>
+            {% endfor %}
 
-{{govukRadios({'id' : score_radio_id, 'name': score_radio_id, 'items': [{'value': 1, 'text': '1', 'hint': {
-    'text':'Wow'},
-}, {'value': 2, 'text': '2'}, {'value': 3, 'text': '3'}, {'value': 4, 'text': '4'}, {'value': 5, 'text': '5'}]})}}
+        </div>
 
+    </div>
 {% endmacro %}

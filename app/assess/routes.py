@@ -4,7 +4,7 @@ from app.assess.data import submit_score_and_justification
 from app.assess.display_value_mappings import assessment_statuses
 from app.assess.display_value_mappings import asset_types
 from app.assess.forms.comments_form import CommentsForm
-from app.assess.forms.scores_and_justifications import JustScoreForm
+from app.assess.forms.scores_and_justifications import ScoreForm
 from app.assess.models.assessor_task_list import AssessorTaskList
 from app.assess.models.question import Question
 from app.assess.models.question_field import QuestionField
@@ -13,8 +13,10 @@ from app.assess.models.total_table import TotalMoneyTableView
 from config import Config
 from flask import abort
 from flask import Blueprint
+from flask import g
 from flask import render_template
 from flask import request
+from fsd_utils.authentication.decorators import login_requested
 
 
 assess_bp = Blueprint(
@@ -32,10 +34,71 @@ def funds():
     from fund store
     :return:
     """
-
     funds = get_funds()
-
     return render_template("funds.html", funds=funds)
+
+
+@login_requested
+@assess_bp.route(
+    "score/application_id/<application_id>/sub_criteria_id/<sub_criteria_id>",
+    methods=["POST", "GET"],
+)
+def application_sub_crit_scoring(application_id: str, sub_criteria_id: str):
+    fund = get_fund(Config.COF_FUND_ID)
+    form = ScoreForm()
+
+    score_error, justification_error, scores_submitted = False, False, False
+
+    if request.method == "POST":
+        if form.validate_on_submit():
+            score = int(form.score.data)
+            justification = form.justification.data
+            try:
+                user_id = g.account_id
+            except AttributeError:
+                user_id = (  # TODO remove and force g.account_id after adding authentication # noqa
+                    ""
+                )
+            submit_score_and_justification(
+                score=score,
+                justification=justification,
+                application_id=application_id,
+                user_id=user_id,
+                sub_criteria_id=sub_criteria_id,
+            )
+            scores_submitted = True
+
+        else:
+            score_error = True if not form.score.data else False
+            justification_error = (
+                True if not form.justification.data else False
+            )
+    # call to assessment store to get latest score
+    score_list = get_score_and_justification(
+        application_id, sub_criteria_id, score_history=True
+    )
+    latest_score = score_list.pop(0) if len(score_list) > 0 else None
+    # TODO make COF_score_list extendable to other funds
+    COF_score_list = [
+        (5, "Strong"),
+        (4, "Good"),
+        (3, "Satisfactory"),
+        (2, "Partial"),
+        (1, "Poor"),
+    ]
+    return render_template(
+        "sub_criteria.html",
+        scores_submitted=scores_submitted,
+        form=form,
+        score_list=score_list if len(score_list) > 0 else None,
+        latest_score=latest_score,
+        fund=fund,
+        application_id=application_id,
+        sub_criteria_id=sub_criteria_id,
+        COF_score_list=COF_score_list,
+        score_error=score_error,
+        justification_error=justification_error,
+    )
 
 
 @assess_bp.route("/sub_criteria/<sub_criteria_id>/<theme_id>", methods=["GET"])
@@ -241,7 +304,7 @@ def total_table_view():
 @assess_bp.route("/fragments/sub_criteria_scoring", methods=["POST", "GET"])
 def sub_crit_scoring():
 
-    form = JustScoreForm()
+    form = ScoreForm()
 
     if form.validate_on_submit():
 
@@ -260,7 +323,6 @@ def sub_crit_scoring():
             sub_crit_id=sub_crit_id,
         )
         scores_submitted = True
-
     else:
 
         scores_submitted = False

@@ -1,6 +1,9 @@
 {% extends "base.html" %}
 {%- from 'govuk_frontend_jinja/components/back-link/macro.html' import govukBackLink -%}
+{% from "macros/scores_justification.html" import scores_justification %}
+{% from "macros/theme.html" import theme %}
 {% from "macros/sub_criteria_navbar.html" import navbar %}
+
 {% block content %}
     <div class="govuk-phase-banner flex-parent-element"></div>
     <div class="flex-parent-element">
@@ -13,7 +16,7 @@
             <div class="govuk-grid-row">
                 <div class="govuk-grid-column-full">
                     <div class="govuk-grid-column-two-thirds">
-                        <h1 class="govuk-heading-xl fsd-banner-content">Fund: {{ fund }}</h1>
+                        <h1 class="govuk-heading-xl fsd-banner-content">Fund: {{ fund.name }}</h1>
                         <h2 class="govuk-heading-l fsd-banner-content">Project reference: {{ project_reference }}</h2>
                         <h3 class="govuk-body-l fsd-banner-content fsd-banner-collapse-padding">Project name: {{ project_name }}</h3>
                         <h3 class="govuk-body-l fsd-banner-content">Total funding requested: &pound;{{ "{:,.2f}".format(funding_amount_requested) }}</h3>
@@ -33,19 +36,42 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
             <div class="govuk-grid-column-one-third">
-                {{ navbar(sub_criteria,themes, current_theme_id, on_summary) }}
+                {{ navbar(application_id,sub_criteria,sub_criteria.themes, current_theme_id, on_summary) }}
             </div>
             <div class="theme govuk-grid-column-two-thirds">
-                <h2 class="govuk-heading-m">{{current_theme_id|capitalize}}</h2>
-                <h3 class="govuk-heading-s response-title">Applicant's response</h3>
-                <div class="template-answer">
-                    <h2 class="govuk-heading-s"><strong>Question One</strong></h2>
-                    <p class="govuk-body">Answer One</p>
-                    <h2 class="govuk-heading-s"><strong>Question Two</strong></h2>
-                    <p class="govuk-body">Answer Two</p>
+                {% if on_summary %}
+                    {{scores_justification(scores_submitted, form, score_list, latest_score, application_id, sub_criteria_id, COF_score_list, score_error, justification_error)}}
+                {% else %}
+                    {{theme(current_theme_id)}}
+                {% endif %}
+                <div class="s26-content-container">
+                
+                    <h2 class="govuk-heading govuk-heading-l" id="comments-heading">Comments</h2>
+                    <section class="comment-section">
+                        <h3 class="govuk-heading-m">Community engagement</h3>
+                
+                        <p class="govuk-body-s">There are currently no comments&nbsp;for this section.
+                            {# <a href="#" class="govuk-link govuk-link--no-visited-state">Add a comment</a> #}
+                        </p>
+                
+                    </section>
+                    <section class="comment-section">
+                        <h3 class="govuk-heading-m">Local support</h3>
+                
+                        <p class="govuk-body-s">There are currently no comments&nbsp;for this section.
+                            {# <a href="#" class="govuk-link govuk-link--no-visited-state">Add a comment</a> #}
+                        </p>
+                
+                    </section>
+                
                 </div>
+
+
             </div>
         </div>
     </div>
 </div>
+
+
+
 {% endblock %}
