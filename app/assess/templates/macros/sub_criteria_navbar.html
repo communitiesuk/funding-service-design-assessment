@@ -1,16 +1,16 @@
-{% macro navbar(sub_criteria, themes, current_theme_id, on_summary) %}
+{% macro navbar(application_id, sub_criteria, themes, current_theme_id, on_summary) %}
 
 <nav class="assessment-navigation">
     <ul class="govuk-list">
         {%for theme in themes%}
         <li><a class="{{'govuk-link--no-underline govuk-list' if theme.id|string == current_theme_id|string else 'govuk-link--no-visited-state'}}"
-                href="{{ url_for('assess_bp.display_sidebar',sub_criteria_id=sub_criteria.id,theme_id=theme.id) }}">{{theme.name}}</a>
+                href="{{ url_for('assess_bp.display_sidebar',application_id=application_id,sub_criteria_id=sub_criteria.id,theme_id=theme.id) }}">{{theme.name}}</a>
         </li>
         {%endfor%}
     </ul>
 
     <ul class="govuk-list">
-        <li><a class="{{'govuk-link--no-underline govuk-list' if on_summary else 'govuk-link--no-visited-state'}}" href="{{ url_for('assess_bp.display_sidebar',sub_criteria_id=sub_criteria.id,theme_id='score') }}">Score the subcriteria</a></li>
+        <li><a class="{{'govuk-link--no-underline govuk-list' if on_summary else 'govuk-link--no-visited-state'}}" href="{{ url_for('assess_bp.display_sidebar',application_id=application_id,sub_criteria_id=sub_criteria.id,theme_id='score') }}">Score the subcriteria</a></li>
     </ul>
 </nav>
 
