@@ -41,10 +41,6 @@ class TestJinjaMacros(object):
         # replacing new lines to more easily regex match the html
         rendered_html = rendered_html.replace("\n", "")
 
-        # write html to file
-        with open("test.html", "w") as f:
-            f.write(rendered_html)
-
         assert re.search(
             r'<h3 class="example-class">\S*Example title\S*</h3>',
             rendered_html,
@@ -113,3 +109,61 @@ class TestJinjaMacros(object):
         assert (
             len(re.findall(r"<tbody.*?</tbody>", rendered_html)) == 1
         ), "Should have 1 table body"
+
+    def test_score_macro(self, request_ctx):
+        rendered_html = render_template_string(
+            "{{scores(score_form_name, score_list, score_error)}}",
+            scores=get_template_attribute("macros/scores.html", "scores"),
+            score_form_name="Score",
+            score_list=[
+                (5, "Strong"),
+                (4, "Good"),
+                (3, "Satisfactory"),
+                (2, "Partial"),
+                (1, "Poor"),
+            ],
+            score_error=False,
+        )
+
+        # replacing new lines to more easily regex match the html
+        rendered_html = rendered_html.replace("\n", "")
+
+        assert re.search(
+            r"<p.*\S*Select a score from the list:\S*</p>", rendered_html
+        ), "Title not found"
+
+        assert (
+            len(
+                re.findall(
+                    r"""<div class="govuk-radios__item">""", rendered_html
+                )
+            )
+            == 5
+        ), "Should have 5 radios"
+
+        assert (
+            len(re.findall(r"""<span.*?\S*\d</span>""", rendered_html)) == 5
+        ), "Should have 5 score values for radios"
+
+    def test_justification_macro(self, request_ctx):
+        rendered_html = render_template_string(
+            "{{justification(justification_form_name, justification_error)}}",
+            justification=get_template_attribute(
+                "macros/justification.html", "justification"
+            ),
+            justification_form_name="Justification",
+            justification_error=True,
+        )
+
+        # replacing new lines to more easily regex match the html
+        rendered_html = rendered_html.replace("\n", "")
+
+        assert re.search(
+            r"<label.*\S*Add rationale for this \s* score</label>",
+            rendered_html,
+        ), "Title not found"
+
+        assert re.search(
+            r"<p.*Please provide rationale for this score\s*</p>",
+            rendered_html,
+        ), "Intentional error not found"

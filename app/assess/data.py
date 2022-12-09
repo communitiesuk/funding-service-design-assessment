@@ -9,6 +9,7 @@ import requests
 from app.assess.models.application import Application
 from app.assess.models.fund import Fund
 from app.assess.models.round import Round
+from app.assess.models.score import Score
 from app.assess.models.sub_criteria import SubCriteria
 from config import Config
 from flask import abort
@@ -17,8 +18,8 @@ from flask import current_app
 
 def get_data(
     endpoint: str,
-    use_local_data: bool = Config.USE_LOCAL_DATA,
     payload: Dict = None,
+    use_local_data: bool = Config.USE_LOCAL_DATA,
 ):
     if use_local_data:
         current_app.logger.info(f"Fetching local data from '{endpoint}'.")
@@ -144,17 +145,21 @@ def get_round_with_applications(
     return None
 
 
-def get_score_and_justification(application_id, sub_criteria_id):
+def get_score_and_justification(
+    application_id, sub_criteria_id, score_history=True
+):
     url = Config.ASSESSMENT_SCORES_ENDPOINT
     params = {
         "application_id": application_id,
         "sub_criteria_id": sub_criteria_id,
+        "score_history": score_history,
     }
-    response_json = get_data(url, params)
-    current_app.logger.info(
-        f"Response from Assessment Store: '{response_json}'."
-    )
-    return response_json
+    response = get_data(url, params)
+    current_app.logger.info(f"Response from Assessment Store: '{response}'.")
+
+    scores: list[Score] = [Score.from_dict(score) for score in response]
+
+    return scores
 
 
 def submit_score_and_justification(

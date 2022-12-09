@@ -74,7 +74,10 @@ def application_sub_crit_scoring(application_id: str, sub_criteria_id: str):
                 True if not form.justification.data else False
             )
     # call to assessment store to get latest score
-    latest_score = get_score_and_justification(application_id, sub_criteria_id)
+    score_list = get_score_and_justification(
+        application_id, sub_criteria_id, score_history=True
+    )
+    latest_score = score_list.pop(0) if len(score_list) > 0 else None
     # TODO make COF_score_list extendable to other funds
     COF_score_list = [
         (5, "Strong"),
@@ -87,6 +90,7 @@ def application_sub_crit_scoring(application_id: str, sub_criteria_id: str):
         "sub_criteria.html",
         scores_submitted=scores_submitted,
         form=form,
+        score_list=score_list if len(score_list) > 0 else None,
         latest_score=latest_score,
         fund=fund,
         application_id=application_id,
@@ -296,7 +300,7 @@ def total_table_view():
 @assess_bp.route("/fragments/sub_criteria_scoring", methods=["POST", "GET"])
 def sub_crit_scoring():
 
-    form = JustScoreForm()
+    form = ScoreForm()
 
     if form.validate_on_submit():
 
