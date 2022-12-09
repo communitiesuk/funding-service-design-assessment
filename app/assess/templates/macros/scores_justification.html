@@ -2,19 +2,40 @@
 {% from "macros/justification.html" import justification %}
 {%- from "govuk_frontend_jinja/components/button/macro.html" import govukButton -%}
 
-{% macro scores_justification(scores_submitted, form, latest_score, application_id, sub_criteria_id, COF_score_list, score_error, justification_error) %}
+{% macro scores_justification(scores_submitted, form, score_list, latest_score, application_id, sub_criteria_id, COF_score_list, score_error, justification_error) %}
 
 <div class="govuk-grid-column-two-thirds s26-scoring">
     {% if latest_score %}
     <div class="s26-score-group" id="anchor">
         <h2 class="govuk-heading-m">Current score: {{ latest_score['score'] }}</h2>
         <div>
-            <p><strong>Rationale: </strong>{{ latest_score['justification'] }}</p>
+            <p class="govuk-body-s"><strong>Rationale: </strong>{{ latest_score.justification }}</p>
             <p class="govuk-body-s"><strong>Your name</strong> (Assessor)
-                {{ latest_score['user_id'] }}</p>
-            <p class="govuk-body-s"> <strong>Date/time:</strong> {{ latest_score['date_created'] }}</p>
+                {{ latest_score.user_id }}</p>
+            <p class="govuk-body-s"> <strong>Date/time:</strong> {{ latest_score.date_created|datetime_format("%d/%m/%Y at %H:%M") }}</p>
         </div>
     </div>
+    {% if score_list %}
+    <details class="govuk-details govuk-!-margin-top-4" data-module="govuk-details">
+        <summary class="govuk-details__summary">
+          <span class="govuk-details__summary-text">
+            Score history
+          </span>
+        </summary>
+        <div class="govuk-details__text">
+          <div id="anchor">
+            {% for score in score_list %}
+            <p><strong>Score: </strong>{{ score["score"] }}</p>
+            <p><strong>Rationale: </strong>{{ score["justification"] }}</p>
+            <p class="govuk-body-s"><strong>Your name: </strong> (Assessor) {{ score["user_id"] }}</p>
+            <p class="govuk-body-s"><strong>Date/time:</strong> {{ score["date_created"]|datetime_format("%d/%m/%Y at %H:%M") }}</p>
+            <hr>
+            {% endfor %}
+          </div>
+        </div>
+      </details>
+
+    {% endif %}
     {% endif %}
 
     {% if scores_submitted %}

@@ -8,6 +8,8 @@ async-generator==1.10
     # via
     #   trio
     #   trio-websocket
+atomicwrites==1.4.1
+    # via pytest
 attrs==22.1.0
     # via
     #   -r requirements.txt
@@ -46,6 +48,7 @@ cffi==1.15.1
     # via
     #   -r requirements.txt
     #   cryptography
+    #   trio
 cfgv==3.3.1
     # via pre-commit
 chardet==4.0.0
@@ -67,6 +70,14 @@ clickclick==20.10.2
     # via
     #   -r requirements.txt
     #   connexion
+colorama==0.4.6
+    # via
+    #   -r requirements.txt
+    #   bandit
+    #   build
+    #   click
+    #   pytest
+    #   tqdm
 commonmark==0.9.1
     # via
     #   -r requirements.txt
