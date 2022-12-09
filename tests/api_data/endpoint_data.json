@@ -498,7 +498,7 @@
       "location": "Northern Ireland"
     }
   ],
-  "assessment_store/sub_criteria_overview/1a2b3c4d": {
+  "assessment_store/sub_criteria_overview/app_123/1a2b3c4d": {
     "id": "1a2b3c4d",
     "name": "Engagement",
     "score_submitted": "false",
@@ -515,7 +515,11 @@
         "id": "partnerships",
         "name": "Partnerships"
       }
-    ]
+    ],
+    "funding_amount_requested": 250000,
+    "project_name": "community_gym",
+    "fund_id": "test_fund_id",
+    "workflow_status": "NOT_STARTED"
   },
   "assessment_store/application_overviews/123123123-123123123": {
     "criterias": [

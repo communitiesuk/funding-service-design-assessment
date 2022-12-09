@@ -60,7 +60,7 @@ class DefaultConfig:
         "/application_overviews/{application_id}"
     )
 
-    SUB_CRITERIA_OVERVIEW_ENDPOINT = "/sub_criteria_overview/{sub_criteria_id}"
+    SUB_CRITERIA_OVERVIEW_ENDPOINT = "/sub_criteria_overview/{application_id}/{sub_criteria_id}"
     ASSESSMENT_SCORES_ENDPOINT = (
         ASSESSMENT_STORE_API_HOST
         + "/assessments/{assessment_id}/sub_criterias/{sub_criteria_id}/scores"

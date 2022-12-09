@@ -2,9 +2,10 @@
 {%- from 'govuk_frontend_jinja/components/back-link/macro.html' import govukBackLink -%}
 {% from "macros/sub_criteria_navbar.html" import navbar %}
 {% block content %}
-    <div class="govuk-phase-banner flex-parent-element">
-        <p class="flex-parent-element flexed-element-margins-collapse govuk-!-text-align-left"><a href="{{ url_for("assess_bp.landing") }}" class="govuk-back-link">Back to <span class="govuk-!-font-weight-bold">assessment overview</span></a></p>
+    <div class="govuk-phase-banner flex-parent-element"></div>
+    <div class="flex-parent-element">
         <p class="flex-parent-element flexed-element-margins-collapse govuk-!-text-align-right"><a href="#" class="govuk-link flexed-element-margins-collapse" style="text-align:right !important;">Sign out</a></p>
+        <p class="flex-parent-element flexed-element-margins-collapse govuk-!-text-align-left"><a href="{{ url_for("assess_bp.landing") }}" class="govuk-back-link">Back to <span class="govuk-!-font-weight-bold">assessment overview</span></a></p>
     </div>
     </div>
     <div class="fsd-banner-background">

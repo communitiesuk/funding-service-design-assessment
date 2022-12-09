@@ -41,27 +41,27 @@ def funds():
 @assess_bp.route("/sub_criteria/<sub_criteria_id>/<theme_id>", methods=["GET"])
 def display_sidebar(sub_criteria_id, theme_id):
     """
-    Page showing sub criteria and themes
+    Page showing sub criteria and themes for an application
     """
+    args = request.args
+    application_id = args["application_id"]
     on_summary = True if theme_id == "score" else False
 
-    sub_criteria = get_sub_criteria(sub_criteria_id=sub_criteria_id)
-
-    themes: list[Theme] = [
-        Theme.from_filtered_dict(theme) for theme in sub_criteria.themes
-    ]
+    sub_criteria = get_sub_criteria(application_id=application_id, sub_criteria_id=sub_criteria_id)
+    # TODO get from fund store
+    fund = "fund_name" # use sub_criteria.fund_id
 
     # TODO: would render a higher level page with first theme displaying by default # noqa
     return render_template(
         "sub_criteria.html",
-        sub_criteria=sub_criteria,
-        themes=themes,
         current_theme_id=theme_id,
         on_summary=on_summary,
-        funding_amount_requested=1920,
-        project_name="Project name",
-        fund="My fund",
-        workflow_status="IN_PROGRESS",
+        sub_criteria=sub_criteria,
+        themes=sub_criteria.themes,
+        funding_amount_requested=sub_criteria.funding_amount_requested,
+        project_name=sub_criteria.project_name,
+        fund=fund,
+        workflow_status=sub_criteria.workflow_status,
     )
 
 
