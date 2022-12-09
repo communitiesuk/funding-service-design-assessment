@@ -155,7 +155,7 @@ class TestRoutes:
     ):
 
         response = flask_test_client.get(
-            "/assess/sub_criteria/1a2b3c4d/general-information"
+            "/assess/sub_criteria/1a2b3c4d/1/123123123-123123123"
         )
 
         assert 200 == response.status_code, "Wrong status code on response"

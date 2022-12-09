@@ -123,6 +123,11 @@ def display_sidebar(sub_criteria_id, theme_id, application_id):
         themes=themes,
         current_theme_id=theme_id,
         on_summary=on_summary,
+        funding_amount_requested=1920,
+        project_name="Project name",
+        fund="My fund",
+        workflow_status="IN_PROGRESS",
+        application_id=application_id,
         comments=comments
     )
 
