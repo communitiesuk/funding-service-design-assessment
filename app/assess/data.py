@@ -67,7 +67,7 @@ def get_application_overviews(fund_id, round_id, search_params):
     ) + Config.APPLICATION_OVERVIEW_ENDPOINT_FUND_ROUND_PARAMS.format(
         fund_id=fund_id, round_id=round_id, params=urlencode(search_params)
     )
-
+    current_app.logger.info(f"Endpoint '{overviews_endpoint}'.")
     overviews_response = get_data(overviews_endpoint)
     return overviews_response
 

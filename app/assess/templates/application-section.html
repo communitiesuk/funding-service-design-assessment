@@ -3,8 +3,11 @@
 {%- from "govuk_frontend_jinja/components/table/macro.html" import govukTable -%}
 {%  from 'macros/section_element.html' import section_element -%}
 {%  from 'macros/criteria_element.html' import criteria_element -%}
-{% block beforeContent %}{{ govukBackLink({'href': url_for("assess_bp.landing"), 'text': 'Back to assessment dashboard'}) }}{% endblock %}
 {% block content %}
+    <div class="govuk-phase-banner flex-parent-element">
+        <p class="flex-parent-element flexed-element-margins-collapse govuk-!-text-align-left"><a href="{{ url_for("assess_bp.landing") }}" class="govuk-back-link">Back to <span class="govuk-!-font-weight-bold">assessment overview</span></a></p>
+        <p class="flex-parent-element flexed-element-margins-collapse govuk-!-text-align-right"><a href="#" class="govuk-link flexed-element-margins-collapse" style="text-align:right !important;">Sign out</a></p>
+    </div>
     </div>
     <div class="fsd-banner-background">
         <div class="govuk-width-container">
