@@ -70,13 +70,7 @@ def display_sub_criteria(application_id, sub_criteria_id,):
             )
     
     args = request.args
-    theme_id = ""
-
-    try:
-        theme_id = args["theme_id"]
-    except:
-        current_app.logger.info("No theme provided")
-   
+    theme_id = args["theme_id"]
     sub_criteria = get_sub_criteria(application_id=application_id, sub_criteria_id=sub_criteria_id)
     fund = get_fund(Config.COF_FUND_ID)
 
