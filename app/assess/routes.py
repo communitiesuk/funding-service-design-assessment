@@ -71,6 +71,8 @@ def display_sidebar(application_id, sub_criteria_id,):
     
     args = request.args
     theme_id = args["theme_id"]
+    sub_criteria = get_sub_criteria(application_id=application_id, sub_criteria_id=sub_criteria_id)
+    fund = get_fund(Config.COF_FUND_ID)
 
     if theme_id == "score":
         on_score = True
@@ -108,9 +110,7 @@ def display_sidebar(application_id, sub_criteria_id,):
                 justification_error=justification_error,
             )
 
-    on_score = False
-    sub_criteria = get_sub_criteria(application_id=application_id, sub_criteria_id=sub_criteria_id)
-    fund = get_fund(Config.COF_FUND_ID)
+    on_score = False    
     return render_template(
         "sub_criteria.html",
         current_theme_id=theme_id,
