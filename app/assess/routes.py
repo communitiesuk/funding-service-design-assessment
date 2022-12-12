@@ -73,6 +73,7 @@ def display_sub_criteria(application_id, sub_criteria_id,):
     theme_id = args["theme_id"]
     sub_criteria = get_sub_criteria(application_id=application_id, sub_criteria_id=sub_criteria_id)
     fund = get_fund(Config.COF_FUND_ID)
+    comments = get_comments(application_id=application_id, sub_criteria_id=sub_criteria_id)
 
     if theme_id == "score":
         on_score = True
@@ -108,7 +109,8 @@ def display_sub_criteria(application_id, sub_criteria_id,):
                 COF_score_list=COF_score_list,
                 score_error=score_error,
                 justification_error=justification_error,
-                project_reference=sub_criteria.project_reference
+                project_reference=sub_criteria.project_reference,
+                comments=comments
             )
 
     on_score = False
@@ -124,7 +126,8 @@ def display_sub_criteria(application_id, sub_criteria_id,):
         fund=fund,
         form=form,
         workflow_status=sub_criteria.workflow_status,
-        project_reference=sub_criteria.project_reference
+        project_reference=sub_criteria.project_reference,
+        comments=comments
     )
 
 
