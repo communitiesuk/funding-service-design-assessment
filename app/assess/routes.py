@@ -111,7 +111,7 @@ def display_sub_criteria(application_id, sub_criteria_id,):
                 project_reference=sub_criteria.project_reference
             )
 
-    on_score = False    
+    on_score = False
     return render_template(
         "sub_criteria.html",
         current_theme_id=theme_id,

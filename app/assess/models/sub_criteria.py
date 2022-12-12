@@ -15,7 +15,6 @@ class SubCriteria:
     workflow_status: str
     project_reference: str
 
-
     def __post_init__(self):
         self.themes = [
             Theme.from_filtered_dict(theme) for theme in self.themes
