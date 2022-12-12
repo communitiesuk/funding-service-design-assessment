@@ -33,7 +33,9 @@ Clone the repository
 
 ### Install dependencies
 
-From the top-level directory enter the command to install pip and the dependencies of the project
+From the top-level directory enter the command to install flask, pip and the dependencies of the project
+
+    pip install Flask
 
     python3 -m pip install --upgrade pip && pip install -r requirements-dev.txt
 
@@ -76,7 +78,7 @@ Run:
 
 A local dev server will be created on
 
-    http://localhost:5001
+    http://localhost:5000
 
 Flask environment variables are configurable in `.flaskenv`
 
@@ -115,7 +117,7 @@ These are the current pipelines running on the repo:
 
 ## Unit & Accessibility Testing
 
-To run all tests including aXe accessibility tests (using Chrome driver for Selenium) in a development environment run:
+To run all tests including aXe accessibility tests (using Chrome driver for Selenium) in a development environment run the following in your venv:
 
     pytest
 
@@ -130,7 +132,7 @@ Performance tests are stored in a separate repository which is then run in the p
 # Extras
 
 This repo comes with a .pre-commit-config.yaml, if you wish to use this do
-the following while in your virtual enviroment:
+the following while in your virtual environment:
 
     pre-commit install
 
