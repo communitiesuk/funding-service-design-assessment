@@ -38,7 +38,7 @@ def funds():
 
 
 @assess_bp.route("/application_id/<application_id>/sub_criteria_id/<sub_criteria_id>", methods=["POST", "GET"])
-def display_sidebar(application_id, sub_criteria_id,):
+def display_sub_criteria(application_id, sub_criteria_id,):
     """
     Page showing sub criteria and themes for an application
     """
