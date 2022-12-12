@@ -277,7 +277,7 @@ def get_questions(application_id):
         return data
 
 
-def  get_sub_criteria(application_id, sub_criteria_id):
+def get_sub_criteria(application_id, sub_criteria_id):
     """_summary_: Function is set up to retrieve
     the data from assessment store with
     get_data() function.
@@ -289,7 +289,7 @@ def  get_sub_criteria(application_id, sub_criteria_id):
     Returns:
       {
         "sub_criteria_id": "",
-        "sub_criteria_name": "", 
+        "sub_criteria_name": "",
         "score_submitted": "",
         "themes": []
     }
