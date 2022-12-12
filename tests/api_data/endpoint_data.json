@@ -519,7 +519,8 @@
     "funding_amount_requested": 250000,
     "project_name": "Community Gym",
     "fund_id": "test_fund_id",
-    "workflow_status": "NOT_STARTED"
+    "workflow_status": "NOT_STARTED",
+    "project_reference": "LKMBNS"
   },
   "assessment_store/application_overviews/123123123-123123123": {
     "criterias": [

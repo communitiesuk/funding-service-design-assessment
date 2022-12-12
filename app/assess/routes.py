@@ -108,6 +108,7 @@ def display_sidebar(application_id, sub_criteria_id,):
                 COF_score_list=COF_score_list,
                 score_error=score_error,
                 justification_error=justification_error,
+                project_reference=sub_criteria.project_reference
             )
 
     on_score = False    
@@ -122,7 +123,8 @@ def display_sidebar(application_id, sub_criteria_id,):
         project_name=sub_criteria.project_name,
         fund=fund,
         form=form,
-        workflow_status=sub_criteria.workflow_status
+        workflow_status=sub_criteria.workflow_status,
+        project_reference=sub_criteria.project_reference
     )
 
 
