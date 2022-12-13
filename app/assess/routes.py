@@ -76,7 +76,6 @@ def display_sub_criteria(application_id, sub_criteria_id,):
     comments = get_comments(application_id=application_id, sub_criteria_id=sub_criteria_id)
 
     if theme_id == "score":
-        on_score = True
         # call to assessment store to get latest score
         score_list = get_score_and_justification(
             application_id, sub_criteria_id, score_history=True
@@ -94,39 +93,28 @@ def display_sub_criteria(application_id, sub_criteria_id,):
         return render_template(
             "sub_criteria.html",
                 current_theme_id=theme_id,
-                on_summary=on_score,
+                on_summary=True,
                 sub_criteria=sub_criteria,
                 application_id=application_id,
-                sub_criteria_id=sub_criteria_id,
-                funding_amount_requested=sub_criteria.funding_amount_requested,
-                project_name=sub_criteria.project_name,
                 fund=fund,
                 form=form,
-                workflow_status=sub_criteria.workflow_status,
                 scores_submitted=scores_submitted,
                 score_list=score_list if len(score_list) > 0 else None,
                 latest_score=latest_score,
                 COF_score_list=COF_score_list,
                 score_error=score_error,
                 justification_error=justification_error,
-                project_reference=sub_criteria.project_reference,
                 comments=comments
             )
 
-    on_score = False
     return render_template(
         "sub_criteria.html",
         current_theme_id=theme_id,
-        on_summary=on_score,
+        on_summary=False,
         sub_criteria=sub_criteria,
         application_id=application_id,
-        sub_criteria_id=sub_criteria_id,
-        funding_amount_requested=sub_criteria.funding_amount_requested,
-        project_name=sub_criteria.project_name,
         fund=fund,
         form=form,
-        workflow_status=sub_criteria.workflow_status,
-        project_reference=sub_criteria.project_reference,
         comments=comments
     )
 

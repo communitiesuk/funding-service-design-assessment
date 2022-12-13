@@ -6,7 +6,7 @@ applications:
   - https://github.com/cloudfoundry/python-buildpack.git
   command: gunicorn wsgi:app -c run/gunicorn/devtest.py
   routes:
-    - route: assessment.dev.fundingservice.co.uk
+    - route: assessment.dev.gids.dev
   env:
     FLASK_ENV: dev
     FLASK_DEBUG: 1
@@ -22,7 +22,7 @@ applications:
   - https://github.com/cloudfoundry/python-buildpack.git
   command: gunicorn wsgi:app -c run/gunicorn/devtest.py
   routes:
-    - route: assessment.test.fundingservice.co.uk
+    - route: assessment.test.gids.dev
   env:
     FLASK_ENV: test
     ASSESSMENT_STORE_API_HOST: https://funding-service-design-assessment-store-test.london.cloudapps.digital
