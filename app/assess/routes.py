@@ -8,7 +8,6 @@ from app.assess.forms.scores_and_justifications import ScoreForm
 from app.assess.models.assessor_task_list import AssessorTaskList
 from app.assess.models.question import Question
 from app.assess.models.question_field import QuestionField
-from app.assess.models.theme import Theme
 from app.assess.models.total_table import TotalMoneyTableView
 from config import Config
 from flask import abort
@@ -38,17 +37,13 @@ def funds():
     return render_template("funds.html", funds=funds)
 
 
-@login_requested
-@assess_bp.route(
-    "score/application_id/<application_id>/sub_criteria_id/<sub_criteria_id>",
-    methods=["POST", "GET"],
-)
-def application_sub_crit_scoring(application_id: str, sub_criteria_id: str):
-    fund = get_fund(Config.COF_FUND_ID)
+@assess_bp.route("/application_id/<application_id>/sub_criteria_id/<sub_criteria_id>", methods=["POST", "GET"])
+def display_sub_criteria(application_id, sub_criteria_id,):
+    """
+    Page showing sub criteria and themes for an application
+    """
     form = ScoreForm()
-
-    score_error, justification_error, scores_submitted = False, False, False
-
+    score_error, justification_error, scores_submitted, scores_list = False, False, False, []
     if request.method == "POST":
         if form.validate_on_submit():
             score = int(form.score.data)
@@ -73,54 +68,51 @@ def application_sub_crit_scoring(application_id: str, sub_criteria_id: str):
             justification_error = (
                 True if not form.justification.data else False
             )
-    # call to assessment store to get latest score
-    score_list = get_score_and_justification(
-        application_id, sub_criteria_id, score_history=True
-    )
-    latest_score = score_list.pop(0) if len(score_list) > 0 else None
-    # TODO make COF_score_list extendable to other funds
-    COF_score_list = [
-        (5, "Strong"),
-        (4, "Good"),
-        (3, "Satisfactory"),
-        (2, "Partial"),
-        (1, "Poor"),
-    ]
+    
+    args = request.args
+    theme_id = args["theme_id"]
+    sub_criteria = get_sub_criteria(application_id=application_id, sub_criteria_id=sub_criteria_id)
+    fund = get_fund(Config.COF_FUND_ID)
+
+    if theme_id == "score":        
+        # call to assessment store to get latest score
+        score_list = get_score_and_justification(
+            application_id, sub_criteria_id, score_history=True
+        )
+        latest_score = score_list.pop(0) if len(score_list) > 0 else None
+        # TODO make COF_score_list extendable to other funds
+        COF_score_list = [
+            (5, "Strong"),
+            (4, "Good"),
+            (3, "Satisfactory"),
+            (2, "Partial"),
+            (1, "Poor"),
+        ]
+
+        return render_template(
+            "sub_criteria.html",
+                current_theme_id=theme_id,
+                on_summary=True,
+                sub_criteria=sub_criteria,
+                application_id=application_id,                
+                fund=fund,
+                form=form,                
+                scores_submitted=scores_submitted,
+                score_list=score_list if len(score_list) > 0 else None,
+                latest_score=latest_score,
+                COF_score_list=COF_score_list,
+                score_error=score_error,
+                justification_error=justification_error,                
+            )
+    
     return render_template(
         "sub_criteria.html",
-        scores_submitted=scores_submitted,
-        form=form,
-        score_list=score_list if len(score_list) > 0 else None,
-        latest_score=latest_score,
-        fund=fund,
-        application_id=application_id,
-        sub_criteria_id=sub_criteria_id,
-        COF_score_list=COF_score_list,
-        score_error=score_error,
-        justification_error=justification_error,
-    )
-
-
-@assess_bp.route("/sub_criteria/<sub_criteria_id>/<theme_id>", methods=["GET"])
-def display_sidebar(sub_criteria_id, theme_id):
-    """
-    Page showing sub criteria and themes
-    """
-    on_summary = True if theme_id == "score" else False
-
-    sub_criteria = get_sub_criteria(sub_criteria_id=sub_criteria_id)
-
-    themes: list[Theme] = [
-        Theme.from_filtered_dict(theme) for theme in sub_criteria.themes
-    ]
-
-    # TODO: would render a higher level page with first theme displaying by default # noqa
-    return render_template(
-        "sidebar.html",
-        sub_criteria=sub_criteria,
-        themes=themes,
         current_theme_id=theme_id,
-        on_summary=on_summary,
+        on_summary=False,
+        sub_criteria=sub_criteria,
+        application_id=application_id,     
+        fund=fund,
+        form=form,
     )
 
 

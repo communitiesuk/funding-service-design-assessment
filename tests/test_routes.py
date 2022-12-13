@@ -142,6 +142,49 @@ class TestRoutes:
                 b"Assessor dashboard</p>" in response.data
             ), "Response does not contain expected heading"
 
+
+    @pytest.mark.parametrize(
+        "expected_names",
+        [
+            b"Current score: 5",
+            b"Rescore",
+            b"Add rationale for this"
+        ],
+    )
+    
+    def test_route_sub_criteria_scroing(self, flask_test_client, expected_names):
+
+        response = flask_test_client.get(
+            "/assess/application_id/app_123/sub_criteria_id/1a2b3c4d?theme_id=score"
+        )
+
+        assert 200 == response.status_code, "Wrong status code on response"
+
+        assert (
+            expected_names in response.data
+        ), "Response does not contain expected id"
+
+    @pytest.mark.parametrize(
+        "expected_names",
+        [
+            b"General-information",
+            b"Applicant's response",
+            b"Comments"
+        ],
+    )
+    
+    def test_route_sub_criteria_non_scroing(self, flask_test_client, expected_names):
+
+        response = flask_test_client.get(
+            "/assess/application_id/app_123/sub_criteria_id/1a2b3c4d?theme_id=general-information"
+        )
+
+        assert 200 == response.status_code, "Wrong status code on response"
+
+        assert (
+            expected_names in response.data
+        ), "Response does not contain expected id"
+
     @pytest.mark.parametrize(
         "expected_ids, expected_names",
         [
@@ -150,12 +193,14 @@ class TestRoutes:
             (b"partnerships", b"Partnerships"),
         ],
     )
-    def test_route_sidebar(
+
+    
+    def test_route_sub_criteria_side_bar(
         self, flask_test_client, expected_ids, expected_names
     ):
 
         response = flask_test_client.get(
-            "/assess/sub_criteria/1a2b3c4d/general-information"
+            "/assess/application_id/app_123/sub_criteria_id/1a2b3c4d?theme_id=general-information"
         )
 
         assert 200 == response.status_code, "Wrong status code on response"

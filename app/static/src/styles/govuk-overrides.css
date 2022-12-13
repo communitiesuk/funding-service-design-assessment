@@ -1,7 +1,18 @@
 .govuk-width-container {
+  width: 100%;
     max-width: 1400px;
     padding: 0 2em;
+    margin: auto;
   }
+
+.govuk-header {
+    padding-bottom:0px;
+    border-bottom:0px;
+}
+
+.govuk-header__container {
+    padding-top:10px !important;
+}
 
 .govuk-table-no-bottom-border .govuk-table__body .govuk-table__row:last-child .govuk-table__cell {
     border-bottom: none;
@@ -23,3 +34,31 @@
 .gov-uk-table__cell--align-right {
     text-align: right;
   }
+
+.fsd-banner-background {
+    background-color: #1d70b8;
+    margin: 0 0 30px;
+    padding: 40px 0;
+    color:white;
+    text-size-adjust:100%;
+}
+
+.fsd-banner-content {
+    color:white;
+}
+
+.fsd-banner-collapse-padding {
+    margin-bottom:0px;
+}
+
+.govuk-template__body {
+    background-color: #f1f1f1;
+}
+
+.govuk-phase-banner__content {
+    width:100%
+}
+
+.govuk-heading-xl {
+    margin-bottom:30px;
+}

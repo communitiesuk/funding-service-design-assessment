@@ -498,7 +498,7 @@
       "location": "Northern Ireland"
     }
   ],
-  "assessment_store/sub_criteria_overview/1a2b3c4d": {
+  "assessment_store/sub_criteria_overview/app_123/1a2b3c4d": {
     "id": "1a2b3c4d",
     "name": "Engagement",
     "score_submitted": "false",
@@ -515,7 +515,12 @@
         "id": "partnerships",
         "name": "Partnerships"
       }
-    ]
+    ],
+    "funding_amount_requested": 250000,
+    "project_name": "Community Gym",
+    "fund_id": "test_fund_id",
+    "workflow_status": "NOT_STARTED",
+    "project_reference": "LKMBNS"
   },
   "assessment_store/application_overviews/123123123-123123123": {
     "criterias": [
@@ -668,5 +673,34 @@
       }
     ],
     "workflow_status": "NOT_STARTED"
-  }
+  },
+  "assessment_store/score":[
+    {
+      "application_id": "123123123-123123123",
+      "date_created": "2022-12-08T15:45:54.664955",
+      "id": "ba4ce3fb-6819-4f33-94ae-b830dc4c662b",
+      "justification": "fgd",
+      "score": 5,
+      "sub_criteria_id": "app-info",
+      "user_id": ""
+    },
+    {
+      "application_id": "123123123-123123123",
+      "date_created": "2022-12-08T15:45:15.802821",
+      "id": "a96513cd-b1f8-435d-81e9-d8b760c8bb7d",
+      "justification": "gg",
+      "score": 2,
+      "sub_criteria_id": "app-info",
+      "user_id": ""
+    },
+    {
+      "application_id": "123123123-123123123",
+      "date_created": "2022-12-08T15:45:07.987830",
+      "id": "befee261-f71c-4bf0-9bdf-016cbb254dfb",
+      "justification": "gg",
+      "score": 5,
+      "sub_criteria_id": "app-info",
+      "user_id": ""
+    }
+  ]
 }

@@ -1,14 +1,26 @@
 import inspect
+import enum
 from dataclasses import dataclass
 from app.assess.models.theme import Theme
 
 
-@dataclass
+@dataclass()
 class SubCriteria:
     id: str
     name: str
-    score_submitted: bool
     themes: list[Theme]
+    funding_amount_requested: int
+    project_name: str
+    fund_id: str
+    workflow_status: str
+    project_reference: str
+
+    def __post_init__(self):
+        self.themes = [
+            Theme.from_filtered_dict(theme) for theme in self.themes
+        ]
+        if isinstance(self.workflow_status, enum.Enum):
+            self.workflow_status = self.workflow_status.name
 
     @classmethod
     def from_filtered_dict(cls, d: dict):

@@ -277,13 +277,14 @@ def get_questions(application_id):
         return data
 
 
-def get_sub_criteria(sub_criteria_id):
+def get_sub_criteria(application_id, sub_criteria_id):
     """_summary_: Function is set up to retrieve
     the data from assessment store with
     get_data() function.
 
     Args:
-        sub_criteria_id: Takes an sub_criteria id.
+        application_id:
+        sub_criteria_id
 
     Returns:
       {
@@ -296,6 +297,7 @@ def get_sub_criteria(sub_criteria_id):
     sub_criteria_endpoint = (
         Config.ASSESSMENT_STORE_API_HOST
         + Config.SUB_CRITERIA_OVERVIEW_ENDPOINT.format(
+            application_id=application_id,
             sub_criteria_id=sub_criteria_id
         )
     )
