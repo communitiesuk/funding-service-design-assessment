@@ -126,14 +126,13 @@ jobs:
           cf_password: ${{secrets.CF_PASSWORD}}
           command: push funding-service-design-assessment-test
 
-
   run-shared-tests_test:
     needs: deploy_test
     if: ${{ github.actor != 'dependabot[bot]' && github.ref == 'refs/heads/main' }}
     uses: communitiesuk/funding-design-service-workflows/.github/workflows/run-shared-tests.yml@fs-1972-add-uat-tests
     with:
-      perf_test_target_url_application_store: https://funding-service-design-application-store-test.london.cloudapps.digital/
-      perf_test_target_url_fund_store: https://funding-service-design-fund-store-test.london.cloudapps.digital/
+      perf_test_target_url_application_store: https://funding-service-design-application-store-test.london.cloudapps.digital
+      perf_test_target_url_fund_store: https://funding-service-design-fund-store-test.london.cloudapps.digital
       e2e_tests_target_url_frontend: https://fsd:fsd@frontend.test.gids.dev
       e2e_tests_target_url_authenticator: https://fsd:fsd@authenticator2.test.gids.dev
       e2e_tests_target_url_form_runner: https://fsd:fsd@forms.test.gids.dev
