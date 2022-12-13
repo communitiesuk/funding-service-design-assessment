@@ -17,10 +17,10 @@
                 <div class="govuk-grid-column-full">
                     <div class="govuk-grid-column-two-thirds">
                         <h1 class="govuk-heading-xl fsd-banner-content">Fund: {{ fund.name }}</h1>
-                        <h2 class="govuk-heading-l fsd-banner-content">Project reference: {{ project_reference }}</h2>
-                        <h3 class="govuk-body-l fsd-banner-content fsd-banner-collapse-padding">Project name: {{ project_name }}</h3>
-                        <h3 class="govuk-body-l fsd-banner-content">Total funding requested: &pound;{{ "{:,.2f}".format(funding_amount_requested) }}</h3>
-                        <h3 class="govuk-body-l fsd-banner-content fsd-banner-collapse-padding">{{ workflow_status | status_to_human }}</h3>
+                        <h2 class="govuk-heading-l fsd-banner-content">Project reference: {{ sub_criteria.project_reference }}</h2>
+                        <h3 class="govuk-body-l fsd-banner-content fsd-banner-collapse-padding">Project name: {{ sub_criteria.project_name }}</h3>
+                        <h3 class="govuk-body-l fsd-banner-content">Total funding requested: &pound;{{ "{:,.2f}".format(sub_criteria.funding_amount_requested) }}</h3>
+                        <h3 class="govuk-body-l fsd-banner-content fsd-banner-collapse-padding">{{ sub_criteria.workflow_status | status_to_human }}</h3>
                     </div>
                 </div>
             </div>
@@ -40,7 +40,7 @@
             </div>
             <div class="theme govuk-grid-column-two-thirds">
                 {% if on_summary %}
-                    {{scores_justification(scores_submitted, form, score_list, latest_score, application_id, sub_criteria_id, COF_score_list, score_error, justification_error)}}
+                    {{scores_justification(scores_submitted, form, score_list, latest_score, application_id, sub_criteria.id, COF_score_list, score_error, justification_error)}}
                 {% else %}
                     {{theme(current_theme_id)}}
                 {% endif %}
