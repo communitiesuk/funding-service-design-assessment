@@ -2,6 +2,7 @@ from app.assess.views.filters import all_caps_to_human
 from app.assess.views.filters import datetime_format
 from app.assess.views.filters import slash_separated_day_month_year
 from app.assess.views.filters import status_to_human
+from app.assess.views.filters import datetime_format_24hr
 from app.assets import compile_static_assets
 from config import Config
 from flask import Flask
@@ -42,6 +43,7 @@ def create_app() -> Flask:
     ] = slash_separated_day_month_year
     flask_app.jinja_env.filters["all_caps_to_human"] = all_caps_to_human
     flask_app.jinja_env.filters["status_to_human"] = status_to_human
+    flask_app.jinja_env.filters["datetime_format_24hr"] = datetime_format_24hr
 
     Compress(flask_app)
 

@@ -702,5 +702,23 @@
       "sub_criteria_id": "app-info",
       "user_id": ""
     }
+  ],
+  "assessment_store/comment/app_123/1a2b3c4d":[
+    {
+      "comment": "This is a comment",
+      "user_id": "0a31fa06-7555-11ed-a1eb-0242ac120002",
+      "date_created": "2022-12-08T15:45:07.987830",
+      "email_address": "test@test.com",
+      "full_name" : "Gommez Addams",
+      "user_role": "LEAD_ASSESSOR"
+    },
+    {
+      "comment": "Youre missing some details",
+      "user_id": "0a31fa06-7555-11ed-a1eb-0242ac10505",
+      "date_created": "2022-10-27T08:32:13.383999",
+      "email_address": "test@test.com",
+      "full_name" : "Bruce Wayne",
+      "user_role": "ASSESSOR"
+    }
   ]
 }

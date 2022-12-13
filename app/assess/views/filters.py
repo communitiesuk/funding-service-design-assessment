@@ -27,7 +27,10 @@ def datetime_format(value, format):
     )
     return formatted_time
 
+def datetime_format_24hr(value):    
+    return datetime.fromisoformat(value).strftime("%d/%m/%Y at %H:%M")
 
 def all_caps_to_human(word):
     if word:
-        return word.capitalize()
+        result = word.replace('_', ' ')
+        return result.capitalize()

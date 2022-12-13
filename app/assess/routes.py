@@ -73,8 +73,9 @@ def display_sub_criteria(application_id, sub_criteria_id,):
     theme_id = args["theme_id"]
     sub_criteria = get_sub_criteria(application_id=application_id, sub_criteria_id=sub_criteria_id)
     fund = get_fund(Config.COF_FUND_ID)
+    comments = get_comments(application_id=application_id, sub_criteria_id=sub_criteria_id)
 
-    if theme_id == "score":        
+    if theme_id == "score":
         # call to assessment store to get latest score
         score_list = get_score_and_justification(
             application_id, sub_criteria_id, score_history=True
@@ -94,25 +95,27 @@ def display_sub_criteria(application_id, sub_criteria_id,):
                 current_theme_id=theme_id,
                 on_summary=True,
                 sub_criteria=sub_criteria,
-                application_id=application_id,                
+                application_id=application_id,
                 fund=fund,
-                form=form,                
+                form=form,
                 scores_submitted=scores_submitted,
                 score_list=score_list if len(score_list) > 0 else None,
                 latest_score=latest_score,
                 COF_score_list=COF_score_list,
                 score_error=score_error,
-                justification_error=justification_error,                
+                justification_error=justification_error,
+                comments=comments
             )
-    
+
     return render_template(
         "sub_criteria.html",
         current_theme_id=theme_id,
         on_summary=False,
         sub_criteria=sub_criteria,
-        application_id=application_id,     
+        application_id=application_id,
         fund=fund,
         form=form,
+        comments=comments
     )
 
 
