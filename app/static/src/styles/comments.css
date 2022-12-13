@@ -1,15 +1,15 @@
-.s26-comment-group {
+.comment-group {
     background-color: #ffffff;
     padding: 25px 25px 5px;
     margin-top: 15px;
     border: 2px #1d70b8 solid;
 }
 
-.s26-comment-group:last-of-type {
+.comment-group:last-of-type {
     margin-bottom: 30px;
 }
 
-.s26-comment-group .govuk-body-s {
+.comment-group .govuk-body-s {
     color: #505a5f;
     margin-top: -10px;
 }
