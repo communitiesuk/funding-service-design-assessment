@@ -338,5 +338,5 @@ def get_comments(application_id: str, sub_criteria_id: str):
      comment_endpoint = (
         Config.ASSESSMENT_STORE_API_HOST + 
         Config.COMMENTS_ENDPOINT.format(application_id=application_id, sub_criteria_id=sub_criteria_id))     
-     comment_response = get_data(comment_endpoint) 
+     comment_response = get_data(comment_endpoint)
      return comment_response

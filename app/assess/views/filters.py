@@ -30,8 +30,7 @@ def datetime_format(value, format):
 def datetime_format_24hr(value):    
     return datetime.strptime(value, "%Y-%m-%dT%H:%M:%S.%f").strftime("%d/%m/%Y at %H:%M")
 
-
-
 def all_caps_to_human(word):
     if word:
-        return word.capitalize()
+        result = word.replace('_', ' ')
+        return result.capitalize()
