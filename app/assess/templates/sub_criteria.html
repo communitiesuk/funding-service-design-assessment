@@ -44,20 +44,25 @@
                 {% else %}
                     {{theme(current_theme_id, answers_meta)}}
                 {% endif %}
-                <div class="s26-content-container">
-                    <h2 class="govuk-heading govuk-heading-l" id="comments-heading">Comments</h2>
-                    <section class="comment-section">
-                        <h3 class="govuk-heading-m">Community engagement</h3>
-                        <p class="govuk-body-s">There are currently no comments&nbsp;for this section.
-                            {# <a href="#" class="govuk-link govuk-link--no-visited-state">Add a comment</a> #}
-                        </p>
-                    </section>
-                    <section class="comment-section">
-                        <h3 class="govuk-heading-m">Local support</h3>
-                        <p class="govuk-body-s">There are currently no comments&nbsp;for this section.
-                            {# <a href="#" class="govuk-link govuk-link--no-visited-state">Add a comment</a> #}
-                        </p>
-                    </section>
+                <div class="govuk-!-margin-top-7" id="anchor">
+                    <h2 class="govuk-heading-m">Comments</h2>
+                    <div id="more-detail-hint" class="govuk-hint">
+                      <p class="govuk-hint">Summarise any thoughts you have on the information provided.</p>
+                      <p class="govuk-hint">You cannot edit or delete your comment once you have saved it.</p>
+                    </div>
+                    {% if comments == None %}
+                    <div class="govuk-body govuk-!-margin-top-6">
+                        No comments have been left yet.
+                        </div>
+                    {% else %}
+                    {% for comment in comments %}
+                    <div class="comment-group">
+                      <p class="govuk-body">{{comment.comment}}</p>
+                      <p class="govuk-body-s">{{comment.full_name}} ({{comment.user_role|all_caps_to_human}}) {{comment.email_address}}</p>
+                      <p class="govuk-body-s">{{comment.date_created|datetime_format_24hr}}</p>
+                    </div>
+                    {% endfor %}
+                    {% endif %}
                 </div>
             </div>
         </div>

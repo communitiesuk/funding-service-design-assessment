@@ -326,3 +326,22 @@ def get_sub_criteria_theme_answers(
         msg = f"theme_answers: '{theme_id}' not found."
         current_app.logger.warn(msg)
         abort(404, description=msg)
+
+
+def get_comments(application_id: str, sub_criteria_id: str):
+    """_summary_: Function is set up to retrieve
+    the data from application store with
+    get_data() function.
+    Args:
+        application_id: Takes an application_id, sub_criteria_id: takes a sub_criteria_id # noqa
+    Returns:
+        Returns a dictionary of comments.
+    """
+    comment_endpoint = (
+        Config.ASSESSMENT_STORE_API_HOST
+        + Config.COMMENTS_ENDPOINT.format(
+            application_id=application_id, sub_criteria_id=sub_criteria_id
+        )
+    )
+    comment_response = get_data(comment_endpoint)
+    return comment_response

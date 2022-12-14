@@ -70,6 +70,8 @@ class DefaultConfig:
 
     ASSESSMENT_SCORES_ENDPOINT = ASSESSMENT_STORE_API_HOST + "/score"
 
+    COMMENTS_ENDPOINT = "/comment/{application_id}/{sub_criteria_id}"
+
     """
     Assets
     """
