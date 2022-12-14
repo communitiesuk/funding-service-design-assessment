@@ -31,10 +31,6 @@
     text-transform: none;
   }
 
-.gov-uk-table__cell--align-right {
-    text-align: right;
-  }
-
 .fsd-banner-background {
     background-color: #1d70b8;
     margin: 0 0 30px;

@@ -1,0 +1,47 @@
+{%- from "govuk_frontend_jinja/components/table/macro.html" import govukTable -%}
+{% macro criteria_element(criteria, name_classes, application_id) %}
+
+    {% set rows = [] %}
+    {% for sub_criteria in criteria.sub_criterias %}
+        {% set _ = rows.append([
+            {
+                "html": '<a class="govuk-link" href="{}">{}</a>'.format(
+                    url_for(
+                        'assess_bp.display_sub_criteria',
+                         application_id=application_id,
+                         sub_criteria_id="1a2b3c4d"
+                    ),
+                    sub_criteria.name
+                )
+            },
+            { "text": sub_criteria.theme_count, "format": "numeric" },
+            { "text": sub_criteria.score, "format": "numeric" },
+            { "html": '<span class="govuk-tag--scored-criteria">{}</span>'.format(sub_criteria.status), "format": "numeric" }
+        ]) %}
+    {% endfor %}
+
+    {% set _ = rows.append([
+        { "html": "<strong>Total criteria score</strong>" },
+        { "text": "" },
+        { "text": "" },
+        { "text": "{} of {}".format(criteria.total_criteria_score, criteria.total_criteria_score_possible), "format": "numeric" },
+    ]) %}
+
+    <h3 class="{{ name_classes or '' }}">{{ criteria.name }}</h3>
+    <p class="govuk-body govuk-!-margin-bottom-2">
+        <strong>{{ (criteria.weighting * 100)|int }}%</strong> of overall score.
+    </p>
+
+    {{ govukTable({
+        "firstCellIsHeader":false,
+        "head":[
+            { "text": "Assessment sub criteria" },
+            { "text": "Number of sections", "format": "numeric" },
+            { "text": "Score", "format": "numeric" },
+            { "text": "Status", "format": "numeric" }
+        ],
+        "rows": rows,
+        "classes": "govuk-!-margin-bottom-6 govuk-table-no-bottom-border"
+    }) }}
+
+{% endmacro %}

@@ -1,7 +1,7 @@
 import re
 
-from app.assess.models.assessor_task_list import _CriteriaSubCriteria
-from app.assess.models.assessor_task_list import _SubCriteria
+from app.assess.models.ui.assessor_task_list import _CriteriaSubCriteria
+from app.assess.models.ui.assessor_task_list import _SubCriteria
 from flask import get_template_attribute
 from flask import render_template_string
 
