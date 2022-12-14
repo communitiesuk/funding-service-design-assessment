@@ -3,6 +3,7 @@ from app.assess.views.filters import datetime_format
 from app.assess.views.filters import slash_separated_day_month_year
 from app.assess.views.filters import status_to_human
 from app.assess.views.filters import datetime_format_24hr
+from app.assess.views.filters import format_project_ref
 
 
 class TestFilters(object):
@@ -30,3 +31,8 @@ class TestFilters(object):
         date_in = "2023-01-30T14:50:00.500"
         result = datetime_format_24hr(date_in)
         assert "30/01/2023 at 14:50" == result, "Wrong format returned"
+    
+    def test_format_project_ref(self):
+        short_id = "COF-123-LKMBNS"
+        result = format_project_ref(short_id)
+        assert "LKMBNS" == result, "Wrong format returned"

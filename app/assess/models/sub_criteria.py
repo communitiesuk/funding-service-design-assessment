@@ -13,7 +13,7 @@ class SubCriteria:
     project_name: str
     fund_id: str
     workflow_status: str
-    project_reference: str
+    short_id: str
 
     def __post_init__(self):
         self.themes = [
