@@ -90,3 +90,119 @@ class MonetaryKeyValues(ApplicationResponseComponent):
             question_answer_pairs=_dict["answer"],
             total=sum([float(amt) for _, amt in _dict["answer"]]),
         )
+
+
+def _ui_component_from_factory(item: dict):
+    presentation_type = item["presentation_type"]
+    if presentation_type == "grouped_fields":
+        return MonetaryKeyValues.from_dict(item)
+    elif presentation_type == "text":
+        return OrientedQuestionAnswerPair.from_dict(item)
+    elif presentation_type == "file":
+        return FileQuestionAnswerPair.from_dict(item)
+
+    # Note that types "amount", "description" and "heading" are not used
+    # here because they are grouped together in the "grouped_fields" type
+    # in a pre-processing step
+    raise NotImplementedError(
+        f"Unknown presentation type: {presentation_type}"
+    )
+
+
+def _convert_heading_description_amount_items(
+    response,
+) -> tuple[list[dict], set[str]]:
+    field_ids = {
+        item["field_id"]
+        for item in response
+        if item["presentation_type"] == "heading"
+    }
+
+    grouped_fields_items = []
+    for field_id in field_ids:
+        items_map = {
+            item["presentation_type"]: item
+            for item in response
+            if item["field_id"] == field_id
+        }
+        descriptions, amounts = (
+            items_map.get("description")["answer"],
+            items_map.get("amount")["answer"],
+        )
+        grouped_fields = zip(descriptions, map(float, amounts))
+
+        grouped_fields_items.append(
+            {
+                "caption": items_map.get("heading")["question"],
+                "question": items_map.get("description")["question"],
+                "field_id": field_id,
+                "answer": grouped_fields,
+                "presentation_type": "grouped_fields",
+            }
+        )
+    return grouped_fields_items, field_ids
+
+
+def _convert_checkbox_items(response) -> tuple[list[dict], set[str]]:
+    def _dash_separated_to_human_readable(s: str) -> str:
+        return s.replace("-", " ").capitalize()
+
+    field_ids = {
+        item["field_id"]
+        for item in response
+        if item["field_type"] == "checkboxesField"
+    }
+    items_to_process = (i for i in response if i["field_id"] in field_ids)
+
+    text_items = []
+    for item in items_to_process:
+        text_items.extend(
+            {
+                "question": _dash_separated_to_human_readable(answer),
+                "field_id": item["field_id"],
+                "answer": "Yes",
+                "presentation_type": "text",
+            }
+            for answer in item["answer"]
+        )
+    return text_items, field_ids
+
+
+def _make_field_ids_hashable(item: dict) -> dict:
+    field_id = item["field_id"]
+    if isinstance(field_id, list):
+        item["field_id"] = tuple(field_id)
+    return item
+
+
+def create_ui_components(
+    response_with_unhashable_fields: list[dict],
+) -> List[ApplicationResponseComponent]:
+    response = map(_make_field_ids_hashable, response_with_unhashable_fields)
+
+    (
+        grouped_fields_items,
+        gfi_field_ids,
+    ) = _convert_heading_description_amount_items(response)
+    text_items, ti_field_ids = _convert_checkbox_items(response)
+
+    processed_field_ids = gfi_field_ids | ti_field_ids
+    unprocessed_items = [
+        i for i in response if str(i["field_id"]) not in processed_field_ids
+    ]
+
+    post_processed_items = (
+        grouped_fields_items + text_items + unprocessed_items
+    )
+    # note that we use dict.fromkeys to remove duplicates
+    # (sets are unordered)
+    field_ids_in_order = list(
+        dict.fromkeys(str(i["field_id"]) for i in response)
+    )
+    # we need to preserve the order of the fields from the back-end,
+    # so we re-sort it here
+    post_processed_items.sort(
+        key=lambda x: field_ids_in_order.index(str(x["field_id"]))
+    )
+
+    return map(_ui_component_from_factory, post_processed_items)
