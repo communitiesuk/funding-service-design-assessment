@@ -11,7 +11,7 @@
 } %}
 
 {% macro theme(theme_id, answers_meta) %}
-    <h2 class="govuk-heading-m">{{ current_theme_id | capitalize }}</h2>
+    <h2 class="govuk-heading-m">{{ theme_id | capitalize }}</h2>
     <h3 class="govuk-heading-s response-title">Applicant's response</h3>
     <div class="template-answer">
         {% for meta in answers_meta %}

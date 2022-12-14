@@ -1279,5 +1279,23 @@
       "presentation_type": "text",
       "question": "Describe any specific challenges your community faces, and how the asset will address these"
     }
+  ],
+  "assessment_store/sub_criteria_themes/app_123/general-information": [
+    {
+      "answer": "Test",
+      "field_id": "oOPUXI",
+      "field_type": "multilineTextField",
+      "form_name": "value-to-the-community",
+      "presentation_type": "text",
+      "question": "Tell us about your local community as a whole"
+    },
+    {
+      "answer": "Test",
+      "field_id": "NKOmNL",
+      "field_type": "multilineTextField",
+      "form_name": "value-to-the-community",
+      "presentation_type": "text",
+      "question": "Describe any specific challenges your community faces, and how the asset will address these"
+    }
   ]
 }

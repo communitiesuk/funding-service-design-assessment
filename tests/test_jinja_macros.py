@@ -1,5 +1,6 @@
 import re
 
+from app.assess.models.ui.assessor_task_list import _Criteria
 from app.assess.models.ui.assessor_task_list import _CriteriaSubCriteria
 from app.assess.models.ui.assessor_task_list import _SubCriteria
 from flask import get_template_attribute
@@ -9,33 +10,34 @@ from flask import render_template_string
 class TestJinjaMacros(object):
     def test_criteria_macro(self, request_ctx):
         rendered_html = render_template_string(
-            "{{criteria_element(sub_criterias, name, name_classes,"
-            " total_criteria_score, total_criteria_score_possible,"
-            " weighting)}}",
+            "{{criteria_element(criteria, name_classes, application_id)}}",
             criteria_element=get_template_attribute(
-                "macros/criteria_element.html", "criteria_element"
+                "macros/criteria_element.jinja2", "criteria_element"
             ),
-            sub_criterias=[
-                _CriteriaSubCriteria(
-                    id="1",
-                    name="Sub Criteria 1",
-                    status="Not started",
-                    theme_count=1,
-                    score=2,
-                ),
-                _CriteriaSubCriteria(
-                    id="2",
-                    name="Sub Criteria 2",
-                    status="Not started",
-                    theme_count=2,
-                    score=2,
-                ),
-            ],
-            name="Example title",
+            criteria=_Criteria(
+                name="Example title",
+                total_criteria_score=0,
+                total_criteria_score_possible=0,
+                weighting=0.5,
+                sub_criterias=[
+                    _CriteriaSubCriteria(
+                        id="1",
+                        name="Sub Criteria 1",
+                        status="Not started",
+                        theme_count=1,
+                        score=2,
+                    ),
+                    _CriteriaSubCriteria(
+                        id="2",
+                        name="Sub Criteria 2",
+                        status="Not started",
+                        theme_count=2,
+                        score=2,
+                    ),
+                ],
+            ),
             name_classes="example-class",
-            total_criteria_score=0,
-            total_criteria_score_possible=0,
-            weighting=0.5,
+            application_id=1,
         )
 
         # replacing new lines to more easily regex match the html
@@ -72,7 +74,7 @@ class TestJinjaMacros(object):
         rendered_html = render_template_string(
             "{{section_element(name, sub_criterias)}}",
             section_element=get_template_attribute(
-                "macros/section_element.html", "section_element"
+                "macros/section_element.jinja2", "section_element"
             ),
             name="Example title",
             sub_criterias=[
