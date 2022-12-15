@@ -10,11 +10,6 @@
          ]) %}
     {% endfor %}
 
-    {# Footer/last cell #}
-    {#    TODO: check with UI what we should do in this scenario#}
-    {# is it worth showing this header if there is only one row? #}
-    {#    {% if products|length > 1 %}#}
-
     {% set _ = rows.extend([[
         {'text': 'Total', 'classes': 'govuk-table__header'}, {'text': "£{:,.2f}".format(meta.total), 'format': 'numeric'}
     ]]) %}

@@ -1,31 +1,640 @@
 import json  # noqa
 
 import pytest  # noqa
-from app.assess.models.ui.applicators_response import (  # noqa
-    _convert_checkbox_items,  # noqa
-)  # noqa
-from app.assess.models.ui.applicators_response import (  # noqa
-    _convert_heading_description_amount_items,  # noqa
-)  # noqa
-from app.assess.models.ui.applicators_response import (  # noqa
-    _ui_component_from_factory,  # noqa
-)  # noqa
-from app.assess.models.ui.applicators_response import (  # noqa
-    create_ui_components,  # noqa
-)  # noqa
-from app.assess.models.ui.applicators_response import (  # noqa
-    FileQuestionAnswerPair,  # noqa
-)  # noqa
-from app.assess.models.ui.applicators_response import MonetaryKeyValues  # noqa
-from app.assess.models.ui.applicators_response import (  # noqa
-    OrientedQuestionAnswerPair,  # noqa
-)  # noqa
+from app.assess.models.ui.applicators_response import _convert_checkbox_items
+from app.assess.models.ui.applicators_response import (
+    _convert_heading_description_amount,
+)
+from app.assess.models.ui.applicators_response import (
+    _convert_non_number_grouped_fields,
+)
+from app.assess.models.ui.applicators_response import _flatten_field_ids
+from app.assess.models.ui.applicators_response import _make_field_ids_hashable
+from app.assess.models.ui.applicators_response import (
+    _ui_component_from_factory,
+)
+from app.assess.models.ui.applicators_response import AboveQuestionAnswerPair
+from app.assess.models.ui.applicators_response import (
+    AboveQuestionAnswerPairHref,
+)
+from app.assess.models.ui.applicators_response import (
+    ApplicatorsResponseComponent,
+)
+from app.assess.models.ui.applicators_response import BesideQuestionAnswerPair
+from app.assess.models.ui.applicators_response import (
+    BesideQuestionAnswerPairHref,
+)
+from app.assess.models.ui.applicators_response import create_ui_components
+from app.assess.models.ui.applicators_response import (
+    FormattedBesideQuestionAnswerPair,
+)
+from app.assess.models.ui.applicators_response import MonetaryKeyValues
+from app.assess.views.filters import format_address
 
-# noqa
 
-# TODO(tferns): Add tests for the following (in-progress)
-# - concrete ui component classes (should_render and from_dict)
-# - _convert_heading_description_amount_items    # maybe tested through
-# - _convert_checkbox_items                      # public methods?
-# - _ui_component_from_factory                   # ^
-# - create_ui_components
+class TestApplicatorsResponseComponentConcreteSubclasses:
+    def test_monetary_key_values_should_render(self):
+        data = {
+            "question": ("Test caption", "Test question"),
+            "answer": [
+                ("Test description 1", 10.0),
+                ("Test description 2", 20.0),
+            ],
+        }
+        key_values = MonetaryKeyValues.from_dict(data)
+        assert key_values.caption == "Test caption"
+        assert key_values.column_description == "Test question"
+        assert key_values.question_answer_pairs == [
+            ("Test description 1", 10.0),
+            ("Test description 2", 20.0),
+        ]
+        assert key_values.should_render is True
+
+    def test_monetary_key_values_should_not_render(self):
+        data = {
+            "question": ("Test question", "Test question"),
+            "answer": [],
+        }
+        key_values = MonetaryKeyValues.from_dict(data)
+        assert key_values.should_render is False
+
+    @pytest.mark.parametrize(
+        "clazz, data",
+        [
+            (
+                AboveQuestionAnswerPair,
+                {"question": "What is your name?", "answer": "John Doe"},
+            ),
+            (
+                BesideQuestionAnswerPair,
+                {"question": "What is your name?", "answer": "John Doe"},
+            ),
+        ],
+    )
+    def test_question_answer_pair_should_render(self, clazz, data):
+        qa_pair = clazz.from_dict(data)
+        assert qa_pair.question == "What is your name?"
+        assert qa_pair.answer == data["answer"]
+        assert qa_pair.should_render is True
+
+    @pytest.mark.parametrize(
+        "clazz, data",
+        [
+            (
+                AboveQuestionAnswerPair,
+                {"question": "What is your name?", "answer": None},
+            ),
+            (
+                BesideQuestionAnswerPair,
+                {"question": "What is your name?", "answer": None},
+            ),
+        ],
+    )
+    def test_question_answer_pair_should_not_render(self, clazz, data):
+        qa_pair = clazz.from_dict(data)
+        assert qa_pair.question == "What is your name?"
+        assert qa_pair.answer == data["answer"]
+        assert qa_pair.should_render is False
+
+    @pytest.mark.parametrize(
+        "clazz, data",
+        [
+            (
+                AboveQuestionAnswerPairHref,
+                {"question": "What is your name?", "answer": "John Doe"},
+            ),
+            (
+                BesideQuestionAnswerPairHref,
+                {"question": "What is your name?", "answer": "John Doe"},
+            ),
+        ],
+    )
+    def test_question_answer_pair_href_should_render(self, clazz, data):
+        qa_pair = clazz.from_dict(data, "https://example.com")
+        assert qa_pair.question == "What is your name?"
+        assert qa_pair.answer == data["answer"]
+        assert qa_pair.answer_href == "https://example.com"
+        assert qa_pair.should_render is True
+
+    @pytest.mark.parametrize(
+        "clazz, data",
+        [
+            (
+                AboveQuestionAnswerPairHref,
+                {"question": "What is your name?", "answer": None},
+            ),
+            (
+                BesideQuestionAnswerPairHref,
+                {"question": "What is your name?", "answer": None},
+            ),
+        ],
+    )
+    def test_question_answer_pair_href_should_not_render(self, clazz, data):
+        qa_pair = clazz.from_dict(data, "https://example.com")
+        assert qa_pair.question == "What is your name?"
+        assert qa_pair.answer == data["answer"]
+        assert qa_pair.answer_href == "https://example.com"
+        assert qa_pair.should_render is False
+
+
+class TestApplicatorsResponseComponentFactory:
+    @pytest.mark.parametrize(
+        "item, expected_class",
+        [
+            (
+                {
+                    "presentation_type": "grouped_fields",
+                    "answer": [("foo", "1"), ("bar", "2")],
+                    "question": ["foo", "foo"],
+                },
+                MonetaryKeyValues,
+            ),
+            (
+                {
+                    "presentation_type": "text",
+                    "field_type": "multilineTextField",
+                    "answer": "lorem ipsum",
+                    "question": "foo",
+                },
+                AboveQuestionAnswerPair,
+            ),
+            (
+                {
+                    "presentation_type": "text",
+                    "field_type": "websiteField",
+                    "answer": "https://www.example.com",
+                    "question": "foo",
+                },
+                BesideQuestionAnswerPairHref,
+            ),
+            (
+                {
+                    "presentation_type": "text",
+                    "field_type": "textField",
+                    "answer": "lorem ipsum",
+                    "question": "foo",
+                },
+                BesideQuestionAnswerPair,
+            ),
+            (
+                {
+                    "presentation_type": "file",
+                    "answer": "https://www.example.com/file.pdf",
+                    "question": "foo",
+                },
+                AboveQuestionAnswerPairHref,
+            ),
+            (
+                {
+                    "presentation_type": "address",
+                    "answer": "123 Main St",
+                    "question": "foo",
+                },
+                FormattedBesideQuestionAnswerPair,
+            ),
+        ],
+    )
+    def test__ui_component_from_factory(self, item, expected_class):
+        result = _ui_component_from_factory(item)
+        assert isinstance(result, expected_class)
+
+
+class TestConvertHeadingDescriptionAmountToGroupedFields:
+    @pytest.mark.parametrize(
+        "response, expected_grouped_fields_items, expected_field_ids",
+        [
+            (
+                [
+                    {
+                        "presentation_type": "heading",
+                        "field_id": "foo",
+                        "question": "Foo",
+                    },
+                    {
+                        "presentation_type": "description",
+                        "field_id": "foo",
+                        "question": "Description",
+                        "answer": ["lorem", "ipsum"],
+                    },
+                    {
+                        "presentation_type": "amount",
+                        "field_id": "foo",
+                        "question": "Amount",
+                        "answer": ["1.23", "4.56"],
+                    },
+                ],
+                [
+                    {
+                        "question": ("Foo", "Description"),
+                        "field_id": "foo",
+                        "answer": [("lorem", 1.23), ("ipsum", 4.56)],
+                        "presentation_type": "grouped_fields",
+                    }
+                ],
+                {"foo"},
+            ),
+            (
+                [
+                    {
+                        "presentation_type": "heading",
+                        "field_id": "foo",
+                        "question": "Foo",
+                    },
+                    {
+                        "presentation_type": "heading",
+                        "field_id": "bar",
+                        "question": "Bar",
+                    },
+                    {
+                        "presentation_type": "description",
+                        "field_id": "foo",
+                        "question": "Description",
+                        "answer": ["lorem", "ipsum"],
+                    },
+                    {
+                        "presentation_type": "description",
+                        "field_id": "bar",
+                        "question": "Description",
+                        "answer": ["dolor", "sit"],
+                    },
+                    {
+                        "presentation_type": "amount",
+                        "field_id": "foo",
+                        "question": "Amount",
+                        "answer": ["1.23", "4.56"],
+                    },
+                    {
+                        "presentation_type": "amount",
+                        "field_id": "bar",
+                        "question": "Amount",
+                        "answer": ["7.89", "0.12"],
+                    },
+                ],
+                [
+                    {
+                        "question": ("Foo", "Description"),
+                        "field_id": "foo",
+                        "answer": [("lorem", 1.23), ("ipsum", 4.56)],
+                        "presentation_type": "grouped_fields",
+                    },
+                    {
+                        "question": ("Bar", "Description"),
+                        "field_id": "bar",
+                        "answer": [("dolor", 7.89), ("sit", 0.12)],
+                        "presentation_type": "grouped_fields",
+                    },
+                ],
+                {"foo", "bar"},
+            ),
+        ],
+    )
+    def test__convert_heading_description_amount(
+        self, response, expected_grouped_fields_items, expected_field_ids
+    ):
+        result, field_ids = _convert_heading_description_amount(response)
+        assert result == expected_grouped_fields_items
+        assert field_ids == expected_field_ids
+
+    def test__convert_heading_description_amount_should_throw_when_bad_config(
+        self,
+    ):
+        response = [
+            {
+                "presentation_type": "heading",
+                "field_id": "foo",
+                "question": "Foo",
+            },
+            {
+                "presentation_type": "description",
+                "field_id": "foo",
+                "question": "Description",
+                "answer": ["lorem", "ipsum"],
+            },
+            {
+                "presentation_type": "amount",
+                "field_id": "foo",
+                "question": "Amount",
+                "answer": ["1.23", "4.56"],
+            },
+            {
+                "presentation_type": "heading",
+                "field_id": "bar",
+                "question": "Bar",
+            },
+        ]
+
+        with pytest.raises(ValueError) as exc_info:
+            _convert_heading_description_amount(response)
+
+        assert (
+            str(exc_info.value)
+            == "Could not find item with presentation_type: description at"
+            " index: 1\nThis probably means there is an uneven number of"
+            " 'heading', 'description' and 'amount' items\nThere should be"
+            " an equal number of each of these items"
+        )
+
+
+class TestConvertCheckboxItems:
+    @pytest.mark.parametrize(
+        "response, expected_text_items, expected_field_ids",
+        [
+            (
+                [
+                    {
+                        "field_type": "checkboxesField",
+                        "field_id": "foo",
+                        "answer": ["lorem-de", "ipsum_do"],
+                    }
+                ],
+                [
+                    {
+                        "question": "Lorem de",
+                        "field_type": "checkboxesField",
+                        "field_id": "foo",
+                        "answer": "Yes",
+                        "presentation_type": "text",
+                    },
+                    {
+                        "question": "Ipsum do",
+                        "field_type": "checkboxesField",
+                        "field_id": "foo",
+                        "answer": "Yes",
+                        "presentation_type": "text",
+                    },
+                ],
+                {"foo"},
+            ),
+            (
+                [
+                    {
+                        "field_type": "checkboxesField",
+                        "field_id": "foo",
+                        "answer": ["lorem", "ipsum"],
+                    },
+                    {
+                        "field_type": "checkboxesField",
+                        "field_id": "bar",
+                        "answer": ["dolor", "sit"],
+                    },
+                ],
+                [
+                    {
+                        "question": "Lorem",
+                        "field_type": "checkboxesField",
+                        "field_id": "foo",
+                        "answer": "Yes",
+                        "presentation_type": "text",
+                    },
+                    {
+                        "question": "Ipsum",
+                        "field_type": "checkboxesField",
+                        "field_id": "foo",
+                        "answer": "Yes",
+                        "presentation_type": "text",
+                    },
+                    {
+                        "question": "Dolor",
+                        "field_type": "checkboxesField",
+                        "field_id": "bar",
+                        "answer": "Yes",
+                        "presentation_type": "text",
+                    },
+                    {
+                        "question": "Sit",
+                        "field_type": "checkboxesField",
+                        "field_id": "bar",
+                        "answer": "Yes",
+                        "presentation_type": "text",
+                    },
+                ],
+                {"foo", "bar"},
+            ),
+        ],
+    )
+    def test__convert_checkbox_items(
+        self, response, expected_text_items, expected_field_ids
+    ):
+        result, field_ids = _convert_checkbox_items(response)
+        assert result == expected_text_items
+        assert field_ids == expected_field_ids
+
+
+class TestConvertNonNumberGroupedFields:
+    @pytest.mark.parametrize(
+        "response, expected_text_items, expected_field_ids",
+        [
+            (
+                [
+                    {
+                        "question": "Question 1",
+                        "field_id": ["foo"],
+                        "answer": ["Answer 1"],
+                        "presentation_type": "grouped_fields",
+                        "field_type": "numberField",
+                    }
+                ],
+                [],
+                set(),
+            ),
+            (
+                [
+                    {
+                        "question": "Caption",
+                        "field_id": ["foo"],
+                        "answer": [("Subquestion 1", "Subanswer 1")],
+                        "presentation_type": "grouped_fields",
+                        "field_type": "textField",
+                    }
+                ],
+                [
+                    {
+                        "question": "Subquestion 1",
+                        "field_id": "foo",
+                        "answer": "Subanswer 1",
+                        "presentation_type": "text",
+                        "field_type": "textField",
+                    }
+                ],
+                {("foo",), "foo"},
+            ),
+            (
+                [
+                    {
+                        "question": "Header",
+                        "field_id": ["foo", "bar"],
+                        "answer": [
+                            ("Question 1", "Answer 1"),
+                            ("Question 2", "Answer 2"),
+                        ],
+                        "presentation_type": "grouped_fields",
+                        "field_type": "textField",
+                    }
+                ],
+                [
+                    {
+                        "question": "Question 1",
+                        "field_id": "foo",
+                        "answer": "Answer 1",
+                        "presentation_type": "text",
+                        "field_type": "textField",
+                    },
+                    {
+                        "question": "Question 2",
+                        "field_id": "bar",
+                        "answer": "Answer 2",
+                        "presentation_type": "text",
+                        "field_type": "textField",
+                    },
+                ],
+                {("foo", "bar"), "foo", "bar"},
+            ),
+        ],
+    )
+    def test__convert_non_number_grouped_fields(
+        self, response, expected_text_items, expected_field_ids
+    ):
+        result, field_ids = _convert_non_number_grouped_fields(response)
+        assert result == expected_text_items
+        assert field_ids == expected_field_ids
+
+
+class TestUtilMethods:
+    @pytest.mark.parametrize(
+        "field_id, expected_field_ids",
+        [
+            ("foo", ["foo"]),
+            (("foo", "bar"), [("foo", "bar"), "foo", "bar"]),
+            (["foo", "bar"], [("foo", "bar"), "foo", "bar"]),
+        ],
+    )
+    def test__flatten_field_ids(self, field_id, expected_field_ids):
+        assert _flatten_field_ids(field_id) == expected_field_ids
+
+    @pytest.mark.parametrize(
+        "item, expected",
+        [
+            ({"field_id": 1}, {"field_id": 1}),
+            ({"field_id": [1, 2, 3]}, {"field_id": (1, 2, 3)}),
+        ],
+    )
+    def test__make_field_ids_hashable(self, item, expected):
+        result = _make_field_ids_hashable(item)
+        assert result == expected
+
+
+def test_create_ui_components_retains_order():
+    response_with_unhashable_fields = [
+        {
+            "field_id": "field_1",
+            "question": "First",
+            "answer": "John Doe",
+            "presentation_type": "text",
+            "field_type": "textField",
+        },
+        {
+            "field_id": ["field_2", "field_3"],
+            "question": "",
+            "answer": ["Second", "Third"],
+            "presentation_type": "list",
+            "field_type": "checkboxesField",
+        },
+        {
+            "field_id": "field_4",
+            "question": "Fourth",
+            "answer": "Software Engineer",
+            "presentation_type": "text",
+            "field_type": "textField",
+        },
+        {
+            "presentation_type": "heading",
+            "field_id": "field_5",
+            "question": "Fifth",
+            "field_type": "multiInputField",
+        },
+        {
+            "presentation_type": "description",
+            "field_id": "field_5",
+            "question": "Description",
+            "field_type": "multiInputField",
+            "answer": ["Subquestion 1", "Subquestion 2"],
+        },
+        {
+            "presentation_type": "amount",
+            "field_id": "field_5",
+            "question": "Amount",
+            "field_type": "multiInputField",
+            "answer": ["1.23", "4.56"],
+        },
+        {
+            "field_id": "field_6",
+            "question": "Sixth",
+            "answer": "Yes",
+            "presentation_type": "text",
+            "field_type": "multilineTextField",
+        },
+        {
+            "caption": "Foo",
+            "question": "Description",
+            "field_id": ["field_7", "field_8"],
+            "answer": [("Seventh", "a-website"), ("Eigth", "another-website")],
+            "presentation_type": "grouped_fields",
+            "field_type": "websiteField",
+        },
+        {
+            "field_id": "field_9",
+            "question": "Ninth",
+            "answer": "Yes",
+            "presentation_type": "address",
+            "field_type": "UkAddressField",
+        },
+        {
+            "field_id": "field_10",
+            "question": "Tenth",
+            "answer": "afile.doc",
+            "presentation_type": "file",
+            "field_type": "fileUploadField",
+        },
+    ]
+
+    ui_components = create_ui_components(response_with_unhashable_fields)
+
+    assert all(
+        isinstance(ui_component, ApplicatorsResponseComponent)
+        for ui_component in ui_components
+    )
+
+    assert len(ui_components) == 10
+
+    assert isinstance(ui_components[0], BesideQuestionAnswerPair)
+    assert ui_components[0].question == "First"
+
+    assert isinstance(ui_components[1], BesideQuestionAnswerPair)
+    assert ui_components[1].question == "Second"
+
+    assert isinstance(ui_components[2], BesideQuestionAnswerPair)
+    assert ui_components[2].question == "Third"
+
+    assert isinstance(ui_components[3], BesideQuestionAnswerPair)
+    assert ui_components[3].question == "Fourth"
+
+    assert isinstance(ui_components[4], MonetaryKeyValues)
+    assert ui_components[4].caption == "Fifth"
+    assert ui_components[4].question_answer_pairs[0][0] == "Subquestion 1"
+    assert ui_components[4].question_answer_pairs[1][0] == "Subquestion 2"
+
+    assert isinstance(ui_components[5], AboveQuestionAnswerPair)
+    assert ui_components[5].question == "Sixth"
+
+    assert isinstance(ui_components[6], BesideQuestionAnswerPairHref)
+    assert ui_components[6].question == "Seventh"
+
+    assert isinstance(ui_components[7], BesideQuestionAnswerPairHref)
+    assert ui_components[7].question == "Eigth"
+
+    assert isinstance(ui_components[8], FormattedBesideQuestionAnswerPair)
+    assert ui_components[8].question == "Ninth"
+    assert ui_components[8].formatter == format_address
+
+    assert isinstance(ui_components[9], AboveQuestionAnswerPairHref)
+    assert ui_components[9].question == "Tenth"
