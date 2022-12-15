@@ -27,10 +27,26 @@ def datetime_format(value, format):
     )
     return formatted_time
 
-def datetime_format_24hr(value):    
+
+def format_date(value, from_, to_):
+    return datetime.strptime(value, from_).strftime(to_)
+
+
+def datetime_format_24hr(value):
     return datetime.fromisoformat(value).strftime("%d/%m/%Y at %H:%M")
+
+
+def remove_dashes_underscores_capitalize(s: str) -> str:
+    return s.replace("-", " ").replace("_", " ").capitalize()
+
+
+def format_address(address: str) -> str:
+    address_parts = address.split(", ")
+    address_parts = [part for part in address_parts if part != "null"]
+    return address_parts
+
 
 def all_caps_to_human(word):
     if word:
-        result = word.replace('_', ' ')
+        result = word.replace("_", " ")
         return result.capitalize()

@@ -1,10 +1,20 @@
 {%- from "govuk_frontend_jinja/components/table/macro.html" import govukTable -%}
-{% macro section_element(name, sub_criterias) %}
+{% macro section_element(name, sub_criterias, application_id) %}
     <h2 class="govuk-heading-l govuk-!-margin-top-8">{{ name }}</h2>
     {% set rows = [] %}
     {% for sub_criteria in sub_criterias %}
         {% set _ = rows.append([
-        { 'html': '<a class="govuk-link" href="section/{}">{}</a>'.format(sub_criteria['id'], sub_criteria['name']) }
+            {
+                'html': '<a class="govuk-link" href="{}">{}</a>'.format(
+                    url_for(
+                        'assess_bp.display_sub_criteria',
+                         application_id=application_id,
+                         sub_criteria_id=sub_criteria.id,
+                         theme_id=sub_criteria.first_theme_id
+                    ),
+                    sub_criteria.name
+                )
+            }
         ]) %}
     {% endfor %}
     {{ govukTable({

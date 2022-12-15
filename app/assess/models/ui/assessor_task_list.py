@@ -6,6 +6,7 @@ from typing import List
 class _SubCriteria:
     id: str
     name: str
+    first_theme_id: str
 
 
 @dataclass
@@ -55,6 +56,7 @@ class AssessorTaskList:
                         _SubCriteria(
                             id=sub_criteria["id"],
                             name=sub_criteria["name"],
+                            first_theme_id=sub_criteria["first_theme_id"],
                         )
                         for sub_criteria in section["sub_criterias"]
                     ],
@@ -76,6 +78,7 @@ class AssessorTaskList:
                             status=sub_criteria["status"],
                             score=sub_criteria["score"],
                             theme_count=sub_criteria["theme_count"],
+                            first_theme_id=sub_criteria["first_theme_id"],
                         )
                         for sub_criteria in criteria["sub_criterias"]
                     ],

@@ -1,4 +1,4 @@
-{% macro question_beside_answer(meta) %}
+{% macro question_beside_href_answer(meta) %}
 
     <dl class="govuk-summary-list">
         <div class="govuk-summary-list__row">
@@ -6,7 +6,7 @@
                 {{ meta.question }}
             </dt>
             <dd class="govuk-summary-list__value">
-                {{ "£{:,.2f}".format(meta.answer) if meta.answer is number else meta.answer }}
+                <a class="govuk-link govuk-!-font-weight-regular" href="{{ meta.answer_href }}">{{ meta.answer }}</a>
             </dd>
         </div>
     </dl>

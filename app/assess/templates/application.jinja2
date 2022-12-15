@@ -32,7 +32,7 @@
                     </p>
                 </div>
                 {% for section in state.sections %}
-                    {{ section_element(section.name, section.sub_criterias) }}{% endfor %}
+                    {{ section_element(section.name, section.sub_criterias, application_id) }}{% endfor %}
                 <h2 class="govuk-heading-l govuk-!-margin-top-8">Score the application</h2>
                 <p class="govuk-body">
                     Scored. Your comments and scores save as you go. You can edit until you submit for moderation.
