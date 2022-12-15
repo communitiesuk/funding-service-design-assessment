@@ -520,7 +520,7 @@
     "project_name": "Community Gym",
     "fund_id": "test_fund_id",
     "workflow_status": "NOT_STARTED",
-    "project_reference": "LKMBNS"
+    "short_id": "COF-123-LKMBNS"
   },
   "assessment_store/application_overviews/app_123": {
     "criterias": [
@@ -640,7 +640,7 @@
     "date_submitted": "2022-10-27T08:32:13.383999",
     "fund_id": "47aef2f5-3fcb-4d45-acb5-f0152b5f03c4",
     "project_name": "Restore the vintage community centre in Hereford",
-    "project_reference": "COF-R2W2-AWDZQF",
+    "short_id": "COF-R2W2-AWDZQF",
     "sections": [
       {
         "name": "Organisation information",

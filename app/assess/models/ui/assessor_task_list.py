@@ -35,7 +35,7 @@ class _Criteria:
 class AssessorTaskList:
     fund_name: str
     project_name: str
-    project_reference: str
+    short_id: str
     workflow_status: str
     date_submitted: str
     sections: List[_Section]
@@ -45,7 +45,7 @@ class AssessorTaskList:
     def from_json(cls, json: dict):
         return AssessorTaskList(
             fund_name=json.get("fund_name"),
-            project_reference=json.get("project_reference"),
+            short_id=json.get("short_id"),
             project_name=json.get("project_name"),
             date_submitted=json.get("date_submitted"),
             workflow_status=json.get("workflow_status"),
