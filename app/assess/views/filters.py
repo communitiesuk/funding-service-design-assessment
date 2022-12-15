@@ -34,3 +34,7 @@ def all_caps_to_human(word):
     if word:
         result = word.replace('_', ' ')
         return result.capitalize()
+
+def format_project_ref(value: str):
+    secions = value.split("-")
+    return secions[len(secions) - 1]
