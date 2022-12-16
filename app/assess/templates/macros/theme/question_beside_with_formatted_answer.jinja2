@@ -1,0 +1,21 @@
+{% macro question_beside_with_formatted_answer(meta) %}
+
+    <dl class="govuk-summary-list">
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+                {{ meta.question }}
+            </dt>
+            <dd class="govuk-summary-list__value">
+                {% set formatted = meta.formatter(meta.answer) %}
+                {% if formatted is string %}
+                    {{ formatted }}
+                {% elif formatted is iterable %}
+                    {% for item in formatted %}
+                        {{ item }}{% if not loop.last %}<br>{% endif %}
+                    {% endfor %}
+                {% endif %}
+            </dd>
+        </div>
+    </dl>
+
+{% endmacro %}

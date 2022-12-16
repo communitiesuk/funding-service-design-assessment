@@ -1,6 +1,7 @@
 from app.assess.data import get_application_overviews
 from app.assess.data import get_fund
 from app.assess.data import get_round
+from app.assess.data import get_comments
 from config.envs.default import DefaultConfig
 from flask import Flask
 
@@ -99,3 +100,9 @@ class TestDataOperations:
             fund = get_fund(DefaultConfig.COF_FUND_ID)
         assert fund, "No fund returned"
         assert "Community Ownership Fund" == fund.name, "Wrong fund title"
+
+    def test_get_comments(self):
+
+        with self.test_app.app_context():
+            comments = get_comments("app_123", "1a2b3c4d")
+        assert 2 == len(comments), "wrong number of comments"

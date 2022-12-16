@@ -9,6 +9,7 @@ import requests
 from app.assess.models.application import Application
 from app.assess.models.fund import Fund
 from app.assess.models.round import Round
+from app.assess.models.score import Score
 from app.assess.models.sub_criteria import SubCriteria
 from config import Config
 from flask import abort
@@ -17,8 +18,8 @@ from flask import current_app
 
 def get_data(
     endpoint: str,
-    use_local_data: bool = Config.USE_LOCAL_DATA,
     payload: Dict = None,
+    use_local_data: bool = Config.USE_LOCAL_DATA,
 ):
     if use_local_data:
         current_app.logger.info(f"Fetching local data from '{endpoint}'.")
@@ -141,17 +142,21 @@ def get_round_with_applications(
     return None
 
 
-def get_score_and_justification(application_id, sub_criteria_id):
+def get_score_and_justification(
+    application_id, sub_criteria_id, score_history=True
+):
     url = Config.ASSESSMENT_SCORES_ENDPOINT
     params = {
         "application_id": application_id,
         "sub_criteria_id": sub_criteria_id,
+        "score_history": score_history,
     }
-    response_json = get_data(url, params)
-    current_app.logger.info(
-        f"Response from Assessment Store: '{response_json}'."
-    )
-    return response_json
+    response = get_data(url, params)
+    current_app.logger.info(f"Response from Assessment Store: '{response}'.")
+
+    scores: list[Score] = [Score.from_dict(score) for score in response]
+
+    return scores
 
 
 def submit_score_and_justification(
@@ -269,13 +274,14 @@ def get_questions(application_id):
         return data
 
 
-def get_sub_criteria(sub_criteria_id):
+def get_sub_criteria(application_id, sub_criteria_id):
     """_summary_: Function is set up to retrieve
     the data from assessment store with
     get_data() function.
 
     Args:
-        sub_criteria_id: Takes an sub_criteria id.
+        application_id:
+        sub_criteria_id
 
     Returns:
       {
@@ -288,7 +294,7 @@ def get_sub_criteria(sub_criteria_id):
     sub_criteria_endpoint = (
         Config.ASSESSMENT_STORE_API_HOST
         + Config.SUB_CRITERIA_OVERVIEW_ENDPOINT.format(
-            sub_criteria_id=sub_criteria_id
+            application_id=application_id, sub_criteria_id=sub_criteria_id
         )
     )
     sub_criteria_response = get_data(sub_criteria_endpoint)
@@ -300,18 +306,39 @@ def get_sub_criteria(sub_criteria_id):
         abort(404, description=msg)
 
 
-def get_assessment_config_mapping(
-    fund_id: str, round_id: str
-) -> Union[Dict, None]:
-    assessment_mapping_endpoint = (
-        Config.ASSESSMENT_MAPPING_CONFIG_ENDPOINT.format(
-            fund_id=fund_id, round_id=round_id
+def get_sub_criteria_theme_answers(
+    application_id: str, theme_id: str
+) -> Union[list, None]:
+    theme_answers_endpoint = (
+        Config.ASSESSMENT_STORE_API_HOST
+        + Config.SUB_CRITERIA_THEME_ANSWERS_ENDPOINT.format(
+            application_id=application_id, theme_id=theme_id
         )
     )
-    current_app.logger.info(assessment_mapping_endpoint)
-    assessment_mapping_response = get_data(
-        assessment_mapping_endpoint, use_local_data=False
+    theme_answers_response = get_data(theme_answers_endpoint)
+
+    if theme_answers_response:
+        return theme_answers_response
+    else:
+        msg = f"theme_answers: '{theme_id}' not found."
+        current_app.logger.warn(msg)
+        abort(404, description=msg)
+
+
+def get_comments(application_id: str, sub_criteria_id: str):
+    """_summary_: Function is set up to retrieve
+    the data from application store with
+    get_data() function.
+    Args:
+        application_id: Takes an application_id, sub_criteria_id: takes a sub_criteria_id # noqa
+    Returns:
+        Returns a dictionary of comments.
+    """
+    comment_endpoint = (
+        Config.ASSESSMENT_STORE_API_HOST
+        + Config.COMMENTS_ENDPOINT.format(
+            application_id=application_id, sub_criteria_id=sub_criteria_id
+        )
     )
-    if assessment_mapping_response:
-        return assessment_mapping_response
-    return None
+    comment_response = get_data(comment_endpoint)
+    return comment_response

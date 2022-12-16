@@ -6,9 +6,6 @@ from fsd_utils import configclass
 
 @configclass
 class DevelopmentConfig(DefaultConfig):
-    ASSESSMENT_SCORES_ENDPOINT = (
-        DefaultConfig.ASSESSMENT_STORE_API_HOST + "/score"
-    )
 
     FSD_LOG_LEVEL = logging.INFO
 

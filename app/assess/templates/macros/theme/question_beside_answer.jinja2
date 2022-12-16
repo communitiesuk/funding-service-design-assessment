@@ -1,0 +1,14 @@
+{% macro question_beside_answer(meta) %}
+
+    <dl class="govuk-summary-list">
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+                {{ meta.question }}
+            </dt>
+            <dd class="govuk-summary-list__value">
+                {{ "£{:,.2f}".format(meta.answer) if meta.answer is number else meta.answer }}
+            </dd>
+        </div>
+    </dl>
+
+{% endmacro %}
