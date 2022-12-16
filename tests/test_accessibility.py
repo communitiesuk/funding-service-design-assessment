@@ -124,7 +124,7 @@ class TestAccessibilityWithChrome:
             assert len(results["violations"]) <= 4
             assert (
                 len(results["violations"]) == 0
-                or results["violations"][0]["impact"] == "minor"
+                or results["violations"][0]["impact"] == "serious"
             )
 
     # TODO reinstate once assessment form finalised
