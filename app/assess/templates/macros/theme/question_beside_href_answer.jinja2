@@ -6,7 +6,11 @@
                 {{ meta.question }}
             </dt>
             <dd class="govuk-summary-list__value">
-                <a class="govuk-link govuk-!-font-weight-regular" href="{{ meta.answer_href }}">{{ meta.answer }}</a>
+                {% if meta.answer_href %}
+                    <a class="govuk-link govuk-!-font-weight-regular" href="{{ meta.answer_href }}">{{ meta.answer }}</a>
+                {% else %}
+                    {{ meta.answer }}
+                {% endif %}
             </dd>
         </div>
     </dl>

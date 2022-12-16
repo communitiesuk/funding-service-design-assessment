@@ -9,6 +9,8 @@ from app.assess.views.filters import format_address
 from app.assess.views.filters import format_date
 from app.assess.views.filters import remove_dashes_underscores_capitalize
 
+ANSWER_NOT_PROVIDED_DEFAULT = "Not provided."
+
 
 @dataclass
 class ApplicatorsResponseComponent(ABC):
@@ -20,25 +22,36 @@ class ApplicatorsResponseComponent(ABC):
         )
 
     @property
-    @abstractmethod
     def should_render(self):
         return True
 
 
 @dataclass
-class QuestionAnswerPair(ApplicatorsResponseComponent, ABC):
+class QuestionHeading(ApplicatorsResponseComponent):
+    question: str
+
+    key = "question_heading"
+
+    @classmethod
+    def from_dict(cls, data: dict):
+        return cls(question=data["question"])
+
+
+@dataclass
+class QuestionAnswerPair(ApplicatorsResponseComponent):
     question: str
     answer: str | float
 
     @property
     def should_render(self):
-        return self.question is not None and self.answer is not None
+        return True
 
     @classmethod
     def from_dict(cls, data: dict):
+        answer = data.get("answer")
         return cls(
             question=data["question"],
-            answer=data.get("answer"),
+            answer=answer if answer else ANSWER_NOT_PROVIDED_DEFAULT,
         )
 
 
@@ -56,10 +69,11 @@ class QuestionAnswerPairHref(QuestionAnswerPair):
 
     @classmethod
     def from_dict(cls, data: dict, href):  # noqa
+        answer = data.get("answer")
         return cls(
             question=data["question"],
-            answer=data.get("answer"),
-            answer_href=href,
+            answer=answer if answer else ANSWER_NOT_PROVIDED_DEFAULT,
+            answer_href=href if answer else None,
         )
 
 
@@ -81,8 +95,8 @@ class FormattedBesideQuestionAnswerPair(QuestionAnswerPair):
     def from_dict(cls, data: dict, formatter: callable):  # noqa
         return cls(
             question=data["question"],
-            answer=data.get("answer"),
-            formatter=formatter,
+            answer=data.get("answer", ANSWER_NOT_PROVIDED_DEFAULT),
+            formatter=formatter if data.get("answer") else lambda x: x,
         )
 
 
@@ -125,6 +139,9 @@ def _ui_component_from_factory(item: dict):
 
     if presentation_type == "grouped_fields":
         return MonetaryKeyValues.from_dict(item)
+
+    elif presentation_type == "question_heading":
+        return QuestionHeading.from_dict(item)
 
     elif presentation_type in ("text", "list"):
 
@@ -176,7 +193,7 @@ def _convert_heading_description_amount(
         if item["presentation_type"] == "heading"
     ]
 
-    grouped_fields_items = []
+    items = []
 
     for index, field_id in enumerate(field_ids):
         heading = _get_item_by_presentation_type_index(
@@ -190,6 +207,7 @@ def _convert_heading_description_amount(
         )
 
         if "answer" not in description or "answer" not in amount:
+            items.append(_build_item(heading["question"], field_id))
             continue
 
         descriptions, amounts = description["answer"], amount["answer"]
@@ -198,7 +216,7 @@ def _convert_heading_description_amount(
 
         grouped_fields = list(zip(descriptions, map(float, poundless_amounts)))
 
-        grouped_fields_items.append(
+        items.append(
             {
                 "question": (heading["question"], description["question"]),
                 "field_id": field_id,
@@ -206,7 +224,16 @@ def _convert_heading_description_amount(
                 "presentation_type": "grouped_fields",
             }
         )
-    return grouped_fields_items, set(field_ids)
+    return items, set(field_ids)
+
+
+def _build_item(question, field_id, presentation_type="text"):
+    return {
+        "question": question,
+        "field_type": "text",
+        "field_id": field_id,
+        "presentation_type": presentation_type,
+    }
 
 
 def _get_item_by_presentation_type_index(response, presentation_type, index):
@@ -244,8 +271,19 @@ def _convert_checkbox_items(
 
     text_items = []
     for item in items_to_process:
-        if "answer" not in item:
+        text_item = _build_item(
+            item["question"],
+            item["field_id"],
+            "question_heading",
+        )
+
+        if len(item.get("answer", [])) == 0:  # if no checkboxes are selected
+            text_item["presentation_type"] = "text"
+            text_item["answer"] = "None selected."
+            text_items.append(text_item)
             continue
+
+        text_items.append(text_item)
         text_items.extend(
             {
                 "question": remove_dashes_underscores_capitalize(answer),
@@ -256,6 +294,7 @@ def _convert_checkbox_items(
             }
             for answer in item["answer"]
         )
+
     return text_items, field_ids
 
 
@@ -283,8 +322,12 @@ def _convert_non_number_grouped_fields(
 
     text_items = []
     for item in items_to_process:
-        if "answer" not in item:
+        if "answer" not in item or len(item.get("answer", [])) == 0:
+            text_items.append(
+                _build_item(item["question"][0], item["field_id"])
+            )
             continue
+
         for question_answer_tuple, field_id in zip(
             item["answer"], item["field_id"]
         ):

@@ -13,6 +13,7 @@ from app.assess.models.ui.applicators_response import (
     FormattedBesideQuestionAnswerPair,
 )
 from app.assess.models.ui.applicators_response import MonetaryKeyValues
+from app.assess.models.ui.applicators_response import QuestionHeading
 from app.assess.models.ui.assessor_task_list import _Criteria
 from app.assess.models.ui.assessor_task_list import _CriteriaSubCriteria
 from app.assess.models.ui.assessor_task_list import _SubCriteria
@@ -391,6 +392,15 @@ class TestJinjaMacros(object):
                     "formatter": format_address,
                 },
                 "unique-key-6",
+            ),
+            (
+                QuestionHeading,
+                {
+                    "data": {
+                        "question": "unique-key-7",
+                    }
+                },
+                "unique-key-7",
             ),
         ],
     )

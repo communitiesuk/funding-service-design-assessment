@@ -4,6 +4,7 @@
 {% from "macros/theme/question_above_href_answer.jinja2" import question_above_href_answer %}
 {% from "macros/theme/question_beside_href_answer.jinja2" import question_beside_href_answer %}
 {% from "macros/theme/question_beside_with_formatted_answer.jinja2" import question_beside_with_formatted_answer %}
+{% from "macros/theme/question_heading.jinja2" import question_heading %}
 
 {% set ui_component_mapping = {
     'monetary_key_values': monetary_key_values,
@@ -12,6 +13,7 @@
     'question_above_href_answer': question_above_href_answer,
     'question_beside_href_answer': question_beside_href_answer,
     'question_beside_with_formatted_answer': question_beside_with_formatted_answer,
+    'question_heading': question_heading,
 } %}
 
 {% macro theme(theme_id, answers_meta) %}

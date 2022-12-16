@@ -18,6 +18,9 @@ from app.assess.models.ui.applicators_response import (
     AboveQuestionAnswerPairHref,
 )
 from app.assess.models.ui.applicators_response import (
+    ANSWER_NOT_PROVIDED_DEFAULT,
+)
+from app.assess.models.ui.applicators_response import (
     ApplicatorsResponseComponent,
 )
 from app.assess.models.ui.applicators_response import BesideQuestionAnswerPair
@@ -29,6 +32,7 @@ from app.assess.models.ui.applicators_response import (
     FormattedBesideQuestionAnswerPair,
 )
 from app.assess.models.ui.applicators_response import MonetaryKeyValues
+from app.assess.models.ui.applicators_response import QuestionHeading
 from app.assess.views.filters import format_address
 
 
@@ -90,11 +94,10 @@ class TestApplicatorsResponseComponentConcreteSubclasses:
             ),
         ],
     )
-    def test_question_answer_pair_should_not_render(self, clazz, data):
+    def test_question_answer_pair_should_render_default(self, clazz, data):
         qa_pair = clazz.from_dict(data)
         assert qa_pair.question == "What is your name?"
-        assert qa_pair.answer == data["answer"]
-        assert qa_pair.should_render is False
+        assert qa_pair.answer == ANSWER_NOT_PROVIDED_DEFAULT
 
     @pytest.mark.parametrize(
         "clazz, data",
@@ -114,7 +117,6 @@ class TestApplicatorsResponseComponentConcreteSubclasses:
         assert qa_pair.question == "What is your name?"
         assert qa_pair.answer == data["answer"]
         assert qa_pair.answer_href == "https://example.com"
-        assert qa_pair.should_render is True
 
     @pytest.mark.parametrize(
         "clazz, data",
@@ -129,12 +131,13 @@ class TestApplicatorsResponseComponentConcreteSubclasses:
             ),
         ],
     )
-    def test_question_answer_pair_href_should_not_render(self, clazz, data):
+    def test_question_answer_pair_href_should_render_default(
+        self, clazz, data
+    ):
         qa_pair = clazz.from_dict(data, "https://example.com")
         assert qa_pair.question == "What is your name?"
-        assert qa_pair.answer == data["answer"]
-        assert qa_pair.answer_href == "https://example.com"
-        assert qa_pair.should_render is False
+        assert qa_pair.answer == ANSWER_NOT_PROVIDED_DEFAULT
+        assert qa_pair.answer_href is None
 
 
 class TestApplicatorsResponseComponentFactory:
@@ -214,13 +217,41 @@ class TestConvertHeadingDescriptionAmountToGroupedFields:
                         "presentation_type": "description",
                         "field_id": "foo",
                         "question": "Description",
+                    },
+                    {
+                        "presentation_type": "amount",
+                        "field_id": "foo",
+                        "question": "Amount",
+                    },
+                ],
+                [
+                    {
+                        "question": "Foo",
+                        "field_type": "text",
+                        "field_id": "foo",
+                        "presentation_type": "text",
+                    }
+                ],
+                {"foo"},
+            ),
+            (
+                [
+                    {
+                        "presentation_type": "heading",
+                        "field_id": "foo",
+                        "question": "Foo",
+                    },
+                    {
+                        "presentation_type": "description",
+                        "field_id": "foo",
+                        "question": "Description",
                         "answer": ["lorem", "ipsum"],
                     },
                     {
                         "presentation_type": "amount",
                         "field_id": "foo",
                         "question": "Amount",
-                        "answer": ["1.23", "4.56"],
+                        "answer": ["£1.23", "4.56"],
                     },
                 ],
                 [
@@ -342,12 +373,19 @@ class TestConvertCheckboxItems:
             (
                 [
                     {
+                        "question": "Foo",
                         "field_type": "checkboxesField",
                         "field_id": "foo",
                         "answer": ["lorem-de", "ipsum_do"],
                     }
                 ],
                 [
+                    {
+                        "question": "Foo",
+                        "field_type": "text",
+                        "field_id": "foo",
+                        "presentation_type": "question_heading",
+                    },
                     {
                         "question": "Lorem de",
                         "field_type": "checkboxesField",
@@ -368,17 +406,45 @@ class TestConvertCheckboxItems:
             (
                 [
                     {
+                        "question": "Foo",
+                        "field_type": "checkboxesField",
+                        "field_id": "foo",
+                        "answer": [],
+                    }
+                ],
+                [
+                    {
+                        "question": "Foo",
+                        "field_type": "text",
+                        "field_id": "foo",
+                        "presentation_type": "text",
+                        "answer": "None selected.",
+                    },
+                ],
+                {"foo"},
+            ),
+            (
+                [
+                    {
+                        "question": "Foo",
                         "field_type": "checkboxesField",
                         "field_id": "foo",
                         "answer": ["lorem", "ipsum"],
                     },
                     {
+                        "question": "Bar",
                         "field_type": "checkboxesField",
                         "field_id": "bar",
                         "answer": ["dolor", "sit"],
                     },
                 ],
                 [
+                    {
+                        "question": "Foo",
+                        "field_type": "text",
+                        "field_id": "foo",
+                        "presentation_type": "question_heading",
+                    },
                     {
                         "question": "Lorem",
                         "field_type": "checkboxesField",
@@ -392,6 +458,12 @@ class TestConvertCheckboxItems:
                         "field_id": "foo",
                         "answer": "Yes",
                         "presentation_type": "text",
+                    },
+                    {
+                        "question": "Bar",
+                        "field_type": "text",
+                        "field_id": "bar",
+                        "presentation_type": "question_heading",
                     },
                     {
                         "question": "Dolor",
@@ -427,7 +499,7 @@ class TestConvertNonNumberGroupedFields:
             (
                 [
                     {
-                        "question": "Question 1",
+                        "question": ["Question 1", "Question 1"],
                         "field_id": ["foo"],
                         "answer": ["Answer 1"],
                         "presentation_type": "grouped_fields",
@@ -440,7 +512,7 @@ class TestConvertNonNumberGroupedFields:
             (
                 [
                     {
-                        "question": "Caption",
+                        "question": ["Caption", "Caption"],
                         "field_id": ["foo"],
                         "answer": [("Subquestion 1", "Subanswer 1")],
                         "presentation_type": "grouped_fields",
@@ -461,7 +533,46 @@ class TestConvertNonNumberGroupedFields:
             (
                 [
                     {
-                        "question": "Header",
+                        "question": ["Caption", "Caption"],
+                        "field_id": ["foo"],
+                        "presentation_type": "grouped_fields",
+                        "field_type": "textField",
+                    }
+                ],
+                [
+                    {
+                        "question": "Caption",
+                        "field_type": "text",
+                        "field_id": ["foo"],
+                        "presentation_type": "text",
+                    }
+                ],
+                {("foo",), "foo"},
+            ),
+            (
+                [
+                    {
+                        "question": ["Caption", "Caption"],
+                        "field_id": ["foo"],
+                        "presentation_type": "grouped_fields",
+                        "answer": [],
+                        "field_type": "textField",
+                    }
+                ],
+                [
+                    {
+                        "question": "Caption",
+                        "field_type": "text",
+                        "field_id": ["foo"],
+                        "presentation_type": "text",
+                    }
+                ],
+                {("foo",), "foo"},
+            ),
+            (
+                [
+                    {
+                        "question": ["Header", "Header"],
                         "field_id": ["foo", "bar"],
                         "answer": [
                             ("Question 1", "Answer 1"),
@@ -534,7 +645,7 @@ def test_create_ui_components_retains_order():
         },
         {
             "field_id": ["field_2", "field_3"],
-            "question": "",
+            "question": "Second heading!",
             "answer": ["Second", "Third"],
             "presentation_type": "list",
             "field_type": "checkboxesField",
@@ -604,37 +715,40 @@ def test_create_ui_components_retains_order():
         for ui_component in ui_components
     )
 
-    assert len(ui_components) == 10
+    assert len(ui_components) == 11
 
     assert isinstance(ui_components[0], BesideQuestionAnswerPair)
     assert ui_components[0].question == "First"
 
-    assert isinstance(ui_components[1], BesideQuestionAnswerPair)
-    assert ui_components[1].question == "Second"
+    assert isinstance(ui_components[1], QuestionHeading)
+    assert ui_components[1].question == "Second heading!"
 
     assert isinstance(ui_components[2], BesideQuestionAnswerPair)
-    assert ui_components[2].question == "Third"
+    assert ui_components[2].question == "Second"
 
     assert isinstance(ui_components[3], BesideQuestionAnswerPair)
-    assert ui_components[3].question == "Fourth"
+    assert ui_components[3].question == "Third"
 
-    assert isinstance(ui_components[4], MonetaryKeyValues)
-    assert ui_components[4].caption == "Fifth"
-    assert ui_components[4].question_answer_pairs[0][0] == "Subquestion 1"
-    assert ui_components[4].question_answer_pairs[1][0] == "Subquestion 2"
+    assert isinstance(ui_components[4], BesideQuestionAnswerPair)
+    assert ui_components[4].question == "Fourth"
 
-    assert isinstance(ui_components[5], AboveQuestionAnswerPair)
-    assert ui_components[5].question == "Sixth"
+    assert isinstance(ui_components[5], MonetaryKeyValues)
+    assert ui_components[5].caption == "Fifth"
+    assert ui_components[5].question_answer_pairs[0][0] == "Subquestion 1"
+    assert ui_components[5].question_answer_pairs[1][0] == "Subquestion 2"
 
-    assert isinstance(ui_components[6], BesideQuestionAnswerPairHref)
-    assert ui_components[6].question == "Seventh"
+    assert isinstance(ui_components[6], AboveQuestionAnswerPair)
+    assert ui_components[6].question == "Sixth"
 
     assert isinstance(ui_components[7], BesideQuestionAnswerPairHref)
-    assert ui_components[7].question == "Eigth"
+    assert ui_components[7].question == "Seventh"
 
-    assert isinstance(ui_components[8], FormattedBesideQuestionAnswerPair)
-    assert ui_components[8].question == "Ninth"
-    assert ui_components[8].formatter == format_address
+    assert isinstance(ui_components[8], BesideQuestionAnswerPairHref)
+    assert ui_components[8].question == "Eigth"
 
-    assert isinstance(ui_components[9], AboveQuestionAnswerPairHref)
-    assert ui_components[9].question == "Tenth"
+    assert isinstance(ui_components[9], FormattedBesideQuestionAnswerPair)
+    assert ui_components[9].question == "Ninth"
+    assert ui_components[9].formatter == format_address
+
+    assert isinstance(ui_components[10], AboveQuestionAnswerPairHref)
+    assert ui_components[10].question == "Tenth"
