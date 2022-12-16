@@ -9,10 +9,14 @@ from app.assess.views.filters import status_to_human
 from app.assets import compile_static_assets
 from config import Config
 from flask import Flask
+from flask import g
+from flask import redirect
+from flask import request
 from flask_assets import Environment
 from flask_compress import Compress
 from flask_talisman import Talisman
 from flask_wtf.csrf import CSRFProtect
+from fsd_utils.authentication.decorators import login_requested
 from fsd_utils.healthchecks.checkers import FlaskRunningChecker
 from fsd_utils.healthchecks.healthcheck import Healthcheck
 from fsd_utils.logging import logging
@@ -113,6 +117,32 @@ def create_app() -> Flask:
 
         health = Healthcheck(flask_app)
         health.add_check(FlaskRunningChecker())
+
+        @flask_app.before_request
+        @login_requested
+        def ensure_minimum_required_roles():
+            minimum_roles_required = ["COMMENTER"]
+            unprotected_routes = [
+                "/"
+            ]
+            if g.is_authenticated:
+                # Ensure that authenticated users have
+                # all minimum required roles
+                if not g.user.roles or not all(
+                    role_required in g.user.roles
+                    for role_required in minimum_roles_required
+                ):
+                    return redirect(
+                        flask_app.config.get("AUTHENTICATOR_HOST")
+                        + "/service/user"
+                        + "?roles_required="
+                        + "|".join(minimum_roles_required)
+                    )
+            elif not request.path in unprotected_routes \
+                    and not request.path.startswith("/static/"):
+                # Redirect unauthenticated users to
+                # login on the home page
+                return redirect("/")
 
         return flask_app
 
