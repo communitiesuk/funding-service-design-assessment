@@ -1,0 +1,26 @@
+{%- from "govuk_frontend_jinja/components/table/macro.html" import govukTable -%}
+{% macro section_element(name, sub_criterias, application_id) %}
+    <h2 class="govuk-heading-l govuk-!-margin-top-8">{{ name }}</h2>
+    {% set rows = [] %}
+    {% for sub_criteria in sub_criterias %}
+        {% set _ = rows.append([
+            {
+                'html': '<a class="govuk-link" href="{}">{}</a>'.format(
+                    url_for(
+                        'assess_bp.display_sub_criteria',
+                         application_id=application_id,
+                         sub_criteria_id=sub_criteria.id
+                    ),
+                    sub_criteria.name
+                )
+            }
+        ]) %}
+    {% endfor %}
+    {{ govukTable({
+        "caption": "This section is not scored. Can be used for due diligence checks.",
+        "firstCellIsHeader":false,
+        "head": [[{ "text": "" }]],
+        "captionClasses": "govuk-body govuk-!-text-align-left govuk-!-font-weight-regular govuk-!-margin-bottom-4",
+        "rows": rows,
+    }) }}
+{% endmacro %}

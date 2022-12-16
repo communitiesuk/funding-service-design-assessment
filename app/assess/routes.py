@@ -5,18 +5,17 @@ from app.assess.display_value_mappings import assessment_statuses
 from app.assess.display_value_mappings import asset_types
 from app.assess.forms.comments_form import CommentsForm
 from app.assess.forms.scores_and_justifications import ScoreForm
-from app.assess.models.assessor_task_list import AssessorTaskList
 from app.assess.models.question import Question
 from app.assess.models.question_field import QuestionField
 from app.assess.models.total_table import TotalMoneyTableView
+from app.assess.models.ui import applicators_response
+from app.assess.models.ui.assessor_task_list import AssessorTaskList
 from config import Config
 from flask import abort
 from flask import Blueprint
 from flask import g
 from flask import render_template
 from flask import request
-from fsd_utils.authentication.decorators import login_requested
-
 
 assess_bp = Blueprint(
     "assess_bp",
@@ -37,13 +36,23 @@ def funds():
     return render_template("funds.html", funds=funds)
 
 
-@assess_bp.route("/application_id/<application_id>/sub_criteria_id/<sub_criteria_id>", methods=["POST", "GET"])
-def display_sub_criteria(application_id, sub_criteria_id,):
+@assess_bp.route(
+    "/application_id/<application_id>/sub_criteria_id/<sub_criteria_id>",
+    methods=["POST", "GET"],
+)
+def display_sub_criteria(
+    application_id,
+    sub_criteria_id,
+):
     """
     Page showing sub criteria and themes for an application
     """
     form = ScoreForm()
-    score_error, justification_error, scores_submitted, scores_list = False, False, False, []
+    score_error, justification_error, scores_submitted = (
+        False,
+        False,
+        False,
+    )
     if request.method == "POST":
         if form.validate_on_submit():
             score = int(form.score.data)
@@ -68,12 +77,14 @@ def display_sub_criteria(application_id, sub_criteria_id,):
             justification_error = (
                 True if not form.justification.data else False
             )
-    
+
     args = request.args
-    theme_id = args["theme_id"]
-    sub_criteria = get_sub_criteria(application_id=application_id, sub_criteria_id=sub_criteria_id)
+    sub_criteria = get_sub_criteria(application_id, sub_criteria_id)
+    theme_id = args.get("theme_id", sub_criteria.themes[0].id)
     fund = get_fund(Config.COF_FUND_ID)
-    comments = get_comments(application_id=application_id, sub_criteria_id=sub_criteria_id)
+    comments = get_comments(
+        application_id=application_id, sub_criteria_id=sub_criteria_id
+    )
 
     if theme_id == "score":
         # call to assessment store to get latest score
@@ -92,20 +103,29 @@ def display_sub_criteria(application_id, sub_criteria_id,):
 
         return render_template(
             "sub_criteria.html",
-                current_theme_id=theme_id,
-                on_summary=True,
-                sub_criteria=sub_criteria,
-                application_id=application_id,
-                fund=fund,
-                form=form,
-                scores_submitted=scores_submitted,
-                score_list=score_list if len(score_list) > 0 else None,
-                latest_score=latest_score,
-                COF_score_list=COF_score_list,
-                score_error=score_error,
-                justification_error=justification_error,
-                comments=comments
-            )
+            current_theme_id=theme_id,
+            on_summary=True,
+            sub_criteria=sub_criteria,
+            application_id=application_id,
+            fund=fund,
+            form=form,
+            scores_submitted=scores_submitted,
+            score_list=score_list if len(score_list) > 0 else None,
+            latest_score=latest_score,
+            COF_score_list=COF_score_list,
+            score_error=score_error,
+            justification_error=justification_error,
+            comments=comments,
+        )
+
+    answers_meta = []
+    if theme_id:
+        theme_answers_response = get_sub_criteria_theme_answers(
+            application_id, theme_id
+        )
+        answers_meta = applicators_response.create_ui_components(
+            theme_answers_response
+        )
 
     return render_template(
         "sub_criteria.html",
@@ -115,7 +135,8 @@ def display_sub_criteria(application_id, sub_criteria_id,):
         application_id=application_id,
         fund=fund,
         form=form,
-        comments=comments
+        comments=comments,
+        answers_meta=answers_meta,
     )
 
 
@@ -441,8 +462,9 @@ def application(application_id):
     state = AssessorTaskList.from_json(assessor_task_list_metadata)
 
     return render_template(
-        "application-section.html",
+        "application.jinja2",
         state=state,
+        application_id=application_id,
     )
 
 

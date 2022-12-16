@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 {%- from 'govuk_frontend_jinja/components/back-link/macro.html' import govukBackLink -%}
 {%- from "govuk_frontend_jinja/components/table/macro.html" import govukTable -%}
-{%  from 'macros/section_element.html' import section_element -%}
-{%  from 'macros/criteria_element.html' import criteria_element -%}
+{% from 'macros/section_element.jinja2' import section_element -%}
+{% from 'macros/criteria_element.jinja2' import criteria_element -%}
 {% block beforeContent %}{{ govukBackLink({'href': url_for("assess_bp.landing")}) }}{% endblock %}
 {% block content %}
     <div class="govuk-grid-row">
@@ -24,13 +24,15 @@
                 </h1>
                 <div>
                     <p class="govuk-body-l govuk-!-margin-top-1 govuk-!-margin-bottom-1">
-                        <strong>Assessment status: <span class="govuk-task-list__status--blue">{{ state.workflow_status | status_to_human }}</span></strong>
+                        <strong>Assessment status: <span
+                                class="govuk-task-list__status--blue">{{ state.workflow_status | status_to_human }}</span></strong>
                     </p>
                     <p class="govuk-body-l">
                         <strong>Overall total score:</strong> xx out of xx
                     </p>
                 </div>
-                {% for section in state.sections %}{{ section_element(section.name, section.sub_criterias) }}{% endfor %}
+                {% for section in state.sections %}
+                    {{ section_element(section.name, section.sub_criterias, application_id) }}{% endfor %}
                 <h2 class="govuk-heading-l govuk-!-margin-top-8">Score the application</h2>
                 <p class="govuk-body">
                     Scored. Your comments and scores save as you go. You can edit until you submit for moderation.
@@ -41,16 +43,7 @@
                     {% if loop.index > 0 %}
                         {% set name_classes = "govuk-heading-m govuk-!-margin-bottom-2 govuk-!-margin-top-8" %}
                     {% endif %}
-                    {{
-                    criteria_element(
-                    criteria.sub_criterias,
-                    criteria.name,
-                    name_classes,
-                    criteria.total_criteria_score,
-                    criteria.total_criteria_score_possible,
-                    criteria.weighting
-                    )
-                    }}
+                    {{ criteria_element(criteria, name_classes, application_id) }}
                 {% endfor %}
             </div>
         </div>

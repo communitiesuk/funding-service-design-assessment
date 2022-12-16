@@ -1,0 +1,28 @@
+{%- from "govuk_frontend_jinja/components/table/macro.html" import govukTable -%}
+
+{% macro monetary_key_values(meta) %}
+
+    {% set rows = [] %}
+    {% for question, answer in meta.question_answer_pairs %}
+        {% set _ = rows.extend([
+             [{'text': question},
+             {'text': "£{:,.2f}".format(answer), 'format': 'numeric'}],
+         ]) %}
+    {% endfor %}
+
+    {% set _ = rows.extend([[
+        {'text': 'Total', 'classes': 'govuk-table__header'}, {'text': "£{:,.2f}".format(meta.total), 'format': 'numeric'}
+    ]]) %}
+
+    {{ govukTable({
+         'caption': meta.caption,
+         'captionClasses': 'govuk-heading-m',
+         'firstCellIsHeader': False,
+         'head': [
+             {'text': meta.column_description},
+             {'text': 'Amount', 'format': 'numeric'},
+         ],
+         'rows': rows
+    }) }}
+
+{% endmacro %}
