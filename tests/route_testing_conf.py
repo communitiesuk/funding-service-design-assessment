@@ -9,7 +9,7 @@ intro_routes_and_test_content = {
     "/": [{"tag": "a", "name": None, "contains": "Assessment Hub"}],
     "/assess": [{"tag": "h1", "name": None, "contains": "Funds"}],
     "/assess/landing": [
-        {"tag": "p", "name": None, "contains": "Assessor dashboard"}
+        {"tag": "h1", "name": None, "contains": "Team dashboard"}
     ],
     # TODO work out what these should be once design finalised
     # "/assess/funding-service-design": [

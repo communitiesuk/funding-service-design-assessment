@@ -25,7 +25,7 @@ class TestRoutes:
             )
 
             assert (
-                b"Assessor dashboard</p>" in response.data
+                b"Team dashboard" in response.data
             ), "Response does not contain expected heading"
 
     def test_route_landing_filter_status(self, flask_test_client):
@@ -52,7 +52,7 @@ class TestRoutes:
             )
 
             assert (
-                b"Assessor dashboard</p>" in response.data
+                b"Team dashboard" in response.data
             ), "Response does not contain expected heading"
 
     def test_route_landing_filter_asset_type(self, flask_test_client):
@@ -79,7 +79,7 @@ class TestRoutes:
             )
 
             assert (
-                b"Assessor dashboard</p>" in response.data
+                b"Team dashboard" in response.data
             ), "Response does not contain expected heading"
 
     def test_route_landing_search_term(self, flask_test_client):
@@ -106,7 +106,7 @@ class TestRoutes:
             )
 
             assert (
-                b"Assessor dashboard</p>" in response.data
+                b"Team dashboard" in response.data
             ), "Response does not contain expected heading"
 
     def test_route_landing_clear_filters(self, flask_test_client):
@@ -139,7 +139,7 @@ class TestRoutes:
             )
 
             assert (
-                b"Assessor dashboard</p>" in response.data
+                b"Team dashboard" in response.data
             ), "Response does not contain expected heading"
 
     @pytest.mark.parametrize(

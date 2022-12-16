@@ -369,14 +369,12 @@
       "location": "Northern Ireland"
     }
   ],
-  "fund_store/funds/47aef2f5-3fcb-4d45-acb5-f0152b5f03c4": [
-    {
+  "fund_store/funds/47aef2f5-3fcb-4d45-acb5-f0152b5f03c4": {
       "description": "The Community Ownership Fund is a £150 million fund over 4 years to support community groups across England, Wales, Scotland and Northern Ireland to take ownership of assets which are at risk of being lost to the community.",
       "id": "47aef2f5-3fcb-4d45-acb5-f0152b5f03c4",
       "name": "Community Ownership Fund",
       "short_name": "COF"
-    }
-  ],
+    },
   "fund_store/funds/47aef2f5-3fcb-4d45-acb5-f0152b5f03c4/rounds/c603d114-5364-4474-a0c4-c41cbf4d3bbd": {
     "assessment_criteria_weighting": [
       {
