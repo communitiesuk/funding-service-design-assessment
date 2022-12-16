@@ -189,6 +189,9 @@ def _convert_heading_description_amount(
             response, "amount", index
         )
 
+        if "answer" not in description or "answer" not in amount:
+            continue
+
         descriptions, amounts = description["answer"], amount["answer"]
 
         grouped_fields = list(zip(descriptions, map(float, amounts)))

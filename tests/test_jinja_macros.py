@@ -40,7 +40,6 @@ class TestJinjaMacros(object):
                         status="Not started",
                         theme_count=1,
                         score=2,
-                        first_theme_id="123",
                     ),
                     _CriteriaSubCriteria(
                         id="2",
@@ -48,7 +47,6 @@ class TestJinjaMacros(object):
                         status="Not started",
                         theme_count=2,
                         score=2,
-                        first_theme_id="456",
                     ),
                 ],
             ),
@@ -105,10 +103,12 @@ class TestJinjaMacros(object):
             name="Example title",
             sub_criterias=[
                 _SubCriteria(
-                    id="1", name="Sub Criteria 1", first_theme_id="123"
+                    id="1",
+                    name="Sub Criteria 1",
                 ),
                 _SubCriteria(
-                    id="2", name="Sub Criteria 2", first_theme_id="456"
+                    id="2",
+                    name="Sub Criteria 2",
                 ),
             ],
             application_id=1,

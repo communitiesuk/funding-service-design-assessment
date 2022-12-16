@@ -528,7 +528,6 @@
         "name": "Strategic case",
         "sub_criterias": [
           {
-            "first_theme_id": "community_use",
             "id": "benefits",
             "name": "Benefits",
             "score": -1,
@@ -536,7 +535,6 @@
             "theme_count": 2
           },
           {
-            "first_theme_id": "engaging-the-community",
             "id": "engagement",
             "name": "Engagement",
             "score": -1,
@@ -544,7 +542,6 @@
             "theme_count": 2
           },
           {
-            "first_theme_id": "environmental-considerations",
             "id": "environmental_sustainability",
             "name": "Environmental Sustainability",
             "score": -1,
@@ -560,7 +557,6 @@
         "name": "Management case",
         "sub_criterias": [
           {
-            "first_theme_id": "funding_requested",
             "id": "funding_breakdown",
             "name": "Funding breakdown",
             "score": -1,
@@ -568,7 +564,6 @@
             "theme_count": 1
           },
           {
-            "first_theme_id": "feasibility",
             "id": "financial_and_risk_forecasts",
             "name": "Financial and risk forecasts",
             "score": -1,
@@ -576,7 +571,6 @@
             "theme_count": 3
           },
           {
-            "first_theme_id": "previous_experience",
             "id": "skills_and_resources",
             "name": "Skills and resources",
             "score": -1,
@@ -584,7 +578,6 @@
             "theme_count": 3
           },
           {
-            "first_theme_id": "representing_community_views",
             "id": "representation_inclusiveness_and_integration",
             "name": "Representation, inclusiveness and integration",
             "score": -1,
@@ -592,7 +585,6 @@
             "theme_count": 2
           },
           {
-            "first_theme_id": "business_plan",
             "id": "business_plan",
             "name": "Business plan",
             "score": -1,
@@ -608,7 +600,6 @@
         "name": "Potential to deliver community benefit",
         "sub_criterias": [
           {
-            "first_theme_id": "delivering_and_sustaining_benefits",
             "id": "community-benefits",
             "name": "How the community benefits\t",
             "score": -1,
@@ -624,7 +615,6 @@
         "name": "Added value of the community asset",
         "sub_criterias": [
           {
-            "first_theme_id": "addressing_community_challenges",
             "id": "value-to-the-community",
             "name": "Value to the community",
             "score": -1,
@@ -646,12 +636,10 @@
         "name": "Organisation information",
         "sub_criterias": [
           {
-            "first_theme_id": "general_info",
             "id": "org_info",
             "name": "Organisation information"
           },
           {
-            "first_theme_id": "contact_information",
             "id": "applicant_info",
             "name": "Applicant information"
           }
@@ -661,12 +649,10 @@
         "name": "Project information",
         "sub_criterias": [
           {
-            "first_theme_id": "previous_funding",
             "id": "project_info",
             "name": "Project information"
           },
           {
-            "first_theme_id": "asset_ownership",
             "id": "asset_info",
             "name": "Asset information"
           }
@@ -676,12 +662,10 @@
         "name": "Check declarations",
         "sub_criterias": [
           {
-            "first_theme_id": "declarations",
             "id": "declarations",
             "name": "Declarations"
           },
           {
-            "first_theme_id": "asset_ownership",
             "id": "subsidy_control_and_state_aid",
             "name": "Subsidy control and state aid"
           }
@@ -877,7 +861,10 @@
       "field_type": "numberField",
       "form_name": "",
       "presentation_type": "grouped_fields",
-      "question": ["Total funding request", "Total funding request"]
+      "question": [
+        "Total funding request",
+        "Total funding request"
+      ]
     },
     {
       "answer": "Capital costs",
@@ -1133,7 +1120,10 @@
       "field_type": "multilineTextField",
       "form_name": "organisation-information",
       "presentation_type": "grouped_fields",
-      "question": ["Describe your previous projects","Describe your previous projects"]
+      "question": [
+        "Describe your previous projects",
+        "Describe your previous projects"
+      ]
     },
     {
       "answer": "No",
@@ -1426,7 +1416,10 @@
       "field_type": "numberField",
       "form_name": "",
       "presentation_type": "grouped_fields",
-      "question": ["Total funding request", "Total funding request"]
+      "question": [
+        "Total funding request",
+        "Total funding request"
+      ]
     },
     {
       "answer": "Capital costs",
@@ -1674,7 +1667,10 @@
       "field_type": "multilineTextField",
       "form_name": "organisation-information",
       "presentation_type": "grouped_fields",
-      "question": ["Describe your previous projects","Describe your previous projects"]
+      "question": [
+        "Describe your previous projects",
+        "Describe your previous projects"
+      ]
     },
     {
       "answer": "No",
@@ -1871,7 +1867,10 @@
       "field_type": "textField",
       "form_name": "organisation-information",
       "presentation_type": "grouped_fields",
-      "question": ["Alternative names of your organisation", "Alternative names of your organisation"]
+      "question": [
+        "Alternative names of your organisation",
+        "Alternative names of your organisation"
+      ]
     },
     {
       "answer": [
@@ -1887,7 +1886,10 @@
       "field_type": "radiosField",
       "form_name": "organisation-information",
       "presentation_type": "grouped_fields",
-      "question": ["Type of organisation", "Type of organisation"]
+      "question": [
+        "Type of organisation",
+        "Type of organisation"
+      ]
     },
     {
       "field_id": "GlPmCX",
@@ -1904,7 +1906,10 @@
       "field_type": "radiosField",
       "form_name": "organisation-information",
       "presentation_type": "grouped_fields",
-      "question": ["Which regulatory body is your company registered with?", "Which regulatory body is your company registered with?"]
+      "question": [
+        "Which regulatory body is your company registered with?",
+        "Which regulatory body is your company registered with?"
+      ]
     },
     {
       "answer": "Test",
@@ -1982,7 +1987,10 @@
       "field_type": "websiteField",
       "form_name": "organisation-information",
       "presentation_type": "grouped_fields",
-      "question": ["Website and social media", "Website and social media"]
+      "question": [
+        "Website and social media",
+        "Website and social media"
+      ]
     }
   ],
   "assessment_store/sub_criteria_themes/app_123/activities": [
@@ -2017,7 +2025,10 @@
       "field_type": "multilineTextField",
       "form_name": "organisation-information",
       "presentation_type": "grouped_fields",
-      "question": ["Tell us about your organisation's main activities","Tell us about your organisation's main activities"]
+      "question": [
+        "Tell us about your organisation's main activities",
+        "Tell us about your organisation's main activities"
+      ]
     }
   ],
   "assessment_store/sub_criteria_themes/app_123/partnerships": [
@@ -2091,7 +2102,10 @@
       "field_type": "multilineTextField",
       "form_name": "project-information",
       "presentation_type": "list",
-      "question": ["Describe your previous projects", "Describe your previous projects"]
+      "question": [
+        "Describe your previous projects",
+        "Describe your previous projects"
+      ]
     },
     {
       "field_id": "TFdnGq",
@@ -2250,7 +2264,10 @@
       "field_type": "textField",
       "form_name": "asset-information",
       "presentation_type": "grouped_fields",
-      "question": ["Asset type", "Asset type"]
+      "question": [
+        "Asset type",
+        "Asset type"
+      ]
     },
     {
       "answer": "No",

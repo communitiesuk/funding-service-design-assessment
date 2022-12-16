@@ -79,8 +79,8 @@ def display_sub_criteria(
             )
 
     args = request.args
-    theme_id = args.get("theme_id", "")
     sub_criteria = get_sub_criteria(application_id, sub_criteria_id)
+    theme_id = args.get("theme_id", sub_criteria.themes[0].id)
     fund = get_fund(Config.COF_FUND_ID)
     comments = get_comments(
         application_id=application_id, sub_criteria_id=sub_criteria_id
