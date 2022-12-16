@@ -84,16 +84,6 @@ class TestJinjaMacros(object):
             len(re.findall(r"<tr.*?</tr>", rendered_html)) == 4
         ), "Should have 4 table rows"
 
-        assert (
-            "/assess/application_id/1/sub_criteria_id/1?theme_id=123"
-            in rendered_html
-        ), "Should have a link to the first theme"
-
-        assert (
-            "/assess/application_id/1/sub_criteria_id/2?theme_id=456"
-            in rendered_html
-        ), "Should have a link to the second theme"
-
     def test_section_macro(self, request_ctx):
         rendered_html = render_template_string(
             "{{section_element(name, sub_criterias, application_id)}}",
@@ -142,16 +132,6 @@ class TestJinjaMacros(object):
         assert (
             len(re.findall(r"<tbody.*?</tbody>", rendered_html)) == 1
         ), "Should have 1 table body"
-
-        assert (
-            "/assess/application_id/1/sub_criteria_id/1?theme_id=123"
-            in rendered_html
-        ), "Should have a link to the first theme"
-
-        assert (
-            "/assess/application_id/1/sub_criteria_id/2?theme_id=456"
-            in rendered_html
-        ), "Should have a link to the second theme"
 
     def test_score_macro(self, request_ctx):
         rendered_html = render_template_string(
