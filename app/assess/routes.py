@@ -463,7 +463,7 @@ def application(application_id):
     current_app.logger.info(f"Fetching data from '{assessor_task_list_metadata}'.")
 
     return render_template(
-        "application.jinja2",
+        "assessor_tasklist.html",
         state=state,
         application_id=application_id,
     )
