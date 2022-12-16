@@ -343,7 +343,7 @@
   "assessment_store/application_overviews/47aef2f5-3fcb-4d45-acb5-f0152b5f03c4/c603d114-5364-4474-a0c4-c41cbf4d3bbd?search_term=&search_in=project_name%2Cshort_id&asset_type=ALL&status=ALL": [
     {
       "short_id": "COF-R2W2-IRNWPB",
-      "workflow_status": "in-progress",
+      "workflow_status": "IN_PROGRESS",
       "application_id": "app_123",
       "type_of_application": "pub",
       "project_name": "Save the Dog and Duck",
@@ -352,7 +352,7 @@
     },
     {
       "short_id": "COF-R2W2-AJTRIB",
-      "workflow_status": "qa-ready",
+      "workflow_status": "QA_READY",
       "application_id": "234234234-123123123",
       "type_of_application": "sporting",
       "project_name": "Save the rugby pitch",
@@ -361,7 +361,7 @@
     },
     {
       "short_id": "COF-R2W2-BMEQLK",
-      "workflow_status": "not-started",
+      "workflow_status": "NOT_STARTED",
       "application_id": "789789789-879789",
       "type_of_application": "community-centre",
       "project_name": "Save our village hall",
@@ -424,7 +424,7 @@
   "assessment_store/application_overviews/47aef2f5-3fcb-4d45-acb5-f0152b5f03c4/c603d114-5364-4474-a0c4-c41cbf4d3bbd?search_term=AJTRIB&search_in=project_name%2Cshort_id&asset_type=ALL&status=ALL": [
     {
       "short_id": "COF-R2W2-AJTRIB",
-      "workflow_status": "qa-ready",
+      "workflow_status": "QA_READY",
       "application_id": "234234234-123123123",
       "type_of_application": "sporting",
       "project_name": "Save the rugby pitch",
@@ -435,7 +435,7 @@
   "assessment_store/application_overviews/47aef2f5-3fcb-4d45-acb5-f0152b5f03c4/c603d114-5364-4474-a0c4-c41cbf4d3bbd?search_term=Save+our+village&search_in=project_name%2Cshort_id&asset_type=ALL&status=ALL": [
     {
       "short_id": "COF-R2W2-BMEQLK",
-      "workflow_status": "not-started",
+      "workflow_status": "NOT_STARTED",
       "application_id": "789789789-879789",
       "type_of_application": "community-centre",
       "project_name": "Save our village hall",
@@ -446,7 +446,7 @@
   "assessment_store/application_overviews/47aef2f5-3fcb-4d45-acb5-f0152b5f03c4/c603d114-5364-4474-a0c4-c41cbf4d3bbd?search_term=&search_in=project_name%2Cshort_id&asset_type=ALL&status=QA_READY": [
     {
       "short_id": "COF-R2W2-AJTRIB",
-      "workflow_status": "qa-ready",
+      "workflow_status": "QA_READY",
       "application_id": "234234234-123123123",
       "type_of_application": "sporting",
       "project_name": "Save the rugby pitch",
@@ -457,7 +457,7 @@
   "assessment_store/application_overviews/47aef2f5-3fcb-4d45-acb5-f0152b5f03c4/c603d114-5364-4474-a0c4-c41cbf4d3bbd?search_term=&search_in=project_name%2Cshort_id&asset_type=pub&status=ALL": [
     {
       "short_id": "COF-R2W2-IRNWPB",
-      "workflow_status": "in-progress",
+      "workflow_status": "IN_PROGRESS",
       "application_id": "app_123",
       "type_of_application": "pub",
       "project_name": "Save the Dog and Duck",
@@ -468,7 +468,7 @@
   "assessment_store/application_overviews/47aef2f5-3fcb-4d45-acb5-f0152b5f03c4/c603d114-5364-4474-a0c4-c41cbf4d3bbd?search_term=&search_in=project_name%2Cshort_id&asset_type=sporting&status=ALL": [
     {
       "short_id": "COF-R2W2-AJTRIB",
-      "workflow_status": "qa-ready",
+      "workflow_status": "QA_READY",
       "application_id": "234234234-123123123",
       "type_of_application": "sporting",
       "project_name": "Save the rugby pitch",
@@ -479,7 +479,7 @@
   "assessment_store/application_overviews/47aef2f5-3fcb-4d45-acb5-f0152b5f03c4/c603d114-5364-4474-a0c4-c41cbf4d3bbd?search_term=&search_in=project_name%2Cshort_id&asset_type=ALL&status=IN_PROGRESS": [
     {
       "short_id": "COF-R2W2-IRNWPB",
-      "workflow_status": "in-progress",
+      "workflow_status": "IN_PROGRESS",
       "application_id": "app_123",
       "type_of_application": "pub",
       "project_name": "Save the Dog and Duck",
@@ -490,7 +490,7 @@
   "assessment_store/application_overviews/47aef2f5-3fcb-4d45-acb5-f0152b5f03c4/c603d114-5364-4474-a0c4-c41cbf4d3bbd?search_term=&search_in=project_name%2Cshort_id&asset_type=community-centre&status=NOT_STARTED": [
     {
       "short_id": "COF-R2W2-BMEQLK",
-      "workflow_status": "not-started",
+      "workflow_status": "NOT_STARTED",
       "application_id": "789789789-879789",
       "type_of_application": "community-centre",
       "project_name": "Save our village hall",
