@@ -194,7 +194,9 @@ def _convert_heading_description_amount(
 
         descriptions, amounts = description["answer"], amount["answer"]
 
-        grouped_fields = list(zip(descriptions, map(float, amounts)))
+        poundless_amounts = [a.replace("£", "") for a in amounts]
+
+        grouped_fields = list(zip(descriptions, map(float, poundless_amounts)))
 
         grouped_fields_items.append(
             {
