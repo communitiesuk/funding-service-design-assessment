@@ -117,17 +117,6 @@ class TestJinjaMacros(object):
         ), "Should have 1 table"
 
         assert (
-            len(
-                re.findall(
-                    r"<caption.*?This section is not scored\. Can be used for"
-                    r" due diligence checks\.*?</caption>",
-                    rendered_html,
-                )
-            )
-            == 1
-        ), "Should have 1 caption"
-
-        assert (
             len(re.findall(r"<thead.*?</thead>", rendered_html)) == 1
         ), "Should have 1 table header"
         assert (
