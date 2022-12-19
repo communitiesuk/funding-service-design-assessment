@@ -39,7 +39,7 @@ expected_unauthenticated_g_attributes = {
 }
 
 
-def _create_valid_token():
+def create_valid_token():
 
     _test_private_key_path = (
         str(Path(__file__).parent) + "/keys/rsa256/private.pem"
@@ -52,7 +52,7 @@ def _create_valid_token():
         )
 
 
-def _create_invalid_token():
+def create_invalid_token():
 
     _test_private_key_path = (
         str(Path(__file__).parent) + "/keys/rsa256/private_invalid.pem"
@@ -121,8 +121,14 @@ def _flask_test_client(user_token=None):
 
 @pytest.fixture(scope="function")
 def flask_test_client():
-    valid_user_token = _create_valid_token()
+    valid_user_token = create_valid_token()
     return next(_flask_test_client(user_token=valid_user_token))
+
+
+@pytest.fixture(scope="function")
+def flask_test_client_invalid_token():
+    invalid_user_token = create_invalid_token()
+    return next(_flask_test_client(user_token=invalid_user_token))
 
 
 @pytest.fixture(scope="class")
