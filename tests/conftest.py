@@ -1,6 +1,8 @@
 import multiprocessing
 import platform
+from pathlib import Path
 
+import jwt as jwt
 import pytest
 from app.create_app import create_app
 from selenium import webdriver
@@ -10,6 +12,57 @@ from webdriver_manager.chrome import ChromeDriverManager
 
 if platform.system() == "Darwin":
     multiprocessing.set_start_method("fork")  # Required on macOSX
+
+
+test_user_claims_payload = {
+    "accountId": "test-user",
+    "email": "test@example.com",
+    "fullName": "Test User",
+    "roles": ["LEAD_ASSESSOR", "ASSESSOR", "COMMENTER"],
+}
+expected_valid_g_attributes = {
+    "is_authenticated": True,
+    "logout_url": "https://authenticator/sessions/sign-out",
+    "account_id": "test-user",
+    "user": {
+        "email": "test@example.com",
+        "full_name": "Test User",
+        "highest_role": "LEAD_ASSESSOR",
+        "roles": ["LEAD_ASSESSOR", "ASSESSOR", "COMMENTER"],
+    },
+}
+
+expected_unauthenticated_g_attributes = {
+    "is_authenticated": False,
+    "logout_url": "https://authenticator/sessions/sign-out",
+    "account_id": None,
+}
+
+
+def _create_valid_token():
+
+    _test_private_key_path = (
+        str(Path(__file__).parent) + "/keys/rsa256/private.pem"
+    )
+    with open(_test_private_key_path, mode="rb") as private_key_file:
+        rsa256_private_key = private_key_file.read()
+
+        return jwt.encode(
+            test_user_claims_payload, rsa256_private_key, algorithm="RS256"
+        )
+
+
+def _create_invalid_token():
+
+    _test_private_key_path = (
+        str(Path(__file__).parent) + "/keys/rsa256/private_invalid.pem"
+    )
+    with open(_test_private_key_path, mode="rb") as private_key_file:
+        rsa256_private_key = private_key_file.read()
+
+        return jwt.encode(
+            test_user_claims_payload, rsa256_private_key, algorithm="RS256"
+        )
 
 
 def post_driver(driver, path, params):
@@ -54,15 +107,22 @@ def app():
         yield create_app()
 
 
-@pytest.fixture()
-def flask_test_client():
+def _flask_test_client(user_token=None):
     """
     Creates the test client we will be using to test the responses
     from our app, this is a test fixture.
     :return: A flask test client.
     """
-    with create_app().test_client() as test_client:
-        yield test_client
+    with create_app().app_context() as app_context:
+        with app_context.app.test_client() as test_client:
+            test_client.set_cookie("localhost", "fsd_user_token", user_token)
+            yield test_client
+
+
+@pytest.fixture(scope="function")
+def flask_test_client():
+    valid_user_token = _create_valid_token()
+    return next(_flask_test_client(user_token=valid_user_token))
 
 
 @pytest.fixture(scope="class")
