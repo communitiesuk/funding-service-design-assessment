@@ -14,32 +14,36 @@ if platform.system() == "Darwin":
     multiprocessing.set_start_method("fork")  # Required on macOSX
 
 
-test_user_claims_payload = {
+test_lead_assessor_claims = {
     "accountId": "test-user",
     "email": "test@example.com",
     "fullName": "Test User",
     "roles": ["LEAD_ASSESSOR", "ASSESSOR", "COMMENTER"],
 }
-expected_valid_g_attributes = {
-    "is_authenticated": True,
-    "logout_url": "https://authenticator/sessions/sign-out",
-    "account_id": "test-user",
-    "user": {
-        "email": "test@example.com",
-        "full_name": "Test User",
-        "highest_role": "LEAD_ASSESSOR",
-        "roles": ["LEAD_ASSESSOR", "ASSESSOR", "COMMENTER"],
-    },
+
+test_assessor_claims = {
+    "accountId": "test-user",
+    "email": "test@example.com",
+    "fullName": "Test User",
+    "roles": ["ASSESSOR", "COMMENTER"],
 }
 
-expected_unauthenticated_g_attributes = {
-    "is_authenticated": False,
-    "logout_url": "https://authenticator/sessions/sign-out",
-    "account_id": None,
+test_commenter_claims = {
+    "accountId": "test-user",
+    "email": "test@example.com",
+    "fullName": "Test User",
+    "roles": ["COMMENTER"],
+}
+
+test_roleless_user_claims = {
+    "accountId": "test-user",
+    "email": "test@example.com",
+    "fullName": "Test User",
+    "roles": [],
 }
 
 
-def create_valid_token():
+def create_valid_token(payload=test_assessor_claims):
 
     _test_private_key_path = (
         str(Path(__file__).parent) + "/keys/rsa256/private.pem"
@@ -47,9 +51,7 @@ def create_valid_token():
     with open(_test_private_key_path, mode="rb") as private_key_file:
         rsa256_private_key = private_key_file.read()
 
-        return jwt.encode(
-            test_user_claims_payload, rsa256_private_key, algorithm="RS256"
-        )
+        return jwt.encode(payload, rsa256_private_key, algorithm="RS256")
 
 
 def create_invalid_token():
@@ -61,7 +63,7 @@ def create_invalid_token():
         rsa256_private_key = private_key_file.read()
 
         return jwt.encode(
-            test_user_claims_payload, rsa256_private_key, algorithm="RS256"
+            test_assessor_claims, rsa256_private_key, algorithm="RS256"
         )
 
 
