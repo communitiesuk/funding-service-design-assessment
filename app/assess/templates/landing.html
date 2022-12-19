@@ -14,6 +14,18 @@
                 <div class="govuk-grid-column-full">
                     <div class="govuk-grid-column-two-thirds">
                         <h1 class="govuk-heading-xl fsd-banner-content">Team dashboard</h1>
+                        {% if user.highest_role == "LEAD_ASSESSOR" %}
+                            <div class="lead-dashboard-stats">
+                                <div class="lead-dashboard-stat">
+                                    <p class="">30</p>
+                                    <p class="">QA complete</p>
+                                </div>
+                                <div class="lead-dashboard-stat">
+                                    <p class="">100</p>
+                                    <p class="">Assessments</p>
+                                </div>
+                            </div>
+                        {% endif %}
                         <h2 class="govuk-heading-l fsd-banner-content">All active assessments</h2>
                         <h3 class="govuk-body-l fsd-banner-content fsd-banner-collapse-padding"><strong>Fund: </strong>Community Ownership Fund</h3>
                         <h3 class="govuk-body-l fsd-banner-content"><strong>Round:</strong> Round 2 Window 2</h3>
