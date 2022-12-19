@@ -34,12 +34,8 @@ class DefaultConfig:
     """
 
     AUTHENTICATOR_HOST = getenv("AUTHENTICATOR_HOST", "authenticator")
-    SSO_LOGIN_URL = (
-        AUTHENTICATOR_HOST + "/sso/login"
-    )
-    SSO_LOGOUT_URL = (
-        AUTHENTICATOR_HOST + "/sso/logout"
-    )
+    SSO_LOGIN_URL = AUTHENTICATOR_HOST + "/sso/login"
+    SSO_LOGOUT_URL = AUTHENTICATOR_HOST + "/sso/logout"
     # RSA 256 KEYS
     RSA256_PUBLIC_KEY_BASE64 = getenv("RSA256_PUBLIC_KEY_BASE64")
     if RSA256_PUBLIC_KEY_BASE64:
