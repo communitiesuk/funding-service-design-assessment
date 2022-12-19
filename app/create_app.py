@@ -122,9 +122,7 @@ def create_app() -> Flask:
         @login_requested
         def ensure_minimum_required_roles():
             minimum_roles_required = ["COMMENTER"]
-            unprotected_routes = [
-                "/"
-            ]
+            unprotected_routes = ["/"]
             if g.is_authenticated:
                 # Ensure that authenticated users have
                 # all minimum required roles
@@ -138,8 +136,10 @@ def create_app() -> Flask:
                         + "?roles_required="
                         + "|".join(minimum_roles_required)
                     )
-            elif not request.path in unprotected_routes \
-                    and not request.path.startswith("/static/"):
+            elif (
+                request.path not in unprotected_routes
+                and not request.path.startswith("/static/")
+            ):  # noqa
                 # Redirect unauthenticated users to
                 # login on the home page
                 return redirect("/")
