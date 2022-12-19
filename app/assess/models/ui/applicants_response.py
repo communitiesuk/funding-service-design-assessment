@@ -210,7 +210,7 @@ def _ui_component_from_factory(item: dict):
 def _convert_heading_description_amount(
     response: Iterable[dict],
 ) -> tuple[list[dict], set[str]]:
-    """Convert a list of dictionaries representing a respose question and
+    """Convert a list of dictionaries representing a response question and
     answers into a tuple of a list of dictionaries representing grouped fields
     and a set of field IDs.
 
