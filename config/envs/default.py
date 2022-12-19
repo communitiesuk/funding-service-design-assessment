@@ -28,6 +28,7 @@ class DefaultConfig:
     TEMPLATES_FOLDER = "templates"
     LOCAL_SERVICE_NAME = "local_flask"
     ASSESSMENT_HUB_ROUTE = "/assess"
+    DASHBOARD_ROUTE = "/assess/landing"
 
     """
     Security

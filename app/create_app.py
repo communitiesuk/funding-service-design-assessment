@@ -136,6 +136,8 @@ def create_app() -> Flask:
                         + "?roles_required="
                         + "|".join(minimum_roles_required)
                     )
+                elif request.path == "/":
+                    return redirect(flask_app.config.get("DASHBOARD_ROUTE"))
             elif (
                 request.path not in unprotected_routes
                 and not request.path.startswith("/static/")
