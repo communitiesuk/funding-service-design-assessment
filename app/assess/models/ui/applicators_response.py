@@ -8,6 +8,7 @@ from typing import Tuple
 from app.assess.views.filters import format_address
 from app.assess.views.filters import format_date
 from app.assess.views.filters import remove_dashes_underscores_capitalize
+from app.assess.data import get_file_url
 
 ANSWER_NOT_PROVIDED_DEFAULT = "Not provided."
 
@@ -128,7 +129,7 @@ class MonetaryKeyValues(ApplicatorsResponseComponent):
         )
 
 
-def _ui_component_from_factory(item: dict):
+def _ui_component_from_factory(item: dict, application_id: str):
     presentation_type = item["presentation_type"]
     field_type = item.get("field_type")
     answer = item.get("answer")
@@ -169,7 +170,8 @@ def _ui_component_from_factory(item: dict):
 
     elif presentation_type == "file":
         # TODO(FS-2065(?)): add href as link to download actual file?
-        return AboveQuestionAnswerPairHref.from_dict(item, href=answer)
+        presighned_url = get_file_url(filename=answer, application_id=application_id)
+        return AboveQuestionAnswerPairHref.from_dict(item, href=presighned_url)
 
     elif presentation_type == "address":
         return FormattedBesideQuestionAnswerPair.from_dict(
@@ -357,7 +359,7 @@ def _make_field_ids_hashable(item: dict) -> dict:
 
 
 def create_ui_components(
-    response_with_some_unhashable_fields: list[dict],
+    response_with_some_unhashable_fields: list[dict], applicaition_id: str
 ) -> List[ApplicatorsResponseComponent]:
     response = list(
         map(_make_field_ids_hashable, response_with_some_unhashable_fields)
@@ -395,4 +397,4 @@ def create_ui_components(
         key=lambda x: field_ids_in_order.index(x["field_id"])
     )
 
-    return list(map(_ui_component_from_factory, post_processed_items))
+    return (_ui_component_from_factory(item, applicaition_id) for item in post_processed_items)

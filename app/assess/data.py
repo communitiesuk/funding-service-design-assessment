@@ -15,6 +15,10 @@ from config import Config
 from flask import abort
 from flask import current_app
 
+import boto3
+import requests  
+from config import Config
+from botocore.exceptions import ClientError
 
 def get_data(
     endpoint: str,
@@ -345,3 +349,38 @@ def get_comments(application_id: str, sub_criteria_id: str):
     )
     comment_response = get_data(comment_endpoint)
     return comment_response
+
+def get_file_url(filename: str, application_id: str):
+    """_summary_: Function is set up to retrieve
+    files from aws bucket.
+    Args:
+        filename: Takes an filename # noqa
+    Returns:
+        Returns a presigned url.
+    """
+
+    if (filename == None):
+        return None
+    key = Config.AWS_ACCESS_KEY_ID
+    secret = Config.AWS_SECRET_ACCESS_KEY
+    bucket = Config.AWS_BUCKET_NAME
+    region = Config.AWS_REGION
+
+    prefixed_file_name = application_id + "/" + filename
+
+    client = boto3.client('s3')
+
+    s3_client = boto3.client('s3', 
+                      aws_access_key_id=key, 
+                      aws_secret_access_key=secret, 
+                      region_name=region
+                      )
+    try:
+        response = s3_client.generate_presigned_url('get_object',
+                                                    Params={'Bucket': bucket,
+                                                            'Key': prefixed_file_name},
+                                                    ExpiresIn=3600)
+        return response
+    except ClientError as e:
+        current_app.logger.error(e)
+        return None

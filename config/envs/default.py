@@ -84,3 +84,12 @@ class DefaultConfig:
     COF_ROUND2_ID = CommonConfig.COF_ROUND_2_ID
 
     USE_LOCAL_DATA = strtobool(getenv("USE_LOCAL_DATA", "False"))
+
+    """
+    Aws Config
+    """
+
+    AWS_ACCESS_KEY_ID = getenv("AWS_ACCESS_KEY_ID")
+    AWS_SECRET_ACCESS_KEY =  getenv("AWS_SECRET_ACCESS_KEY")
+    AWS_BUCKET_NAME = getenv("AWS_BUCKET_NAME")
+    AWS_REGION = getenv("AWS_REGION")

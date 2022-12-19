@@ -708,7 +708,7 @@ def test_create_ui_components_retains_order():
         },
     ]
 
-    ui_components = create_ui_components(response_with_unhashable_fields)
+    ui_components = create_ui_components(response_with_unhashable_fields, "test")
 
     assert all(
         isinstance(ui_component, ApplicatorsResponseComponent)
