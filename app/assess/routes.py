@@ -429,6 +429,7 @@ def landing():
 
     return render_template(
         "landing.html",
+        user=g.user,
         application_overviews=application_overviews,
         assessment_deadline=assessment_deadline,
         query_params=search_params,
