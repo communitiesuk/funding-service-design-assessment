@@ -5,6 +5,10 @@
     margin: auto;
   }
 
+.govuk-main-wrapper {
+    padding:0px;
+}
+
 .govuk-header {
     padding-bottom:0px;
     border-bottom:0px;
@@ -29,6 +33,10 @@
     padding: 2.5px;
     font-weight: 400;
     text-transform: none;
+  }
+
+.gov-uk-table__cell--align-right {
+    text-align: right;
   }
 
 .fsd-banner-background {
@@ -57,4 +65,34 @@
 
 .govuk-heading-xl {
     margin-bottom:30px;
+}
+
+.flex-parent-element {
+  display: flex;
+    width:100%;
+}
+
+.flex-child-element {
+  flex: 1;
+  border: 2px solid blueviolet;
+  margin: 0px;
+}
+
+.flexed-element-margins-collapse, flexed-element-margins-collapse > p, flexed-element-margins-collapse > p > a {
+display: block;
+font-size: 16px;
+margin:0px;
+}
+
+.flex-child-element:first-child {
+
+}
+.govuk-back-link {
+    margin:0px;
+}
+
+.govuk-phase-banner {
+    margin-top: 15px;
+    margin-bottom:15px;
+    border-bottom:0px;
 }

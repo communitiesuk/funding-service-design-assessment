@@ -14,7 +14,7 @@
                   <input class="govuk-input govuk-input--width-20" type="text" s, assessment_statusespellcheck="false" aria-label="Search reference or project name" id="application_search" name="search_term", value="{{query_params['search_term']}}">
             </div>
       </div>
-      <div class="govuk-form-group govuk-!-display-inline-block" govuk-!-padding-right-2">
+      <div class="govuk-form-group govuk-!-display-inline-block govuk-!-padding-right-2">
             <label class="govuk-label" for="filter_asset_type">
             Filter by asset type
             </label>
@@ -101,11 +101,11 @@
         {% for overview in application_overviews %}
             <tr class="govuk-table__row">
 
-                <td class="govuk-table__cell">{{overview.short_id[-6:]}}</a></td>
+                <td class="govuk-table__cell">{{overview.short_id[-6:]}}</td>
 
                 <td class="govuk-table__cell"><a class="govuk-link" href="{{url_for('assess_bp.application',application_id=overview.application_id)}}">{{overview.project_name}}</a></td>
-                <td class="govuk-table__cell">{{asset_types[overview.type_of_application]}}</td>
-                <td class="govuk-table__cell">{{ "£%.2f"|format(overview.funding_amount_requested | int) }}</td>
+                <td class="govuk-table__cell">{{asset_types[overview.asset_type]}}</td>
+                <td class="govuk-table__cell">&pound;{{ "{:,.2f}".format(overview.funding_amount_requested) }}</td>
                 <td class="govuk-table__cell">{{ overview.location }}</td>
                 {% if overview.workflow_status ==  "not-started" %}
                   <td class="govuk-table__cell"><span class="not-started-tag">{{assessment_statuses[overview.workflow_status]}}</span></td>
