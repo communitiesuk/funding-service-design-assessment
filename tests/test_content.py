@@ -6,6 +6,7 @@ from config import Config
 from flask import url_for
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.errorhandler import NoSuchElementException
+from tests.conftest import create_valid_token
 from tests.route_testing_conf import intro_routes_and_test_content
 from tests.utils import print_html_page
 
@@ -17,6 +18,9 @@ class TestContentWithChrome:
     def route_content_test(self, route_rel: str, content_dict: dict):
         url = url_for("default_bp.index", _external=True) + route_rel[1:]
         self.driver.get(url=url)
+        self.driver.add_cookie(
+            {"name": "fsd_user_token", "value": create_valid_token()}
+        )
         source = self.driver.page_source
         print_html_page(
             html=source,
