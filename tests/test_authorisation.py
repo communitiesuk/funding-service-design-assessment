@@ -100,9 +100,11 @@ class TestAuthorisation:
         response = flask_test_client.get("/", follow_redirects=True)
         assert response.status_code == 200
         assert (
-            b'<p class="govuk-heading-xl">Assessor dashboard</p>'
+            b'<h1 class="govuk-heading-xl fsd-banner-content">Team'
+            b" dashboard</h1>"
             in response.data
         )
+        assert b'<div class="lead-dashboard-stats">' in response.data
 
     def test_authorised_assessor_redirected_to_dashboard(
         self, flask_test_client
@@ -130,9 +132,11 @@ class TestAuthorisation:
         response = flask_test_client.get("/", follow_redirects=True)
         assert response.status_code == 200
         assert (
-            b'<p class="govuk-heading-xl">Assessor dashboard</p>'
+            b'<h1 class="govuk-heading-xl fsd-banner-content">Team'
+            b" dashboard</h1>"
             in response.data
         )
+        assert b'<div class="lead-dashboard-stats">' not in response.data
 
     def test_authorised_commenter_redirected_to_dashboard(
         self, flask_test_client
@@ -160,6 +164,8 @@ class TestAuthorisation:
         response = flask_test_client.get("/", follow_redirects=True)
         assert response.status_code == 200
         assert (
-            b'<p class="govuk-heading-xl">Assessor dashboard</p>'
+            b'<h1 class="govuk-heading-xl fsd-banner-content">Team'
+            b" dashboard</h1>"
             in response.data
         )
+        assert b'<div class="lead-dashboard-stats">' not in response.data
