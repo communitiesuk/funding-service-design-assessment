@@ -8,7 +8,7 @@ from app.assess.forms.scores_and_justifications import ScoreForm
 from app.assess.models.question import Question
 from app.assess.models.question_field import QuestionField
 from app.assess.models.total_table import TotalMoneyTableView
-from app.assess.models.ui import applicators_response
+from app.assess.models.ui import applicants_response
 from app.assess.models.ui.assessor_task_list import AssessorTaskList
 from config import Config
 from flask import abort
@@ -123,7 +123,7 @@ def display_sub_criteria(
         theme_answers_response = get_sub_criteria_theme_answers(
             application_id, theme_id
         )
-        answers_meta = applicators_response.create_ui_components(
+        answers_meta = applicants_response.create_ui_components(
             theme_answers_response
         )
 
