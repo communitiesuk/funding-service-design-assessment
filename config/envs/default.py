@@ -34,7 +34,7 @@ class DefaultConfig:
     Security
     """
 
-    AUTHENTICATOR_HOST = getenv("AUTHENTICATOR_HOST", "authenticator")
+    AUTHENTICATOR_HOST = getenv("AUTHENTICATOR_HOST", "https://authenticator")
     SSO_LOGIN_URL = AUTHENTICATOR_HOST + "/sso/login"
     SSO_LOGOUT_URL = AUTHENTICATOR_HOST + "/sso/logout"
     # RSA 256 KEYS
