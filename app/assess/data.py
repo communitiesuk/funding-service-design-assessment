@@ -7,6 +7,7 @@ from urllib.parse import urlencode
 
 import requests
 from app.assess.models.application import Application
+from app.assess.models.comment import Comment
 from app.assess.models.fund import Fund
 from app.assess.models.round import Round
 from app.assess.models.score import Score
@@ -340,5 +341,14 @@ def get_comments(application_id: str, sub_criteria_id: str):
             application_id=application_id, sub_criteria_id=sub_criteria_id
         )
     )
+
     comment_response = get_data(comment_endpoint)
-    return comment_response
+    if comment_response and (type(comment_response) is list):
+        comments = []
+        for comment in comment_response:
+            comments.append(Comment.from_filtered_dict(comment))
+        return comments
+    else:
+        msg = f"comment: '{comment_response['id']}' not found."
+        current_app.logger.warn(msg)
+        abort(404, description=msg)

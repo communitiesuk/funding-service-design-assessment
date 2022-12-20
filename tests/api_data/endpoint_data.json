@@ -704,7 +704,7 @@
   "assessment_store/comment/app_123/1a2b3c4d": [
     {
       "comment": "This is a comment",
-      "user_id": "0a31fa06-7555-11ed-a1eb-0242ac120002",
+      "user_id": "0a31fa06-7555-11ed-a1eb-0242ac120001",
       "date_created": "2022-12-08T15:45:07.987830",
       "email_address": "test@test.com",
       "full_name": "Gommez Addams",
@@ -712,11 +712,19 @@
     },
     {
       "comment": "Youre missing some details",
-      "user_id": "0a31fa06-7555-11ed-a1eb-0242ac10505",
+      "user_id": "0a31fa06-7555-11ed-a1eb-0242ac10502",
       "date_created": "2022-10-27T08:32:13.383999",
       "email_address": "test@test.com",
       "full_name": "Bruce Wayne",
       "user_role": "ASSESSOR"
+    },
+    {
+      "comment": "This meets criteria X",
+      "user_id": "0a31fa06-7555-11ed-a1eb-0242ac120003",
+      "date_created": "2022-12-20T09:25:05.987830",
+      "email_address": "hammer@test.com",
+      "full_name": "Thor",
+      "user_role": "COMMENTER"
     }
   ],
   "assessment_store/sub_criteria_themes/app_123/community_use": [
