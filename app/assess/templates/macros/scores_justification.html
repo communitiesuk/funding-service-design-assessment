@@ -4,7 +4,7 @@
 
 {% macro scores_justification(scores_submitted, form, score_list, latest_score, application_id, sub_criteria_id, COF_score_list, score_error, justification_error) %}
 
-<div class="govuk-grid-column-two-thirds s26-scoring">
+<div class="govuk-grid-column-full s26-scoring">
     {% if latest_score %}
     <div class="s26-score-group" id="anchor">
         <h2 class="govuk-heading-m">Current score: {{ latest_score['score'] }}</h2>
@@ -66,7 +66,7 @@
         {% if latest_score %}
         {{govukButton({'text': 'Rescore', 'type':'submit'})}}
         {% else %}
-        {{govukButton({'text': 'Save score', 'type':'submit'})}}
+        {{govukButton({'text': 'Save score', 'type':'submit', 'classes':'primary-button'})}}
         {% endif %}
     </form>
     {% endif %}

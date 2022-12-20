@@ -27,7 +27,7 @@ class TestJinjaMacros(object):
         rendered_html = render_template_string(
             "{{criteria_element(criteria, name_classes, application_id)}}",
             criteria_element=get_template_attribute(
-                "macros/criteria_element.jinja2", "criteria_element"
+                "macros/criteria_element.html", "criteria_element"
             ),
             criteria=_Criteria(
                 name="Example title",
@@ -89,7 +89,7 @@ class TestJinjaMacros(object):
         rendered_html = render_template_string(
             "{{section_element(name, sub_criterias, application_id)}}",
             section_element=get_template_attribute(
-                "macros/section_element.jinja2", "section_element"
+                "macros/section_element.html", "section_element"
             ),
             name="Example title",
             sub_criterias=[
@@ -113,14 +113,14 @@ class TestJinjaMacros(object):
         ), "Title not found"
 
         assert (
-            len(re.findall(r"<table.*?</table>", rendered_html)) == 1
+            len(re.findall(r"<table.*?</table>", rendered_html)) == 0
         ), "Should have 1 table"
 
         assert (
-            len(re.findall(r"<thead.*?</thead>", rendered_html)) == 1
+            len(re.findall(r"<thead.*?</thead>", rendered_html)) == 0
         ), "Should have 1 table header"
         assert (
-            len(re.findall(r"<tbody.*?</tbody>", rendered_html)) == 1
+            len(re.findall(r"<tbody.*?</tbody>", rendered_html)) == 0
         ), "Should have 1 table body"
 
     def test_score_macro(self, request_ctx):
@@ -400,7 +400,7 @@ class TestJinjaMacros(object):
 
         rendered_html = render_template_string(
             "{{ theme('a-theme-id', [meta]) }}",
-            theme=get_template_attribute("macros/theme.jinja2", "theme"),
+            theme=get_template_attribute("macros/theme.html", "theme"),
             meta=meta,
         )
 
