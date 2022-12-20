@@ -109,7 +109,8 @@ def app():
         yield create_app()
 
 
-def _flask_test_client(user_token=None):
+@pytest.fixture(scope="function")
+def flask_test_client(user_token=None):
     """
     Creates the test client we will be using to test the responses
     from our app, this is a test fixture.
@@ -117,20 +118,12 @@ def _flask_test_client(user_token=None):
     """
     with create_app().app_context() as app_context:
         with app_context.app.test_client() as test_client:
-            test_client.set_cookie("localhost", "fsd_user_token", user_token)
+            test_client.set_cookie(
+                "localhost",
+                "fsd_user_token",
+                user_token or create_valid_token(),
+            )
             yield test_client
-
-
-@pytest.fixture(scope="function")
-def flask_test_client():
-    valid_user_token = create_valid_token()
-    return next(_flask_test_client(user_token=valid_user_token))
-
-
-@pytest.fixture(scope="function")
-def flask_test_client_invalid_token():
-    invalid_user_token = create_invalid_token()
-    return next(_flask_test_client(user_token=invalid_user_token))
 
 
 @pytest.fixture(scope="class")
