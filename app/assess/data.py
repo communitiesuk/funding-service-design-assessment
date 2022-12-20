@@ -358,6 +358,8 @@ def get_file_url(filename: str, application_id: str):
     Returns:
         Returns a presigned url.
     """
+    if (Config.FLASK_ENV == "unit_test"):
+        return filename
 
     if (filename == None):
         return None
@@ -380,6 +382,7 @@ def get_file_url(filename: str, application_id: str):
                                                     Params={'Bucket': bucket,
                                                             'Key': prefixed_file_name},
                                                     ExpiresIn=3600)
+        
         return response
     except ClientError as e:
         current_app.logger.error(e)

@@ -107,9 +107,3 @@ class TestDataOperations:
         with self.test_app.app_context():
             comments = get_comments("app_123", "1a2b3c4d")
         assert 2 == len(comments), "wrong number of comments"
-    
-    def test_download_file(self):
-
-        with self.test_app.app_context():
-            comments = get_file_url("Hello world.txt", "")
-        assert 1 == len(comments), "No file downloaded"

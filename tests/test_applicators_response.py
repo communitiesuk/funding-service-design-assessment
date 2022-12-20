@@ -198,7 +198,7 @@ class TestApplicatorsResponseComponentFactory:
         ],
     )
     def test__ui_component_from_factory(self, item, expected_class):
-        result = _ui_component_from_factory(item)
+        result = _ui_component_from_factory(item, "app_123")
         assert isinstance(result, expected_class)
 
 
@@ -708,7 +708,7 @@ def test_create_ui_components_retains_order():
         },
     ]
 
-    ui_components = create_ui_components(response_with_unhashable_fields, "test")
+    ui_components = create_ui_components(response_with_unhashable_fields, "app_123")
 
     assert all(
         isinstance(ui_component, ApplicatorsResponseComponent)

@@ -397,4 +397,4 @@ def create_ui_components(
         key=lambda x: field_ids_in_order.index(x["field_id"])
     )
 
-    return (_ui_component_from_factory(item, applicaition_id) for item in post_processed_items)
+    return [_ui_component_from_factory(item, applicaition_id) for item in post_processed_items]
