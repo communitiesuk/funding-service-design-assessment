@@ -16,6 +16,7 @@ from flask import Blueprint
 from flask import g
 from flask import render_template
 from flask import request
+from fsd_utils.authentication.decorators import login_required
 
 assess_bp = Blueprint(
     "assess_bp",
@@ -40,6 +41,7 @@ def funds():
     "/application_id/<application_id>/sub_criteria_id/<sub_criteria_id>",
     methods=["POST", "GET"],
 )
+@login_required(roles_required=["COMMENTER"])
 def display_sub_criteria(
     application_id,
     sub_criteria_id,
@@ -57,12 +59,7 @@ def display_sub_criteria(
         if form.validate_on_submit():
             score = int(form.score.data)
             justification = form.justification.data
-            try:
-                user_id = g.account_id
-            except AttributeError:
-                user_id = (  # TODO remove and force g.account_id after adding authentication # noqa
-                    ""
-                )
+            user_id = g.account_id
             submit_score_and_justification(
                 score=score,
                 justification=justification,
@@ -460,7 +457,9 @@ def application(application_id):
     assessor_task_list_metadata["fund_name"] = fund.name
 
     state = AssessorTaskList.from_json(assessor_task_list_metadata)
-    current_app.logger.info(f"Fetching data from '{assessor_task_list_metadata}'.")
+    current_app.logger.info(
+        f"Fetching data from '{assessor_task_list_metadata}'."
+    )
 
     return render_template(
         "assessor_tasklist.html",

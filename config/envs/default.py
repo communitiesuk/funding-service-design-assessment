@@ -33,6 +33,7 @@ class DefaultConfig:
     FUND_STORE_API_HOST = CommonConfig.FUND_STORE_API_HOST
     APPLICATION_STORE_API_HOST = CommonConfig.APPLICATION_STORE_API_HOST
     ASSESSMENT_STORE_API_HOST = CommonConfig.ASSESSMENT_STORE_API_HOST
+    ACCOUNT_STORE_API_HOST = CommonConfig.ACCOUNT_STORE_API_HOST
 
     """
     External APIs
@@ -71,6 +72,9 @@ class DefaultConfig:
     ASSESSMENT_SCORES_ENDPOINT = ASSESSMENT_STORE_API_HOST + "/score"
 
     COMMENTS_ENDPOINT = "/comment/{application_id}/{sub_criteria_id}"
+
+    # Account store endoints
+    BULK_ACCOUNTS_ENDPOINT = ACCOUNT_STORE_API_HOST + "/bulk-accounts"
 
     """
     Assets
