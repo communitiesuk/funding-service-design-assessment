@@ -192,7 +192,6 @@ def _ui_component_from_factory(item: dict, application_id: str):
             return BesideQuestionAnswerPair.from_dict(item)
 
     elif presentation_type == "file":
-        # TODO(FS-2065(?)): add href as link to download actual file?
         presigned_url = get_file_url(
             filename=answer, application_id=application_id
         )
