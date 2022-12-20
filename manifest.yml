@@ -27,5 +27,7 @@ applications:
     FLASK_ENV: test
     ASSESSMENT_STORE_API_HOST: https://funding-service-design-assessment-store-test.london.cloudapps.digital
     FUND_STORE_API_HOST: https://funding-service-design-fund-store-test.london.cloudapps.digital
+  services:
+    - form-uploads-test
   health-check-http-endpoint: /healthcheck
   health-check-type: http
