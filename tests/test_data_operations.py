@@ -2,7 +2,6 @@ from app.assess.data import get_application_overviews
 from app.assess.data import get_fund
 from app.assess.data import get_round
 from app.assess.data import get_comments
-from app.assess.data import get_file_url
 from config.envs.default import DefaultConfig
 from flask import Flask
 
