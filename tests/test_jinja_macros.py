@@ -1,19 +1,19 @@
 import re
 
 import pytest
-from app.assess.models.ui.applicators_response import AboveQuestionAnswerPair
-from app.assess.models.ui.applicators_response import (
+from app.assess.models.ui.applicants_response import AboveQuestionAnswerPair
+from app.assess.models.ui.applicants_response import (
     AboveQuestionAnswerPairHref,
 )
-from app.assess.models.ui.applicators_response import BesideQuestionAnswerPair
-from app.assess.models.ui.applicators_response import (
+from app.assess.models.ui.applicants_response import BesideQuestionAnswerPair
+from app.assess.models.ui.applicants_response import (
     BesideQuestionAnswerPairHref,
 )
-from app.assess.models.ui.applicators_response import (
+from app.assess.models.ui.applicants_response import (
     FormattedBesideQuestionAnswerPair,
 )
-from app.assess.models.ui.applicators_response import MonetaryKeyValues
-from app.assess.models.ui.applicators_response import QuestionHeading
+from app.assess.models.ui.applicants_response import MonetaryKeyValues
+from app.assess.models.ui.applicants_response import QuestionHeading
 from app.assess.models.ui.assessor_task_list import _Criteria
 from app.assess.models.ui.assessor_task_list import _CriteriaSubCriteria
 from app.assess.models.ui.assessor_task_list import _SubCriteria
@@ -115,17 +115,6 @@ class TestJinjaMacros(object):
         assert (
             len(re.findall(r"<table.*?</table>", rendered_html)) == 1
         ), "Should have 1 table"
-
-        assert (
-            len(
-                re.findall(
-                    r"<caption.*?This section is not scored\. Can be used for"
-                    r" due diligence checks\.*?</caption>",
-                    rendered_html,
-                )
-            )
-            == 1
-        ), "Should have 1 caption"
 
         assert (
             len(re.findall(r"<thead.*?</thead>", rendered_html)) == 1

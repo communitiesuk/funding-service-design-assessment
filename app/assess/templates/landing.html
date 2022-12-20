@@ -4,9 +4,25 @@
 {% import 'components/application_overviews_table.html' as application_overviews_table-%}
 
 {% block content %}
-<p class="govuk-heading-xl">Assessor dashboard</p>
-<h1 class="govuk-heading-l">All assessments</h1>
-<h2 class="govuk-heading-m dashboard-deadline ">Due date: <span class="govuk-body-l">{{ assessment_deadline|datetime_format("%d/%m/%Y at %H:%M") }}</span></h2>
-
+    <div class="govuk-phase-banner flex-parent-element">
+        <p class="flex-parent-element flexed-element-margins-collapse govuk-!-text-align-right"><a href="#" class="govuk-link flexed-element-margins-collapse" style="text-align:right !important;">Sign out</a></p>
+    </div>
+    </div>
+    <div class="fsd-banner-background">
+        <div class="govuk-width-container">
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-full">
+                    <div class="govuk-grid-column-two-thirds">
+                        <h1 class="govuk-heading-xl fsd-banner-content">Team dashboard</h1>
+                        <h2 class="govuk-heading-l fsd-banner-content">All active assessments</h2>
+                        <h3 class="govuk-body-l fsd-banner-content fsd-banner-collapse-padding"><strong>Fund: </strong>Community Ownership Fund</h3>
+                        <h3 class="govuk-body-l fsd-banner-content"><strong>Round:</strong> Round 2 Window 2</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="govuk-width-container">
       {{ application_overviews_table.render(application_overviews, query_params, asset_types, assessment_statuses, show_clear_filters) }}
+ </div>
 {% endblock %}

@@ -1,42 +1,42 @@
 import json  # noqa
 
 import pytest  # noqa
-from app.assess.models.ui.applicators_response import _convert_checkbox_items
-from app.assess.models.ui.applicators_response import (
+from app.assess.models.ui.applicants_response import _convert_checkbox_items
+from app.assess.models.ui.applicants_response import (
     _convert_heading_description_amount,
 )
-from app.assess.models.ui.applicators_response import (
+from app.assess.models.ui.applicants_response import (
     _convert_non_number_grouped_fields,
 )
-from app.assess.models.ui.applicators_response import _flatten_field_ids
-from app.assess.models.ui.applicators_response import _make_field_ids_hashable
-from app.assess.models.ui.applicators_response import (
+from app.assess.models.ui.applicants_response import _flatten_field_ids
+from app.assess.models.ui.applicants_response import _make_field_ids_hashable
+from app.assess.models.ui.applicants_response import (
     _ui_component_from_factory,
 )
-from app.assess.models.ui.applicators_response import AboveQuestionAnswerPair
-from app.assess.models.ui.applicators_response import (
+from app.assess.models.ui.applicants_response import AboveQuestionAnswerPair
+from app.assess.models.ui.applicants_response import (
     AboveQuestionAnswerPairHref,
 )
-from app.assess.models.ui.applicators_response import (
+from app.assess.models.ui.applicants_response import (
     ANSWER_NOT_PROVIDED_DEFAULT,
 )
-from app.assess.models.ui.applicators_response import (
-    ApplicatorsResponseComponent,
+from app.assess.models.ui.applicants_response import (
+    ApplicantResponseComponent,
 )
-from app.assess.models.ui.applicators_response import BesideQuestionAnswerPair
-from app.assess.models.ui.applicators_response import (
+from app.assess.models.ui.applicants_response import BesideQuestionAnswerPair
+from app.assess.models.ui.applicants_response import (
     BesideQuestionAnswerPairHref,
 )
-from app.assess.models.ui.applicators_response import create_ui_components
-from app.assess.models.ui.applicators_response import (
+from app.assess.models.ui.applicants_response import create_ui_components
+from app.assess.models.ui.applicants_response import (
     FormattedBesideQuestionAnswerPair,
 )
-from app.assess.models.ui.applicators_response import MonetaryKeyValues
-from app.assess.models.ui.applicators_response import QuestionHeading
+from app.assess.models.ui.applicants_response import MonetaryKeyValues
+from app.assess.models.ui.applicants_response import QuestionHeading
 from app.assess.views.filters import format_address
 
 
-class TestApplicatorsResponseComponentConcreteSubclasses:
+class TestApplicantResponseComponentConcreteSubclasses:
     def test_monetary_key_values_should_render(self):
         data = {
             "question": ("Test caption", "Test question"),
@@ -54,13 +54,22 @@ class TestApplicatorsResponseComponentConcreteSubclasses:
         ]
         assert key_values.should_render is True
 
-    def test_monetary_key_values_should_not_render(self):
-        data = {
-            "question": ("Test question", "Test question"),
-            "answer": [],
-        }
-        key_values = MonetaryKeyValues.from_dict(data)
-        assert key_values.should_render is False
+    @pytest.mark.parametrize(
+        "mkv_data",
+        [
+            {"question": ("Test caption", "Test question"), "answer": []},
+            {"question": ("Test caption", "Test question"), "answer": None},
+            {"question": ("Test caption", "Test question")},
+        ],
+    )
+    def test_monetary_key_values_should_default_to_not_provided(
+        self, mkv_data
+    ):
+        above_qa_pair = MonetaryKeyValues.from_dict(mkv_data)
+
+        assert isinstance(above_qa_pair, AboveQuestionAnswerPair)
+        assert above_qa_pair.question == "Test question"
+        assert above_qa_pair.answer == ANSWER_NOT_PROVIDED_DEFAULT
 
     @pytest.mark.parametrize(
         "clazz, data",
@@ -711,7 +720,7 @@ def test_create_ui_components_retains_order():
     ui_components = create_ui_components(response_with_unhashable_fields, "app_123")
 
     assert all(
-        isinstance(ui_component, ApplicatorsResponseComponent)
+        isinstance(ui_component, ApplicantResponseComponent)
         for ui_component in ui_components
     )
 
