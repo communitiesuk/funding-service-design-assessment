@@ -69,7 +69,7 @@ class TestAuthorisation:
         assert response.status_code == 200
         assert b"Please sign in to continue." in response.data
         assert (
-            b'<a href="authenticator/sso/login" role="button"'
+            b'<a href="https://authenticator/sso/login" role="button"'
             b' draggable="false" class="govuk-button"'
             b' data-module="govuk-button">'
             in response.data
