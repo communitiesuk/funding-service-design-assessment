@@ -156,3 +156,10 @@ margin:0px;
   text-transform: capitalize;
 }
 
+.primary-button {
+  margin-bottom: 0;
+  background-color: #1d70b8;
+}
+.primary-button:hover {
+  background-color: #003078;
+}

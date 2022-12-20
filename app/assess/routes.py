@@ -223,3 +223,35 @@ def comments():
         )
 
     return render_template("macros/example_comments_template.html", form=form)
+
+
+@assess_bp.route("/fragments/sub_criteria_scoring", methods=["POST", "GET"])
+def sub_crit_scoring():
+
+    form = ScoreForm()
+
+    if form.validate_on_submit():
+
+        score = int(form.score.data)
+        just = form.justification.data
+
+        assessment_id = "test_assess_id"
+        person_id = "test_person_id"
+        sub_crit_id = "test_sub_crit_id"
+
+        submit_score_and_justification(
+            score=score,
+            assessment_id=assessment_id,
+            person_id=person_id,
+            justification=just,
+            sub_crit_id=sub_crit_id,
+        )
+        scores_submitted = True
+    else:
+        scores_submitted = False
+
+    return render_template(
+        "scores_justification.html",
+        scores_submitted=scores_submitted,
+        form=form,
+    )
