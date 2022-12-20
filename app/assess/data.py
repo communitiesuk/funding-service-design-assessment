@@ -351,7 +351,7 @@ def get_file_url(filename: str, application_id: str):
     """_summary_: Function is set up to retrieve
     files from aws bucket.
     Args:
-        filename: Takes an filename # noqa
+        filename: Takes an filename, application_id: Takes an application_id # noqa
     Returns:
         Returns a presigned url.
     """
