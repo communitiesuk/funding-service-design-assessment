@@ -8,7 +8,7 @@ default_bp = Blueprint("default_bp", __name__, template_folder="templates")
 @default_bp.route("/")
 def index():
     return render_template(
-        "index.html", assessment_url=Config.ASSESSMENT_HUB_ROUTE + "/landing/"
+        "index.html", assessment_url=Config.ASSESSMENT_HUB_ROUTE + "/assessor_dashboard/"
     )
 
 

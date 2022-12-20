@@ -16,11 +16,22 @@
             }
         ]) %}
     {% endfor %}
+    {% if name == "Unscored" %}
     {{ govukTable({
-        "caption": "This section is not scored. Can be used for due diligence checks.",
+        "caption": "Use for due diligence checks.",
         "firstCellIsHeader":false,
         "head": [[{ "text": "" }]],
         "captionClasses": "govuk-body govuk-!-text-align-left govuk-!-font-weight-regular govuk-!-margin-bottom-4",
         "rows": rows,
     }) }}
+    {% endif %}
+    {% if name == "Declarations" %}
+    {{ govukTable({
+        "caption": "Review against legal and policy requirements.",
+        "firstCellIsHeader":false,
+        "head": [[{ "text": "" }]],
+        "captionClasses": "govuk-body govuk-!-text-align-left govuk-!-font-weight-regular govuk-!-margin-bottom-4",
+        "rows": rows,
+    }) }}
+    {% endif %}
 {% endmacro %}
