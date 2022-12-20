@@ -92,4 +92,4 @@ class DefaultConfig:
     AWS_ACCESS_KEY_ID = getenv("AWS_ACCESS_KEY_ID")
     AWS_SECRET_ACCESS_KEY =  getenv("AWS_SECRET_ACCESS_KEY")
     AWS_BUCKET_NAME = getenv("AWS_BUCKET_NAME")
-    AWS_REGION = getenv("AWS_REGION")
+    AWS_REGION = "eu-west-2"
