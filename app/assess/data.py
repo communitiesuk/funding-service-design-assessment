@@ -363,25 +363,18 @@ def get_file_url(filename: str, application_id: str):
 
     if (filename == None):
         return None
-    key = Config.AWS_ACCESS_KEY_ID
-    secret = Config.AWS_SECRET_ACCESS_KEY
-    bucket = Config.AWS_BUCKET_NAME
-    region = Config.AWS_REGION
 
-    prefixed_file_name = application_id + "/" + filename
-
-    client = boto3.client('s3')
+    prefixed_file_name = application_id + "/" + filename    
 
     s3_client = boto3.client('s3', 
-                      aws_access_key_id=key, 
-                      aws_secret_access_key=secret, 
-                      region_name=region
+                      aws_access_key_id=Config.AWS_ACCESS_KEY_ID, 
+                      aws_secret_access_key=Config.AWS_SECRET_ACCESS_KEY, 
+                      region_name=Config.AWS_REGION
                       )
     try:
         response = s3_client.generate_presigned_url('get_object',
-                                                    Params={'Bucket': bucket,
-                                                            'Key': prefixed_file_name},
-                                                    ExpiresIn=3600)
+                            Params={'Bucket':  Config.AWS_BUCKET_NAME, 'Key': prefixed_file_name},
+                            ExpiresIn=3600)
         
         return response
     except ClientError as e:
