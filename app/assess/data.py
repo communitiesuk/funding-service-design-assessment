@@ -356,11 +356,21 @@ def get_file_url(filename: str, application_id: str):
     Returns:
         Returns a presigned url.
     """
-    if (Config.FLASK_ENV == "unit_test"):
-        return filename
 
     if (filename == None):
         return None
+
+    if "VCAP_SERVICES" in os.environ:
+    # Extract the JSON string from the environment variable
+        vcap_services = json.loads(os.environ["VCAP_SERVICES"])
+
+        # Check for the "aws-s3-bucket" service
+        if "aws-s3-bucket" in vcap_services:
+            # Extract the credentials from the service's configuration
+            s3_credentials = vcap_services["aws-s3-bucket"][0]["credentials"]
+            Config.AWS_ACCESS_KEY_ID = s3_credentials["aws_access_key_id"]
+            Config.AWS_SECRET_ACCESS_KEY = s3_credentials["aws_secret_access_key"]
+            Config.AWS_BUCKET_NAME = s3_credentials["bucket_name"]
 
     prefixed_file_name = application_id + "/" + filename    
 

@@ -161,8 +161,12 @@ class TestRoutes:
         [b"General information", b"Applicant's response", b"Comments"],
     )
     def test_route_sub_criteria_non_scroing(
-        self, flask_test_client, expected_names
+        self, flask_test_client, expected_names, mocker
     ):
+        mocker.patch(
+        "app.assess.models.ui.applicants_response.get_file_url",
+        return_value="sample1.doc")
+
         response = flask_test_client.get(
             "/assess/application_id/app_123/sub_criteria_id/1a2b3c4d?theme_id=general-information"  # noqa
         )
@@ -182,8 +186,12 @@ class TestRoutes:
         ],
     )
     def test_route_sub_criteria_side_bar(
-        self, flask_test_client, expected_ids, expected_names
+        self, flask_test_client, expected_ids, expected_names, mocker
     ):
+        mocker.patch(
+            "app.assess.models.ui.applicants_response.get_file_url",
+            return_value="sample1.doc")
+
         response = flask_test_client.get(
             "/assess/application_id/app_123/sub_criteria_id/1a2b3c4d?theme_id=general-information"  # noqa
         )

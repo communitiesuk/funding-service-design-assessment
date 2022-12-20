@@ -206,7 +206,11 @@ class TestApplicatorsResponseComponentFactory:
             ),
         ],
     )
-    def test__ui_component_from_factory(self, item, expected_class):
+    def test__ui_component_from_factory(self, item, expected_class, mocker):
+        mocker.patch(
+        "app.assess.models.ui.applicants_response.get_file_url",
+        return_value="sample1.doc")
+
         result = _ui_component_from_factory(item, "app_123")
         assert isinstance(result, expected_class)
 
@@ -643,7 +647,7 @@ class TestUtilMethods:
         assert result == expected
 
 
-def test_create_ui_components_retains_order():
+def test_create_ui_components_retains_order(mocker):
     response_with_unhashable_fields = [
         {
             "field_id": "field_1",
@@ -716,7 +720,11 @@ def test_create_ui_components_retains_order():
             "field_type": "fileUploadField",
         },
     ]
-
+    mocker.patch(
+        "app.assess.models.ui.applicants_response.get_file_url",
+        return_value="sample1.doc",
+    )
+    
     ui_components = create_ui_components(response_with_unhashable_fields, "app_123")
 
     assert all(
