@@ -1,7 +1,9 @@
 from unittest import mock
 
 import pytest
+from app.assess.models.score import Score
 from config import Config
+from tests.route_testing_conf import create_token
 
 
 class TestRoutes:
@@ -35,7 +37,8 @@ class TestRoutes:
             return_value=[],
         ) as mock_get_application_overviews_func:
             response = flask_test_client.get(
-                "/assess/assessor_dashboard/", query_string={"status": "QA_COMPLETE"}
+                "/assess/assessor_dashboard/",
+                query_string={"status": "QA_COMPLETE"},
             )
 
             assert 200 == response.status_code, "Wrong status code on response"
@@ -61,7 +64,8 @@ class TestRoutes:
             return_value=[],
         ) as mock_get_application_overviews_func:
             response = flask_test_client.get(
-                "/assess/assessor_dashboard/", query_string={"asset_type": "pub"}
+                "/assess/assessor_dashboard/",
+                query_string={"asset_type": "pub"},
             )
 
             assert 200 == response.status_code, "Wrong status code on response"
@@ -87,7 +91,8 @@ class TestRoutes:
             return_value=[],
         ) as mock_get_application_overviews_func:
             response = flask_test_client.get(
-                "/assess/assessor_dashboard/", query_string={"search_term": "hello"}
+                "/assess/assessor_dashboard/",
+                query_string={"search_term": "hello"},
             )
 
             assert 200 == response.status_code, "Wrong status code on response"
@@ -146,32 +151,50 @@ class TestRoutes:
     def test_route_sub_criteria_scroing(
         self, flask_test_client, expected_names
     ):
-        response = flask_test_client.get(
-            "/assess/application_id/app_123/sub_criteria_id/1a2b3c4d?theme_id=score"  # noqa
-        )
+        # Define a dummy value for the return value of get_score_and_justification # noqa
+        mock_scores = [
+            Score(
+                id="123",
+                application_id="app_123",
+                sub_criteria_id="1a2b3c4d",
+                score="5",
+                justification="test justification",
+                date_created="2022-01-01T00:00:00",
+                user_id="test-user",
+                user_full_name="Test User",
+                user_email="test@example.com",
+            )
+        ]
 
-        assert 200 == response.status_code, "Wrong status code on response"
+        # Use unittest.mock to create a mock object for get_scores_and_justification # noqa
+        with mock.patch(
+            "app.assess.routes.get_score_and_justification"
+        ) as mock_get_score_and_justification:
+            # Set the return value of the mock object
+            mock_get_score_and_justification.return_value = mock_scores
 
-        assert (
-            expected_names in response.data
-        ), "Response does not contain expected id"
+            # Mocking fsd-user-token cookie
+            test_payload = {
+                "accountId": "test-user",
+                "email": "test@example.com",
+                "fullName": "Test User",
+                "roles": ["LEAD_ASSESSOR", "ASSESSOR", "COMMENTER"],
+            }
+            token = create_token(test_payload)
+            flask_test_client.set_cookie("localhost", "fsd_user_token", token)
 
-    @pytest.mark.parametrize(
-        "expected_names",
-        [b"General information", b"Applicant's response", b"Comments"],
-    )
-    def test_route_sub_criteria_non_scroing(
-        self, flask_test_client, expected_names
-    ):
-        response = flask_test_client.get(
-            "/assess/application_id/app_123/sub_criteria_id/1a2b3c4d?theme_id=general-information"  # noqa
-        )
+            # Send a request to the route you want to test
+            response = flask_test_client.get(
+                "/assess/application_id/app_123/sub_criteria_id/1a2b3c4d?theme_id=score"  # noqa
+            )
 
-        assert 200 == response.status_code, "Wrong status code on response"
+            # Assert that the response has the expected status code
+            assert 200 == response.status_code, "Wrong status code on response"
 
-        assert (
-            expected_names in response.data
-        ), "Response does not contain expected id"
+            # Assert that the response contains the expected ids
+            assert (
+                expected_names in response.data
+            ), "Response does not contain expected names"
 
     @pytest.mark.parametrize(
         "expected_ids, expected_names",
@@ -182,14 +205,28 @@ class TestRoutes:
         ],
     )
     def test_route_sub_criteria_side_bar(
-        self, flask_test_client, expected_ids, expected_names
+        self, flask_test_client, monkeypatch, expected_ids, expected_names
     ):
+
+        # Mocking fsd-user-token cookie
+        test_payload = {
+            "accountId": "test-user",
+            "email": "test@example.com",
+            "fullName": "Test User",
+            "roles": ["LEAD_ASSESSOR", "ASSESSOR", "COMMENTER"],
+        }
+        token = create_token(test_payload)
+        flask_test_client.set_cookie("localhost", "fsd_user_token", token)
+
+        # Send a request to the route you want to test
         response = flask_test_client.get(
             "/assess/application_id/app_123/sub_criteria_id/1a2b3c4d?theme_id=general-information"  # noqa
         )
 
+        # Assert that the response has the expected status code
         assert 200 == response.status_code, "Wrong status code on response"
 
+        # Assert that the response contains the expected ids and names
         assert (
             expected_ids in response.data
         ), "Response does not contain expected id"

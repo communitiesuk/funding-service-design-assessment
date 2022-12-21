@@ -142,6 +142,12 @@ def get_round_with_applications(
     return None
 
 
+def get_bulk_accounts_dict(account_ids: List):
+    account_url = Config.BULK_ACCOUNTS_ENDPOINT
+    account_params = {"account_id": account_ids}
+    return get_data(account_url, account_params)
+
+
 def get_score_and_justification(
     application_id, sub_criteria_id, score_history=True
 ):
@@ -155,13 +161,8 @@ def get_score_and_justification(
     current_app.logger.info(
         f"Response from Assessment Store: '{score_response}'."
     )
-
-    # account_ids = {score["id"]: score["user_id"] for score in score_response}
     account_ids = [score["user_id"] for score in score_response]
-    account_url = Config.BULK_ACCOUNTS_ENDPOINT
-    account_params = {"account_id": account_ids}
-    bulk_accounts_dict = get_data(account_url, account_params)
-
+    bulk_accounts_dict = get_bulk_accounts_dict(account_ids)
     scores: list[Score] = [
         Score.from_dict(
             score
@@ -176,7 +177,6 @@ def get_score_and_justification(
         )
         for score in score_response
     ]
-
     return scores
 
 
