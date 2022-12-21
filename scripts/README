@@ -1,0 +1,17 @@
+# download_files.py
+
+This script will get a list of all objects in the supplied S3 bucket and download them to the specified target directory. On each run it creates a timestamped directory inside the target and all downloads are placed in here. It creates one level of directories within the hierarchy of a particular object. eg. If an object key is `app-123/myDocument.txt` it will create a folder called `app-123` and download the file `myDocument.txt` within it. If an object key is just `/testing.txt` it will download the file `testing.txt` directly within the timestamped folder.
+
+## Usage
+Execute on the command line:
+
+        python scripts/download_files.py --region_name eu-west-2 --aws_access_key_id *** --aws_secret_access_key *** --aws_bucket_name **** --target_folder /directory/on/local/machine --do_download True
+
+Access keys for dev/test are in bitwarden. The AWS bucket name can be found on cloud foundry by interrogating the `VCAP_SERVICES` environment variable for an application that uses the bucket, eg
+
+    cf env funding-service-design-form-runner-dev
+
+If `do_download` is set to False, it will just print the number of files to download, won't actually download them.
+
+## Tests
+There are some very basic tests in `test_download_files.py` based on test data that is in the test bucket as of 21/12/22. They are commented out as they are likely to fail due to data, file paths etc. but are a convenient method for testing changes to this script during development. You will need to add the credentials etc at the top of this file where there are placeholders.
