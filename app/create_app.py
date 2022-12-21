@@ -74,11 +74,10 @@ def create_app() -> Flask:
         return dict(
             stage="beta",
             service_title="Assessment Hub",
-            service_meta_description=(
-                "Assessment Hub"
-            ),
+            service_meta_description="Assessment Hub",
             service_meta_keywords="Assessment Hub",
             service_meta_author="DLUHC",
+            sso_logout_url=flask_app.config.get("SSO_LOGOUT_URL"),
         )
 
     with flask_app.app_context():
@@ -122,7 +121,7 @@ def create_app() -> Flask:
         @login_requested
         def ensure_minimum_required_roles():
             minimum_roles_required = ["COMMENTER"]
-            unprotected_routes = ["/"]
+            unprotected_routes = ["", "/"]
             if g.is_authenticated:
                 # Ensure that authenticated users have
                 # all minimum required roles
@@ -136,7 +135,7 @@ def create_app() -> Flask:
                         + "?roles_required="
                         + "|".join(minimum_roles_required)
                     )
-                elif request.path == "/":
+                elif request.path in ["", "/"]:
                     return redirect(flask_app.config.get("DASHBOARD_ROUTE"))
             elif (
                 request.path not in unprotected_routes
