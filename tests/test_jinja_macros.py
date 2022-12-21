@@ -38,14 +38,14 @@ class TestJinjaMacros(object):
                     _CriteriaSubCriteria(
                         id="1",
                         name="Sub Criteria 1",
-                        status="Not started",
+                        status="NOT_STARTED",
                         theme_count=1,
                         score=2,
                     ),
                     _CriteriaSubCriteria(
                         id="2",
                         name="Sub Criteria 2",
-                        status="Not started",
+                        status="NOT_STARTED",
                         theme_count=2,
                         score=2,
                     ),
