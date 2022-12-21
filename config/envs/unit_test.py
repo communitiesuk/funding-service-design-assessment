@@ -8,7 +8,6 @@ class UnitTestConfig(DefaultConfig):
     USE_LOCAL_DATA = True
 
     FSD_USER_TOKEN_COOKIE_NAME = "fsd_user_token"
-    AUTHENTICATOR_HOST = "https://authenticator"
 
     # RSA 256 KEYS
     if not hasattr(DefaultConfig, "RSA256_PUBLIC_KEY"):

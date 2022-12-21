@@ -44,7 +44,7 @@ class DefaultConfig:
     Security
     """
 
-    AUTHENTICATOR_HOST = getenv("AUTHENTICATOR_HOST", "authenticator")
+    AUTHENTICATOR_HOST = getenv("AUTHENTICATOR_HOST", "https://authenticator")
     SSO_LOGIN_URL = AUTHENTICATOR_HOST + "/sso/login"
     SSO_LOGOUT_URL = AUTHENTICATOR_HOST + "/sso/logout"
     # RSA 256 KEYS
@@ -55,9 +55,19 @@ class DefaultConfig:
     """
     APIs Config
     """
-    FUND_STORE_API_HOST = CommonConfig.FUND_STORE_API_HOST
-    APPLICATION_STORE_API_HOST = CommonConfig.APPLICATION_STORE_API_HOST
-    ASSESSMENT_STORE_API_HOST = CommonConfig.ASSESSMENT_STORE_API_HOST
+    TEST_FUND_STORE_API_HOST = CommonConfig.FUND_STORE_API_HOST
+    TEST_APPLICATION_STORE_API_HOST = CommonConfig.APPLICATION_STORE_API_HOST
+    TEST_ASSESSMENT_STORE_API_HOST = CommonConfig.ASSESSMENT_STORE_API_HOST
+
+    FUND_STORE_API_HOST = getenv(
+        "FUND_STORE_API_HOST", TEST_FUND_STORE_API_HOST
+    )
+    APPLICATION_STORE_API_HOST = getenv(
+        "APPLICATION_STORE_API_HOST", TEST_APPLICATION_STORE_API_HOST
+    )
+    ASSESSMENT_STORE_API_HOST = getenv(
+        "ASSESSMENT_STORE_API_HOST", TEST_ASSESSMENT_STORE_API_HOST
+    )
 
     """
     External APIs
@@ -76,7 +86,7 @@ class DefaultConfig:
     APPLICATION_STATUS_ENDPOINT = CommonConfig.APPLICATION_STATUS_ENDPOINT
     APPLICATION_SEARCH_ENDPOINT = CommonConfig.APPLICATION_SEARCH_ENDPOINT
 
-    # Assesment store endpoints
+    # Assessment store endpoints
     APPLICATION_OVERVIEW_ENDPOINT_FUND_ROUND_PARAMS = (
         "/application_overviews/{fund_id}/{round_id}?{params}"
     )
