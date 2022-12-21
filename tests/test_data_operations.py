@@ -105,4 +105,4 @@ class TestDataOperations:
 
         with self.test_app.app_context():
             comments = get_comments("app_123", "1a2b3c4d")
-        assert 2 == len(comments), "wrong number of comments"
+        assert 3 == len(comments), "wrong number of comments"
