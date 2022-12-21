@@ -10,7 +10,7 @@ class TestRoutes:
             "app.assess.routes.get_application_overviews",
             return_value=[],
         ) as mock_get_application_overviews_func:
-            response = flask_test_client.get("/assess/landing/")
+            response = flask_test_client.get("/assess/assessor_dashboard/")
 
             assert 200 == response.status_code, "Wrong status code on response"
 
@@ -35,7 +35,7 @@ class TestRoutes:
             return_value=[],
         ) as mock_get_application_overviews_func:
             response = flask_test_client.get(
-                "/assess/landing/", query_string={"status": "QA_COMPLETE"}
+                "/assess/assessor_dashboard/", query_string={"status": "QA_COMPLETE"}
             )
 
             assert 200 == response.status_code, "Wrong status code on response"
@@ -61,7 +61,7 @@ class TestRoutes:
             return_value=[],
         ) as mock_get_application_overviews_func:
             response = flask_test_client.get(
-                "/assess/landing/", query_string={"asset_type": "pub"}
+                "/assess/assessor_dashboard/", query_string={"asset_type": "pub"}
             )
 
             assert 200 == response.status_code, "Wrong status code on response"
@@ -87,7 +87,7 @@ class TestRoutes:
             return_value=[],
         ) as mock_get_application_overviews_func:
             response = flask_test_client.get(
-                "/assess/landing/", query_string={"search_term": "hello"}
+                "/assess/assessor_dashboard/", query_string={"search_term": "hello"}
             )
 
             assert 200 == response.status_code, "Wrong status code on response"
@@ -113,7 +113,7 @@ class TestRoutes:
             return_value=[],
         ) as mock_get_application_overviews_func:
             response = flask_test_client.get(
-                "/assess/landing/",
+                "/assess/assessor_dashboard/",
                 query_string={
                     "clear_filters": "",
                     "search_term": "hello",

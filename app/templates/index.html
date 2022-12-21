@@ -3,12 +3,21 @@
 {%- from "govuk_frontend_jinja/components/button/macro.html" import govukButton -%}
 
 {% block content %}
-  <div>
+    <div class="govuk-phase-banner flex-parent-element">
+        <p></p>
+    </div>
+    </div>
+  <div class="govuk-width-container">
       <h1 class="govuk-heading-xl">Assessment Hub</h1>
+
+      <p class="govuk-body">
+        Welcome to the assessment service.
+        <br /><br />Please sign in to continue.</p>
+
+    {{ govukButton({
+    "isStartButton": false,
+    "href" : login_url,
+    "text": "Sign in"
+    }) }}
   </div>
-  {{ govukButton({
-    "isStartButton": True,
-    "href" : assessment_url,
-  "text": "Get started"
-}) }}
 {% endblock %}
