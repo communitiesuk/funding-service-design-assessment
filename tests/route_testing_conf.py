@@ -3,9 +3,7 @@ Our single source of truth for which
 routes need to be tested and their expected
 content.
 """
-import jwt
 from app.assess.data import get_local_data
-from config import Config
 
 intro_routes_and_test_content = {
     "/": [{"tag": "h1", "name": None, "contains": "Assessment Hub"}],
@@ -42,11 +40,3 @@ def assessment_form_test_routes():
             )
         routes.update({question_path: tags})
     return routes
-
-
-# For testing routes with login_required/requested decoraters
-algorithm = "RS256"
-
-
-def create_token(payload):
-    return jwt.encode(payload, Config.RSA256_PRIVATE_KEY, algorithm=algorithm)

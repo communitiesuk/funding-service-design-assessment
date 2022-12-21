@@ -3,7 +3,7 @@ from unittest import mock
 import pytest
 from app.assess.models.score import Score
 from config import Config
-from tests.route_testing_conf import create_token
+from tests.conftest import create_valid_token
 
 
 class TestRoutes:
@@ -180,7 +180,7 @@ class TestRoutes:
                 "fullName": "Test User",
                 "roles": ["LEAD_ASSESSOR", "ASSESSOR", "COMMENTER"],
             }
-            token = create_token(test_payload)
+            token = create_valid_token(test_payload)
             flask_test_client.set_cookie("localhost", "fsd_user_token", token)
 
             # Send a request to the route you want to test
@@ -215,7 +215,7 @@ class TestRoutes:
             "fullName": "Test User",
             "roles": ["LEAD_ASSESSOR", "ASSESSOR", "COMMENTER"],
         }
-        token = create_token(test_payload)
+        token = create_valid_token(test_payload)
         flask_test_client.set_cookie("localhost", "fsd_user_token", token)
 
         # Send a request to the route you want to test
