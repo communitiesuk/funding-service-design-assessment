@@ -1,7 +1,7 @@
 #-----------------------------------
 #   FSD Utils
 #-----------------------------------
-funding-service-design-utils==1.0.14
+funding-service-design-utils==1.0.15
 requests
 
 #-----------------------------------
@@ -37,5 +37,10 @@ connexion
 swagger-ui-bundle
 openapi-spec-validator
 prance
+
+#-----------------------------------
+#   AWS
+#-----------------------------------
+boto3
 
 git+https://github.com/SergeyPirogov/webdriver_manager@dc73f4a27e8f40cd81dc4718a3f26c22ede29586

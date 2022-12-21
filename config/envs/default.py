@@ -38,7 +38,7 @@ class DefaultConfig:
     TEMPLATES_FOLDER = "templates"
     LOCAL_SERVICE_NAME = "local_flask"
     ASSESSMENT_HUB_ROUTE = "/assess"
-    DASHBOARD_ROUTE = "/assess/landing"
+    DASHBOARD_ROUTE = "/assess/assessor_dashboard"
 
     """
     Security
@@ -55,19 +55,10 @@ class DefaultConfig:
     """
     APIs Config
     """
-    TEST_FUND_STORE_API_HOST = CommonConfig.FUND_STORE_API_HOST
-    TEST_APPLICATION_STORE_API_HOST = CommonConfig.APPLICATION_STORE_API_HOST
-    TEST_ASSESSMENT_STORE_API_HOST = CommonConfig.ASSESSMENT_STORE_API_HOST
-
-    FUND_STORE_API_HOST = getenv(
-        "FUND_STORE_API_HOST", TEST_FUND_STORE_API_HOST
-    )
-    APPLICATION_STORE_API_HOST = getenv(
-        "APPLICATION_STORE_API_HOST", TEST_APPLICATION_STORE_API_HOST
-    )
-    ASSESSMENT_STORE_API_HOST = getenv(
-        "ASSESSMENT_STORE_API_HOST", TEST_ASSESSMENT_STORE_API_HOST
-    )
+    FUND_STORE_API_HOST = CommonConfig.FUND_STORE_API_HOST
+    APPLICATION_STORE_API_HOST = CommonConfig.APPLICATION_STORE_API_HOST
+    ASSESSMENT_STORE_API_HOST = CommonConfig.ASSESSMENT_STORE_API_HOST
+    ACCOUNT_STORE_API_HOST = CommonConfig.ACCOUNT_STORE_API_HOST
 
     """
     External APIs
@@ -107,6 +98,9 @@ class DefaultConfig:
 
     COMMENTS_ENDPOINT = "/comment/{application_id}/{sub_criteria_id}"
 
+    # Account store endoints
+    BULK_ACCOUNTS_ENDPOINT = ACCOUNT_STORE_API_HOST + "/bulk-accounts"
+
     """
     Assets
     """
@@ -119,3 +113,12 @@ class DefaultConfig:
     COF_ROUND2_ID = CommonConfig.COF_ROUND_2_ID
 
     USE_LOCAL_DATA = strtobool(getenv("USE_LOCAL_DATA", "False"))
+
+    """
+    Aws Config
+    """
+
+    AWS_ACCESS_KEY_ID = getenv("AWS_ACCESS_KEY_ID")
+    AWS_SECRET_ACCESS_KEY =  getenv("AWS_SECRET_ACCESS_KEY")
+    AWS_BUCKET_NAME = getenv("AWS_BUCKET_NAME")
+    AWS_REGION = "eu-west-2"

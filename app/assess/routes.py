@@ -5,9 +5,6 @@ from app.assess.display_value_mappings import assessment_statuses
 from app.assess.display_value_mappings import asset_types
 from app.assess.forms.comments_form import CommentsForm
 from app.assess.forms.scores_and_justifications import ScoreForm
-from app.assess.models.question import Question
-from app.assess.models.question_field import QuestionField
-from app.assess.models.total_table import TotalMoneyTableView
 from app.assess.models.ui import applicants_response
 from app.assess.models.ui.assessor_task_list import AssessorTaskList
 from config import Config
@@ -16,6 +13,7 @@ from flask import Blueprint
 from flask import g
 from flask import render_template
 from flask import request
+from fsd_utils.authentication.decorators import login_required
 
 assess_bp = Blueprint(
     "assess_bp",
@@ -25,21 +23,11 @@ assess_bp = Blueprint(
 )
 
 
-@assess_bp.route("/", methods=["GET"])
-def funds():
-    """
-    Page showing available funds
-    from fund store
-    :return:
-    """
-    funds = get_funds()
-    return render_template("funds.html", funds=funds)
-
-
 @assess_bp.route(
     "/application_id/<application_id>/sub_criteria_id/<sub_criteria_id>",
     methods=["POST", "GET"],
 )
+@login_required(roles_required=["COMMENTER"])
 def display_sub_criteria(
     application_id,
     sub_criteria_id,
@@ -65,12 +53,7 @@ def display_sub_criteria(
         if form.validate_on_submit():
             score = int(form.score.data)
             justification = form.justification.data
-            try:
-                user_id = g.account_id
-            except AttributeError:
-                user_id = (  # TODO remove and force g.account_id after adding authentication # noqa
-                    ""
-                )
+            user_id = g.account_id
             submit_score_and_justification(
                 score=score,
                 justification=justification,
@@ -139,7 +122,7 @@ def display_sub_criteria(
             application_id, theme_id
         )
         answers_meta = applicants_response.create_ui_components(
-            theme_answers_response
+            theme_answers_response, application_id
         )
 
     return render_template(
@@ -149,259 +132,7 @@ def display_sub_criteria(
         **common_template_config,
     )
 
-
-@assess_bp.route("/fragments/structured_question", methods=["GET"])
-def selection_fragment():
-    """
-    An example route showing passing data from select type
-    answers (radio, checkbox, select) through to a base
-    template that utilises the 'structured_question'
-    macro.
-    """
-
-    example_assessment_store_data_for_select_type_data = {
-        "question": "Declarations",
-        "status": "completed",
-        "fields": [
-            # Radio answer
-            {
-                "key": "declarations-state-aid",
-                "title": (
-                    "Would funding your organisation be classed as State Aid?"
-                ),
-                "type": "list",
-                "answer": "False",
-            },
-            {
-                "key": "declarations-environmental",
-                "title": (
-                    "Does your application comply with all relevant"
-                    " environmental standards?"
-                ),
-                "type": "list",
-                "answer": "True",
-            },
-            # Checkbox answer
-            {
-                "key": "who-is-endorsing-your-application",
-                "title": "Who is endorsing your application?",
-                "type": "list",
-                "answer": "['Member of parliament (MP)']",
-            },
-            {
-                "key": "about-your-project-policy-aims",
-                "title": (
-                    "Which policy aims will your project deliver against?"
-                ),
-                "type": "list",
-                "answer": (
-                    "['regeneration', 'Level up skills', 'Fight climate"
-                    " change']"
-                ),
-            },
-            # select list answer (selected '1')
-            {
-                "key": "your-project-sector",
-                "title": "Project sector",
-                "type": "list",
-                "answer": "1",
-            },
-            {
-                "key": "rDyIBy",
-                "title": "Risk Level",
-                "type": "list",
-                "answer": "medium",
-            },
-            {
-                "key": "XBxwLy",
-                "title": "Categorise your risk",
-                "type": "list",
-                "answer": "reputational risk",
-            },
-        ],
-    }
-    # collect different answer types here to pass to base template such as
-    # select type (radio, checkbox), free-text, table etc
-    question = Question.from_json(
-        example_assessment_store_data_for_select_type_data
-    )
-    structured_question_data = question.as_structured_question()
-    template_data = {"structured_question_data": structured_question_data}
-
-    return render_template(
-        "structured_question.html", title=question.title, data=template_data
-    )
-
-
-@assess_bp.route("/fragments/title_answer_pairs", methods=["GET"])
-def text_area_1():
-    """
-    Page showing fragment of text_area_1
-    :return:
-    """
-
-    question_data = {
-        "question": "About your organisation",
-        "fields": [
-            {
-                "key": "application-name",
-                "title": "Applicant name",
-                "type": "text",
-                "answer": "Bobby Bob",
-            },
-            {
-                "key": "applicant-email",
-                "title": "Email",
-                "type": "text",
-                "answer": "a@example.com",
-            },
-            {
-                "key": "applicant-telephone-number",
-                "title": "Telephone number",
-                "type": "text",
-                "answer": "01632 960 000",
-            },
-            {
-                "key": "applicant-website",
-                "title": "Website",
-                "type": "text",
-                "answer": "https://www.onedirection.com",
-            },
-        ],
-    }
-
-    data_dict = {}
-
-    data_dict["title"] = question_data["question"]
-
-    data_dict["answers"] = [
-        {"title": data_dict["title"], "answer": data_dict["answer"]}
-        for data_dict in question_data["fields"]
-    ]
-
-    return render_template("title_answer_pairs.html", data_dict=data_dict)
-
-
-@assess_bp.route("/fragments/total_table_view", methods=["GET"])
-def total_table_view():
-
-    question_data = {
-        "question": "About your project",
-        "fields": [
-            {
-                "key": "about-your-project-capital-expenditure",
-                "title": "Capital expenditure",
-                "type": "text",
-                "answer": "£10",
-            },
-            {
-                "key": "about-your-project-revenue",
-                "title": "Revenue",
-                "type": "text",
-                "answer": "£4",
-            },
-            {
-                "key": "about-your-project-subsidy",
-                "title": "Subsidy",
-                "type": "text",
-                "answer": "£5",
-            },
-        ],
-    }
-
-    question_model = TotalMoneyTableView.from_question_json(question_data)
-
-    return render_template(
-        "total_table.html",
-        question_data=question_data,
-        row_dict=question_model.row_dict(),
-    )
-
-
-@assess_bp.route("/fragments/sub_criteria_scoring", methods=["POST", "GET"])
-def sub_crit_scoring():
-
-    form = ScoreForm()
-
-    if form.validate_on_submit():
-
-        score = int(form.score.data)
-        just = form.justification.data
-
-        assessment_id = "test_assess_id"
-        person_id = "test_person_id"
-        sub_crit_id = "test_sub_crit_id"
-
-        submit_score_and_justification(
-            score=score,
-            assessment_id=assessment_id,
-            person_id=person_id,
-            justification=just,
-            sub_crit_id=sub_crit_id,
-        )
-        scores_submitted = True
-    else:
-
-        scores_submitted = False
-
-    return render_template(
-        "scores_justification.html",
-        scores_submitted=scores_submitted,
-        form=form,
-    )
-
-
-@assess_bp.route("/fragments/text_input")
-def text_input():
-    """
-    Render html page with json contains question & answer.
-    """
-
-    input_text_name = {
-        "questions": [
-            {
-                "fields": [
-                    {
-                        "key": "oLfixk",
-                        "title": "Your name",
-                        "type": "text",
-                        "answer": "Steve",
-                    },
-                ],
-            }
-        ],
-    }
-
-    input_text_address = {
-        "questions": [
-            {
-                "fields": [
-                    {
-                        "key": "gOgMvi",
-                        "title": "Your UK address",
-                        "type": "text",
-                        "answer": "99 evoco, example street, London, UB5 5FF",
-                    },
-                ],
-            }
-        ],
-    }
-
-    name = QuestionField.from_json(
-        input_text_name["questions"][0]["fields"][0]
-    )
-    address = QuestionField.from_json(
-        input_text_address["questions"][0]["fields"][0]
-    )
-
-    return render_template(
-        "macros/example_text_input.html",
-        name=name,
-        address=address,
-    )
-
-
-@assess_bp.route("/landing/", methods=["GET"])
+@assess_bp.route("/assessor_dashboard/", methods=["GET"])
 def landing():
     """
     Landing page for assessors
@@ -433,7 +164,7 @@ def landing():
     ).assessment_deadline
 
     return render_template(
-        "landing.html",
+        "assessor_dashboard.html",
         user=g.user,
         application_overviews=application_overviews,
         assessment_deadline=assessment_deadline,
@@ -477,37 +208,6 @@ def application(application_id):
     )
 
 
-@assess_bp.route("/fragments/upload_documents/")
-def upload_documents():
-    """
-    Render html page with json contains title & answer/url.
-    """
-
-    uploaded_file_json = {
-        "name": "Digital Form Builder - Runner test-form-",
-        "questions": [
-            {
-                "question": "Upload documents page",
-                "fields": [
-                    {
-                        "key": "ocdeay",
-                        "title": "Python language - Introduction & course",
-                        "type": "file",
-                        "answer": "https://en.wikipedia.org/wiki/Python_(programming_language)",  # noqa
-                    }
-                ],
-            }
-        ],
-    }
-
-    json_fields = uploaded_file_json["questions"][0]["fields"][0]
-    file_metadata = QuestionField.from_json(json_fields)
-
-    return render_template(
-        "macros/example_upload_documents.html", file_metadata=file_metadata
-    )
-
-
 @assess_bp.route("/comments/", methods=["GET", "POST"])
 def comments():
     """
@@ -524,3 +224,35 @@ def comments():
         )
 
     return render_template("macros/example_comments_template.html", form=form)
+
+
+@assess_bp.route("/fragments/sub_criteria_scoring", methods=["POST", "GET"])
+def sub_crit_scoring():
+
+    form = ScoreForm()
+
+    if form.validate_on_submit():
+
+        score = int(form.score.data)
+        just = form.justification.data
+
+        assessment_id = "test_assess_id"
+        person_id = "test_person_id"
+        sub_crit_id = "test_sub_crit_id"
+
+        submit_score_and_justification(
+            score=score,
+            assessment_id=assessment_id,
+            person_id=person_id,
+            justification=just,
+            sub_crit_id=sub_crit_id,
+        )
+        scores_submitted = True
+    else:
+        scores_submitted = False
+
+    return render_template(
+        "scores_justification.html",
+        scores_submitted=scores_submitted,
+        form=form,
+    )

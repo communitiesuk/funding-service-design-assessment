@@ -10,7 +10,7 @@ intro_routes_and_test_content = {
     "/assess": [{"tag": "h1", "name": None, "contains": "Funds"}],
     "/assess/landing": [
         {"tag": "h1", "name": None, "contains": "Team dashboard"}
-    ]
+    ],
 }
 
 

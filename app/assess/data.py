@@ -16,6 +16,19 @@ from config import Config
 from flask import abort
 from flask import current_app
 
+import boto3
+import requests  
+from config import Config
+from botocore.exceptions import ClientError
+
+if "VCAP_SERVICES" in os.environ:   
+        vcap_services = json.loads(os.environ["VCAP_SERVICES"])
+
+        if "aws-s3-bucket" in vcap_services:
+            s3_credentials = vcap_services["aws-s3-bucket"][0]["credentials"]
+            Config.AWS_ACCESS_KEY_ID = s3_credentials["aws_access_key_id"]
+            Config.AWS_SECRET_ACCESS_KEY = s3_credentials["aws_secret_access_key"]
+            Config.AWS_BUCKET_NAME = s3_credentials["bucket_name"]
 
 def get_data(
     endpoint: str,
@@ -143,20 +156,41 @@ def get_round_with_applications(
     return None
 
 
+def get_bulk_accounts_dict(account_ids: List):
+    account_url = Config.BULK_ACCOUNTS_ENDPOINT
+    account_params = {"account_id": account_ids}
+    return get_data(account_url, account_params)
+
+
 def get_score_and_justification(
     application_id, sub_criteria_id, score_history=True
 ):
-    url = Config.ASSESSMENT_SCORES_ENDPOINT
-    params = {
+    score_url = Config.ASSESSMENT_SCORES_ENDPOINT
+    score_params = {
         "application_id": application_id,
         "sub_criteria_id": sub_criteria_id,
         "score_history": score_history,
     }
-    response = get_data(url, params)
-    current_app.logger.info(f"Response from Assessment Store: '{response}'.")
-
-    scores: list[Score] = [Score.from_dict(score) for score in response]
-
+    score_response = get_data(score_url, score_params)
+    current_app.logger.info(
+        f"Response from Assessment Store: '{score_response}'."
+    )
+    account_ids = [score["user_id"] for score in score_response]
+    bulk_accounts_dict = get_bulk_accounts_dict(account_ids)
+    scores: list[Score] = [
+        Score.from_dict(
+            score
+            | {
+                "user_full_name": bulk_accounts_dict[score["user_id"]][
+                    "full_name"
+                ],
+                "user_email": bulk_accounts_dict[score["user_id"]][
+                    "email_address"
+                ],
+            }
+        )
+        for score in score_response
+    ]
     return scores
 
 
@@ -255,10 +289,8 @@ def get_questions(application_id):
     """_summary_: Function is set up to retrieve
     the data from application store with
     get_data() function.
-
     Args:
         application_id: Takes an application_id.
-
     Returns:
         Returns a dictionary of questions & their statuses.
     """
@@ -279,11 +311,9 @@ def get_sub_criteria(application_id, sub_criteria_id):
     """_summary_: Function is set up to retrieve
     the data from assessment store with
     get_data() function.
-
     Args:
         application_id:
         sub_criteria_id
-
     Returns:
       {
         "sub_criteria_id": "",
@@ -352,3 +382,33 @@ def get_comments(application_id: str, sub_criteria_id: str):
         msg = f"comment: '{comment_response['id']}' not found."
         current_app.logger.warn(msg)
         abort(404, description=msg)
+
+def get_file_url(filename: str, application_id: str):
+    """_summary_: Function is set up to retrieve
+    files from aws bucket.
+    Args:
+        filename: Takes an filename
+        application_id: Takes an application_id # noqa
+    Returns:
+        Returns a presigned url.
+    """
+
+    if (filename == None):
+        return None   
+
+    prefixed_file_name = application_id + "/" + filename    
+
+    s3_client = boto3.client('s3', 
+                      aws_access_key_id=Config.AWS_ACCESS_KEY_ID, 
+                      aws_secret_access_key=Config.AWS_SECRET_ACCESS_KEY, 
+                      region_name=Config.AWS_REGION
+                      )
+    try:
+        response = s3_client.generate_presigned_url('get_object',
+                            Params={'Bucket':  Config.AWS_BUCKET_NAME, 'Key': prefixed_file_name},
+                            ExpiresIn=3600)
+        
+        return response
+    except ClientError as e:
+        current_app.logger.error(e)
+        return None
