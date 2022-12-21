@@ -10,7 +10,7 @@ def index():
     return render_template(
         "index.html",
         login_url=Config.SSO_LOGIN_URL,
-        assessment_url=Config.ASSESSMENT_HUB_ROUTE + "/landing/",
+        assessment_url=Config.ASSESSMENT_HUB_ROUTE + "/assessor_dashboard/",
     )
 
 

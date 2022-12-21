@@ -3,8 +3,8 @@ from datetime import datetime
 
 def status_to_human(status: str):
     status_to_human_map = {
-        "NOT_STARTED": "Not started",
-        "IN_PROGRESS": "In progress",
+        "NOT_STARTED": "Not Started",
+        "IN_PROGRESS": "In Progress",
         "SUBMITTED": "Submitted",
         "COMPLETED": "Completed",
     }
@@ -40,7 +40,7 @@ def remove_dashes_underscores_capitalize(s: str) -> str:
     return s.replace("-", " ").replace("_", " ").capitalize()
 
 
-def format_address(address: str) -> str:
+def format_address(address: str) -> list[str]:
     address_parts = address.split(", ")
     address_parts = [part for part in address_parts if part != "null"]
     return address_parts

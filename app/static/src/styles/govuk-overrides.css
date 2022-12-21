@@ -96,3 +96,70 @@ margin:0px;
     margin-bottom:15px;
     border-bottom:0px;
 }
+
+
+.dashboard-label {
+  text-transform: uppercase;
+  padding: 0.5em;
+  margin: 1em 0 0 0;
+  font-weight: 600;
+}
+
+.completed .dashboard-label {
+  background-color: #005ea5;
+  color: white;
+}
+
+.in-progress .dashboard-label {
+  background-color: #d2e2f1;
+  color: #005ea5;
+}
+
+.not-started .dashboard-label {
+  background-color: #797979;
+  color: white;
+}
+
+.not-started-tag {
+  background-color: #aac9e4;
+  color: #0b0c0c;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.1;
+  font-weight: 400;
+  font-size: 19px;
+  padding: 2px 4px;
+  letter-spacing: normal;
+  text-transform: capitalize;
+}
+
+.stopped-tag {
+  background-color: #505a5f;
+  color: #ffffff;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.1;
+  font-weight: 400;
+  font-size: 19px;
+  padding: 2px 4px;
+  letter-spacing: normal;
+  text-transform: capitalize;
+}
+
+.flagged-tag {
+  background-color: #d4351c;
+  color: #ffffff;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.1;
+  font-weight: 400;
+  font-size: 19px;
+  padding: 2px 4px;
+  letter-spacing: normal;
+  text-transform: capitalize;
+}
+
+.primary-button {
+  margin-bottom: 0;
+  background-color: #1d70b8;
+}
+.primary-button:hover {
+  background-color: #003078;
+}

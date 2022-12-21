@@ -1,14 +1,13 @@
 {% extends "base.html" %}
 {%- from 'govuk_frontend_jinja/components/back-link/macro.html' import govukBackLink -%}
 {% from "macros/scores_justification.html" import scores_justification %}
-{% from "macros/theme.jinja2" import theme %}
+{% from "macros/theme.html" import theme %}
 {% from "macros/sub_criteria_navbar.html" import navbar %}
 
 {% block content %}
-    <div class="govuk-phase-banner flex-parent-element"></div>
-    <div class="flex-parent-element">
-        <p class="flex-parent-element flexed-element-margins-collapse govuk-!-text-align-right"><a href="#" class="govuk-link flexed-element-margins-collapse" style="text-align:right !important;">Sign out</a></p>
-        <p class="flex-parent-element flexed-element-margins-collapse govuk-!-text-align-left"><a href="{{ url_for("assess_bp.landing") }}" class="govuk-back-link">Back to <span class="govuk-!-font-weight-bold">assessment overview</span></a></p>
+    <div class="govuk-phase-banner flex-parent-element">
+        <p class="govuk-!-text-align-left flex-parent-element flexed-element-margins-collapse">{{ govukBackLink({'href': url_for("assess_bp.application", application_id=application_id), 'text': 'Back to assessment overview'}) }}</p>
+        <p class="flex-parent-element flexed-element-margins-collapse govuk-!-text-align-right"><a href="#" class="govuk-link flexed-element-margins-collapse">Sign out</a></p>
     </div>
     </div>
     <div class="fsd-banner-background">
@@ -29,7 +28,7 @@
         <div class="govuk-width-container">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-one-third content-container">
-            <h1 class="govuk-heading-l scoring-heading">{{sub_criteria.id}}</h1>
+            <h2 class="govuk-heading-l scoring-heading">{{sub_criteria.name}}</h2>
         </div>
     </div>
 

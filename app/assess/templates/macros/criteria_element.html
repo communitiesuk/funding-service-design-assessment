@@ -14,15 +14,14 @@
                     sub_criteria.name
                 )
             },
-            { "text": sub_criteria.theme_count, "format": "numeric" },
-            { "text": sub_criteria.score, "format": "numeric" },
-            { "html": '<span class="govuk-tag--scored-criteria">{}</span>'.format(sub_criteria.status), "format": "numeric" }
+            { "text": sub_criteria.score or "", "format": "numeric" },
+            { "html": '<span class="govuk-tag--scored-criteria">{}</span>'.format(sub_criteria.status|status_to_human),
+                "format": "numeric" }
         ]) %}
     {% endfor %}
 
     {% set _ = rows.append([
         { "html": "<strong>Total criteria score</strong>" },
-        { "text": "" },
         { "text": "" },
         { "text": "{} of {}".format(criteria.total_criteria_score, criteria.total_criteria_score_possible), "format": "numeric" },
     ]) %}
@@ -36,8 +35,7 @@
         "firstCellIsHeader":false,
         "head":[
             { "text": "Assessment sub criteria" },
-            { "text": "Number of sections", "format": "numeric" },
-            { "text": "Score", "format": "numeric" },
+            { "text": "Score out of 5", "format": "numeric" },
             { "text": "Status", "format": "numeric" }
         ],
         "rows": rows,
