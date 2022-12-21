@@ -129,7 +129,7 @@ class TestAuthorisation:
             b" dashboard</h1>"
             in response.data
         )
-        assert b'<div class="lead-dashboard-stats">' in response.data
+        assert b"lead-dashboard-stats" in response.data
 
     def test_authorised_assessor_redirected_to_dashboard(
         self, flask_test_client
