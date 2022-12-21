@@ -12,6 +12,8 @@ class Score:
     justification: str
     date_created: str
     user_id: str
+    user_full_name: str
+    user_email: str
 
     def __post_init__(self):
         self.date_created = datetime.fromisoformat(self.date_created).strftime(
