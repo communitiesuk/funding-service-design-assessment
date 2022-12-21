@@ -107,7 +107,7 @@ def display_sub_criteria(
             application_id, theme_id
         )
         answers_meta = applicants_response.create_ui_components(
-            theme_answers_response
+            theme_answers_response, application_id
         )
 
     return render_template(

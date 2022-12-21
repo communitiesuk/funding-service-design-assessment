@@ -15,6 +15,19 @@ from config import Config
 from flask import abort
 from flask import current_app
 
+import boto3
+import requests  
+from config import Config
+from botocore.exceptions import ClientError
+
+if "VCAP_SERVICES" in os.environ:   
+        vcap_services = json.loads(os.environ["VCAP_SERVICES"])
+
+        if "aws-s3-bucket" in vcap_services:
+            s3_credentials = vcap_services["aws-s3-bucket"][0]["credentials"]
+            Config.AWS_ACCESS_KEY_ID = s3_credentials["aws_access_key_id"]
+            Config.AWS_SECRET_ACCESS_KEY = s3_credentials["aws_secret_access_key"]
+            Config.AWS_BUCKET_NAME = s3_credentials["bucket_name"]
 
 def get_data(
     endpoint: str,
@@ -363,3 +376,33 @@ def get_comments(application_id: str, sub_criteria_id: str):
     )
     comment_response = get_data(comment_endpoint)
     return comment_response
+
+def get_file_url(filename: str, application_id: str):
+    """_summary_: Function is set up to retrieve
+    files from aws bucket.
+    Args:
+        filename: Takes an filename
+        application_id: Takes an application_id # noqa
+    Returns:
+        Returns a presigned url.
+    """
+
+    if (filename == None):
+        return None   
+
+    prefixed_file_name = application_id + "/" + filename    
+
+    s3_client = boto3.client('s3', 
+                      aws_access_key_id=Config.AWS_ACCESS_KEY_ID, 
+                      aws_secret_access_key=Config.AWS_SECRET_ACCESS_KEY, 
+                      region_name=Config.AWS_REGION
+                      )
+    try:
+        response = s3_client.generate_presigned_url('get_object',
+                            Params={'Bucket':  Config.AWS_BUCKET_NAME, 'Key': prefixed_file_name},
+                            ExpiresIn=3600)
+        
+        return response
+    except ClientError as e:
+        current_app.logger.error(e)
+        return None
