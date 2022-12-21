@@ -1,3 +1,4 @@
+import base64
 from os import getenv
 from pathlib import Path
 
@@ -20,12 +21,26 @@ class DefaultConfig:
 
     FORCE_HTTPS = CommonConfig.FORCE_HTTPS
     FSD_LOG_LEVEL = CommonConfig.FSD_LOG_LEVEL
+    FSD_USER_TOKEN_COOKIE_NAME = "fsd_user_token"
 
     STATIC_FOLDER = "app/static/dist"
     STATIC_URL_PATH = "/assets"
     TEMPLATES_FOLDER = "templates"
     LOCAL_SERVICE_NAME = "local_flask"
     ASSESSMENT_HUB_ROUTE = "/assess"
+    DASHBOARD_ROUTE = "/assess/assessor_dashboard"
+
+    """
+    Security
+    """
+
+    AUTHENTICATOR_HOST = getenv("AUTHENTICATOR_HOST", "https://authenticator")
+    SSO_LOGIN_URL = AUTHENTICATOR_HOST + "/sso/login"
+    SSO_LOGOUT_URL = AUTHENTICATOR_HOST + "/sso/logout"
+    # RSA 256 KEYS
+    RSA256_PUBLIC_KEY_BASE64 = getenv("RSA256_PUBLIC_KEY_BASE64")
+    if RSA256_PUBLIC_KEY_BASE64:
+        RSA256_PUBLIC_KEY = base64.b64decode(RSA256_PUBLIC_KEY_BASE64).decode()
 
     """
     APIs Config
@@ -52,7 +67,7 @@ class DefaultConfig:
     APPLICATION_STATUS_ENDPOINT = CommonConfig.APPLICATION_STATUS_ENDPOINT
     APPLICATION_SEARCH_ENDPOINT = CommonConfig.APPLICATION_SEARCH_ENDPOINT
 
-    # Assesment store endpoints
+    # Assessment store endpoints
     APPLICATION_OVERVIEW_ENDPOINT_FUND_ROUND_PARAMS = (
         "/application_overviews/{fund_id}/{round_id}?{params}"
     )

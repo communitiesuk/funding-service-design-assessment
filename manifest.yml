@@ -10,9 +10,11 @@ applications:
   env:
     FLASK_ENV: dev
     FLASK_DEBUG: 1
-    FUND_STORE_API_HOST: fund_store #https://funding-service-design-fund-store-dev.london.cloudapps.digital
-    APPLICATION_STORE_API_HOST: application_store #https://funding-service-design-application-store-dev.london.cloudapps.digital
-    ASSESSMENT_STORE_API_HOST: assessment_store #https://funding-service-design-assessment-store-dev.london.cloudapps.digital
+    FUND_STORE_API_HOST: https://funding-service-design-fund-store-dev.london.cloudapps.digital
+    APPLICATION_STORE_API_HOST: https://funding-service-design-application-store-dev.london.cloudapps.digital
+    ASSESSMENT_STORE_API_HOST: https://funding-service-design-assessment-store-dev.london.cloudapps.digital
+    AUTHENTICATOR_HOST: https://fsd:fsd@authenticator2.dev.gids.dev
+    RSA256_PUBLIC_KEY_BASE64: ((RSA256_PUBLIC_KEY_BASE64))
   health-check-http-endpoint: /healthcheck
   health-check-type: http
 
@@ -26,6 +28,9 @@ applications:
   env:
     FLASK_ENV: test
     ASSESSMENT_STORE_API_HOST: https://funding-service-design-assessment-store-test.london.cloudapps.digital
+    APPLICATION_STORE_API_HOST: https://funding-service-design-application-store-test.london.cloudapps.digital
     FUND_STORE_API_HOST: https://funding-service-design-fund-store-test.london.cloudapps.digital
+    AUTHENTICATOR_HOST: https://fsd:fsd@authenticator2.test.gids.dev
+    RSA256_PUBLIC_KEY_BASE64: ((RSA256_PUBLIC_KEY_BASE64))
   health-check-http-endpoint: /healthcheck
   health-check-type: http

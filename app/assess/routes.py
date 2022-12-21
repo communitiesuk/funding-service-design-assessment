@@ -5,9 +5,6 @@ from app.assess.display_value_mappings import assessment_statuses
 from app.assess.display_value_mappings import asset_types
 from app.assess.forms.comments_form import CommentsForm
 from app.assess.forms.scores_and_justifications import ScoreForm
-from app.assess.models.question import Question
-from app.assess.models.question_field import QuestionField
-from app.assess.models.total_table import TotalMoneyTableView
 from app.assess.models.ui import applicants_response
 from app.assess.models.ui.assessor_task_list import AssessorTaskList
 from config import Config
@@ -164,6 +161,7 @@ def landing():
 
     return render_template(
         "assessor_dashboard.html",
+        user=g.user,
         application_overviews=application_overviews,
         assessment_deadline=assessment_deadline,
         query_params=search_params,
