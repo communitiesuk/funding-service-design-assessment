@@ -377,6 +377,29 @@ def get_comments(application_id: str, sub_criteria_id: str):
     comment_response = get_data(comment_endpoint)
     return comment_response
 
+
+def submit_comment(
+    comment, application_id, sub_criteria_id, user_id, theme_id
+):
+    data_dict = {
+        "comment": comment,
+        "user_id": user_id,
+        "application_id": application_id,
+        "sub_criteria_id": sub_criteria_id,
+        "comment_type": "COMMENT",
+        "theme_id": theme_id
+    }
+    url = Config.ASSESSMENT_COMMENT_ENDPOINT
+    response = requests.post(url, json=data_dict)
+    current_app.logger.info(
+        f"Response from Assessment Store: '{response.json()}'."
+    )
+    if response.status_code == 200:
+        return True
+    else:
+        return False
+
+
 def get_file_url(filename: str, application_id: str):
     """_summary_: Function is set up to retrieve
     files from aws bucket.

@@ -13,6 +13,7 @@ from flask import Blueprint
 from flask import g
 from flask import render_template
 from flask import request
+from flask import redirect
 from fsd_utils.authentication.decorators import login_required
 
 assess_bp = Blueprint(
@@ -35,6 +36,13 @@ def display_sub_criteria(
     """
     Page showing sub criteria and themes for an application
     """
+
+    displayCommentBox = False
+    if 'add-comment' in request.args.keys() and request.args['add-comment'] == '1':
+        displayCommentBox = True            
+
+    commentForm = CommentsForm()
+
     form = ScoreForm()
     score_error, justification_error, scores_submitted = (
         False,
@@ -54,6 +62,21 @@ def display_sub_criteria(
                 sub_criteria_id=sub_criteria_id,
             )
             scores_submitted = True
+     
+        elif commentForm.validate_on_submit():
+            comment=commentForm.comment.data
+            user_id = g.account_id
+            theme_id=request.args['theme_id']
+            displayCommentBox = False
+
+            submit_comment(
+                    comment=comment,
+                    application_id=application_id,
+                    sub_criteria_id=sub_criteria_id,
+                    user_id=user_id,
+                    theme_id=theme_id
+                )
+            return redirect(request.path + "?theme_id=" + theme_id)
 
         else:
             score_error = True if not form.score.data else False
@@ -118,6 +141,8 @@ def display_sub_criteria(
         application_id=application_id,
         fund=fund,
         form=form,
+        commentForm=commentForm,
+        displayCommentBox=displayCommentBox,
         comments=comments,
         answers_meta=answers_meta,
     )
