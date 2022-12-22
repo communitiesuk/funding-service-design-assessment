@@ -10,6 +10,7 @@ from app.assets import compile_static_assets
 from app.auth import auth_protect
 from config import Config
 from flask import Flask
+from flask import g
 from flask_assets import Environment
 from flask_compress import Compress
 from flask_talisman import Talisman
@@ -77,6 +78,7 @@ def create_app() -> Flask:
             service_meta_keywords="Assessment Hub",
             service_meta_author="DLUHC",
             sso_logout_url=flask_app.config.get("SSO_LOGOUT_URL"),
+            g=g,
         )
 
     with flask_app.app_context():
