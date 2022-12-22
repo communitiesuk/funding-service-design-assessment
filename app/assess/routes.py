@@ -13,7 +13,6 @@ from flask import Blueprint
 from flask import g
 from flask import render_template
 from flask import request
-from fsd_utils.authentication.decorators import login_required
 
 assess_bp = Blueprint(
     "assess_bp",
@@ -27,7 +26,6 @@ assess_bp = Blueprint(
     "/application_id/<application_id>/sub_criteria_id/<sub_criteria_id>",
     methods=["POST", "GET"],
 )
-@login_required(roles_required=["COMMENTER"])
 def display_sub_criteria(
     application_id,
     sub_criteria_id,
@@ -35,6 +33,21 @@ def display_sub_criteria(
     """
     Page showing sub criteria and themes for an application
     """
+    args = request.args
+    sub_criteria = get_sub_criteria(application_id, sub_criteria_id)
+    theme_id = args.get("theme_id", sub_criteria.themes[0].id)
+    fund = get_fund(Config.COF_FUND_ID)
+
+    # SECURITY SECTION START ######
+    # Prevent non-assessors from accessing
+    # the scoring version of this page
+    if theme_id == "score" and g.user.highest_role not in [
+        "LEAD_ASSESSOR",
+        "ASSESSOR",
+    ]:
+        abort(404)
+    # SECURITY SECTION ENDS ########
+
     form = ScoreForm()
     score_error, justification_error, scores_submitted = (
         False,
@@ -61,10 +74,6 @@ def display_sub_criteria(
                 True if not form.justification.data else False
             )
 
-    args = request.args
-    sub_criteria = get_sub_criteria(application_id, sub_criteria_id)
-    theme_id = args.get("theme_id", sub_criteria.themes[0].id)
-    fund = get_fund(Config.COF_FUND_ID)
     comments = get_comments(
         application_id=application_id, sub_criteria_id=sub_criteria_id
     )
