@@ -11,6 +11,7 @@ from app.assess.models.fund import Fund
 from app.assess.models.round import Round
 from app.assess.models.score import Score
 from app.assess.models.sub_criteria import SubCriteria
+from app.assess.models.comment import Comment
 from config import Config
 from flask import abort
 from flask import current_app
@@ -375,7 +376,30 @@ def get_comments(application_id: str, sub_criteria_id: str, theme_id):
         )
     )
     comment_response = get_data(comment_endpoint)
-    return comment_response
+    comments = None
+    if comment_response != None:
+        account_ids = [comment["user_id"] for comment in comment_response]
+        bulk_accounts_dict = get_bulk_accounts_dict(account_ids)
+
+        comments: list[Comment] = [
+            Comment.from_dict(
+                comment
+                | {
+                    "full_name": bulk_accounts_dict[comment["user_id"]][
+                       "full_name"
+                    ],
+                    "email_address": bulk_accounts_dict[comment["user_id"]][
+                       "email_address"
+                    ],
+                    "highest_role": bulk_accounts_dict[comment["user_id"]][
+                       "highest_role"
+                    ],
+                }
+            )
+            for comment in comment_response
+        ]
+
+    return comments
 
 def get_file_url(filename: str, application_id: str):
     """_summary_: Function is set up to retrieve

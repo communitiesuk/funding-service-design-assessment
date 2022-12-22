@@ -65,8 +65,10 @@ def display_sub_criteria(
     theme_id = args.get("theme_id", sub_criteria.themes[0].id)
     fund = get_fund(Config.COF_FUND_ID)
     comments = get_comments(
-        application_id=application_id, sub_criteria_id=sub_criteria_id
+        application_id=application_id, sub_criteria_id=sub_criteria_id, theme_id=theme_id
     )
+
+    comments_dictionary = {t.id: [c for c in comments if c.theme_id == t.id] for t in sub_criteria.themes}
 
     if theme_id == "score":
         # call to assessment store to get latest score
@@ -97,7 +99,7 @@ def display_sub_criteria(
             COF_score_list=COF_score_list,
             score_error=score_error,
             justification_error=justification_error,
-            comments=comments,
+            comments=comments_dictionary,
         )
 
     answers_meta = []
@@ -117,7 +119,7 @@ def display_sub_criteria(
         application_id=application_id,
         fund=fund,
         form=form,
-        comments=comments,
+        comments=comments_dictionary,
         answers_meta=answers_meta,
     )
 

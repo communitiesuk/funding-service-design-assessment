@@ -1,0 +1,28 @@
+{% macro comment_summary(comments, themes) %}
+<div class="govuk-!-margin-top-7" id="anchor">
+    <h2 class="govuk-heading-m">Comments</h2>
+    <div id="more-detail-hint" class="govuk-hint">
+      <p class="govuk-hint">Summarise any thoughts you have on the information provided.</p>
+      <p class="govuk-hint">You cannot edit or delete your comment once you have saved it.</p>
+    </div>
+    {% if comments == None %}
+    <div class="govuk-body govuk-!-margin-top-6">
+        No comments have been left yet.
+        </div>
+    {% else %}
+    {% for theme in themes %}
+    {% if comments[theme.id]|length > 0%}
+    <h3 class="govuk-heading-m">{{theme.name}}</h3>
+        {% for comment in comments[theme.id] %}            
+                <div class="comment-group">
+                    <p class="govuk-body">{{comment.comment}}</p>
+                    <p class="govuk-body-s">{{comment.full_name}} ({{comment.highest_role|all_caps_to_human}}) {{comment.email_address}}</p>
+                    <p class="govuk-body-s">{{comment.date_created|datetime_format_24hr}}</p>
+                </div>           
+        {% endfor %}
+            </br>
+     {%endif%}       
+    {% endfor %}    
+    {% endif %}
+</div>
+{% endmacro %}
