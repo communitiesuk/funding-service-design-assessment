@@ -372,14 +372,14 @@ def get_comments(application_id: str, sub_criteria_id: str):
         )
     )
 
-    comment_response = get_data(comment_endpoint)
+    comment_response = None
     if comment_response and (type(comment_response) is list):
         comments = []
         for comment in comment_response:
             comments.append(Comment.from_filtered_dict(comment))
         return comments
     else:
-        msg = f"comment: '{comment_response['id']}' not found."
+        msg = f"No comment response for application: '{application_id}'."
         current_app.logger.warn(msg)
         abort(404, description=msg)
 
