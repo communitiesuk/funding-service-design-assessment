@@ -28,7 +28,11 @@ def auth_protect(minimum_roles_required, unprotected_routes):
 
     """
 
-    if Config.FLASK_ENV == "development" and Config.DEBUG_USER_ROLE:
+    if (
+        Config.FLASK_ENV == "development"
+        and Config.DEBUG_USER_ROLE
+        and not g.is_authenticated
+    ):
         g.is_authenticated = True
         g.account_id = "dev-account-id"
         g.user = User(**Config.DEBUG_USER)
