@@ -5,6 +5,7 @@ from typing import Iterable
 from typing import List
 from typing import Tuple
 
+from app.assess.data import get_file_url
 from app.assess.views.filters import format_address
 from app.assess.views.filters import format_date
 from app.assess.views.filters import remove_dashes_underscores_capitalize
@@ -129,7 +130,7 @@ class MonetaryKeyValues(ApplicantResponseComponent):
         )
 
 
-def _ui_component_from_factory(item: dict):
+def _ui_component_from_factory(item: dict, application_id: str):
     """
     :param item: dict
     A dictionary representing the UI component to create. It must contain the following keys:
@@ -191,8 +192,10 @@ def _ui_component_from_factory(item: dict):
             return BesideQuestionAnswerPair.from_dict(item)
 
     elif presentation_type == "file":
-        # TODO(FS-2065(?)): add href as link to download actual file?
-        return AboveQuestionAnswerPairHref.from_dict(item, href=answer)
+        presigned_url = get_file_url(
+            filename=answer, application_id=application_id
+        )
+        return AboveQuestionAnswerPairHref.from_dict(item, href=presigned_url)
 
     elif presentation_type == "address":
         return FormattedBesideQuestionAnswerPair.from_dict(
@@ -470,7 +473,7 @@ def _make_field_ids_hashable(item: dict) -> dict:
 
 
 def create_ui_components(
-    response_with_some_unhashable_fields: list[dict],
+    response_with_some_unhashable_fields: list[dict], application_id: str
 ) -> List[ApplicantResponseComponent]:
     """Creates UI components for displaying applicant responses.
 
@@ -524,4 +527,7 @@ def create_ui_components(
         key=lambda x: field_ids_in_order.index(x["field_id"])
     )
 
-    return list(map(_ui_component_from_factory, post_processed_items))
+    return [
+        _ui_component_from_factory(item, application_id)
+        for item in post_processed_items
+    ]

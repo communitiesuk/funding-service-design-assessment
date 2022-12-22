@@ -11,21 +11,28 @@ class DevelopmentConfig(DefaultConfig):
 
     # for local testing with flask run and USE_LOCAL_DATA = True:
     # USE_LOCAL_DATA = True
-    # FSD_LOG_LEVEL = logging.INFO
-    # FUND_STORE_API_HOST = "fund_store"
-    # ASSESSMENT_STORE_API_HOST = "assessment_store"
-    # APPLICATION_STORE_API_HOST = "application_store"
-
-    # FUND_STORE_API_HOST = "https://funding-service-design-fund-store-dev.london.cloudapps.digital" # noqa
-    # ASSESSMENT_STORE_API_HOST = "https://funding-service-design-assessment-store-dev.london.cloudapps.digital" # noqa
-
     # for testing with docker runner:
     USE_LOCAL_DATA = False
+
     FSD_LOG_LEVEL = logging.INFO
     FSD_USER_TOKEN_COOKIE_NAME = "fsd_user_token"
-    AUTHENTICATOR_HOST = getenv("AUTHENTICATOR_HOST", "authenticator")
+    AUTHENTICATOR_HOST = getenv("AUTHENTICATOR_HOST", "https://authenticator")
     SSO_LOGIN_URL = AUTHENTICATOR_HOST + "/sso/login"
     SSO_LOGOUT_URL = AUTHENTICATOR_HOST + "/sso/logout"
+
+    DEBUG_USER_ROLE = getenv("DEBUG_USER_ROLE", "COMMENTER")
+
+    DEBUG_USER = {
+        "full_name": "Development User",
+        "email": "dev@example.com",
+        "roles": {
+            "LEAD_ASSESSOR": ["LEAD_ASSESSOR", "ASSESSOR", "COMMENTER"],
+            "ASSESSOR": ["ASSESSOR", "COMMENTER"],
+            "COMMENTER": ["COMMENTER"],
+        }.get(DEBUG_USER_ROLE),
+        "highest_role": DEBUG_USER_ROLE,
+    }
+
     # RSA 256 KEYS
     RSA256_PUBLIC_KEY_BASE64 = getenv("RSA256_PUBLIC_KEY_BASE64")
     if RSA256_PUBLIC_KEY_BASE64:

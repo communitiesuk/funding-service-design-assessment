@@ -205,9 +205,11 @@ class TestRoutes:
         ],
     )
     def test_route_sub_criteria_side_bar(
-        self, flask_test_client, monkeypatch, expected_ids, expected_names
+        self, flask_test_client, monkeypatch, expected_ids, expected_names, mocker
     ):
-
+        mocker.patch(
+            "app.assess.models.ui.applicants_response.get_file_url",
+            return_value="sample1.doc")
         # Mocking fsd-user-token cookie
         test_payload = {
             "accountId": "test-user",

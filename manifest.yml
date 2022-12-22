@@ -32,5 +32,7 @@ applications:
     FUND_STORE_API_HOST: https://funding-service-design-fund-store-test.london.cloudapps.digital
     AUTHENTICATOR_HOST: https://fsd:fsd@authenticator2.test.gids.dev
     RSA256_PUBLIC_KEY_BASE64: ((RSA256_PUBLIC_KEY_BASE64))
+  services:
+    - form-uploads-test
   health-check-http-endpoint: /healthcheck
   health-check-type: http
