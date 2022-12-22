@@ -75,6 +75,7 @@ def create_app() -> Flask:
             service_meta_description="Assessment Hub",
             service_meta_keywords="Assessment Hub",
             service_meta_author="DLUHC",
+            sso_logout_url=flask_app.config.get("SSO_LOGOUT_URL"),
         )
 
     with flask_app.app_context():
