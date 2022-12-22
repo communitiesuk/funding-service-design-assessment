@@ -8,13 +8,14 @@
         </li>
         {%endfor%}
     </ul>
-    {% if role_information["scoring_permissions"]%}
+
+{% if g.user.highest_role in ["ASSESSOR","LEAD_ASSESSOR"] %}
     {% if current_theme_id != "score" %}
     <ul class="govuk-list">
-        <li><a class="{{'govuk-link--no-underline govuk-list' if on_summary else 'govuk-link--no-visited-state'}}" href="{{ url_for('assess_bp.display_sub_criteria',application_id=application_id,sub_criteria_id=sub_criteria.id,theme_id='score') }}">Score the subcriteria</a></li>
+        <li><a id="score-subcriteria-link" class="{{'govuk-link--no-underline govuk-list' if on_summary else 'govuk-link--no-visited-state'}}" href="{{ url_for('assess_bp.display_sub_criteria',application_id=application_id,sub_criteria_id=sub_criteria.id,theme_id='score') }}">Score the subcriteria</a></li>
     </ul>
     {% endif %}
-    {% endif %}
+{% endif %}
 </nav>
 
 {%endmacro%}
