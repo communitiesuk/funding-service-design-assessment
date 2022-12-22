@@ -205,7 +205,7 @@ class TestAuthorisation:
         ],
     )
     def test_different_user_levels_see_correct_sub_criteria_view(
-        self, flask_test_client, claim, expect_scoring_available
+        self, flask_test_client, claim, expect_scoring_available, mocker
     ):
         """
         GIVEN authorised users
@@ -220,6 +220,10 @@ class TestAuthorisation:
         Returns:
 
         """
+        mocker.patch(
+            "app.assess.models.ui.applicants_response.get_file_url",
+            return_value="sample1.doc")
+         
         flask_test_client.set_cookie(
             "localhost",
             "fsd_user_token",
@@ -248,7 +252,7 @@ class TestAuthorisation:
         ],
     )
     def test_different_user_levels_see_correct_comments_on_sub_criteria_view(
-        self, flask_test_client, claim, expect_all_comments_available
+        self, flask_test_client, claim, expect_all_comments_available, mocker
     ):
         """
         GIVEN authorised users
@@ -265,6 +269,10 @@ class TestAuthorisation:
         Returns:
 
         """
+        mocker.patch(
+            "app.assess.models.ui.applicants_response.get_file_url",
+            return_value="sample1.doc")
+
         flask_test_client.set_cookie(
             "localhost",
             "fsd_user_token",
