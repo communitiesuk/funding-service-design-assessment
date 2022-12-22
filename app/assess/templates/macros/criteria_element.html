@@ -14,7 +14,7 @@
                     sub_criteria.name
                 )
             },
-            { "text": sub_criteria.score or "", "format": "numeric" },
+            { "text": sub_criteria.score or "", "format": "numeric" } if g.user.highest_role in ["ASSESSOR","LEAD_ASSESSOR"] else None,
             { "html": '<span class="govuk-tag--scored-criteria">{}</span>'.format(sub_criteria.status|status_to_human),
                 "format": "numeric" }
         ]) %}
@@ -24,18 +24,19 @@
         { "html": "<strong>Total criteria score</strong>" },
         { "text": "" },
         { "text": "{} of {}".format(criteria.total_criteria_score, criteria.total_criteria_score_possible), "format": "numeric" },
-    ]) %}
+    ]) if g.user.highest_role in ["ASSESSOR","LEAD_ASSESSOR"] %}
 
     <h3 class="{{ name_classes or '' }}">{{ criteria.name }}</h3>
     <p class="govuk-body govuk-!-margin-bottom-2">
         <strong>{{ (criteria.weighting * 100)|int }}%</strong> of overall score.
     </p>
 
-    {{ govukTable({
+    {{
+        govukTable({
         "firstCellIsHeader":false,
-        "head":[
+        "head": [
             { "text": "Assessment sub criteria" },
-            { "text": "Score out of 5", "format": "numeric" },
+            { "text": "Score out of 5", "format": "numeric" } if g.user.highest_role in ["ASSESSOR","LEAD_ASSESSOR"] else None,
             { "text": "Status", "format": "numeric" }
         ],
         "rows": rows,
