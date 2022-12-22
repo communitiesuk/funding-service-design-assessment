@@ -7,11 +7,9 @@ from app.assess.views.filters import remove_dashes_underscores_capitalize
 from app.assess.views.filters import slash_separated_day_month_year
 from app.assess.views.filters import status_to_human
 from app.assets import compile_static_assets
+from app.auth import auth_protect
 from config import Config
 from flask import Flask
-from flask import g
-from flask import redirect
-from flask import request
 from flask_assets import Environment
 from flask_compress import Compress
 from flask_talisman import Talisman
@@ -74,9 +72,7 @@ def create_app() -> Flask:
         return dict(
             stage="beta",
             service_title="Assessment Hub",
-            service_meta_description=(
-                "Assessment Hub"
-            ),
+            service_meta_description="Assessment Hub",
             service_meta_keywords="Assessment Hub",
             service_meta_author="DLUHC",
         )
@@ -121,30 +117,10 @@ def create_app() -> Flask:
         @flask_app.before_request
         @login_requested
         def ensure_minimum_required_roles():
-            minimum_roles_required = ["COMMENTER"]
-            unprotected_routes = ["/"]
-            if g.is_authenticated:
-                # Ensure that authenticated users have
-                # all minimum required roles
-                if not g.user.roles or not all(
-                    role_required in g.user.roles
-                    for role_required in minimum_roles_required
-                ):
-                    return redirect(
-                        flask_app.config.get("AUTHENTICATOR_HOST")
-                        + "/service/user"
-                        + "?roles_required="
-                        + "|".join(minimum_roles_required)
-                    )
-                elif request.path == "/":
-                    return redirect(flask_app.config.get("DASHBOARD_ROUTE"))
-            elif (
-                request.path not in unprotected_routes
-                and not request.path.startswith("/static/")
-            ):  # noqa
-                # Redirect unauthenticated users to
-                # login on the home page
-                return redirect("/")
+            return auth_protect(
+                minimum_roles_required=["COMMENTER"],
+                unprotected_routes=["", "/"],
+            )
 
         return flask_app
 
