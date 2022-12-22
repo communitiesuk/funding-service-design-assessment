@@ -148,7 +148,7 @@ class TestRoutes:
         "expected_names",
         [b"Current score: 5", b"Rescore", b"Add rationale for this"],
     )
-    def test_route_sub_criteria_scroing(
+    def test_route_sub_criteria_scoring(
         self, flask_test_client, expected_names
     ):
         # Define a dummy value for the return value of get_score_and_justification # noqa
@@ -202,14 +202,21 @@ class TestRoutes:
             (b"general-information", b"General information"),
             (b"activities", b"Activities"),
             (b"partnerships", b"Partnerships"),
+            (b"score-subcriteria-link", b"Score the subcriteria"),
         ],
     )
-    def test_route_sub_criteria_side_bar(
-        self, flask_test_client, monkeypatch, expected_ids, expected_names, mocker
+    def test_route_sub_criteria_side_bar_lead_assessor(
+        self,
+        flask_test_client,
+        monkeypatch,
+        expected_ids,
+        expected_names,
+        mocker,
     ):
         mocker.patch(
             "app.assess.models.ui.applicants_response.get_file_url",
-            return_value="sample1.doc")
+            return_value="sample1.doc",
+        )
         # Mocking fsd-user-token cookie
         test_payload = {
             "accountId": "test-user",
@@ -235,3 +242,80 @@ class TestRoutes:
         assert (
             expected_names in response.data
         ), "Response does not contain expected name"
+
+    def test_route_sub_criteria_scoring_inaccessible_to_commenters(
+        self, flask_test_client
+    ):
+
+        # Mocking fsd-user-token cookie
+        test_payload = {
+            "accountId": "test-user",
+            "email": "test@example.com",
+            "fullName": "Test User",
+            "roles": ["COMMENTER"],
+        }
+        token = create_valid_token(test_payload)
+        flask_test_client.set_cookie("localhost", "fsd_user_token", token)
+
+        # Send a request to the route you want to test
+        response = flask_test_client.get(
+            "/assess/application_id/app_123/sub_criteria_id/1a2b3c4d?theme_id=score"  # noqa
+        )
+
+        # Assert that the response has the expected status code
+        assert 404 == response.status_code, (
+            "Commenter should receive a 404 when trying to access the sub"
+            " criteria scoring page"
+        )
+
+    @pytest.mark.parametrize(
+        "expected_ids, expected_names",
+        [
+            (b"general-information", b"General information"),
+            (b"activities", b"Activities"),
+            (b"partnerships", b"Partnerships"),
+        ],
+    )
+    def test_route_sub_criteria_side_bar_commenter(
+        self,
+        flask_test_client,
+        monkeypatch,
+        expected_ids,
+        expected_names,
+        mocker,
+    ):
+        mocker.patch(
+            "app.assess.models.ui.applicants_response.get_file_url",
+            return_value="sample1.doc",
+        )
+        # Mocking fsd-user-token cookie
+        test_payload = {
+            "accountId": "test-user",
+            "email": "test@example.com",
+            "fullName": "Test User",
+            "roles": ["COMMENTER"],
+        }
+        token = create_valid_token(test_payload)
+        flask_test_client.set_cookie("localhost", "fsd_user_token", token)
+
+        # Send a request to the route you want to test
+        response = flask_test_client.get(
+            "/assess/application_id/app_123/sub_criteria_id/1a2b3c4d?theme_id=general-information"  # noqa
+        )
+
+        # Assert that the response has the expected status code
+        assert 200 == response.status_code, "Wrong status code on response"
+
+        # Assert that the response contains the expected ids and names
+        assert (
+            expected_ids in response.data
+        ), "Response does not contain expected id"
+        assert (
+            expected_names in response.data
+        ), "Response does not contain expected name"
+        assert (
+            b"score-subcriteria-link" not in response.data
+        ), "Sidebar should not contain score subcriteria link"
+        assert (
+            b"Score the subcriteria" not in response.data
+        ), "Sidebar should not contain the link to score subcriteria"
