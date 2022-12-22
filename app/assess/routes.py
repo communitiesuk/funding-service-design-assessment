@@ -27,7 +27,6 @@ assess_bp = Blueprint(
     "/application_id/<application_id>/sub_criteria_id/<sub_criteria_id>",
     methods=["POST", "GET"],
 )
-@login_required(roles_required=["COMMENTER"])
 def display_sub_criteria(
     application_id,
     sub_criteria_id,
@@ -45,7 +44,7 @@ def display_sub_criteria(
         if form.validate_on_submit():
             score = int(form.score.data)
             justification = form.justification.data
-            user_id = g.account_id
+            user_id = "test"
             submit_score_and_justification(
                 score=score,
                 justification=justification,

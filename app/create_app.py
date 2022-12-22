@@ -23,6 +23,7 @@ from fsd_utils.logging import logging
 from jinja2 import ChoiceLoader
 from jinja2 import PackageLoader
 from jinja2 import PrefixLoader
+from fsd_utils.authentication.models import User
 
 
 def create_app() -> Flask:
@@ -117,34 +118,45 @@ def create_app() -> Flask:
 
         health = Healthcheck(flask_app)
         health.add_check(FlaskRunningChecker())
-
         @flask_app.before_request
-        @login_requested
-        def ensure_minimum_required_roles():
-            minimum_roles_required = ["COMMENTER"]
-            unprotected_routes = ["/"]
-            if g.is_authenticated:
-                # Ensure that authenticated users have
-                # all minimum required roles
-                if not g.user.roles or not all(
-                    role_required in g.user.roles
-                    for role_required in minimum_roles_required
-                ):
-                    return redirect(
-                        flask_app.config.get("AUTHENTICATOR_HOST")
-                        + "/service/user"
-                        + "?roles_required="
-                        + "|".join(minimum_roles_required)
-                    )
-                elif request.path == "/":
-                    return redirect(flask_app.config.get("DASHBOARD_ROUTE"))
-            elif (
-                request.path not in unprotected_routes
-                and not request.path.startswith("/static/")
-            ):  # noqa
-                # Redirect unauthenticated users to
-                # login on the home page
-                return redirect("/")
+        def allow_login():
+            g.is_authenticated = True
+            g.account_id = "123"            
+            g.user = User(
+                full_name="full_name",
+                email="email",
+                roles=["COMMENTER"],
+                highest_role="COMMENTER",
+            )
+            if request.path in ["","/"]:
+                return redirect(flask_app.config.get("DASHBOARD_ROUTE"))
+        # @flask_app.before_request
+        # @login_requested
+        # def ensure_minimum_required_roles():
+        #     minimum_roles_required = ["COMMENTER"]
+        #     unprotected_routes = ["/"]
+        #     if g.is_authenticated:
+        #         # Ensure that authenticated users have
+        #         # all minimum required roles
+        #         if not g.user.roles or not all(
+        #             role_required in g.user.roles
+        #             for role_required in minimum_roles_required
+        #         ):
+        #             return redirect(
+        #                 flask_app.config.get("AUTHENTICATOR_HOST")
+        #                 + "/service/user"
+        #                 + "?roles_required="
+        #                 + "|".join(minimum_roles_required)
+        #             )
+        #         elif request.path == "/":
+        #             return redirect(flask_app.config.get("DASHBOARD_ROUTE"))
+        #     elif (
+        #         request.path not in unprotected_routes
+        #         and not request.path.startswith("/static/")
+        #     ):  # noqa
+        #         # Redirect unauthenticated users to
+        #         # login on the home page
+        #         return redirect("/")
 
         return flask_app
 

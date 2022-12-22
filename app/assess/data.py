@@ -359,7 +359,7 @@ def get_sub_criteria_theme_answers(
         abort(404, description=msg)
 
 
-def get_comments(application_id: str, sub_criteria_id: str):
+def get_comments(application_id: str, sub_criteria_id: str, theme_id):
     """_summary_: Function is set up to retrieve
     the data from application store with
     get_data() function.
@@ -371,7 +371,7 @@ def get_comments(application_id: str, sub_criteria_id: str):
     comment_endpoint = (
         Config.ASSESSMENT_STORE_API_HOST
         + Config.COMMENTS_ENDPOINT.format(
-            application_id=application_id, sub_criteria_id=sub_criteria_id
+            application_id=application_id, sub_criteria_id=sub_criteria_id, theme_id=theme_id
         )
     )
     comment_response = get_data(comment_endpoint)
