@@ -1,4 +1,4 @@
-{% macro navbar(application_id, sub_criteria, current_theme_id, on_summary) %}
+{% macro navbar(application_id, sub_criteria, current_theme_id, on_summary, role_information) %}
 
 <nav class="assessment-navigation">
     <ul class="govuk-list">
@@ -8,8 +8,7 @@
         </li>
         {%endfor%}
     </ul>
-
-    {% if current_theme_id != "score"%}
+    {% if role_information["scoring_permissions"] %}
     <ul class="govuk-list">
         <li><a class="{{'govuk-link--no-underline govuk-list' if on_summary else 'govuk-link--no-visited-state'}}" href="{{ url_for('assess_bp.display_sub_criteria',application_id=application_id,sub_criteria_id=sub_criteria.id,theme_id='score') }}">Score the subcriteria</a></li>
     </ul>

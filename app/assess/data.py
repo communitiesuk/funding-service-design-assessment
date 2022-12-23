@@ -289,10 +289,8 @@ def get_questions(application_id):
     """_summary_: Function is set up to retrieve
     the data from application store with
     get_data() function.
-
     Args:
         application_id: Takes an application_id.
-
     Returns:
         Returns a dictionary of questions & their statuses.
     """
@@ -313,11 +311,9 @@ def get_sub_criteria(application_id, sub_criteria_id):
     """_summary_: Function is set up to retrieve
     the data from assessment store with
     get_data() function.
-
     Args:
         application_id:
         sub_criteria_id
-
     Returns:
       {
         "sub_criteria_id": "",
@@ -375,6 +371,7 @@ def get_comments(application_id: str, sub_criteria_id: str, theme_id):
             application_id=application_id, sub_criteria_id=sub_criteria_id, theme_id=theme_id
         )
     )
+
     comment_response = get_data(comment_endpoint)
     comments = None
     if comment_response != None:

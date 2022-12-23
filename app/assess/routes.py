@@ -35,13 +35,21 @@ def display_sub_criteria(
     """
     Page showing sub criteria and themes for an application
     """
+    role_information = {
+        "is_commenter": g.user.highest_role == "COMMENTER",
+        "scoring_permissions": any(
+            required_role in g.user.roles
+            for required_role in ["ASSESSOR", "LEAD_ASSESSOR"]
+        ),
+    }
     form = ScoreForm()
     score_error, justification_error, scores_submitted = (
         False,
         False,
         False,
     )
-    if request.method == "POST":
+    if request.method == "POST" and role_information["scoring_permissions"]:
+        current_app.logger.info(f"Processing POST to {request.path}.")
         if form.validate_on_submit():
             score = int(form.score.data)
             justification = form.justification.data
@@ -52,6 +60,7 @@ def display_sub_criteria(
                 application_id=application_id,
                 user_id=user_id,
                 sub_criteria_id=sub_criteria_id,
+                role_information=role_information,
             )
             scores_submitted = True
 
@@ -60,16 +69,27 @@ def display_sub_criteria(
             justification_error = (
                 True if not form.justification.data else False
             )
-
-    args = request.args
-    sub_criteria = get_sub_criteria(application_id, sub_criteria_id)
-    theme_id = args.get("theme_id", sub_criteria.themes[0].id)
+    current_app.logger.info(f"Processing GET to {request.path}.")
+    sub_criteria = get_sub_criteria(
+        application_id=application_id, sub_criteria_id=sub_criteria_id
+    )
+    theme_id = request.args.get("theme_id", sub_criteria.themes[0].id)
     fund = get_fund(Config.COF_FUND_ID)
     comments = get_comments(
         application_id=application_id, sub_criteria_id=sub_criteria_id, theme_id=theme_id
     )
 
     comments_dictionary = {theme.id: [comment for comment in comments if comment.theme_id == theme.id] for theme in sub_criteria.themes}
+
+    common_template_config = {
+        "role_information": role_information,
+        "current_theme_id": theme_id,
+        "sub_criteria": sub_criteria,
+        "application_id": application_id,
+        "fund": fund,
+        "form": form,
+        "comments": comments_dictionary,
+    }
 
     if theme_id == "score":
         # call to assessment store to get latest score
@@ -88,19 +108,14 @@ def display_sub_criteria(
 
         return render_template(
             "sub_criteria.html",
-            current_theme_id=theme_id,
             on_summary=True,
-            sub_criteria=sub_criteria,
-            application_id=application_id,
-            fund=fund,
-            form=form,
             scores_submitted=scores_submitted,
             score_list=score_list if len(score_list) > 0 else None,
             latest_score=latest_score,
             COF_score_list=COF_score_list,
             score_error=score_error,
             justification_error=justification_error,
-            comments=comments_dictionary,
+            **common_template_config,
         )
 
     answers_meta = []
@@ -114,21 +129,10 @@ def display_sub_criteria(
 
     return render_template(
         "sub_criteria.html",
-        current_theme_id=theme_id,
         on_summary=False,
-        sub_criteria=sub_criteria,
-        application_id=application_id,
-        fund=fund,
-        form=form,
-        comments=comments_dictionary,
         answers_meta=answers_meta,
+        **common_template_config,
     )
-
-
-@assess_bp.route("/sub_criteria", methods=["GET"])
-def display_base():
-    None
-
 
 @assess_bp.route("/assessor_dashboard/", methods=["GET"])
 def landing():
