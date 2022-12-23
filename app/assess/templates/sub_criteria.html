@@ -35,10 +35,10 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
             <div class="govuk-grid-column-one-third">
-                {{ navbar(application_id, sub_criteria, current_theme_id, on_summary) }}
+                {{ navbar(application_id, sub_criteria, current_theme_id, on_summary, role_information) }}
             </div>
             <div class="theme govuk-grid-column-two-thirds">
-                {% if on_summary %}
+                {% if on_summary and role_information["scoring_permissions"] %}
                     {{scores_justification(scores_submitted, form, score_list, latest_score, application_id, sub_criteria.id, COF_score_list, score_error, justification_error)}}
                 {% else %}
                     {{theme(current_theme_id, answers_meta)}}
@@ -55,11 +55,17 @@
                         </div>
                     {% else %}
                     {% for comment in comments %}
-                    <div class="comment-group">
-                      <p class="govuk-body">{{comment.comment}}</p>
-                      <p class="govuk-body-s">{{comment.full_name}} ({{comment.user_role|all_caps_to_human}}) {{comment.email_address}}</p>
-                      <p class="govuk-body-s">{{comment.date_created|datetime_format_24hr}}</p>
-                    </div>
+                        {% if role_information["is_commenter"] and (comment.user_role == "ASSESSOR" or comment.user_role == "LEAD_ASSESSOR") %}
+                            <div class="comment-group">
+                                <p class="govuk-body">Permission required to see comment.</p>
+                            </div>
+                        {% else %}
+                            <div class="comment-group">
+                                <p class="govuk-body">{{comment.user_role}}</p>
+                                <p class="govuk-body-s">{{comment.full_name}} ({{comment.user_role|all_caps_to_human}}) {{comment.email_address}}</p>
+                                <p class="govuk-body-s">{{comment.date_created|datetime_format_24hr}}</p>
+                            </div>
+                        {% endif %}
                     {% endfor %}
                     {% endif %}
                 </div>

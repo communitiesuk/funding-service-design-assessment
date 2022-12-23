@@ -7,6 +7,7 @@ from urllib.parse import urlencode
 
 import requests
 from app.assess.models.application import Application
+from app.assess.models.comment import Comment
 from app.assess.models.fund import Fund
 from app.assess.models.round import Round
 from app.assess.models.score import Score
@@ -288,10 +289,8 @@ def get_questions(application_id):
     """_summary_: Function is set up to retrieve
     the data from application store with
     get_data() function.
-
     Args:
         application_id: Takes an application_id.
-
     Returns:
         Returns a dictionary of questions & their statuses.
     """
@@ -312,11 +311,9 @@ def get_sub_criteria(application_id, sub_criteria_id):
     """_summary_: Function is set up to retrieve
     the data from assessment store with
     get_data() function.
-
     Args:
         application_id:
         sub_criteria_id
-
     Returns:
       {
         "sub_criteria_id": "",
@@ -374,8 +371,17 @@ def get_comments(application_id: str, sub_criteria_id: str):
             application_id=application_id, sub_criteria_id=sub_criteria_id
         )
     )
+
     comment_response = get_data(comment_endpoint)
-    return comment_response
+    if comment_response and (type(comment_response) is list):
+        comments = []
+        for comment in comment_response:
+            comments.append(Comment.from_filtered_dict(comment))
+        return comments
+    else:
+        msg = f"No comment response for application: '{application_id}'."
+        current_app.logger.warn(msg)
+        abort(404, description=msg)
 
 def get_file_url(filename: str, application_id: str):
     """_summary_: Function is set up to retrieve
