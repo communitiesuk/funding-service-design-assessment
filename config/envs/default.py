@@ -94,7 +94,13 @@ class DefaultConfig:
         "/sub_criteria_overview/{application_id}/{sub_criteria_id}"
     )
 
+    BANNER_STATE_ENDPOINT = (
+        "/sub_criteria_overview/banner_state/{application_id}"
+    )
+
     ASSESSMENT_SCORES_ENDPOINT = ASSESSMENT_STORE_API_HOST + "/score"
+
+    ASSESSMENT_FLAGS_ENDPOINT = ASSESSMENT_STORE_API_HOST + "/flag"
 
     COMMENTS_ENDPOINT = "/comment/{application_id}/{sub_criteria_id}"
 
@@ -119,6 +125,6 @@ class DefaultConfig:
     """
 
     AWS_ACCESS_KEY_ID = getenv("AWS_ACCESS_KEY_ID")
-    AWS_SECRET_ACCESS_KEY =  getenv("AWS_SECRET_ACCESS_KEY")
+    AWS_SECRET_ACCESS_KEY = getenv("AWS_SECRET_ACCESS_KEY")
     AWS_BUCKET_NAME = getenv("AWS_BUCKET_NAME")
     AWS_REGION = "eu-west-2"
