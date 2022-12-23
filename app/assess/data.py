@@ -394,10 +394,7 @@ def submit_comment(
     current_app.logger.info(
         f"Response from Assessment Store: '{response.json()}'."
     )
-    if response.status_code == 200:
-        return True
-    else:
-        return False
+    return response.ok
 
 
 def get_file_url(filename: str, application_id: str):

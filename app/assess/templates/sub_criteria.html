@@ -64,7 +64,7 @@
                     {% endfor %}
                     {% endif %}
                     
-                    {% if displayCommentBox != True %}
+                    {% if display_comment_box != True %}
                     <form method="GET">
                         <button id="comment-button-community" class="govuk-button secondary-button govuk-!-margin-top-2" type="submit" data-module="govuk-button" value="add-comment">
                             {% if comments == None %} Add a comment
@@ -76,8 +76,8 @@
                     </form>
                     {% endif %}
 
-                    {% if displayCommentBox == True %}
-                        {{ commentBox(commentForm) }}
+                    {% if display_comment_box == True %}
+                        {{ commentBox(comment_form) }}
                     {% endif %}
                 </div>
             </div>

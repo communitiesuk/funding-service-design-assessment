@@ -162,9 +162,9 @@ class TestJinjaMacros(object):
 
     def test_comment_macro(self, request_ctx):
         rendered_html = render_template_string(
-            "{{commentBox(commentForm)}}",
+            "{{commentBox(comment_form)}}",
             commentBox=get_template_attribute("macros/comments_box.html", "commentBox"),
-            commentForm=CommentsForm()
+            comment_form=CommentsForm()
         )
 
         # replacing new lines to more easily regex match the html
@@ -172,11 +172,11 @@ class TestJinjaMacros(object):
 
         assert re.search(
             r"Add a comment</label>", rendered_html
-        ), "Title not found"
+        ), "Comment label not found"
 
         assert re.search(
             r"Save comment</button>", rendered_html
-        ), "Title not found"
+        ), "Save button not found"
 
     def test_justification_macro(self, request_ctx):
         rendered_html = render_template_string(
