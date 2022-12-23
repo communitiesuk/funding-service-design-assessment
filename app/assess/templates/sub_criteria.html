@@ -3,6 +3,8 @@
 {% from "macros/scores_justification.html" import scores_justification %}
 {% from "macros/theme.html" import theme %}
 {% from "macros/sub_criteria_navbar.html" import navbar %}
+{% from "macros/comments.html" import comment %}
+{% from "macros/comments_summary.html" import comment_summary %}
 
 {% block content %}
     <div class="govuk-phase-banner flex-parent-element">
@@ -43,32 +45,11 @@
                 {% else %}
                     {{theme(current_theme_id, answers_meta)}}
                 {% endif %}
-                <div class="govuk-!-margin-top-7" id="anchor">
-                    <h2 class="govuk-heading-m">Comments</h2>
-                    <div id="more-detail-hint" class="govuk-hint">
-                      <p class="govuk-hint">Summarise any thoughts you have on the information provided.</p>
-                      <p class="govuk-hint">You cannot edit or delete your comment once you have saved it.</p>
-                    </div>
-                    {% if comments == None %}
-                    <div class="govuk-body govuk-!-margin-top-6">
-                        No comments have been left yet.
-                        </div>
-                    {% else %}
-                    {% for comment in comments %}
-                        {% if role_information["is_commenter"] and (comment.user_role == "ASSESSOR" or comment.user_role == "LEAD_ASSESSOR") %}
-                            <div class="comment-group">
-                                <p class="govuk-body">Permission required to see comment.</p>
-                            </div>
-                        {% else %}
-                            <div class="comment-group">
-                                <p class="govuk-body">{{comment.user_role}}</p>
-                                <p class="govuk-body-s">{{comment.full_name}} ({{comment.user_role|all_caps_to_human}}) {{comment.email_address}}</p>
-                                <p class="govuk-body-s">{{comment.date_created|datetime_format_24hr}}</p>
-                            </div>
-                        {% endif %}
-                    {% endfor %}
-                    {% endif %}
-                </div>
+                {%if current_theme_id == "score"%}
+                {{comment_summary(comments,sub_criteria.themes,role_information["is_commenter"])}}
+                {% else %}
+                {{comment(comments, role_information["is_commenter"])}}
+                {% endif %}
             </div>
         </div>
     </div>

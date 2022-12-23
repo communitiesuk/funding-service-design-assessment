@@ -114,7 +114,6 @@ def create_app() -> Flask:
 
         health = Healthcheck(flask_app)
         health.add_check(FlaskRunningChecker())
-
         @flask_app.before_request
         @login_requested
         def ensure_minimum_required_roles():

@@ -680,7 +680,7 @@
       "justification": "fgd",
       "score": 5,
       "sub_criteria_id": "app-info",
-      "user_id": ""
+      "user_id": "0a31fa06-7555-11ed-a1eb-0242ac120002"
     },
     {
       "application_id": "app_123",
@@ -689,7 +689,7 @@
       "justification": "gg",
       "score": 2,
       "sub_criteria_id": "app-info",
-      "user_id": ""
+      "user_id": "0a31fa06-7555-11ed-a1eb-0242ac120002"
     },
     {
       "application_id": "app_123",
@@ -698,35 +698,78 @@
       "justification": "gg",
       "score": 5,
       "sub_criteria_id": "app-info",
-      "user_id": ""
+      "user_id": "0a31fa06-7555-11ed-a1eb-0242ac120002"
     }
   ],
-  "assessment_store/comment/app_123/1a2b3c4d": [
+  "assessment_store/comment/app_123/1a2b3c4d/general-information": [
     {
       "comment": "This is a comment",
-      "user_id": "0a31fa06-7555-11ed-a1eb-0242ac120001",
+      "user_id": "0a31fa06-7555-11ed-a1eb-0242ac120002",
       "date_created": "2022-12-08T15:45:07.987830",
-      "email_address": "test@test.com",
-      "full_name": "Gommez Addams",
-      "user_role": "LEAD_ASSESSOR"
+      "theme_id": "general-information"
     },
     {
       "comment": "Youre missing some details",
-      "user_id": "0a31fa06-7555-11ed-a1eb-0242ac10502",
+      "user_id": "0a31fa06-7555-11ed-a1eb-0242ac10505",
       "date_created": "2022-10-27T08:32:13.383999",
-      "email_address": "test@test.com",
-      "full_name": "Bruce Wayne",
-      "user_role": "ASSESSOR"
+      "theme_id": "general-information"
     },
     {
       "comment": "This meets criteria X",
       "user_id": "0a31fa06-7555-11ed-a1eb-0242ac120003",
-      "date_created": "2022-12-20T09:25:05.987830",
-      "email_address": "hammer@test.com",
-      "full_name": "Thor",
-      "user_role": "COMMENTER"
+      "date_created": "2022-10-27T08:32:13.383999",
+      "theme_id": "general-information"
     }
   ],
+  "assessment_store/comment/app_123/1a2b3c4d/activities": [
+      {
+        "comment": "Activities is wrong",
+        "user_id": "0a31fa06-7555-11ed-a1eb-0242ac120002",
+        "date_created": "2022-12-08T15:45:07.987830",       
+        "theme_id": "activities"
+      },
+      {
+        "comment": "Add more detail here",
+        "user_id": "0a31fa06-7555-11ed-a1eb-0242ac10505",
+        "date_created": "2022-10-27T08:32:13.383999",        
+        "theme_id": "activities"
+      }
+  ],
+  "assessment_store/comment/app_123/1a2b3c4d/partnerships": [
+    
+  ],
+  "assessment_store/comment/app_123/1a2b3c4d/score": [
+    {
+      "comment": "This is a comment",
+      "user_id": "0a31fa06-7555-11ed-a1eb-0242ac120002",
+      "date_created": "2022-12-08T15:45:07.987830",
+      "theme_id": "general-information"
+    },
+    {
+      "comment": "Youre missing some details",
+      "user_id": "0a31fa06-7555-11ed-a1eb-0242ac10505",
+      "date_created": "2022-10-27T08:32:13.383999",
+      "theme_id": "general-information"
+    },
+    {
+      "comment": "This is wrong",
+      "user_id": "0a31fa06-7555-11ed-a1eb-0242ac10505",
+      "date_created": "2022-10-27T08:32:13.383999",
+      "theme_id": "general-information"
+    },
+    {
+      "comment": "Activities is wrong",
+      "user_id": "0a31fa06-7555-11ed-a1eb-0242ac120002",
+      "date_created": "2022-12-08T15:45:07.987830",
+      "theme_id": "activities"
+    },
+    {
+      "comment": "Add more detail here",
+      "user_id": "0a31fa06-7555-11ed-a1eb-0242ac10505",
+      "date_created": "2022-12-08T15:45:07.987830",     
+      "theme_id": "activities"
+    }
+],
   "assessment_store/sub_criteria_themes/app_123/community_use": [
     {
       "answer": "Test",
@@ -2379,5 +2422,25 @@
       "presentation_type": "text",
       "question": "Confirm you have a bank account set up and associated with the organisation you are applying on behalf of"
     }
-  ]
+  ],
+  "account_store/bulk-accounts":{
+    "0a31fa06-7555-11ed-a1eb-0242ac120002" : {
+      "user_id": "0a31fa06-7555-11ed-a1eb-0242ac120002",
+      "full_name" : "Gommez Addams",
+      "highest_role": "LEAD_ASSESSOR",
+      "email_address":"test@test.com"
+    },
+    "0a31fa06-7555-11ed-a1eb-0242ac10505": {
+      "user_id": "0a31fa06-7555-11ed-a1eb-0242ac10505",
+      "full_name" : "Bruce Wayne",
+      "highest_role": "ASSESSOR",
+      "email_address":"test@test.com"
+    },
+    "0a31fa06-7555-11ed-a1eb-0242ac120003": {
+      "user_id": "0a31fa06-7555-11ed-a1eb-0242ac120003",
+      "full_name" : "Thor",
+      "highest_role": "COMMENTER",
+      "email_address":"test@test.com"
+    }
+  }
 }

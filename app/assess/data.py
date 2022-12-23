@@ -7,11 +7,11 @@ from urllib.parse import urlencode
 
 import requests
 from app.assess.models.application import Application
-from app.assess.models.comment import Comment
 from app.assess.models.fund import Fund
 from app.assess.models.round import Round
 from app.assess.models.score import Score
 from app.assess.models.sub_criteria import SubCriteria
+from app.assess.models.comment import Comment
 from config import Config
 from flask import abort
 from flask import current_app
@@ -356,7 +356,7 @@ def get_sub_criteria_theme_answers(
         abort(404, description=msg)
 
 
-def get_comments(application_id: str, sub_criteria_id: str):
+def get_comments(application_id: str, sub_criteria_id: str, theme_id, themes):
     """_summary_: Function is set up to retrieve
     the data from application store with
     get_data() function.
@@ -368,20 +368,43 @@ def get_comments(application_id: str, sub_criteria_id: str):
     comment_endpoint = (
         Config.ASSESSMENT_STORE_API_HOST
         + Config.COMMENTS_ENDPOINT.format(
-            application_id=application_id, sub_criteria_id=sub_criteria_id
+            application_id=application_id, sub_criteria_id=sub_criteria_id, theme_id=theme_id
         )
     )
 
-    comment_response = get_data(comment_endpoint)
-    if comment_response and (type(comment_response) is list):
-        comments = []
-        for comment in comment_response:
-            comments.append(Comment.from_filtered_dict(comment))
-        return comments
+    comment_response = get_data(comment_endpoint)   
+
+    if (type(comment_response) is list):
+        if len(comment_response) == 0:
+            current_app.logger.info(f"No comments found for application: {application_id}, sub_criteria_id: {sub_criteria_id}")
+            return None
+
+        account_ids = [comment["user_id"] for comment in comment_response]
+        bulk_accounts_dict = get_bulk_accounts_dict(account_ids)
+
+        comments: list[Comment] = [
+            Comment.from_dict(
+                comment
+                | {
+                    "full_name": bulk_accounts_dict[comment["user_id"]][
+                       "full_name"
+                    ],
+                    "email_address": bulk_accounts_dict[comment["user_id"]][
+                       "email_address"
+                    ],
+                    "highest_role": bulk_accounts_dict[comment["user_id"]][
+                       "highest_role"
+                    ],
+                }
+            )
+            for comment in comment_response
+        ]
+        theme_id_to_comments_list_map = {theme.id: [comment for comment in comments if comment.theme_id == theme.id] for theme in themes}
+        return theme_id_to_comments_list_map
     else:
         msg = f"No comment response for application: '{application_id}'."
         current_app.logger.warn(msg)
-        abort(404, description=msg)
+        abort(500, description=msg)
 
 def get_file_url(filename: str, application_id: str):
     """_summary_: Function is set up to retrieve
