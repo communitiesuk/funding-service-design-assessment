@@ -1,0 +1,13 @@
+{% macro assessment_flag(flag, user_info) %}
+    <div class="assessment-alert assessment-alert--flagged">
+        <h1 class="assessment-alert__heading govuk-heading-l">{{ flag.flag_type.name | title }}</h1>
+
+        <h2 class="govuk-heading-m">Reason</h2>
+        <p class="govuk-body">{{ flag.justification }}</p>
+        <h2 class="govuk-heading-m">Section flagged</h2>
+        <p class="govuk-body">{{ flag.section_to_flag }}</p>
+        {# TODO: Add lead role or highest role dynamically here? #}
+        <p class="govuk-body-s">{{ user_info["full_name"] }} ({{ user_info["highest_role"] }}) {{ user_info["email_address"] }}</p>
+        <p class="govuk-body-s">{{ flag.date_created | datetime_format("%d/%m/%Y at %H:%M") }}</p>
+    </div>
+{% endmacro %}

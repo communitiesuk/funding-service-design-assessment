@@ -1,0 +1,23 @@
+{% macro banner_summary(fund_name, project_reference, project_name, funding_amount_requested, workflow_status) %}
+
+</div> {# This div is here on purpose. #}
+<div class="fsd-banner-background">
+    <div class="govuk-width-container">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                <div class="govuk-grid-column-two-thirds">
+                    <h1 class="govuk-heading-xl fsd-banner-content">Fund: {{ fund_name }}</h1>
+                    <h2 class="govuk-heading-l fsd-banner-content">Project
+                        reference: {{ project_reference | format_project_ref }}</h2>
+                    <h3 class="govuk-body-l fsd-banner-content fsd-banner-collapse-padding">Project
+                        name: {{ project_name }}</h3>
+                    <h3 class="govuk-body-l fsd-banner-content">Total funding requested:
+                        &pound;{{ "{:,.2f}".format(funding_amount_requested) }}</h3>
+                    <h3 class="govuk-body-l fsd-banner-content fsd-banner-collapse-padding">{{ workflow_status | status_to_human }}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endmacro %}
