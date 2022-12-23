@@ -1,4 +1,5 @@
 import base64
+from os import environ
 from os import getenv
 from pathlib import Path
 
@@ -18,6 +19,15 @@ class DefaultConfig:
     SESSION_COOKIE_NAME = CommonConfig.SESSION_COOKIE_NAME
     FLASK_ROOT = str(Path(__file__).parent.parent.parent)
     FLASK_ENV = CommonConfig.FLASK_ENV
+
+    # Authentication
+    FSD_USER_TOKEN_COOKIE_NAME = "fsd_user_token"
+    AUTHENTICATOR_HOST = environ.get("AUTHENTICATOR_HOST", "authenticator")
+    FSD_USER_TOKEN_COOKIE_NAME = "fsd_user_token"
+    # RSA 256 KEYS
+    RSA256_PUBLIC_KEY_BASE64 = environ.get("RSA256_PUBLIC_KEY_BASE64")
+    if RSA256_PUBLIC_KEY_BASE64:
+        RSA256_PUBLIC_KEY = base64.b64decode(RSA256_PUBLIC_KEY_BASE64).decode()
 
     FORCE_HTTPS = CommonConfig.FORCE_HTTPS
     FSD_LOG_LEVEL = CommonConfig.FSD_LOG_LEVEL
