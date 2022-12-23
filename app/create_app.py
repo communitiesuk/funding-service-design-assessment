@@ -109,6 +109,12 @@ def create_app() -> Flask:
         )
 
         # Bundle and compile assets
+        assets = Environment()
+        assets.init_app(flask_app)
+        compile_static_assets(assets, flask_app)
+
+        health = Healthcheck(flask_app)
+        health.add_check(FlaskRunningChecker())
        
         @flask_app.before_request
         @login_requested

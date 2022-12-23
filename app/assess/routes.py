@@ -27,6 +27,7 @@ assess_bp = Blueprint(
     "/application_id/<application_id>/sub_criteria_id/<sub_criteria_id>",
     methods=["POST", "GET"],
 )
+@login_required(roles_required=["COMMENTER"])
 def display_sub_criteria(
     application_id,
     sub_criteria_id,
@@ -44,7 +45,7 @@ def display_sub_criteria(
         if form.validate_on_submit():
             score = int(form.score.data)
             justification = form.justification.data
-            user_id = "test"
+            user_id = g.account_id
             submit_score_and_justification(
                 score=score,
                 justification=justification,
@@ -68,7 +69,7 @@ def display_sub_criteria(
         application_id=application_id, sub_criteria_id=sub_criteria_id, theme_id=theme_id
     )
 
-    comments_dictionary = {t.id: [c for c in comments if c.theme_id == t.id] for t in sub_criteria.themes}
+    comments_dictionary = {theme.id: [comment for comment in comments if comment.theme_id == theme.id] for theme in sub_criteria.themes}
 
     if theme_id == "score":
         # call to assessment store to get latest score
