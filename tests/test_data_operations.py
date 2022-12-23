@@ -2,6 +2,7 @@ from app.assess.data import get_application_overviews
 from app.assess.data import get_comments
 from app.assess.data import get_fund
 from app.assess.data import get_round
+from app.assess.models.theme import Theme
 from config.envs.default import DefaultConfig
 from flask import Flask
 
@@ -104,5 +105,6 @@ class TestDataOperations:
     def test_get_comments(self):
 
         with self.test_app.app_context():
-            comments = get_comments("app_123", "1a2b3c4d", "general-information")
+            themes = [Theme(id='general-information', name='General information'), Theme(id='activities', name='Activities'), Theme(id='partnerships', name='Partnerships')]
+            comments = get_comments("app_123", "1a2b3c4d", "general-information", themes)
         assert 3 == len(comments), "wrong number of comments"

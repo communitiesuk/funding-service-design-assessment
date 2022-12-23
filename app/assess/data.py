@@ -372,11 +372,13 @@ def get_comments(application_id: str, sub_criteria_id: str, theme_id, themes):
         )
     )
 
-    comment_response = get_data(comment_endpoint)
-    if comment_response == None:
-        return None
+    comment_response = get_data(comment_endpoint)   
 
-    if comment_response != None:
+    if (type(comment_response) is list):
+        if len(comment_response) == 0:
+            current_app.logger.info(f"No comments found for application: {application_id}, sub_criteria_id: {sub_criteria_id}")
+            return None
+
         account_ids = [comment["user_id"] for comment in comment_response]
         bulk_accounts_dict = get_bulk_accounts_dict(account_ids)
 
@@ -398,7 +400,11 @@ def get_comments(application_id: str, sub_criteria_id: str, theme_id, themes):
             for comment in comment_response
         ]
         theme_id_to_comments_list_map = {theme.id: [comment for comment in comments if comment.theme_id == theme.id] for theme in themes}
-        return theme_id_to_comments_list_map    
+        return theme_id_to_comments_list_map
+    else:
+        msg = f"No comment response for application: '{application_id}'."
+        current_app.logger.warn(msg)
+        abort(500, description=msg)    
 
 def get_file_url(filename: str, application_id: str):
     """_summary_: Function is set up to retrieve
