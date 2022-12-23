@@ -9,7 +9,7 @@
 {% block content %}
     <div class="govuk-phase-banner flex-parent-element">
         <p class="govuk-!-text-align-left flex-parent-element flexed-element-margins-collapse">{{ govukBackLink({'href': url_for("assess_bp.application", application_id=application_id), 'text': 'Back to assessment overview'}) }}</p>
-        <p class="flex-parent-element flexed-element-margins-collapse govuk-!-text-align-right"><a href="#" class="govuk-link flexed-element-margins-collapse">Sign out</a></p>
+        <p class="flex-parent-element flexed-element-margins-collapse govuk-!-text-align-right"><a href="{{ sso_logout_url }}" class="govuk-link flexed-element-margins-collapse">Log out</a></p>
     </div>
     </div>
     <div class="fsd-banner-background">
