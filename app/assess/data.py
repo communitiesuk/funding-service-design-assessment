@@ -404,7 +404,7 @@ def get_comments(application_id: str, sub_criteria_id: str, theme_id, themes):
     else:
         msg = f"No comment response for application: '{application_id}'."
         current_app.logger.warn(msg)
-        abort(500, description=msg)    
+        abort(500, description=msg)
 
 def get_file_url(filename: str, application_id: str):
     """_summary_: Function is set up to retrieve
