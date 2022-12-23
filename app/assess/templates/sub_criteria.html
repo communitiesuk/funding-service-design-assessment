@@ -46,9 +46,9 @@
                     {{theme(current_theme_id, answers_meta)}}
                 {% endif %}
                 {%if current_theme_id == "score"%}
-                {{comment_summary(comments,sub_criteria.themes)}}
+                {{comment_summary(comments,sub_criteria.themes,role_information["is_commenter"])}}
                 {% else %}
-                {{comment(comments)}}
+                {{comment(comments, role_information["is_commenter"])}}
                 {% endif %}
             </div>
         </div>

@@ -715,8 +715,8 @@
       "theme_id": "general-information"
     },
     {
-      "comment": "This is wrong",
-      "user_id": "0a31fa06-7555-11ed-a1eb-0242ac10505",
+      "comment": "This meets criteria X",
+      "user_id": "0a31fa06-7555-11ed-a1eb-0242ac120003",
       "date_created": "2022-10-27T08:32:13.383999",
       "theme_id": "general-information"
     }
@@ -2431,6 +2431,12 @@
       "user_id": "0a31fa06-7555-11ed-a1eb-0242ac10505",
       "full_name" : "Bruce Wayne",
       "highest_role": "ASSESSOR",
+      "email_address":"test@test.com"
+    },
+    "0a31fa06-7555-11ed-a1eb-0242ac120003": {
+      "user_id": "0a31fa06-7555-11ed-a1eb-0242ac120003",
+      "full_name" : "Thor",
+      "highest_role": "COMMENTER",
       "email_address":"test@test.com"
     }
   }
