@@ -194,26 +194,7 @@ class TestRoutes:
             # Assert that the response contains the expected ids
             assert (
                 expected_names in response.data
-            ), "Response does not contain expected names"
-    
-    # @pytest.mark.parametrize(
-    #     "expected_ids, expected_names",
-    #     [
-    #         (b"general-information", b"General information"),
-    #         (b"activities", b"Activities"),
-    #         (b"partnerships", b"Partnerships"),
-    #     ],
-    # )
-    # def test_route_sub_criteria_comment(self, flask_test_client, expected_names):
-    #     comments_payload = {
-    #         "application_id": "app_123", 
-    #         "sub_criteria_id": "1a2b3c4d",
-    #         "comment": "Please provide more information",
-    #         "comment_type": "COMMENT",
-    #         "user_id": "test",
-    #         "theme_id": "something"
-    #     }
-    
+            ), "Response does not contain expected names"    
 
     @pytest.mark.parametrize(
         "expected_ids, expected_names",
