@@ -27,7 +27,7 @@ assess_bp = Blueprint(
     "/application_id/<application_id>/sub_criteria_id/<sub_criteria_id>",
     methods=["POST", "GET"],
 )
-
+@login_required(roles_required=["COMMENTER"])
 def display_sub_criteria(
     application_id,
     sub_criteria_id,
@@ -76,10 +76,8 @@ def display_sub_criteria(
     theme_id = request.args.get("theme_id", sub_criteria.themes[0].id)
     fund = get_fund(Config.COF_FUND_ID)
     comments = get_comments(
-        application_id=application_id, sub_criteria_id=sub_criteria_id, theme_id=theme_id
+        application_id=application_id, sub_criteria_id=sub_criteria_id, theme_id=theme_id, themes=sub_criteria.themes
     )
-
-    comments_dictionary = {theme.id: [comment for comment in comments if comment.theme_id == theme.id] for theme in sub_criteria.themes}
 
     common_template_config = {
         "role_information": role_information,
@@ -88,7 +86,7 @@ def display_sub_criteria(
         "application_id": application_id,
         "fund": fund,
         "form": form,
-        "comments": comments_dictionary,
+        "comments": comments,
     }
 
     if theme_id == "score":

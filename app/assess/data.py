@@ -356,7 +356,7 @@ def get_sub_criteria_theme_answers(
         abort(404, description=msg)
 
 
-def get_comments(application_id: str, sub_criteria_id: str, theme_id):
+def get_comments(application_id: str, sub_criteria_id: str, theme_id, themes):
     """_summary_: Function is set up to retrieve
     the data from application store with
     get_data() function.
@@ -373,7 +373,9 @@ def get_comments(application_id: str, sub_criteria_id: str, theme_id):
     )
 
     comment_response = get_data(comment_endpoint)
-    comments = None
+    if comment_response == None:
+        return None
+
     if comment_response != None:
         account_ids = [comment["user_id"] for comment in comment_response]
         bulk_accounts_dict = get_bulk_accounts_dict(account_ids)
@@ -395,8 +397,8 @@ def get_comments(application_id: str, sub_criteria_id: str, theme_id):
             )
             for comment in comment_response
         ]
-
-    return comments
+        theme_id_to_comments_list_map = {theme.id: [comment for comment in comments if comment.theme_id == theme.id] for theme in themes}
+        return theme_id_to_comments_list_map    
 
 def get_file_url(filename: str, application_id: str):
     """_summary_: Function is set up to retrieve
