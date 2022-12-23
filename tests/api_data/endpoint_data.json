@@ -725,19 +725,13 @@
       {
         "comment": "Activities is wrong",
         "user_id": "0a31fa06-7555-11ed-a1eb-0242ac120002",
-        "date_created": "2022-12-08T15:45:07.987830",
-        "email_address": "test@test.com",
-        "full_name": "Gommez Addams",
-        "user_role": "LEAD_ASSESSOR",
+        "date_created": "2022-12-08T15:45:07.987830",       
         "theme_id": "activities"
       },
       {
         "comment": "Add more detail here",
         "user_id": "0a31fa06-7555-11ed-a1eb-0242ac10505",
-        "date_created": "2022-10-27T08:32:13.383999",
-        "email_address": "test@test.com",
-        "full_name": "Bruce Wayne",
-        "user_role": "ASSESSOR",
+        "date_created": "2022-10-27T08:32:13.383999",        
         "theme_id": "activities"
       }
   ],
@@ -769,7 +763,7 @@
     {
       "comment": "Add more detail here",
       "user_id": "0a31fa06-7555-11ed-a1eb-0242ac10505",
-      "user_role": "ASSESSOR",
+      "date_created": "2022-12-08T15:45:07.987830",     
       "theme_id": "activities"
     }
 ],
