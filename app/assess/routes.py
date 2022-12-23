@@ -36,9 +36,14 @@ def display_sub_criteria(
     """
     Page showing sub criteria and themes for an application
     """
+<<<<<<< HEAD
 
     display_comment_box = False
 
+=======
+    
+    displayCommentBox = False
+>>>>>>> 62c8d002eeb73618cc2bc30a4d1c377158601c46
     if 'add-comment' in request.args.keys() and request.args['add-comment'] == '1':
         display_comment_box = True            
 
