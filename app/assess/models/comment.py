@@ -7,9 +7,9 @@ class Comment:
     user_id: str
     date_created: str
     email_address: str
-    full_name:str
-    highest_role:str
-    theme_id:str
+    full_name: str
+    highest_role: str
+    theme_id: str
 
     @classmethod
     def from_dict(cls, d: dict):

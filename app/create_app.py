@@ -21,7 +21,6 @@ from fsd_utils.logging import logging
 from jinja2 import ChoiceLoader
 from jinja2 import PackageLoader
 from jinja2 import PrefixLoader
-from fsd_utils.authentication.models import User
 
 
 def create_app() -> Flask:
@@ -115,7 +114,6 @@ def create_app() -> Flask:
 
         health = Healthcheck(flask_app)
         health.add_check(FlaskRunningChecker())
-       
         @flask_app.before_request
         @login_requested
         def ensure_minimum_required_roles():
