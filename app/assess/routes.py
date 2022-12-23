@@ -42,7 +42,6 @@ def display_sub_criteria(
         display_comment_box = True            
 
     comment_form = CommentsForm()
-
     form = ScoreForm()
     score_error, justification_error, scores_submitted = (
         False,
