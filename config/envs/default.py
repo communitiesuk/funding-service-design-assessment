@@ -96,6 +96,8 @@ class DefaultConfig:
 
     ASSESSMENT_SCORES_ENDPOINT = ASSESSMENT_STORE_API_HOST + "/score"
 
+    ASSESSMENT_COMMENT_ENDPOINT = ASSESSMENT_STORE_API_HOST + "/comment"
+
     COMMENTS_ENDPOINT = "/comment/{application_id}/{sub_criteria_id}/{theme_id}"
 
     # Account store endoints
