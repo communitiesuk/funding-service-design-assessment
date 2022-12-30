@@ -8,7 +8,7 @@ from app.assess.data import get_local_data
 intro_routes_and_test_content = {
     "/": [{"tag": "h1", "name": None, "contains": "Assessment Hub"}],
     "/assess": [{"tag": "h1", "name": None, "contains": "Funds"}],
-    "/assess/landing": [
+    "/assess/assessor_dashboard": [
         {"tag": "h1", "name": None, "contains": "Team dashboard"}
     ],
 }
