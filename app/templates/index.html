@@ -10,7 +10,7 @@
   <div class="govuk-width-container">
       <h1 class="govuk-heading-xl">Assessment Hub</h1>
 
-      {% if g.is_autheticated %}
+      {% if not g.is_authenticated %}
         <p class="govuk-body">
             Welcome to the assessment service.
             <br /><br />Please sign in to continue.
