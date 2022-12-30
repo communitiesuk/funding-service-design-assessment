@@ -116,6 +116,7 @@ def create_app() -> Flask:
 
         health = Healthcheck(flask_app)
         health.add_check(FlaskRunningChecker())
+
         @flask_app.before_request
         @login_requested
         def ensure_minimum_required_roles():
@@ -123,6 +124,15 @@ def create_app() -> Flask:
                 minimum_roles_required=["COMMENTER"],
                 unprotected_routes=["", "/"],
             )
+
+        @flask_app.after_request
+        def set_response_headers(response):
+            response.headers[
+                "Cache-Control"
+            ] = "no-cache, no-store, must-revalidate"
+            response.headers["Pragma"] = "no-cache"
+            response.headers["Expires"] = "0"
+            return response
 
         return flask_app
 
