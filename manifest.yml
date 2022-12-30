@@ -15,6 +15,9 @@ applications:
     ASSESSMENT_STORE_API_HOST: https://funding-service-design-assessment-store-dev.london.cloudapps.digital
     AUTHENTICATOR_HOST: https://fsd:fsd@authenticator2.dev.gids.dev
     RSA256_PUBLIC_KEY_BASE64: ((RSA256_PUBLIC_KEY_BASE64))
+    # Sentry DSN is OK to be public see: https://docs.sentry.io/product/sentry-basics/dsn-explainer/#dsn-utilization
+    SENTRY_DSN: https://cae245fff7d8483e9d73c73b30137ffc@o1432034.ingest.sentry.io/4504418515550208
+    GITHUB_SHA: ((GITHUB_SHA))
   health-check-http-endpoint: /healthcheck
   health-check-type: http
 
@@ -32,6 +35,9 @@ applications:
     FUND_STORE_API_HOST: https://funding-service-design-fund-store-test.london.cloudapps.digital
     AUTHENTICATOR_HOST: https://fsd:fsd@authenticator2.test.gids.dev
     RSA256_PUBLIC_KEY_BASE64: ((RSA256_PUBLIC_KEY_BASE64))
+    # Sentry DSN is OK to be public see: https://docs.sentry.io/product/sentry-basics/dsn-explainer/#dsn-utilization
+    SENTRY_DSN: https://cae245fff7d8483e9d73c73b30137ffc@o1432034.ingest.sentry.io/4504418515550208
+    GITHUB_SHA: ((GITHUB_SHA))
   services:
     - form-uploads-test
   health-check-http-endpoint: /healthcheck
