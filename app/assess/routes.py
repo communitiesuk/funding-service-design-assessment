@@ -82,7 +82,10 @@ def display_sub_criteria(
     theme_id = request.args.get("theme_id", sub_criteria.themes[0].id)
     fund = get_fund(Config.COF_FUND_ID)
     comments = get_comments(
-        application_id=application_id, sub_criteria_id=sub_criteria_id, theme_id=theme_id, themes=sub_criteria.themes
+        application_id=application_id,
+        sub_criteria_id=sub_criteria_id,
+        theme_id=theme_id,
+        themes=sub_criteria.themes,
     )
 
     common_template_config = {
@@ -136,6 +139,7 @@ def display_sub_criteria(
         answers_meta=answers_meta,
         **common_template_config,
     )
+
 
 @assess_bp.route("/assessor_dashboard/", methods=["GET"])
 def landing():
