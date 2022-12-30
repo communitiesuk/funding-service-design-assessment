@@ -1,6 +1,7 @@
 import re
 
 import pytest
+from app.assess.forms.comments_form import CommentsForm
 from app.assess.models.ui.applicants_response import AboveQuestionAnswerPair
 from app.assess.models.ui.applicants_response import (
     AboveQuestionAnswerPairHref,
@@ -157,6 +158,24 @@ class TestJinjaMacros(object):
         assert (
             len(re.findall(r"""<span.*?\S*\d</span>""", rendered_html)) == 5
         ), "Should have 5 score values for radios"
+
+    def test_comment_macro(self, request_ctx):
+        rendered_html = render_template_string(
+            "{{commentBox(commentForm)}}",
+            commentBox=get_template_attribute("macros/comments_box.html", "commentBox"),
+            commentForm=CommentsForm()
+        )
+
+        # replacing new lines to more easily regex match the html
+        rendered_html = rendered_html.replace("\n", "")
+
+        assert re.search(
+            r"Add a comment</label>", rendered_html
+        ), "Add Comment label not found"
+
+        assert re.search(
+            r"Save comment</button>", rendered_html
+        ), "Save comment button not found"
 
     def test_justification_macro(self, request_ctx):
         rendered_html = render_template_string(

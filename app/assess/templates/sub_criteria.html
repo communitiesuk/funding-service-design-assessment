@@ -5,6 +5,8 @@
 {% from "macros/sub_criteria_navbar.html" import navbar %}
 {% from "macros/comments.html" import comment %}
 {% from "macros/comments_summary.html" import comment_summary %}
+{% from "macros/comments_box.html" import commentBox %}
+
 
 {% block content %}
     <div class="govuk-phase-banner flex-parent-element">
@@ -50,6 +52,21 @@
                 {% else %}
                 {{comment(comments, role_information["is_commenter"])}}
                 {% endif %}
+                {% if displayCommentBox != True %}
+                    <form method="GET">
+                        <button id="comment-button-community" class="govuk-button secondary-button govuk-!-margin-top-2" type="submit" data-module="govuk-button" value="add-comment">
+                            {% if comments == None %} Add a comment
+                            {% else %} Add another comment
+                            {% endif %}
+                        </button>
+                        <input type="hidden" name="theme_id" value="{{current_theme_id}}">
+                        <input type="hidden" name="add-comment" value="1">
+                    </form>
+                    {% endif %}
+
+                    {% if displayCommentBox == True %}
+                        {{ commentBox(commentForm) }}
+                    {% endif %}
             </div>
         </div>
     </div>
