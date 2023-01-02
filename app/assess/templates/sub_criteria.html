@@ -5,6 +5,10 @@
 {% from "macros/sub_criteria_navbar.html" import navbar %}
 {% from "macros/banner_summary.html" import banner_summary %}
 {% from "macros/flag_application_button.html" import flag_application_button %}
+{% from "macros/comments.html" import comment %}
+{% from "macros/comments_summary.html" import comment_summary %}
+{% from "macros/comments_box.html" import commentBox %}
+
 
 {% block content %}
 
@@ -42,32 +46,26 @@
                 {% else %}
                     {{theme(current_theme_id, answers_meta)}}
                 {% endif %}
-                <div class="govuk-!-margin-top-7" id="anchor">
-                    <h2 class="govuk-heading-m">Comments</h2>
-                    <div id="more-detail-hint" class="govuk-hint">
-                      <p class="govuk-hint">Summarise any thoughts you have on the information provided.</p>
-                      <p class="govuk-hint">You cannot edit or delete your comment once you have saved it.</p>
-                    </div>
-                    {% if comments == None %}
-                    <div class="govuk-body govuk-!-margin-top-6">
-                        No comments have been left yet.
-                        </div>
-                    {% else %}
-                    {% for comment in comments %}
-                        {% if role_information["is_commenter"] and (comment.user_role == "ASSESSOR" or comment.user_role == "LEAD_ASSESSOR") %}
-                            <div class="comment-group">
-                                <p class="govuk-body">Permission required to see comment.</p>
-                            </div>
-                        {% else %}
-                            <div class="comment-group">
-                                <p class="govuk-body">{{comment.user_role}}</p>
-                                <p class="govuk-body-s">{{comment.full_name}} ({{comment.user_role|all_caps_to_human}}) {{comment.email_address}}</p>
-                                <p class="govuk-body-s">{{comment.date_created|datetime_format_24hr}}</p>
-                            </div>
-                        {% endif %}
-                    {% endfor %}
+                {%if current_theme_id == "score"%}
+                {{comment_summary(comments,sub_criteria.themes,role_information["is_commenter"])}}
+                {% else %}
+                {{comment(comments, role_information["is_commenter"])}}
+                {% endif %}
+                {% if displayCommentBox != True %}
+                    <form method="GET">
+                        <button id="comment-button-community" class="govuk-button secondary-button govuk-!-margin-top-2" type="submit" data-module="govuk-button" value="add-comment">
+                            {% if comments == None %} Add a comment
+                            {% else %} Add another comment
+                            {% endif %}
+                        </button>
+                        <input type="hidden" name="theme_id" value="{{current_theme_id}}">
+                        <input type="hidden" name="add-comment" value="1">
+                    </form>
                     {% endif %}
-                </div>
+
+                    {% if displayCommentBox == True %}
+                        {{ commentBox(commentForm) }}
+                    {% endif %}
             </div>
         </div>
     </div>

@@ -100,9 +100,13 @@ class DefaultConfig:
 
     ASSESSMENT_SCORES_ENDPOINT = ASSESSMENT_STORE_API_HOST + "/score"
 
+    ASSESSMENT_COMMENT_ENDPOINT = ASSESSMENT_STORE_API_HOST + "/comment"
+
     ASSESSMENT_FLAGS_ENDPOINT = ASSESSMENT_STORE_API_HOST + "/flag"
 
-    COMMENTS_ENDPOINT = "/comment/{application_id}/{sub_criteria_id}"
+    COMMENTS_ENDPOINT = (
+        "/comment/{application_id}/{sub_criteria_id}/{theme_id}"
+    )
 
     # Account store endoints
     BULK_ACCOUNTS_ENDPOINT = ACCOUNT_STORE_API_HOST + "/bulk-accounts"

@@ -45,6 +45,15 @@ def display_sub_criteria(
             for required_role in ["ASSESSOR", "LEAD_ASSESSOR"]
         ),
     }
+
+    displayCommentBox = False
+    if (
+        "add-comment" in request.args.keys()
+        and request.args["add-comment"] == "1"
+    ):
+        displayCommentBox = True
+
+    commentForm = CommentsForm()
     form = ScoreForm()
     score_error, justification_error, scores_submitted = (
         False,
@@ -67,6 +76,20 @@ def display_sub_criteria(
             )
             scores_submitted = True
 
+        elif commentForm.validate_on_submit():
+            comment = commentForm.comment.data
+            user_id = g.account_id
+            theme_id = request.args["theme_id"]
+            displayCommentBox = False
+
+            submit_comment(
+                comment=comment,
+                application_id=application_id,
+                sub_criteria_id=sub_criteria_id,
+                user_id=user_id,
+                theme_id=theme_id,
+            )
+            return redirect(request.path + "?theme_id=" + theme_id)
         else:
             score_error = True if not form.score.data else False
             justification_error = (
@@ -80,7 +103,10 @@ def display_sub_criteria(
     fund = get_fund(Config.COF_FUND_ID)
     is_flagged = any(get_flags(application_id))
     comments = get_comments(
-        application_id=application_id, sub_criteria_id=sub_criteria_id
+        application_id=application_id,
+        sub_criteria_id=sub_criteria_id,
+        theme_id=theme_id,
+        themes=sub_criteria.themes,
     )
 
     common_template_config = {
@@ -133,6 +159,8 @@ def display_sub_criteria(
     return render_template(
         "sub_criteria.html",
         on_summary=False,
+        commentForm=commentForm,
+        displayCommentBox=displayCommentBox,
         answers_meta=answers_meta,
         **common_template_config,
     )
@@ -167,6 +195,7 @@ def flag(application_id):
         form=form,
         referrer=request.referrer,
     )
+
 
 @assess_bp.route("/assessor_dashboard/", methods=["GET"])
 def landing():
