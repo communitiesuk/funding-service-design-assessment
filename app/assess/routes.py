@@ -166,7 +166,11 @@ def display_sub_criteria(
     )
 
 
-@assess_bp.route("/flag/<application_id>", methods=["GET", "POST"])
+@assess_bp.route(
+    "/flag/<application_id>",
+    methods=["GET", "POST"],
+)
+@login_required(roles_required=["ASSESSOR", "LEAD_ASSESSOR"])
 def flag(application_id):
     # TODO: handle multiple flags.
     flags = get_flags(application_id)

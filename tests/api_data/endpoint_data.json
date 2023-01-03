@@ -370,11 +370,11 @@
     }
   ],
   "fund_store/funds/47aef2f5-3fcb-4d45-acb5-f0152b5f03c4": {
-      "description": "The Community Ownership Fund is a £150 million fund over 4 years to support community groups across England, Wales, Scotland and Northern Ireland to take ownership of assets which are at risk of being lost to the community.",
-      "id": "47aef2f5-3fcb-4d45-acb5-f0152b5f03c4",
-      "name": "Community Ownership Fund",
-      "short_name": "COF"
-    },
+    "description": "The Community Ownership Fund is a £150 million fund over 4 years to support community groups across England, Wales, Scotland and Northern Ireland to take ownership of assets which are at risk of being lost to the community.",
+    "id": "47aef2f5-3fcb-4d45-acb5-f0152b5f03c4",
+    "name": "Community Ownership Fund",
+    "short_name": "COF"
+  },
   "fund_store/funds/47aef2f5-3fcb-4d45-acb5-f0152b5f03c4/rounds/c603d114-5364-4474-a0c4-c41cbf4d3bbd": {
     "assessment_criteria_weighting": [
       {
@@ -722,21 +722,20 @@
     }
   ],
   "assessment_store/comment/app_123/1a2b3c4d/activities": [
-      {
-        "comment": "Activities is wrong",
-        "user_id": "0a31fa06-7555-11ed-a1eb-0242ac120002",
-        "date_created": "2022-12-08T15:45:07.987830",       
-        "theme_id": "activities"
-      },
-      {
-        "comment": "Add more detail here",
-        "user_id": "0a31fa06-7555-11ed-a1eb-0242ac10505",
-        "date_created": "2022-10-27T08:32:13.383999",        
-        "theme_id": "activities"
-      }
+    {
+      "comment": "Activities is wrong",
+      "user_id": "0a31fa06-7555-11ed-a1eb-0242ac120002",
+      "date_created": "2022-12-08T15:45:07.987830",
+      "theme_id": "activities"
+    },
+    {
+      "comment": "Add more detail here",
+      "user_id": "0a31fa06-7555-11ed-a1eb-0242ac10505",
+      "date_created": "2022-10-27T08:32:13.383999",
+      "theme_id": "activities"
+    }
   ],
   "assessment_store/comment/app_123/1a2b3c4d/partnerships": [
-    
   ],
   "assessment_store/comment/app_123/1a2b3c4d/score": [
     {
@@ -766,10 +765,10 @@
     {
       "comment": "Add more detail here",
       "user_id": "0a31fa06-7555-11ed-a1eb-0242ac10505",
-      "date_created": "2022-12-08T15:45:07.987830",     
+      "date_created": "2022-12-08T15:45:07.987830",
       "theme_id": "activities"
     }
-],
+  ],
   "assessment_store/sub_criteria_themes/app_123/community_use": [
     {
       "answer": "Test",
@@ -2423,24 +2422,58 @@
       "question": "Confirm you have a bank account set up and associated with the organisation you are applying on behalf of"
     }
   ],
-  "account_store/bulk-accounts":{
-    "0a31fa06-7555-11ed-a1eb-0242ac120002" : {
+  "account_store/bulk-accounts": {
+    "0a31fa06-7555-11ed-a1eb-0242ac120002": {
       "user_id": "0a31fa06-7555-11ed-a1eb-0242ac120002",
-      "full_name" : "Gommez Addams",
+      "full_name": "Gommez Addams",
       "highest_role": "LEAD_ASSESSOR",
-      "email_address":"test@test.com"
+      "email_address": "test@test.com"
     },
     "0a31fa06-7555-11ed-a1eb-0242ac10505": {
       "user_id": "0a31fa06-7555-11ed-a1eb-0242ac10505",
-      "full_name" : "Bruce Wayne",
+      "full_name": "Bruce Wayne",
       "highest_role": "ASSESSOR",
-      "email_address":"test@test.com"
+      "email_address": "test@test.com"
     },
     "0a31fa06-7555-11ed-a1eb-0242ac120003": {
       "user_id": "0a31fa06-7555-11ed-a1eb-0242ac120003",
-      "full_name" : "Thor",
+      "full_name": "Thor",
       "highest_role": "COMMENTER",
-      "email_address":"test@test.com"
+      "email_address": "test@test.com"
     }
-  }
+  },
+  "assessment_store/sub_criteria_themes/app_123/declarations": [
+    {
+      "answer": "Yes",
+      "field_id": "LlvhYl",
+      "field_type": "yesNoField",
+      "form_name": "declarations",
+      "presentation_type": "text",
+      "question": "Confirm you have considered subsidy control and state aid implications for your project, and the information you have given us is correct"
+    },
+    {
+      "answer": "No",
+      "field_id": "wJrJWY",
+      "field_type": "yesNoField",
+      "form_name": "declarations",
+      "presentation_type": "text",
+      "question": "Confirm you have considered people with protected characteristics throughout the planning of your project"
+    },
+    {
+      "answer": "Yes",
+      "field_id": "COiwQr",
+      "field_type": "yesNoField",
+      "form_name": "declarations",
+      "presentation_type": "text",
+      "question": "Confirm you have considered sustainability and the environment throughout the planning of your project, including compliance with the government's Net Zero ambitions"
+    },
+    {
+      "answer": "No",
+      "field_id": "bRPzWU",
+      "field_type": "yesNoField",
+      "form_name": "declarations",
+      "presentation_type": "text",
+      "question": "Confirm you have a bank account set up and associated with the organisation you are applying on behalf of"
+    }
+  ]
 }

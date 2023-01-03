@@ -3,7 +3,9 @@ from unittest import mock
 import pytest
 from app.assess.models.score import Score
 from config import Config
+from flask import session
 from tests.conftest import create_valid_token
+from tests.conftest import test_lead_assessor_claims
 
 
 class TestRoutes:
@@ -205,11 +207,17 @@ class TestRoutes:
         ],
     )
     def test_route_sub_criteria_side_bar(
-        self, flask_test_client, monkeypatch, expected_ids, expected_names, mocker
+        self,
+        flask_test_client,
+        monkeypatch,
+        expected_ids,
+        expected_names,
+        mocker,
     ):
         mocker.patch(
             "app.assess.models.ui.applicants_response.get_file_url",
-            return_value="sample1.doc")
+            return_value="sample1.doc",
+        )
         # Mocking fsd-user-token cookie
         test_payload = {
             "accountId": "test-user",
@@ -235,3 +243,41 @@ class TestRoutes:
         assert (
             expected_names in response.data
         ), "Response does not contain expected name"
+
+    def test_flag_route_already_flagged(self, flask_test_client, mocker):
+        token = create_valid_token(test_lead_assessor_claims)
+        flask_test_client.set_cookie("localhost", "fsd_user_token", token)
+
+        mock_get_flags = mocker.patch("app.assess.routes.get_flags")
+        mock_get_flags.return_value = [
+            {"reason": "Test reason", "section": "Test section"}
+        ]
+
+        response = flask_test_client.get("assess/flag/1")
+
+        assert response.status_code == 400
+
+    def test_flag_route_submit_flag(
+        self, flask_test_client, mocker, request_ctx
+    ):
+        token = create_valid_token(test_lead_assessor_claims)
+        flask_test_client.set_cookie("localhost", "fsd_user_token", token)
+        session["csrf_token"] = "test"
+
+        mocker.patch("app.assess.routes.submit_flag", return_value=None)
+        mock_get_flags = mocker.patch("app.assess.routes.get_flags")
+        mock_get_banner_state = mocker.patch(
+            "app.assess.routes.get_banner_state"
+        )
+        mock_get_fund = mocker.patch("app.assess.routes.get_fund")
+        mock_get_flags.return_value = []
+        mock_get_banner_state.return_value = {"fund_id": 1}
+        mock_get_fund.return_value = mock.Mock(name="Test Fund")
+
+        response = flask_test_client.post(
+            "assess/flag/1",
+            data={"reason": "Test reason", "section": "Test section"},
+        )
+
+        assert response.status_code == 302
+        assert response.headers["Location"] == "/assess/application/1"
