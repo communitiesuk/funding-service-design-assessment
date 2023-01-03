@@ -222,8 +222,9 @@ class TestAuthorisation:
         """
         mocker.patch(
             "app.assess.models.ui.applicants_response.get_file_url",
-            return_value="sample1.doc")
-         
+            return_value="sample1.doc",
+        )
+
         flask_test_client.set_cookie(
             "localhost",
             "fsd_user_token",
@@ -271,7 +272,8 @@ class TestAuthorisation:
         """
         mocker.patch(
             "app.assess.models.ui.applicants_response.get_file_url",
-            return_value="sample1.doc")
+            return_value="sample1.doc",
+        )
 
         flask_test_client.set_cookie(
             "localhost",

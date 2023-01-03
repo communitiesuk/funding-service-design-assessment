@@ -10,14 +10,26 @@
   <div class="govuk-width-container">
       <h1 class="govuk-heading-xl">Assessment Hub</h1>
 
-      <p class="govuk-body">
-        Welcome to the assessment service.
-        <br /><br />Please sign in to continue.</p>
+      {% if not g.is_authenticated %}
+        <p class="govuk-body">
+            Welcome to the assessment service.
+            <br /><br />Please sign in to continue.
+        </p>
 
-    {{ govukButton({
-    "isStartButton": false,
-    "href" : login_url,
-    "text": "Sign in"
-    }) }}
+        {{ govukButton({
+        "isStartButton": false,
+        "href" : login_url,
+        "text": "Sign in"
+        }) }}
+      {% else %}
+        {{ govukButton({
+        "isStartButton": false,
+        "href" : assessment_url,
+        "text": "Continue"
+        }) }}
+        <p class="govuk-body">
+            Or, <a href="{{ logout_url }}" class="govuk-link">log out</a>.
+        </p>
+      {% endif %}
   </div>
 {% endblock %}

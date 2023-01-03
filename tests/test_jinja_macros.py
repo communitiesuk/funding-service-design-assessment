@@ -19,12 +19,20 @@ from app.assess.models.ui.assessor_task_list import _Criteria
 from app.assess.models.ui.assessor_task_list import _CriteriaSubCriteria
 from app.assess.models.ui.assessor_task_list import _SubCriteria
 from app.assess.views.filters import format_address
+from flask import g
 from flask import get_template_attribute
 from flask import render_template_string
+from fsd_utils.authentication.models import User
 
 
 class TestJinjaMacros(object):
-    def test_criteria_macro(self, request_ctx):
+    def test_criteria_macro_lead_assessor(self, request_ctx):
+        g.user = User(
+            full_name="Test Lead Assessor",
+            email="test@example.com",
+            roles=["LEAD_ASSESSOR", "ASSESSOR", "COMMENTER"],
+            highest_role="LEAD_ASSESSOR",
+        )
         rendered_html = render_template_string(
             "{{criteria_element(criteria, name_classes, application_id)}}",
             criteria_element=get_template_attribute(
@@ -54,6 +62,7 @@ class TestJinjaMacros(object):
             ),
             name_classes="example-class",
             application_id=1,
+            g=g,
         )
 
         # replacing new lines to more easily regex match the html
@@ -85,6 +94,65 @@ class TestJinjaMacros(object):
         assert (
             len(re.findall(r"<tr.*?</tr>", rendered_html)) == 4
         ), "Should have 4 table rows"
+
+        assert re.search(
+            r"<strong>Total criteria score</strong>", rendered_html
+        ), "Should have Total criteria score"
+        assert re.search(
+            r"<th.*Score out of 5.*?</th>", rendered_html
+        ), "Should have Score out of 5 column"
+
+    def test_criteria_macro_commenter(self, request_ctx):
+        g.user = User(
+            full_name="Test Commenter",
+            email="test@example.com",
+            roles=["COMMENTER"],
+            highest_role="COMMENTER",
+        )
+        rendered_html = render_template_string(
+            "{{criteria_element(criteria, name_classes, application_id)}}",
+            criteria_element=get_template_attribute(
+                "macros/criteria_element.html", "criteria_element"
+            ),
+            criteria=_Criteria(
+                name="Example title",
+                total_criteria_score=0,
+                total_criteria_score_possible=0,
+                weighting=0.5,
+                sub_criterias=[
+                    _CriteriaSubCriteria(
+                        id="1",
+                        name="Sub Criteria 1",
+                        status="NOT_STARTED",
+                        theme_count=1,
+                        score=2,
+                    ),
+                    _CriteriaSubCriteria(
+                        id="2",
+                        name="Sub Criteria 2",
+                        status="NOT_STARTED",
+                        theme_count=2,
+                        score=2,
+                    ),
+                ],
+            ),
+            name_classes="example-class",
+            application_id=1,
+            g=g,
+        )
+
+        # replacing new lines to more easily regex match the html
+        rendered_html = rendered_html.replace("\n", "")
+        assert (
+            len(re.findall(r"<tr.*?</tr>", rendered_html)) == 3
+        ), "Should have 3 table rows"
+        assert (
+            re.search(r"<strong>Total criteria score</strong>", rendered_html)
+            is None
+        ), "Should not have Total criteria score"
+        assert (
+            re.search(r"<th.*Score out of 5.*?</th>", rendered_html) is None
+        ), "Should not have Score out of 5 column"
 
     def test_section_macro(self, request_ctx):
         rendered_html = render_template_string(

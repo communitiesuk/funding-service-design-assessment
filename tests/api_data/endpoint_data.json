@@ -529,21 +529,21 @@
             "id": "benefits",
             "name": "Benefits",
             "score": -1,
-            "status": "NOT_STARTED",
+            "status": "Not started",
             "theme_count": 2
           },
           {
             "id": "engagement",
             "name": "Engagement",
             "score": -1,
-            "status": "NOT_STARTED",
+            "status": "Not started",
             "theme_count": 2
           },
           {
             "id": "environmental_sustainability",
             "name": "Environmental Sustainability",
             "score": -1,
-            "status": "NOT_STARTED",
+            "status": "Not started",
             "theme_count": 1
           }
         ],
@@ -558,35 +558,35 @@
             "id": "funding_breakdown",
             "name": "Funding breakdown",
             "score": -1,
-            "status": "NOT_STARTED",
+            "status": "Not started",
             "theme_count": 1
           },
           {
             "id": "financial_and_risk_forecasts",
             "name": "Financial and risk forecasts",
             "score": -1,
-            "status": "NOT_STARTED",
+            "status": "Not started",
             "theme_count": 3
           },
           {
             "id": "skills_and_resources",
             "name": "Skills and resources",
             "score": -1,
-            "status": "NOT_STARTED",
+            "status": "Not started",
             "theme_count": 3
           },
           {
             "id": "representation_inclusiveness_and_integration",
             "name": "Representation, inclusiveness and integration",
             "score": -1,
-            "status": "NOT_STARTED",
+            "status": "Not started",
             "theme_count": 2
           },
           {
             "id": "business_plan",
             "name": "Business plan",
             "score": -1,
-            "status": "NOT_STARTED",
+            "status": "Not started",
             "theme_count": 1
           }
         ],
@@ -601,7 +601,7 @@
             "id": "community-benefits",
             "name": "How the community benefits\t",
             "score": -1,
-            "status": "NOT_STARTED",
+            "status": "Not started",
             "theme_count": 2
           }
         ],
@@ -616,7 +616,7 @@
             "id": "value-to-the-community",
             "name": "Value to the community",
             "score": -1,
-            "status": "NOT_STARTED",
+            "status": "Not started",
             "theme_count": 1
           }
         ],
