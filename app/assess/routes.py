@@ -33,11 +33,11 @@ def display_sub_criteria(
     """
     Page showing sub criteria and themes for an application
     """
-    args = request.args
-    sub_criteria = get_sub_criteria(application_id, sub_criteria_id)
-    theme_id = args.get("theme_id", sub_criteria.themes[0].id)
-    fund = get_fund(Config.COF_FUND_ID)
     current_app.logger.info(f"Processing GET to {request.path}.")
+    sub_criteria = get_sub_criteria(application_id, sub_criteria_id)
+    theme_id = request.args.get("theme_id", sub_criteria.themes[0].id)
+    fund = get_fund(Config.COF_FUND_ID)
+    display_comment_box = False
 
     comments = get_comments(
         application_id=application_id,
@@ -124,43 +124,35 @@ def display_sub_criteria(
         )
 
     elif theme_id != "score":
-        displayCommentBox = False
-        if (
-            "add-comment" in request.args.keys()
-            and request.args["add-comment"] == "1"
-        ):
-            displayCommentBox = True
-
-        commentForm = CommentsForm()
-
         theme_answers_response = get_sub_criteria_theme_answers(
             application_id, theme_id
         )
         answers_meta = applicants_response.create_ui_components(
             theme_answers_response, application_id
         )
+        if request.args.get("add-comment") == "1":
+            display_comment_box = True
 
-        if request.method == "POST":
-            if commentForm.validate_on_submit():
-                comment = commentForm.comment.data
-                user_id = g.account_id
-                theme_id = request.args["theme_id"]
-                displayCommentBox = False
+        comment_form = CommentsForm()
 
-                submit_comment(
-                    comment=comment,
-                    application_id=application_id,
-                    sub_criteria_id=sub_criteria_id,
-                    user_id=user_id,
-                    theme_id=theme_id,
-                )
+        if comment_form.validate_on_submit():
+            comment = comment_form.comment.data
+            display_comment_box = False
+
+            submit_comment(
+                comment=comment,
+                application_id=application_id,
+                sub_criteria_id=sub_criteria_id,
+                user_id=g.account_id,
+                theme_id=theme_id,
+            )
 
         return render_template(
             "sub_criteria.html",
             on_summary=False,
             answers_meta=answers_meta,
-            commentForm=commentForm,
-            displayCommentBox=displayCommentBox,
+            commentForm=comment_form,
+            displayCommentBox=display_comment_box,
             **common_template_config,
         )
 
