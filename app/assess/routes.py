@@ -138,7 +138,6 @@ def display_sub_criteria(
             **common_template_config,
         )
 
-
 @assess_bp.route("/assessor_dashboard/", methods=["GET"])
 def landing():
     """
