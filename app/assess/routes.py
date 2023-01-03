@@ -124,6 +124,15 @@ def display_sub_criteria(
         )
 
     elif theme_id != "score":
+        displayCommentBox = False
+        if (
+            "add-comment" in request.args.keys()
+            and request.args["add-comment"] == "1"
+        ):
+            displayCommentBox = True
+
+        commentForm = CommentsForm()
+
         theme_answers_response = get_sub_criteria_theme_answers(
             application_id, theme_id
         )
@@ -131,12 +140,30 @@ def display_sub_criteria(
             theme_answers_response, application_id
         )
 
+        if request.method == "POST":
+            if commentForm.validate_on_submit():
+                comment = commentForm.comment.data
+                user_id = g.account_id
+                theme_id = request.args["theme_id"]
+                displayCommentBox = False
+
+                submit_comment(
+                    comment=comment,
+                    application_id=application_id,
+                    sub_criteria_id=sub_criteria_id,
+                    user_id=user_id,
+                    theme_id=theme_id,
+                )
+
         return render_template(
             "sub_criteria.html",
             on_summary=False,
             answers_meta=answers_meta,
+            commentForm=commentForm,
+            displayCommentBox=displayCommentBox,
             **common_template_config,
         )
+
 
 @assess_bp.route("/assessor_dashboard/", methods=["GET"])
 def landing():
