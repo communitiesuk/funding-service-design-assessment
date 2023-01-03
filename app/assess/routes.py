@@ -38,51 +38,6 @@ def display_sub_criteria(
     theme_id = args.get("theme_id", sub_criteria.themes[0].id)
     fund = get_fund(Config.COF_FUND_ID)
     current_app.logger.info(f"Processing GET to {request.path}.")
-    scoring_template_config = {}
-
-    # SECURITY SECTION START ######
-    # Prevent non-assessors from accessing
-    # the scoring version of this page
-    if theme_id == "score":
-        if g.user.highest_role not in [
-            "LEAD_ASSESSOR",
-            "ASSESSOR",
-        ]:
-            abort(404)
-        else:
-            form = ScoreForm()
-            score_error, justification_error, scores_submitted = (
-                False,
-                False,
-                False,
-            )
-            if request.method == "POST":
-                current_app.logger.info(f"Processing POST to {request.path}.")
-                if form.validate_on_submit():
-                    score = int(form.score.data)
-                    justification = form.justification.data
-                    user_id = g.account_id
-                    submit_score_and_justification(
-                        score=score,
-                        justification=justification,
-                        application_id=application_id,
-                        user_id=user_id,
-                        sub_criteria_id=sub_criteria_id,
-                        role_information=role_information,
-                    )
-                    scores_submitted = True
-
-                else:
-                    score_error = True if not form.score.data else False
-                    justification_error = (
-                        True if not form.justification.data else False
-                    )
-            scoring_template_config = {
-                "scores_submitted": scores_submitted,
-                "score_error": score_error,
-                "justification_error": justification_error,
-                "form": form,
-            }
 
     comments = get_comments(
         application_id=application_id,
@@ -100,6 +55,47 @@ def display_sub_criteria(
     }
 
     if theme_id == "score":
+        # SECURITY SECTION START ######
+        # Prevent non-assessors from accessing
+        # the scoring version of this page
+        if g.user.highest_role not in [
+            "LEAD_ASSESSOR",
+            "ASSESSOR",
+        ]:
+            current_app.logger.info(
+                "Non-assessor attempted to access scoring view"
+                f" {request.path}."
+            )
+            abort(404)
+        # SECURITY SECTION END ######
+
+        form = ScoreForm()
+        score_error, justification_error, scores_submitted = (
+            False,
+            False,
+            False,
+        )
+        if request.method == "POST":
+            current_app.logger.info(f"Processing POST to {request.path}.")
+            if form.validate_on_submit():
+                score = int(form.score.data)
+                justification = form.justification.data
+                user_id = g.account_id
+                submit_score_and_justification(
+                    score=score,
+                    justification=justification,
+                    application_id=application_id,
+                    user_id=user_id,
+                    sub_criteria_id=sub_criteria_id,
+                    role_information=role_information,
+                )
+                scores_submitted = True
+
+            else:
+                score_error = True if not form.score.data else False
+                justification_error = (
+                    True if not form.justification.data else False
+                )
         # call to assessment store to get latest score
         score_list = get_score_and_justification(
             application_id, sub_criteria_id, score_history=True
@@ -120,12 +116,14 @@ def display_sub_criteria(
             score_list=score_list if len(score_list) > 0 else None,
             latest_score=latest_score,
             COF_score_list=COF_score_list,
+            scores_submitted=scores_submitted,
+            score_error=score_error,
+            justification_error=justification_error,
+            form=form,
             **common_template_config,
-            **scoring_template_config,
         )
 
-    answers_meta = []
-    if theme_id:
+    elif theme_id != "score":
         theme_answers_response = get_sub_criteria_theme_answers(
             application_id, theme_id
         )
@@ -133,12 +131,12 @@ def display_sub_criteria(
             theme_answers_response, application_id
         )
 
-    return render_template(
-        "sub_criteria.html",
-        on_summary=False,
-        answers_meta=answers_meta,
-        **common_template_config,
-    )
+        return render_template(
+            "sub_criteria.html",
+            on_summary=False,
+            answers_meta=answers_meta,
+            **common_template_config,
+        )
 
 
 @assess_bp.route("/assessor_dashboard/", methods=["GET"])
