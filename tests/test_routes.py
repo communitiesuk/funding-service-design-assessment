@@ -4,6 +4,8 @@ import pytest
 from app.assess.models.score import Score
 from config import Config
 from tests.conftest import create_valid_token
+from tests.conftest import test_commenter_claims
+from tests.conftest import test_lead_assessor_claims
 
 
 class TestRoutes:
@@ -218,13 +220,7 @@ class TestRoutes:
             return_value="sample1.doc",
         )
         # Mocking fsd-user-token cookie
-        test_payload = {
-            "accountId": "test-user",
-            "email": "test@example.com",
-            "fullName": "Test User",
-            "roles": ["LEAD_ASSESSOR", "ASSESSOR", "COMMENTER"],
-        }
-        token = create_valid_token(test_payload)
+        token = create_valid_token(test_lead_assessor_claims)
         flask_test_client.set_cookie("localhost", "fsd_user_token", token)
 
         # Send a request to the route you want to test
@@ -248,13 +244,7 @@ class TestRoutes:
     ):
 
         # Mocking fsd-user-token cookie
-        test_payload = {
-            "accountId": "test-user",
-            "email": "test@example.com",
-            "fullName": "Test User",
-            "roles": ["COMMENTER"],
-        }
-        token = create_valid_token(test_payload)
+        token = create_valid_token(test_commenter_claims)
         flask_test_client.set_cookie("localhost", "fsd_user_token", token)
 
         # Send a request to the route you want to test
@@ -289,13 +279,7 @@ class TestRoutes:
             return_value="sample1.doc",
         )
         # Mocking fsd-user-token cookie
-        test_payload = {
-            "accountId": "test-user",
-            "email": "test@example.com",
-            "fullName": "Test User",
-            "roles": ["COMMENTER"],
-        }
-        token = create_valid_token(test_payload)
+        token = create_valid_token(test_commenter_claims)
         flask_test_client.set_cookie("localhost", "fsd_user_token", token)
 
         # Send a request to the route you want to test
