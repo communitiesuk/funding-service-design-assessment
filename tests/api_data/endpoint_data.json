@@ -701,7 +701,7 @@
       "user_id": "0a31fa06-7555-11ed-a1eb-0242ac120002"
     }
   ],
-  "assessment_store/comment/app_123/1a2b3c4d/general-information": [
+  "assessment_store/comment?application_id=app_123&sub_criteria_id=1a2b3c4d&theme_id=general-information": [
     {
       "comment": "This is a comment",
       "user_id": "0a31fa06-7555-11ed-a1eb-0242ac120002",
@@ -721,7 +721,7 @@
       "theme_id": "general-information"
     }
   ],
-  "assessment_store/comment/app_123/1a2b3c4d/activities": [
+  "assessment_store/comment?application_id=app_123&sub_criteria_id=1a2b3c4d&theme_id=activities": [
     {
       "comment": "Activities is wrong",
       "user_id": "0a31fa06-7555-11ed-a1eb-0242ac120002",
@@ -735,9 +735,9 @@
       "theme_id": "activities"
     }
   ],
-  "assessment_store/comment/app_123/1a2b3c4d/partnerships": [
+  "assessment_store/comment?application_id=app_123&sub_criteria_id=1a2b3c4d&theme_id=partnerships": [
   ],
-  "assessment_store/comment/app_123/1a2b3c4d/score": [
+  "assessment_store/comment?application_id=app_123&sub_criteria_id=1a2b3c4d&theme_id=score": [
     {
       "comment": "This is a comment",
       "user_id": "0a31fa06-7555-11ed-a1eb-0242ac120002",

@@ -424,7 +424,7 @@ def get_comments(application_id: str, sub_criteria_id: str, theme_id, themes):
 
     comment_response = get_data(comment_endpoint)
 
-    if len(comment_response) == 0:
+    if not comment_response or len(comment_response) == 0:
         current_app.logger.info(
             f"No comments found for application: {application_id},"
             f" sub_criteria_id: {sub_criteria_id}"
