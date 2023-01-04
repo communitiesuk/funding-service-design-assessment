@@ -36,7 +36,7 @@ $govuk-colour-white: #ffffff;
 .template-answer {
     border: 3px $govuk-border-colour solid;
     padding: 25px 25px 4px;
-    background-color: govuk-colour("white");
+    background-color: $govuk-colour-white;
   }
 
 
