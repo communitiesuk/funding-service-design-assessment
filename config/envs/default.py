@@ -107,7 +107,8 @@ class DefaultConfig:
     ASSESSMENT_FLAGS_ENDPOINT = ASSESSMENT_STORE_API_HOST + "/flag"
 
     COMMENTS_ENDPOINT = (
-        "/comment/{application_id}/{sub_criteria_id}/{theme_id}"
+        "/comment?application_id={application_id}&sub_criteria_id="
+        "{sub_criteria_id}&theme_id={theme_id}"
     )
 
     # Account store endoints
