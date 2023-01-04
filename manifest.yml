@@ -20,6 +20,8 @@ applications:
     GITHUB_SHA: ((GITHUB_SHA))
   health-check-http-endpoint: /healthcheck
   health-check-type: http
+  services:
+    - form-uploads-dev
 
 - name: funding-service-design-assessment-test
   memory: 64M

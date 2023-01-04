@@ -22,3 +22,7 @@ class UnitTestConfig(DefaultConfig):
         )
         with open(_test_public_key_path, mode="rb") as public_key_file:
             RSA256_PUBLIC_KEY = public_key_file.read()
+    AWS_ACCESS_KEY_ID = getenv("AWS_ACCESS_KEY_ID")
+    AWS_SECRET_ACCESS_KEY = getenv("AWS_SECRET_ACCESS_KEY")
+    AWS_BUCKET_NAME = getenv("AWS_BUCKET_NAME")
+    AWS_REGION = "eu-west-2"
