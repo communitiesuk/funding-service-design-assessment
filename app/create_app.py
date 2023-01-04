@@ -10,6 +10,7 @@ from app.assets import compile_static_assets
 from app.auth import auth_protect
 from config import Config
 from flask import Flask
+from flask import g
 from flask_assets import Environment
 from flask_compress import Compress
 from flask_talisman import Talisman
@@ -77,6 +78,7 @@ def create_app() -> Flask:
             service_meta_keywords="Assessment Hub",
             service_meta_author="DLUHC",
             sso_logout_url=flask_app.config.get("SSO_LOGOUT_URL"),
+            g=g,
         )
 
     with flask_app.app_context():
@@ -115,6 +117,7 @@ def create_app() -> Flask:
 
         health = Healthcheck(flask_app)
         health.add_check(FlaskRunningChecker())
+
         @flask_app.before_request
         @login_requested
         def ensure_minimum_required_roles():
@@ -122,6 +125,15 @@ def create_app() -> Flask:
                 minimum_roles_required=["COMMENTER"],
                 unprotected_routes=["", "/"],
             )
+
+        @flask_app.after_request
+        def set_response_headers(response):
+            response.headers[
+                "Cache-Control"
+            ] = "no-cache, no-store, must-revalidate"
+            response.headers["Pragma"] = "no-cache"
+            response.headers["Expires"] = "0"
+            return response
 
         return flask_app
 

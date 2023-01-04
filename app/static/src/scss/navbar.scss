@@ -7,11 +7,16 @@ $govuk-colour-white: #ffffff;
     margin-top: 8px;
     border-top: 3px $govuk-link-colour solid ;
     ul:first-of-type {
+      border-top: none;
       margin-top: 20px;
     }
     ul:last-of-type {
         border-top: 2px $govuk-border-colour solid;
         padding-top: 20px;
+    }
+    ul:first-of-type:last-of-type {
+        border-top: none;
+        padding-top: 0;
     }
   }
 

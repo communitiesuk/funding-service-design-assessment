@@ -12,7 +12,7 @@
                     <h3 class="govuk-body-l fsd-banner-content fsd-banner-collapse-padding">Project
                         name: {{ project_name }}</h3>
                     <h3 class="govuk-body-l fsd-banner-content">Total funding requested:
-                        &pound;{{ "{:,.2f}".format(funding_amount_requested) }}</h3>
+                        &pound;{{ "{:,.2f}".format(funding_amount_requested | int) }}</h3>
                     <h3 class="govuk-body-l fsd-banner-content fsd-banner-collapse-padding">{{ workflow_status | status_to_human }}</h3>
                 </div>
             </div>

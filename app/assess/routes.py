@@ -30,7 +30,6 @@ assess_bp = Blueprint(
     "/application_id/<application_id>/sub_criteria_id/<sub_criteria_id>",
     methods=["POST", "GET"],
 )
-@login_required(roles_required=["COMMENTER"])
 def display_sub_criteria(
     application_id,
     sub_criteria_id,
@@ -38,70 +37,13 @@ def display_sub_criteria(
     """
     Page showing sub criteria and themes for an application
     """
-    role_information = {
-        "is_commenter": g.user.highest_role == "COMMENTER",
-        "scoring_permissions": any(
-            required_role in g.user.roles
-            for required_role in ["ASSESSOR", "LEAD_ASSESSOR"]
-        ),
-    }
-
-    displayCommentBox = False
-    if (
-        "add-comment" in request.args.keys()
-        and request.args["add-comment"] == "1"
-    ):
-        displayCommentBox = True
-
-    commentForm = CommentsForm()
-    form = ScoreForm()
-    score_error, justification_error, scores_submitted = (
-        False,
-        False,
-        False,
-    )
-    if request.method == "POST" and role_information["scoring_permissions"]:
-        current_app.logger.info(f"Processing POST to {request.path}.")
-        if form.validate_on_submit():
-            score = int(form.score.data)
-            justification = form.justification.data
-            user_id = g.account_id
-            submit_score_and_justification(
-                score=score,
-                justification=justification,
-                application_id=application_id,
-                user_id=user_id,
-                sub_criteria_id=sub_criteria_id,
-                role_information=role_information,
-            )
-            scores_submitted = True
-
-        elif commentForm.validate_on_submit():
-            comment = commentForm.comment.data
-            user_id = g.account_id
-            theme_id = request.args["theme_id"]
-            displayCommentBox = False
-
-            submit_comment(
-                comment=comment,
-                application_id=application_id,
-                sub_criteria_id=sub_criteria_id,
-                user_id=user_id,
-                theme_id=theme_id,
-            )
-            return redirect(request.path + "?theme_id=" + theme_id)
-        else:
-            score_error = True if not form.score.data else False
-            justification_error = (
-                True if not form.justification.data else False
-            )
     current_app.logger.info(f"Processing GET to {request.path}.")
-    sub_criteria = get_sub_criteria(
-        application_id=application_id, sub_criteria_id=sub_criteria_id
-    )
+    sub_criteria = get_sub_criteria(application_id, sub_criteria_id)
     theme_id = request.args.get("theme_id", sub_criteria.themes[0].id)
     fund = get_fund(Config.COF_FUND_ID)
+    display_comment_box = False
     is_flagged = any(get_flags(application_id))
+
     comments = get_comments(
         application_id=application_id,
         sub_criteria_id=sub_criteria_id,
@@ -110,17 +52,55 @@ def display_sub_criteria(
     )
 
     common_template_config = {
-        "role_information": role_information,
         "current_theme_id": theme_id,
         "sub_criteria": sub_criteria,
         "application_id": application_id,
         "fund": fund,
-        "form": form,
         "comments": comments,
-        "is_flagged": is_flagged,
+        "if_flagged": is_flagged,
     }
 
     if theme_id == "score":
+        # SECURITY SECTION START ######
+        # Prevent non-assessors from accessing
+        # the scoring version of this page
+        if g.user.highest_role not in [
+            "LEAD_ASSESSOR",
+            "ASSESSOR",
+        ]:
+            current_app.logger.info(
+                "Non-assessor attempted to access scoring view"
+                f" {request.path}."
+            )
+            abort(404)
+        # SECURITY SECTION END ######
+
+        form = ScoreForm()
+        score_error, justification_error, scores_submitted = (
+            False,
+            False,
+            False,
+        )
+        if request.method == "POST":
+            current_app.logger.info(f"Processing POST to {request.path}.")
+            if form.validate_on_submit():
+                score = int(form.score.data)
+                justification = form.justification.data
+                user_id = g.account_id
+                submit_score_and_justification(
+                    score=score,
+                    justification=justification,
+                    application_id=application_id,
+                    user_id=user_id,
+                    sub_criteria_id=sub_criteria_id,
+                )
+                scores_submitted = True
+
+            else:
+                score_error = True if not form.score.data else False
+                justification_error = (
+                    True if not form.justification.data else False
+                )
         # call to assessment store to get latest score
         score_list = get_score_and_justification(
             application_id, sub_criteria_id, score_history=True
@@ -138,32 +118,48 @@ def display_sub_criteria(
         return render_template(
             "sub_criteria.html",
             on_summary=True,
-            scores_submitted=scores_submitted,
             score_list=score_list if len(score_list) > 0 else None,
             latest_score=latest_score,
             COF_score_list=COF_score_list,
+            scores_submitted=scores_submitted,
             score_error=score_error,
             justification_error=justification_error,
+            form=form,
             **common_template_config,
         )
 
-    answers_meta = []
-    if theme_id:
+    elif theme_id != "score":
         theme_answers_response = get_sub_criteria_theme_answers(
             application_id, theme_id
         )
         answers_meta = applicants_response.create_ui_components(
             theme_answers_response, application_id
         )
+        if request.args.get("add-comment") == "1":
+            display_comment_box = True
 
-    return render_template(
-        "sub_criteria.html",
-        on_summary=False,
-        commentForm=commentForm,
-        displayCommentBox=displayCommentBox,
-        answers_meta=answers_meta,
-        **common_template_config,
-    )
+        comment_form = CommentsForm()
+
+        if comment_form.validate_on_submit():
+            comment = comment_form.comment.data
+            display_comment_box = False
+
+            submit_comment(
+                comment=comment,
+                application_id=application_id,
+                sub_criteria_id=sub_criteria_id,
+                user_id=g.account_id,
+                theme_id=theme_id,
+            )
+
+        return render_template(
+            "sub_criteria.html",
+            on_summary=False,
+            answers_meta=answers_meta,
+            commentForm=comment_form,
+            displayCommentBox=display_comment_box,
+            **common_template_config,
+        )
 
 
 @assess_bp.route(
