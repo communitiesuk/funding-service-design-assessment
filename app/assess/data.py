@@ -21,15 +21,6 @@ from flask import abort
 from flask import current_app
 from flask import g
 
-if "VCAP_SERVICES" in os.environ:
-    vcap_services = json.loads(os.environ["VCAP_SERVICES"])
-
-    if "aws-s3-bucket" in vcap_services:
-        s3_credentials = vcap_services["aws-s3-bucket"][0]["credentials"]
-        Config.AWS_ACCESS_KEY_ID = s3_credentials["aws_access_key_id"]
-        Config.AWS_SECRET_ACCESS_KEY = s3_credentials["aws_secret_access_key"]
-        Config.AWS_BUCKET_NAME = s3_credentials["bucket_name"]
-
 
 def get_data(
     endpoint: str,

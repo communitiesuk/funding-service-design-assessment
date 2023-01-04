@@ -1,4 +1,6 @@
 import base64
+import json
+import os
 from os import environ
 from os import getenv
 from pathlib import Path
@@ -128,7 +130,12 @@ class DefaultConfig:
     Aws Config
     """
 
-    AWS_ACCESS_KEY_ID = getenv("AWS_ACCESS_KEY_ID")
-    AWS_SECRET_ACCESS_KEY = getenv("AWS_SECRET_ACCESS_KEY")
-    AWS_BUCKET_NAME = getenv("AWS_BUCKET_NAME")
-    AWS_REGION = "eu-west-2"
+    if "VCAP_SERVICES" in os.environ:
+        vcap_services = json.loads(os.environ["VCAP_SERVICES"])
+
+        if "aws-s3-bucket" in vcap_services:
+            s3_credentials = vcap_services["aws-s3-bucket"][0]["credentials"]
+            AWS_REGION = s3_credentials["aws_region"]
+            AWS_ACCESS_KEY_ID = s3_credentials["aws_access_key_id"]
+            AWS_SECRET_ACCESS_KEY = s3_credentials["aws_secret_access_key"]
+            AWS_BUCKET_NAME = s3_credentials["bucket_name"]
