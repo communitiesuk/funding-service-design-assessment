@@ -5,30 +5,31 @@ from typing import List
 from typing import Union
 from urllib.parse import urlencode
 
+import boto3
 import requests
 from app.assess.models.application import Application
+from app.assess.models.comment import Comment
+from app.assess.models.flag import Flag
+from app.assess.models.flag import FlagType
 from app.assess.models.fund import Fund
 from app.assess.models.round import Round
 from app.assess.models.score import Score
 from app.assess.models.sub_criteria import SubCriteria
-from app.assess.models.comment import Comment
+from botocore.exceptions import ClientError
 from config import Config
 from flask import abort
 from flask import current_app
+from flask import g
 
-import boto3
-import requests  
-from config import Config
-from botocore.exceptions import ClientError
+if "VCAP_SERVICES" in os.environ:
+    vcap_services = json.loads(os.environ["VCAP_SERVICES"])
 
-if "VCAP_SERVICES" in os.environ:   
-        vcap_services = json.loads(os.environ["VCAP_SERVICES"])
+    if "aws-s3-bucket" in vcap_services:
+        s3_credentials = vcap_services["aws-s3-bucket"][0]["credentials"]
+        Config.AWS_ACCESS_KEY_ID = s3_credentials["aws_access_key_id"]
+        Config.AWS_SECRET_ACCESS_KEY = s3_credentials["aws_secret_access_key"]
+        Config.AWS_BUCKET_NAME = s3_credentials["bucket_name"]
 
-        if "aws-s3-bucket" in vcap_services:
-            s3_credentials = vcap_services["aws-s3-bucket"][0]["credentials"]
-            Config.AWS_ACCESS_KEY_ID = s3_credentials["aws_access_key_id"]
-            Config.AWS_SECRET_ACCESS_KEY = s3_credentials["aws_secret_access_key"]
-            Config.AWS_BUCKET_NAME = s3_credentials["bucket_name"]
 
 def get_data(
     endpoint: str,
@@ -337,6 +338,53 @@ def get_sub_criteria(application_id, sub_criteria_id):
         abort(404, description=msg)
 
 
+def get_banner_state(application_id: str):
+    banner_state_endpoint = (
+        Config.ASSESSMENT_STORE_API_HOST
+        + Config.BANNER_STATE_ENDPOINT.format(application_id=application_id)
+    )
+
+    banner_state = get_data(banner_state_endpoint)
+
+    if banner_state:
+        return banner_state
+    else:
+        msg = f"banner_state: '{application_id}' not found."
+        current_app.logger.warn(msg)
+        abort(404, description=msg)
+
+
+def get_flags(application_id: str) -> list[Flag] | None:
+    flags = get_data(
+        Config.ASSESSMENT_FLAGS_ENDPOINT,
+        payload={"application_id": application_id},
+    )
+    if flags:
+        return [Flag.from_dict(flag) for flag in flags]
+    else:
+        msg = f"flags: '{application_id}' not found."
+        current_app.logger.warn(msg)
+        return []
+
+
+def submit_flag(
+    application_id: str, justification: str, section: str
+) -> Flag | None:
+    flag = requests.post(
+        Config.ASSESSMENT_FLAGS_ENDPOINT,
+        json={
+            "application_id": application_id,
+            "justification": justification,
+            "section_to_flag": section,
+            "flag_type": FlagType.FLAGGED.name,  # TODO: Other flag types?
+            "user_id": g.account_id,
+        },
+    )
+    if flag:
+        flag_json = flag.json()
+        return Flag.from_dict(flag_json)
+
+
 def get_sub_criteria_theme_answers(
     application_id: str, theme_id: str
 ) -> Union[list, None]:
@@ -368,15 +416,20 @@ def get_comments(application_id: str, sub_criteria_id: str, theme_id, themes):
     comment_endpoint = (
         Config.ASSESSMENT_STORE_API_HOST
         + Config.COMMENTS_ENDPOINT.format(
-            application_id=application_id, sub_criteria_id=sub_criteria_id, theme_id=theme_id
+            application_id=application_id,
+            sub_criteria_id=sub_criteria_id,
+            theme_id=theme_id,
         )
     )
 
-    comment_response = get_data(comment_endpoint)   
+    comment_response = get_data(comment_endpoint)
 
-    if (type(comment_response) is list):
+    if type(comment_response) is list:
         if len(comment_response) == 0:
-            current_app.logger.info(f"No comments found for application: {application_id}, sub_criteria_id: {sub_criteria_id}")
+            current_app.logger.info(
+                f"No comments found for application: {application_id},"
+                f" sub_criteria_id: {sub_criteria_id}"
+            )
             return None
 
         account_ids = [comment["user_id"] for comment in comment_response]
@@ -387,24 +440,30 @@ def get_comments(application_id: str, sub_criteria_id: str, theme_id, themes):
                 comment
                 | {
                     "full_name": bulk_accounts_dict[comment["user_id"]][
-                       "full_name"
+                        "full_name"
                     ],
                     "email_address": bulk_accounts_dict[comment["user_id"]][
-                       "email_address"
+                        "email_address"
                     ],
                     "highest_role": bulk_accounts_dict[comment["user_id"]][
-                       "highest_role"
+                        "highest_role"
                     ],
                 }
             )
             for comment in comment_response
         ]
-        theme_id_to_comments_list_map = {theme.id: [comment for comment in comments if comment.theme_id == theme.id] for theme in themes}
+        theme_id_to_comments_list_map = {
+            theme.id: [
+                comment for comment in comments if comment.theme_id == theme.id
+            ]
+            for theme in themes
+        }
         return theme_id_to_comments_list_map
     else:
         msg = f"No comment response for application: '{application_id}'."
         current_app.logger.warn(msg)
         abort(500, description=msg)
+
 
 def submit_comment(
     comment, application_id, sub_criteria_id, user_id, theme_id
@@ -415,15 +474,16 @@ def submit_comment(
         "application_id": application_id,
         "sub_criteria_id": sub_criteria_id,
         "comment_type": "COMMENT",
-        "theme_id": theme_id
+        "theme_id": theme_id,
     }
     url = Config.ASSESSMENT_COMMENT_ENDPOINT
     response = requests.post(url, json=data_dict)
     current_app.logger.info(
         f"Response from Assessment Store: '{response.json()}'."
     )
-    
-    return response.ok 
+
+    return response.ok
+
 
 def get_file_url(filename: str, application_id: str):
     """_summary_: Function is set up to retrieve
@@ -435,21 +495,27 @@ def get_file_url(filename: str, application_id: str):
         Returns a presigned url.
     """
 
-    if (filename == None):
-        return None   
+    if filename is None:
+        return None
 
-    prefixed_file_name = application_id + "/" + filename    
+    prefixed_file_name = application_id + "/" + filename
 
-    s3_client = boto3.client('s3', 
-                      aws_access_key_id=Config.AWS_ACCESS_KEY_ID, 
-                      aws_secret_access_key=Config.AWS_SECRET_ACCESS_KEY, 
-                      region_name=Config.AWS_REGION
-                      )
+    s3_client = boto3.client(
+        "s3",
+        aws_access_key_id=Config.AWS_ACCESS_KEY_ID,
+        aws_secret_access_key=Config.AWS_SECRET_ACCESS_KEY,
+        region_name=Config.AWS_REGION,
+    )
     try:
-        response = s3_client.generate_presigned_url('get_object',
-                            Params={'Bucket':  Config.AWS_BUCKET_NAME, 'Key': prefixed_file_name},
-                            ExpiresIn=3600)
-        
+        response = s3_client.generate_presigned_url(
+            "get_object",
+            Params={
+                "Bucket": Config.AWS_BUCKET_NAME,
+                "Key": prefixed_file_name,
+            },
+            ExpiresIn=3600,
+        )
+
         return response
     except ClientError as e:
         current_app.logger.error(e)

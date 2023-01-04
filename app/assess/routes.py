@@ -4,6 +4,7 @@ from app.assess.data import submit_score_and_justification
 from app.assess.display_value_mappings import assessment_statuses
 from app.assess.display_value_mappings import asset_types
 from app.assess.forms.comments_form import CommentsForm
+from app.assess.forms.flag_form import FlagApplicationForm
 from app.assess.forms.scores_and_justifications import ScoreForm
 from app.assess.models.ui import applicants_response
 from app.assess.models.ui.assessor_task_list import AssessorTaskList
@@ -11,8 +12,11 @@ from config import Config
 from flask import abort
 from flask import Blueprint
 from flask import g
+from flask import redirect
 from flask import render_template
 from flask import request
+from flask import url_for
+from fsd_utils.authentication.decorators import login_required
 
 assess_bp = Blueprint(
     "assess_bp",
@@ -38,6 +42,7 @@ def display_sub_criteria(
     theme_id = request.args.get("theme_id", sub_criteria.themes[0].id)
     fund = get_fund(Config.COF_FUND_ID)
     display_comment_box = False
+    is_flagged = any(get_flags(application_id))
 
     comments = get_comments(
         application_id=application_id,
@@ -52,6 +57,7 @@ def display_sub_criteria(
         "application_id": application_id,
         "fund": fund,
         "comments": comments,
+        "if_flagged": is_flagged,
     }
 
     if theme_id == "score":
@@ -87,7 +93,6 @@ def display_sub_criteria(
                     application_id=application_id,
                     user_id=user_id,
                     sub_criteria_id=sub_criteria_id,
-                    role_information=role_information,
                 )
                 scores_submitted = True
 
@@ -157,6 +162,41 @@ def display_sub_criteria(
         )
 
 
+@assess_bp.route(
+    "/flag/<application_id>",
+    methods=["GET", "POST"],
+)
+@login_required(roles_required=["ASSESSOR", "LEAD_ASSESSOR"])
+def flag(application_id):
+    # TODO: handle multiple flags.
+    flags = get_flags(application_id)
+    if any(flags):
+        abort(400, "Application already flagged")
+
+    form = FlagApplicationForm()
+
+    if request.method == "POST" and form.validate_on_submit():
+        submit_flag(application_id, form.reason.data, form.section.data)
+        return redirect(
+            url_for(
+                "assess_bp.application",
+                application_id=application_id,
+            )
+        )
+
+    banner_state = get_banner_state(application_id)
+    fund = get_fund(banner_state["fund_id"])
+
+    return render_template(
+        "flag_application.html",
+        application_id=application_id,
+        fund_name=fund.name,
+        banner_state=banner_state,
+        form=form,
+        referrer=request.referrer,
+    )
+
+
 @assess_bp.route("/assessor_dashboard/", methods=["GET"])
 def landing():
     """
@@ -202,7 +242,6 @@ def landing():
 
 @assess_bp.route("/application/<application_id>", methods=["GET"])
 def application(application_id):
-
     """
     Application summary page
     Shows information about the fund, application ID
@@ -226,10 +265,19 @@ def application(application_id):
         f"Fetching data from '{assessor_task_list_metadata}'."
     )
 
+    flags = get_flags(application_id)
+    flag = flags[0] if flags else None  # TODO: handle multiple flags?
+
+    accounts = {}
+    if flag:
+        accounts = get_bulk_accounts_dict([flag.user_id])
+
     return render_template(
         "assessor_tasklist.html",
         state=state,
         application_id=application_id,
+        flag=flag,
+        flag_user_info=accounts.get(flag.user_id) if flag else None,
     )
 
 
@@ -253,7 +301,6 @@ def comments():
 
 @assess_bp.route("/fragments/sub_criteria_scoring", methods=["POST", "GET"])
 def sub_crit_scoring():
-
     form = ScoreForm()
 
     if form.validate_on_submit():
