@@ -50,6 +50,7 @@ def display_sub_criteria(
         theme_id=theme_id,
         themes=sub_criteria.themes,
     )
+    current_app.logger.error(comments)
 
     common_template_config = {
         "current_theme_id": theme_id,
@@ -118,7 +119,7 @@ def display_sub_criteria(
             (2, "Partial"),
             (1, "Poor"),
         ]
-        
+
         if request.args.get("add-comment") == "1":
             display_comment_box = True
 
@@ -127,15 +128,15 @@ def display_sub_criteria(
         if comment_form.validate_on_submit():
             comment = comment_form.comment.data
             display_comment_box = False
-            
+
             submit_comment(
                 comment=comment,
                 application_id=application_id,
                 sub_criteria_id=sub_criteria_id,
                 user_id=g.account_id,
                 theme_id=theme_id,
-                )    
-            
+            )
+
             return redirect(
                 url_for(
                     "assess_bp.display_sub_criteria",

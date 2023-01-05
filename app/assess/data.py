@@ -177,7 +177,7 @@ def get_score_and_justification(
     )
     account_ids = [score["user_id"] for score in score_response]
     bulk_accounts_dict = get_bulk_accounts_dict(account_ids)
-    current_app.logger.error(bulk_accounts_dict)
+
     scores: list[Score] = [
         Score.from_dict(
             score
@@ -195,7 +195,7 @@ def get_score_and_justification(
         )
         for score in score_response
     ]
-    current_app.logger.error(scores)
+
     return scores
 
 
@@ -455,13 +455,23 @@ def get_comments(application_id: str, sub_criteria_id: str, theme_id, themes):
         )
         for comment in comment_response
     ]
+
+    score_theme_map = {
+        "score": [
+            comment for comment in comments if comment.theme_id == "score"
+        ]
+    }
+
     theme_id_to_comments_list_map = {
         theme.id: [
             comment for comment in comments if comment.theme_id == theme.id
         ]
         for theme in themes
     }
-    return theme_id_to_comments_list_map
+
+    final_map = theme_id_to_comments_list_map | score_theme_map
+
+    return final_map
 
 
 def submit_comment(
