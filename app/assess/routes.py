@@ -152,6 +152,15 @@ def display_sub_criteria(
                 theme_id=theme_id,
             )
 
+            return redirect(
+                url_for(
+                    "assess_bp.display_sub_criteria",
+                    application_id=application_id,
+                    sub_criteria_id=sub_criteria_id,
+                    theme_id=theme_id,
+                )
+            )
+
         return render_template(
             "sub_criteria.html",
             on_summary=False,
