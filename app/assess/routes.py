@@ -40,8 +40,53 @@ def display_sub_criteria(
     current_app.logger.info(f"Processing GET to {request.path}.")
     sub_criteria = get_sub_criteria(application_id, sub_criteria_id)
     theme_id = request.args.get("theme_id", sub_criteria.themes[0].id)
+    comment_form = CommentsForm()
+
+    add_comment_argument = request.args.get("add_comment") == "1"
+    if all(
+        [
+            add_comment_argument,
+            request.method == "POST",
+            comment_form.validate_on_submit(),
+        ]
+    ):
+        comment = comment_form.comment.data
+
+        submit_comment(
+            comment=comment,
+            application_id=application_id,
+            sub_criteria_id=sub_criteria_id,
+            user_id=g.account_id,
+            theme_id=theme_id,
+        )
+
+        return redirect(
+            url_for(
+                "assess_bp.display_sub_criteria",
+                application_id=application_id,
+                sub_criteria_id=sub_criteria_id,
+                theme_id=theme_id,
+                _anchor="comments",
+            )
+        )
+
+    expand_comment_box = bool(request.args.get("expand-comment-box"))
+    # used to expand the comment box when
+    # a user clicks on the add comment button, we use redirect
+    # to anchor the page to the add comment section
+    if expand_comment_box:
+        return redirect(
+            url_for(
+                "assess_bp.display_sub_criteria",
+                application_id=application_id,
+                sub_criteria_id=sub_criteria_id,
+                theme_id=theme_id,
+                add_comment=1,
+                _anchor="comment",
+            )
+        )
+
     fund = get_fund(Config.COF_FUND_ID)
-    display_comment_box = False
     is_flagged = any(get_flags(application_id))
 
     comments = get_comments(
@@ -58,6 +103,8 @@ def display_sub_criteria(
         "fund": fund,
         "comments": comments,
         "if_flagged": is_flagged,
+        "display_comment_box": add_comment_argument,
+        "comment_form": comment_form,
     }
 
     if theme_id == "score":
@@ -118,32 +165,6 @@ def display_sub_criteria(
             (2, "Partial"),
             (1, "Poor"),
         ]
-        
-        if request.args.get("add-comment") == "1":
-            display_comment_box = True
-
-        comment_form = CommentsForm()
-
-        if comment_form.validate_on_submit():
-            comment = comment_form.comment.data
-            display_comment_box = False
-            
-            submit_comment(
-                comment=comment,
-                application_id=application_id,
-                sub_criteria_id=sub_criteria_id,
-                user_id=g.account_id,
-                theme_id=theme_id,
-                )    
-            
-            return redirect(
-                url_for(
-                    "assess_bp.display_sub_criteria",
-                    application_id=application_id,
-                    sub_criteria_id=sub_criteria_id,
-                    theme_id=theme_id,
-                )
-            )
 
         return render_template(
             "sub_criteria.html",
@@ -151,8 +172,6 @@ def display_sub_criteria(
             score_list=score_list or None,
             latest_score=latest_score,
             COF_score_list=COF_score_list,
-            commentForm=comment_form,
-            displayCommentBox=display_comment_box,
             scores_submitted=scores_submitted,
             score_error=score_error,
             justification_error=justification_error,
@@ -160,47 +179,19 @@ def display_sub_criteria(
             **common_template_config,
         )
 
-    elif theme_id != "score":
-        theme_answers_response = get_sub_criteria_theme_answers(
-            application_id, theme_id
-        )
-        answers_meta = applicants_response.create_ui_components(
-            theme_answers_response, application_id
-        )
-        if request.args.get("add-comment") == "1":
-            display_comment_box = True
+    theme_answers_response = get_sub_criteria_theme_answers(
+        application_id, theme_id
+    )
+    answers_meta = applicants_response.create_ui_components(
+        theme_answers_response, application_id
+    )
 
-        comment_form = CommentsForm()
-
-        if comment_form.validate_on_submit():
-            comment = comment_form.comment.data
-            display_comment_box = False
-
-            submit_comment(
-                comment=comment,
-                application_id=application_id,
-                sub_criteria_id=sub_criteria_id,
-                user_id=g.account_id,
-                theme_id=theme_id,
-            )
-
-            return redirect(
-                url_for(
-                    "assess_bp.display_sub_criteria",
-                    application_id=application_id,
-                    sub_criteria_id=sub_criteria_id,
-                    theme_id=theme_id,
-                )
-            )
-
-        return render_template(
-            "sub_criteria.html",
-            on_summary=False,
-            answers_meta=answers_meta,
-            commentForm=comment_form,
-            displayCommentBox=display_comment_box,
-            **common_template_config,
-        )
+    return render_template(
+        "sub_criteria.html",
+        on_summary=False,
+        answers_meta=answers_meta,
+        **common_template_config,
+    )
 
 
 @assess_bp.route(
