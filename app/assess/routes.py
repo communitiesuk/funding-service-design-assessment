@@ -122,9 +122,7 @@ def display_sub_criteria(
         return render_template(
             "sub_criteria.html",
             on_summary=True,
-            score_list=score_list
-            if (score_list is not None and len(score_list) > 0)
-            else None,
+            score_list=score_list or None,
             latest_score=latest_score,
             COF_score_list=COF_score_list,
             scores_submitted=scores_submitted,
