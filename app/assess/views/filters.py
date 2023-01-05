@@ -55,3 +55,12 @@ def all_caps_to_human(word):
 def format_project_ref(value: str):
     secions = value.split("-")
     return secions[len(secions) - 1]
+
+
+def remove_theme_name_score(theme):
+    """ Function removed the "Score" theme
+    Filter is being used to remove the "Score" theme 
+    for "Score the subcriteria" page.
+    """
+    return [x for x in theme if x.name!="Score"]
+        
