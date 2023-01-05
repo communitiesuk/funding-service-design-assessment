@@ -5,37 +5,26 @@
     </div>
     <div class="fsd-login-banner-background">
     </div>
-        <div class="govuk-width-container">
-            <div class="govuk-grid-row">
-                <div class="govuk-grid-column-full">
-                    <div class="govuk-grid-column-two-thirds">
-                        {% if not g.is_authenticated %}
-                        <h1 class="govuk-heading-xl">Welcome to the assessment tool</h1>
-                        <p class="govuk-body">Here you can:</p>
-                        <ul class="govuk-list govuk-list--bullet">
-                            <li>assess applications end to end</li>
-                            <li>comment on specific applicant responses</li>
-                            <li>monitor the assessment progress of a fund</li>
-                        </ul>
-                        {{ govukButton({
-                        "isStartButton": false,
-                        "href" : login_url,
-                        "text": "Log in"
-                        }) }}
-                        {% else %}
-                        {{ govukButton({
-                        "isStartButton": false,
-                        "href" : assessment_url,
-                        "text": "Continue"
-                        }) }}
-                        <p class="govuk-body">
-                            Or, <a href="{{ logout_url }}" class="govuk-link">log out</a>.
-                        </p>
-                      {% endif %}
-                        <h2 class="govuk-heading-l">Get help</h2>
-                        <p class="govuk-body">If you are having issues logging in, email the FSD support team at <a class="govuk-link" href="mailto:FSD.Support@levellingup.gov.uk">FSD.Support@levellingup.gov.uk</a></p>
-                    </div>
+    <div class="govuk-width-container">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                <div class="govuk-grid-column-two-thirds">
+                    <h1 class="govuk-heading-xl">Welcome to the assessment tool</h1>
+                    <p class="govuk-body">Here you can:</p>
+                    <ul class="govuk-list govuk-list--bullet">
+                        <li>assess applications end to end</li>
+                        <li>comment on specific applicant responses</li>
+                        <li>monitor the assessment progress of a fund</li>
+                    </ul>
+                    {{ govukButton({
+                    "isStartButton": false,
+                    "href" : login_url,
+                    "text": "Log in"
+                    }) }}
+                    <h2 class="govuk-heading-l">Get help</h2>
+                    <p class="govuk-body">If you are having issues logging in, email the FSD support team at <a class="govuk-link" href="mailto:FSD.Support@levellingup.gov.uk">FSD.Support@levellingup.gov.uk</a></p>
                 </div>
             </div>
-    </div>
+        </div>
+</div>
 {% endblock %}
