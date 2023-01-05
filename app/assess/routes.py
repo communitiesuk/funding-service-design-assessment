@@ -17,6 +17,7 @@ from flask import render_template
 from flask import request
 from flask import url_for
 from fsd_utils.authentication.decorators import login_required
+from app.assess.models.theme import Theme
 
 assess_bp = Blueprint(
     "assess_bp",
@@ -50,7 +51,6 @@ def display_sub_criteria(
         theme_id=theme_id,
         themes=sub_criteria.themes,
     )
-    current_app.logger.error(comments)
 
     common_template_config = {
         "current_theme_id": theme_id,
@@ -62,6 +62,9 @@ def display_sub_criteria(
     }
 
     if theme_id == "score":
+        # "Score" theme is added to fetch comments belong to score page/theme only  
+        sub_criteria.themes.append(Theme(id="score", name="Score"))   
+         
         # SECURITY SECTION START ######
         # Prevent non-assessors from accessing
         # the scoring version of this page
@@ -145,7 +148,7 @@ def display_sub_criteria(
                     theme_id=theme_id,
                 )
             )
-
+            
         return render_template(
             "sub_criteria.html",
             on_summary=True,
