@@ -260,6 +260,40 @@ class TestRoutes:
             " criteria scoring page"
         )
 
+    def test_homepage_route_accessible(self, flask_test_client):
+
+        # Remove fsd-user-token cookie
+        flask_test_client.set_cookie("localhost", "fsd_user_token", "")
+
+        # Send a request to the homepage "/" route
+        response = flask_test_client.get("/")
+
+        # Assert that the response has the expected status code
+        assert (
+            200 == response.status_code
+        ), "Homepage route should be accessible"
+
+        # Send a request to the root route
+        response = flask_test_client.get("", follow_redirects=True)
+
+        # Assert that the response has the expected status code
+        assert (
+            200 == response.status_code
+        ), "Homepage route should be accessible"
+
+    def test_healthcheck_route_accessible(self, flask_test_client):
+
+        # Remove fsd-user-token cookie
+        flask_test_client.set_cookie("localhost", "fsd_user_token", "")
+
+        # Send a request to the /healthcheck route
+        response = flask_test_client.get("/healthcheck")  # noqa
+
+        # Assert that the response has the expected status code
+        assert (
+            200 == response.status_code
+        ), "Healthcheck route should be accessible"
+
     @pytest.mark.parametrize(
         "expected_ids, expected_names",
         [
