@@ -14,7 +14,7 @@
     </div>
     </div>
 
-    {% if flag %}
+    {% if flag and g.user.highest_role in ("ASSESSOR", "LEAD_ASSESSOR") %}
         {{ assessment_flag(flag, flag_user_info) }}
     {% endif %}
 
@@ -27,7 +27,7 @@
     ) }}
 
     <div class="govuk-width-container">
-        {% if not flag %}
+        {% if not flag and g.user.highest_role in ("ASSESSOR", "LEAD_ASSESSOR") %}
             {{ flag_application_button(application_id) }}
         {% endif %}
         <div class="govuk-grid-row">

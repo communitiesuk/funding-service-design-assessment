@@ -26,7 +26,7 @@
     ) }}
 
     <div class="govuk-width-container">
-        {% if not is_flagged %}
+        {% if not is_flagged and g.user.highest_role in ("ASSESSOR", "LEAD_ASSESSOR") %}
             {{ flag_application_button(application_id) }}
         {% endif %}
         <div class="govuk-grid-row">
