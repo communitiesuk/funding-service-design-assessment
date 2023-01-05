@@ -12,7 +12,6 @@
         <p class="govuk-!-text-align-left flex-parent-element flexed-element-margins-collapse">{{ govukBackLink({'href': url_for("assess_bp.landing"), 'text': 'Back to assessment dashboard'}) }}</p>
         <p class="flex-parent-element flexed-element-margins-collapse govuk-!-text-align-right"><a href="{{ sso_logout_url }}" class="govuk-link flexed-element-margins-collapse">Log out</a></p>
     </div>
-    </div>
 
     {% if flag and g.user.highest_role in ("ASSESSOR", "LEAD_ASSESSOR") %}
         {{ assessment_flag(flag, flag_user_info) }}
