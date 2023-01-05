@@ -164,11 +164,20 @@ def get_score_and_justification(
         "score_history": score_history,
     }
     score_response = get_data(score_url, score_params)
+
+    if not score_response or len(score_response) == 0:
+        current_app.logger.info(
+            f"No scores found for application: {application_id},"
+            f" sub_criteria_id: {sub_criteria_id}"
+        )
+        return None
+
     current_app.logger.info(
         f"Response from Assessment Store: '{score_response}'."
     )
     account_ids = [score["user_id"] for score in score_response]
     bulk_accounts_dict = get_bulk_accounts_dict(account_ids)
+    current_app.logger.error(bulk_accounts_dict)
     scores: list[Score] = [
         Score.from_dict(
             score
@@ -179,10 +188,14 @@ def get_score_and_justification(
                 "user_email": bulk_accounts_dict[score["user_id"]][
                     "email_address"
                 ],
+                "highest_role": bulk_accounts_dict[score["user_id"]][
+                    "highest_role"
+                ],
             }
         )
         for score in score_response
     ]
+    current_app.logger.error(scores)
     return scores
 
 

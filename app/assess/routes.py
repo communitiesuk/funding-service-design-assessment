@@ -105,7 +105,11 @@ def display_sub_criteria(
         score_list = get_score_and_justification(
             application_id, sub_criteria_id, score_history=True
         )
-        latest_score = score_list.pop(0) if len(score_list) > 0 else None
+        latest_score = (
+            score_list.pop(0)
+            if (score_list is not None and len(score_list) > 0)
+            else None
+        )
         # TODO make COF_score_list extendable to other funds
         COF_score_list = [
             (5, "Strong"),
@@ -118,7 +122,9 @@ def display_sub_criteria(
         return render_template(
             "sub_criteria.html",
             on_summary=True,
-            score_list=score_list if len(score_list) > 0 else None,
+            score_list=score_list
+            if (score_list is not None and len(score_list) > 0)
+            else None,
             latest_score=latest_score,
             COF_score_list=COF_score_list,
             scores_submitted=scores_submitted,
