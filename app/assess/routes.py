@@ -57,7 +57,7 @@ def display_sub_criteria(
         "application_id": application_id,
         "fund": fund,
         "comments": comments,
-        "if_flagged": is_flagged,
+        "is_flagged": is_flagged,
     }
 
     if theme_id == "score":
