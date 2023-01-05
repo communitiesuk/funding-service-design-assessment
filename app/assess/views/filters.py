@@ -58,8 +58,8 @@ def format_project_ref(value: str):
 
 
 def remove_theme_name_score(theme):
-    """ Function removed the "Score" theme
-    Filter is being used to remove the "Score" theme 
+    """
+    This function is being used to remove the "Score" theme 
     for "Score the subcriteria" page.
     """
     return [x for x in theme if x.name!="Score"]
