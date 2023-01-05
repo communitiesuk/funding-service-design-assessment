@@ -455,7 +455,8 @@ def get_comments(application_id: str, sub_criteria_id: str, theme_id, themes):
         )
         for comment in comment_response
     ]
-
+    
+    # getting comments data for theme "score" for scoring page.
     score_theme_map = {
         "score": [
             comment for comment in comments if comment.theme_id == "score"
@@ -469,9 +470,8 @@ def get_comments(application_id: str, sub_criteria_id: str, theme_id, themes):
         for theme in themes
     }
 
-    final_map = theme_id_to_comments_list_map | score_theme_map
-
-    return final_map
+    comments_mapping = theme_id_to_comments_list_map | score_theme_map
+    return comments_mapping
 
 
 def submit_comment(
