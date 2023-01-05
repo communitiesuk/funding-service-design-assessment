@@ -166,6 +166,7 @@ class TestRoutes:
                 user_id="test-user",
                 user_full_name="Test User",
                 user_email="test@example.com",
+                highest_role="LEAD_ASSESSOR",
             )
         ]
 
