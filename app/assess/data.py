@@ -5,15 +5,21 @@ from typing import List
 from typing import Union
 from urllib.parse import urlencode
 
+import boto3
 import requests
 from app.assess.models.application import Application
+from app.assess.models.comment import Comment
+from app.assess.models.flag import Flag
+from app.assess.models.flag import FlagType
 from app.assess.models.fund import Fund
 from app.assess.models.round import Round
 from app.assess.models.score import Score
 from app.assess.models.sub_criteria import SubCriteria
+from botocore.exceptions import ClientError
 from config import Config
 from flask import abort
 from flask import current_app
+from flask import g
 
 
 def get_data(
@@ -142,20 +148,41 @@ def get_round_with_applications(
     return None
 
 
+def get_bulk_accounts_dict(account_ids: List):
+    account_url = Config.BULK_ACCOUNTS_ENDPOINT
+    account_params = {"account_id": account_ids}
+    return get_data(account_url, account_params)
+
+
 def get_score_and_justification(
     application_id, sub_criteria_id, score_history=True
 ):
-    url = Config.ASSESSMENT_SCORES_ENDPOINT
-    params = {
+    score_url = Config.ASSESSMENT_SCORES_ENDPOINT
+    score_params = {
         "application_id": application_id,
         "sub_criteria_id": sub_criteria_id,
         "score_history": score_history,
     }
-    response = get_data(url, params)
-    current_app.logger.info(f"Response from Assessment Store: '{response}'.")
-
-    scores: list[Score] = [Score.from_dict(score) for score in response]
-
+    score_response = get_data(score_url, score_params)
+    current_app.logger.info(
+        f"Response from Assessment Store: '{score_response}'."
+    )
+    account_ids = [score["user_id"] for score in score_response]
+    bulk_accounts_dict = get_bulk_accounts_dict(account_ids)
+    scores: list[Score] = [
+        Score.from_dict(
+            score
+            | {
+                "user_full_name": bulk_accounts_dict[score["user_id"]][
+                    "full_name"
+                ],
+                "user_email": bulk_accounts_dict[score["user_id"]][
+                    "email_address"
+                ],
+            }
+        )
+        for score in score_response
+    ]
     return scores
 
 
@@ -254,10 +281,8 @@ def get_questions(application_id):
     """_summary_: Function is set up to retrieve
     the data from application store with
     get_data() function.
-
     Args:
         application_id: Takes an application_id.
-
     Returns:
         Returns a dictionary of questions & their statuses.
     """
@@ -278,11 +303,9 @@ def get_sub_criteria(application_id, sub_criteria_id):
     """_summary_: Function is set up to retrieve
     the data from assessment store with
     get_data() function.
-
     Args:
         application_id:
         sub_criteria_id
-
     Returns:
       {
         "sub_criteria_id": "",
@@ -306,6 +329,53 @@ def get_sub_criteria(application_id, sub_criteria_id):
         abort(404, description=msg)
 
 
+def get_banner_state(application_id: str):
+    banner_state_endpoint = (
+        Config.ASSESSMENT_STORE_API_HOST
+        + Config.BANNER_STATE_ENDPOINT.format(application_id=application_id)
+    )
+
+    banner_state = get_data(banner_state_endpoint)
+
+    if banner_state:
+        return banner_state
+    else:
+        msg = f"banner_state: '{application_id}' not found."
+        current_app.logger.warn(msg)
+        abort(404, description=msg)
+
+
+def get_flags(application_id: str) -> list[Flag] | None:
+    flags = get_data(
+        Config.ASSESSMENT_FLAGS_ENDPOINT,
+        payload={"application_id": application_id},
+    )
+    if flags:
+        return [Flag.from_dict(flag) for flag in flags]
+    else:
+        msg = f"flags: '{application_id}' not found."
+        current_app.logger.warn(msg)
+        return []
+
+
+def submit_flag(
+    application_id: str, justification: str, section: str
+) -> Flag | None:
+    flag = requests.post(
+        Config.ASSESSMENT_FLAGS_ENDPOINT,
+        json={
+            "application_id": application_id,
+            "justification": justification,
+            "section_to_flag": section,
+            "flag_type": FlagType.FLAGGED.name,  # TODO: Other flag types?
+            "user_id": g.account_id,
+        },
+    )
+    if flag:
+        flag_json = flag.json()
+        return Flag.from_dict(flag_json)
+
+
 def get_sub_criteria_theme_answers(
     application_id: str, theme_id: str
 ) -> Union[list, None]:
@@ -325,7 +395,7 @@ def get_sub_criteria_theme_answers(
         abort(404, description=msg)
 
 
-def get_comments(application_id: str, sub_criteria_id: str):
+def get_comments(application_id: str, sub_criteria_id: str, theme_id, themes):
     """_summary_: Function is set up to retrieve
     the data from application store with
     get_data() function.
@@ -337,8 +407,102 @@ def get_comments(application_id: str, sub_criteria_id: str):
     comment_endpoint = (
         Config.ASSESSMENT_STORE_API_HOST
         + Config.COMMENTS_ENDPOINT.format(
-            application_id=application_id, sub_criteria_id=sub_criteria_id
+            application_id=application_id,
+            sub_criteria_id=sub_criteria_id,
+            theme_id=theme_id,
         )
     )
+
     comment_response = get_data(comment_endpoint)
-    return comment_response
+
+    if not comment_response or len(comment_response) == 0:
+        current_app.logger.info(
+            f"No comments found for application: {application_id},"
+            f" sub_criteria_id: {sub_criteria_id}"
+        )
+        return None
+
+    account_ids = [comment["user_id"] for comment in comment_response]
+    bulk_accounts_dict = get_bulk_accounts_dict(account_ids)
+
+    comments: list[Comment] = [
+        Comment.from_dict(
+            comment
+            | {
+                "full_name": bulk_accounts_dict[comment["user_id"]][
+                    "full_name"
+                ],
+                "email_address": bulk_accounts_dict[comment["user_id"]][
+                    "email_address"
+                ],
+                "highest_role": bulk_accounts_dict[comment["user_id"]][
+                    "highest_role"
+                ],
+            }
+        )
+        for comment in comment_response
+    ]
+    theme_id_to_comments_list_map = {
+        theme.id: [
+            comment for comment in comments if comment.theme_id == theme.id
+        ]
+        for theme in themes
+    }
+    return theme_id_to_comments_list_map
+
+
+def submit_comment(
+    comment, application_id, sub_criteria_id, user_id, theme_id
+):
+    data_dict = {
+        "comment": comment,
+        "user_id": user_id,
+        "application_id": application_id,
+        "sub_criteria_id": sub_criteria_id,
+        "comment_type": "COMMENT",
+        "theme_id": theme_id,
+    }
+    url = Config.ASSESSMENT_COMMENT_ENDPOINT
+    response = requests.post(url, json=data_dict)
+    current_app.logger.info(
+        f"Response from Assessment Store: '{response.json()}'."
+    )
+
+    return response.ok
+
+
+def get_file_url(filename: str, application_id: str):
+    """_summary_: Function is set up to retrieve
+    files from aws bucket.
+    Args:
+        filename: Takes an filename
+        application_id: Takes an application_id # noqa
+    Returns:
+        Returns a presigned url.
+    """
+
+    if filename is None:
+        return None
+
+    prefixed_file_name = application_id + "/" + filename
+
+    s3_client = boto3.client(
+        "s3",
+        aws_access_key_id=Config.AWS_ACCESS_KEY_ID,
+        aws_secret_access_key=Config.AWS_SECRET_ACCESS_KEY,
+        region_name=Config.AWS_REGION,
+    )
+    try:
+        response = s3_client.generate_presigned_url(
+            "get_object",
+            Params={
+                "Bucket": Config.AWS_BUCKET_NAME,
+                "Key": prefixed_file_name,
+            },
+            ExpiresIn=3600,
+        )
+
+        return response
+    except ClientError as e:
+        current_app.logger.error(e)
+        return None

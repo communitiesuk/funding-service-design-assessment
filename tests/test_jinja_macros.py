@@ -1,6 +1,7 @@
 import re
 
 import pytest
+from app.assess.forms.comments_form import CommentsForm
 from app.assess.models.ui.applicants_response import AboveQuestionAnswerPair
 from app.assess.models.ui.applicants_response import (
     AboveQuestionAnswerPairHref,
@@ -18,12 +19,20 @@ from app.assess.models.ui.assessor_task_list import _Criteria
 from app.assess.models.ui.assessor_task_list import _CriteriaSubCriteria
 from app.assess.models.ui.assessor_task_list import _SubCriteria
 from app.assess.views.filters import format_address
+from flask import g
 from flask import get_template_attribute
 from flask import render_template_string
+from fsd_utils.authentication.models import User
 
 
 class TestJinjaMacros(object):
-    def test_criteria_macro(self, request_ctx):
+    def test_criteria_macro_lead_assessor(self, request_ctx):
+        g.user = User(
+            full_name="Test Lead Assessor",
+            email="test@example.com",
+            roles=["LEAD_ASSESSOR", "ASSESSOR", "COMMENTER"],
+            highest_role="LEAD_ASSESSOR",
+        )
         rendered_html = render_template_string(
             "{{criteria_element(criteria, name_classes, application_id)}}",
             criteria_element=get_template_attribute(
@@ -38,14 +47,14 @@ class TestJinjaMacros(object):
                     _CriteriaSubCriteria(
                         id="1",
                         name="Sub Criteria 1",
-                        status="Not started",
+                        status="NOT_STARTED",
                         theme_count=1,
                         score=2,
                     ),
                     _CriteriaSubCriteria(
                         id="2",
                         name="Sub Criteria 2",
-                        status="Not started",
+                        status="NOT_STARTED",
                         theme_count=2,
                         score=2,
                     ),
@@ -53,6 +62,7 @@ class TestJinjaMacros(object):
             ),
             name_classes="example-class",
             application_id=1,
+            g=g,
         )
 
         # replacing new lines to more easily regex match the html
@@ -84,6 +94,65 @@ class TestJinjaMacros(object):
         assert (
             len(re.findall(r"<tr.*?</tr>", rendered_html)) == 4
         ), "Should have 4 table rows"
+
+        assert re.search(
+            r"<strong>Total criteria score</strong>", rendered_html
+        ), "Should have Total criteria score"
+        assert re.search(
+            r"<th.*Score out of 5.*?</th>", rendered_html
+        ), "Should have Score out of 5 column"
+
+    def test_criteria_macro_commenter(self, request_ctx):
+        g.user = User(
+            full_name="Test Commenter",
+            email="test@example.com",
+            roles=["COMMENTER"],
+            highest_role="COMMENTER",
+        )
+        rendered_html = render_template_string(
+            "{{criteria_element(criteria, name_classes, application_id)}}",
+            criteria_element=get_template_attribute(
+                "macros/criteria_element.html", "criteria_element"
+            ),
+            criteria=_Criteria(
+                name="Example title",
+                total_criteria_score=0,
+                total_criteria_score_possible=0,
+                weighting=0.5,
+                sub_criterias=[
+                    _CriteriaSubCriteria(
+                        id="1",
+                        name="Sub Criteria 1",
+                        status="NOT_STARTED",
+                        theme_count=1,
+                        score=2,
+                    ),
+                    _CriteriaSubCriteria(
+                        id="2",
+                        name="Sub Criteria 2",
+                        status="NOT_STARTED",
+                        theme_count=2,
+                        score=2,
+                    ),
+                ],
+            ),
+            name_classes="example-class",
+            application_id=1,
+            g=g,
+        )
+
+        # replacing new lines to more easily regex match the html
+        rendered_html = rendered_html.replace("\n", "")
+        assert (
+            len(re.findall(r"<tr.*?</tr>", rendered_html)) == 3
+        ), "Should have 3 table rows"
+        assert (
+            re.search(r"<strong>Total criteria score</strong>", rendered_html)
+            is None
+        ), "Should not have Total criteria score"
+        assert (
+            re.search(r"<th.*Score out of 5.*?</th>", rendered_html) is None
+        ), "Should not have Score out of 5 column"
 
     def test_section_macro(self, request_ctx):
         rendered_html = render_template_string(
@@ -157,6 +226,26 @@ class TestJinjaMacros(object):
         assert (
             len(re.findall(r"""<span.*?\S*\d</span>""", rendered_html)) == 5
         ), "Should have 5 score values for radios"
+
+    def test_comment_macro(self, request_ctx):
+        rendered_html = render_template_string(
+            "{{commentBox(commentForm)}}",
+            commentBox=get_template_attribute(
+                "macros/comments_box.html", "commentBox"
+            ),
+            commentForm=CommentsForm(),
+        )
+
+        # replacing new lines to more easily regex match the html
+        rendered_html = rendered_html.replace("\n", "")
+
+        assert re.search(
+            r"Add a comment</label>", rendered_html
+        ), "Add Comment label not found"
+
+        assert re.search(
+            r"Save comment</button>", rendered_html
+        ), "Save comment button not found"
 
     def test_justification_macro(self, request_ctx):
         rendered_html = render_template_string(
@@ -405,3 +494,124 @@ class TestJinjaMacros(object):
         )
 
         assert expected_unique_id in rendered_html, "Unique ID not found"
+
+    def test_banner_summary_macro(self, request_ctx):
+        fund_name = "Test Fund"
+        project_reference = "TEST123"
+        project_name = "Test Project"
+        funding_amount_requested = 123456.78
+        workflow_status = "SUBMITTED"
+
+        rendered_html = render_template_string(
+            "{{ banner_summary(fund_name, project_reference, project_name,"
+            " funding_amount_requested, workflow_status) }}",
+            banner_summary=get_template_attribute(
+                "macros/banner_summary.html", "banner_summary"
+            ),
+            fund_name=fund_name,
+            project_reference=project_reference,
+            project_name=project_name,
+            funding_amount_requested=funding_amount_requested,
+            workflow_status=workflow_status,
+        )
+
+        # Replace newlines for easier regex matching
+        rendered_html = rendered_html.replace("\n", "")
+
+        assert re.search(
+            r"Fund: Test Fund",
+            rendered_html,
+        ), "Fund name not found"
+        assert re.search(
+            r"Project\s+reference: TEST123",
+            rendered_html,
+        ), "Project reference not found"
+        assert re.search(
+            r"Project\s+name: Test Project",
+            rendered_html,
+        ), "Project name not found"
+        assert re.search(
+            r"Total funding requested:\s+&pound;123,456.78",
+            rendered_html,
+        ), "Funding amount not found"
+        assert re.search(
+            r"Submitted",
+            rendered_html,
+        ), "Workflow status not found"
+
+    def test_flag_application_button(self, request_ctx):
+        rendered_html = render_template_string(
+            "{{flag_application_button(12345)}}",
+            flag_application_button=get_template_attribute(
+                "macros/flag_application_button.html",
+                "flag_application_button",
+            ),
+        )
+
+        rendered_html = rendered_html.replace("\n", "")
+
+        assert re.search(
+            r'<div class="govuk-grid-row govuk-!-text-align-right">.*</div>',
+            rendered_html,
+        ), "Flag application button container not found"
+        assert re.search(
+            r'<a href="/assess/flag/12345".*Flag application.*</a>',
+            rendered_html,
+        ), "Flag application button not found"
+
+    def test_assessment_flag(self, request_ctx):
+        rendered_html = render_template_string(
+            "{{assessment_flag(flag, user_info)}}",
+            assessment_flag=get_template_attribute(
+                "macros/assessment_flag.html", "assessment_flag"
+            ),
+            flag={
+                "flag_type": {"name": "Test flag"},
+                "justification": "Test justification",
+                "section_to_flag": "Test section",
+                "date_created": "2020-01-01 12:00:00",
+            },
+            user_info={
+                "full_name": "Test user",
+                "highest_role": "Test role",
+                "email_address": "test@example.com",
+            },
+        )
+
+        # replacing new lines to more easily regex match the html
+        rendered_html = rendered_html.replace("\n", "")
+
+        assert re.search(
+            r"Test Flag",
+            rendered_html,
+        ), "Flag type not found"
+
+        assert re.search(
+            r"Reason",
+            rendered_html,
+        ), "Reason heading not found"
+
+        assert re.search(
+            r"Test justification",
+            rendered_html,
+        ), "Justification not found"
+
+        assert re.search(
+            r"Section flagged",
+            rendered_html,
+        ), "Section flagged heading not found"
+
+        assert re.search(
+            r"Test section",
+            rendered_html,
+        ), "Section not found"
+
+        assert re.search(
+            r"Test user.*\S*Test role.*\S*test@example.com",
+            rendered_html,
+        ), "User info not found"
+
+        assert re.search(
+            r"\d{2}/\d{2}/\d{4} at \d{2}:\d{2}",
+            rendered_html,
+        ), "Date created not found"

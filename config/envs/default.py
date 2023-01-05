@@ -1,3 +1,7 @@
+import base64
+import json
+import os
+from os import environ
 from os import getenv
 from pathlib import Path
 
@@ -18,14 +22,37 @@ class DefaultConfig:
     FLASK_ROOT = str(Path(__file__).parent.parent.parent)
     FLASK_ENV = CommonConfig.FLASK_ENV
 
+    # Authentication
+    FSD_USER_TOKEN_COOKIE_NAME = "fsd_user_token"
+    AUTHENTICATOR_HOST = environ.get("AUTHENTICATOR_HOST", "authenticator")
+    FSD_USER_TOKEN_COOKIE_NAME = "fsd_user_token"
+    # RSA 256 KEYS
+    RSA256_PUBLIC_KEY_BASE64 = environ.get("RSA256_PUBLIC_KEY_BASE64")
+    if RSA256_PUBLIC_KEY_BASE64:
+        RSA256_PUBLIC_KEY = base64.b64decode(RSA256_PUBLIC_KEY_BASE64).decode()
+
     FORCE_HTTPS = CommonConfig.FORCE_HTTPS
     FSD_LOG_LEVEL = CommonConfig.FSD_LOG_LEVEL
+    FSD_USER_TOKEN_COOKIE_NAME = "fsd_user_token"
 
     STATIC_FOLDER = "app/static/dist"
     STATIC_URL_PATH = "/assets"
     TEMPLATES_FOLDER = "templates"
     LOCAL_SERVICE_NAME = "local_flask"
     ASSESSMENT_HUB_ROUTE = "/assess"
+    DASHBOARD_ROUTE = "/assess/assessor_dashboard"
+
+    """
+    Security
+    """
+
+    AUTHENTICATOR_HOST = getenv("AUTHENTICATOR_HOST", "https://authenticator")
+    SSO_LOGIN_URL = AUTHENTICATOR_HOST + "/sso/login"
+    SSO_LOGOUT_URL = AUTHENTICATOR_HOST + "/sso/logout"
+    # RSA 256 KEYS
+    RSA256_PUBLIC_KEY_BASE64 = getenv("RSA256_PUBLIC_KEY_BASE64")
+    if RSA256_PUBLIC_KEY_BASE64:
+        RSA256_PUBLIC_KEY = base64.b64decode(RSA256_PUBLIC_KEY_BASE64).decode()
 
     """
     APIs Config
@@ -33,6 +60,7 @@ class DefaultConfig:
     FUND_STORE_API_HOST = CommonConfig.FUND_STORE_API_HOST
     APPLICATION_STORE_API_HOST = CommonConfig.APPLICATION_STORE_API_HOST
     ASSESSMENT_STORE_API_HOST = CommonConfig.ASSESSMENT_STORE_API_HOST
+    ACCOUNT_STORE_API_HOST = CommonConfig.ACCOUNT_STORE_API_HOST
 
     """
     External APIs
@@ -51,7 +79,7 @@ class DefaultConfig:
     APPLICATION_STATUS_ENDPOINT = CommonConfig.APPLICATION_STATUS_ENDPOINT
     APPLICATION_SEARCH_ENDPOINT = CommonConfig.APPLICATION_SEARCH_ENDPOINT
 
-    # Assesment store endpoints
+    # Assessment store endpoints
     APPLICATION_OVERVIEW_ENDPOINT_FUND_ROUND_PARAMS = (
         "/application_overviews/{fund_id}/{round_id}?{params}"
     )
@@ -68,9 +96,23 @@ class DefaultConfig:
         "/sub_criteria_overview/{application_id}/{sub_criteria_id}"
     )
 
+    BANNER_STATE_ENDPOINT = (
+        "/sub_criteria_overview/banner_state/{application_id}"
+    )
+
     ASSESSMENT_SCORES_ENDPOINT = ASSESSMENT_STORE_API_HOST + "/score"
 
-    COMMENTS_ENDPOINT = "/comment/{application_id}/{sub_criteria_id}"
+    ASSESSMENT_COMMENT_ENDPOINT = ASSESSMENT_STORE_API_HOST + "/comment"
+
+    ASSESSMENT_FLAGS_ENDPOINT = ASSESSMENT_STORE_API_HOST + "/flag"
+
+    COMMENTS_ENDPOINT = (
+        "/comment?application_id={application_id}&sub_criteria_id="
+        "{sub_criteria_id}&theme_id={theme_id}"
+    )
+
+    # Account store endoints
+    BULK_ACCOUNTS_ENDPOINT = ACCOUNT_STORE_API_HOST + "/bulk-accounts"
 
     """
     Assets
@@ -84,3 +126,17 @@ class DefaultConfig:
     COF_ROUND2_ID = CommonConfig.COF_ROUND_2_ID
 
     USE_LOCAL_DATA = strtobool(getenv("USE_LOCAL_DATA", "False"))
+
+    """
+    Aws Config
+    """
+
+    if "VCAP_SERVICES" in os.environ:
+        vcap_services = json.loads(os.environ["VCAP_SERVICES"])
+
+        if "aws-s3-bucket" in vcap_services:
+            s3_credentials = vcap_services["aws-s3-bucket"][0]["credentials"]
+            AWS_REGION = s3_credentials["aws_region"]
+            AWS_ACCESS_KEY_ID = s3_credentials["aws_access_key_id"]
+            AWS_SECRET_ACCESS_KEY = s3_credentials["aws_secret_access_key"]
+            AWS_BUCKET_NAME = s3_credentials["bucket_name"]

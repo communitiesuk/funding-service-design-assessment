@@ -7,12 +7,16 @@ from app.assess.views.filters import remove_dashes_underscores_capitalize
 from app.assess.views.filters import slash_separated_day_month_year
 from app.assess.views.filters import status_to_human
 from app.assets import compile_static_assets
+from app.auth import auth_protect
 from config import Config
 from flask import Flask
+from flask import g
 from flask_assets import Environment
 from flask_compress import Compress
 from flask_talisman import Talisman
 from flask_wtf.csrf import CSRFProtect
+from fsd_utils.authentication.decorators import login_requested
+from fsd_utils import init_sentry
 from fsd_utils.healthchecks.checkers import FlaskRunningChecker
 from fsd_utils.healthchecks.healthcheck import Healthcheck
 from fsd_utils.logging import logging
@@ -22,7 +26,7 @@ from jinja2 import PrefixLoader
 
 
 def create_app() -> Flask:
-
+    init_sentry()
     flask_app = Flask("Assessment Frontend")
 
     flask_app.config.from_object("config.Config")
@@ -70,11 +74,11 @@ def create_app() -> Flask:
         return dict(
             stage="beta",
             service_title="Assessment Hub",
-            service_meta_description=(
-                "Assessment Hub"
-            ),
+            service_meta_description="Assessment Hub",
             service_meta_keywords="Assessment Hub",
             service_meta_author="DLUHC",
+            sso_logout_url=flask_app.config.get("SSO_LOGOUT_URL"),
+            g=g,
         )
 
     with flask_app.app_context():
@@ -113,6 +117,23 @@ def create_app() -> Flask:
 
         health = Healthcheck(flask_app)
         health.add_check(FlaskRunningChecker())
+
+        @flask_app.before_request
+        @login_requested
+        def ensure_minimum_required_roles():
+            return auth_protect(
+                minimum_roles_required=["COMMENTER"],
+                unprotected_routes=["", "/"],
+            )
+
+        @flask_app.after_request
+        def set_response_headers(response):
+            response.headers[
+                "Cache-Control"
+            ] = "no-cache, no-store, must-revalidate"
+            response.headers["Pragma"] = "no-cache"
+            response.headers["Expires"] = "0"
+            return response
 
         return flask_app
 

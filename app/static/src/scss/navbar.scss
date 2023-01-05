@@ -7,11 +7,16 @@ $govuk-colour-white: #ffffff;
     margin-top: 8px;
     border-top: 3px $govuk-link-colour solid ;
     ul:first-of-type {
+      border-top: none;
       margin-top: 20px;
     }
     ul:last-of-type {
         border-top: 2px $govuk-border-colour solid;
         padding-top: 20px;
+    }
+    ul:first-of-type:last-of-type {
+        border-top: none;
+        padding-top: 0;
     }
   }
 
@@ -31,10 +36,10 @@ $govuk-colour-white: #ffffff;
 .template-answer {
     border: 3px $govuk-border-colour solid;
     padding: 25px 25px 4px;
-    background-color: govuk-colour("white");
+    background-color: $govuk-colour-white;
   }
 
-  
+
 .scoring-heading {
     margin-bottom: 10px;
 }
@@ -43,16 +48,16 @@ $govuk-colour-white: #ffffff;
     max-width: 1400px;
     padding: 0 2em;
     margin: auto;
-  
+
     .sign-out {
       margin-bottom: 10px;
     }
-  
+
     .task-list {
       padding: 0px;
     }
   }
-  
+
  .assessment-overview .headline-info {
     .headline-container {
         margin-bottom: 0px;
@@ -72,7 +77,7 @@ $govuk-colour-white: #ffffff;
     * {
       color: $govuk-colour-white;
     }
-  
+
     .lead-dashboard-heading {
       margin-bottom: 20px;
     }

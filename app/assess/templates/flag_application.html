@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{%- from 'govuk_frontend_jinja/components/back-link/macro.html' import govukBackLink -%}
+{%- from "govuk_frontend_jinja/components/table/macro.html" import govukTable -%}
+{% from "macros/banner_summary.html" import banner_summary %}
+
+{% block content %}
+    <div class="govuk-phase-banner flex-parent-element">
+        <p class="govuk-!-text-align-left flex-parent-element flexed-element-margins-collapse">
+            {{ govukBackLink({'href': url_for("assess_bp.landing"), 'text': 'Back to assessment dashboard'}) }}
+        </p>
+        <p class="flex-parent-element flexed-element-margins-collapse govuk-!-text-align-right">
+            <a href="#"
+               class="govuk-link flexed-element-margins-collapse">Sign out
+            </a>
+        </p>
+    </div>
+
+    {{ banner_summary(
+        fund_name,
+        banner_state.short_id,
+        banner_state.project_name,
+        banner_state.funding_amount_requested,
+        banner_state.workflow_status
+    ) }}
+
+    <div class="govuk-width-container">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                <div>
+                    <div class="govuk-grid-column-two-thirds">
+                        <form method="POST">
+                            {{ form.csrf_token }}
+                            <h1 class="govuk-heading govuk-heading-l">Flag application</h1>
+                            <p class="govuk-body">
+                                Flag a section to a lead assessor. They will review the responses
+                                to either resolve your query, or stop the assessment.
+                            </p>
+
+                            {% if form.errors.get("reason") %}
+                                <p class="govuk-error-message">
+                                    <span class="govuk-visually-hidden">Error:</span> Please provide a reason for
+                                    flagging this application
+                                </p>
+                            {% endif %}
+
+                            <div class="govuk-form-group">
+                                <label class="govuk-label govuk-label--s" for="reason">
+                                    Reason for flagging
+                                </label>
+                                <textarea class="govuk-textarea"
+                                          id="reason"
+                                          name="reason"
+                                          rows="8">{{ form.reason.data or "" }}</textarea>
+                            </div>
+
+                            {% if form.errors.get("section") %}
+                                <p class="govuk-error-message">
+                                    <span class="govuk-visually-hidden">Error:</span> Please provide which section you
+                                    are flagging
+                                </p>
+                            {% endif %}
+
+                            <div class="govuk-form-group">
+                                <label class="govuk-label govuk-label--s"
+                                       for="section">
+                                    Section to flag
+                                </label>
+                                <input class="govuk-input"
+                                       id="section"
+                                       name="section"
+                                       type="text"
+                                       value="{{ form.section.data or "" }}">
+                            </div>
+
+
+                            <div class="govuk-button-group">
+                                <button class="govuk-button primary-button"
+                                        data-module="govuk-button">
+                                    Submit
+                                </button>
+                                <a href="{{ referrer }}"
+                                   class="govuk-button secondary-button">
+                                    Cancel
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

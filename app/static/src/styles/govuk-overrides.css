@@ -1,26 +1,26 @@
 .govuk-width-container {
-  width: 100%;
+    width: 100%;
     max-width: 1400px;
     padding: 0 2em;
     margin: auto;
-  }
+}
 
 .govuk-main-wrapper {
-    padding:0px;
+    padding: 0px;
 }
 
 .govuk-header {
-    padding-bottom:0px;
-    border-bottom:0px;
+    padding-bottom: 0px;
+    border-bottom: 0px;
 }
 
 .govuk-header__container {
-    padding-top:10px !important;
+    padding-top: 10px !important;
 }
 
 .govuk-table-no-bottom-border .govuk-table__body .govuk-table__row:last-child .govuk-table__cell {
     border-bottom: none;
-  }
+}
 
 .govuk-tag--scored-criteria {
     text-size-adjust: 100%;
@@ -33,26 +33,26 @@
     padding: 2.5px;
     font-weight: 400;
     text-transform: none;
-  }
+}
 
 .gov-uk-table__cell--align-right {
     text-align: right;
-  }
+}
 
 .fsd-banner-background {
     background-color: #1d70b8;
     margin: 0 0 30px;
     padding: 40px 0;
-    color:white;
-    text-size-adjust:100%;
+    color: white;
+    text-size-adjust: 100%;
 }
 
 .fsd-banner-content {
-    color:white;
+    color: white;
 }
 
 .fsd-banner-collapse-padding {
-    margin-bottom:0px;
+    margin-bottom: 0px;
 }
 
 .govuk-template__body {
@@ -60,106 +60,135 @@
 }
 
 .govuk-phase-banner__content {
-    width:100%
+    width: 100%
 }
 
 .govuk-heading-xl {
-    margin-bottom:30px;
+    margin-bottom: 30px;
 }
 
 .flex-parent-element {
-  display: flex;
-    width:100%;
+    display: flex;
+    width: 100%;
 }
 
 .flex-child-element {
-  flex: 1;
-  border: 2px solid blueviolet;
-  margin: 0px;
+    flex: 1;
+    border: 2px solid blueviolet;
+    margin: 0px;
 }
 
 .flexed-element-margins-collapse, flexed-element-margins-collapse > p, flexed-element-margins-collapse > p > a {
-display: block;
-font-size: 16px;
-margin:0px;
+    display: block;
+    font-size: 16px;
+    margin: 0px;
 }
 
 .flex-child-element:first-child {
 
 }
+
 .govuk-back-link {
-    margin:0px;
+    margin: 0px;
 }
 
 .govuk-phase-banner {
     margin-top: 15px;
-    margin-bottom:15px;
-    border-bottom:0px;
+    margin-bottom: 15px;
+    border-bottom: 0px;
 }
 
 
 .dashboard-label {
-  text-transform: uppercase;
-  padding: 0.5em;
-  margin: 1em 0 0 0;
-  font-weight: 600;
+    text-transform: uppercase;
+    padding: 0.5em;
+    margin: 1em 0 0 0;
+    font-weight: 600;
 }
 
 .completed .dashboard-label {
-  background-color: #005ea5;
-  color: white;
+    background-color: #005ea5;
+    color: white;
 }
 
 .in-progress .dashboard-label {
-  background-color: #d2e2f1;
-  color: #005ea5;
+    background-color: #d2e2f1;
+    color: #005ea5;
 }
 
 .not-started .dashboard-label {
-  background-color: #797979;
-  color: white;
+    background-color: #797979;
+    color: white;
 }
 
 .not-started-tag {
-  background-color: #aac9e4;
-  color: #0b0c0c;
-  -moz-osx-font-smoothing: grayscale;
-  line-height: 1.1;
-  font-weight: 400;
-  font-size: 19px;
-  padding: 2px 4px;
-  letter-spacing: normal;
-  text-transform: capitalize;
+    background-color: #aac9e4;
+    color: #0b0c0c;
+    -moz-osx-font-smoothing: grayscale;
+    line-height: 1.1;
+    font-weight: 400;
+    font-size: 19px;
+    padding: 2px 4px;
+    letter-spacing: normal;
+    text-transform: capitalize;
 }
 
 .stopped-tag {
-  background-color: #505a5f;
-  color: #ffffff;
-  -moz-osx-font-smoothing: grayscale;
-  line-height: 1.1;
-  font-weight: 400;
-  font-size: 19px;
-  padding: 2px 4px;
-  letter-spacing: normal;
-  text-transform: capitalize;
+    background-color: #505a5f;
+    color: #ffffff;
+    -moz-osx-font-smoothing: grayscale;
+    line-height: 1.1;
+    font-weight: 400;
+    font-size: 19px;
+    padding: 2px 4px;
+    letter-spacing: normal;
+    text-transform: capitalize;
 }
 
 .flagged-tag {
-  background-color: #d4351c;
-  color: #ffffff;
-  -moz-osx-font-smoothing: grayscale;
-  line-height: 1.1;
-  font-weight: 400;
-  font-size: 19px;
-  padding: 2px 4px;
-  letter-spacing: normal;
-  text-transform: capitalize;
+    background-color: #d4351c;
+    color: #ffffff;
+    -moz-osx-font-smoothing: grayscale;
+    line-height: 1.1;
+    font-weight: 400;
+    font-size: 19px;
+    padding: 2px 4px;
+    letter-spacing: normal;
+    text-transform: capitalize;
 }
 
 .primary-button {
-  margin-bottom: 0;
-  background-color: #1d70b8;
+    margin-bottom: 0;
+    background-color: #1d70b8;
 }
+
 .primary-button:hover {
-  background-color: #003078;
+    background-color: #003078;
+}
+
+.govuk-button.secondary-button {
+    margin-bottom: 0;
+    background-color: #ffffff;
+    color: #0b0c0c;
+}
+
+.secondary-button:hover {
+    background-color: #b1b4b6;
+}
+
+.assessment-alert {
+    border: 2px solid #003078;
+    border-left: 10px solid #003078;
+    background-color: #ccd5e4;
+    padding: 30px;
+    font-family: "GDS Transport", arial, sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    margin: 10px 0 30px;
+}
+
+.assessment-alert--flagged {
+    border: 2px solid #d4351c;
+    border-left: 10px solid #d4351c;
+    background-color: #f6efee;
 }

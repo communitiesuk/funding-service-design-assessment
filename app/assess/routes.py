@@ -4,18 +4,19 @@ from app.assess.data import submit_score_and_justification
 from app.assess.display_value_mappings import assessment_statuses
 from app.assess.display_value_mappings import asset_types
 from app.assess.forms.comments_form import CommentsForm
+from app.assess.forms.flag_form import FlagApplicationForm
 from app.assess.forms.scores_and_justifications import ScoreForm
-from app.assess.models.question import Question
-from app.assess.models.question_field import QuestionField
-from app.assess.models.total_table import TotalMoneyTableView
 from app.assess.models.ui import applicants_response
 from app.assess.models.ui.assessor_task_list import AssessorTaskList
 from config import Config
 from flask import abort
 from flask import Blueprint
 from flask import g
+from flask import redirect
 from flask import render_template
 from flask import request
+from flask import url_for
+from fsd_utils.authentication.decorators import login_required
 
 assess_bp = Blueprint(
     "assess_bp",
@@ -36,46 +37,70 @@ def display_sub_criteria(
     """
     Page showing sub criteria and themes for an application
     """
-    form = ScoreForm()
-    score_error, justification_error, scores_submitted = (
-        False,
-        False,
-        False,
-    )
-    if request.method == "POST":
-        if form.validate_on_submit():
-            score = int(form.score.data)
-            justification = form.justification.data
-            try:
-                user_id = g.account_id
-            except AttributeError:
-                user_id = (  # TODO remove and force g.account_id after adding authentication # noqa
-                    ""
-                )
-            submit_score_and_justification(
-                score=score,
-                justification=justification,
-                application_id=application_id,
-                user_id=user_id,
-                sub_criteria_id=sub_criteria_id,
-            )
-            scores_submitted = True
-
-        else:
-            score_error = True if not form.score.data else False
-            justification_error = (
-                True if not form.justification.data else False
-            )
-
-    args = request.args
+    current_app.logger.info(f"Processing GET to {request.path}.")
     sub_criteria = get_sub_criteria(application_id, sub_criteria_id)
-    theme_id = args.get("theme_id", sub_criteria.themes[0].id)
+    theme_id = request.args.get("theme_id", sub_criteria.themes[0].id)
     fund = get_fund(Config.COF_FUND_ID)
+    display_comment_box = False
+    is_flagged = any(get_flags(application_id))
+
     comments = get_comments(
-        application_id=application_id, sub_criteria_id=sub_criteria_id
+        application_id=application_id,
+        sub_criteria_id=sub_criteria_id,
+        theme_id=theme_id,
+        themes=sub_criteria.themes,
     )
+
+    common_template_config = {
+        "current_theme_id": theme_id,
+        "sub_criteria": sub_criteria,
+        "application_id": application_id,
+        "fund": fund,
+        "comments": comments,
+        "if_flagged": is_flagged,
+    }
 
     if theme_id == "score":
+        # SECURITY SECTION START ######
+        # Prevent non-assessors from accessing
+        # the scoring version of this page
+        if g.user.highest_role not in [
+            "LEAD_ASSESSOR",
+            "ASSESSOR",
+        ]:
+            current_app.logger.info(
+                "Non-assessor attempted to access scoring view"
+                f" {request.path}."
+            )
+            abort(404)
+        # SECURITY SECTION END ######
+
+        form = ScoreForm()
+        score_error, justification_error, scores_submitted = (
+            False,
+            False,
+            False,
+        )
+        if request.method == "POST":
+            current_app.logger.info(f"Processing POST to {request.path}.")
+            if form.validate_on_submit():
+                score = int(form.score.data)
+                justification = form.justification.data
+                user_id = g.account_id
+                submit_score_and_justification(
+                    score=score,
+                    justification=justification,
+                    application_id=application_id,
+                    user_id=user_id,
+                    sub_criteria_id=sub_criteria_id,
+                )
+                scores_submitted = True
+
+            else:
+                score_error = True if not form.score.data else False
+                justification_error = (
+                    True if not form.justification.data else False
+                )
         # call to assessment store to get latest score
         score_list = get_score_and_justification(
             application_id, sub_criteria_id, score_history=True
@@ -92,46 +117,84 @@ def display_sub_criteria(
 
         return render_template(
             "sub_criteria.html",
-            current_theme_id=theme_id,
             on_summary=True,
-            sub_criteria=sub_criteria,
-            application_id=application_id,
-            fund=fund,
-            form=form,
-            scores_submitted=scores_submitted,
             score_list=score_list if len(score_list) > 0 else None,
             latest_score=latest_score,
             COF_score_list=COF_score_list,
+            scores_submitted=scores_submitted,
             score_error=score_error,
             justification_error=justification_error,
-            comments=comments,
+            form=form,
+            **common_template_config,
         )
 
-    answers_meta = []
-    if theme_id:
+    elif theme_id != "score":
         theme_answers_response = get_sub_criteria_theme_answers(
             application_id, theme_id
         )
         answers_meta = applicants_response.create_ui_components(
-            theme_answers_response
+            theme_answers_response, application_id
+        )
+        if request.args.get("add-comment") == "1":
+            display_comment_box = True
+
+        comment_form = CommentsForm()
+
+        if comment_form.validate_on_submit():
+            comment = comment_form.comment.data
+            display_comment_box = False
+
+            submit_comment(
+                comment=comment,
+                application_id=application_id,
+                sub_criteria_id=sub_criteria_id,
+                user_id=g.account_id,
+                theme_id=theme_id,
+            )
+
+        return render_template(
+            "sub_criteria.html",
+            on_summary=False,
+            answers_meta=answers_meta,
+            commentForm=comment_form,
+            displayCommentBox=display_comment_box,
+            **common_template_config,
         )
 
+
+@assess_bp.route(
+    "/flag/<application_id>",
+    methods=["GET", "POST"],
+)
+@login_required(roles_required=["ASSESSOR", "LEAD_ASSESSOR"])
+def flag(application_id):
+    # TODO: handle multiple flags.
+    flags = get_flags(application_id)
+    if any(flags):
+        abort(400, "Application already flagged")
+
+    form = FlagApplicationForm()
+
+    if request.method == "POST" and form.validate_on_submit():
+        submit_flag(application_id, form.reason.data, form.section.data)
+        return redirect(
+            url_for(
+                "assess_bp.application",
+                application_id=application_id,
+            )
+        )
+
+    banner_state = get_banner_state(application_id)
+    fund = get_fund(banner_state["fund_id"])
+
     return render_template(
-        "sub_criteria.html",
-        current_theme_id=theme_id,
-        on_summary=False,
-        sub_criteria=sub_criteria,
+        "flag_application.html",
         application_id=application_id,
-        fund=fund,
+        fund_name=fund.name,
+        banner_state=banner_state,
         form=form,
-        comments=comments,
-        answers_meta=answers_meta,
+        referrer=request.referrer,
     )
-
-
-@assess_bp.route("/sub_criteria", methods=["GET"])
-def display_base():
-    None
 
 
 @assess_bp.route("/assessor_dashboard/", methods=["GET"])
@@ -167,6 +230,7 @@ def landing():
 
     return render_template(
         "assessor_dashboard.html",
+        user=g.user,
         application_overviews=application_overviews,
         assessment_deadline=assessment_deadline,
         query_params=search_params,
@@ -178,7 +242,6 @@ def landing():
 
 @assess_bp.route("/application/<application_id>", methods=["GET"])
 def application(application_id):
-
     """
     Application summary page
     Shows information about the fund, application ID
@@ -198,12 +261,23 @@ def application(application_id):
     assessor_task_list_metadata["fund_name"] = fund.name
 
     state = AssessorTaskList.from_json(assessor_task_list_metadata)
-    current_app.logger.info(f"Fetching data from '{assessor_task_list_metadata}'.")
+    current_app.logger.info(
+        f"Fetching data from '{assessor_task_list_metadata}'."
+    )
+
+    flags = get_flags(application_id)
+    flag = flags[0] if flags else None  # TODO: handle multiple flags?
+
+    accounts = {}
+    if flag:
+        accounts = get_bulk_accounts_dict([flag.user_id])
 
     return render_template(
         "assessor_tasklist.html",
         state=state,
         application_id=application_id,
+        flag=flag,
+        flag_user_info=accounts.get(flag.user_id) if flag else None,
     )
 
 
@@ -227,7 +301,6 @@ def comments():
 
 @assess_bp.route("/fragments/sub_criteria_scoring", methods=["POST", "GET"])
 def sub_crit_scoring():
-
     form = ScoreForm()
 
     if form.validate_on_submit():

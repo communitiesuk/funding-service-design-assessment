@@ -1,14 +1,18 @@
 import inspect
 from dataclasses import dataclass
 
-
 @dataclass
-class Theme:
-    id: str
-    name: str
+class Comment:
+    comment: str
+    user_id: str
+    date_created: str
+    email_address: str
+    full_name: str
+    highest_role: str
+    theme_id: str
 
     @classmethod
-    def from_filtered_dict(cls, d: dict):
+    def from_dict(cls, d: dict):
         # Filter unknown fields from JSON dictionary
         return cls(
             **{
