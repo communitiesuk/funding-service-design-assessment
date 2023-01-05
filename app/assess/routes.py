@@ -114,6 +114,32 @@ def display_sub_criteria(
             (2, "Partial"),
             (1, "Poor"),
         ]
+        
+        if request.args.get("add-comment") == "1":
+            display_comment_box = True
+
+        comment_form = CommentsForm()
+
+        if comment_form.validate_on_submit():
+            comment = comment_form.comment.data
+            display_comment_box = False
+            
+            submit_comment(
+                comment=comment,
+                application_id=application_id,
+                sub_criteria_id=sub_criteria_id,
+                user_id=g.account_id,
+                theme_id=theme_id,
+                )    
+            
+            return redirect(
+                url_for(
+                    "assess_bp.display_sub_criteria",
+                    application_id=application_id,
+                    sub_criteria_id=sub_criteria_id,
+                    theme_id=theme_id,
+                )
+            )
 
         return render_template(
             "sub_criteria.html",
@@ -121,6 +147,8 @@ def display_sub_criteria(
             score_list=score_list if len(score_list) > 0 else None,
             latest_score=latest_score,
             COF_score_list=COF_score_list,
+            commentForm=comment_form,
+            displayCommentBox=display_comment_box,
             scores_submitted=scores_submitted,
             score_error=score_error,
             justification_error=justification_error,
