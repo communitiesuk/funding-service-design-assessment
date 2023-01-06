@@ -467,21 +467,23 @@ def get_comments(application_id: str, sub_criteria_id: str, theme_id, themes):
 def submit_comment(
     comment, application_id, sub_criteria_id, user_id, theme_id
 ):
-    data_dict = {
-        "comment": comment,
-        "user_id": user_id,
-        "application_id": application_id,
-        "sub_criteria_id": sub_criteria_id,
-        "comment_type": "COMMENT",
-        "theme_id": theme_id,
-    }
-    url = Config.ASSESSMENT_COMMENT_ENDPOINT
-    response = requests.post(url, json=data_dict)
-    current_app.logger.info(
-        f"Response from Assessment Store: '{response.json()}'."
-    )
+    # TODO: should we add something that informs the user the comment doesnt hasnt saved?
+    if comment.isspace() == False and comment != "":
+        data_dict = {
+            "comment": comment,
+            "user_id": user_id,
+            "application_id": application_id,
+            "sub_criteria_id": sub_criteria_id,
+            "comment_type": "COMMENT",
+            "theme_id": theme_id,
+        }
+        url = Config.ASSESSMENT_COMMENT_ENDPOINT
+        response = requests.post(url, json=data_dict)
+        current_app.logger.info(
+            f"Response from Assessment Store: '{response.json()}'."
+        )
 
-    return response.ok
+        return response.ok
 
 
 def get_file_url(filename: str, application_id: str):
