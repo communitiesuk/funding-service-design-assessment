@@ -68,7 +68,7 @@ class TestAuthorisation:
         flask_test_client.set_cookie("localhost", "fsd_user_token", "")
         response = flask_test_client.get("/")
         assert response.status_code == 200
-        assert b"Please sign in to continue." in response.data
+        assert b"Welcome to the assessment tool" in response.data
         assert (
             b'<a href="https://authenticator/sso/login" role="button"'
             b' draggable="false" class="govuk-button"'

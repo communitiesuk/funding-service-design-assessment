@@ -51,7 +51,7 @@
                 {% else %}
                 {{comment(comments)}}
                 {% endif %}
-                {% if display_comment_box != True %}
+                {% if display_comment_box != True and current_theme_id != "score" %}
                     <a
                         id="comment"
                         class="govuk-button secondary-button govuk-!-margin-top-2 govuk-!-margin-bottom-6"
