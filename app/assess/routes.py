@@ -60,7 +60,7 @@ def display_sub_criteria(
         "is_flagged": is_flagged,
     }
 
-    if theme_id == "score":
+    if theme_id == "score" and sub_criteria.is_scored:
         # SECURITY SECTION START ######
         # Prevent non-assessors from accessing
         # the scoring version of this page
@@ -118,7 +118,7 @@ def display_sub_criteria(
             (2, "Partial"),
             (1, "Poor"),
         ]
-        
+
         if request.args.get("add-comment") == "1":
             display_comment_box = True
 
@@ -127,15 +127,15 @@ def display_sub_criteria(
         if comment_form.validate_on_submit():
             comment = comment_form.comment.data
             display_comment_box = False
-            
+
             submit_comment(
                 comment=comment,
                 application_id=application_id,
                 sub_criteria_id=sub_criteria_id,
                 user_id=g.account_id,
                 theme_id=theme_id,
-                )    
-            
+            )
+
             return redirect(
                 url_for(
                     "assess_bp.display_sub_criteria",

@@ -500,6 +500,7 @@
     "id": "1a2b3c4d",
     "name": "Engagement",
     "score_submitted": "false",
+    "is_scored": true,
     "themes": [
       {
         "id": "general-information",
