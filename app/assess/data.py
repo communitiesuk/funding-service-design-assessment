@@ -177,7 +177,6 @@ def get_score_and_justification(
     )
     account_ids = [score["user_id"] for score in score_response]
     bulk_accounts_dict = get_bulk_accounts_dict(account_ids)
-    current_app.logger.error(bulk_accounts_dict)
     scores: list[Score] = [
         Score.from_dict(
             score
@@ -195,7 +194,6 @@ def get_score_and_justification(
         )
         for score in score_response
     ]
-    current_app.logger.error(scores)
     return scores
 
 
