@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField
 from wtforms import TextAreaField
-from wtforms.validators import DataRequired
+from wtforms.validators import InputRequired
 from wtforms.validators import length
 
 
@@ -10,7 +10,7 @@ class FlagApplicationForm(FlaskForm):
         "Reason for flagging",
         validators=[
             length(max=10000),
-            DataRequired(
+            InputRequired(
                 message="Provide a reason for flagging this application"
             ),
         ],
@@ -19,6 +19,6 @@ class FlagApplicationForm(FlaskForm):
         "Section to flag",
         validators=[
             length(max=10000),
-            DataRequired(message="Provide which section you are flagging"),
+            InputRequired(message="Provide which section you are flagging"),
         ],
     )
