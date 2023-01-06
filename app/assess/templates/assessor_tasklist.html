@@ -10,10 +10,11 @@
 {% block content %}
     <div class="govuk-phase-banner flex-parent-element">
         <p class="govuk-!-text-align-left flex-parent-element flexed-element-margins-collapse">{{ govukBackLink({'href': url_for("assess_bp.landing"), 'text': 'Back to assessment dashboard'}) }}</p>
-        <p class="flex-parent-element flexed-element-margins-collapse govuk-!-text-align-right"><a href="{{ sso_logout_url }}" class="govuk-link flexed-element-margins-collapse">Log out</a></p>
+        <p class="flex-parent-element flexed-element-margins-collapse govuk-!-text-align-right"><a
+                href="{{ sso_logout_url }}" class="govuk-link flexed-element-margins-collapse">Log out</a></p>
     </div>
 
-     {% if flag %}
+    {% if flag and g.user.highest_role in ("ASSESSOR", "LEAD_ASSESSOR") %}
         {{ assessment_flag(flag, flag_user_info) }}
     {% endif %}
 
@@ -26,23 +27,27 @@
     ) }}
 
     <div class="govuk-width-container">
-        {% if not flag %}
-            {{ flag_application_button(application_id) }}
-        {% endif %}
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-full">
-                <div class="govuk-grid-column-two-thirds">
-                    {% for section in state.sections %}
-                        {{ section_element(section.name, section.sub_criterias, application_id) }}{% endfor %}
-                    <h2 class="govuk-heading-l govuk-!-margin-top-8">Score the application</h2>
-                    <p class="govuk-body">Assess all responses under each sub criteria.</p>
-                    {% for criteria in state.criterias %}
-                        {% set name_classes = "govuk-heading-m govuk-!-margin-bottom-2" %}
-                        {% if loop.index > 0 %}
-                            {% set name_classes = "govuk-heading-m govuk-!-margin-bottom-2 govuk-!-margin-top-8" %}
+                <div>
+                    <div class="govuk-grid-column-two-thirds">
+                        {% for section in state.sections %}
+                            {{ section_element(section.name, section.sub_criterias, application_id) }}{% endfor %}
+                        <h2 class="govuk-heading-l govuk-!-margin-top-8">Score the application</h2>
+                        <p class="govuk-body">Assess all responses under each sub criteria.</p>
+                        {% for criteria in state.criterias %}
+                            {% set name_classes = "govuk-heading-m govuk-!-margin-bottom-2" %}
+                            {% if loop.index > 0 %}
+                                {% set name_classes = "govuk-heading-m govuk-!-margin-bottom-2 govuk-!-margin-top-8" %}
+                            {% endif %}
+                            {{ criteria_element(criteria, name_classes, application_id) }}
+                        {% endfor %}
+                    </div>
+                    <div class="govuk-grid-column-one-third govuk-!-margin-top-2">
+                        {% if not flag and g.user.highest_role in ("ASSESSOR", "LEAD_ASSESSOR") %}
+                            {{ flag_application_button(application_id) }}
                         {% endif %}
-                        {{ criteria_element(criteria, name_classes, application_id) }}
-                    {% endfor %}
+                    </div>
                 </div>
             </div>
         </div>

@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {%- from 'govuk_frontend_jinja/components/back-link/macro.html' import govukBackLink -%}
 {%- from "govuk_frontend_jinja/components/table/macro.html" import govukTable -%}
+{%- from 'govuk_frontend_jinja/components/textarea/macro.html' import govukTextarea -%}
 {% from "macros/banner_summary.html" import banner_summary %}
 
 {% block content %}
@@ -36,42 +37,32 @@
                                 to either resolve your query, or stop the assessment.
                             </p>
 
-                            {% if form.errors.get("reason") %}
-                                <p class="govuk-error-message">
-                                    <span class="govuk-visually-hidden">Error:</span> Please provide a reason for
-                                    flagging this application
-                                </p>
-                            {% endif %}
+                            {{ govukTextarea({
+                                'id': form.reason.id,
+                                'name': form.reason.id,
+                                'label': {
+                                    'text': 'Reason for flagging',
+                                    'classes': 'govuk-label govuk-label--s'
+                                },
+                                'errorMessage': {
+                                    'text': form.errors.get("reason") | join("\n")
+                                } if form.errors.get("reason") else None,
+                                'rows': 8,
+                                'value': form.reason.data or ""
+                            }) }}
 
-                            <div class="govuk-form-group">
-                                <label class="govuk-label govuk-label--s" for="reason">
-                                    Reason for flagging
-                                </label>
-                                <textarea class="govuk-textarea"
-                                          id="reason"
-                                          name="reason"
-                                          rows="8">{{ form.reason.data or "" }}</textarea>
-                            </div>
-
-                            {% if form.errors.get("section") %}
-                                <p class="govuk-error-message">
-                                    <span class="govuk-visually-hidden">Error:</span> Please provide which section you
-                                    are flagging
-                                </p>
-                            {% endif %}
-
-                            <div class="govuk-form-group">
-                                <label class="govuk-label govuk-label--s"
-                                       for="section">
-                                    Section to flag
-                                </label>
-                                <input class="govuk-input"
-                                       id="section"
-                                       name="section"
-                                       type="text"
-                                       value="{{ form.section.data or "" }}">
-                            </div>
-
+                            {{ govukTextarea({
+                                'id': form.section.id,
+                                'name': form.section.id,
+                                'label': {
+                                    'text': 'Section to flag',
+                                    'classes': 'govuk-label govuk-label--s'
+                                },
+                                'errorMessage': {
+                                    'text': form.errors.get("section") | join("\n"),
+                                } if form.errors.get("section") else None,
+                                'value': form.section.data or ""
+                            }) }}
 
                             <div class="govuk-button-group">
                                 <button class="govuk-button primary-button"
