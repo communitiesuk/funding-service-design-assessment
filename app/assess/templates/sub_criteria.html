@@ -53,11 +53,15 @@
                 {% endif %}
                 {% if displayCommentBox != True %}
                     <form method="GET">
+                        {%if current_theme_id != "score"%}
                         <button id="comment-button-community" class="govuk-button secondary-button govuk-!-margin-top-2" type="submit" data-module="govuk-button" value="add-comment">
+                         
                             {% if comments == None %} Add a comment
                             {% else %} Add another comment
                             {% endif %}
+                            
                         </button>
+                        {% endif %}
                         <input type="hidden" name="theme_id" value="{{current_theme_id}}">
                         <input type="hidden" name="add-comment" value="1">
                     </form>
