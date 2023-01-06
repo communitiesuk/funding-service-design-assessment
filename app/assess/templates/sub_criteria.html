@@ -7,7 +7,7 @@
 {% from "macros/flag_application_button.html" import flag_application_button %}
 {% from "macros/comments.html" import comment %}
 {% from "macros/comments_summary.html" import comment_summary %}
-{% from "macros/comments_box.html" import commentBox %}
+{% from "macros/comments_box.html" import comment_box %}
 
 
 {% block content %}
@@ -26,7 +26,7 @@
     ) }}
 
     <div class="govuk-width-container">
-        {% if not is_flagged %}
+        {% if not is_flagged and g.user.highest_role in ("ASSESSOR", "LEAD_ASSESSOR") %}
             {{ flag_application_button(application_id) }}
         {% endif %}
         <div class="govuk-grid-row">
@@ -51,24 +51,29 @@
                 {% else %}
                 {{comment(comments)}}
                 {% endif %}
-                {% if displayCommentBox != True %}
-                    <form method="GET">
-                        {%if current_theme_id != "score"%}
-                        <button id="comment-button-community" class="govuk-button secondary-button govuk-!-margin-top-2" type="submit" data-module="govuk-button" value="add-comment">
-                         
-                            {% if comments == None %} Add a comment
-                            {% else %} Add another comment
-                            {% endif %}
-                            
-                        </button>
+                {% if display_comment_box != True and current_theme_id != "score" %}
+                    <a
+                        id="comment"
+                        class="govuk-button secondary-button govuk-!-margin-top-2 govuk-!-margin-bottom-6"
+                        type="submit"
+                        data-module="govuk-button"
+                        href="{{ url_for(
+                            "assess_bp.display_sub_criteria",
+                            application_id=application_id,
+                            sub_criteria_id=sub_criteria.id,
+                            theme_id=current_theme_id,
+                            add_comment="1",
+                            _anchor="comment"
+                        ) }}"
+                    >
+                        {% if comments == None %} Add a comment
+                        {% else %} Add another comment
                         {% endif %}
-                        <input type="hidden" name="theme_id" value="{{current_theme_id}}">
-                        <input type="hidden" name="add-comment" value="1">
-                    </form>
+                    </a>
                     {% endif %}
 
-                    {% if displayCommentBox == True %}
-                        {{ commentBox(commentForm) }}
+                    {% if display_comment_box == True %}
+                        {{ comment_box(comment_form) }}
                     {% endif %}
             </div>
         </div>
