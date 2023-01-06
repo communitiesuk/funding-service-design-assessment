@@ -466,7 +466,7 @@ def get_comments(application_id: str, sub_criteria_id: str, theme_id, themes):
 
 def submit_comment(
     comment, application_id, sub_criteria_id, user_id, theme_id
-):    
+):
     data_dict = {
         "comment": comment,
         "user_id": user_id,
