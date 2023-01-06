@@ -85,7 +85,7 @@ def display_sub_criteria(
         "comment_form": comment_form,
     }
 
-    if theme_id == "score":
+    if theme_id == "score" and sub_criteria.is_scored:
         # SECURITY SECTION START ######
         # Prevent non-assessors from accessing
         # the scoring version of this page
