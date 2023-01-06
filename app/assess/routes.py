@@ -43,13 +43,7 @@ def display_sub_criteria(
     comment_form = CommentsForm()
 
     add_comment_argument = request.args.get("add_comment") == "1"
-    if all(
-        [
-            add_comment_argument,
-            request.method == "POST",
-            comment_form.validate_on_submit(),
-        ]
-    ):
+    if add_comment_argument and comment_form.validate_on_submit():
         comment = comment_form.comment.data
 
         submit_comment(
