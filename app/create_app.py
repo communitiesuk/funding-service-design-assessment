@@ -15,8 +15,8 @@ from flask_assets import Environment
 from flask_compress import Compress
 from flask_talisman import Talisman
 from flask_wtf.csrf import CSRFProtect
-from fsd_utils.authentication.decorators import login_requested
 from fsd_utils import init_sentry
+from fsd_utils.authentication.decorators import login_requested
 from fsd_utils.healthchecks.checkers import FlaskRunningChecker
 from fsd_utils.healthchecks.healthcheck import Healthcheck
 from fsd_utils.logging import logging
@@ -123,7 +123,7 @@ def create_app() -> Flask:
         def ensure_minimum_required_roles():
             return auth_protect(
                 minimum_roles_required=["COMMENTER"],
-                unprotected_routes=["", "/"],
+                unprotected_routes=["/", "/healthcheck"],
             )
 
         @flask_app.after_request
