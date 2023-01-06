@@ -52,21 +52,24 @@
                 {{comment(comments)}}
                 {% endif %}
                 {% if display_comment_box != True %}
-                    <form method="GET">
-                        <button
-                            id="comment"
-                            class="govuk-button secondary-button govuk-!-margin-top-2 govuk-!-margin-bottom-6"
-                            type="submit"
-                            data-module="govuk-button"
-                            value="add-comment"
-                        >
-                            {% if comments == None %} Add a comment
-                            {% else %} Add another comment
-                            {% endif %}
-                        </button>
-                        <input type="hidden" name="theme_id" value="{{current_theme_id}}">
-                        <input type="hidden" name="expand-comment-box" value="1">
-                    </form>
+                    <a
+                        id="comment"
+                        class="govuk-button secondary-button govuk-!-margin-top-2 govuk-!-margin-bottom-6"
+                        type="submit"
+                        data-module="govuk-button"
+                        href="{{ url_for(
+                            "assess_bp.display_sub_criteria",
+                            application_id=application_id,
+                            sub_criteria_id=sub_criteria.id,
+                            theme_id=current_theme_id,
+                            add_comment="1",
+                            _anchor="comment"
+                        ) }}"
+                    >
+                        {% if comments == None %} Add a comment
+                        {% else %} Add another comment
+                        {% endif %}
+                    </a>
                     {% endif %}
 
                     {% if display_comment_box == True %}

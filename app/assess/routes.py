@@ -64,22 +64,6 @@ def display_sub_criteria(
             )
         )
 
-    expand_comment_box = bool(request.args.get("expand-comment-box"))
-    # used to expand the comment box when
-    # a user clicks on the add comment button, we use redirect
-    # to anchor the page to the add comment section
-    if expand_comment_box:
-        return redirect(
-            url_for(
-                "assess_bp.display_sub_criteria",
-                application_id=application_id,
-                sub_criteria_id=sub_criteria_id,
-                theme_id=theme_id,
-                add_comment=1,
-                _anchor="comment",
-            )
-        )
-
     fund = get_fund(Config.COF_FUND_ID)
     is_flagged = any(get_flags(application_id))
 
