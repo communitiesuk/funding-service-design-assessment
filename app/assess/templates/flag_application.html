@@ -45,7 +45,7 @@
                                     'classes': 'govuk-label govuk-label--s'
                                 },
                                 'errorMessage': {
-                                    'text': 'Please provide a reason for flagging this application'
+                                    'text': form.errors.get("reason") | join("\n")
                                 } if form.errors.get("reason") else None,
                                 'rows': 8,
                                 'value': form.reason.data or ""
@@ -59,7 +59,7 @@
                                     'classes': 'govuk-label govuk-label--s'
                                 },
                                 'errorMessage': {
-                                    'text': 'Please provide which section you are flagging'
+                                    'text': form.errors.get("section") | join("\n"),
                                 } if form.errors.get("section") else None,
                                 'value': form.section.data or ""
                             }) }}
