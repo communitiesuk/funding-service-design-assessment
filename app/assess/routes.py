@@ -124,7 +124,7 @@ def display_sub_criteria(
 
         comment_form = CommentsForm()
 
-        if request.method == "POST" and comment_form.validate_on_submit():
+        if comment_form.validate_on_submit():
             comment = comment_form.comment.data
             display_comment_box = False
             
@@ -172,7 +172,7 @@ def display_sub_criteria(
 
         comment_form = CommentsForm()
 
-        if request.method == "POST" and comment_form.validate_on_submit():
+        if comment_form.validate_on_submit():
             comment = comment_form.comment.data
             display_comment_box = False
 
