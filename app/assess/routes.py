@@ -101,11 +101,7 @@ def display_sub_criteria(
         # SECURITY SECTION END ######
 
         form = ScoreForm()
-        score_error, justification_error, scores_submitted = (
-            False,
-            False,
-            False,
-        )
+        score_error = justification_error = scores_submitted = False
         if request.method == "POST":
             current_app.logger.info(f"Processing POST to {request.path}.")
             if form.validate_on_submit():
@@ -280,6 +276,7 @@ def application(application_id):
 
     accounts = {}
     if flag:
+        state.workflow_status = "FLAGGED"
         accounts = get_bulk_accounts_dict([flag.user_id])
 
     return render_template(
