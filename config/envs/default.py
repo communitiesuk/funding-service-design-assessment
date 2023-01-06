@@ -111,7 +111,7 @@ class DefaultConfig:
         "{sub_criteria_id}&theme_id={theme_id}"
     )
 
-    # Account store endoints
+    # Account store endpoints
     BULK_ACCOUNTS_ENDPOINT = ACCOUNT_STORE_API_HOST + "/bulk-accounts"
 
     """

@@ -229,11 +229,11 @@ class TestJinjaMacros(object):
 
     def test_comment_macro(self, request_ctx):
         rendered_html = render_template_string(
-            "{{commentBox(commentForm)}}",
-            commentBox=get_template_attribute(
-                "macros/comments_box.html", "commentBox"
+            "{{comment_box(comment_form)}}",
+            comment_box=get_template_attribute(
+                "macros/comments_box.html", "comment_box"
             ),
-            commentForm=CommentsForm(),
+            comment_form=CommentsForm(),
         )
 
         # replacing new lines to more easily regex match the html

@@ -1,15 +1,15 @@
 {%- from 'govuk_frontend_jinja/components/textarea/macro.html' import govukTextarea -%}
 {%- from "govuk_frontend_jinja/components/button/macro.html" import govukButton -%}
 
-{% macro commentBox(commentForm) %}
+{% macro comment_box(comment_form) %}
 
 <form method="POST">
 <div class="govuk-grid-row">
-    {{ commentForm.csrf_token }}
+    {{ comment_form.csrf_token }}
     <div class="govuk-grid-column-three-quarters">
     {{ govukTextarea({
-    "name": commentForm.comment.id,
-    "id": commentForm.comment.id,
+    "name": comment_form.comment.id,
+    "id": comment_form.comment.id,
     "label": {
       "text": "Add a comment",
       "classes": "govuk-label--s",
