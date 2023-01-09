@@ -497,6 +497,13 @@ def get_file_url(filename: str, application_id: str):
 
     prefixed_file_name = application_id + "/" + filename
 
+    current_app.logger.info("ACCESS KEY IS: " + Config.AWS_ACCESS_KEY_ID)
+    current_app.logger.info(
+        "SECRET KEY START IS : " + Config.AWS_SECRET_ACCESS_KEY[0:5]
+    )
+    current_app.logger.info("REGION IS : " + Config.AWS_REGION)
+    current_app.logger.info("BUCKET NAME IS : " + Config.AWS_BUCKET_NAME)
+
     s3_client = boto3.client(
         "s3",
         aws_access_key_id=Config.AWS_ACCESS_KEY_ID,
