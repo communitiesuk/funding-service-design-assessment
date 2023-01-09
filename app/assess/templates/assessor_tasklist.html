@@ -33,7 +33,7 @@
                     <div class="govuk-grid-column-two-thirds">
                         {% for section in state.sections %}
                             {{ section_element(section.name, section.sub_criterias, application_id) }}{% endfor %}
-                        <h2 class="govuk-heading-l govuk-!-margin-top-8">Score the application</h2>
+                        <h2 class="govuk-heading-l govuk-!-margin-top-8">Scored</h2>
                         <p class="govuk-body">Assess all responses under each sub criteria.</p>
                         {% for criteria in state.criterias %}
                             {% set name_classes = "govuk-heading-m govuk-!-margin-bottom-2" %}
