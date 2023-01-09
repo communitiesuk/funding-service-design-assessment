@@ -166,6 +166,7 @@ class TestRoutes:
                 user_id="test-user",
                 user_full_name="Test User",
                 user_email="test@example.com",
+                highest_role="LEAD_ASSESSOR",
             )
         ]
 
@@ -258,6 +259,40 @@ class TestRoutes:
             "Commenter should receive a 404 when trying to access the sub"
             " criteria scoring page"
         )
+
+    def test_homepage_route_accessible(self, flask_test_client):
+
+        # Remove fsd-user-token cookie
+        flask_test_client.set_cookie("localhost", "fsd_user_token", "")
+
+        # Send a request to the homepage "/" route
+        response = flask_test_client.get("/")
+
+        # Assert that the response has the expected status code
+        assert (
+            200 == response.status_code
+        ), "Homepage route should be accessible"
+
+        # Send a request to the root route
+        response = flask_test_client.get("", follow_redirects=True)
+
+        # Assert that the response has the expected status code
+        assert (
+            200 == response.status_code
+        ), "Homepage route should be accessible"
+
+    def test_healthcheck_route_accessible(self, flask_test_client):
+
+        # Remove fsd-user-token cookie
+        flask_test_client.set_cookie("localhost", "fsd_user_token", "")
+
+        # Send a request to the /healthcheck route
+        response = flask_test_client.get("/healthcheck")  # noqa
+
+        # Assert that the response has the expected status code
+        assert (
+            200 == response.status_code
+        ), "Healthcheck route should be accessible"
 
     @pytest.mark.parametrize(
         "expected_ids, expected_names",

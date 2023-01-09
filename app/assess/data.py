@@ -164,6 +164,14 @@ def get_score_and_justification(
         "score_history": score_history,
     }
     score_response = get_data(score_url, score_params)
+
+    if not score_response or len(score_response) == 0:
+        current_app.logger.info(
+            f"No scores found for application: {application_id},"
+            f" sub_criteria_id: {sub_criteria_id}"
+        )
+        return None
+
     current_app.logger.info(
         f"Response from Assessment Store: '{score_response}'."
     )
@@ -178,6 +186,9 @@ def get_score_and_justification(
                 ],
                 "user_email": bulk_accounts_dict[score["user_id"]][
                     "email_address"
+                ],
+                "highest_role": bulk_accounts_dict[score["user_id"]][
+                    "highest_role"
                 ],
             }
         )
@@ -415,45 +426,40 @@ def get_comments(application_id: str, sub_criteria_id: str, theme_id, themes):
 
     comment_response = get_data(comment_endpoint)
 
-    if type(comment_response) is list:
-        if len(comment_response) == 0:
-            current_app.logger.info(
-                f"No comments found for application: {application_id},"
-                f" sub_criteria_id: {sub_criteria_id}"
-            )
-            return None
+    if not comment_response or len(comment_response) == 0:
+        current_app.logger.info(
+            f"No comments found for application: {application_id},"
+            f" sub_criteria_id: {sub_criteria_id}"
+        )
+        return None
 
-        account_ids = [comment["user_id"] for comment in comment_response]
-        bulk_accounts_dict = get_bulk_accounts_dict(account_ids)
+    account_ids = [comment["user_id"] for comment in comment_response]
+    bulk_accounts_dict = get_bulk_accounts_dict(account_ids)
 
-        comments: list[Comment] = [
-            Comment.from_dict(
-                comment
-                | {
-                    "full_name": bulk_accounts_dict[comment["user_id"]][
-                        "full_name"
-                    ],
-                    "email_address": bulk_accounts_dict[comment["user_id"]][
-                        "email_address"
-                    ],
-                    "highest_role": bulk_accounts_dict[comment["user_id"]][
-                        "highest_role"
-                    ],
-                }
-            )
-            for comment in comment_response
+    comments: list[Comment] = [
+        Comment.from_dict(
+            comment
+            | {
+                "full_name": bulk_accounts_dict[comment["user_id"]][
+                    "full_name"
+                ],
+                "email_address": bulk_accounts_dict[comment["user_id"]][
+                    "email_address"
+                ],
+                "highest_role": bulk_accounts_dict[comment["user_id"]][
+                    "highest_role"
+                ],
+            }
+        )
+        for comment in comment_response
+    ]
+    theme_id_to_comments_list_map = {
+        theme.id: [
+            comment for comment in comments if comment.theme_id == theme.id
         ]
-        theme_id_to_comments_list_map = {
-            theme.id: [
-                comment for comment in comments if comment.theme_id == theme.id
-            ]
-            for theme in themes
-        }
-        return theme_id_to_comments_list_map
-    else:
-        msg = f"No comment response for application: '{application_id}'."
-        current_app.logger.warn(msg)
-        abort(500, description=msg)
+        for theme in themes
+    }
+    return theme_id_to_comments_list_map
 
 
 def submit_comment(

@@ -40,8 +40,31 @@ def display_sub_criteria(
     current_app.logger.info(f"Processing GET to {request.path}.")
     sub_criteria = get_sub_criteria(application_id, sub_criteria_id)
     theme_id = request.args.get("theme_id", sub_criteria.themes[0].id)
+    comment_form = CommentsForm()
+
+    add_comment_argument = request.args.get("add_comment") == "1"
+    if add_comment_argument and comment_form.validate_on_submit():
+        comment = comment_form.comment.data
+
+        submit_comment(
+            comment=comment,
+            application_id=application_id,
+            sub_criteria_id=sub_criteria_id,
+            user_id=g.account_id,
+            theme_id=theme_id,
+        )
+
+        return redirect(
+            url_for(
+                "assess_bp.display_sub_criteria",
+                application_id=application_id,
+                sub_criteria_id=sub_criteria_id,
+                theme_id=theme_id,
+                _anchor="comments",
+            )
+        )
+
     fund = get_fund(Config.COF_FUND_ID)
-    display_comment_box = False
     is_flagged = any(get_flags(application_id))
 
     comments = get_comments(
@@ -57,10 +80,12 @@ def display_sub_criteria(
         "application_id": application_id,
         "fund": fund,
         "comments": comments,
-        "if_flagged": is_flagged,
+        "is_flagged": is_flagged,
+        "display_comment_box": add_comment_argument,
+        "comment_form": comment_form,
     }
 
-    if theme_id == "score":
+    if theme_id == "score" and sub_criteria.is_scored:
         # SECURITY SECTION START ######
         # Prevent non-assessors from accessing
         # the scoring version of this page
@@ -76,11 +101,7 @@ def display_sub_criteria(
         # SECURITY SECTION END ######
 
         form = ScoreForm()
-        score_error, justification_error, scores_submitted = (
-            False,
-            False,
-            False,
-        )
+        score_error = justification_error = scores_submitted = False
         if request.method == "POST":
             current_app.logger.info(f"Processing POST to {request.path}.")
             if form.validate_on_submit():
@@ -105,7 +126,11 @@ def display_sub_criteria(
         score_list = get_score_and_justification(
             application_id, sub_criteria_id, score_history=True
         )
-        latest_score = score_list.pop(0) if len(score_list) > 0 else None
+        latest_score = (
+            score_list.pop(0)
+            if (score_list is not None and len(score_list) > 0)
+            else None
+        )
         # TODO make COF_score_list extendable to other funds
         COF_score_list = [
             (5, "Strong"),
@@ -118,7 +143,7 @@ def display_sub_criteria(
         return render_template(
             "sub_criteria.html",
             on_summary=True,
-            score_list=score_list if len(score_list) > 0 else None,
+            score_list=score_list or None,
             latest_score=latest_score,
             COF_score_list=COF_score_list,
             scores_submitted=scores_submitted,
@@ -128,38 +153,19 @@ def display_sub_criteria(
             **common_template_config,
         )
 
-    elif theme_id != "score":
-        theme_answers_response = get_sub_criteria_theme_answers(
-            application_id, theme_id
-        )
-        answers_meta = applicants_response.create_ui_components(
-            theme_answers_response, application_id
-        )
-        if request.args.get("add-comment") == "1":
-            display_comment_box = True
+    theme_answers_response = get_sub_criteria_theme_answers(
+        application_id, theme_id
+    )
+    answers_meta = applicants_response.create_ui_components(
+        theme_answers_response, application_id
+    )
 
-        comment_form = CommentsForm()
-
-        if comment_form.validate_on_submit():
-            comment = comment_form.comment.data
-            display_comment_box = False
-
-            submit_comment(
-                comment=comment,
-                application_id=application_id,
-                sub_criteria_id=sub_criteria_id,
-                user_id=g.account_id,
-                theme_id=theme_id,
-            )
-
-        return render_template(
-            "sub_criteria.html",
-            on_summary=False,
-            answers_meta=answers_meta,
-            commentForm=comment_form,
-            displayCommentBox=display_comment_box,
-            **common_template_config,
-        )
+    return render_template(
+        "sub_criteria.html",
+        on_summary=False,
+        answers_meta=answers_meta,
+        **common_template_config,
+    )
 
 
 @assess_bp.route(
@@ -270,6 +276,7 @@ def application(application_id):
 
     accounts = {}
     if flag:
+        state.workflow_status = "FLAGGED"
         accounts = get_bulk_accounts_dict([flag.user_id])
 
     return render_template(

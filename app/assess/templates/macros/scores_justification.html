@@ -10,8 +10,8 @@
         <h2 class="govuk-heading-m">Current score: {{ latest_score['score'] }}</h2>
         <div>
             <p class="govuk-body-s"><strong>Rationale: </strong>{{ latest_score.justification }}</p>
-            <p class="govuk-body-s"><strong>Your name</strong> (Assessor)
-                {% if latest_score.user_full_name %}{{ latest_score.user_full_name }}, {% endif %}{% if latest_score.user_email %}{{ latest_score.user_email }}{% endif %}</p>
+            <p class="govuk-body-s"><strong>{% if latest_score.user_full_name %}{{ latest_score.user_full_name }}, {% endif %}</strong> {{ latest_score.highest_role }},
+                {% if latest_score.user_email %}{{ latest_score.user_email }}{% endif %}</p>
             <p class="govuk-body-s"> <strong>Date/time:</strong> {{ latest_score.date_created|datetime_format("%d/%m/%Y at %H:%M") }}</p>
         </div>
     </div>
@@ -27,7 +27,7 @@
             {% for score in score_list %}
             <p><strong>Score: </strong>{{ score["score"] }}</p>
             <p><strong>Rationale: </strong>{{ score["justification"] }}</p>
-            <p class="govuk-body-s"><strong>Your name: </strong> (Assessor) {{ score["user_full_name"] }}, {{ score["user_email"] }}</p>
+            <p class="govuk-body-s"><strong>{{ score["user_full_name"] }}: </strong> {{ score["highest_role"] }}, {{ score["user_email"] }}</p>
             <p class="govuk-body-s"><strong>Date/time:</strong> {{ score["date_created"]|datetime_format("%d/%m/%Y at %H:%M") }}</p>
             <hr>
             {% endfor %}
