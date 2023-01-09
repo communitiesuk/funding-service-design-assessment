@@ -208,7 +208,7 @@ class TestApplicatorsResponseComponentFactory:
     )
     def test__ui_component_from_factory(self, item, expected_class, mocker):
         mocker.patch(
-        "app.assess.models.ui.applicants_response.get_file_url",
+        "app.assess.models.ui.applicants_response.get_file",
         return_value="sample1.doc")
 
         result = _ui_component_from_factory(item, "app_123")
@@ -721,7 +721,7 @@ def test_create_ui_components_retains_order(mocker):
         },
     ]
     mocker.patch(
-        "app.assess.models.ui.applicants_response.get_file_url",
+        "app.assess.models.ui.applicants_response.get_file",
         return_value="sample1.doc",
     )
     

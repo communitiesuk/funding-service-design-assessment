@@ -219,7 +219,7 @@ class TestAuthorisation:
 
         """
         mocker.patch(
-            "app.assess.models.ui.applicants_response.get_file_url",
+            "app.assess.models.ui.applicants_response.get_file",
             return_value="sample1.doc",
         )
 
@@ -269,7 +269,7 @@ class TestAuthorisation:
 
         """
         mocker.patch(
-            "app.assess.models.ui.applicants_response.get_file_url",
+            "app.assess.models.ui.applicants_response.get_file",
             return_value="sample1.doc",
         )
 

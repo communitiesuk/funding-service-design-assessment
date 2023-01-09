@@ -218,7 +218,7 @@ class TestRoutes:
         mocker,
     ):
         mocker.patch(
-            "app.assess.models.ui.applicants_response.get_file_url",
+            "app.assess.models.ui.applicants_response.get_file",
             return_value="sample1.doc",
         )
         # Mocking fsd-user-token cookie
@@ -311,7 +311,7 @@ class TestRoutes:
         mocker,
     ):
         mocker.patch(
-            "app.assess.models.ui.applicants_response.get_file_url",
+            "app.assess.models.ui.applicants_response.get_file",
             return_value="sample1.doc",
         )
         # Mocking fsd-user-token cookie
