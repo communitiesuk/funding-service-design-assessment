@@ -233,7 +233,12 @@ def landing():
     assessment_deadline = get_round(
         Config.COF_FUND_ID, Config.COF_ROUND2_ID
     ).assessment_deadline
-
+    
+    # Updating assessment progress for applications
+    application_overviews = get_assessment_progress(
+        application_overviews
+        )
+  
     return render_template(
         "assessor_dashboard.html",
         user=g.user,
