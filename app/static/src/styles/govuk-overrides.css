@@ -192,3 +192,15 @@
     border-left: 10px solid #d4351c;
     background-color: #f6efee;
 }
+
+.fsd-login-banner-background {
+    background-color: #1d70b8;
+    margin: 0 0 30px;
+    padding: 20px 0;
+    color:white;
+    text-size-adjust:100%;
+}
+
+.fsd-login-banner-content {
+    color:black;
+}
