@@ -126,7 +126,17 @@ class TestAuthorisation:
         response = flask_test_client.get("/", follow_redirects=True)
         assert response.status_code == 200
         assert (
-            b'Team dashboard'
+            b'<h1 class="govuk-heading-xl fsd-banner-content">'
+            b"Team dashboard</h1>"
+            in response.data
+        )
+        assert b"lead-dashboard-stats" in response.data
+        assert (
+            b'<p id="lead-dashboard-stat-assessments-qa-completed">1</p>'
+            in response.data
+        )
+        assert (
+            b'<p id="lead-dashboard-stat-assessments-total">10</p>'
             in response.data
         )
 
