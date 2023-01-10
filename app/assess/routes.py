@@ -236,9 +236,7 @@ def landing():
     ).assessment_deadline
 
     # Updating assessment progress for applications
-    application_overviews = get_assessment_progress(
-        application_overviews
-        )
+    application_overviews = get_assessment_progress(application_overviews)
 
     stats = get_assessments_stats(Config.COF_FUND_ID, Config.COF_ROUND2_ID)
 
@@ -348,6 +346,8 @@ def sub_crit_scoring():
 
 @assess_bp.route("/file/<application_id>/<file_name>", methods=["GET"])
 def get_file(application_id: str, file_name: str):
-    response = get_file_response(application_id=application_id, file_name=file_name)
-    
+    response = get_file_response(
+        application_id=application_id, file_name=file_name
+    )
+
     return response
