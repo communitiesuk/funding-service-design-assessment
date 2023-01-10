@@ -518,4 +518,4 @@ def get_file_response(file_name: str, application_id: str):
         return response
     except ClientError as e:
         current_app.logger.error(e)
-        return None
+        raise Exception(e)
