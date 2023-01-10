@@ -496,6 +496,16 @@
       "location": "Northern Ireland"
     }
   ],
+  "assessment_store/assessments/get-stats/47aef2f5-3fcb-4d45-acb5-f0152b5f03c4/c603d114-5364-4474-a0c4-c41cbf4d3bbd": {
+    "assessing": 0,
+    "completed": 0,
+    "not_started": 10,
+    "other_flagged": 1,
+    "qa_completed": 1,
+    "resolved_flags": 0,
+    "stopped": 0,
+    "total": 10
+  },
   "assessment_store/sub_criteria_overview/app_123/1a2b3c4d": {
     "id": "1a2b3c4d",
     "name": "Engagement",
@@ -2442,39 +2452,5 @@
       "highest_role": "COMMENTER",
       "email_address": "test@test.com"
     }
-  },
-  "assessment_store/sub_criteria_themes/app_123/declarations": [
-    {
-      "answer": "Yes",
-      "field_id": "LlvhYl",
-      "field_type": "yesNoField",
-      "form_name": "declarations",
-      "presentation_type": "text",
-      "question": "Confirm you have considered subsidy control and state aid implications for your project, and the information you have given us is correct"
-    },
-    {
-      "answer": "No",
-      "field_id": "wJrJWY",
-      "field_type": "yesNoField",
-      "form_name": "declarations",
-      "presentation_type": "text",
-      "question": "Confirm you have considered people with protected characteristics throughout the planning of your project"
-    },
-    {
-      "answer": "Yes",
-      "field_id": "COiwQr",
-      "field_type": "yesNoField",
-      "form_name": "declarations",
-      "presentation_type": "text",
-      "question": "Confirm you have considered sustainability and the environment throughout the planning of your project, including compliance with the government's Net Zero ambitions"
-    },
-    {
-      "answer": "No",
-      "field_id": "bRPzWU",
-      "field_type": "yesNoField",
-      "form_name": "declarations",
-      "presentation_type": "text",
-      "question": "Confirm you have a bank account set up and associated with the organisation you are applying on behalf of"
-    }
-  ]
+  }
 }

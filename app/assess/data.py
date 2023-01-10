@@ -249,38 +249,14 @@ def get_applications(params: dict) -> Union[List[Application], None]:
     return None
 
 
-def get_todo_summary() -> Union[Dict, None]:
-    applications = call_search_applications("")
-    if applications and len(applications) > 0:
-        todo_summary = {}
-        todo_summary.update(
-            {
-                "completed": len(
-                    [
-                        1
-                        for application in applications
-                        if application["status"] == "COMPLETED"
-                    ]
-                ),
-                "assessing": len(
-                    [
-                        1
-                        for application in applications
-                        if application["status"] == "ASSESSING"
-                    ]
-                ),
-                "not_started": len(
-                    [
-                        1
-                        for application in applications
-                        if application["status"] == "NOT_STARTED"
-                    ]
-                ),
-            }
-        )
-
-        return todo_summary
-    return None
+def get_assessments_stats(fund_id: str, round_id: str) -> Dict:
+    assessments_stats_endpoint = (
+        Config.ASSESSMENT_STORE_API_HOST
+    ) + Config.ASSESSMENTS_STATS_ENDPOINT.format(
+        fund_id=fund_id, round_id=round_id
+    )
+    current_app.logger.info(f"Endpoint '{assessments_stats_endpoint}'.")
+    return get_data(assessments_stats_endpoint)
 
 
 def get_application(identifier: str) -> Union[Application, None]:

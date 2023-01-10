@@ -1,5 +1,6 @@
 from app.assess.data import *
 from app.assess.data import get_application_overviews
+from app.assess.data import get_assessments_stats
 from app.assess.data import submit_score_and_justification
 from app.assess.display_value_mappings import assessment_statuses
 from app.assess.display_value_mappings import asset_types
@@ -233,12 +234,14 @@ def landing():
     assessment_deadline = get_round(
         Config.COF_FUND_ID, Config.COF_ROUND2_ID
     ).assessment_deadline
-    
+
     # Updating assessment progress for applications
     application_overviews = get_assessment_progress(
         application_overviews
         )
-  
+
+    stats = get_assessments_stats(Config.COF_FUND_ID, Config.COF_ROUND2_ID)
+
     return render_template(
         "assessor_dashboard.html",
         user=g.user,
@@ -248,6 +251,7 @@ def landing():
         asset_types=asset_types,
         assessment_statuses=assessment_statuses,
         show_clear_filters=show_clear_filters,
+        stats=stats,
     )
 
 
