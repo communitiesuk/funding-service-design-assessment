@@ -3,17 +3,14 @@
 {%- from "govuk_frontend_jinja/components/table/macro.html" import govukTable -%}
 {%- from 'govuk_frontend_jinja/components/textarea/macro.html' import govukTextarea -%}
 {% from "macros/banner_summary.html" import banner_summary %}
+{% from "macros/logout_partial.html" import logout_partial %}
 
 {% block content %}
     <div class="govuk-phase-banner flex-parent-element">
         <p class="govuk-!-text-align-left flex-parent-element flexed-element-margins-collapse">
             {{ govukBackLink({'href': url_for("assess_bp.landing"), 'text': 'Back to assessment dashboard'}) }}
         </p>
-        <p class="flex-parent-element flexed-element-margins-collapse govuk-!-text-align-right">
-            <a href="#"
-               class="govuk-link flexed-element-margins-collapse">Sign out
-            </a>
-        </p>
+        {{ logout_partial(sso_logout_url) }}
     </div>
 
     {{ banner_summary(
