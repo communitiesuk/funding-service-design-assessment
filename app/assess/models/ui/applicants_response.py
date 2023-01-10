@@ -4,8 +4,8 @@ from dataclasses import dataclass
 from typing import Iterable
 from typing import List
 from typing import Tuple
+from flask import url_for
 
-from app.assess.data import get_file_url
 from app.assess.views.filters import format_address
 from app.assess.views.filters import format_date
 from app.assess.views.filters import remove_dashes_underscores_capitalize
@@ -192,9 +192,11 @@ def _ui_component_from_factory(item: dict, application_id: str):
             return BesideQuestionAnswerPair.from_dict(item)
 
     elif presentation_type == "file":
-        presigned_url = get_file_url(
-            filename=answer, application_id=application_id
-        )
+        presigned_url = url_for( 
+            "assess_bp.get_file",
+            application_id=application_id,
+            file_name=answer if answer else ""
+            )
         return AboveQuestionAnswerPairHref.from_dict(item, href=presigned_url)
 
     elif presentation_type == "address":
