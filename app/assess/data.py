@@ -47,19 +47,23 @@ def get_data(
             )
             return None
 
+
 def get_assessment_progress(application_metadata):
     application_ids_list = {
-        'application_ids':
-            [x.get('application_id') for x in application_metadata]
-        }
+        "application_ids": [
+            x.get("application_id") for x in application_metadata
+        ]
+    }
     endpoint_url = Config.ASSESSMENT_PROGRESS_ENDPOINT
     response = get_data(endpoint=endpoint_url, payload=application_ids_list)
     if response is not None:
-        [x.update(
-            {"progress":res.get("progress")}
-            ) for res in response for x in application_metadata
-            if res['application_id']==x['application_id']]
-    
+        [
+            x.update({"progress": res.get("progress")})
+            for res in response
+            for x in application_metadata
+            if res["application_id"] == x["application_id"]
+        ]
+
     return application_metadata
 
 
@@ -162,7 +166,7 @@ def get_round_with_applications(
         return fund_round
     return None
 
-        
+
 def get_bulk_accounts_dict(account_ids: List):
     account_url = Config.BULK_ACCOUNTS_ENDPOINT
     account_params = {"account_id": account_ids}
