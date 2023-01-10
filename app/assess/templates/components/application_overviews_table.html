@@ -105,7 +105,10 @@
                 {% if assessment_statuses[overview.workflow_status] ==  "Not Started" %}
                   <td class="govuk-table__cell"><span class="not-started-tag">{{assessment_statuses[overview.workflow_status]}}</span></td>
                 {% else %}
-                  <td class="govuk-table__cell">{{assessment_statuses[overview.workflow_status]}}</td>
+                  <td class="govuk-table__cell">{{assessment_statuses[overview.workflow_status]}}
+                    {{ '(' + overview.progress|string + '%)' if 'progress' in overview else '(0%)'}}
+         
+                 </td>
                 {% endif %}
             </tr>
         {% endfor %}
