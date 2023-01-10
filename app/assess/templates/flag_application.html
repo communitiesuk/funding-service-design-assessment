@@ -10,8 +10,8 @@
             {{ govukBackLink({'href': url_for("assess_bp.landing"), 'text': 'Back to assessment dashboard'}) }}
         </p>
         <p class="flex-parent-element flexed-element-margins-collapse govuk-!-text-align-right">
-            <a href="#"
-               class="govuk-link flexed-element-margins-collapse">Sign out
+            <a href="{{ sso_logout_url }}" class="govuk-link">
+                Log out
             </a>
         </p>
     </div>
