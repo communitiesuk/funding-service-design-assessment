@@ -339,6 +339,6 @@ def sub_crit_scoring():
 
 @assess_bp.route("/file/<application_id>/<file_name>", methods=["GET"])
 def get_file(application_id: str, file_name: str):
-    response = get_file(application_id=application_id, file_name=file_name)
+    response = get_file_response(application_id=application_id, file_name=file_name)
     
     return response
