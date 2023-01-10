@@ -3,15 +3,11 @@
 {%- from "govuk_frontend_jinja/components/button/macro.html" import govukButton -%}
 {% import 'components/application_overviews_table.html' as application_overviews_table-%}
 {% from "macros/banner_summary.html" import banner_summary %}
-
+{% from "macros/logout_partial.html" import logout_partial %}
 
 {% block content %}
     <div class="govuk-phase-banner flex-parent-element">
-        <p class="flex-parent-element flexed-element-margins-collapse govuk-!-text-align-right">
-            <a href="{{ sso_logout_url }}" class="govuk-link">
-                Log out
-            </a>
-        </p>
+        {{ logout_partial(sso_logout_url) }}
     </div>
     </div>
     <div class="fsd-banner-background">
