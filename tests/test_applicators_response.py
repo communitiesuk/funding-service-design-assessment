@@ -626,8 +626,6 @@ class TestConvertNonNumberGroupedFields:
 
 
 class TestUtilMethods:
-  
-
     @pytest.mark.parametrize(
         "field_id, expected_field_ids",
         [
