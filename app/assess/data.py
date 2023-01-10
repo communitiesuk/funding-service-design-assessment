@@ -52,7 +52,7 @@ def get_assessment_progress(application_metadata):
         'application_ids':
             [x.get('application_id') for x in application_metadata]
         }
-    endpoint_url = Config.ASSESSMENT_PROGRESS
+    endpoint_url = Config.ASSESSMENT_PROGRESS_ENDPOINT
     response = get_data(endpoint=endpoint_url, payload=application_ids_list)
     if response is not None:
         [x.update(
