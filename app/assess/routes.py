@@ -172,7 +172,7 @@ def display_sub_criteria(
     "/flag/<application_id>",
     methods=["GET", "POST"],
 )
-@login_required(roles_required=["ASSESSOR", "LEAD_ASSESSOR"])
+@login_required(roles_required=["ASSESSOR"])
 def flag(application_id):
     # TODO: handle multiple flags.
     flags = get_flags(application_id)
