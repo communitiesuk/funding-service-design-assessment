@@ -204,3 +204,21 @@
 .fsd-login-banner-content {
     color:black;
 }
+
+.score-group h2 {
+    background-color: #1d70b8;
+    color: #ffffff;
+    padding: 20px 0px 20px 25px;
+    margin: 0px;
+}
+
+.score-group div {
+    background-color: #ffffff;
+    padding: 25px 25px 6px;
+    border: 2px #1d70b8 solid;
+}
+
+.score-group div .govuk-body-s {
+    color: #505a5f;
+    margin-top: -10px;
+}
