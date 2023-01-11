@@ -28,3 +28,8 @@ def get_status(questions):
             for value in questions.values()
         )
     return status
+
+def all_status_completed(criteria_list):
+    """ Function checks if all statuses are completed then returns True 
+    otherwise returns False"""
+    return all(sub_criteria.status == "COMPLETED" for criteria in criteria_list.criterias for sub_criteria in criteria.sub_criterias)
