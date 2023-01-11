@@ -21,6 +21,13 @@
                 <p class="govuk-body">{{comment.comment}}</p>
                 <p class="govuk-body-s">{{comment.full_name}} ({{comment.highest_role|all_caps_to_human}}) {{comment.email_address}}</p>
                 <p class="govuk-body-s">{{comment.date_created|datetime_format_24hr}}</p>
+                {% if loop.first %}
+                    {% for message in get_flashed_messages(category_filter=["successful_comment"]) %}
+                      <p class="govuk-body govuk-!-font-weight-bold success-flash">
+                          {{ message }}
+                      </p>
+                    {% endfor %}
+                {% endif %}
             </div>
         {% endif %}
         {% endfor %}

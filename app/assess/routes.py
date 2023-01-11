@@ -11,6 +11,7 @@ from app.assess.models.ui.assessor_task_list import AssessorTaskList
 from config import Config
 from flask import abort
 from flask import Blueprint
+from flask import flash
 from flask import g
 from flask import redirect
 from flask import render_template
@@ -46,13 +47,16 @@ def display_sub_criteria(
     if add_comment_argument and comment_form.validate_on_submit():
         comment = comment_form.comment.data
 
-        submit_comment(
+        successfully_commented = submit_comment(
             comment=comment,
             application_id=application_id,
             sub_criteria_id=sub_criteria_id,
             user_id=g.account_id,
             theme_id=theme_id,
         )
+
+        if successfully_commented:
+            flash("Comment saved", "successful_comment")
 
         return redirect(
             url_for(
@@ -339,6 +343,8 @@ def sub_crit_scoring():
 
 @assess_bp.route("/file/<application_id>/<file_name>", methods=["GET"])
 def get_file(application_id: str, file_name: str):
-    response = get_file_response(application_id=application_id, file_name=file_name)
-    
+    response = get_file_response(
+        application_id=application_id, file_name=file_name
+    )
+
     return response
