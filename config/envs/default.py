@@ -104,7 +104,7 @@ class DefaultConfig:
 
     ASSESSMENT_COMMENT_ENDPOINT = ASSESSMENT_STORE_API_HOST + "/comment"
 
-    ASSESSMENT_FLAGS_ENDPOINT = ASSESSMENT_STORE_API_HOST + "/flag"
+    ASSESSMENT_LATEST_FLAG_ENDPOINT = ASSESSMENT_STORE_API_HOST + "/flag?application_id={application_id}"
 
     COMMENTS_ENDPOINT = (
         "/comment?application_id={application_id}&sub_criteria_id="

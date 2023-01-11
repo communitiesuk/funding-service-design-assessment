@@ -6,12 +6,12 @@ from wtforms.validators import length
 
 
 class FlagApplicationForm(FlaskForm):
-    reason = TextAreaField(
+    justification = TextAreaField(
         "Reason for flagging",
         validators=[
             length(max=10000),
             DataRequired(
-                message="Provide a reason for flagging this application"
+                message="Provide a justification for flagging this application"
             ),
         ],
     )
