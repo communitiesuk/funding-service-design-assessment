@@ -172,7 +172,7 @@ def display_sub_criteria(
     "/flag/<application_id>",
     methods=["GET", "POST"],
 )
-@login_required(roles_required=["ASSESSOR", "LEAD_ASSESSOR"])
+@login_required(roles_required=["ASSESSOR"])
 def flag(application_id):
     # TODO: handle multiple flags.
     flags = get_flags(application_id)
@@ -234,9 +234,12 @@ def landing():
         Config.COF_FUND_ID, Config.COF_ROUND2_ID
     ).assessment_deadline
 
-
-    print("😎😎😎😎😎😎😎😎😎", application_overviews)
-
+    
+    # Updating assessment progress for applications
+    application_overviews = get_assessment_progress(
+        application_overviews
+        )
+  
     return render_template(
         "assessor_dashboard.html",
         user=g.user,
@@ -281,8 +284,6 @@ def application(application_id):
     if flag:
         state.workflow_status = "FLAGGED"
         accounts = get_bulk_accounts_dict([flag.user_id])
-
-    print("😎😎😎😎😎😎", flags)
 
     return render_template(
         "assessor_tasklist.html",
@@ -340,3 +341,10 @@ def sub_crit_scoring():
         scores_submitted=scores_submitted,
         form=form,
     )
+
+
+@assess_bp.route("/file/<application_id>/<file_name>", methods=["GET"])
+def get_file(application_id: str, file_name: str):
+    response = get_file_response(application_id=application_id, file_name=file_name)
+    
+    return response
