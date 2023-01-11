@@ -15,6 +15,20 @@
         </p>
         {{ logout_partial(sso_logout_url) }}
     </div>
+    {% if status_completed %}
+    <div class="govuk-grid-row .assessment-alert">
+        <div class="govuk-grid-column-three-quarters">
+          <div class="assessment-alert govuk-!-margin-bottom-8">
+              <h2 class="assessment-alert__heading govuk-heading-l govuk-!-margin-top-4">All sections assessed</h2>
+              <input type="hidden" id="application_id" name="application_id">
+              <p class="govuk-body">You can now mark the assessment as complete when you're ready.</p>
+              <p class="govuk-body">itmay be selected for quality assurance (QA) once you've done this.</p>
+              <button class="govuk-button primary-button" data-module="govuk-button">Mark as complete</button>
+            </div>
+        </div>
+      </div>
+      {% endif %}
+    
 
     {% if flag and g.user.highest_role in ("ASSESSOR", "LEAD_ASSESSOR") %}
         {{ assessment_flag(flag, flag_user_info) }}
