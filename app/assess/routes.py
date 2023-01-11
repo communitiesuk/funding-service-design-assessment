@@ -1,3 +1,5 @@
+from app.assess.status import all_status_completed
+
 from app.assess.data import *
 from app.assess.data import get_application_overviews
 from app.assess.data import submit_score_and_justification
@@ -283,9 +285,12 @@ def application(application_id):
     if flag:
         state.workflow_status = "FLAGGED"
         accounts = get_bulk_accounts_dict([flag.user_id])
-
+        
+    status_completed = all_status_completed(state)
+    
     return render_template(
         "assessor_tasklist.html",
+        status_completed = status_completed,
         state=state,
         application_id=application_id,
         flag=flag,
