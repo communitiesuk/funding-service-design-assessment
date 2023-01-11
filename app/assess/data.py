@@ -249,7 +249,7 @@ def get_applications(params: dict) -> Union[List[Application], None]:
     return None
 
 
-def get_assessments_stats(fund_id: str, round_id: str) -> Dict:
+def get_assessments_stats(fund_id: str, round_id: str) -> Dict | None:
     assessments_stats_endpoint = (
         Config.ASSESSMENT_STORE_API_HOST
     ) + Config.ASSESSMENTS_STATS_ENDPOINT.format(
@@ -501,15 +501,20 @@ def get_file_response(file_name: str, application_id: str):
     )
 
     try:
-        obj = s3_client.get_object(Bucket=Config.AWS_BUCKET_NAME, Key=prefixed_file_name)
-        
-        mimetype = obj["ResponseMetadata"]["HTTPHeaders"]["content-type"]
-        data = obj['Body'].read()
+        obj = s3_client.get_object(
+            Bucket=Config.AWS_BUCKET_NAME, Key=prefixed_file_name
+        )
 
-        response = Response(data, 
-                            mimetype=mimetype,
-                            headers={'Content-Disposition': f'attachment;filename={file_name}'}
-                        )
+        mimetype = obj["ResponseMetadata"]["HTTPHeaders"]["content-type"]
+        data = obj["Body"].read()
+
+        response = Response(
+            data,
+            mimetype=mimetype,
+            headers={
+                "Content-Disposition": f"attachment;filename={file_name}"
+            },
+        )
         return response
     except ClientError as e:
         current_app.logger.error(e)
