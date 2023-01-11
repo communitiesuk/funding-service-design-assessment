@@ -235,15 +235,18 @@ def landing():
         Config.COF_FUND_ID, Config.COF_ROUND2_ID
     ).assessment_deadline
 
-    # Updating assessment progress for applications
-    application_overviews = get_assessment_progress(application_overviews)
-
     stats = get_assessments_stats(Config.COF_FUND_ID, Config.COF_ROUND2_ID)
+
+    post_processed_overviews = (
+        get_assessment_progress(application_overviews)
+        if application_overviews
+        else []
+    )
 
     return render_template(
         "assessor_dashboard.html",
         user=g.user,
-        application_overviews=application_overviews,
+        application_overviews=post_processed_overviews,
         assessment_deadline=assessment_deadline,
         query_params=search_params,
         asset_types=asset_types,

@@ -35,7 +35,7 @@
         govukTable({
         "firstCellIsHeader":false,
         "head": [
-            { "text": "Assessment sub criteria" },
+            { "text": "Assessment sub criteria", "classes": "govuk-!-width-one-half"  },
             { "text": "Score out of 5", "format": "numeric" } if g.user.highest_role in ["ASSESSOR","LEAD_ASSESSOR"] else None,
             { "text": "Status", "format": "numeric" }
         ],
