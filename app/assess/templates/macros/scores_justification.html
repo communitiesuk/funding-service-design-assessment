@@ -6,12 +6,18 @@
 
 <div class="govuk-grid-column-full s26-scoring">
     {% if latest_score %}
-    <div class="s26-score-group" id="anchor">
+    <div class="score-group" id="score">
         <h2 class="govuk-heading-m">Current score: {{ latest_score['score'] }}</h2>
         <div>
-            <p class="govuk-body-s"><strong>Rationale: </strong>{{ latest_score.justification }}</p>
-            <p class="govuk-body-s"><strong>{% if latest_score.user_full_name %}{{ latest_score.user_full_name }}, {% endif %}</strong> {{ latest_score.highest_role }},
-                {% if latest_score.user_email %}{{ latest_score.user_email }}{% endif %}</p>
+            <p class="govuk-body-m"><strong>Rationale: </strong>{{ latest_score.justification }}</p>
+            <p class="govuk-body-s">
+                <strong>
+                    {% if latest_score.user_full_name %}{{ latest_score.user_full_name }} {% endif %}
+                </strong> ({{ latest_score.highest_role|all_caps_to_human }})
+                {% if latest_score.user_email %}
+                    {{ latest_score.user_email }}
+                {% endif %}
+            </p>
             <p class="govuk-body-s"> <strong>Date/time:</strong> {{ latest_score.date_created|datetime_format("%d/%m/%Y at %H:%M") }}</p>
         </div>
     </div>
@@ -27,29 +33,29 @@
             {% for score in score_list %}
             <p><strong>Score: </strong>{{ score["score"] }}</p>
             <p><strong>Rationale: </strong>{{ score["justification"] }}</p>
-            <p class="govuk-body-s"><strong>{{ score["user_full_name"] }}: </strong> {{ score["highest_role"] }}, {{ score["user_email"] }}</p>
+            <p class="govuk-body-s"><strong>{{ score["user_full_name"] }}: </strong> {{ score["highest_role"]|all_caps_to_human }}, {{ score["user_email"] }}</p>
             <p class="govuk-body-s"><strong>Date/time:</strong> {{ score["date_created"]|datetime_format("%d/%m/%Y at %H:%M") }}</p>
             <hr>
             {% endfor %}
           </div>
         </div>
       </details>
-
     {% endif %}
     {% endif %}
 
     {% if scores_submitted %}
-    {{govukButton
-        ({
-            'text': 'Rescore',
-            'type': 'submit',
-            'href': url_for('assess_bp.display_sub_criteria', application_id=application_id, sub_criteria_id=sub_criteria_id, theme_id='score')
-        })
-    }}
+        {{govukButton
+            ({
+                'text': 'Rescore',
+                'type': 'submit',
+                'classes': 'secondary-button govuk-!-margin-top-4' if not score_list else 'secondary-button',
+                'href': url_for('assess_bp.display_sub_criteria', application_id=application_id, sub_criteria_id=sub_criteria_id, theme_id='score')
+            })
+        }}
     {% else %}
     <form method="POST">
         {{ form.csrf_token }}
-        <div class="govuk-form-group">
+        <div class="govuk-form-group govuk-!-margin-top-4">
             {% if latest_score %}
             <h2 class="govuk-heading-m">Rescore</h2>
             {% else %}
@@ -64,9 +70,9 @@
             {{justification(form.justification.id, justification_error)}}
         </div>
         {% if latest_score %}
-        {{govukButton({'text': 'Rescore', 'type':'submit'})}}
+            {{govukButton({'text': 'Save a new score', 'type':'submit', 'classes': 'primary-button'})}}
         {% else %}
-        {{govukButton({'text': 'Save score', 'type':'submit', 'classes':'primary-button'})}}
+            {{govukButton({'text': 'Save score', 'type':'submit', 'classes':'primary-button'})}}
         {% endif %}
     </form>
     {% endif %}
