@@ -15,7 +15,7 @@
     </div>
 
     {% if flag and g.user.highest_role in ("ASSESSOR", "LEAD_ASSESSOR") %}
-        {{ assessment_flag(flag, flag_user_info) }}
+        {{ assessment_flag(flag) }}
     {% endif %}
 
     {{ banner_summary(
@@ -23,7 +23,7 @@
         state.short_id,
         state.project_name,
         state.funding_amount_requested,
-        state.workflow_status
+        state.workflow_status,
     ) }}
 
     <div class="govuk-width-container">

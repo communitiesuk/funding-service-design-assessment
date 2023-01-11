@@ -501,10 +501,11 @@ class TestJinjaMacros(object):
         project_name = "Test Project"
         funding_amount_requested = 123456.78
         workflow_status = "SUBMITTED"
+        assessment_flag = None
 
         rendered_html = render_template_string(
             "{{ banner_summary(fund_name, project_reference, project_name,"
-            " funding_amount_requested, workflow_status) }}",
+            " funding_amount_requested, workflow_status, flag) }}",
             banner_summary=get_template_attribute(
                 "macros/banner_summary.html", "banner_summary"
             ),
@@ -513,6 +514,7 @@ class TestJinjaMacros(object):
             project_name=project_name,
             funding_amount_requested=funding_amount_requested,
             workflow_status=workflow_status,
+            flag = assessment_flag
         )
 
         # Replace newlines for easier regex matching
@@ -538,6 +540,38 @@ class TestJinjaMacros(object):
             r"Submitted",
             rendered_html,
         ), "Workflow status not found"
+
+
+    def test_stopped_flag_macro(self, request_ctx):
+        fund_name = "Test Fund"
+        project_reference = "TEST123"
+        project_name = "Test Project"
+        funding_amount_requested = 123456.78
+        workflow_status = "SUBMITTED"
+        assessment_flag = {
+            "flag_type": {"name": "STOPPED"},
+            "justification": "Test justification",
+            "section_to_flag": "Test section",
+            "date_created": "2020-01-01 12:00:00",
+        }
+
+        rendered_html = render_template_string(
+            "{{ banner_summary(fund_name, project_reference, project_name,"
+            " funding_amount_requested, workflow_status, flag) }}",
+            banner_summary=get_template_attribute(
+                "macros/banner_summary.html", "banner_summary"
+            ),
+            fund_name=fund_name,
+            project_reference=project_reference,
+            project_name=project_name,
+            funding_amount_requested=funding_amount_requested,
+            workflow_status=workflow_status,
+            flag=assessment_flag)
+
+        assert re.search(
+            r"Stopped", rendered_html
+        ), "Stopped text not found in banner"
+
 
     def test_flag_application_button(self, request_ctx):
         rendered_html = render_template_string(
@@ -583,6 +617,63 @@ class TestJinjaMacros(object):
 
         assert re.search(
             r"Test Flag",
+            rendered_html,
+        ), "Flag type not found"
+
+        assert re.search(
+            r"Reason",
+            rendered_html,
+        ), "Reason heading not found"
+
+        assert re.search(
+            r"Test justification",
+            rendered_html,
+        ), "Justification not found"
+
+        assert re.search(
+            r"Section flagged",
+            rendered_html,
+        ), "Section flagged heading not found"
+
+        assert re.search(
+            r"Test section",
+            rendered_html,
+        ), "Section not found"
+
+        assert re.search(
+            r"Test user.*\S*Test role.*\S*test@example.com",
+            rendered_html,
+        ), "User info not found"
+
+        assert re.search(
+            r"\d{2}/\d{2}/\d{4} at \d{2}:\d{2}",
+            rendered_html,
+        ), "Date created not found"
+
+    def test_stopped_assessment_flag(self, request_ctx):
+        rendered_html = render_template_string(
+            "{{assessment_flag(flag, user_info)}}",
+            assessment_flag=get_template_attribute(
+                "macros/assessment_flag.html", "assessment_flag"
+            ),
+            flag={
+                "flag_type": {"name": "STOPPED"},
+                "justification": "Test justification",
+                "section_to_flag": "Test section",
+                "date_created": "2020-01-01 12:00:00",
+            },
+            user_info={
+                "full_name": "Test user",
+                "highest_role": "Test role",
+                "email_address": "test@example.com",
+            },
+        )
+
+        # replacing new lines to more easily regex match the html
+        rendered_html = rendered_html.replace("\n", "")
+
+        assert re.search(
+            r"Assessment Stopped",
             rendered_html,
         ), "Flag type not found"
 
