@@ -275,6 +275,8 @@ def application(application_id):
     assessor_task_list_metadata["fund_name"] = fund.name
 
     state = AssessorTaskList.from_json(assessor_task_list_metadata)
+    current_app.logger.error(
+            f"Get status {state.workflow_status}")
     current_app.logger.info(
         f"Fetching data from '{assessor_task_list_metadata}'."
     )
@@ -287,7 +289,7 @@ def application(application_id):
         state.workflow_status = "FLAGGED"
         accounts = get_bulk_accounts_dict([flag.user_id])
         
-    status_completed = all_status_completed(state)
+    sub_criteria_status_completed = all_status_completed(state)
     form = AssessmentCompleteForm()
     if form.validate_on_submit():
         current_app.logger.error(
@@ -297,10 +299,9 @@ def application(application_id):
         
     return render_template(
         "assessor_tasklist.html",
-        status_completed = status_completed,
+        sub_criteria_status_completed = sub_criteria_status_completed,
         form = form,
         state=state,
-        
         application_id=application_id,
         flag=flag,
         show_prompt= False,
