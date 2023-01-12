@@ -8,7 +8,7 @@ async-generator==1.10
     # via
     #   trio
     #   trio-websocket
-attrs==22.1.0
+attrs==22.2.0
     # via
     #   -r requirements.txt
     #   jsonschema
@@ -24,17 +24,17 @@ babel==2.11.0
     #   flask-babel
 bandit==1.7.4
     # via -r requirements-dev.in
-black==22.6.0
+black==22.12.0
     # via -r requirements-dev.in
 blinker==1.5
     # via
     #   -r requirements.txt
     #   sentry-sdk
-boto3==1.26.33
+boto3==1.26.48
     # via
     #   -r requirements-dev.in
     #   -r requirements.txt
-botocore==1.29.33
+botocore==1.29.48
     # via
     #   -r requirements.txt
     #   boto3
@@ -43,9 +43,9 @@ brotli==1.0.9
     # via
     #   -r requirements.txt
     #   flask-compress
-build==0.8.0
+build==0.10.0
     # via pip-tools
-certifi==2022.9.24
+certifi==2022.12.7
     # via
     #   -r requirements.txt
     #   requests
@@ -61,7 +61,7 @@ chardet==4.0.0
     # via
     #   -r requirements.txt
     #   prance
-charset-normalizer==2.1.1
+charset-normalizer==3.0.1
     # via
     #   -r requirements.txt
     #   requests
@@ -82,7 +82,7 @@ commonmark==0.9.1
     #   rich
 connexion==2.14.1
     # via -r requirements.txt
-cryptography==38.0.4
+cryptography==39.0.0
     # via
     #   -r requirements.txt
     #   pyjwt
@@ -90,9 +90,9 @@ cryptography==38.0.4
     #   urllib3
 cssmin==0.2.0
     # via -r requirements.txt
-deepdiff==5.8.1
+deepdiff==6.2.3
     # via -r requirements-dev.in
-distlib==0.3.4
+distlib==0.3.6
     # via virtualenv
 dnspython==2.2.1
     # via
@@ -100,7 +100,11 @@ dnspython==2.2.1
     #   email-validator
 email-validator==1.2.1
     # via -r requirements.txt
-filelock==3.7.1
+exceptiongroup==1.1.0
+    # via
+    #   pytest
+    #   trio
+filelock==3.9.0
     # via virtualenv
 flask==2.1.1
     # via
@@ -125,15 +129,11 @@ flask-talisman==0.8.1
     # via -r requirements.txt
 flask-wtf==1.0.0
     # via -r requirements.txt
-<<<<<<< Updated upstream
-funding-service-design-utils==1.0.18
-=======
 funding-service-design-utils @ git+https://github.com/communitiesuk/funding-service-design-utils.git@aa12835a55a1e8ed30eb0a359711c5b8429aad38
->>>>>>> Stashed changes
     # via -r requirements.txt
-gitdb==4.0.9
+gitdb==4.0.10
     # via gitpython
-gitpython==3.1.27
+gitpython==3.1.30
     # via bandit
 govuk-frontend-jinja==2.0.0
     # via -r requirements.txt
@@ -141,9 +141,9 @@ gunicorn==20.1.0
     # via
     #   -r requirements.txt
     #   funding-service-design-utils
-h11==0.13.0
+h11==0.14.0
     # via wsproto
-identify==2.5.1
+identify==2.5.13
     # via pre-commit
 idna==3.4
     # via
@@ -152,7 +152,7 @@ idna==3.4
     #   requests
     #   trio
     #   urllib3
-importlib-resources==5.10.0
+importlib-resources==5.10.2
     # via
     #   -r requirements.txt
     #   openapi-spec-validator
@@ -160,7 +160,7 @@ inflection==0.5.1
     # via
     #   -r requirements.txt
     #   connexion
-iniconfig==1.1.1
+iniconfig==2.0.0
     # via pytest
 invoke==1.7.3
     # via -r requirements-dev.in
@@ -197,7 +197,7 @@ jsonschema-spec==0.1.2
     # via
     #   -r requirements.txt
     #   openapi-spec-validator
-lazy-object-proxy==1.8.0
+lazy-object-proxy==1.9.0
     # via
     #   -r requirements.txt
     #   openapi-spec-validator
@@ -219,6 +219,8 @@ openapi-spec-validator==0.5.1
     # via -r requirements.txt
 ordered-set==4.1.0
     # via deepdiff
+orjson==3.8.5
+    # via deepdiff
 outcome==1.2.0
     # via trio
 packaging==21.3
@@ -232,15 +234,13 @@ pathable==0.4.3
     # via
     #   -r requirements.txt
     #   jsonschema-spec
-pathspec==0.9.0
+pathspec==0.10.3
     # via black
-pbr==5.9.0
+pbr==5.11.1
     # via stevedore
-pep517==0.12.0
-    # via build
-pip-tools==6.8.0
+pip-tools==6.12.1
     # via -r requirements-dev.in
-platformdirs==2.5.2
+platformdirs==2.6.2
     # via
     #   black
     #   virtualenv
@@ -248,15 +248,15 @@ pluggy==1.0.0
     # via pytest
 prance==0.22.11.4.0
     # via -r requirements.txt
-pre-commit==2.19.0
+pre-commit==2.21.0
     # via -r requirements-dev.in
 py==1.11.0
-    # via pytest
+    # via pytest-html
 pycparser==2.21
     # via
     #   -r requirements.txt
     #   cffi
-pygments==2.13.0
+pygments==2.14.0
     # via
     #   -r requirements.txt
     #   rich
@@ -264,13 +264,15 @@ pyjwt[crypto]==2.6.0
     # via
     #   -r requirements.txt
     #   funding-service-design-utils
-pyopenssl==22.0.0
+pyopenssl==23.0.0
     # via urllib3
 pyparsing==3.0.9
     # via
     #   -r requirements.txt
     #   packaging
-pyrsistent==0.19.2
+pyproject-hooks==1.0.0
+    # via build
+pyrsistent==0.19.3
     # via
     #   -r requirements.txt
     #   jsonschema
@@ -278,7 +280,7 @@ pyscss==1.4.0
     # via -r requirements.txt
 pysocks==1.7.1
     # via urllib3
-pytest==7.1.2
+pytest==7.2.0
     # via
     #   -r requirements-dev.in
     #   axe-selenium-python
@@ -292,13 +294,13 @@ pytest==7.1.2
     #   pytest-variables
 pytest-base-url==2.0.0
     # via pytest-selenium
-pytest-env==0.6.2
+pytest-env==0.8.1
     # via -r requirements-dev.in
 pytest-flask==1.2.0
     # via -r requirements-dev.in
-pytest-html==3.1.1
+pytest-html==3.2.0
     # via pytest-selenium
-pytest-metadata==2.0.1
+pytest-metadata==2.0.4
     # via pytest-html
 pytest-mock==3.7.0
     # via -r requirements-dev.in
@@ -319,7 +321,7 @@ python-json-logger==2.0.4
     # via
     #   -r requirements.txt
     #   funding-service-design-utils
-pytz==2022.6
+pytz==2022.7
     # via
     #   -r requirements.txt
     #   babel
@@ -335,7 +337,7 @@ pyyaml==6.0
     #   jsonschema-spec
     #   openapi-spec-validator
     #   pre-commit
-requests==2.28.1
+requests==2.28.2
     # via
     #   -r requirements.txt
     #   connexion
@@ -368,7 +370,7 @@ semver==2.13.0
     # via
     #   -r requirements.txt
     #   prance
-sentry-sdk[flask]==1.11.1
+sentry-sdk[flask]==1.13.0
     # via
     #   -r requirements.txt
     #   funding-service-design-utils
@@ -380,32 +382,29 @@ six==1.16.0
     #   pyscss
     #   python-dateutil
     #   tenacity
-    #   virtualenv
 smmap==5.0.0
     # via gitdb
-sniffio==1.2.0
+sniffio==1.3.0
     # via trio
 sortedcontainers==2.4.0
     # via trio
-stevedore==3.5.0
+stevedore==4.1.1
     # via bandit
 swagger-ui-bundle==0.0.9
     # via -r requirements.txt
 tenacity==6.3.1
     # via pytest-selenium
-toml==0.10.2
-    # via pre-commit
 tomli==2.0.1
     # via
     #   black
     #   build
-    #   pep517
+    #   pyproject-hooks
     #   pytest
 tqdm==4.64.1
     # via
     #   -r requirements.txt
     #   webdriver-manager
-trio==0.21.0
+trio==0.22.0
     # via
     #   selenium
     #   trio-websocket
@@ -415,7 +414,7 @@ typing-extensions==4.4.0
     # via
     #   -r requirements.txt
     #   jsonschema-spec
-urllib3[secure,socks]==1.26.13
+urllib3[secure,socks]==1.26.14
     # via
     #   -r requirements.txt
     #   botocore
@@ -424,7 +423,7 @@ urllib3[secure,socks]==1.26.13
     #   sentry-sdk
 urllib3-secure-extra==0.1.0
     # via urllib3
-virtualenv==20.15.1
+virtualenv==20.17.1
     # via pre-commit
 webassets==2.0
     # via
@@ -440,9 +439,9 @@ werkzeug==2.2.2
     #   connexion
     #   flask
     #   pytest-flask
-wheel==0.37.1
+wheel==0.38.4
     # via pip-tools
-wsproto==1.1.0
+wsproto==1.2.0
     # via trio-websocket
 wtforms==3.0.1
     # via
