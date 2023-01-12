@@ -56,14 +56,23 @@ def get_assessment_progress(application_metadata):
         ]
     }
     endpoint_url = Config.ASSESSMENT_PROGRESS_ENDPOINT
-    response = get_data(endpoint=endpoint_url, payload=application_ids_list)
-    if response is not None:
-        [
-            x.update({"progress": res.get("progress")})
-            for res in response
-            for x in application_metadata
-            if res["application_id"] == x["application_id"]
-        ]
+    current_app.logger.info(
+        f"Fetching assessment progress from '{endpoint_url}', with json"
+        f" payload: {application_ids_list}."
+    )
+    response = requests.post(endpoint_url, json=application_ids_list)
+
+    if not response.ok:
+        current_app.logger.error(
+            f"Could not get assessment progress for endpoint '{endpoint_url}'"
+        )
+        return application_metadata
+
+    response_json = response.json()
+    for res in response_json:
+        for am in application_metadata:
+            if am.get("application_id") == res.get("application_id"):
+                am["progress"] = res.get("progress")
 
     return application_metadata
 
@@ -525,15 +534,20 @@ def get_file_response(file_name: str, application_id: str):
     )
 
     try:
-        obj = s3_client.get_object(Bucket=Config.AWS_BUCKET_NAME, Key=prefixed_file_name)
-        
-        mimetype = obj["ResponseMetadata"]["HTTPHeaders"]["content-type"]
-        data = obj['Body'].read()
+        obj = s3_client.get_object(
+            Bucket=Config.AWS_BUCKET_NAME, Key=prefixed_file_name
+        )
 
-        response = Response(data, 
-                            mimetype=mimetype,
-                            headers={'Content-Disposition': f'attachment;filename={file_name}'}
-                        )
+        mimetype = obj["ResponseMetadata"]["HTTPHeaders"]["content-type"]
+        data = obj["Body"].read()
+
+        response = Response(
+            data,
+            mimetype=mimetype,
+            headers={
+                "Content-Disposition": f"attachment;filename={file_name}"
+            },
+        )
         return response
     except ClientError as e:
         current_app.logger.error(e)
