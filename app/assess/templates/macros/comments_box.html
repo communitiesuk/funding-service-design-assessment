@@ -6,13 +6,14 @@
 <form method="POST">
 <div class="govuk-grid-row">
     {{ comment_form.csrf_token }}
-    <div class="govuk-grid-column-three-quarters">
+    <div class="govuk-grid-column-full">
     {{ govukTextarea({
     "name": comment_form.comment.id,
     "id": comment_form.comment.id,
+    "rows": 8,
     "label": {
       "text": "Add a comment",
-      "classes": "govuk-label--s",
+      "classes": "govuk-label--m",
       isPageHeading: true
     },
     "errorMessage": {
@@ -22,7 +23,8 @@
 
   {{ govukButton({
     "text": "Save comment",
-    "type": "submit"
+    "type": "submit",
+    "classes": "primary-button govuk-!-margin-bottom-9"
   }) }}
 
     </div>
