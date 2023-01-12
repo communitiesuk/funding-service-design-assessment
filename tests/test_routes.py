@@ -5,8 +5,8 @@ from app.assess.models.score import Score
 from config import Config
 from flask import session
 from tests.conftest import create_valid_token
-from tests.conftest import test_commenter_claims
 from tests.conftest import test_assessor_claims
+from tests.conftest import test_commenter_claims
 from tests.conftest import test_lead_assessor_claims
 
 
@@ -211,13 +211,9 @@ class TestRoutes:
         ],
     )
     def test_route_sub_criteria_side_bar_lead_assessor(
-        self,
-        flask_test_client,
-        monkeypatch,
-        expected_ids,
-        expected_names
+        self, flask_test_client, monkeypatch, expected_ids, expected_names
     ):
-        
+
         # Mocking fsd-user-token cookie
         token = create_valid_token(test_lead_assessor_claims)
         flask_test_client.set_cookie("localhost", "fsd_user_token", token)
@@ -304,8 +300,8 @@ class TestRoutes:
         flask_test_client,
         monkeypatch,
         expected_ids,
-        expected_names,        
-    ):       
+        expected_names,
+    ):
         # Mocking fsd-user-token cookie
         token = create_valid_token(test_commenter_claims)
         flask_test_client.set_cookie("localhost", "fsd_user_token", token)
@@ -340,7 +336,9 @@ class TestRoutes:
 
         assert response.status_code == 400
 
-    def test_flag_route_with_resolved_flag(self, flask_test_client):
+    def test_flag_route_works_for_applciation_with_latest_resolved_flag(
+        self, flask_test_client
+    ):
         token = create_valid_token(test_lead_assessor_claims)
         flask_test_client.set_cookie("localhost", "fsd_user_token", token)
 
@@ -348,15 +346,42 @@ class TestRoutes:
 
         assert response.status_code == 200
 
+    def test_application_route_should_show_stopped_flag(
+        self, flask_test_client
+    ):
+        token = create_valid_token(test_lead_assessor_claims)
+        flask_test_client.set_cookie("localhost", "fsd_user_token", token)
+
+        response = flask_test_client.get("assess/application/stopped_app")
+
+        assert response.status_code == 200
+        assert b"21/01/2023" in response.data
+        assert b"Stopped" in response.data
+
+    def test_application_route_should_not_show_resolved_flag(
+        self, flask_test_client
+    ):
+        token = create_valid_token(test_lead_assessor_claims)
+        flask_test_client.set_cookie("localhost", "fsd_user_token", token)
+
+        response = flask_test_client.get("assess/application/resolved_app")
+
+        assert response.status_code == 200
+        assert b"01/01/2023" not in response.data
+        assert b"Reason" not in response.data
+        assert b"Section flagged" not in response.data
+
     @pytest.mark.parametrize(
         "user_account, visible",
         [
-            (test_commenter_claims, False), 
-            (test_assessor_claims, False), 
+            (test_commenter_claims, False),
+            (test_assessor_claims, False),
             (test_lead_assessor_claims, True),
         ],
     )
-    def test_resolve_flag_option_shows_for_correct_permissions(self, flask_test_client, user_account, visible):
+    def test_resolve_flag_option_shows_for_correct_permissions(
+        self, flask_test_client, user_account, visible
+    ):
         token = create_valid_token(user_account)
         flask_test_client.set_cookie("localhost", "fsd_user_token", token)
 
@@ -375,7 +400,9 @@ class TestRoutes:
         session["csrf_token"] = "test"
 
         mocker.patch("app.assess.routes.submit_flag", return_value=None)
-        mock_get_latest_flag = mocker.patch("app.assess.routes.get_latest_flag")
+        mock_get_latest_flag = mocker.patch(
+            "app.assess.routes.get_latest_flag"
+        )
         mock_get_banner_state = mocker.patch(
             "app.assess.routes.get_banner_state"
         )
@@ -386,8 +413,28 @@ class TestRoutes:
 
         response = flask_test_client.post(
             "assess/flag/1",
-            data={"justification": "Test justification", "section": "Test section"},
+            data={
+                "justification": "Test justification",
+                "section": "Test section",
+            },
         )
 
         assert response.status_code == 302
         assert response.headers["Location"] == "/assess/application/1"
+
+    def test_flag_route_resolve_flag(
+        self,
+        flask_test_client,
+    ):
+        token = create_valid_token(test_lead_assessor_claims)
+        flask_test_client.set_cookie("localhost", "fsd_user_token", token)
+
+        response = flask_test_client.get(
+            "assess/resolve_flag/app_123?section=org_info",
+        )
+
+        assert response.status_code == 200
+        assert b"Resolve flag" in response.data
+        assert b"Query resolved" in response.data
+        assert b"Stop assessment" in response.data
+        assert b"Reason" in response.data
