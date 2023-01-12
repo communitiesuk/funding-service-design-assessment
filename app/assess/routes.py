@@ -19,6 +19,7 @@ from flask import render_template
 from flask import request
 from flask import url_for
 from fsd_utils.authentication.decorators import login_required
+from app.assess.forms.assessment_form import AssessmentCompleteForm
 
 assess_bp = Blueprint(
     "assess_bp",
@@ -253,7 +254,7 @@ def landing():
     )
 
 
-@assess_bp.route("/application/<application_id>", methods=["GET"])
+@assess_bp.route("/application/<application_id>", methods=["GET", "POST"])
 def application(application_id):
     """
     Application summary page
@@ -287,17 +288,26 @@ def application(application_id):
         accounts = get_bulk_accounts_dict([flag.user_id])
         
     status_completed = all_status_completed(state)
-    
+    form = AssessmentCompleteForm()
+    if form.validate_on_submit():
+        current_app.logger.error(
+            f"Updating application status to COMPLETED")
+        # TODO: Update status (Remove below line once logic implemented)
+        state.workflow_status = "COMPLETED"
+        
     return render_template(
         "assessor_tasklist.html",
         status_completed = status_completed,
+        form = form,
         state=state,
+        
         application_id=application_id,
         flag=flag,
+        show_prompt= False,
         flag_user_info=accounts.get(flag.user_id) if flag else None,
-    )
-
-
+)
+        
+   
 @assess_bp.route("/comments/", methods=["GET", "POST"])
 def comments():
     """
