@@ -85,6 +85,9 @@
         Funding requested
       </th>
 
+      <th scope="col" class="govuk-table__header">
+        Location
+      </th>
 
       <th scope="col" class="govuk-table__header">
         Status
@@ -102,12 +105,13 @@
                 <td class="govuk-table__cell"><a class="govuk-link" href="{{url_for('assess_bp.application',application_id=overview.application_id)}}">{{overview.project_name}}</a></td>
                 <td class="govuk-table__cell">{{asset_types[overview.asset_type]}}</td>
                 <td class="govuk-table__cell">&pound;{{ "{:,.2f}".format(overview.funding_amount_requested|int|round) }}</td>
+                <td class="govuk-table__cell">{{ overview.location_json_blob.country }}</td>
                 {% if assessment_statuses[overview.workflow_status] ==  "Not Started" %}
                   <td class="govuk-table__cell"><span class="not-started-tag">{{assessment_statuses[overview.workflow_status]}}</span></td>
                 {% else %}
                   <td class="govuk-table__cell">{{assessment_statuses[overview.workflow_status]}}
                     {{ '(' + overview.progress|string + '%)' if 'progress' in overview else '(0%)'}}
-         
+
                  </td>
                 {% endif %}
             </tr>
