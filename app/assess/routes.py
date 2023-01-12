@@ -240,6 +240,7 @@ def landing():
             if application_overviews
             else []
         )
+        # TODO: remove this when we have local data for post requests.
         if not Config.USE_LOCAL_DATA
         else application_overviews
     )
