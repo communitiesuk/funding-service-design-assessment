@@ -235,9 +235,13 @@ def landing():
     ).assessment_deadline
 
     post_processed_overviews = (
-        get_assessment_progress(application_overviews)
-        if application_overviews
-        else []
+        (
+            get_assessment_progress(application_overviews)
+            if application_overviews
+            else []
+        )
+        if not Config.USE_LOCAL_DATA
+        else application_overviews
     )
 
     return render_template(

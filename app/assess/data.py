@@ -72,7 +72,7 @@ def get_assessment_progress(application_metadata):
     for res in response_json:
         for am in application_metadata:
             if am.get("application_id") == res.get("application_id"):
-                am["assessment_progress"] = res.get("assessment_progress")
+                am["progress"] = res.get("progress")
 
     return application_metadata
 
