@@ -1,7 +1,11 @@
 #-----------------------------------
 #   FSD Utils
 #-----------------------------------
+<<<<<<< Updated upstream
 funding-service-design-utils>=1.0.7,<1.1.0
+=======
+git+https://github.com/communitiesuk/funding-service-design-utils.git@aa12835a55a1e8ed30eb0a359711c5b8429aad38
+>>>>>>> Stashed changes
 requests
 
 #-----------------------------------

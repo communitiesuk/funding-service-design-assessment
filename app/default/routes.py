@@ -15,6 +15,11 @@ def index():
     )
 
 
+@default_bp.route("/debug-sentry")
+def trigger_error():
+    1 / 0
+
+
 @default_bp.errorhandler(404)
 def not_found(error):
     return render_template("404.html"), 404
