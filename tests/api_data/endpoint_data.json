@@ -497,13 +497,12 @@
     }
   ],
   "assessment_store/assessments/get-stats/47aef2f5-3fcb-4d45-acb5-f0152b5f03c4/c603d114-5364-4474-a0c4-c41cbf4d3bbd": {
-    "assessing": 0,
     "completed": 0,
+    "assessing": 0,
     "not_started": 10,
-    "other_flagged": 1,
     "qa_completed": 1,
-    "resolved_flags": 0,
     "stopped": 0,
+    "flagged": 1,
     "total": 10
   },
   "assessment_store/sub_criteria_overview/app_123/1a2b3c4d": {
