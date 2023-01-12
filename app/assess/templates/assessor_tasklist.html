@@ -30,7 +30,7 @@
         </div>
       </div>
 
-    {% elif status_completed %}
+    {% elif sub_criteria_status_completed %}
 
     <form method="POST" action="{{ url_for('assess_bp.application', application_id=application_id) }}">
         {{ form.csrf_token }}
