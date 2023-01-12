@@ -13,6 +13,7 @@ class FlagType(Enum):
 
 @dataclass()
 class Flag:
+    id: str
     justification: str
     section_to_flag: str
     flag_type: FlagType | str

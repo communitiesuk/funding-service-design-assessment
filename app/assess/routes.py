@@ -68,7 +68,7 @@ def display_sub_criteria(
         )
 
     fund = get_fund(Config.COF_FUND_ID)
-    is_flagged = any(get_latest_flag(application_id))
+    is_flagged = True if get_latest_flag(application_id) else False
 
     comments = get_comments(
         application_id=application_id,
@@ -278,7 +278,7 @@ def application(application_id):
         f"Fetching data from '{assessor_task_list_metadata}'."
     )
 
-    flag = get_latest_flag(application_id) # TODO: handle multiple flags?
+    flag = get_latest_flag(application_id)
 
     accounts = {}
     if flag:
@@ -293,7 +293,7 @@ def application(application_id):
         state=state,
         application_id=application_id,
         flag=flag,
-        flag_user_info={"full_name":"Test User Lead", "highest_role":"Lead Assessor"} if flag else None
+        flag_user_info=accounts.get(flag.user_id) if flag else None
     )
 
 

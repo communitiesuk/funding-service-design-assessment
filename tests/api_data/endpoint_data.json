@@ -1,4 +1,37 @@
 {
+  "assessment_store/flag?application_id=app_123":{
+      "application_id": "app_123",
+      "date_created": "2023-01-10T15:09:58",
+      "flag_type": "FLAGGED",
+      "id": "flagid",
+      "justification": "string",
+      "section_to_flag": "community",
+      "user_id": "test@example.com"
+    },
+    "assessment_store/flag?application_id=resolved_app":{
+      "application_id": "resolved_app",
+      "date_created": "2023-01-10T15:09:58",
+      "flag_type": "RESOLVED",
+      "id": "flagidresolved",
+      "justification": "string",
+      "section_to_flag": "community",
+      "user_id": "test@example.com"
+    },
+  "assessment_store/flag?application_id=app_234":{},
+  "assessment_store/sub_criteria_overview/banner_state/app_123":{
+    "short_id":"short",
+    "project_name":"name",
+    "funding_amount_requested":10,
+    "workflow_status":"IN_PROGRESS",
+    "fund_id":"funding-service-design"
+  },
+  "assessment_store/sub_criteria_overview/banner_state/resolved_app":{
+    "short_id":"short",
+    "project_name":"name",
+    "funding_amount_requested":10,
+    "workflow_status":"IN_PROGRESS",
+    "fund_id":"funding-service-design"
+  },
   "fund_store/funds": [
     {
       "fund_name": "Funding Service Design",
@@ -2387,40 +2420,6 @@
       "form_name": "project-information",
       "presentation_type": "text",
       "question": "In which local council area is your asset?"
-    }
-  ],
-  "assessment_store/sub_criteria_themes/app_123/declarations": [
-    {
-      "answer": "Yes",
-      "field_id": "LlvhYl",
-      "field_type": "yesNoField",
-      "form_name": "declarations",
-      "presentation_type": "text",
-      "question": "Confirm you have considered subsidy control and state aid implications for your project, and the information you have given us is correct"
-    },
-    {
-      "answer": "No",
-      "field_id": "wJrJWY",
-      "field_type": "yesNoField",
-      "form_name": "declarations",
-      "presentation_type": "text",
-      "question": "Confirm you have considered people with protected characteristics throughout the planning of your project"
-    },
-    {
-      "answer": "Yes",
-      "field_id": "COiwQr",
-      "field_type": "yesNoField",
-      "form_name": "declarations",
-      "presentation_type": "text",
-      "question": "Confirm you have considered sustainability and the environment throughout the planning of your project, including compliance with the government's Net Zero ambitions"
-    },
-    {
-      "answer": "No",
-      "field_id": "bRPzWU",
-      "field_type": "yesNoField",
-      "form_name": "declarations",
-      "presentation_type": "text",
-      "question": "Confirm you have a bank account set up and associated with the organisation you are applying on behalf of"
     }
   ],
   "account_store/bulk-accounts": {

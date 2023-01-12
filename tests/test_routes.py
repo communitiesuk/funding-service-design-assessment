@@ -6,6 +6,7 @@ from config import Config
 from flask import session
 from tests.conftest import create_valid_token
 from tests.conftest import test_commenter_claims
+from tests.conftest import test_assessor_claims
 from tests.conftest import test_lead_assessor_claims
 
 
@@ -331,18 +332,40 @@ class TestRoutes:
             b"Score the subcriteria" not in response.data
         ), "Sidebar should not contain the link to score subcriteria"
 
-    def test_flag_route_already_flagged(self, flask_test_client, mocker):
+    def test_flag_route_already_flagged(self, flask_test_client):
         token = create_valid_token(test_lead_assessor_claims)
         flask_test_client.set_cookie("localhost", "fsd_user_token", token)
 
-        mock_get_flags = mocker.patch("app.assess.routes.get_flags")
-        mock_get_flags.return_value = [
-            {"reason": "Test reason", "section": "Test section"}
-        ]
-
-        response = flask_test_client.get("assess/flag/1")
+        response = flask_test_client.get("assess/flag/app_123")
 
         assert response.status_code == 400
+
+    def test_flag_route_with_resolved_flag(self, flask_test_client):
+        token = create_valid_token(test_lead_assessor_claims)
+        flask_test_client.set_cookie("localhost", "fsd_user_token", token)
+
+        response = flask_test_client.get("assess/flag/resolved_app")
+
+        assert response.status_code == 200
+
+    @pytest.mark.parametrize(
+        "user_account, visible",
+        [
+            (test_commenter_claims, False), 
+            (test_assessor_claims, False), 
+            (test_lead_assessor_claims, True),
+        ],
+    )
+    def test_resolve_flag_option_shows_for_correct_permissions(self, flask_test_client, user_account, visible):
+        token = create_valid_token(user_account)
+        flask_test_client.set_cookie("localhost", "fsd_user_token", token)
+
+        response = flask_test_client.get("assess/application/app_123")
+        assert response.status_code == 200
+        if visible:
+            assert b"Resolve flag" in response.data
+        else:
+            assert b"Resolve flag" not in response.data
 
     def test_flag_route_submit_flag(
         self, flask_test_client, mocker, request_ctx
@@ -352,18 +375,18 @@ class TestRoutes:
         session["csrf_token"] = "test"
 
         mocker.patch("app.assess.routes.submit_flag", return_value=None)
-        mock_get_flags = mocker.patch("app.assess.routes.get_flags")
+        mock_get_latest_flag = mocker.patch("app.assess.routes.get_latest_flag")
         mock_get_banner_state = mocker.patch(
             "app.assess.routes.get_banner_state"
         )
         mock_get_fund = mocker.patch("app.assess.routes.get_fund")
-        mock_get_flags.return_value = []
+        mock_get_latest_flag.return_value = []
         mock_get_banner_state.return_value = {"fund_id": 1}
         mock_get_fund.return_value = mock.Mock(name="Test Fund")
 
         response = flask_test_client.post(
             "assess/flag/1",
-            data={"reason": "Test reason", "section": "Test section"},
+            data={"justification": "Test justification", "section": "Test section"},
         )
 
         assert response.status_code == 302
