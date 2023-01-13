@@ -1,15 +1,16 @@
-from app.assess.status import all_status_completed
-
 from app.assess.data import *
 from app.assess.data import get_application_overviews
 from app.assess.data import submit_score_and_justification
 from app.assess.display_value_mappings import assessment_statuses
 from app.assess.display_value_mappings import asset_types
+from app.assess.forms.assessment_form import AssessmentCompleteForm
 from app.assess.forms.comments_form import CommentsForm
 from app.assess.forms.flag_form import FlagApplicationForm
 from app.assess.forms.scores_and_justifications import ScoreForm
 from app.assess.models.ui import applicants_response
 from app.assess.models.ui.assessor_task_list import AssessorTaskList
+from app.assess.status import all_status_completed
+from app.assess.status import update_ar_status_to_completed
 from config import Config
 from flask import abort
 from flask import Blueprint
@@ -19,7 +20,6 @@ from flask import render_template
 from flask import request
 from flask import url_for
 from fsd_utils.authentication.decorators import login_required
-from app.assess.forms.assessment_form import AssessmentCompleteForm
 
 assess_bp = Blueprint(
     "assess_bp",
@@ -280,8 +280,7 @@ def application(application_id):
     assessor_task_list_metadata["fund_name"] = fund.name
 
     state = AssessorTaskList.from_json(assessor_task_list_metadata)
-    current_app.logger.error(
-            f"Get status {state.workflow_status}")
+    current_app.logger.error(f"Get status {state.workflow_status}")
     current_app.logger.info(
         f"Fetching data from '{assessor_task_list_metadata}'."
     )
@@ -293,27 +292,29 @@ def application(application_id):
     if flag:
         state.workflow_status = "FLAGGED"
         accounts = get_bulk_accounts_dict([flag.user_id])
-        
+
     sub_criteria_status_completed = all_status_completed(state)
     form = AssessmentCompleteForm()
-    if request.method=="POST":
-        requests.post(
-            Config.ASSESSMENT_UPDATE_STATUS.format(
-                application_id=application_id)
-            )
-   
+    if request.method == "POST":
+        update_ar_status_to_completed(application_id)
+        assessor_task_list_metadata = get_assessor_task_list_state(
+            application_id
+        )
+        if not assessor_task_list_metadata:
+            abort(404)
+        state = AssessorTaskList.from_json(assessor_task_list_metadata)
+
     return render_template(
         "assessor_tasklist.html",
-        sub_criteria_status_completed = sub_criteria_status_completed,
-        form = form,
+        sub_criteria_status_completed=sub_criteria_status_completed,
+        form=form,
         state=state,
         application_id=application_id,
         flag=flag,
-        show_prompt= False,
         flag_user_info=accounts.get(flag.user_id) if flag else None,
-)
-        
-   
+    )
+
+
 @assess_bp.route("/comments/", methods=["GET", "POST"])
 def comments():
     """

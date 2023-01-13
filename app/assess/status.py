@@ -1,3 +1,7 @@
+import requests
+from config import Config
+
+
 def get_status(questions):
     """_summary_: GIVEN function return a dictionary
     of statuses.
@@ -29,7 +33,22 @@ def get_status(questions):
         )
     return status
 
+
 def all_status_completed(criteria_list):
-    """ Function checks if all statuses are completed then returns True 
+    """Function checks if all statuses are completed then returns True
     otherwise returns False"""
-    return all(sub_criteria.status == "COMPLETED" for criteria in criteria_list.criterias for sub_criteria in criteria.sub_criterias)
+    return all(
+        sub_criteria.status == "COMPLETED"
+        for criteria in criteria_list.criterias
+        for sub_criteria in criteria.sub_criterias
+    )
+
+
+def update_ar_status_to_completed(application_id):
+    """Function makes a call to assessment store to update the
+    status of given application_id to COMPLETED"""
+    response = requests.post(
+        Config.ASSESSMENT_UPDATE_STATUS.format(application_id=application_id)
+    )
+    if response:
+        return response
