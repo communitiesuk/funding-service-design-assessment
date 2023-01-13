@@ -48,7 +48,6 @@ def display_sub_criteria(
     add_comment_argument = request.args.get("add_comment") == "1"
     if add_comment_argument and comment_form.validate_on_submit():
         comment = comment_form.comment.data
-
         submit_comment(
             comment=comment,
             application_id=application_id,
@@ -297,12 +296,12 @@ def application(application_id):
         
     sub_criteria_status_completed = all_status_completed(state)
     form = AssessmentCompleteForm()
-    if form.validate_on_submit():
-        current_app.logger.error(
-            f"Updating application status to COMPLETED")
-        # TODO: Update status (Remove below line once logic implemented)
-        state.workflow_status = "COMPLETED"
-        
+    if request.method=="POST":
+        requests.post(
+            Config.ASSESSMENT_UPDATE_STATUS.format(
+                application_id=application_id)
+            )
+   
     return render_template(
         "assessor_tasklist.html",
         sub_criteria_status_completed = sub_criteria_status_completed,
