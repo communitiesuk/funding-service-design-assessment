@@ -234,9 +234,6 @@ def landing():
         Config.COF_FUND_ID, Config.COF_ROUND2_ID
     ).assessment_deadline
 
-
-    print("😎😎😎😎😎😎😎😎😎", application_overviews)
-
     return render_template(
         "assessor_dashboard.html",
         user=g.user,
@@ -282,14 +279,11 @@ def application(application_id):
         state.workflow_status = "FLAGGED"
         accounts = get_bulk_accounts_dict([flag.user_id])
 
-    print("😎😎😎😎😎😎", flags)
-
     return render_template(
         "assessor_tasklist.html",
         state=state,
         application_id=application_id,
         flag=flag,
-        # flag_user_info=accounts.get(flag.user_id) if flag else None,
     )
 
 

@@ -15,7 +15,7 @@
     </div>
 
     {% if flag and g.user.highest_role in ("ASSESSOR", "LEAD_ASSESSOR") %}
-        {{ assessment_flag(flag) }}
+        {{ assessment_flag(flag, flag_user_info) }}
     {% endif %}
 
     {{ banner_summary(

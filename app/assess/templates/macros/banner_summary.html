@@ -14,12 +14,11 @@
                     <h3 class="govuk-body-l fsd-banner-content">Total funding requested:
                         &pound;{{ "{:,.2f}".format(funding_amount_requested | float) }}</h3>
                     <h3 class="govuk-body-l fsd-banner-content fsd-banner-collapse-padding">
-                        {% if flag == None  %}
-                            {{ workflow_status | status_to_human }}
-                        {% else %}
+                        {% if flag %}
                             {{ flag.flag_type.name | capitalize }}
+                        {% else %}
+                            {{ workflow_status | status_to_human }}
                         {% endif %}
-
                     </h3>
 
                 </div>
