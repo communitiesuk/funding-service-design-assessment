@@ -304,7 +304,6 @@ def application(application_id):
         application_id=application_id,
         flag=flag,
         flag_user_info=accounts.get(flag.user_id) if flag else None,
-
     )
 
 
