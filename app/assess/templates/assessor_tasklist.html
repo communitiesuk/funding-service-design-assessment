@@ -32,7 +32,6 @@
 </div>
 
 {% elif sub_criteria_status_completed %}
-
 <form method="POST" action="{{ url_for('assess_bp.application', application_id=application_id) }}">
     {{ form.csrf_token }}
     <div class="govuk-grid-row">
@@ -46,8 +45,8 @@
             </div>
         </div>
     </div>
-    {% endif %}
 </form>
+{% endif %}
 
 {% if flag and g.user.highest_role in ("ASSESSOR", "LEAD_ASSESSOR") %}
 {{ assessment_flag(flag, flag_user_info) }}
