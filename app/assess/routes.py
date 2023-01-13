@@ -1,5 +1,6 @@
 from app.assess.data import *
 from app.assess.data import get_application_overviews
+from app.assess.data import get_assessments_stats
 from app.assess.data import submit_score_and_justification
 from app.assess.display_value_mappings import assessment_statuses
 from app.assess.display_value_mappings import asset_types
@@ -240,10 +241,17 @@ def landing():
         Config.COF_FUND_ID, Config.COF_ROUND2_ID
     ).assessment_deadline
 
+    stats = get_assessments_stats(Config.COF_FUND_ID, Config.COF_ROUND2_ID)
+
     post_processed_overviews = (
-        get_assessment_progress(application_overviews)
-        if application_overviews
-        else []
+        (
+            get_assessment_progress(application_overviews)
+            if application_overviews
+            else []
+        )
+        # TODO: remove this when we have local data for post requests.
+        if not Config.USE_LOCAL_DATA
+        else application_overviews
     )
 
     return render_template(
@@ -255,6 +263,7 @@ def landing():
         asset_types=asset_types,
         assessment_statuses=assessment_statuses,
         show_clear_filters=show_clear_filters,
+        stats=stats,
     )
 
 
