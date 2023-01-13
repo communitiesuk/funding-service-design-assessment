@@ -25,7 +25,6 @@ class DefaultConfig:
     # Authentication
     FSD_USER_TOKEN_COOKIE_NAME = "fsd_user_token"
     AUTHENTICATOR_HOST = environ.get("AUTHENTICATOR_HOST", "authenticator")
-    FSD_USER_TOKEN_COOKIE_NAME = "fsd_user_token"
     # RSA 256 KEYS
     RSA256_PUBLIC_KEY_BASE64 = environ.get("RSA256_PUBLIC_KEY_BASE64")
     if RSA256_PUBLIC_KEY_BASE64:
@@ -80,6 +79,7 @@ class DefaultConfig:
     APPLICATION_SEARCH_ENDPOINT = CommonConfig.APPLICATION_SEARCH_ENDPOINT
 
     # Assessment store endpoints
+    ASSESSMENTS_STATS_ENDPOINT = "/assessments/get-stats/{fund_id}/{round_id}"
     APPLICATION_OVERVIEW_ENDPOINT_FUND_ROUND_PARAMS = (
         "/application_overviews/{fund_id}/{round_id}?{params}"
     )

@@ -1,5 +1,6 @@
 from app.assess.data import *
 from app.assess.data import get_application_overviews
+from app.assess.data import get_assessments_stats
 from app.assess.data import submit_score_and_justification
 from app.assess.display_value_mappings import assessment_statuses
 from app.assess.display_value_mappings import asset_types
@@ -237,17 +238,30 @@ def landing():
     # Updating assessment progress for applications
     application_overviews = get_assessment_progress(
         application_overviews
+
+    stats = get_assessments_stats(Config.COF_FUND_ID, Config.COF_ROUND2_ID)
+
+    post_processed_overviews = (
+        (
+            get_assessment_progress(application_overviews)
+            if application_overviews
+            else []
         )
-  
+        # TODO: remove this when we have local data for post requests.
+        if not Config.USE_LOCAL_DATA
+        else application_overviews
+    )
+
     return render_template(
         "assessor_dashboard.html",
         user=g.user,
-        application_overviews=application_overviews,
+        application_overviews=post_processed_overviews,
         assessment_deadline=assessment_deadline,
         query_params=search_params,
         asset_types=asset_types,
         assessment_statuses=assessment_statuses,
         show_clear_filters=show_clear_filters,
+        stats=stats,
     )
 
 
@@ -343,6 +357,8 @@ def sub_crit_scoring():
 
 @assess_bp.route("/file/<application_id>/<file_name>", methods=["GET"])
 def get_file(application_id: str, file_name: str):
-    response = get_file_response(application_id=application_id, file_name=file_name)
-    
+    response = get_file_response(
+        application_id=application_id, file_name=file_name
+    )
+
     return response
