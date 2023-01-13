@@ -6,12 +6,14 @@
 {% from "macros/banner_summary.html" import banner_summary %}
 {% from "macros/flag_application_button.html" import flag_application_button %}
 {% from "macros/assessment_flag.html" import assessment_flag %}
+{% from "macros/logout_partial.html" import logout_partial %}
 
 {% block content %}
     <div class="govuk-phase-banner flex-parent-element">
-        <p class="govuk-!-text-align-left flex-parent-element flexed-element-margins-collapse">{{ govukBackLink({'href': url_for("assess_bp.landing"), 'text': 'Back to assessment dashboard'}) }}</p>
-        <p class="flex-parent-element flexed-element-margins-collapse govuk-!-text-align-right"><a
-                href="{{ sso_logout_url }}" class="govuk-link flexed-element-margins-collapse">Log out</a></p>
+        <p class="govuk-!-text-align-left flex-parent-element flexed-element-margins-collapse">
+            {{ govukBackLink({'href': url_for("assess_bp.landing"), 'text': 'Back to assessment dashboard'}) }}
+        </p>
+        {{ logout_partial(sso_logout_url) }}
     </div>
 
     {% if flag and g.user.highest_role in ("ASSESSOR", "LEAD_ASSESSOR") %}

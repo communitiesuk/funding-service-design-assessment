@@ -214,13 +214,9 @@ class TestRoutes:
         flask_test_client,
         monkeypatch,
         expected_ids,
-        expected_names,
-        mocker,
+        expected_names
     ):
-        mocker.patch(
-            "app.assess.models.ui.applicants_response.get_file_url",
-            return_value="sample1.doc",
-        )
+        
         # Mocking fsd-user-token cookie
         token = create_valid_token(test_lead_assessor_claims)
         flask_test_client.set_cookie("localhost", "fsd_user_token", token)
@@ -307,13 +303,8 @@ class TestRoutes:
         flask_test_client,
         monkeypatch,
         expected_ids,
-        expected_names,
-        mocker,
-    ):
-        mocker.patch(
-            "app.assess.models.ui.applicants_response.get_file_url",
-            return_value="sample1.doc",
-        )
+        expected_names,        
+    ):       
         # Mocking fsd-user-token cookie
         token = create_valid_token(test_commenter_claims)
         flask_test_client.set_cookie("localhost", "fsd_user_token", token)

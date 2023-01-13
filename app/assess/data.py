@@ -20,6 +20,7 @@ from config import Config
 from flask import abort
 from flask import current_app
 from flask import g
+from flask import Response
 
 
 def get_data(
@@ -46,6 +47,25 @@ def get_data(
                 f"Could not get data for endpoint '{endpoint}' "
             )
             return None
+
+
+def get_assessment_progress(application_metadata):
+    application_ids_list = {
+        "application_ids": [
+            x.get("application_id") for x in application_metadata
+        ]
+    }
+    endpoint_url = Config.ASSESSMENT_PROGRESS_ENDPOINT
+    response = get_data(endpoint=endpoint_url, payload=application_ids_list)
+    if response is not None:
+        [
+            x.update({"progress": res.get("progress")})
+            for res in response
+            for x in application_metadata
+            if res["application_id"] == x["application_id"]
+        ]
+
+    return application_metadata
 
 
 def get_local_data(endpoint: str):
@@ -482,20 +502,20 @@ def submit_comment(
     return response.ok
 
 
-def get_file_url(filename: str, application_id: str):
+def get_file_response(file_name: str, application_id: str):
     """_summary_: Function is set up to retrieve
     files from aws bucket.
     Args:
         filename: Takes an filename
         application_id: Takes an application_id # noqa
     Returns:
-        Returns a presigned url.
+        Returns a response with a file from aws.
     """
 
-    if filename is None:
+    if file_name is None:
         return None
 
-    prefixed_file_name = application_id + "/" + filename
+    prefixed_file_name = application_id + "/" + file_name
 
     s3_client = boto3.client(
         "s3",
@@ -503,17 +523,18 @@ def get_file_url(filename: str, application_id: str):
         aws_secret_access_key=Config.AWS_SECRET_ACCESS_KEY,
         region_name=Config.AWS_REGION,
     )
-    try:
-        response = s3_client.generate_presigned_url(
-            "get_object",
-            Params={
-                "Bucket": Config.AWS_BUCKET_NAME,
-                "Key": prefixed_file_name,
-            },
-            ExpiresIn=3600,
-        )
 
+    try:
+        obj = s3_client.get_object(Bucket=Config.AWS_BUCKET_NAME, Key=prefixed_file_name)
+        
+        mimetype = obj["ResponseMetadata"]["HTTPHeaders"]["content-type"]
+        data = obj['Body'].read()
+
+        response = Response(data, 
+                            mimetype=mimetype,
+                            headers={'Content-Disposition': f'attachment;filename={file_name}'}
+                        )
         return response
     except ClientError as e:
         current_app.logger.error(e)
-        return None
+        raise Exception(e)

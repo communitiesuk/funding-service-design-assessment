@@ -8,13 +8,16 @@
 {% from "macros/comments.html" import comment %}
 {% from "macros/comments_summary.html" import comment_summary %}
 {% from "macros/comments_box.html" import comment_box %}
+{% from "macros/logout_partial.html" import logout_partial %}
 
 
 {% block content %}
 
     <div class="govuk-phase-banner flex-parent-element">
-        <p class="govuk-!-text-align-left flex-parent-element flexed-element-margins-collapse">{{ govukBackLink({'href': url_for("assess_bp.application", application_id=application_id), 'text': 'Back to assessment overview'}) }}</p>
-        <p class="flex-parent-element flexed-element-margins-collapse govuk-!-text-align-right"><a href="{{ sso_logout_url }}" class="govuk-link flexed-element-margins-collapse">Log out</a></p>
+        <p class="govuk-!-text-align-left flex-parent-element flexed-element-margins-collapse">
+            {{ govukBackLink({'href': url_for("assess_bp.application", application_id=application_id), 'text': 'Back to assessment overview'}) }}
+        </p>
+        {{ logout_partial(sso_logout_url) }}
     </div>
 
     {{ banner_summary(
