@@ -1,5 +1,6 @@
 import requests
 from config import Config
+from flask import current_app
 
 
 def get_status(questions):
@@ -50,5 +51,8 @@ def update_ar_status_to_completed(application_id):
     response = requests.post(
         Config.ASSESSMENT_UPDATE_STATUS.format(application_id=application_id)
     )
-    if response:
+    if response==204:
         return response
+    else:
+        current_app.logger.error("Not Found: application_id not found")
+     
