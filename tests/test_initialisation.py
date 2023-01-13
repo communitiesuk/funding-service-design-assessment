@@ -16,6 +16,11 @@ def test_flask_initiates(flask_test_client):
     If this test succeeds then our flask application
     is AT LEAST up and running without errors.
     """
+    flask_test_client.set_cookie(
+        "localhost",
+        "fsd_user_token",
+        "",
+    )
     response = flask_test_client.get("/", follow_redirects=True)
     assert response.status_code == 200
 
