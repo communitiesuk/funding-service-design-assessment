@@ -1,4 +1,53 @@
 {
+  "assessment_store/flag?application_id=app_123":{
+      "application_id": "app_123",
+      "date_created": "2023-01-10T15:09:58",
+      "flag_type": "FLAGGED",
+      "id": "flagid",
+      "justification": "string",
+      "section_to_flag": "community",
+      "user_id": "test@example.com"
+    },
+    "assessment_store/flag?application_id=resolved_app":{
+      "application_id": "resolved_app",
+      "date_created": "2023-01-01T15:09:58",
+      "flag_type": "RESOLVED",
+      "id": "flagidresolved",
+      "justification": "string",
+      "section_to_flag": "community",
+      "user_id": "test@example.com"
+    },
+    "assessment_store/flag?application_id=stopped_app":{
+      "application_id": "stopped_app",
+      "date_created": "2023-01-21T15:09:58",
+      "flag_type": "STOPPED",
+      "id": "flagidstopped",
+      "justification": "string",
+      "section_to_flag": "community",
+      "user_id": "test@example.com"
+    },
+  "assessment_store/flag?application_id=app_234":{},
+  "assessment_store/sub_criteria_overview/banner_state/app_123":{
+    "short_id":"short",
+    "project_name":"name",
+    "funding_amount_requested":10,
+    "workflow_status":"IN_PROGRESS",
+    "fund_id":"funding-service-design"
+  },
+  "assessment_store/sub_criteria_overview/banner_state/stopped_app":{
+    "short_id":"short",
+    "project_name":"name",
+    "funding_amount_requested":10,
+    "workflow_status":"IN_PROGRESS",
+    "fund_id":"funding-service-design"
+  },
+  "assessment_store/sub_criteria_overview/banner_state/resolved_app":{
+    "short_id":"short",
+    "project_name":"name",
+    "funding_amount_requested":10,
+    "workflow_status":"IN_PROGRESS",
+    "fund_id":"funding-service-design"
+  },
   "fund_store/funds": [
     {
       "fund_name": "Funding Service Design",
@@ -531,6 +580,310 @@
     "short_id": "COF-123-LKMBNS"
   },
   "assessment_store/application_overviews/app_123": {
+    "criterias": [
+      {
+        "name": "Strategic case",
+        "sub_criterias": [
+          {
+            "id": "benefits",
+            "name": "Benefits",
+            "score": -1,
+            "status": "NOT_STARTED",
+            "theme_count": 2
+          },
+          {
+            "id": "engagement",
+            "name": "Engagement",
+            "score": -1,
+            "status": "NOT_STARTED",
+            "theme_count": 2
+          },
+          {
+            "id": "environmental_sustainability",
+            "name": "Environmental Sustainability",
+            "score": -1,
+            "status": "NOT_STARTED",
+            "theme_count": 1
+          }
+        ],
+        "total_criteria_score": -1,
+        "total_criteria_score_possible": -1,
+        "weighting": 0.3
+      },
+      {
+        "name": "Management case",
+        "sub_criterias": [
+          {
+            "id": "funding_breakdown",
+            "name": "Funding breakdown",
+            "score": -1,
+            "status": "NOT_STARTED",
+            "theme_count": 1
+          },
+          {
+            "id": "financial_and_risk_forecasts",
+            "name": "Financial and risk forecasts",
+            "score": -1,
+            "status": "NOT_STARTED",
+            "theme_count": 3
+          },
+          {
+            "id": "skills_and_resources",
+            "name": "Skills and resources",
+            "score": -1,
+            "status": "NOT_STARTED",
+            "theme_count": 3
+          },
+          {
+            "id": "representation_inclusiveness_and_integration",
+            "name": "Representation, inclusiveness and integration",
+            "score": -1,
+            "status": "NOT_STARTED",
+            "theme_count": 2
+          },
+          {
+            "id": "business_plan",
+            "name": "Business plan",
+            "score": -1,
+            "status": "NOT_STARTED",
+            "theme_count": 1
+          }
+        ],
+        "total_criteria_score": -1,
+        "total_criteria_score_possible": -1,
+        "weighting": 0.3
+      },
+      {
+        "name": "Potential to deliver community benefit",
+        "sub_criterias": [
+          {
+            "id": "community-benefits",
+            "name": "How the community benefits\t",
+            "score": -1,
+            "status": "NOT_STARTED",
+            "theme_count": 2
+          }
+        ],
+        "total_criteria_score": -1,
+        "total_criteria_score_possible": -1,
+        "weighting": 0.3
+      },
+      {
+        "name": "Added value of the community asset",
+        "sub_criterias": [
+          {
+            "id": "value-to-the-community",
+            "name": "Value to the community",
+            "score": -1,
+            "status": "NOT_STARTED",
+            "theme_count": 1
+          }
+        ],
+        "total_criteria_score": -1,
+        "total_criteria_score_possible": -1,
+        "weighting": 0.1
+      }
+    ],
+    "date_submitted": "2022-10-27T08:32:13.383999",
+    "fund_id": "47aef2f5-3fcb-4d45-acb5-f0152b5f03c4",
+    "project_name": "Restore the vintage community centre in Hereford",
+    "short_id": "COF-R2W2-AWDZQF",
+    "sections": [
+      {
+        "name": "Organisation information",
+        "sub_criterias": [
+          {
+            "id": "org_info",
+            "name": "Organisation information"
+          },
+          {
+            "id": "applicant_info",
+            "name": "Applicant information"
+          }
+        ]
+      },
+      {
+        "name": "Project information",
+        "sub_criterias": [
+          {
+            "id": "project_info",
+            "name": "Project information"
+          },
+          {
+            "id": "asset_info",
+            "name": "Asset information"
+          }
+        ]
+      },
+      {
+        "name": "Check declarations",
+        "sub_criterias": [
+          {
+            "id": "declarations",
+            "name": "Declarations"
+          },
+          {
+            "id": "subsidy_control_and_state_aid",
+            "name": "Subsidy control and state aid"
+          }
+        ]
+      }
+    ],
+    "workflow_status": "NOT_STARTED"
+  },
+  "assessment_store/application_overviews/stopped_app": {
+    "criterias": [
+      {
+        "name": "Strategic case",
+        "sub_criterias": [
+          {
+            "id": "benefits",
+            "name": "Benefits",
+            "score": -1,
+            "status": "NOT_STARTED",
+            "theme_count": 2
+          },
+          {
+            "id": "engagement",
+            "name": "Engagement",
+            "score": -1,
+            "status": "NOT_STARTED",
+            "theme_count": 2
+          },
+          {
+            "id": "environmental_sustainability",
+            "name": "Environmental Sustainability",
+            "score": -1,
+            "status": "NOT_STARTED",
+            "theme_count": 1
+          }
+        ],
+        "total_criteria_score": -1,
+        "total_criteria_score_possible": -1,
+        "weighting": 0.3
+      },
+      {
+        "name": "Management case",
+        "sub_criterias": [
+          {
+            "id": "funding_breakdown",
+            "name": "Funding breakdown",
+            "score": -1,
+            "status": "NOT_STARTED",
+            "theme_count": 1
+          },
+          {
+            "id": "financial_and_risk_forecasts",
+            "name": "Financial and risk forecasts",
+            "score": -1,
+            "status": "NOT_STARTED",
+            "theme_count": 3
+          },
+          {
+            "id": "skills_and_resources",
+            "name": "Skills and resources",
+            "score": -1,
+            "status": "NOT_STARTED",
+            "theme_count": 3
+          },
+          {
+            "id": "representation_inclusiveness_and_integration",
+            "name": "Representation, inclusiveness and integration",
+            "score": -1,
+            "status": "NOT_STARTED",
+            "theme_count": 2
+          },
+          {
+            "id": "business_plan",
+            "name": "Business plan",
+            "score": -1,
+            "status": "NOT_STARTED",
+            "theme_count": 1
+          }
+        ],
+        "total_criteria_score": -1,
+        "total_criteria_score_possible": -1,
+        "weighting": 0.3
+      },
+      {
+        "name": "Potential to deliver community benefit",
+        "sub_criterias": [
+          {
+            "id": "community-benefits",
+            "name": "How the community benefits\t",
+            "score": -1,
+            "status": "NOT_STARTED",
+            "theme_count": 2
+          }
+        ],
+        "total_criteria_score": -1,
+        "total_criteria_score_possible": -1,
+        "weighting": 0.3
+      },
+      {
+        "name": "Added value of the community asset",
+        "sub_criterias": [
+          {
+            "id": "value-to-the-community",
+            "name": "Value to the community",
+            "score": -1,
+            "status": "NOT_STARTED",
+            "theme_count": 1
+          }
+        ],
+        "total_criteria_score": -1,
+        "total_criteria_score_possible": -1,
+        "weighting": 0.1
+      }
+    ],
+    "date_submitted": "2022-10-27T08:32:13.383999",
+    "fund_id": "47aef2f5-3fcb-4d45-acb5-f0152b5f03c4",
+    "project_name": "Restore the vintage community centre in Hereford",
+    "short_id": "COF-R2W2-AWDZQF",
+    "sections": [
+      {
+        "name": "Organisation information",
+        "sub_criterias": [
+          {
+            "id": "org_info",
+            "name": "Organisation information"
+          },
+          {
+            "id": "applicant_info",
+            "name": "Applicant information"
+          }
+        ]
+      },
+      {
+        "name": "Project information",
+        "sub_criterias": [
+          {
+            "id": "project_info",
+            "name": "Project information"
+          },
+          {
+            "id": "asset_info",
+            "name": "Asset information"
+          }
+        ]
+      },
+      {
+        "name": "Check declarations",
+        "sub_criterias": [
+          {
+            "id": "declarations",
+            "name": "Declarations"
+          },
+          {
+            "id": "subsidy_control_and_state_aid",
+            "name": "Subsidy control and state aid"
+          }
+        ]
+      }
+    ],
+    "workflow_status": "NOT_STARTED"
+  },
+  "assessment_store/application_overviews/resolved_app": {
     "criterias": [
       {
         "name": "Strategic case",
@@ -2396,40 +2749,6 @@
       "form_name": "project-information",
       "presentation_type": "text",
       "question": "In which local council area is your asset?"
-    }
-  ],
-  "assessment_store/sub_criteria_themes/app_123/declarations": [
-    {
-      "answer": "Yes",
-      "field_id": "LlvhYl",
-      "field_type": "yesNoField",
-      "form_name": "declarations",
-      "presentation_type": "text",
-      "question": "Confirm you have considered subsidy control and state aid implications for your project, and the information you have given us is correct"
-    },
-    {
-      "answer": "No",
-      "field_id": "wJrJWY",
-      "field_type": "yesNoField",
-      "form_name": "declarations",
-      "presentation_type": "text",
-      "question": "Confirm you have considered people with protected characteristics throughout the planning of your project"
-    },
-    {
-      "answer": "Yes",
-      "field_id": "COiwQr",
-      "field_type": "yesNoField",
-      "form_name": "declarations",
-      "presentation_type": "text",
-      "question": "Confirm you have considered sustainability and the environment throughout the planning of your project, including compliance with the government's Net Zero ambitions"
-    },
-    {
-      "answer": "No",
-      "field_id": "bRPzWU",
-      "field_type": "yesNoField",
-      "form_name": "declarations",
-      "presentation_type": "text",
-      "question": "Confirm you have a bank account set up and associated with the organisation you are applying on behalf of"
     }
   ],
   "account_store/bulk-accounts": {

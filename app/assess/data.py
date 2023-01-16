@@ -361,29 +361,45 @@ def get_banner_state(application_id: str):
         abort(404, description=msg)
 
 
-def get_flags(application_id: str) -> list[Flag] | None:
-    flags = get_data(
-        Config.ASSESSMENT_FLAGS_ENDPOINT,
-        payload={"application_id": application_id},
+def get_latest_flag(application_id: str) -> list[Flag] | None:
+    flag = get_data(
+        Config.ASSESSMENT_LATEST_FLAG_ENDPOINT.format(
+            application_id=application_id
+        )
     )
-    if flags:
-        return [Flag.from_dict(flag) for flag in flags]
+    if flag:
+        return Flag.from_dict(flag)
     else:
-        msg = f"flags: '{application_id}' not found."
+        msg = f"flag for application: '{application_id}' not found."
         current_app.logger.warn(msg)
-        return []
+        return None
 
 
 def submit_flag(
-    application_id: str, justification: str, section: str
+    application_id: str, flag_type: str, justification: str, section: str
 ) -> Flag | None:
+    """Submits a new flag to the assessment store for an application.
+    Returns Flag if a flag is created
+
+    :param application_d: The application the flag belongs to.
+    :param flag_type: The type of flag (e.g: 'FLAGGED' or 'STOPPED')
+    :param justification: The justification for raising the flag
+    :param section: The assessment section the flag has been raised for.
+    """
+    current_app.logger.info(
+        "POSTing new flag to endpoint"
+        f" '{Config.ASSESSMENT_LATEST_FLAG_ENDPOINT}'.\n"
+        "Details: \n"
+        f" - flag_type: {flag_type} \n"
+        f" - application_id: '{application_id}') \n"
+    )
     flag = requests.post(
-        Config.ASSESSMENT_FLAGS_ENDPOINT,
+        Config.ASSESSMENT_LATEST_FLAG_ENDPOINT,
         json={
             "application_id": application_id,
             "justification": justification,
             "section_to_flag": section,
-            "flag_type": FlagType.FLAGGED.name,  # TODO: Other flag types?
+            "flag_type": flag_type,
             "user_id": g.account_id,
         },
     )
