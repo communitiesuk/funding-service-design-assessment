@@ -363,7 +363,9 @@ def get_banner_state(application_id: str):
 
 def get_latest_flag(application_id: str) -> list[Flag] | None:
     flag = get_data(
-        Config.ASSESSMENT_LATEST_FLAG_ENDPOINT.format(application_id=application_id)
+        Config.ASSESSMENT_LATEST_FLAG_ENDPOINT.format(
+            application_id=application_id
+        )
     )
     if flag:
         return Flag.from_dict(flag)
@@ -404,6 +406,7 @@ def submit_flag(
     if flag:
         flag_json = flag.json()
         return Flag.from_dict(flag_json)
+
 
 def get_sub_criteria_theme_answers(
     application_id: str, theme_id: str

@@ -105,6 +105,12 @@ class TestDataOperations:
     def test_get_comments(self):
 
         with self.test_app.app_context():
-            themes = [Theme(id='general-information', name='General information'), Theme(id='activities', name='Activities'), Theme(id='partnerships', name='Partnerships')]
-            comments = get_comments("app_123", "1a2b3c4d", "general-information", themes)
+            themes = [
+                Theme(id="general-information", name="General information"),
+                Theme(id="activities", name="Activities"),
+                Theme(id="partnerships", name="Partnerships"),
+            ]
+            comments = get_comments(
+                "app_123", "1a2b3c4d", "general-information", themes
+            )
         assert 3 == len(comments), "wrong number of comments"

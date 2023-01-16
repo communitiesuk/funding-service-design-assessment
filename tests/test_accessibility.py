@@ -9,7 +9,8 @@ from axe_selenium_python import Axe
 from config import Config
 from json2html import json2html
 from selenium.webdriver.chrome.webdriver import WebDriver
-from tests.route_testing_conf import intro_routes_and_test_content, assessment_form_test_routes
+from tests.route_testing_conf import assessment_form_test_routes
+from tests.route_testing_conf import intro_routes_and_test_content
 from tests.utils import get_service
 from tests.utils import get_service_html_filepath
 
@@ -123,8 +124,9 @@ class TestAccessibilityWithChrome:
             )
             assert len(results["violations"]) <= 4
             assert (
-                    len(results["violations"]) == 0
-                    or results["violations"][0]["impact"] == "serious" or "minor"
+                len(results["violations"]) == 0
+                or results["violations"][0]["impact"] == "serious"
+                or "minor"
             )
 
     def test_assessment_form_routes_accessible(self):

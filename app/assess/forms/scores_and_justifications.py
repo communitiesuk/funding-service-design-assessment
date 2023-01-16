@@ -12,4 +12,6 @@ class ScoreForm(FlaskForm):
     score = RadioField(
         "Score", choices=[1, 2, 3, 4, 5], validators=[InputRequired()]
     )
-    justification = TextAreaField("Justification", validators=[InputRequired()])
+    justification = TextAreaField(
+        "Justification", validators=[InputRequired()]
+    )
