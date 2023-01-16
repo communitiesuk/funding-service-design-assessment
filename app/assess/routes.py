@@ -68,7 +68,7 @@ def display_sub_criteria(
         )
 
     fund = get_fund(Config.COF_FUND_ID)
-    is_flagged = True if get_latest_flag(application_id) else False
+    is_flagged = bool(get_latest_flag(application_id))
 
     comments = get_comments(
         application_id=application_id,
