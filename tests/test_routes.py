@@ -1,6 +1,8 @@
 from unittest import mock
 
+import app
 import pytest
+from app.assess.models.flag import Flag
 from app.assess.models.score import Score
 from config import Config
 from flask import session
@@ -422,7 +424,7 @@ class TestRoutes:
         assert response.status_code == 302
         assert response.headers["Location"] == "/assess/application/1"
 
-    def test_flag_route_resolve_flag(
+    def test_flag_route_get_resolve_flag(
         self,
         flask_test_client,
     ):
@@ -438,3 +440,39 @@ class TestRoutes:
         assert b"Query resolved" in response.data
         assert b"Stop assessment" in response.data
         assert b"Reason" in response.data
+
+    def test_flag_route_post_resolve_flag(self, flask_test_client, mocker):
+        token = create_valid_token(test_lead_assessor_claims)
+        flask_test_client.set_cookie("localhost", "fsd_user_token", token)
+        mocker.patch(
+            "app.assess.routes.submit_flag",
+            return_value=Flag.from_dict(
+                {
+                    "application_id": "app_123",
+                    "date_created": "2023-01-10T15:09:58",
+                    "flag_type": "FLAGGED",
+                    "id": "flagid",
+                    "justification": "string",
+                    "section_to_flag": "community",
+                    "user_id": "test@example.com",
+                }
+            ),
+        )
+
+        response = flask_test_client.post(
+            "assess/resolve_flag/app_123?section=org_info",
+            data={
+                "resolution_flag": "RESOLVED",
+                "justification": "Checked with so and so.",
+            },
+        )
+        app.assess.routes.submit_flag.assert_called_once()
+        app.assess.routes.submit_flag.assert_called_once_with(
+            "app_123",
+            "RESOLVED",
+            "Checked with so and so.",
+            "section not specified",
+        )
+
+        assert response.status_code == 302
+        assert response.headers["Location"] == "/assess/application/app_123"
