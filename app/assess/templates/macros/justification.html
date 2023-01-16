@@ -4,7 +4,7 @@
 
 <div class="govuk-form-group comments {% if justification_error %}govuk-form-group--error{% endif %}" name="just-text-area" id="just-text-area">
     <h2 class="govuk-label-wrapper">
-        <label class="govuk-label govuk-label--m">Add rationale for this
+        <label for="justification" class="govuk-label govuk-label--m">Add rationale for this
             score</label>
     </h2>
     <div id="more-detail-hint" class="govuk-hint">
@@ -17,7 +17,7 @@
       </p>
     {% endif %}
     <textarea class="govuk-textarea" id="justification" name={{justification_form_name}} value=""
-        rows="10" aria-describedby="more-detail-hint" aria-label="Justification"></textarea>
+        rows="10" aria-describedby="more-detail-hint"></textarea>
 </div>
 
 {% endmacro %}
