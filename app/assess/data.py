@@ -368,7 +368,7 @@ def get_latest_flag(application_id: str) -> list[Flag] | None:
         )
     )
     if flag:
-        return Flag.from_dict(flag)
+        return Flag.from_dict(flag[0])
     else:
         msg = f"flag for application: '{application_id}' not found."
         current_app.logger.warn(msg)

@@ -1,7 +1,12 @@
 {% macro assessment_flag(flag, user_info, application_id) %}
     <div class="assessment-alert assessment-alert--flagged">
-        <h1 class="assessment-alert__heading govuk-heading-l">{{ flag.flag_type.name | title }}</h1>
-
+        <h1 class="assessment-alert__heading govuk-heading-l">
+            {% if flag.flag_type.name == "STOPPED" %}
+                Assessment Stopped
+            {% else %}
+                {{ flag.flag_type.name | title }}
+            {% endif %}
+        </h1>
         <h2 class="govuk-heading-m">Reason</h2>
         <p class="govuk-body">{{ flag.justification }}</p>
         <h2 class="govuk-heading-m">Section flagged</h2>
