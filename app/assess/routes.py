@@ -238,7 +238,7 @@ def landing():
     # Updating assessment progress for applications
     application_overviews = get_assessment_progress(
         application_overviews
-
+    )
     stats = get_assessments_stats(Config.COF_FUND_ID, Config.COF_ROUND2_ID)
 
     post_processed_overviews = (
