@@ -9,12 +9,46 @@
 {% from "macros/logout_partial.html" import logout_partial %}
 
 {% block content %}
-    <div class="govuk-phase-banner flex-parent-element">
-        <p class="govuk-!-text-align-left flex-parent-element flexed-element-margins-collapse">
-            {{ govukBackLink({'href': url_for("assess_bp.landing"), 'text': 'Back to assessment dashboard'}) }}
-        </p>
-        {{ logout_partial(sso_logout_url) }}
+<div class="govuk-phase-banner flex-parent-element">
+    <p class="govuk-!-text-align-left flex-parent-element flexed-element-margins-collapse">
+        {{ govukBackLink({'href': url_for("assess_bp.landing"), 'text': 'Back to assessment dashboard'}) }}
+    </p>
+    {{ logout_partial(sso_logout_url) }}
+</div>
+
+{% if state.workflow_status=="COMPLETED" %}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+        <div class="assessment-complete  govuk-margin-bottom-8">
+            <h2 class="assessment-alert__heading govuk-heading-l govuk-!-margin-top-4">
+                Assessment complete</h2>
+            <p class="govuk-body">You have marked this assessment as complete.</p>
+            <p class="govuk-body">
+                It may now be selected for quality assurance (QA). New scores and rationales could be added if this
+                happens.
+            </p>
+        </div>
     </div>
+</div>
+
+
+{% elif sub_criteria_status_completed %}
+<form method="POST" action="{{ url_for('assess_bp.application', application_id=application_id) }}">
+    {{ form.csrf_token }}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <div class="assessment-alert  govuk-margin-bottom-8">
+                <h2 class="assessment-alert__heading govuk-heading-l govuk-!-margin-top-4">All sections assessed</h2>
+                <p class="govuk-body">You can now mark the assessment as complete when you're ready.</p>
+                <p class="govuk-body">It may be selected for quality assurance (QA) once you've done this.</p>
+                <button class="govuk-button primary-button" data-module="govuk-button" type="submit">Mark as
+                    complete</button>
+            </div>
+        </div>
+    </div>
+</form>
+{% endif %}
+
 
     {% if flag and g.user.highest_role in ("ASSESSOR", "LEAD_ASSESSOR") and not state.flag_resolved %}
         {{ assessment_flag(flag, flag_user_info, application_id) }}
@@ -55,4 +89,5 @@
             </div>
         </div>
     </div>
+</div>
 {% endblock %}

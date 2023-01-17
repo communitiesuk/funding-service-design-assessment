@@ -1,11 +1,17 @@
 from unittest import mock
+from unittest.mock import MagicMock
+from unittest.mock import patch
 
 import app
 import pytest
+from flask import current_app
 from app.assess.models.flag import Flag
 from app.assess.models.score import Score
+from app.assess.routes import application
 from config import Config
+from flask import Response
 from flask import session
+from tests.api_data.test_data import assessor_task_list_test_metadata
 from tests.conftest import create_valid_token
 from tests.conftest import test_assessor_claims
 from tests.conftest import test_commenter_claims
@@ -423,6 +429,48 @@ class TestRoutes:
 
         assert response.status_code == 302
         assert response.headers["Location"] == "/assess/application/1"
+
+
+def test_application_endpoint(flask_test_client):
+    """ The test mocks the fsd_user_token cookie and sets it on the client. Then it calls the application function with an application ID of "123" and makes assertions about the behavior of the mock objects and the returned response.
+    It mocks the following functions:
+        get_assessor_task_list_state
+        get_fund
+        get_flags
+        all_status_completed
+        update_ar_status_to_completed
+        render_template
+    It asserts that the render_template function is called once and that the first argument passed to the function is the correct template name and that the response contains the word 'COMPLETED' """
+   
+    with patch(
+        "app.assess.routes.get_assessor_task_list_state",
+        return_value=assessor_task_list_test_metadata,
+    ), patch(
+        "app.assess.routes.get_fund",
+        return_value=MagicMock(name="Community Ownership Fund"),
+    ), patch(
+        "app.assess.routes.get_latest_flag", return_value=[]
+    ), patch(
+        "app.assess.routes.all_status_completed", return_value=True
+    ), patch(
+        "app.assess.routes.update_ar_status_to_completed",
+        return_value=MagicMock(spec=Response, status_code=204),
+    ), patch(
+        "app.assess.routes.render_template",
+        return_value="<html> COMPLETED </html>",
+    ) as mock_render_template:
+
+        # Mocking fsd-user-token cookie
+        token = create_valid_token(test_lead_assessor_claims)
+        flask_test_client.set_cookie("localhost", "fsd_user_token", token)
+
+        # Run a test
+        with current_app.test_request_context():
+            response = application("123")
+            mock_render_template.assert_called_once()
+            args, kwargs = mock_render_template.call_args
+            assert args[0] == "assessor_tasklist.html"
+            assert "COMPLETED" in response
 
     def test_flag_route_get_resolve_flag(
         self,

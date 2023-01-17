@@ -4,6 +4,7 @@ from app.assess.data import get_assessments_stats
 from app.assess.data import submit_score_and_justification
 from app.assess.display_value_mappings import assessment_statuses
 from app.assess.display_value_mappings import asset_types
+from app.assess.forms.assessment_form import AssessmentCompleteForm
 from app.assess.forms.comments_form import CommentsForm
 from app.assess.forms.flag_form import FlagApplicationForm
 from app.assess.forms.resolve_flag_form import ResolveFlagForm
@@ -11,6 +12,8 @@ from app.assess.forms.scores_and_justifications import ScoreForm
 from app.assess.models.flag import FlagType
 from app.assess.models.ui import applicants_response
 from app.assess.models.ui.assessor_task_list import AssessorTaskList
+from app.assess.status import all_status_completed
+from app.assess.status import update_ar_status_to_completed
 from config import Config
 from flask import abort
 from flask import Blueprint
@@ -48,7 +51,6 @@ def display_sub_criteria(
     add_comment_argument = request.args.get("add_comment") == "1"
     if add_comment_argument and comment_form.validate_on_submit():
         comment = comment_form.comment.data
-
         submit_comment(
             comment=comment,
             application_id=application_id,
@@ -268,7 +270,7 @@ def landing():
     )
 
 
-@assess_bp.route("/application/<application_id>", methods=["GET"])
+@assess_bp.route("/application/<application_id>", methods=["GET", "POST"])
 def application(application_id):
     """
     Application summary page
@@ -302,8 +304,21 @@ def application(application_id):
             state.workflow_status = "FLAGGED"
             accounts = get_bulk_accounts_dict([flag.user_id])
 
+    sub_criteria_status_completed = all_status_completed(state)
+    form = AssessmentCompleteForm()
+    if request.method == "POST":
+        update_ar_status_to_completed(application_id)
+        assessor_task_list_metadata = get_assessor_task_list_state(
+            application_id
+        )
+        if not assessor_task_list_metadata:
+            abort(404)
+        state = AssessorTaskList.from_json(assessor_task_list_metadata)
+
     return render_template(
         "assessor_tasklist.html",
+        sub_criteria_status_completed=sub_criteria_status_completed,
+        form=form,
         state=state,
         application_id=application_id,
         flag=flag,
