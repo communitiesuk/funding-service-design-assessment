@@ -441,7 +441,7 @@ class TestRoutes:
         assert b"Stop assessment" in response.data
         assert b"Reason" in response.data
 
-    def test_flag_route_post_resolve_flag(self, flask_test_client, mocker):
+    def test_post_resolved_flag(self, flask_test_client, mocker):
         token = create_valid_token(test_lead_assessor_claims)
         flask_test_client.set_cookie("localhost", "fsd_user_token", token)
         mocker.patch(
@@ -449,8 +449,8 @@ class TestRoutes:
             return_value=Flag.from_dict(
                 {
                     "application_id": "app_123",
-                    "date_created": "2023-01-10T15:09:58",
-                    "flag_type": "FLAGGED",
+                    "date_created": "2023-01-01T00:00:00",
+                    "flag_type": "RESOLVED",
                     "id": "flagid",
                     "justification": "string",
                     "section_to_flag": "community",
@@ -471,6 +471,60 @@ class TestRoutes:
             "app_123",
             "RESOLVED",
             "Checked with so and so.",
+            "section not specified",
+        )
+
+        assert response.status_code == 302
+        assert response.headers["Location"] == "/assess/application/app_123"
+
+    def test_flag_route_get_continue_application(
+        self,
+        flask_test_client,
+    ):
+        token = create_valid_token(test_lead_assessor_claims)
+        flask_test_client.set_cookie("localhost", "fsd_user_token", token)
+
+        response = flask_test_client.get(
+            "/assess/continue_assessment/app_123",
+        )
+
+        assert response.status_code == 200
+        assert b"short" in response.data
+        assert b"Reason for continuing assessment" in response.data
+        assert b"10.00" in response.data
+        # TODO This will change to b"Stopped" when changes go in to update statuses
+        assert b"In Progress" in response.data
+
+    def test_post_continue_application(self, flask_test_client, mocker):
+        token = create_valid_token(test_lead_assessor_claims)
+        flask_test_client.set_cookie("localhost", "fsd_user_token", token)
+        mocker.patch(
+            "app.assess.routes.submit_flag",
+            return_value=Flag.from_dict(
+                {
+                    "application_id": "app_123",
+                    "date_created": "2023-01-01T00:00:00",
+                    "flag_type": "RESOLVED",
+                    "id": "flagid",
+                    "justification": "string",
+                    "section_to_flag": "community",
+                    "user_id": "test@example.com",
+                }
+            ),
+        )
+
+        response = flask_test_client.post(
+            "assess/resolve_flag/app_123?section=org_info",
+            data={
+                "resolution_flag": "RESOLVED",
+                "justification": "We should continue the application.",
+            },
+        )
+        app.assess.routes.submit_flag.assert_called_once()
+        app.assess.routes.submit_flag.assert_called_once_with(
+            "app_123",
+            "RESOLVED",
+            "We should continue the application.",
             "section not specified",
         )
 

@@ -5,7 +5,8 @@
 {% from 'macros/criteria_element.html' import criteria_element -%}
 {% from "macros/banner_summary.html" import banner_summary %}
 {% from "macros/flag_application_button.html" import flag_application_button %}
-{% from "macros/assessment_flag.html" import assessment_flag %}
+{% from "macros/assessment_flag.html" import assessment_flagged %}
+{% from "macros/assessment_flag.html" import assessment_stopped %}
 {% from "macros/logout_partial.html" import logout_partial %}
 
 {% block content %}
@@ -16,8 +17,10 @@
         {{ logout_partial(sso_logout_url) }}
     </div>
 
-    {% if flag and g.user.highest_role in ("ASSESSOR", "LEAD_ASSESSOR") and not state.flag_resolved %}
-        {{ assessment_flag(flag, flag_user_info, application_id) }}
+    {% if flag and g.user.highest_role in ("ASSESSOR", "LEAD_ASSESSOR") and flag.flag_type.name == "FLAGGED" %}
+        {{ assessment_flagged(flag, flag_user_info, application_id) }}
+    {% elif flag and g.user.highest_role in ("ASSESSOR", "LEAD_ASSESSOR") and flag.flag_type.name == "STOPPED" %}
+        {{ assessment_stopped(flag, flag_user_info, application_id) }}
     {% endif %}
 
     {{ banner_summary(
