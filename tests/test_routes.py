@@ -449,7 +449,7 @@ def test_application_endpoint(flask_test_client):
         "app.assess.routes.get_fund",
         return_value=MagicMock(name="Community Ownership Fund"),
     ), patch(
-        "app.assess.routes.get_flags", return_value=[]
+        "app.assess.routes.get_latest_flag", return_value=[]
     ), patch(
         "app.assess.routes.all_status_completed", return_value=True
     ), patch(
