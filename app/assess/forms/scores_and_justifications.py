@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import RadioField
 from wtforms import TextAreaField
-from wtforms.validators import DataRequired
+from wtforms.validators import InputRequired
 
 
 class ScoreForm(FlaskForm):
@@ -10,6 +10,8 @@ class ScoreForm(FlaskForm):
     """
 
     score = RadioField(
-        "Score", choices=[1, 2, 3, 4, 5], validators=[DataRequired()]
+        "Score", choices=[1, 2, 3, 4, 5], validators=[InputRequired()]
     )
-    justification = TextAreaField("Justification", validators=[DataRequired()])
+    justification = TextAreaField(
+        "Justification", validators=[InputRequired()]
+    )

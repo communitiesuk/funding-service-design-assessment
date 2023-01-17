@@ -258,38 +258,14 @@ def get_applications(params: dict) -> Union[List[Application], None]:
     return None
 
 
-def get_todo_summary() -> Union[Dict, None]:
-    applications = call_search_applications("")
-    if applications and len(applications) > 0:
-        todo_summary = {}
-        todo_summary.update(
-            {
-                "completed": len(
-                    [
-                        1
-                        for application in applications
-                        if application["status"] == "COMPLETED"
-                    ]
-                ),
-                "assessing": len(
-                    [
-                        1
-                        for application in applications
-                        if application["status"] == "ASSESSING"
-                    ]
-                ),
-                "not_started": len(
-                    [
-                        1
-                        for application in applications
-                        if application["status"] == "NOT_STARTED"
-                    ]
-                ),
-            }
-        )
-
-        return todo_summary
-    return None
+def get_assessments_stats(fund_id: str, round_id: str) -> Dict | None:
+    assessments_stats_endpoint = (
+        Config.ASSESSMENT_STORE_API_HOST
+    ) + Config.ASSESSMENTS_STATS_ENDPOINT.format(
+        fund_id=fund_id, round_id=round_id
+    )
+    current_app.logger.info(f"Endpoint '{assessments_stats_endpoint}'.")
+    return get_data(assessments_stats_endpoint)
 
 
 def get_application(identifier: str) -> Union[Application, None]:
@@ -385,29 +361,45 @@ def get_banner_state(application_id: str):
         abort(404, description=msg)
 
 
-def get_flags(application_id: str) -> list[Flag] | None:
-    flags = get_data(
-        Config.ASSESSMENT_FLAGS_ENDPOINT,
-        payload={"application_id": application_id},
+def get_latest_flag(application_id: str) -> list[Flag] | None:
+    flag = get_data(
+        Config.ASSESSMENT_LATEST_FLAG_ENDPOINT.format(
+            application_id=application_id
+        )
     )
-    if flags:
-        return [Flag.from_dict(flag) for flag in flags]
+    if flag:
+        return Flag.from_dict(flag)
     else:
-        msg = f"flags: '{application_id}' not found."
+        msg = f"flag for application: '{application_id}' not found."
         current_app.logger.warn(msg)
-        return []
+        return None
 
 
 def submit_flag(
-    application_id: str, justification: str, section: str
+    application_id: str, flag_type: str, justification: str, section: str
 ) -> Flag | None:
+    """Submits a new flag to the assessment store for an application.
+    Returns Flag if a flag is created
+
+    :param application_d: The application the flag belongs to.
+    :param flag_type: The type of flag (e.g: 'FLAGGED' or 'STOPPED')
+    :param justification: The justification for raising the flag
+    :param section: The assessment section the flag has been raised for.
+    """
+    current_app.logger.info(
+        "POSTing new flag to endpoint"
+        f" '{Config.ASSESSMENT_LATEST_FLAG_ENDPOINT}'.\n"
+        "Details: \n"
+        f" - flag_type: {flag_type} \n"
+        f" - application_id: '{application_id}') \n"
+    )
     flag = requests.post(
-        Config.ASSESSMENT_FLAGS_ENDPOINT,
+        Config.ASSESSMENT_LATEST_FLAG_ENDPOINT,
         json={
             "application_id": application_id,
             "justification": justification,
             "section_to_flag": section,
-            "flag_type": FlagType.FLAGGED.name,  # TODO: Other flag types?
+            "flag_type": flag_type,
             "user_id": g.account_id,
         },
     )

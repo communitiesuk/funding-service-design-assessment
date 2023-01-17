@@ -39,3 +39,27 @@
     margin-bottom: 30px;
     font-size: 1.1875rem;
 }
+
+.lead-dashboard-stats {
+    display: flex;
+    gap: 50px;
+    margin-bottom: 30px;
+}
+
+.lead-dashboard-stat {
+    width: 15em;
+    padding: 30px;
+    background-color: #ffffff;
+}
+
+.lead-dashboard-stat p {
+    font-weight: 600;
+    color: #1d70b8;
+    margin-top: 0;
+    margin-bottom: 3px
+}
+
+.lead-dashboard-stat p:first-of-type {
+    font-size: 4em;
+    line-height: 1.31579;
+}
