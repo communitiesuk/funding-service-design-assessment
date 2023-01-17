@@ -265,6 +265,7 @@ def landing():
         Config.COF_FUND_ID, Config.COF_ROUND2_ID
     ).assessment_deadline
 
+
     stats = get_assessments_stats(Config.COF_FUND_ID, Config.COF_ROUND2_ID)
 
     post_processed_overviews = (
