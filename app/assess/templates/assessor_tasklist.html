@@ -5,6 +5,7 @@
 {% from 'macros/criteria_element.html' import criteria_element -%}
 {% from "macros/banner_summary.html" import banner_summary %}
 {% from "macros/flag_application_button.html" import flag_application_button %}
+{% from "macros/mark_qa_complete_button.html" import mark_qa_complete_button %}
 {% from "macros/assessment_flag.html" import assessment_flag %}
 {% from "macros/logout_partial.html" import logout_partial %}
 
@@ -78,16 +79,21 @@
                             {{ criteria_element(criteria, name_classes, application_id) }}
                         {% endfor %}
                     </div>
-                    {% if g.user.highest_role == "LEAD_ASSESSOR" and state.workflow_status=="COMPLETED" %}
-                        <div class="govuk-grid-column-one-third govuk-!-margin-top-2">
+
+                    <div class="govuk-grid-column-one-third govuk-!-margin-top-2 govuk-button-group">
+                        <span>
+                              {% if g.user.highest_role == "LEAD_ASSESSOR" and state.workflow_status=="COMPLETED" %}
+                                {{ mark_qa_complete_button(application_id) }}
+                              {% endif %}
+                        </span>
+                   
+                       <span> 
+                          {% if (not flag or state.flag_resolved) and g.user.highest_role in ("ASSESSOR", "LEAD_ASSESSOR") %}
                             {{ flag_application_button(application_id) }}
-                        </div>
-                    {% endif %}
-                    <div class="govuk-grid-column-one-third govuk-!-margin-top-2">
-                        {% if (not flag or state.flag_resolved) and g.user.highest_role in ("ASSESSOR", "LEAD_ASSESSOR") %}
-                            {{ flag_application_button(application_id) }}
-                        {% endif %}
+                          {% endif %}
+                        </span>
                     </div>
+
                 </div>
             </div>
         </div>

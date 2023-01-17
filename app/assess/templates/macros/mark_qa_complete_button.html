@@ -1,0 +1,14 @@
+{% macro mark_qa_complete_button(application_id) %}
+    <div class="govuk-grid-row govuk-!-text-align-right">
+        <div class="govuk-grid-column-full govuk-!-margin-bottom-6">
+
+            <!-- TODO: Update url_for endpoint to mark_qa_complete endpoint -->
+
+            <a href="{{ url_for('assess_bp.flag', application_id=application_id) }}"
+               class="govuk-button govuk-button--secondary"
+               data-module="govuk-button">
+                Mark QA complete
+            </a>
+        </div>
+    </div>
+{% endmacro %}
