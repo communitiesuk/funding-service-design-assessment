@@ -17,7 +17,7 @@
                         {% if flag %}
                             {{ flag.flag_type.name | capitalize }}
                         {% else %}
-                            {{ workflow_status | status_to_human }}
+                            {{ 'Assessment complete' if workflow_status=='COMPLETED' else workflow_status | status_to_human }}
                         {% endif %}
                     </h3>
                 </div>
