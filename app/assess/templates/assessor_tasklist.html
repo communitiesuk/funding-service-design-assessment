@@ -53,13 +53,12 @@
     {% if flag and g.user.highest_role in ("ASSESSOR", "LEAD_ASSESSOR") and not state.flag_resolved %}
         {{ assessment_flag(flag, flag_user_info, application_id) }}
     {% endif %}
-
     {{ banner_summary(
         state.fund_name,
         state.short_id,
         state.project_name,
         state.funding_amount_requested,
-        state.workflow_status,
+        'ASSESSMENT_COMPLETE' if state.workflow_status=='COMPLETED' else state.workflow_status,
         flag
     ) }}
 
