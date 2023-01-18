@@ -15,22 +15,22 @@ if platform.system() == "Darwin":
 
 
 test_lead_assessor_claims = {
-    "accountId": "test-user",
-    "email": "test@example.com",
+    "accountId": "lead",
+    "email": "lead@test.com",
     "fullName": "Test User",
     "roles": ["LEAD_ASSESSOR", "ASSESSOR", "COMMENTER"],
 }
 
 test_assessor_claims = {
-    "accountId": "test-user",
-    "email": "test@example.com",
+    "accountId": "assessor",
+    "email": "assessor@test.com",
     "fullName": "Test User",
     "roles": ["ASSESSOR", "COMMENTER"],
 }
 
 test_commenter_claims = {
-    "accountId": "test-user",
-    "email": "test@example.com",
+    "accountId": "commenter",
+    "email": "commenter@test.com",
     "fullName": "Test User",
     "roles": ["COMMENTER"],
 }

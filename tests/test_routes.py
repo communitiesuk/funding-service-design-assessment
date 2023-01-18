@@ -7,7 +7,6 @@ from app.assess.models.score import Score
 from config import Config
 from flask import session
 from tests.conftest import create_valid_token
-from tests.conftest import test_assessor_claims
 from tests.conftest import test_commenter_claims
 from tests.conftest import test_lead_assessor_claims
 
@@ -373,27 +372,6 @@ class TestRoutes:
         assert b"Reason" not in response.data
         assert b"Section flagged" not in response.data
 
-    @pytest.mark.parametrize(
-        "user_account, visible",
-        [
-            (test_commenter_claims, False),
-            (test_assessor_claims, False),
-            (test_lead_assessor_claims, True),
-        ],
-    )
-    def test_resolve_flag_option_shows_for_correct_permissions(
-        self, flask_test_client, user_account, visible
-    ):
-        token = create_valid_token(user_account)
-        flask_test_client.set_cookie("localhost", "fsd_user_token", token)
-
-        response = flask_test_client.get("assess/application/app_123")
-        assert response.status_code == 200
-        if visible:
-            assert b"Resolve flag" in response.data
-        else:
-            assert b"Resolve flag" not in response.data
-
     def test_flag_route_submit_flag(
         self, flask_test_client, mocker, request_ctx
     ):
@@ -492,7 +470,8 @@ class TestRoutes:
         assert b"short" in response.data
         assert b"Reason for continuing assessment" in response.data
         assert b"10.00" in response.data
-        # TODO This will change to b"Stopped" when changes go in to update statuses
+        # TODO This will change to b"Stopped" when changes go 
+        # in to update statuses
         assert b"In Progress" in response.data
 
     def test_post_continue_application(self, flask_test_client, mocker):

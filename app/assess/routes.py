@@ -265,7 +265,6 @@ def landing():
         Config.COF_FUND_ID, Config.COF_ROUND2_ID
     ).assessment_deadline
 
-
     stats = get_assessments_stats(Config.COF_FUND_ID, Config.COF_ROUND2_ID)
 
     post_processed_overviews = (
@@ -331,6 +330,7 @@ def application(application_id):
         state=state,
         application_id=application_id,
         flag=flag,
+        current_user_role=g.user.highest_role,
         flag_user_info=accounts.get(flag.user_id) if flag else None,
     )
 

@@ -409,7 +409,7 @@ class TestAuthorisation:
             (test_lead_assessor_claims, True),
         ],
     )
-    def test_different_user_levels_have_correct_permissions_to_restart_assessment(
+    def test_user_levels_have_correct_permissions_to_restart_an_assessment(
         self,
         flask_test_client,
         claim,
@@ -452,3 +452,24 @@ class TestAuthorisation:
                     e.args[0]
                     == "Following external redirects is not supported."
                 )
+
+    @pytest.mark.parametrize(
+        "user_account, visible",
+        [
+            (test_commenter_claims, False),
+            (test_assessor_claims, False),
+            (test_lead_assessor_claims, True),
+        ],
+    )
+    def test_resolve_flag_option_shows_for_correct_permissions(
+        self, flask_test_client, user_account, visible
+    ):
+        token = create_valid_token(user_account)
+        flask_test_client.set_cookie("localhost", "fsd_user_token", token)
+
+        response = flask_test_client.get("assess/application/app_123")
+        assert response.status_code == 200
+        if visible:
+            assert b"Resolve flag" in response.data
+        else:
+            assert b"Resolve flag" not in response.data
