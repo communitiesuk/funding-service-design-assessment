@@ -470,7 +470,7 @@ class TestRoutes:
         assert b"short" in response.data
         assert b"Reason for continuing assessment" in response.data
         assert b"10.00" in response.data
-        # TODO This will change to b"Stopped" when changes go 
+        # TODO This will change to b"Stopped" when changes go
         # in to update statuses
         assert b"In Progress" in response.data
 

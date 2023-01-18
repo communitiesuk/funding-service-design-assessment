@@ -103,7 +103,9 @@
                 <td class="govuk-table__cell">{{asset_types[overview.asset_type]}}</td>
                 <td class="govuk-table__cell">&pound;{{ "{:,.2f}".format(overview.funding_amount_requested|int|round) }}</td>
                 <td class="govuk-table__cell">
-                    {% if overview.workflow_status == "NOT_STARTED" %}
+                  {% if overview.workflow_status == "COMPLETED" %}
+                              {{assessment_statuses[overview.workflow_status]}}                         
+                    {% elif overview.workflow_status == "NOT_STARTED" %}
                           <span class="not-started-tag">
                               {{assessment_statuses[overview.workflow_status]}}
                           </span>
