@@ -7,13 +7,14 @@ from app.assess.display_value_mappings import asset_types
 from app.assess.forms.assessment_form import AssessmentCompleteForm
 from app.assess.forms.comments_form import CommentsForm
 from app.assess.forms.flag_form import FlagApplicationForm
+from app.assess.forms.mark_qa_complete_form import MarkQaCompleteForm
 from app.assess.forms.resolve_flag_form import ResolveFlagForm
 from app.assess.forms.scores_and_justifications import ScoreForm
 from app.assess.models.flag import FlagType
 from app.assess.models.ui import applicants_response
 from app.assess.models.ui.assessor_task_list import AssessorTaskList
 from app.assess.status import all_status_completed
-from app.assess.status import update_ar_status_to_completed
+from app.assess.status import update_ar_status
 from config import Config
 from flask import abort
 from flask import Blueprint
@@ -212,6 +213,34 @@ def flag(application_id):
     )
 
 
+@assess_bp.route("/qa_complete/<application_id>", methods=["GET", "POST"])
+@login_required(roles_required=["LEAD_ASSESSOR"])
+def qa_complete(application_id):
+
+    form = MarkQaCompleteForm()
+
+    if request.method == "POST" and form.validate_on_submit():
+        update_ar_status(application_id, "QA_COMPLETE")
+        return redirect(
+            url_for(
+                "assess_bp.application",
+                application_id=application_id,
+            )
+        )
+
+    banner_state = get_banner_state(application_id)
+    fund = get_fund(banner_state["fund_id"])
+
+    return render_template(
+        "mark_qa_complete.html",
+        application_id=application_id,
+        fund_name=fund.name,
+        banner_state=banner_state,
+        form=form,
+        referrer=request.referrer,
+    )
+
+
 @assess_bp.route("/assessor_dashboard/", methods=["GET"])
 def landing():
     """
@@ -242,7 +271,6 @@ def landing():
     assessment_deadline = get_round(
         Config.COF_FUND_ID, Config.COF_ROUND2_ID
     ).assessment_deadline
-
 
     stats = get_assessments_stats(Config.COF_FUND_ID, Config.COF_ROUND2_ID)
 
@@ -307,7 +335,7 @@ def application(application_id):
     sub_criteria_status_completed = all_status_completed(state)
     form = AssessmentCompleteForm()
     if request.method == "POST":
-        update_ar_status_to_completed(application_id)
+        update_ar_status(application_id, "COMPLETE")
         assessor_task_list_metadata = get_assessor_task_list_state(
             application_id
         )
