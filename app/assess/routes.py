@@ -1,13 +1,19 @@
 from app.assess.data import *
 from app.assess.data import get_application_overviews
+from app.assess.data import get_assessments_stats
 from app.assess.data import submit_score_and_justification
 from app.assess.display_value_mappings import assessment_statuses
 from app.assess.display_value_mappings import asset_types
+from app.assess.forms.assessment_form import AssessmentCompleteForm
 from app.assess.forms.comments_form import CommentsForm
 from app.assess.forms.flag_form import FlagApplicationForm
+from app.assess.forms.resolve_flag_form import ResolveFlagForm
 from app.assess.forms.scores_and_justifications import ScoreForm
+from app.assess.models.flag import FlagType
 from app.assess.models.ui import applicants_response
 from app.assess.models.ui.assessor_task_list import AssessorTaskList
+from app.assess.status import all_status_completed
+from app.assess.status import update_ar_status_to_completed
 from config import Config
 from flask import abort
 from flask import Blueprint
@@ -45,7 +51,6 @@ def display_sub_criteria(
     add_comment_argument = request.args.get("add_comment") == "1"
     if add_comment_argument and comment_form.validate_on_submit():
         comment = comment_form.comment.data
-
         submit_comment(
             comment=comment,
             application_id=application_id,
@@ -65,7 +70,7 @@ def display_sub_criteria(
         )
 
     fund = get_fund(Config.COF_FUND_ID)
-    is_flagged = any(get_flags(application_id))
+    is_flagged = bool(get_latest_flag(application_id))
 
     comments = get_comments(
         application_id=application_id,
@@ -174,15 +179,19 @@ def display_sub_criteria(
 )
 @login_required(roles_required=["ASSESSOR"])
 def flag(application_id):
-    # TODO: handle multiple flags.
-    flags = get_flags(application_id)
-    if any(flags):
+    flag = get_latest_flag(application_id)
+    if flag and flag.flag_type is not FlagType.RESOLVED:
         abort(400, "Application already flagged")
 
     form = FlagApplicationForm()
 
     if request.method == "POST" and form.validate_on_submit():
-        submit_flag(application_id, form.reason.data, form.section.data)
+        submit_flag(
+            application_id,
+            FlagType.FLAGGED.name,
+            form.justification.data,
+            form.section.data,
+        )
         return redirect(
             url_for(
                 "assess_bp.application",
@@ -234,6 +243,9 @@ def landing():
         Config.COF_FUND_ID, Config.COF_ROUND2_ID
     ).assessment_deadline
 
+
+    stats = get_assessments_stats(Config.COF_FUND_ID, Config.COF_ROUND2_ID)
+
     post_processed_overviews = (
         (
             get_assessment_progress(application_overviews)
@@ -254,10 +266,11 @@ def landing():
         asset_types=asset_types,
         assessment_statuses=assessment_statuses,
         show_clear_filters=show_clear_filters,
+        stats=stats,
     )
 
 
-@assess_bp.route("/application/<application_id>", methods=["GET"])
+@assess_bp.route("/application/<application_id>", methods=["GET", "POST"])
 def application(application_id):
     """
     Application summary page
@@ -266,7 +279,6 @@ def application(application_id):
     :param application_id:
     :return:
     """
-
     assessor_task_list_metadata = get_assessor_task_list_state(application_id)
     if not assessor_task_list_metadata:
         abort(404)
@@ -282,16 +294,31 @@ def application(application_id):
         f"Fetching data from '{assessor_task_list_metadata}'."
     )
 
-    flags = get_flags(application_id)
-    flag = flags[0] if flags else None  # TODO: handle multiple flags?
+    flag = get_latest_flag(application_id)
 
     accounts = {}
     if flag:
-        state.workflow_status = "FLAGGED"
-        accounts = get_bulk_accounts_dict([flag.user_id])
+        if flag.flag_type == FlagType.RESOLVED:
+            state.flag_resolved = True
+        else:
+            state.workflow_status = "FLAGGED"
+            accounts = get_bulk_accounts_dict([flag.user_id])
+
+    sub_criteria_status_completed = all_status_completed(state)
+    form = AssessmentCompleteForm()
+    if request.method == "POST":
+        update_ar_status_to_completed(application_id)
+        assessor_task_list_metadata = get_assessor_task_list_state(
+            application_id
+        )
+        if not assessor_task_list_metadata:
+            abort(404)
+        state = AssessorTaskList.from_json(assessor_task_list_metadata)
 
     return render_template(
         "assessor_tasklist.html",
+        sub_criteria_status_completed=sub_criteria_status_completed,
+        form=form,
         state=state,
         application_id=application_id,
         flag=flag,
@@ -350,8 +377,38 @@ def sub_crit_scoring():
 
 @assess_bp.route("/file/<application_id>/<file_name>", methods=["GET"])
 def get_file(application_id: str, file_name: str):
+
     response = get_file_response(
         application_id=application_id, file_name=file_name
     )
 
     return response
+
+
+@assess_bp.route("/resolve_flag/<application_id>", methods=["GET", "POST"])
+def resolve_flag(application_id):
+    form = ResolveFlagForm()
+    section = request.args.get("section_id", "section not specified")
+    if request.method == "POST" and form.validate_on_submit():
+        submit_flag(
+            application_id,
+            form.resolution_flag.data,
+            form.justification.data,
+            section,
+        )
+        return redirect(
+            url_for(
+                "assess_bp.application",
+                application_id=application_id,
+            )
+        )
+    banner_state = get_banner_state(application_id)
+    fund = get_fund(banner_state["fund_id"])
+    return render_template(
+        "resolve_flag.html",
+        application_id=application_id,
+        fund_name=fund.name,
+        banner_state=banner_state,
+        form=form,
+        referrer=request.referrer,
+    )

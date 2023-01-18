@@ -25,7 +25,6 @@ class DefaultConfig:
     # Authentication
     FSD_USER_TOKEN_COOKIE_NAME = "fsd_user_token"
     AUTHENTICATOR_HOST = environ.get("AUTHENTICATOR_HOST", "authenticator")
-    FSD_USER_TOKEN_COOKIE_NAME = "fsd_user_token"
     # RSA 256 KEYS
     RSA256_PUBLIC_KEY_BASE64 = environ.get("RSA256_PUBLIC_KEY_BASE64")
     if RSA256_PUBLIC_KEY_BASE64:
@@ -80,6 +79,7 @@ class DefaultConfig:
     APPLICATION_SEARCH_ENDPOINT = CommonConfig.APPLICATION_SEARCH_ENDPOINT
 
     # Assessment store endpoints
+    ASSESSMENTS_STATS_ENDPOINT = "/assessments/get-stats/{fund_id}/{round_id}"
     APPLICATION_OVERVIEW_ENDPOINT_FUND_ROUND_PARAMS = (
         "/application_overviews/{fund_id}/{round_id}?{params}"
     )
@@ -101,11 +101,14 @@ class DefaultConfig:
     )
 
     ASSESSMENT_SCORES_ENDPOINT = ASSESSMENT_STORE_API_HOST + "/score"
+    ASSESSMENT_UPDATE_STATUS = ASSESSMENT_STORE_API_HOST + "/application/{application_id}/status/complete"
 
     ASSESSMENT_COMMENT_ENDPOINT = ASSESSMENT_STORE_API_HOST + "/comment"
     ASSESSMENT_PROGRESS_ENDPOINT = ASSESSMENT_STORE_API_HOST + "/progress"
 
-    ASSESSMENT_FLAGS_ENDPOINT = ASSESSMENT_STORE_API_HOST + "/flag"
+    ASSESSMENT_LATEST_FLAG_ENDPOINT = (
+        ASSESSMENT_STORE_API_HOST + "/flag?application_id={application_id}"
+    )
 
     COMMENTS_ENDPOINT = (
         "/comment?application_id={application_id}&sub_criteria_id="

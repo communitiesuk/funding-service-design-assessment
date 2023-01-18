@@ -126,7 +126,17 @@ class TestAuthorisation:
         response = flask_test_client.get("/", follow_redirects=True)
         assert response.status_code == 200
         assert (
-            b'Team dashboard'
+            b'<h1 class="govuk-heading-xl fsd-banner-content">'
+            b"Team dashboard</h1>"
+            in response.data
+        )
+        assert b"lead-dashboard-stats" in response.data
+        assert (
+            b'<p id="lead-dashboard-stat-assessments-qa-completed">1</p>'
+            in response.data
+        )
+        assert (
+            b'<p id="lead-dashboard-stat-assessments-total">10</p>'
             in response.data
         )
 
@@ -217,7 +227,7 @@ class TestAuthorisation:
 
         Returns:
 
-        """       
+        """
 
         flask_test_client.set_cookie(
             "localhost",
@@ -246,7 +256,6 @@ class TestAuthorisation:
             (test_lead_assessor_claims, True),
         ],
     )
-
     def test_different_user_levels_see_correct_comments_on_sub_criteria_view(
         self, flask_test_client, claim, expect_all_comments_available
     ):
@@ -264,7 +273,7 @@ class TestAuthorisation:
 
         Returns:
 
-        """     
+        """
 
         flask_test_client.set_cookie(
             "localhost",
@@ -295,7 +304,7 @@ class TestAuthorisation:
             (test_assessor_claims, True),
             (test_lead_assessor_claims, True),
         ],
-    )   
+    )
     def test_different_user_levels_have_correct_flagging_permissions(
         self, flask_test_client, claim, expect_flagging_available, mocker
     ):
@@ -315,11 +324,11 @@ class TestAuthorisation:
         mocker.patch(
             "app.assess.routes.get_banner_state",
             return_value={
-                "short_id":"short",
-                "project_name":"name",
-                "funding_amount_requested":10,
-                "workflow_status":"IN_PROGRESS",
-                "fund_id":"funding-service-design"
+                "short_id": "short",
+                "project_name": "name",
+                "funding_amount_requested": 10,
+                "workflow_status": "IN_PROGRESS",
+                "fund_id": "funding-service-design",
             },
         )
 
@@ -339,10 +348,12 @@ class TestAuthorisation:
         else:
             try:
                 flask_test_client.get(
-                "assess/flag/app123",
-                follow_redirects=True,
+                    "assess/flag/app123",
+                    follow_redirects=True,
                 )
             except Exception as e:
                 # Redirect to authenticator
-                assert e.args[0] == 'Following external redirects is not supported.'
-                
+                assert (
+                    e.args[0]
+                    == "Following external redirects is not supported."
+                )

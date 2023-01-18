@@ -22,4 +22,5 @@ assessment_statuses = {
     "QA_COMPLETE": "QA Complete",
     "FLAGGED": "Flagged",
     "INELIGIBLE": "Ineligible",
+    "COMPLETED": "Assessment complete",
 }

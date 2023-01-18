@@ -33,9 +33,9 @@ from app.assess.models.ui.applicants_response import (
 )
 from app.assess.models.ui.applicants_response import MonetaryKeyValues
 from app.assess.models.ui.applicants_response import QuestionHeading
+from app.assess.routes import assess_bp
 from app.assess.views.filters import format_address
 from flask import Flask
-from app.assess.routes import assess_bp
 
 
 class TestApplicantResponseComponentConcreteSubclasses:
@@ -153,8 +153,9 @@ class TestApplicantResponseComponentConcreteSubclasses:
 
 class TestApplicatorsResponseComponentFactory:
     test_app = Flask("app")
-    test_app.config['SERVER_NAME'] = "example.org:5000"
+    test_app.config["SERVER_NAME"] = "example.org:5000"
     test_app.register_blueprint(assess_bp)
+
     @pytest.mark.parametrize(
         "item, expected_class",
         [
@@ -651,7 +652,7 @@ class TestUtilMethods:
 
 def test_create_ui_components_retains_order():
     test_app = Flask("app")
-    test_app.config['SERVER_NAME'] = "example.org:5000"
+    test_app.config["SERVER_NAME"] = "example.org:5000"
     test_app.register_blueprint(assess_bp)
     response_with_unhashable_fields = [
         {
@@ -724,9 +725,11 @@ def test_create_ui_components_retains_order():
             "presentation_type": "file",
             "field_type": "fileUploadField",
         },
-    ]    
+    ]
     with test_app.app_context():
-            ui_components = create_ui_components(response_with_unhashable_fields, "app_123")
+        ui_components = create_ui_components(
+            response_with_unhashable_fields, "app_123"
+        )
 
     assert all(
         isinstance(ui_component, ApplicantResponseComponent)

@@ -8,18 +8,14 @@ class FlagType(Enum):
     FLAGGED = 0
     STOPPED = 1
     QA_COMPLETED = 2
-
-
-class ResolutionType(Enum):
-    QUERY_RESOLVED = 0
-    STOP_ASSESSMENT = 1
+    RESOLVED = 3
 
 
 @dataclass()
 class Flag:
+    id: str
     justification: str
     section_to_flag: str
-    resolution_reason: ResolutionType | str
     flag_type: FlagType | str
     application_id: str
     date_created: str
@@ -28,8 +24,6 @@ class Flag:
     def __post_init__(self):
         if self.flag_type:
             self.flag_type = FlagType[self.flag_type]
-        if self.resolution_reason:
-            self.resolution_reason = ResolutionType[self.resolution_reason]
         self.date_created = datetime.fromisoformat(self.date_created).strftime(
             "%Y-%m-%d %X"
         )
