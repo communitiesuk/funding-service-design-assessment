@@ -397,7 +397,13 @@
       "type_of_application": "pub",
       "project_name": "Save the Dog and Duck",
       "funding_amount_requested": "10000",
-      "location": "Wales"
+      "location_json_blob": {
+        "error": false,
+        "county": "Newport",
+        "region": "Wales",
+        "country": "Wales",
+        "constituency": "Newport West"
+      }
     },
     {
       "short_id": "COF-R2W2-AJTRIB",
@@ -406,7 +412,13 @@
       "type_of_application": "sporting",
       "project_name": "Save the rugby pitch",
       "funding_amount_requested": "25000",
-      "location": "Scotland"
+      "location_json_blob": {
+        "error": false,
+        "county": "Newport",
+        "region": "Wales",
+        "country": "Wales",
+        "constituency": "Newport West"
+      }
     },
     {
       "short_id": "COF-R2W2-BMEQLK",
@@ -415,7 +427,13 @@
       "type_of_application": "community-centre",
       "project_name": "Save our village hall",
       "funding_amount_requested": "12345",
-      "location": "Northern Ireland"
+        "location_json_blob": {
+        "error": false,
+        "county": "Newport",
+        "region": "Wales",
+        "country": "Wales",
+        "constituency": "Newport West"
+      }
     }
   ],
   "fund_store/funds/47aef2f5-3fcb-4d45-acb5-f0152b5f03c4": {
@@ -476,7 +494,13 @@
       "type_of_application": "sporting",
       "project_name": "Save the rugby pitch",
       "funding_amount_requested": "25000",
-      "location": "Scotland"
+      "location_json_blob": {
+        "error": false,
+        "county": "Newport",
+        "region": "Wales",
+        "country": "Wales",
+        "constituency": "Newport West"
+      }
     }
   ],
   "assessment_store/application_overviews/47aef2f5-3fcb-4d45-acb5-f0152b5f03c4/c603d114-5364-4474-a0c4-c41cbf4d3bbd?search_term=Save+our+village&search_in=project_name%2Cshort_id&asset_type=ALL&status=ALL": [
@@ -487,7 +511,13 @@
       "type_of_application": "community-centre",
       "project_name": "Save our village hall",
       "funding_amount_requested": "12345",
-      "location": "Northern Ireland"
+      "location_json_blob": {
+        "error": false,
+        "county": "Newport",
+        "region": "Wales",
+        "country": "Wales",
+        "constituency": "Newport West"
+      }
     }
   ],
   "assessment_store/application_overviews/47aef2f5-3fcb-4d45-acb5-f0152b5f03c4/c603d114-5364-4474-a0c4-c41cbf4d3bbd?search_term=&search_in=project_name%2Cshort_id&asset_type=ALL&status=QA_READY": [
@@ -498,7 +528,13 @@
       "type_of_application": "sporting",
       "project_name": "Save the rugby pitch",
       "funding_amount_requested": "25000",
-      "location": "Scotland"
+      "location_json_blob": {
+        "error": false,
+        "county": "Newport",
+        "region": "Wales",
+        "country": "Wales",
+        "constituency": "Newport West"
+      }
     }
   ],
   "assessment_store/application_overviews/47aef2f5-3fcb-4d45-acb5-f0152b5f03c4/c603d114-5364-4474-a0c4-c41cbf4d3bbd?search_term=&search_in=project_name%2Cshort_id&asset_type=pub&status=ALL": [
@@ -509,7 +545,13 @@
       "type_of_application": "pub",
       "project_name": "Save the Dog and Duck",
       "funding_amount_requested": "10000",
-      "location": "Wales"
+      "location_json_blob": {
+        "error": false,
+        "county": "Newport",
+        "region": "Wales",
+        "country": "Wales",
+        "constituency": "Newport West"
+      }
     }
   ],
   "assessment_store/application_overviews/47aef2f5-3fcb-4d45-acb5-f0152b5f03c4/c603d114-5364-4474-a0c4-c41cbf4d3bbd?search_term=&search_in=project_name%2Cshort_id&asset_type=sporting&status=ALL": [
@@ -520,7 +562,13 @@
       "type_of_application": "sporting",
       "project_name": "Save the rugby pitch",
       "funding_amount_requested": "25000",
-      "location": "Scotland"
+      "location_json_blob": {
+        "error": false,
+        "county": "Newport",
+        "region": "Wales",
+        "country": "Wales",
+        "constituency": "Newport West"
+      }
     }
   ],
   "assessment_store/application_overviews/47aef2f5-3fcb-4d45-acb5-f0152b5f03c4/c603d114-5364-4474-a0c4-c41cbf4d3bbd?search_term=&search_in=project_name%2Cshort_id&asset_type=ALL&status=IN_PROGRESS": [
@@ -531,7 +579,13 @@
       "type_of_application": "pub",
       "project_name": "Save the Dog and Duck",
       "funding_amount_requested": "10000",
-      "location": "Wales"
+      "location_json_blob": {
+        "error": false,
+        "county": "Newport",
+        "region": "Wales",
+        "country": "Wales",
+        "constituency": "Newport West"
+      }
     }
   ],
   "assessment_store/application_overviews/47aef2f5-3fcb-4d45-acb5-f0152b5f03c4/c603d114-5364-4474-a0c4-c41cbf4d3bbd?search_term=&search_in=project_name%2Cshort_id&asset_type=community-centre&status=NOT_STARTED": [
@@ -542,7 +596,13 @@
       "type_of_application": "community-centre",
       "project_name": "Save our village hall",
       "funding_amount_requested": "12345",
-      "location": "Northern Ireland"
+      "location_json_blob": {
+        "error": false,
+        "county": "Newport",
+        "region": "Wales",
+        "country": "Wales",
+        "constituency": "Newport West"
+      }
     }
   ],
   "assessment_store/assessments/get-stats/47aef2f5-3fcb-4d45-acb5-f0152b5f03c4/c603d114-5364-4474-a0c4-c41cbf4d3bbd": {
