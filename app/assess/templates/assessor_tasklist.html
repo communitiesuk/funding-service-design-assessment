@@ -32,6 +32,20 @@
     </div>
 </div>
 
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+        <div class="assessment-complete  govuk-margin-bottom-8">
+            <h2 class="assessment-alert__heading govuk-heading-l govuk-!-margin-top-4">
+                QA complete</h2>
+            <p class="govuk-body">You have marked this assessment as QA complete.</p>
+            <p class="govuk-body">
+                {{ flag }}
+            </p>
+        </div>
+    </div>
+</div>
+
+
 {% elif sub_criteria_status_completed %}
 <form method="POST" action="{{ url_for('assess_bp.application', application_id=application_id) }}">
     {{ form.csrf_token }}
@@ -86,8 +100,8 @@
                                 {{ mark_qa_complete_button(application_id) }}
                               {% endif %}
                         </span>
-                   
-                       <span> 
+
+                       <span>
                           {% if (not flag or state.flag_resolved) and g.user.highest_role in ("ASSESSOR", "LEAD_ASSESSOR") %}
                             {{ flag_application_button(application_id) }}
                           {% endif %}

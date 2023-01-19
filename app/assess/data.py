@@ -10,7 +10,6 @@ import requests
 from app.assess.models.application import Application
 from app.assess.models.comment import Comment
 from app.assess.models.flag import Flag
-from app.assess.models.flag import FlagType
 from app.assess.models.fund import Fund
 from app.assess.models.round import Round
 from app.assess.models.score import Score
@@ -376,7 +375,10 @@ def get_latest_flag(application_id: str) -> list[Flag] | None:
 
 
 def submit_flag(
-    application_id: str, flag_type: str, justification: str, section: str
+    application_id: str,
+    flag_type: str,
+    justification: str = None,
+    section: str = None,
 ) -> Flag | None:
     """Submits a new flag to the assessment store for an application.
     Returns Flag if a flag is created

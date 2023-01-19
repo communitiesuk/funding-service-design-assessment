@@ -14,7 +14,7 @@ from app.assess.models.flag import FlagType
 from app.assess.models.ui import applicants_response
 from app.assess.models.ui.assessor_task_list import AssessorTaskList
 from app.assess.status import all_status_completed
-from app.assess.status import update_ar_status
+from app.assess.status import update_ar_status_to_completed
 from config import Config
 from flask import abort
 from flask import Blueprint
@@ -220,7 +220,9 @@ def qa_complete(application_id):
     form = MarkQaCompleteForm()
 
     if request.method == "POST" and form.validate_on_submit():
-        update_ar_status(application_id, "QA_COMPLETE")
+        submit_flag(
+            application_id=application_id, flag_type=FlagType.QA_COMPLETED.name
+        )
         return redirect(
             url_for(
                 "assess_bp.application",
@@ -335,7 +337,7 @@ def application(application_id):
     sub_criteria_status_completed = all_status_completed(state)
     form = AssessmentCompleteForm()
     if request.method == "POST":
-        update_ar_status(application_id, "COMPLETE")
+        update_ar_status_to_completed(application_id)
         assessor_task_list_metadata = get_assessor_task_list_state(
             application_id
         )

@@ -21,33 +21,29 @@
         banner_state.workflow_status
     ) }}
 
-    <div class="govuk-grid-row">
-
-        <div class="govuk-grid-column-full">
-
-            <div class="s26-content-container">
-
-                <div class="govuk-grid-column-two-thirds flagging-container">
-                    <form action="./assessment-overview-qa-complete" method="POST">
+    <div class="govuk-width-container">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                <div class="govuk-grid-column-two-thirds">
+                    <form method="POST">
+                        {{ form.csrf_token }}
                         <h1 class="govuk-heading govuk-heading-l">Mark QA as complete</h1>
 
-                        <p>This will confirm you've completed quality assurance (QA) on this application.</p>
-                        <p>It may be selected for moderation after you've done this.</p>
+                        <p class="govuk-body">This will confirm you've completed quality assurance (QA) on this application.</p>
+                        <p class="govuk-body">It may be selected for moderation after you've done this.</p>
 
                         <div class="govuk-button-group">
-                          <button class="govuk-button primary-button" data-module="govuk-button">
-                              Submit
-                          </button>
-                          <a href="../s26-assessment/assessment-overview" class="govuk-button secondary-button govuk-link--no-visited-state">
-                              Cancel
-                          </a>
+                            <button class="govuk-button primary-button" data-module="govuk-button">
+                                Submit
+                            </button>
+                            <a href="{{ url_for('assess_bp.application', application_id=application_id) }}" class="govuk-button secondary-button govuk-link--no-visited-state">
+                                Cancel
+                            </a>
                         </div>
                     </form>
                 </div>
             </div>
-
         </div>
-
     </div>
 
 {% endblock %}
