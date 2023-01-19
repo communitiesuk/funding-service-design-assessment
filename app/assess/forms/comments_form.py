@@ -10,7 +10,7 @@ class CommentsForm(FlaskForm):
     comment = TextAreaField(
         "Comment",
         validators=[
-            length(max=Config.TEXT_AREA_INPUT_MAX_LETTERS),
+            length(max=Config.TEXT_AREA_INPUT_MAX_CHARACTERS),
             InputRequired(),
         ],
     )

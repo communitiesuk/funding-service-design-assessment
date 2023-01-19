@@ -10,7 +10,7 @@ class FlagApplicationForm(FlaskForm):
     justification = TextAreaField(
         "Reason for flagging",
         validators=[
-            length(max=Config.TEXT_AREA_INPUT_MAX_LETTERS),
+            length(max=Config.TEXT_AREA_INPUT_MAX_CHARACTERS),
             InputRequired(
                 message="Provide a justification for flagging this application"
             ),
@@ -19,7 +19,7 @@ class FlagApplicationForm(FlaskForm):
     section = StringField(
         "Section to flag",
         validators=[
-            length(max=Config.TEXT_AREA_INPUT_MAX_LETTERS),
+            length(max=Config.TEXT_AREA_INPUT_MAX_CHARACTERS),
             InputRequired(message="Provide which section you are flagging"),
         ],
     )

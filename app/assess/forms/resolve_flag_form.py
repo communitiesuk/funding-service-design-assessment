@@ -16,6 +16,6 @@ class ResolveFlagForm(FlaskForm):
         "justification",
         validators=[
             InputRequired(),
-            length(max=Config.TEXT_AREA_INPUT_MAX_LETTERS),
+            length(max=Config.TEXT_AREA_INPUT_MAX_CHARACTERS),
         ],
     )
