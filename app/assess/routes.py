@@ -329,6 +329,7 @@ def application(application_id):
 
     sub_criteria_status_completed = all_status_completed(state)
     form = AssessmentCompleteForm()
+    
     if request.method == "POST":
         update_ar_status_to_completed(application_id)
         assessor_task_list_metadata = get_assessor_task_list_state(
@@ -336,6 +337,10 @@ def application(application_id):
         )
         if not assessor_task_list_metadata:
             abort(404)
+        fund = get_fund(assessor_task_list_metadata["fund_id"])
+        if not fund:
+            abort(404)
+        assessor_task_list_metadata["fund_name"] = fund.name    
         state = AssessorTaskList.from_json(assessor_task_list_metadata)
 
     return render_template(

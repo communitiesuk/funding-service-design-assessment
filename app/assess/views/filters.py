@@ -4,9 +4,9 @@ from datetime import datetime
 def status_to_human(status: str):
     status_to_human_map = {
         "NOT_STARTED": "Not Started",
-        "IN_PROGRESS": "In Progress",
+        "IN_PROGRESS": "In progress",
         "SUBMITTED": "Submitted",
-        "COMPLETED": "Completed",
+        "COMPLETED": "Complete",
         "FLAGGED": "Flagged",
     }
     return status_to_human_map[status]
