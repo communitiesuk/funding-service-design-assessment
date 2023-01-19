@@ -472,7 +472,7 @@ class TestRoutes:
         assert b"10.00" in response.data
         # TODO This will change to b"Stopped" when changes go
         # in to update statuses
-        assert b"In Progress" in response.data
+        assert b"In progress" in response.data
 
     def test_post_continue_application(self, flask_test_client, mocker):
         token = create_valid_token(test_lead_assessor_claims)
