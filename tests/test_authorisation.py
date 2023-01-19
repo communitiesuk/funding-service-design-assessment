@@ -327,26 +327,24 @@ class TestAuthorisation:
             create_valid_token(claim),
         )
 
-        if expect_flagging_available:
+        if not expect_flagging_available:
+            with pytest.raises(RuntimeError) as exec_info:
+                flask_test_client.get(
+                    "assess/flag/app123",
+                    follow_redirects=True,
+                )
+            # Tries to redirect to authenticator
+            assert (
+                str(exec_info.value)
+                == "Following external redirects is not supported."
+            )
+        else:
             response = flask_test_client.get(
                 "assess/flag/app123",
                 follow_redirects=True,
             )
             assert response.status_code == 200
             assert b"Flag application" in response.data
-        else:
-            try:
-                flask_test_client.get(
-                    "assess/flag/app123",
-                    follow_redirects=True,
-                )
-                assert False, "Did not throw expected error."
-            except Exception as e:
-                # Redirect to authenticator
-                assert (
-                    e.args[0]
-                    == "Following external redirects is not supported."
-                )
 
     @pytest.mark.parametrize(
         "claim,expect_resolve_flag_available",
@@ -377,8 +375,18 @@ class TestAuthorisation:
             "fsd_user_token",
             create_valid_token(claim),
         )
-
-        if expect_resolve_flag_available:
+        if not expect_resolve_flag_available:
+            with pytest.raises(RuntimeError) as exec_info:
+                flask_test_client.get(
+                    "assess/resolve_flag/app123",
+                    follow_redirects=True,
+                )
+            # Tries to redirect to authenticator
+            assert (
+                str(exec_info.value)
+                == "Following external redirects is not supported."
+            )
+        else:
             response = flask_test_client.get(
                 "assess/resolve_flag/app123",
                 follow_redirects=True,
@@ -387,19 +395,6 @@ class TestAuthorisation:
             assert b"Resolve flag" in response.data
             assert b"Query resolved" in response.data
             assert b"Stop assessment" in response.data
-        else:
-            try:
-                flask_test_client.get(
-                    "assess/resolve_flag/app123",
-                    follow_redirects=True,
-                )
-                assert False, "Did not throw expected error."
-            except Exception as e:
-                # Redirect to authenticator
-                assert (
-                    e.args[0]
-                    == "Following external redirects is not supported."
-                )
 
     @pytest.mark.parametrize(
         "claim,expect_continue_available",
@@ -431,7 +426,18 @@ class TestAuthorisation:
             create_valid_token(claim),
         )
 
-        if expect_continue_available:
+        if not expect_continue_available:
+            with pytest.raises(RuntimeError) as exec_info:
+                flask_test_client.get(
+                    "assess/continue_assessment/app123",
+                    follow_redirects=True,
+                )
+            # Tries to redirect to authenticator
+            assert (
+                str(exec_info.value)
+                == "Following external redirects is not supported."
+            )
+        else:
             response = flask_test_client.get(
                 "assess/continue_assessment/app123",
                 follow_redirects=True,
@@ -439,19 +445,6 @@ class TestAuthorisation:
             assert response.status_code == 200
             assert b"Continue assessment" in response.data
             assert b"Reason for continuing assessment" in response.data
-        else:
-            try:
-                flask_test_client.get(
-                    "assess/continue_assessment/app123",
-                    follow_redirects=True,
-                )
-                assert False, "Did not throw expected error."
-            except Exception as e:
-                # Redirect to authenticator
-                assert (
-                    e.args[0]
-                    == "Following external redirects is not supported."
-                )
 
     @pytest.mark.parametrize(
         "user_account, visible",
