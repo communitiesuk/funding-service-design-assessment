@@ -9,6 +9,7 @@
 {% from "macros/assessment_flag.html" import assessment_flagged %}
 {% from "macros/assessment_flag.html" import assessment_stopped %}
 {% from "macros/logout_partial.html" import logout_partial %}
+{% from "macros/qa_complete_flag.html" import qa_complete_flag %}
 
 
 {% block content %}
@@ -19,23 +20,26 @@
     {{ logout_partial(sso_logout_url) }}
 </div>
 
-{% if state.workflow_status=="COMPLETED" %}
-<div class="govuk-grid-row">
-    <div class="govuk-grid-column-full">
-        <div class="assessment-complete  govuk-margin-bottom-8">
-            <h2 class="assessment-alert__heading govuk-heading-l govuk-!-margin-top-4">
-                Assessment complete</h2>
-            <p class="govuk-body">You have marked this assessment as complete.</p>
-            <p class="govuk-body">
-                It may now be selected for quality assurance (QA). New scores and rationales could be added if this
-                happens.
-            </p>
-        </div>
-    </div>
-    {% elif flag and current_user_role in ("ASSESSOR", "LEAD_ASSESSOR") and flag.flag_type.name == "FLAGGED" %}
+
+    {% if flag and current_user_role in ("ASSESSOR", "LEAD_ASSESSOR") and flag.flag_type.name == "FLAGGED" %}
         {{ assessment_flagged(flag, flag_user_info, application_id, current_user_role) }}
     {% elif flag and current_user_role in ("ASSESSOR", "LEAD_ASSESSOR") and flag.flag_type.name == "STOPPED" %}
         {{ assessment_stopped(flag, flag_user_info, application_id, current_user_role) }}
+    {% elif flag and current_user_role in ("LEAD_ASSESSOR") and flag.flag_type.name == "QA_COMPLETED" %}
+        {{ qa_complete_flag() }}
+    {% elif state.workflow_status=="COMPLETED" %}
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                <div class="assessment-complete  govuk-margin-bottom-8">
+                    <h2 class="assessment-alert__heading govuk-heading-l govuk-!-margin-top-4">
+                        Assessment complete</h2>
+                    <p class="govuk-body">You have marked this assessment as complete.</p>
+                    <p class="govuk-body">
+                        It may now be selected for quality assurance (QA). New scores and rationales could be added if this
+                        happens.
+                    </p>
+                </div>
+            </div>
     {% elif sub_criteria_status_completed %}
     <form method="POST" action="{{ url_for('assess_bp.application', application_id=application_id) }}">
         {{ form.csrf_token }}
@@ -86,7 +90,7 @@
                               {% endif %}
                         </span>
                        <span>
-                          {% if (not flag or state.flag_resolved) and g.user.highest_role in ("ASSESSOR", "LEAD_ASSESSOR") %}
+                          {% if (not flag or state.flag_resolved or flag.flag_type.name == "QA_COMPLETED") and g.user.highest_role in ("ASSESSOR", "LEAD_ASSESSOR") %}
                             {{ flag_application_button(application_id) }}
                           {% endif %}
                         </span>
