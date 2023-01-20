@@ -107,20 +107,29 @@
                 <td class="govuk-table__cell">&pound;{{ "{:,.2f}".format(overview.funding_amount_requested|int|round) }}</td>
                 <td class="govuk-table__cell">{{ overview.location_json_blob.country}}</td>
                 <td class="govuk-table__cell">
-                  {% if overview.workflow_status == "COMPLETED" %}
-                              {{assessment_statuses[overview.workflow_status]}}                         
-                    {% elif overview.workflow_status == "NOT_STARTED" %}
-                          <span class="not-started-tag">
-                              {{assessment_statuses[overview.workflow_status]}}
-                          </span>
-                    {% elif overview.workflow_status == "FLAGGED" %}
-                          <span class="flagged-tag">
-                              {{assessment_statuses[overview.workflow_status]}}
-                          </span>
-                    {% else %}
-                        {{assessment_statuses[overview.workflow_status]}}
-                        {{ '(' + overview.progress|string + '%)' if 'progress' in overview else '(0%)'}}
-                    {% endif %}
+                  {% if overview.flags
+                     and overview.flags[-1].flag_type != "RESOLVED"
+                     and overview.flags[-1].flag_type == "STOPPED"
+                  %}
+                  <span class="stopped-tag">
+                    {{overview.flags[-1].flag_type | capitalize}}
+                  </span>
+                  {% else %}
+                      {% if overview.workflow_status == "COMPLETED" %}
+                                  {{assessment_statuses[overview.workflow_status]}}                         
+                        {% elif overview.workflow_status == "NOT_STARTED" %}
+                              <span class="not-started-tag">
+                                  {{assessment_statuses[overview.workflow_status]}}
+                              </span>
+                        {% elif overview.workflow_status == "FLAGGED" %}
+                              <span class="flagged-tag">
+                                  {{assessment_statuses[overview.workflow_status]}}
+                              </span>
+                        {% else %}
+                            {{assessment_statuses[overview.workflow_status]}}
+                            {{ '(' + overview.progress|string + '%)' if 'progress' in overview else '(0%)'}}
+                        {% endif %}
+                  {% endif %}
                 </td>
             </tr>
         {% endfor %}
