@@ -21,6 +21,7 @@ class DefaultConfig:
     SESSION_COOKIE_NAME = CommonConfig.SESSION_COOKIE_NAME
     FLASK_ROOT = str(Path(__file__).parent.parent.parent)
     FLASK_ENV = CommonConfig.FLASK_ENV
+    TEXT_AREA_INPUT_MAX_CHARACTERS = 10000
 
     # Authentication
     FSD_USER_TOKEN_COOKIE_NAME = "fsd_user_token"
@@ -101,7 +102,10 @@ class DefaultConfig:
     )
 
     ASSESSMENT_SCORES_ENDPOINT = ASSESSMENT_STORE_API_HOST + "/score"
-    ASSESSMENT_UPDATE_STATUS = ASSESSMENT_STORE_API_HOST + "/application/{application_id}/status/complete"
+    ASSESSMENT_UPDATE_STATUS = (
+        ASSESSMENT_STORE_API_HOST
+        + "/application/{application_id}/status/complete"
+    )
 
     ASSESSMENT_COMMENT_ENDPOINT = ASSESSMENT_STORE_API_HOST + "/comment"
     ASSESSMENT_PROGRESS_ENDPOINT = ASSESSMENT_STORE_API_HOST + "/progress"

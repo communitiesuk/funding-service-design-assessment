@@ -1,11 +1,7 @@
-{% macro assessment_flag(flag, user_info, application_id) %}
+{% macro assessment_flagged(flag, user_info, application_id, current_user_role) %}
     <div class="assessment-alert assessment-alert--flagged">
         <h1 class="assessment-alert__heading govuk-heading-l">
-            {% if flag.flag_type.name == "STOPPED" %}
-                Assessment Stopped
-            {% else %}
-                {{ flag.flag_type.name | title }}
-            {% endif %}
+            {{ flag.flag_type.name | title }}
         </h1>
         <h2 class="govuk-heading-m">Reason</h2>
         <p class="govuk-body">{{ flag.justification }}</p>
@@ -13,8 +9,21 @@
         <p class="govuk-body">{{ flag.section_to_flag }}</p>
         <p class="govuk-body-s">{{ user_info["full_name"] }} ({{ user_info["highest_role"] | all_caps_to_human }}) {{ user_info["email_address"] }}</p>
         <p class="govuk-body-s">{{ flag.date_created | datetime_format("%d/%m/%Y at %H:%M") }}</p>
-        {% if flag.flag_type.name == "FLAGGED" and g.user.highest_role == "LEAD_ASSESSOR"  %}
+        {% if current_user_role == "LEAD_ASSESSOR"  %}
             <p class="govuk-body"><a class="govuk-link govuk-link--no-visited-state" href="{{url_for('assess_bp.resolve_flag',application_id=application_id)}}?section={{flag.section_to_flag}}">Resolve flag</a></p>
+        {% endif %}
+    </div>
+{% endmacro %}
+
+{% macro assessment_stopped(flag, user_info, application_id, current_user_role) %}
+    <div class="assessment-alert assessment-alert--stopped">
+        <h1 class="assessment-alert__heading govuk-heading-l">Assessment {{ flag.flag_type.name | title }}</h1>
+        <h2 class="govuk-heading-m">Reason</h2>
+        <p class="govuk-body">{{ flag.justification }}</p>
+        <p class="govuk-body-s">{{ user_info["full_name"] }} ({{ user_info["highest_role"] | all_caps_to_human }}) {{ user_info["email_address"] }}</p>
+        <p class="govuk-body-s">{{ flag.date_created | datetime_format("%d/%m/%Y at %H:%M") }}</p>
+        {% if current_user_role == "LEAD_ASSESSOR"  %}
+            <p class="govuk-body"><a class="govuk-link govuk-link--no-visited-state" href="{{url_for('assess_bp.continue_assessment',application_id=application_id)}}">Remove flag and continue assessment</a></p>
         {% endif %}
     </div>
 {% endmacro %}

@@ -193,6 +193,12 @@
     background-color: #f6efee;
 }
 
+.assessment-alert--stopped {
+    border: 2px solid #505a5f;
+    border-left: 10px solid #505a5f;
+    background-color: #eef0f2;
+}
+
 .assessment-complete {
     border: 2px solid #00703c;
     border-left: 10px solid #00703c;

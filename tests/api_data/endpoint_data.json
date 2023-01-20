@@ -6,7 +6,7 @@
       "id": "flagid",
       "justification": "string",
       "section_to_flag": "community",
-      "user_id": "test@example.com"
+      "user_id": "0a31fa06-7555-11ed-a1eb-0242ac120002"
     },
     "assessment_store/flag?application_id=resolved_app":{
       "application_id": "resolved_app",
@@ -15,7 +15,7 @@
       "id": "flagidresolved",
       "justification": "string",
       "section_to_flag": "community",
-      "user_id": "test@example.com"
+      "user_id": "abc123"
     },
     "assessment_store/flag?application_id=stopped_app":{
       "application_id": "stopped_app",
@@ -24,7 +24,7 @@
       "id": "flagidstopped",
       "justification": "string",
       "section_to_flag": "community",
-      "user_id": "test@example.com"
+      "user_id": "acx321"
     },
   "assessment_store/flag?application_id=app_234":{},
   "assessment_store/sub_criteria_overview/banner_state/app_123":{
@@ -2816,19 +2816,19 @@
       "user_id": "0a31fa06-7555-11ed-a1eb-0242ac120002",
       "full_name": "Gommez Addams",
       "highest_role": "LEAD_ASSESSOR",
-      "email_address": "test@test.com"
+      "email_address": "lead@test.com"
     },
     "0a31fa06-7555-11ed-a1eb-0242ac10505": {
-      "user_id": "0a31fa06-7555-11ed-a1eb-0242ac10505",
+      "user_id": "1a31fa06-7555-11ed-a1eb-0242ac10505",
       "full_name": "Bruce Wayne",
       "highest_role": "ASSESSOR",
-      "email_address": "test@test.com"
+      "email_address": "assessor@test.com"
     },
     "0a31fa06-7555-11ed-a1eb-0242ac120003": {
-      "user_id": "0a31fa06-7555-11ed-a1eb-0242ac120003",
+      "user_id": "2a31fa06-7555-11ed-a1eb-0242ac120003",
       "full_name": "Thor",
       "highest_role": "COMMENTER",
-      "email_address": "test@test.com"
+      "email_address": "commenter@test.com"
     }
   }
 }

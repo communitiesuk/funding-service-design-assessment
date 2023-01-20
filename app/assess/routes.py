@@ -6,6 +6,7 @@ from app.assess.display_value_mappings import assessment_statuses
 from app.assess.display_value_mappings import asset_types
 from app.assess.forms.assessment_form import AssessmentCompleteForm
 from app.assess.forms.comments_form import CommentsForm
+from app.assess.forms.continue_application_form import ContinueApplicationForm
 from app.assess.forms.flag_form import FlagApplicationForm
 from app.assess.forms.resolve_flag_form import ResolveFlagForm
 from app.assess.forms.scores_and_justifications import ScoreForm
@@ -30,6 +31,29 @@ assess_bp = Blueprint(
     url_prefix=Config.ASSESSMENT_HUB_ROUTE,
     template_folder="templates",
 )
+
+
+def resolve_application(
+    form, application_id, flag, justification, section, page_to_render
+):
+    if request.method == "POST" and form.validate_on_submit():
+        submit_flag(application_id, flag, justification, section)
+        return redirect(
+            url_for(
+                "assess_bp.application",
+                application_id=application_id,
+            )
+        )
+    banner_state = get_banner_state(application_id)
+    fund = get_fund(banner_state["fund_id"])
+    return render_template(
+        page_to_render,
+        application_id=application_id,
+        fund_name=fund.name,
+        banner_state=banner_state,
+        form=form,
+        referrer=request.referrer,
+    )
 
 
 @assess_bp.route(
@@ -243,7 +267,6 @@ def landing():
         Config.COF_FUND_ID, Config.COF_ROUND2_ID
     ).assessment_deadline
 
-
     stats = get_assessments_stats(Config.COF_FUND_ID, Config.COF_ROUND2_ID)
 
     post_processed_overviews = (
@@ -327,26 +350,9 @@ def application(application_id):
         state=state,
         application_id=application_id,
         flag=flag,
+        current_user_role=g.user.highest_role,
         flag_user_info=accounts.get(flag.user_id) if flag else None,
     )
-
-
-@assess_bp.route("/comments/", methods=["GET", "POST"])
-def comments():
-    """
-    example route to call macro for text area field
-    """
-    form = CommentsForm()
-
-    if form.validate_on_submit():
-        comment_data = form.comment.data
-        return render_template(
-            "macros/example_comments_template.html",
-            form=form,
-            comment_data=comment_data,
-        )
-
-    return render_template("macros/example_comments_template.html", form=form)
 
 
 @assess_bp.route("/fragments/sub_criteria_scoring", methods=["POST", "GET"])
@@ -391,29 +397,31 @@ def get_file(application_id: str, file_name: str):
 
 
 @assess_bp.route("/resolve_flag/<application_id>", methods=["GET", "POST"])
+@login_required(roles_required=["LEAD_ASSESSOR"])
 def resolve_flag(application_id):
     form = ResolveFlagForm()
     section = request.args.get("section_id", "section not specified")
-    if request.method == "POST" and form.validate_on_submit():
-        submit_flag(
-            application_id,
-            form.resolution_flag.data,
-            form.justification.data,
-            section,
-        )
-        return redirect(
-            url_for(
-                "assess_bp.application",
-                application_id=application_id,
-            )
-        )
-    banner_state = get_banner_state(application_id)
-    fund = get_fund(banner_state["fund_id"])
-    return render_template(
-        "resolve_flag.html",
-        application_id=application_id,
-        fund_name=fund.name,
-        banner_state=banner_state,
+    return resolve_application(
         form=form,
-        referrer=request.referrer,
+        application_id=application_id,
+        flag=form.resolution_flag.data,
+        justification=form.justification.data,
+        section=section,
+        page_to_render="resolve_flag.html",
+    )
+
+
+@assess_bp.route(
+    "/continue_assessment/<application_id>", methods=["GET", "POST"]
+)
+@login_required(roles_required=["LEAD_ASSESSOR"])
+def continue_assessment(application_id):
+    form = ContinueApplicationForm()
+    return resolve_application(
+        form=form,
+        application_id=application_id,
+        flag=FlagType.RESOLVED.name,
+        justification=form.reason.data,
+        section="NA",
+        page_to_render="continue_assessment.html",
     )
