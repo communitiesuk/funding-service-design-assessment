@@ -46,6 +46,7 @@ def resolve_application(
         )
     state = get_banner_state(application_id)
     flag = get_latest_flag(application_id)
+    # Deduce whether to override workflow_status with flag
     if flag:
         if flag.flag_type == FlagType.RESOLVED:
             state["flag_resolved"] = True
@@ -327,6 +328,7 @@ def application(application_id):
     flag = get_latest_flag(application_id)
 
     accounts = {}
+    # Deduce whether to override workflow_status with flag
     if flag:
         if flag.flag_type == FlagType.RESOLVED:
             state.flag_resolved = True
