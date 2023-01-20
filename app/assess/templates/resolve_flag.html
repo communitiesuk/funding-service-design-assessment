@@ -7,80 +7,82 @@
 
 {% block content %}
 <div class="govuk-phase-banner flex-parent-element">
-    <p class="govuk-!-text-align-left flex-parent-element flexed-element-margins-collapse">
-        {{ govukBackLink({'href': url_for("assess_bp.landing"), 'text': 'Back to assessment dashboard'}) }}
-    </p>
-    {{ logout_partial(sso_logout_url) }}
+  <p class="govuk-!-text-align-left flex-parent-element flexed-element-margins-collapse">
+    {{ govukBackLink({'href': url_for("assess_bp.landing"), 'text': 'Back to assessment dashboard'}) }}
+  </p>
+  {{ logout_partial(sso_logout_url) }}
 </div>
-
 {{ banner_summary(
-    fund_name,
-    banner_state.short_id,
-    banner_state.project_name,
-    banner_state.funding_amount_requested,
-    banner_state.workflow_status
+fund_name,
+state.short_id,
+state.project_name,
+state.funding_amount_requested,
+state.workflow_status,
+flag
 ) }}
-
-<div class="govuk-grid-row">
-  <div class="govuk-grid-column-full">
-          <div class="govuk-grid-column-two-thirds flagging-container">
-              <form method="POST">
-                  {{ form.csrf_token }}
-                  <h1 class="govuk-heading govuk-heading-l">Resolve flag</h1>
-                    {{ govukRadios({
-                      "id": form.resolution_flag.id,
-                      "name": form.resolution_flag.id,
-                      "fieldset": {
-                        "legend": {
-                          "text": "Confirm that a query has been resolved, or that the overall application should not be assessed further",
-                          "isPageHeading": true,
-                          "classes": "govuk-fieldset__legend--s"
-                        }
-                      },
-                      "items": [
-                        {
-                          "value": "RESOLVED",
-                          "text": "Query resolved",
-                          "label": {
-                            "text": "resolve",
-                            "for": form.resolution_flag.id
-                          },
-                        },
-                        {
-                          "value": "STOPPED",
-                          "text": "Stop assessment ",
-                          "label": {
-                            "text": "resolve",
-                            "for": form.resolution_flag.id
-                          },
-                        }
-                      ],
-                      "errorMessage": {
-                        "text": form.errors.get(form.resolution_flag.id) | join("\n"),
-                      } if form.errors.get(form.resolution_flag.id) else None
-                    }) }}
-                    {{ govukTextarea({
-                      'id': form.justification.id,
-                      'name': form.justification.id,
-                      'label': {
-                          'text': 'Reason',
-                          'classes': 'govuk-label govuk-label--s'
-                      },
-                      'errorMessage': {
-                        'text': form.errors.get("justification") | join("\n"),
-                    } if form.errors.get("justification") else None,
-                    'value': form.justification.data or ""
-                    }) }}
-                    <div class="govuk-button-group">
-                      <button class="govuk-button primary-button" data-module="govuk-button">
-                          Submit
-                      </button>
-                      <a href="{{ referrer }}" class="govuk-button secondary-button govuk-link--no-visited-state">
-                          Cancel
-                      </a>
-                    </div>
-              </form>
+<div class="govuk-width-container">
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+      <div class="govuk-grid-column-two-thirds flagging-container">
+        <form method="POST">
+          {{ form.csrf_token }}
+          <h1 class="govuk-heading govuk-heading-l">Resolve flag</h1>
+          {{ govukRadios({
+          "id": form.resolution_flag.id,
+          "name": form.resolution_flag.id,
+          "fieldset": {
+          "legend": {
+          "text": "Confirm that a query has been resolved, or that the overall application should not be assessed
+          further",
+          "isPageHeading": true,
+          "classes": "govuk-fieldset__legend--s"
+          }
+          },
+          "items": [
+          {
+          "value": "RESOLVED",
+          "text": "Query resolved",
+          "label": {
+          "text": "resolve",
+          "for": form.resolution_flag.id
+          },
+          },
+          {
+          "value": "STOPPED",
+          "text": "Stop assessment ",
+          "label": {
+          "text": "resolve",
+          "for": form.resolution_flag.id
+          },
+          }
+          ],
+          "errorMessage": {
+          "text": form.errors.get(form.resolution_flag.id) | join("\n"),
+          } if form.errors.get(form.resolution_flag.id) else None
+          }) }}
+          {{ govukTextarea({
+          'id': form.justification.id,
+          'name': form.justification.id,
+          'label': {
+          'text': 'Reason',
+          'classes': 'govuk-label govuk-label--s'
+          },
+          'errorMessage': {
+          'text': form.errors.get("justification") | join("\n"),
+          } if form.errors.get("justification") else None,
+          'value': form.justification.data or ""
+          }) }}
+          <div class="govuk-button-group">
+            <button class="govuk-button primary-button" data-module="govuk-button">
+              Submit
+            </button>
+            <a href="{{ referrer }}" class="govuk-button secondary-button govuk-link--no-visited-state">
+              Cancel
+            </a>
           </div>
+        </form>
+      </div>
     </div>
   </div>
-  {% endblock %}
+</div>
+{% endblock %}

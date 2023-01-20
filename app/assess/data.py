@@ -3,6 +3,7 @@ import os
 from typing import Dict
 from typing import List
 from typing import Union
+from urllib.parse import quote_plus
 from urllib.parse import urlencode
 
 import boto3
@@ -539,7 +540,9 @@ def get_file_response(file_name: str, application_id: str):
             data,
             mimetype=mimetype,
             headers={
-                "Content-Disposition": f"attachment;filename={file_name}"
+                "Content-Disposition": (
+                    f"attachment;filename={quote_plus(file_name)}"
+                )
             },
         )
         return response

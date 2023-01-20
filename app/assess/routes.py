@@ -6,6 +6,7 @@ from app.assess.display_value_mappings import assessment_statuses
 from app.assess.display_value_mappings import asset_types
 from app.assess.forms.assessment_form import AssessmentCompleteForm
 from app.assess.forms.comments_form import CommentsForm
+from app.assess.forms.continue_application_form import ContinueApplicationForm
 from app.assess.forms.flag_form import FlagApplicationForm
 from app.assess.forms.mark_qa_complete_form import MarkQaCompleteForm
 from app.assess.forms.resolve_flag_form import ResolveFlagForm
@@ -31,6 +32,37 @@ assess_bp = Blueprint(
     url_prefix=Config.ASSESSMENT_HUB_ROUTE,
     template_folder="templates",
 )
+
+
+def resolve_application(
+    form, application_id, flag, justification, section, page_to_render
+):
+    if request.method == "POST" and form.validate_on_submit():
+        submit_flag(application_id, flag, justification, section)
+        return redirect(
+            url_for(
+                "assess_bp.application",
+                application_id=application_id,
+            )
+        )
+    state = get_banner_state(application_id)
+    flag = get_latest_flag(application_id)
+    # Deduce whether to override workflow_status with flag
+    if flag:
+        if flag.flag_type == FlagType.RESOLVED:
+            state["flag_resolved"] = True
+        else:
+            state["workflow_status"] = flag.flag_type.name
+    fund = get_fund(state["fund_id"])
+    return render_template(
+        page_to_render,
+        application_id=application_id,
+        fund_name=fund.name,
+        state=state,
+        form=form,
+        flag=flag,
+        referrer=request.referrer,
+    )
 
 
 @assess_bp.route(
@@ -221,7 +253,6 @@ def qa_complete(application_id):
     form = MarkQaCompleteForm()
 
     if request.method == "POST" and form.validate_on_submit():
-        # current_app.logger.error(g.account_id)
         submit_flag(
             application_id=application_id,
             flag_type=FlagType.QA_COMPLETED.name,
@@ -331,15 +362,17 @@ def application(application_id):
     flag = get_latest_flag(application_id)
 
     accounts = {}
+    # Deduce whether to override workflow_status with flag
     if flag:
         if flag.flag_type == FlagType.RESOLVED:
             state.flag_resolved = True
         else:
-            state.workflow_status = "FLAGGED"
+            state.workflow_status = flag.flag_type.name
             accounts = get_bulk_accounts_dict([flag.user_id])
 
     sub_criteria_status_completed = all_status_completed(state)
     form = AssessmentCompleteForm()
+
     if request.method == "POST":
         update_ar_status_to_completed(application_id)
         assessor_task_list_metadata = get_assessor_task_list_state(
@@ -347,6 +380,10 @@ def application(application_id):
         )
         if not assessor_task_list_metadata:
             abort(404)
+        fund = get_fund(assessor_task_list_metadata["fund_id"])
+        if not fund:
+            abort(404)
+        assessor_task_list_metadata["fund_name"] = fund.name
         state = AssessorTaskList.from_json(assessor_task_list_metadata)
 
     return render_template(
@@ -356,26 +393,9 @@ def application(application_id):
         state=state,
         application_id=application_id,
         flag=flag,
+        current_user_role=g.user.highest_role,
         flag_user_info=accounts.get(flag.user_id) if flag else None,
     )
-
-
-@assess_bp.route("/comments/", methods=["GET", "POST"])
-def comments():
-    """
-    example route to call macro for text area field
-    """
-    form = CommentsForm()
-
-    if form.validate_on_submit():
-        comment_data = form.comment.data
-        return render_template(
-            "macros/example_comments_template.html",
-            form=form,
-            comment_data=comment_data,
-        )
-
-    return render_template("macros/example_comments_template.html", form=form)
 
 
 @assess_bp.route("/fragments/sub_criteria_scoring", methods=["POST", "GET"])
@@ -420,30 +440,31 @@ def get_file(application_id: str, file_name: str):
 
 
 @assess_bp.route("/resolve_flag/<application_id>", methods=["GET", "POST"])
+@login_required(roles_required=["LEAD_ASSESSOR"])
 def resolve_flag(application_id):
     form = ResolveFlagForm()
     section = request.args.get("section_id", "section not specified")
-    if request.method == "POST" and form.validate_on_submit():
-        submit_flag(
-            application_id,
-            form.resolution_flag.data,
-            g.account_id,
-            form.justification.data,
-            section,
-        )
-        return redirect(
-            url_for(
-                "assess_bp.application",
-                application_id=application_id,
-            )
-        )
-    banner_state = get_banner_state(application_id)
-    fund = get_fund(banner_state["fund_id"])
-    return render_template(
-        "resolve_flag.html",
-        application_id=application_id,
-        fund_name=fund.name,
-        banner_state=banner_state,
+    return resolve_application(
         form=form,
-        referrer=request.referrer,
+        application_id=application_id,
+        flag=form.resolution_flag.data,
+        justification=form.justification.data,
+        section=section,
+        page_to_render="resolve_flag.html",
+    )
+
+
+@assess_bp.route(
+    "/continue_assessment/<application_id>", methods=["GET", "POST"]
+)
+@login_required(roles_required=["LEAD_ASSESSOR"])
+def continue_assessment(application_id):
+    form = ContinueApplicationForm()
+    return resolve_application(
+        form=form,
+        application_id=application_id,
+        flag=FlagType.RESOLVED.name,
+        justification=form.reason.data,
+        section="NA",
+        page_to_render="continue_assessment.html",
     )

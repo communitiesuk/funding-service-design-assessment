@@ -15,22 +15,22 @@ if platform.system() == "Darwin":
 
 
 test_lead_assessor_claims = {
-    "accountId": "test-user",
-    "email": "test@example.com",
+    "accountId": "lead",
+    "email": "lead@test.com",
     "fullName": "Test User",
     "roles": ["LEAD_ASSESSOR", "ASSESSOR", "COMMENTER"],
 }
 
 test_assessor_claims = {
-    "accountId": "test-user",
-    "email": "test@example.com",
+    "accountId": "assessor",
+    "email": "assessor@test.com",
     "fullName": "Test User",
     "roles": ["ASSESSOR", "COMMENTER"],
 }
 
 test_commenter_claims = {
-    "accountId": "test-user",
-    "email": "test@example.com",
+    "accountId": "commenter",
+    "email": "commenter@test.com",
     "fullName": "Test User",
     "roles": ["COMMENTER"],
 }
@@ -147,3 +147,17 @@ def selenium_chrome_driver(request, live_server):
     request.cls.driver = chrome_driver
     yield
     request.cls.driver.close()
+
+
+@pytest.fixture(scope="function")
+def mock_get_banner_state(mocker, scope="function"):
+    mocker.patch(
+        "app.assess.routes.get_banner_state",
+        return_value={
+            "short_id": "short",
+            "project_name": "name",
+            "funding_amount_requested": 10,
+            "workflow_status": "IN_PROGRESS",
+            "fund_id": "funding-service-design",
+        },
+    )

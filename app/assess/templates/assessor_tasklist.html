@@ -8,7 +8,6 @@
 {% from "macros/mark_qa_complete_button.html" import mark_qa_complete_button %}
 {% from "macros/assessment_flag.html" import assessment_flag %}
 {% from "macros/logout_partial.html" import logout_partial %}
-
 {% block content %}
 <div class="govuk-phase-banner flex-parent-element">
     <p class="govuk-!-text-align-left flex-parent-element flexed-element-margins-collapse">
@@ -16,7 +15,6 @@
     </p>
     {{ logout_partial(sso_logout_url) }}
 </div>
-
 {% if state.workflow_status=="COMPLETED" %}
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
@@ -31,20 +29,6 @@
         </div>
     </div>
 </div>
-
-<div class="govuk-grid-row">
-    <div class="govuk-grid-column-full">
-        <div class="assessment-complete  govuk-margin-bottom-8">
-            <h2 class="assessment-alert__heading govuk-heading-l govuk-!-margin-top-4">
-                QA complete</h2>
-            <p class="govuk-body">You have marked this assessment as QA complete.</p>
-            <p class="govuk-body">
-                {{ flag }}
-            </p>
-        </div>
-    </div>
-</div>
-
 
 {% elif sub_criteria_status_completed %}
 <form method="POST" action="{{ url_for('assess_bp.application', application_id=application_id) }}">
@@ -62,11 +46,9 @@
     </div>
 </form>
 {% endif %}
-
     {% if flag and g.user.highest_role in ("ASSESSOR", "LEAD_ASSESSOR") and not state.flag_resolved %}
         {{ assessment_flag(flag, flag_user_info, application_id) }}
     {% endif %}
-
     {{ banner_summary(
         state.fund_name,
         state.short_id,
@@ -75,7 +57,6 @@
         state.workflow_status,
         flag
     ) }}
-
     <div class="govuk-width-container">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-full">
@@ -93,21 +74,18 @@
                             {{ criteria_element(criteria, name_classes, application_id) }}
                         {% endfor %}
                     </div>
-
                     <div class="govuk-grid-column-one-third govuk-!-margin-top-2 govuk-button-group">
                         <span>
                               {% if g.user.highest_role == "LEAD_ASSESSOR" and state.workflow_status=="COMPLETED" %}
                                 {{ mark_qa_complete_button(application_id) }}
                               {% endif %}
                         </span>
-
                        <span>
                           {% if (not flag or state.flag_resolved) and g.user.highest_role in ("ASSESSOR", "LEAD_ASSESSOR") %}
                             {{ flag_application_button(application_id) }}
                           {% endif %}
                         </span>
                     </div>
-
                 </div>
             </div>
         </div>

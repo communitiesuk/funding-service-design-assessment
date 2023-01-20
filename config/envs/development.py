@@ -19,9 +19,13 @@ class DevelopmentConfig(DefaultConfig):
 
     # for local testing with flask run and USE_LOCAL_DATA = True:
     # USE_LOCAL_DATA = True
+    # if USE_LOCAL_DATA:
+    #     ACCOUNT_STORE_API_HOST = CommonConfig.TEST_ACCOUNT_STORE_API_HOST
+    #     APPLICATION_STORE_API_HOST = CommonConfig.TEST_APPLICATION_STORE_API_HOST # noqa
+    #     ASSESSMENT_STORE_API_HOST = CommonConfig.TEST_ASSESSMENT_STORE_API_HOST # noqa
+    #     FUND_STORE_API_HOST = CommonConfig.TEST_FUND_STORE_API_HOST
 
     # for testing with docker runner:
-    USE_LOCAL_DATA = False
     FSD_LOG_LEVEL = logging.INFO
     FSD_USER_TOKEN_COOKIE_NAME = "fsd_user_token"
     AUTHENTICATOR_HOST = getenv("AUTHENTICATOR_HOST", "https://authenticator")

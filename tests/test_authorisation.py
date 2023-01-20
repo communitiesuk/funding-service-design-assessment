@@ -213,7 +213,7 @@ class TestAuthorisation:
         ],
     )
     def test_different_user_levels_see_correct_sub_criteria_view(
-        self, flask_test_client, claim, expect_scoring_available, mocker
+        self, flask_test_client, claim, expect_scoring_available
     ):
         """
         GIVEN authorised users
@@ -306,7 +306,11 @@ class TestAuthorisation:
         ],
     )
     def test_different_user_levels_have_correct_flagging_permissions(
-        self, flask_test_client, claim, expect_flagging_available, mocker
+        self,
+        flask_test_client,
+        claim,
+        expect_flagging_available,
+        mock_get_banner_state,
     ):
         """
         GIVEN authorised users
@@ -315,22 +319,7 @@ class TestAuthorisation:
             - commentor role can not flag
             - assessor role can flag
             - lead assessor role can flag
-        Args:
-            flask_test_client:
-
-        Returns:
-
         """
-        mocker.patch(
-            "app.assess.routes.get_banner_state",
-            return_value={
-                "short_id": "short",
-                "project_name": "name",
-                "funding_amount_requested": 10,
-                "workflow_status": "IN_PROGRESS",
-                "fund_id": "funding-service-design",
-            },
-        )
 
         flask_test_client.set_cookie(
             "localhost",
@@ -338,22 +327,142 @@ class TestAuthorisation:
             create_valid_token(claim),
         )
 
-        if expect_flagging_available:
+        if not expect_flagging_available:
+            with pytest.raises(RuntimeError) as exec_info:
+                flask_test_client.get(
+                    "assess/flag/app123",
+                    follow_redirects=True,
+                )
+            # Tries to redirect to authenticator
+            assert (
+                str(exec_info.value)
+                == "Following external redirects is not supported."
+            )
+        else:
             response = flask_test_client.get(
                 "assess/flag/app123",
                 follow_redirects=True,
             )
             assert response.status_code == 200
             assert b"Flag application" in response.data
-        else:
-            try:
+
+    @pytest.mark.parametrize(
+        "claim,expect_resolve_flag_available",
+        [
+            (test_commenter_claims, False),
+            (test_assessor_claims, False),
+            (test_lead_assessor_claims, True),
+        ],
+    )
+    def test_different_user_levels_have_correct_permissions_to_resolve_flag(
+        self,
+        flask_test_client,
+        claim,
+        expect_resolve_flag_available,
+        mock_get_banner_state,
+    ):
+        """
+        GIVEN authorised users
+        WHEN the user accesses the resolve flag route
+        THEN the user sees the appropriate page:
+            - commentor role cannot resolve flag
+            - assessor role cannot resolve flag
+            - lead assessor role can resolve flag
+        """
+
+        flask_test_client.set_cookie(
+            "localhost",
+            "fsd_user_token",
+            create_valid_token(claim),
+        )
+        if not expect_resolve_flag_available:
+            with pytest.raises(RuntimeError) as exec_info:
                 flask_test_client.get(
-                    "assess/flag/app123",
+                    "assess/resolve_flag/app123",
                     follow_redirects=True,
                 )
-            except Exception as e:
-                # Redirect to authenticator
-                assert (
-                    e.args[0]
-                    == "Following external redirects is not supported."
+            # Tries to redirect to authenticator
+            assert (
+                str(exec_info.value)
+                == "Following external redirects is not supported."
+            )
+        else:
+            response = flask_test_client.get(
+                "assess/resolve_flag/app123",
+                follow_redirects=True,
+            )
+            assert response.status_code == 200
+            assert b"Resolve flag" in response.data
+            assert b"Query resolved" in response.data
+            assert b"Stop assessment" in response.data
+
+    @pytest.mark.parametrize(
+        "claim,expect_continue_available",
+        [
+            (test_commenter_claims, False),
+            (test_assessor_claims, False),
+            (test_lead_assessor_claims, True),
+        ],
+    )
+    def test_user_levels_have_correct_permissions_to_restart_an_assessment(
+        self,
+        flask_test_client,
+        claim,
+        expect_continue_available,
+        mock_get_banner_state,
+    ):
+        """
+        GIVEN authorised users
+        WHEN the user accesses the continue assessment route
+        THEN the user sees the appropriate page:
+            - commentor role cannot continue assessment
+            - assessor role cannot continue assessment
+            - lead assessor role can continue assessment
+        """
+
+        flask_test_client.set_cookie(
+            "localhost",
+            "fsd_user_token",
+            create_valid_token(claim),
+        )
+
+        if not expect_continue_available:
+            with pytest.raises(RuntimeError) as exec_info:
+                flask_test_client.get(
+                    "assess/continue_assessment/app123",
+                    follow_redirects=True,
                 )
+            # Tries to redirect to authenticator
+            assert (
+                str(exec_info.value)
+                == "Following external redirects is not supported."
+            )
+        else:
+            response = flask_test_client.get(
+                "assess/continue_assessment/app123",
+                follow_redirects=True,
+            )
+            assert response.status_code == 200
+            assert b"Continue assessment" in response.data
+            assert b"Reason for continuing assessment" in response.data
+
+    @pytest.mark.parametrize(
+        "user_account, visible",
+        [
+            (test_commenter_claims, False),
+            (test_assessor_claims, False),
+            (test_lead_assessor_claims, True),
+        ],
+    )
+    def test_resolve_flag_option_shows_for_correct_permissions(
+        self, flask_test_client, user_account, visible
+    ):
+        token = create_valid_token(user_account)
+        flask_test_client.set_cookie("localhost", "fsd_user_token", token)
+
+        response = flask_test_client.get("assess/application/app_123")
+        assert response.status_code == 200
+        if visible:
+            assert b"Resolve flag" in response.data
+        else:
+            assert b"Resolve flag" not in response.data

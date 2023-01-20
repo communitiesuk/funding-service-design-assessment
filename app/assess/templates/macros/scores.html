@@ -12,9 +12,9 @@
         <div class="govuk-radios" data-module="govuk-radios">
             {% for score, description in score_list %}
             <div class="govuk-radios__item">
-                <input class="govuk-radios__input" aria-label="Scoring" id={{"score-{}".format(score)}} name={{score_form_name}}
+                <input class="govuk-radios__input" id={{"score-{}".format(score)}} name={{score_form_name}}
                     type="radio" value={{score}}>
-                <label class="govuk-label govuk-radios__label" for={{score_form_name}}>
+                <label class="govuk-label govuk-radios__label" for={{"score-{}".format(score)}}>
                     <span class="govuk-!-font-weight-bold">{{score}}</span> {{description}}
                 </label>
             </div>

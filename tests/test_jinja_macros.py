@@ -514,7 +514,7 @@ class TestJinjaMacros(object):
             project_name=project_name,
             funding_amount_requested=funding_amount_requested,
             workflow_status=workflow_status,
-            flag = assessment_flag
+            flag=assessment_flag,
         )
 
         # Replace newlines for easier regex matching
@@ -565,12 +565,12 @@ class TestJinjaMacros(object):
             project_name=project_name,
             funding_amount_requested=funding_amount_requested,
             workflow_status=workflow_status,
-            flag=assessment_flag)
+            flag=assessment_flag,
+        )
 
         assert re.search(
             r"Stopped", rendered_html
         ), "Stopped text not found in banner"
-
 
     def test_flag_application_button(self, request_ctx):
         rendered_html = render_template_string(
@@ -594,9 +594,9 @@ class TestJinjaMacros(object):
 
     def test_stopped_assessment_flag(self, request_ctx):
         rendered_html = render_template_string(
-            "{{assessment_flag(flag, user_info)}}",
-            assessment_flag=get_template_attribute(
-                "macros/assessment_flag.html", "assessment_flag"
+            "{{assessment_stopped(flag, user_info)}}",
+            assessment_stopped=get_template_attribute(
+                "macros/assessment_flag.html", "assessment_stopped"
             ),
             flag={
                 "flag_type": {"name": "STOPPED"},
@@ -630,16 +630,6 @@ class TestJinjaMacros(object):
         ), "Justification not found"
 
         assert re.search(
-            r"Section flagged",
-            rendered_html,
-        ), "Section flagged heading not found"
-
-        assert re.search(
-            r"Test section",
-            rendered_html,
-        ), "Section not found"
-
-        assert re.search(
             r"Test user.*\S*Test role.*\S*test@example.com",
             rendered_html,
         ), "User info not found"
@@ -651,9 +641,9 @@ class TestJinjaMacros(object):
 
     def test_assessment_flag(self, request_ctx):
         rendered_html = render_template_string(
-            "{{assessment_flag(flag, user_info)}}",
-            assessment_flag=get_template_attribute(
-                "macros/assessment_flag.html", "assessment_flag"
+            "{{assessment_flagged(flag, user_info)}}",
+            assessment_flagged=get_template_attribute(
+                "macros/assessment_flag.html", "assessment_flagged"
             ),
             flag={
                 "flag_type": {"name": "Test flag"},
