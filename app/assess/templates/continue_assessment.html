@@ -22,42 +22,43 @@ banner_state.workflow_status
 ) }}
 
 <div class="govuk-width-container">
-    <div class="govuk-grid-column-full">
-        <div class="govuk-grid-column-two-thirds flagging-container">
-            <form method="POST">
-                {{ form.csrf_token }}
-                <h1 class="govuk-heading govuk-heading-l">Continue assessment</h1>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <div class="govuk-grid-column-two-thirds flagging-container">
+                <form method="POST">
+                    {{ form.csrf_token }}
+                    <h1 class="govuk-heading govuk-heading-l">Continue assessment</h1>
 
-                <p class="govuk-body">This will remove the flag and allow assessment to continue.</p>
+                    <p class="govuk-body">This will remove the flag and allow assessment to continue.</p>
 
-                <div class="govuk-form-group">
+                    <div class="govuk-form-group">
 
-                    {{ govukTextarea({
-                    'id': form.reason.id,
-                    'name': form.reason.id,
-                    'rows': '8',
-                    'label': {
+                        {{ govukTextarea({
+                        'id': form.reason.id,
+                        'name': form.reason.id,
+                        'rows': '8',
+                        'label': {
                         'text': 'Reason for continuing assessment',
                         'classes': 'govuk-label govuk-label--s'
-                    },
-                    'errorMessage': {
-                    'text': form.errors.get("section") | join("\n"),
-                    } if form.errors.get("section") else None,
-                    'value': form.reason.data or ""
-                    }) }}
+                        },
+                        'errorMessage': {
+                        'text': form.errors.get("section") | join("\n"),
+                        } if form.errors.get("section") else None,
+                        'value': form.reason.data or ""
+                        }) }}
 
-                </div>
-                <div class="govuk-button-group">
-                    <button class="govuk-button primary-button" data-module="govuk-button">
-                        Submit
-                    </button>
-                    <a href="{{ referrer }}" class="govuk-button secondary-button govuk-link--no-visited-state">
-                        Cancel
-                    </a>
-                </div>
-            </form>
+                    </div>
+                    <div class="govuk-button-group">
+                        <button class="govuk-button primary-button" data-module="govuk-button">
+                            Submit
+                        </button>
+                        <a href="{{ referrer }}" class="govuk-button secondary-button govuk-link--no-visited-state">
+                            Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
         </div>
-
     </div>
 </div>
 
