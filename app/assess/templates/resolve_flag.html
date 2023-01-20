@@ -12,13 +12,13 @@
   </p>
   {{ logout_partial(sso_logout_url) }}
 </div>
-
 {{ banner_summary(
 fund_name,
-banner_state.short_id,
-banner_state.project_name,
-banner_state.funding_amount_requested,
-banner_state.workflow_status
+state.short_id,
+state.project_name,
+state.funding_amount_requested,
+state.workflow_status,
+flag
 ) }}
 <div class="govuk-width-container">
   <div class="govuk-grid-row">

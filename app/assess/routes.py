@@ -44,14 +44,22 @@ def resolve_application(
                 application_id=application_id,
             )
         )
-    banner_state = get_banner_state(application_id)
-    fund = get_fund(banner_state["fund_id"])
+    state = get_banner_state(application_id)
+    flag = get_latest_flag(application_id)
+    # Deduce whether to override workflow_status with flag
+    if flag:
+        if flag.flag_type == FlagType.RESOLVED:
+            state["flag_resolved"] = True
+        else:
+            state["workflow_status"] = flag.flag_type.name
+    fund = get_fund(state["fund_id"])
     return render_template(
         page_to_render,
         application_id=application_id,
         fund_name=fund.name,
-        banner_state=banner_state,
+        state=state,
         form=form,
+        flag=flag,
         referrer=request.referrer,
     )
 
@@ -320,11 +328,12 @@ def application(application_id):
     flag = get_latest_flag(application_id)
 
     accounts = {}
+    # Deduce whether to override workflow_status with flag
     if flag:
         if flag.flag_type == FlagType.RESOLVED:
             state.flag_resolved = True
         else:
-            state.workflow_status = "FLAGGED"
+            state.workflow_status = flag.flag_type.name
             accounts = get_bulk_accounts_dict([flag.user_id])
 
     sub_criteria_status_completed = all_status_completed(state)
