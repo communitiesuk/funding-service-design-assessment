@@ -6,8 +6,11 @@
 {% from "macros/banner_summary.html" import banner_summary %}
 {% from "macros/flag_application_button.html" import flag_application_button %}
 {% from "macros/mark_qa_complete_button.html" import mark_qa_complete_button %}
-{% from "macros/assessment_flag.html" import assessment_flag %}
+{% from "macros/assessment_flag.html" import assessment_flagged %}
+{% from "macros/assessment_flag.html" import assessment_stopped %}
 {% from "macros/logout_partial.html" import logout_partial %}
+
+
 {% block content %}
 <div class="govuk-phase-banner flex-parent-element">
     <p class="govuk-!-text-align-left flex-parent-element flexed-element-margins-collapse">
@@ -15,6 +18,7 @@
     </p>
     {{ logout_partial(sso_logout_url) }}
 </div>
+
 {% if state.workflow_status=="COMPLETED" %}
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
@@ -28,27 +32,27 @@
             </p>
         </div>
     </div>
-</div>
-
-{% elif sub_criteria_status_completed %}
-<form method="POST" action="{{ url_for('assess_bp.application', application_id=application_id) }}">
-    {{ form.csrf_token }}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-full">
-            <div class="assessment-alert  govuk-margin-bottom-8">
-                <h2 class="assessment-alert__heading govuk-heading-l govuk-!-margin-top-4">All sections assessed</h2>
-                <p class="govuk-body">You can now mark the assessment as complete when you're ready.</p>
-                <p class="govuk-body">It may be selected for quality assurance (QA) once you've done this.</p>
-                <button class="govuk-button primary-button" data-module="govuk-button" type="submit">Mark as
-                    complete</button>
+    {% elif flag and current_user_role in ("ASSESSOR", "LEAD_ASSESSOR") and flag.flag_type.name == "FLAGGED" %}
+        {{ assessment_flagged(flag, flag_user_info, application_id, current_user_role) }}
+    {% elif flag and current_user_role in ("ASSESSOR", "LEAD_ASSESSOR") and flag.flag_type.name == "STOPPED" %}
+        {{ assessment_stopped(flag, flag_user_info, application_id, current_user_role) }}
+    {% elif sub_criteria_status_completed %}
+    <form method="POST" action="{{ url_for('assess_bp.application', application_id=application_id) }}">
+        {{ form.csrf_token }}
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                <div class="assessment-alert  govuk-margin-bottom-8">
+                    <h2 class="assessment-alert__heading govuk-heading-l govuk-!-margin-top-4">All sections assessed</h2>
+                    <p class="govuk-body">You can now mark the assessment as complete when you're ready.</p>
+                    <p class="govuk-body">It may be selected for quality assurance (QA) once you've done this.</p>
+                    <button class="govuk-button primary-button" data-module="govuk-button" type="submit">Mark as
+                        complete</button>
+                </div>
             </div>
         </div>
-    </div>
-</form>
-{% endif %}
-    {% if flag and g.user.highest_role in ("ASSESSOR", "LEAD_ASSESSOR") and not state.flag_resolved %}
-        {{ assessment_flag(flag, flag_user_info, application_id) }}
+    </form>
     {% endif %}
+
     {{ banner_summary(
         state.fund_name,
         state.short_id,
@@ -57,6 +61,7 @@
         state.workflow_status,
         flag
     ) }}
+
     <div class="govuk-width-container">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-full">
@@ -85,6 +90,7 @@
                             {{ flag_application_button(application_id) }}
                           {% endif %}
                         </span>
+                    </div>
                     </div>
                 </div>
             </div>
