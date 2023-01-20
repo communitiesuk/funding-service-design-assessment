@@ -463,16 +463,14 @@ class TestRoutes:
         flask_test_client.set_cookie("localhost", "fsd_user_token", token)
 
         response = flask_test_client.get(
-            "/assess/continue_assessment/app_123",
+            "/assess/continue_assessment/stopped_app",
         )
 
         assert response.status_code == 200
         assert b"short" in response.data
         assert b"Reason for continuing assessment" in response.data
         assert b"10.00" in response.data
-        # TODO This will change to b"Stopped" when changes go
-        # in to update statuses
-        assert b"In progress" in response.data
+        assert b"Stopped" in response.data
 
     def test_post_continue_application(self, flask_test_client, mocker):
         token = create_valid_token(test_lead_assessor_claims)
