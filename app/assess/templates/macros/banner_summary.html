@@ -14,8 +14,10 @@
                     <h3 class="govuk-body-l fsd-banner-content">Total funding requested:
                         &pound;{{ "{:,.2f}".format(funding_amount_requested | float) }}</h3>
                     <h3 class="govuk-body-l fsd-banner-content fsd-banner-collapse-padding">
-                        {% if flag %}
-                            {{ flag.flag_type.name | capitalize }}
+                        {% if flag and flag.flag_type.name != "RESOLVED" %}
+                            {% if flag.flag_type.name in ("FLAGGED", "STOPPED") %}
+                                {{ flag.flag_type.name | capitalize }}
+                            {% endif %}
                         {% else %}
                             {{ 'Assessment complete' if workflow_status=='COMPLETED' else workflow_status | status_to_human }}
                         {% endif %}
