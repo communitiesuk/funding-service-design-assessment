@@ -190,6 +190,7 @@ def flag(application_id):
         submit_flag(
             application_id,
             FlagType.FLAGGED.name,
+            g.account_id,
             form.justification.data,
             form.section.data,
         )
@@ -220,8 +221,11 @@ def qa_complete(application_id):
     form = MarkQaCompleteForm()
 
     if request.method == "POST" and form.validate_on_submit():
+        # current_app.logger.error(g.account_id)
         submit_flag(
-            application_id=application_id, flag_type=FlagType.QA_COMPLETED.name
+            application_id=application_id,
+            flag_type=FlagType.QA_COMPLETED.name,
+            user_id=g.account_id,
         )
         return redirect(
             url_for(
@@ -423,6 +427,7 @@ def resolve_flag(application_id):
         submit_flag(
             application_id,
             form.resolution_flag.data,
+            g.account_id,
             form.justification.data,
             section,
         )

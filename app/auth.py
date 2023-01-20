@@ -1,4 +1,5 @@
 from config import Config
+from flask import current_app
 from flask import g
 from flask import redirect
 from flask import request
@@ -27,6 +28,8 @@ def auth_protect(minimum_roles_required, unprotected_routes):
         redirect (302) or None if authorised
 
     """
+    current_app.logger.error(Config.DEBUG_USER_ON)
+    current_app.logger.error(Config.DEBUG_USER_ROLE)
 
     if (
         Config.FLASK_ENV == "development"
