@@ -8,6 +8,7 @@ def status_to_human(status: str):
         "SUBMITTED": "Submitted",
         "COMPLETED": "Complete",
         "FLAGGED": "Flagged",
+        "STOPPED": "Stopped",
     }
     return status_to_human_map[status]
 

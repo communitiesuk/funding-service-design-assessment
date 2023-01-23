@@ -379,7 +379,7 @@ class TestRoutes:
         flask_test_client.set_cookie("localhost", "fsd_user_token", token)
         session["csrf_token"] = "test"
 
-        mocker.patch("app.assess.routes.submit_flag", return_value=None)
+        mocker.patch("app.assess.helpers.submit_flag", return_value=None)
         mock_get_latest_flag = mocker.patch(
             "app.assess.routes.get_latest_flag"
         )
@@ -423,7 +423,7 @@ class TestRoutes:
         token = create_valid_token(test_lead_assessor_claims)
         flask_test_client.set_cookie("localhost", "fsd_user_token", token)
         mocker.patch(
-            "app.assess.routes.submit_flag",
+            "app.assess.helpers.submit_flag",
             return_value=Flag.from_dict(
                 {
                     "application_id": "app_123",
@@ -444,8 +444,8 @@ class TestRoutes:
                 "justification": "Checked with so and so.",
             },
         )
-        app.assess.routes.submit_flag.assert_called_once()
-        app.assess.routes.submit_flag.assert_called_once_with(
+        app.assess.helpers.submit_flag.assert_called_once()
+        app.assess.helpers.submit_flag.assert_called_once_with(
             "app_123",
             "RESOLVED",
             "Checked with so and so.",
@@ -476,7 +476,7 @@ class TestRoutes:
         token = create_valid_token(test_lead_assessor_claims)
         flask_test_client.set_cookie("localhost", "fsd_user_token", token)
         mocker.patch(
-            "app.assess.routes.submit_flag",
+            "app.assess.helpers.submit_flag",
             return_value=Flag.from_dict(
                 {
                     "application_id": "app_123",
@@ -497,8 +497,8 @@ class TestRoutes:
                 "justification": "We should continue the application.",
             },
         )
-        app.assess.routes.submit_flag.assert_called_once()
-        app.assess.routes.submit_flag.assert_called_once_with(
+        app.assess.helpers.submit_flag.assert_called_once()
+        app.assess.helpers.submit_flag.assert_called_once_with(
             "app_123",
             "RESOLVED",
             "We should continue the application.",
