@@ -92,7 +92,7 @@ def display_sub_criteria(
         "application_id": application_id,
         "fund": fund,
         "comments": comments,
-        "is_flagged": True if flag else False,
+        "is_flagged": bool(flag),
         "display_comment_box": add_comment_argument,
         "comment_form": comment_form,
     }
