@@ -380,16 +380,6 @@ class TestRoutes:
         session["csrf_token"] = "test"
 
         mocker.patch("app.assess.routes.submit_flag", return_value=None)
-        mock_get_latest_flag = mocker.patch(
-            "app.assess.routes.get_latest_flag"
-        )
-        mock_get_banner_state = mocker.patch(
-            "app.assess.routes.get_banner_state"
-        )
-        mock_get_fund = mocker.patch("app.assess.routes.get_fund")
-        mock_get_latest_flag.return_value = []
-        mock_get_banner_state.return_value = {"fund_id": 1}
-        mock_get_fund.return_value = mock.Mock(name="Test Fund")
 
         response = flask_test_client.post(
             "assess/flag/1",
@@ -423,7 +413,7 @@ class TestRoutes:
         token = create_valid_token(test_lead_assessor_claims)
         flask_test_client.set_cookie("localhost", "fsd_user_token", token)
         mocker.patch(
-            "app.assess.routes.submit_flag",
+            "app.assess.helpers.submit_flag",
             return_value=Flag.from_dict(
                 {
                     "application_id": "app_123",
@@ -444,8 +434,8 @@ class TestRoutes:
                 "justification": "Checked with so and so.",
             },
         )
-        app.assess.routes.submit_flag.assert_called_once()
-        app.assess.routes.submit_flag.assert_called_once_with(
+        app.assess.helpers.submit_flag.assert_called_once()
+        app.assess.helpers.submit_flag.assert_called_once_with(
             "app_123",
             "RESOLVED",
             "Checked with so and so.",
@@ -476,7 +466,7 @@ class TestRoutes:
         token = create_valid_token(test_lead_assessor_claims)
         flask_test_client.set_cookie("localhost", "fsd_user_token", token)
         mocker.patch(
-            "app.assess.routes.submit_flag",
+            "app.assess.helpers.submit_flag",
             return_value=Flag.from_dict(
                 {
                     "application_id": "app_123",
@@ -497,8 +487,8 @@ class TestRoutes:
                 "justification": "We should continue the application.",
             },
         )
-        app.assess.routes.submit_flag.assert_called_once()
-        app.assess.routes.submit_flag.assert_called_once_with(
+        app.assess.helpers.submit_flag.assert_called_once()
+        app.assess.helpers.submit_flag.assert_called_once_with(
             "app_123",
             "RESOLVED",
             "We should continue the application.",

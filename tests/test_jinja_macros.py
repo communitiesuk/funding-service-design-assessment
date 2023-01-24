@@ -2,6 +2,7 @@ import re
 
 import pytest
 from app.assess.forms.comments_form import CommentsForm
+from app.assess.forms.scores_and_justifications import ScoreForm
 from app.assess.models.ui.applicants_response import AboveQuestionAnswerPair
 from app.assess.models.ui.applicants_response import (
     AboveQuestionAnswerPairHref,
@@ -249,11 +250,11 @@ class TestJinjaMacros(object):
 
     def test_justification_macro(self, request_ctx):
         rendered_html = render_template_string(
-            "{{justification(justification_form_name, justification_error)}}",
+            "{{justification(form, justification_error)}}",
             justification=get_template_attribute(
                 "macros/justification.html", "justification"
             ),
-            justification_form_name="Justification",
+            form=ScoreForm(),
             justification_error=True,
         )
 
@@ -546,7 +547,7 @@ class TestJinjaMacros(object):
         project_reference = "TEST123"
         project_name = "Test Project"
         funding_amount_requested = 123456.78
-        workflow_status = "SUBMITTED"
+        display_status = "STOPPED"
         assessment_flag = {
             "flag_type": {"name": "STOPPED"},
             "justification": "Test justification",
@@ -556,7 +557,7 @@ class TestJinjaMacros(object):
 
         rendered_html = render_template_string(
             "{{ banner_summary(fund_name, project_reference, project_name,"
-            " funding_amount_requested, workflow_status, flag) }}",
+            " funding_amount_requested, display_status, flag) }}",
             banner_summary=get_template_attribute(
                 "macros/banner_summary.html", "banner_summary"
             ),
@@ -564,7 +565,7 @@ class TestJinjaMacros(object):
             project_reference=project_reference,
             project_name=project_name,
             funding_amount_requested=funding_amount_requested,
-            workflow_status=workflow_status,
+            display_status=display_status,
             flag=assessment_flag,
         )
 

@@ -11,6 +11,8 @@ from app.assess.forms.flag_form import FlagApplicationForm
 from app.assess.forms.mark_qa_complete_form import MarkQaCompleteForm
 from app.assess.forms.resolve_flag_form import ResolveFlagForm
 from app.assess.forms.scores_and_justifications import ScoreForm
+from app.assess.helpers import determine_display_status
+from app.assess.helpers import resolve_application
 from app.assess.models.flag import FlagType
 from app.assess.models.ui import applicants_response
 from app.assess.models.ui.assessor_task_list import AssessorTaskList
@@ -26,43 +28,13 @@ from flask import request
 from flask import url_for
 from fsd_utils.authentication.decorators import login_required
 
+
 assess_bp = Blueprint(
     "assess_bp",
     __name__,
     url_prefix=Config.ASSESSMENT_HUB_ROUTE,
     template_folder="templates",
 )
-
-
-def resolve_application(
-    form, application_id, flag, justification, section, page_to_render
-):
-    if request.method == "POST" and form.validate_on_submit():
-        submit_flag(application_id, flag, justification, section)
-        return redirect(
-            url_for(
-                "assess_bp.application",
-                application_id=application_id,
-            )
-        )
-    state = get_banner_state(application_id)
-    flag = get_latest_flag(application_id)
-    # Deduce whether to override workflow_status with flag
-    if flag:
-        if flag.flag_type == FlagType.RESOLVED:
-            state["flag_resolved"] = True
-        else:
-            state["workflow_status"] = flag.flag_type.name
-    fund = get_fund(state["fund_id"])
-    return render_template(
-        page_to_render,
-        application_id=application_id,
-        fund_name=fund.name,
-        state=state,
-        form=form,
-        flag=flag,
-        referrer=request.referrer,
-    )
 
 
 @assess_bp.route(
@@ -103,7 +75,10 @@ def display_sub_criteria(
         )
 
     fund = get_fund(Config.COF_FUND_ID)
-    is_flagged = bool(get_latest_flag(application_id))
+
+    flag = get_latest_flag(application_id)
+    if flag:
+        determine_display_status(sub_criteria, flag)
 
     comments = get_comments(
         application_id=application_id,
@@ -118,7 +93,7 @@ def display_sub_criteria(
         "application_id": application_id,
         "fund": fund,
         "comments": comments,
-        "is_flagged": is_flagged,
+        "is_flagged": bool(flag),
         "display_comment_box": add_comment_argument,
         "comment_form": comment_form,
     }
@@ -144,8 +119,8 @@ def display_sub_criteria(
             current_app.logger.info(f"Processing POST to {request.path}.")
             if form.validate_on_submit():
                 score = int(form.score.data)
-                justification = form.justification.data
                 user_id = g.account_id
+                justification = form.justification.data
                 submit_score_and_justification(
                     score=score,
                     justification=justification,
@@ -212,9 +187,6 @@ def display_sub_criteria(
 )
 @login_required(roles_required=["ASSESSOR"])
 def flag(application_id):
-    flag = get_latest_flag(application_id)
-    if flag and flag.flag_type is not FlagType.RESOLVED:
-        abort(400, "Application already flagged")
 
     form = FlagApplicationForm()
 
@@ -233,8 +205,11 @@ def flag(application_id):
             )
         )
 
+    flag = get_latest_flag(application_id)
+    if flag and flag.flag_type is not FlagType.RESOLVED:
+        abort(400, "Application already flagged")
     banner_state = get_banner_state(application_id)
-    fund = get_fund(banner_state["fund_id"])
+    fund = get_fund(banner_state.fund_id)
 
     return render_template(
         "flag_application.html",
@@ -358,17 +333,10 @@ def application(application_id):
     current_app.logger.info(
         f"Fetching data from '{assessor_task_list_metadata}'."
     )
-
     flag = get_latest_flag(application_id)
-
-    accounts = {}
-    # Deduce whether to override workflow_status with flag
     if flag:
-        if flag.flag_type == FlagType.RESOLVED:
-            state.flag_resolved = True
-        else:
-            state.workflow_status = flag.flag_type.name
-            accounts = get_bulk_accounts_dict([flag.user_id])
+        determine_display_status(state, flag)
+        accounts = get_bulk_accounts_dict([flag.user_id])
 
     sub_criteria_status_completed = all_status_completed(state)
     form = AssessmentCompleteForm()

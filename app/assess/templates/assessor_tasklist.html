@@ -23,7 +23,7 @@
 
     {% if flag and current_user_role in ("ASSESSOR", "LEAD_ASSESSOR") and flag.flag_type.name == "FLAGGED" %}
         {{ assessment_flagged(flag, flag_user_info, application_id, current_user_role) }}
-    {% elif flag and current_user_role in ("ASSESSOR", "LEAD_ASSESSOR") and flag.flag_type.name == "STOPPED" %}
+    {% elif flag and current_user_role in ("ASSESSOR", "LEAD_ASSESSOR") and state.display_status == "STOPPED" %}
         {{ assessment_stopped(flag, flag_user_info, application_id, current_user_role) }}
     {% elif flag and current_user_role in ("LEAD_ASSESSOR") and flag.is_qa_complete %}
         {{ qa_complete_flag() }}
@@ -62,7 +62,7 @@
         state.short_id,
         state.project_name,
         state.funding_amount_requested,
-        state.workflow_status,
+        state.display_status,
         flag
     ) }}
 
