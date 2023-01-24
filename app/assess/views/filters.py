@@ -3,10 +3,10 @@ from datetime import datetime
 
 def status_to_human(status: str):
     status_to_human_map = {
-        "NOT_STARTED": "Not Started",
+        "NOT_STARTED": "Not started",
         "IN_PROGRESS": "In progress",
         "SUBMITTED": "Submitted",
-        "COMPLETED": "Complete",
+        "COMPLETED": "Assessment complete",
         "FLAGGED": "Flagged",
         "STOPPED": "Stopped",
     }
