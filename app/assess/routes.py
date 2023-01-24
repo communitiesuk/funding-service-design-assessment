@@ -186,9 +186,6 @@ def display_sub_criteria(
 )
 @login_required(roles_required=["ASSESSOR"])
 def flag(application_id):
-    flag = get_latest_flag(application_id)
-    if flag and flag.flag_type is not FlagType.RESOLVED:
-        abort(400, "Application already flagged")
 
     form = FlagApplicationForm()
 
@@ -206,6 +203,9 @@ def flag(application_id):
             )
         )
 
+    flag = get_latest_flag(application_id)
+    if flag and flag.flag_type is not FlagType.RESOLVED:
+        abort(400, "Application already flagged")
     banner_state = get_banner_state(application_id)
     fund = get_fund(banner_state.fund_id)
 

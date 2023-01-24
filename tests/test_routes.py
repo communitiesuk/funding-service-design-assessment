@@ -379,17 +379,7 @@ class TestRoutes:
         flask_test_client.set_cookie("localhost", "fsd_user_token", token)
         session["csrf_token"] = "test"
 
-        mocker.patch("app.assess.helpers.submit_flag", return_value=None)
-        mock_get_latest_flag = mocker.patch(
-            "app.assess.routes.get_latest_flag"
-        )
-        mock_get_banner_state = mocker.patch(
-            "app.assess.routes.get_banner_state"
-        )
-        mock_get_fund = mocker.patch("app.assess.routes.get_fund")
-        mock_get_latest_flag.return_value = []
-        mock_get_banner_state.return_value = {"fund_id": 1}
-        mock_get_fund.return_value = mock.Mock(name="Test Fund")
+        mocker.patch("app.assess.routes.submit_flag", return_value=None)
 
         response = flask_test_client.post(
             "assess/flag/1",
