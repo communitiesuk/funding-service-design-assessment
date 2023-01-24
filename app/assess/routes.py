@@ -145,7 +145,6 @@ def display_sub_criteria(
                 score = int(form.score.data)
                 user_id = g.account_id
                 justification = form.justification.data
-                score = form.score.data
                 submit_score_and_justification(
                     score=score,
                     justification=justification,
