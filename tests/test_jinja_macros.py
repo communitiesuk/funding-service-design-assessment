@@ -2,6 +2,7 @@ import re
 
 import pytest
 from app.assess.forms.comments_form import CommentsForm
+from app.assess.forms.scores_and_justifications import ScoreForm
 from app.assess.models.ui.applicants_response import AboveQuestionAnswerPair
 from app.assess.models.ui.applicants_response import (
     AboveQuestionAnswerPairHref,
@@ -249,11 +250,11 @@ class TestJinjaMacros(object):
 
     def test_justification_macro(self, request_ctx):
         rendered_html = render_template_string(
-            "{{justification(justification_form_name, justification_error)}}",
+            "{{justification(form, justification_error)}}",
             justification=get_template_attribute(
                 "macros/justification.html", "justification"
             ),
-            justification_form_name="Justification",
+            form=ScoreForm(),
             justification_error=True,
         )
 

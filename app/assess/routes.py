@@ -143,8 +143,8 @@ def display_sub_criteria(
             current_app.logger.info(f"Processing POST to {request.path}.")
             if form.validate_on_submit():
                 score = int(form.score.data)
-                justification = form.justification.data
                 user_id = g.account_id
+                justification = form.justification.data
                 submit_score_and_justification(
                     score=score,
                     justification=justification,
@@ -158,7 +158,7 @@ def display_sub_criteria(
                 score_error = True if not form.score.data else False
                 justification_error = (
                     True if not form.justification.data else False
-                )
+                )      
         # call to assessment store to get latest score
         score_list = get_score_and_justification(
             application_id, sub_criteria_id, score_history=True
