@@ -15,7 +15,7 @@
                 )
             },
             { "text": sub_criteria.score or "", "format": "numeric" } if g.user.highest_role in ["ASSESSOR","LEAD_ASSESSOR"] else None,
-            { "html": '<span class="govuk-tag--scored-criteria">{}</span>'.format(sub_criteria.status|status_to_human),
+            { "html": '<span class="govuk-tag--scored-criteria">{}</span>'.format(sub_criteria.status|all_caps_to_human),
                 "format": "numeric" }
         ]) %}
     {% endfor %}
