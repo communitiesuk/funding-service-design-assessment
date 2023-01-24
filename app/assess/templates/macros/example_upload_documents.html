@@ -1,7 +1,0 @@
-{% extends "base.html" %}
-{% from "macros/upload_documents.html" import uploadDocuments as upload %}
-
-{% block content %}
-{{ upload(file_metadata.title, file_metadata.answer) }}
-
-{% endblock %}
