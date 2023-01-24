@@ -1,18 +1,6 @@
 from datetime import datetime
 
 
-def status_to_human(status: str):
-    status_to_human_map = {
-        "NOT_STARTED": "Not started",
-        "IN_PROGRESS": "In progress",
-        "SUBMITTED": "Submitted",
-        "COMPLETED": "Assessment complete",
-        "FLAGGED": "Flagged",
-        "STOPPED": "Stopped",
-    }
-    return status_to_human_map[status]
-
-
 def slash_separated_day_month_year(value: str):
     parsed = datetime.strptime(value, "%Y-%m-%dT%H:%M:%S.%f")
     return parsed.strftime("%d/%m/%y")
