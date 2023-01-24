@@ -20,14 +20,15 @@
     {{ logout_partial(sso_logout_url) }}
 </div>
 
+    {% if flag and current_user_role in ("LEAD_ASSESSOR") and flag.is_qa_complete %}
+    {{ qa_complete_flag(flag, flag_user_info) }}
+    {% endif %}
 
     {% if flag and current_user_role in ("ASSESSOR", "LEAD_ASSESSOR") and flag.flag_type.name == "FLAGGED" %}
         {{ assessment_flagged(flag, flag_user_info, application_id, current_user_role) }}
     {% elif flag and current_user_role in ("ASSESSOR", "LEAD_ASSESSOR") and state.display_status == "STOPPED" %}
         {{ assessment_stopped(flag, flag_user_info, application_id, current_user_role) }}
-    {% elif flag and current_user_role in ("LEAD_ASSESSOR") and flag.is_qa_complete %}
-        {{ qa_complete_flag() }}
-    {% elif state.workflow_status=="COMPLETED" %}
+    {% elif state.workflow_status=="COMPLETED" and not flag.is_qa_complete %}
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-full">
                 <div class="assessment-complete  govuk-margin-bottom-8">
@@ -40,7 +41,7 @@
                     </p>
                 </div>
             </div>
-    {% elif sub_criteria_status_completed %}
+    {% elif sub_criteria_status_completed and not flag.is_qa_complete %}
     <form method="POST" action="{{ url_for('assess_bp.application', application_id=application_id) }}">
         {{ form.csrf_token }}
         <div class="govuk-grid-row">
@@ -85,7 +86,7 @@
                     </div>
                     <div class="govuk-grid-column-one-third govuk-!-margin-top-2 govuk-button-group">
                         <span>
-                              {% if g.user.highest_role == "LEAD_ASSESSOR" and state.workflow_status=="COMPLETED" %}
+                              {% if g.user.highest_role == "LEAD_ASSESSOR" and state.workflow_status=="COMPLETED" and not flag.is_qa_complete %}
                                 {{ mark_qa_complete_button(application_id) }}
                               {% endif %}
                         </span>

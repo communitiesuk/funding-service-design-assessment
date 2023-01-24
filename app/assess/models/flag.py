@@ -20,7 +20,7 @@ class Flag:
     application_id: str
     date_created: str
     user_id: str
-    is_qa_complete: bool
+    is_qa_complete: bool = False
 
     def __post_init__(self):
         if self.flag_type:

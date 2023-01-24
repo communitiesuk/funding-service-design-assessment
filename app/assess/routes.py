@@ -206,7 +206,10 @@ def flag(application_id):
         )
 
     flag = get_latest_flag(application_id)
-    if flag and flag.flag_type is not FlagType.RESOLVED:
+    if flag and flag.flag_type not in (
+        FlagType.RESOLVED,
+        FlagType.QA_COMPLETED,
+    ):
         abort(400, "Application already flagged")
     banner_state = get_banner_state(application_id)
     fund = get_fund(banner_state.fund_id)
@@ -241,7 +244,7 @@ def qa_complete(application_id):
         )
 
     banner_state = get_banner_state(application_id)
-    fund = get_fund(banner_state["fund_id"])
+    fund = get_fund(banner_state.fund_id)
 
     return render_template(
         "mark_qa_complete.html",
