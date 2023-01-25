@@ -151,7 +151,6 @@ def display_sub_criteria(
             (2, "Partial"),
             (1, "Poor"),
         ]
-
         return render_template(
             "sub_criteria.html",
             on_summary=True,

@@ -195,9 +195,9 @@ class TestJinjaMacros(object):
 
     def test_score_macro(self, request_ctx):
         rendered_html = render_template_string(
-            "{{scores(score_form_name, score_list, score_error)}}",
+            "{{scores(form, score_list, score_error)}}",
             scores=get_template_attribute("macros/scores.html", "scores"),
-            score_form_name="Score",
+            form=ScoreForm(),
             score_list=[
                 (5, "Strong"),
                 (4, "Good"),
