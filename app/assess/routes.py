@@ -76,8 +76,7 @@ def display_sub_criteria(
     fund = get_fund(Config.COF_FUND_ID)
 
     flag = get_latest_flag(application_id)
-    if flag:
-        determine_display_status(sub_criteria, flag)
+    determine_display_status(sub_criteria, flag)
 
     comments = get_comments(
         application_id=application_id,
@@ -133,7 +132,7 @@ def display_sub_criteria(
                 score_error = True if not form.score.data else False
                 justification_error = (
                     True if not form.justification.data else False
-                )      
+                )
         # call to assessment store to get latest score
         score_list = get_score_and_justification(
             application_id, sub_criteria_id, score_history=True
@@ -300,8 +299,8 @@ def application(application_id):
     )
     flag = get_latest_flag(application_id)
     if flag:
-        determine_display_status(state, flag)
         accounts = get_bulk_accounts_dict([flag.user_id])
+    determine_display_status(state, flag)
 
     sub_criteria_status_completed = all_status_completed(state)
     form = AssessmentCompleteForm()
