@@ -17,9 +17,7 @@
       </p>
     {% endif %}
     <textarea class="govuk-textarea" id="justification" name={{form.justification.id}}
-        rows="10" aria-describedby="more-detail-hint">
-        {% if form.justification.data %}{{form.justification.data}}{% endif %}
-    </textarea>
+        rows="10" aria-describedby="more-detail-hint">{% if form.justification.data %}{{form.justification.data}}{% endif %}</textarea>
 </div>
 
 {% endmacro %}
