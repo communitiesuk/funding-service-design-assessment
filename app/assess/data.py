@@ -20,7 +20,6 @@ from botocore.exceptions import ClientError
 from config import Config
 from flask import abort
 from flask import current_app
-from flask import g
 from flask import Response
 
 
@@ -377,7 +376,11 @@ def get_latest_flag(application_id: str) -> list[Flag] | None:
 
 
 def submit_flag(
-    application_id: str, flag_type: str, justification: str, section: str
+    application_id: str,
+    flag_type: str,
+    user_id: str,
+    justification: str = None,
+    section: str = None,
 ) -> Flag | None:
     """Submits a new flag to the assessment store for an application.
     Returns Flag if a flag is created
@@ -401,7 +404,7 @@ def submit_flag(
             "justification": justification,
             "section_to_flag": section,
             "flag_type": flag_type,
-            "user_id": g.account_id,
+            "user_id": user_id,
         },
     )
     if flag:

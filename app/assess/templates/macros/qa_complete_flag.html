@@ -1,0 +1,12 @@
+{% macro qa_complete_flag(flag, user_info) %}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+        <div class="assessment-complete  govuk-margin-bottom-8">
+            <h2 class="assessment-alert__heading govuk-heading-l govuk-!-margin-top-4">
+                Marked as QA complete </h2>
+                <p class="govuk-body-s">{{ user_info["full_name"] }} ({{ user_info["highest_role"] | all_caps_to_human }}) {{ user_info["email_address"] }}</p>
+                <p class="govuk-body-s">{{ flag.date_created | datetime_format("%d/%m/%Y at %H:%M") }}</p>
+        </div>
+    </div>
+</div>
+{% endmacro %}

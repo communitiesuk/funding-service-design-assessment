@@ -5,39 +5,46 @@
 {% from 'macros/criteria_element.html' import criteria_element -%}
 {% from "macros/banner_summary.html" import banner_summary %}
 {% from "macros/flag_application_button.html" import flag_application_button %}
+{% from "macros/mark_qa_complete_button.html" import mark_qa_complete_button %}
 {% from "macros/assessment_flag.html" import assessment_flagged %}
 {% from "macros/assessment_flag.html" import assessment_stopped %}
 {% from "macros/logout_partial.html" import logout_partial %}
+{% from "macros/qa_complete_flag.html" import qa_complete_flag %}
+
 
 {% block content %}
-    <div class="govuk-phase-banner flex-parent-element">
-        <p class="govuk-!-text-align-left flex-parent-element flexed-element-margins-collapse">
-            {{ govukBackLink({'href': url_for("assess_bp.landing"), 'text': 'Back to assessment dashboard'}) }}
-        </p>
-        {{ logout_partial(sso_logout_url) }}
-    </div>
 
-    {% if flag and current_user_role in ("ASSESSOR", "LEAD_ASSESSOR") and state.display_status == "FLAGGED" %}
+<div class="govuk-phase-banner flex-parent-element">
+    <p class="govuk-!-text-align-left flex-parent-element flexed-element-margins-collapse">
+        {{ govukBackLink({'href': url_for("assess_bp.landing"), 'text': 'Back to assessment dashboard'}) }}
+    </p>
+    {{ logout_partial(sso_logout_url) }}
+</div>
+
+    {% if flag and current_user_role in ("LEAD_ASSESSOR") and flag.is_qa_complete %}
+    {{ qa_complete_flag(flag, flag_user_info) }}
+    {% endif %}
+
+    {% if flag and current_user_role in ("ASSESSOR", "LEAD_ASSESSOR") and flag.flag_type.name == "FLAGGED" %}
         {{ assessment_flagged(flag, flag_user_info, application_id, current_user_role) }}
     {% elif flag and current_user_role in ("ASSESSOR", "LEAD_ASSESSOR") and state.display_status == "STOPPED" %}
         {{ assessment_stopped(flag, flag_user_info, application_id, current_user_role) }}
     {% endif %}
 
-    {% if state.workflow_status=="COMPLETED" %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-full">
-            <div class="assessment-complete  govuk-margin-bottom-8">
-                <h2 class="assessment-alert__heading govuk-heading-l govuk-!-margin-top-4">
-                    Assessment complete</h2>
-                <p class="govuk-body">You have marked this assessment as complete.</p>
-                <p class="govuk-body">
-                    It may now be selected for quality assurance (QA). New scores and rationales could be added if this
-                    happens.
-                </p>
+    {% if state.workflow_status=="COMPLETED" and not flag.is_qa_complete %}
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                <div class="assessment-complete  govuk-margin-bottom-8">
+                    <h2 class="assessment-alert__heading govuk-heading-l govuk-!-margin-top-4">
+                        Assessment complete</h2>
+                    <p class="govuk-body">You have marked this assessment as complete.</p>
+                    <p class="govuk-body">
+                        It may now be selected for quality assurance (QA). New scores and rationales could be added if this
+                        happens.
+                    </p>
+                </div>
             </div>
-        </div>
-    </div>
-    {% elif sub_criteria_status_completed %}
+    {% elif sub_criteria_status_completed and not flag.is_qa_complete %}
     <form method="POST" action="{{ url_for('assess_bp.application', application_id=application_id) }}">
         {{ form.csrf_token }}
         <div class="govuk-grid-row">
@@ -80,10 +87,18 @@
                             {{ criteria_element(criteria, name_classes, application_id) }}
                         {% endfor %}
                     </div>
-                    <div class="govuk-grid-column-one-third govuk-!-margin-top-2">
-                        {% if (not flag or state.flag_resolved) and g.user.highest_role in ("ASSESSOR", "LEAD_ASSESSOR") %}
+                    <div class="govuk-grid-column-one-third govuk-!-margin-top-2 govuk-button-group">
+                        <span>
+                              {% if g.user.highest_role == "LEAD_ASSESSOR" and state.workflow_status=="COMPLETED" and not flag.is_qa_complete %}
+                                {{ mark_qa_complete_button(application_id) }}
+                              {% endif %}
+                        </span>
+                       <span>
+                          {% if (not flag or state.flag_resolved or flag.flag_type.name == "QA_COMPLETED") and g.user.highest_role in ("ASSESSOR", "LEAD_ASSESSOR") %}
                             {{ flag_application_button(application_id) }}
-                        {% endif %}
+                          {% endif %}
+                        </span>
+                    </div>
                     </div>
                 </div>
             </div>

@@ -8,6 +8,7 @@ from app.assess.forms.assessment_form import AssessmentCompleteForm
 from app.assess.forms.comments_form import CommentsForm
 from app.assess.forms.continue_application_form import ContinueApplicationForm
 from app.assess.forms.flag_form import FlagApplicationForm
+from app.assess.forms.mark_qa_complete_form import MarkQaCompleteForm
 from app.assess.forms.resolve_flag_form import ResolveFlagForm
 from app.assess.forms.scores_and_justifications import ScoreForm
 from app.assess.helpers import determine_display_status
@@ -191,6 +192,7 @@ def flag(application_id):
         submit_flag(
             application_id,
             FlagType.FLAGGED.name,
+            g.account_id,
             form.justification.data,
             form.section.data,
         )
@@ -202,13 +204,54 @@ def flag(application_id):
         )
 
     flag = get_latest_flag(application_id)
-    if flag and flag.flag_type is not FlagType.RESOLVED:
+    if flag and flag.flag_type not in (
+        FlagType.RESOLVED,
+        FlagType.QA_COMPLETED,
+    ):
         abort(400, "Application already flagged")
     banner_state = get_banner_state(application_id)
     fund = get_fund(banner_state.fund_id)
 
     return render_template(
         "flag_application.html",
+        application_id=application_id,
+        fund_name=fund.name,
+        banner_state=banner_state,
+        form=form,
+        referrer=request.referrer,
+    )
+
+
+@assess_bp.route("/qa_complete/<application_id>", methods=["GET", "POST"])
+@login_required(roles_required=["LEAD_ASSESSOR"])
+def qa_complete(application_id):
+    """
+    QA complete form html page:
+    Allows you to mark an application as QA_completed by submitting the form.
+    Once submitted, a call is made to the application store endpoint to save
+    the QA_COMPLETED flag in the database for the given application_id
+    """
+
+    form = MarkQaCompleteForm()
+
+    if form.validate_on_submit():
+        submit_flag(
+            application_id=application_id,
+            flag_type=FlagType.QA_COMPLETED.name,
+            user_id=g.account_id,
+        )
+        return redirect(
+            url_for(
+                "assess_bp.application",
+                application_id=application_id,
+            )
+        )
+
+    banner_state = get_banner_state(application_id)
+    fund = get_fund(banner_state.fund_id)
+
+    return render_template(
+        "mark_qa_complete.html",
         application_id=application_id,
         fund_name=fund.name,
         banner_state=banner_state,
