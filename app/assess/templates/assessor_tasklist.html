@@ -29,7 +29,9 @@
         {{ assessment_flagged(flag, flag_user_info, application_id, current_user_role) }}
     {% elif flag and current_user_role in ("ASSESSOR", "LEAD_ASSESSOR") and state.display_status == "STOPPED" %}
         {{ assessment_stopped(flag, flag_user_info, application_id, current_user_role) }}
-    {% elif state.workflow_status=="COMPLETED" and not flag.is_qa_complete %}
+    {% endif %}
+
+    {% if state.workflow_status=="COMPLETED" and not flag.is_qa_complete %}
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-full">
                 <div class="assessment-complete  govuk-margin-bottom-8">
