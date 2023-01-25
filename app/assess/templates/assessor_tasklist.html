@@ -10,27 +10,29 @@
 {% from "macros/logout_partial.html" import logout_partial %}
 
 {% block content %}
-<div class="govuk-phase-banner flex-parent-element">
-    <p class="govuk-!-text-align-left flex-parent-element flexed-element-margins-collapse">
-        {{ govukBackLink({'href': url_for("assess_bp.landing"), 'text': 'Back to assessment dashboard'}) }}
-    </p>
-    {{ logout_partial(sso_logout_url) }}
-</div>
-
-{% if state.workflow_status=="COMPLETED" %}
-<div class="govuk-grid-row">
-    <div class="govuk-grid-column-full">
-        <div class="assessment-complete  govuk-margin-bottom-8">
-            <h2 class="assessment-alert__heading govuk-heading-l govuk-!-margin-top-4">
-                Assessment complete</h2>
-            <p class="govuk-body">You have marked this assessment as complete.</p>
-            <p class="govuk-body">
-                It may now be selected for quality assurance (QA). New scores and rationales could be added if this
-                happens.
-            </p>
-        </div>
+    <div class="govuk-phase-banner flex-parent-element">
+        <p class="govuk-!-text-align-left flex-parent-element flexed-element-margins-collapse">
+            {{ govukBackLink({'href': url_for("assess_bp.landing"), 'text': 'Back to assessment dashboard'}) }}
+        </p>
+        {{ logout_partial(sso_logout_url) }}
     </div>
-    {% elif flag and current_user_role in ("ASSESSOR", "LEAD_ASSESSOR") and state.display_status == "FLAGGED" %}
+
+    {% if state.workflow_status=="COMPLETED" %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <div class="assessment-complete  govuk-margin-bottom-8">
+                <h2 class="assessment-alert__heading govuk-heading-l govuk-!-margin-top-4">
+                    Assessment complete</h2>
+                <p class="govuk-body">You have marked this assessment as complete.</p>
+                <p class="govuk-body">
+                    It may now be selected for quality assurance (QA). New scores and rationales could be added if this
+                    happens.
+                </p>
+            </div>
+        </div>
+    {% endif %}
+
+    {% if flag and current_user_role in ("ASSESSOR", "LEAD_ASSESSOR") and state.display_status == "FLAGGED" %}
         {{ assessment_flagged(flag, flag_user_info, application_id, current_user_role) }}
     {% elif flag and current_user_role in ("ASSESSOR", "LEAD_ASSESSOR") and state.display_status == "STOPPED" %}
         {{ assessment_stopped(flag, flag_user_info, application_id, current_user_role) }}
