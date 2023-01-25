@@ -538,6 +538,7 @@ class TestRoutes:
         assert response.status_code == 200
         assert b"Marked as QA complete" in response.data
         assert b"01/01/2023 at 00:00am" in response.data
+        assert b"Flagged" not in response.data
 
     def test_qa_completed_flagged_application(self, flask_test_client, mocker):
         token = create_valid_token(test_lead_assessor_claims)
