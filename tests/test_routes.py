@@ -497,3 +497,20 @@ class TestRoutes:
 
         assert response.status_code == 302
         assert response.headers["Location"] == "/assess/application/app_123"
+    
+    def test_route_landing_shows_flagged(self, flask_test_client):
+        response = flask_test_client.get("/assess/assessor_dashboard/")
+
+        assert 200 == response.status_code, "Wrong status code on response"
+
+        assert (
+            b"stopped-tag" in response.data
+        ), "Stopped Flag is not displaying"
+
+        assert (
+            b"flagged-tag" in response.data
+        ), "Flagged Flag is not displaying"
+
+        assert (
+            b"Resolved" not in response.data
+        ), "Resolved Flag is displaying and should not"
