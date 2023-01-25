@@ -77,8 +77,7 @@ def display_sub_criteria(
     fund = get_fund(Config.COF_FUND_ID)
 
     flag = get_latest_flag(application_id)
-    if flag:
-        determine_display_status(sub_criteria, flag)
+    determine_display_status(sub_criteria, flag)
 
     comments = get_comments(
         application_id=application_id,
@@ -152,7 +151,6 @@ def display_sub_criteria(
             (2, "Partial"),
             (1, "Poor"),
         ]
-
         return render_template(
             "sub_criteria.html",
             on_summary=True,
@@ -339,8 +337,8 @@ def application(application_id):
     flag = get_latest_flag(application_id)
     current_app.logger.error(flag)
     if flag:
-        determine_display_status(state, flag)
         accounts = get_bulk_accounts_dict([flag.user_id])
+    determine_display_status(state, flag)
 
     sub_criteria_status_completed = all_status_completed(state)
     form = AssessmentCompleteForm()
