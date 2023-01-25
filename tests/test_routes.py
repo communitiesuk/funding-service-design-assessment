@@ -514,11 +514,11 @@ class TestRoutes:
         assert 200 == response.status_code, "Wrong status code on response"
 
         assert (
-            b"Stopped" in response.data
+            b"stopped-tag" in response.data
         ), "Stopped Flag is not displaying"
 
         assert (
-            b"Flagged" in response.data
+            b"flagged-tag" in response.data
         ), "Flagged Flag is not displaying"
 
         assert (

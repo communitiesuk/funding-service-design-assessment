@@ -397,7 +397,7 @@
         {
           "application_id": "242a8da0-c631-481b-b4bd-35ee41ef9903",
           "date_created": "2023-01-19T15:16:29.183130",
-          "flag_type": "FLAGGED",
+          "flag_type": "STOPPED",
           "id": "aa690cdc-f311-4805-8e8b-6ceca24493b2",
           "justification": "Test 1 for flagging",
           "section_to_flag": "information on the section to flag",
@@ -446,7 +446,8 @@
       "flags": [
         {
           "application_id": "242a8da0-c631-481b-b4bd-35ee41ef9903",
-          "date_created": "2023-01-19T16:14:08.847024",
+          "date_created": "2023-01-19T16:14:02.876704",
+          "flag_type": "FLAGGED",
           "id": "b07e70f4-f7bf-407f-bbff-205f3889ec02",
           "justification": "Test1 for flagging",
           "section_to_flag": "information on the section to flag",
