@@ -3,6 +3,7 @@ import logging
 from os import getenv
 
 from config.envs.default import DefaultConfig
+from fsd_utils import CommonConfig  # noqa
 from fsd_utils import configclass
 
 
