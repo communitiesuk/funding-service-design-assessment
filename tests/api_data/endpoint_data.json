@@ -393,6 +393,16 @@
     {
       "short_id": "COF-R2W2-IRNWPB",
       "workflow_status": "IN_PROGRESS",
+      "flags": [
+        {
+          "application_id": "242a8da0-c631-481b-b4bd-35ee41ef9903",
+          "date_created": "2023-01-19T15:16:29.183130",
+          "flag_type": "FLAGGED",
+          "id": "aa690cdc-f311-4805-8e8b-6ceca24493b2",
+          "justification": "Test 1 for flagging",
+          "section_to_flag": "information on the section to flag",
+          "user_id": "abu"
+        }],
       "application_id": "app_123",
       "type_of_application": "pub",
       "project_name": "Save the Dog and Duck",
@@ -408,6 +418,16 @@
     {
       "short_id": "COF-R2W2-AJTRIB",
       "workflow_status": "QA_READY",
+      "flags": [
+        {
+          "application_id": "242a8da0-c631-481b-b4bd-35ee41ef9903",
+          "date_created": "2023-01-19T16:14:02.876704",
+          "flag_type": "STOPPED",
+          "id": "1c5e8bea-f5ed-4b74-8823-e64fec27a7dd",
+          "justification": "Test1 for flagging",
+          "section_to_flag": "information on the section to flag",
+          "user_id": "abu"
+        }],
       "application_id": "234234234-123123123",
       "type_of_application": "sporting",
       "project_name": "Save the rugby pitch",
@@ -423,6 +443,15 @@
     {
       "short_id": "COF-R2W2-BMEQLK",
       "workflow_status": "NOT_STARTED",
+      "flags": [
+        {
+          "application_id": "242a8da0-c631-481b-b4bd-35ee41ef9903",
+          "date_created": "2023-01-19T16:14:08.847024",
+          "id": "b07e70f4-f7bf-407f-bbff-205f3889ec02",
+          "justification": "Test1 for flagging",
+          "section_to_flag": "information on the section to flag",
+          "user_id": "abu"
+        }],
       "application_id": "789789789-879789",
       "type_of_application": "community-centre",
       "project_name": "Save our village hall",
