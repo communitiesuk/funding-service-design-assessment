@@ -337,7 +337,6 @@ def application(application_id):
         f"Fetching data from '{assessor_task_list_metadata}'."
     )
     flag = get_latest_flag(application_id)
-    current_app.logger.error(flag)
     if flag:
         determine_display_status(state, flag)
         accounts = get_bulk_accounts_dict([flag.user_id])
