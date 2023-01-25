@@ -151,13 +151,24 @@ def selenium_chrome_driver(request, live_server):
 
 @pytest.fixture(scope="function")
 def mock_get_banner_state(mocker, scope="function"):
-    mocker.patch(
-        "app.assess.routes.get_banner_state",
-        return_value={
+    from app.assess.models.banner import Banner
+
+    mock_banner_info = Banner.from_filtered_dict(
+        {
             "short_id": "short",
             "project_name": "name",
             "funding_amount_requested": 10,
             "workflow_status": "IN_PROGRESS",
             "fund_id": "funding-service-design",
-        },
+        }
+    )
+
+    mocker.patch(
+        "app.assess.helpers.get_banner_state",
+        return_value=mock_banner_info,
+    )
+
+    mocker.patch(
+        "app.assess.routes.get_banner_state",
+        return_value=mock_banner_info,
     )

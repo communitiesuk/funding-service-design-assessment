@@ -30,10 +30,6 @@ class Round:
 
     @staticmethod
     def from_json(data: dict):
-        # eligibility_criteria = {}
-        # if "eligibility_criteria" in data:
-        #     for key, value in data["eligibility_criteria"].items():
-        #         eligibility_criteria.update({key: value})
         return Round(
             title=data.get("title"),
             id=data.get("id"),

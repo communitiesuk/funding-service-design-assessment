@@ -6,7 +6,6 @@ from app.assess.views.filters import format_address
 from app.assess.views.filters import format_project_ref
 from app.assess.views.filters import remove_dashes_underscores_capitalize
 from app.assess.views.filters import slash_separated_day_month_year
-from app.assess.views.filters import status_to_human
 
 
 class TestFilters(object):
@@ -19,11 +18,6 @@ class TestFilters(object):
         word_in = "HELLO WORLD"
         result = all_caps_to_human(word_in)
         assert "Hello world" == result, "Wrong format returned"
-
-    def test_status_to_human(self):
-        status_in = "NOT_STARTED"
-        result = status_to_human(status_in)
-        assert "Not Started" == result, "Wrong format returned"
 
     def test_slash_separated_day_month_year(self):
         date_in = "2023-01-30T12:00:00.500"

@@ -378,7 +378,7 @@ class TestAuthorisation:
         if not expect_resolve_flag_available:
             with pytest.raises(RuntimeError) as exec_info:
                 flask_test_client.get(
-                    "assess/resolve_flag/app123",
+                    "assess/resolve_flag/app_123",
                     follow_redirects=True,
                 )
             # Tries to redirect to authenticator
@@ -388,7 +388,7 @@ class TestAuthorisation:
             )
         else:
             response = flask_test_client.get(
-                "assess/resolve_flag/app123",
+                "assess/resolve_flag/app_123",
                 follow_redirects=True,
             )
             assert response.status_code == 200
@@ -429,7 +429,7 @@ class TestAuthorisation:
         if not expect_continue_available:
             with pytest.raises(RuntimeError) as exec_info:
                 flask_test_client.get(
-                    "assess/continue_assessment/app123",
+                    "assess/continue_assessment/stopped_app",
                     follow_redirects=True,
                 )
             # Tries to redirect to authenticator
@@ -439,7 +439,7 @@ class TestAuthorisation:
             )
         else:
             response = flask_test_client.get(
-                "assess/continue_assessment/app123",
+                "assess/continue_assessment/stopped_app",
                 follow_redirects=True,
             )
             assert response.status_code == 200

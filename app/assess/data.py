@@ -9,6 +9,7 @@ from urllib.parse import urlencode
 import boto3
 import requests
 from app.assess.models.application import Application
+from app.assess.models.banner import Banner
 from app.assess.models.comment import Comment
 from app.assess.models.flag import Flag
 from app.assess.models.fund import Fund
@@ -351,10 +352,10 @@ def get_banner_state(application_id: str):
         + Config.BANNER_STATE_ENDPOINT.format(application_id=application_id)
     )
 
-    banner_state = get_data(banner_state_endpoint)
+    banner = get_data(banner_state_endpoint)
 
-    if banner_state:
-        return banner_state
+    if banner:
+        return Banner.from_filtered_dict(banner)
     else:
         msg = f"banner_state: '{application_id}' not found."
         current_app.logger.warn(msg)

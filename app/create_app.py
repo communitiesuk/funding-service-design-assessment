@@ -5,7 +5,6 @@ from app.assess.views.filters import format_address
 from app.assess.views.filters import format_project_ref
 from app.assess.views.filters import remove_dashes_underscores_capitalize
 from app.assess.views.filters import slash_separated_day_month_year
-from app.assess.views.filters import status_to_human
 from app.assets import compile_static_assets
 from app.auth import auth_protect
 from config import Config
@@ -49,7 +48,6 @@ def create_app() -> Flask:
         "slash_separated_day_month_year"
     ] = slash_separated_day_month_year
     flask_app.jinja_env.filters["all_caps_to_human"] = all_caps_to_human
-    flask_app.jinja_env.filters["status_to_human"] = status_to_human
     flask_app.jinja_env.filters["datetime_format_24hr"] = datetime_format_24hr
     flask_app.jinja_env.filters["format_project_ref"] = format_project_ref
     flask_app.jinja_env.filters[

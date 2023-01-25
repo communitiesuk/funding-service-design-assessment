@@ -30,9 +30,9 @@
             </p>
         </div>
     </div>
-    {% elif flag and current_user_role in ("ASSESSOR", "LEAD_ASSESSOR") and flag.flag_type.name == "FLAGGED" %}
+    {% elif flag and current_user_role in ("ASSESSOR", "LEAD_ASSESSOR") and state.display_status == "FLAGGED" %}
         {{ assessment_flagged(flag, flag_user_info, application_id, current_user_role) }}
-    {% elif flag and current_user_role in ("ASSESSOR", "LEAD_ASSESSOR") and flag.flag_type.name == "STOPPED" %}
+    {% elif flag and current_user_role in ("ASSESSOR", "LEAD_ASSESSOR") and state.display_status == "STOPPED" %}
         {{ assessment_stopped(flag, flag_user_info, application_id, current_user_role) }}
     {% elif sub_criteria_status_completed %}
     <form method="POST" action="{{ url_for('assess_bp.application', application_id=application_id) }}">
@@ -50,13 +50,13 @@
         </div>
     </form>
     {% endif %}
-    
+
     {{ banner_summary(
         state.fund_name,
         state.short_id,
         state.project_name,
         state.funding_amount_requested,
-        state.workflow_status,
+        state.display_status,
         flag
     ) }}
 
