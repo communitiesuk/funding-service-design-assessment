@@ -9,12 +9,14 @@ from flask import request
 from flask import url_for
 
 
-def determine_display_status(state, latest_flag):
+def determine_display_status(state, latest_flag=None):
     """
     Deduce whether to override display_status with a
     flag.
     """
-    if latest_flag.flag_type == FlagType.RESOLVED:
+    if not latest_flag:
+        state.display_status = state.workflow_status
+    elif latest_flag and latest_flag.flag_type == FlagType.RESOLVED:
         state.display_status = state.workflow_status
         state.flag_resolved = True
     else:
