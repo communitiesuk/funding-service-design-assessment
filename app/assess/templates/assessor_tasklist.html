@@ -17,6 +17,12 @@
         {{ logout_partial(sso_logout_url) }}
     </div>
 
+    {% if flag and current_user_role in ("ASSESSOR", "LEAD_ASSESSOR") and state.display_status == "FLAGGED" %}
+        {{ assessment_flagged(flag, flag_user_info, application_id, current_user_role) }}
+    {% elif flag and current_user_role in ("ASSESSOR", "LEAD_ASSESSOR") and state.display_status == "STOPPED" %}
+        {{ assessment_stopped(flag, flag_user_info, application_id, current_user_role) }}
+    {% endif %}
+
     {% if state.workflow_status=="COMPLETED" %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
@@ -30,12 +36,7 @@
                 </p>
             </div>
         </div>
-    {% endif %}
-
-    {% if flag and current_user_role in ("ASSESSOR", "LEAD_ASSESSOR") and state.display_status == "FLAGGED" %}
-        {{ assessment_flagged(flag, flag_user_info, application_id, current_user_role) }}
-    {% elif flag and current_user_role in ("ASSESSOR", "LEAD_ASSESSOR") and state.display_status == "STOPPED" %}
-        {{ assessment_stopped(flag, flag_user_info, application_id, current_user_role) }}
+    </div>
     {% elif sub_criteria_status_completed %}
     <form method="POST" action="{{ url_for('assess_bp.application', application_id=application_id) }}">
         {{ form.csrf_token }}
