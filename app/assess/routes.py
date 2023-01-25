@@ -227,6 +227,12 @@ def flag(application_id):
 @assess_bp.route("/qa_complete/<application_id>", methods=["GET", "POST"])
 @login_required(roles_required=["LEAD_ASSESSOR"])
 def qa_complete(application_id):
+    """
+    QA complete form html page:
+    Allows you to mark an application as QA_completed by submitting the form.
+    Once submitted, a call is made to the application store endpoint to save
+    the QA_COMPLETED flag in the database for the given application_id
+    """
 
     form = MarkQaCompleteForm()
 
