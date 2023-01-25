@@ -497,3 +497,88 @@ class TestRoutes:
 
         assert response.status_code == 302
         assert response.headers["Location"] == "/assess/application/app_123"
+
+    def test_qa_complete_flag_displayed(self, flask_test_client, mocker):
+        token = create_valid_token(test_lead_assessor_claims)
+        flask_test_client.set_cookie("localhost", "fsd_user_token", token)
+        mocker.patch(
+            "app.assess.routes.get_assessor_task_list_state",
+            return_value={
+                "criterias": [],
+                "date_submitted": "2022-10-27T08:32:13.383999",
+                "fund_id": "47aef2f5-3fcb-4d45-acb5-f0152b5f03c4",
+                "funding_amount_requested": 4600.0,
+                "project_name": "Remodel the beautiful cinema in Cardiff",
+                "sections": [],
+                "short_id": "COF-R2W2-VPWRNH",
+                "workflow_status": "COMPLETED",
+            },
+        )
+        mocker.patch(
+            "app.assess.routes.get_latest_flag",
+            return_value=Flag.from_dict(
+                {
+                    "application_id": "app_123",
+                    "date_created": "2023-01-01T00:00:00",
+                    "flag_type": "QA_COMPLETED",
+                    "id": "flagid",
+                    "justification": "string",
+                    "section_to_flag": "community",
+                    "user_id": "test@example.com",
+                    "is_qa_complete": True,
+                }
+            ),
+        )
+        response = flask_test_client.get(
+            "assess/application/app_123",
+        )
+        app.assess.routes.get_latest_flag.assert_called_once()
+        app.assess.routes.get_latest_flag.assert_called_once_with("app_123")
+
+        assert response.status_code == 200
+        assert b"Marked as QA complete" in response.data
+        assert b"01/01/2023 at 00:00am" in response.data
+
+    def test_qa_completed_flagged_application(self, flask_test_client, mocker):
+        token = create_valid_token(test_lead_assessor_claims)
+        flask_test_client.set_cookie("localhost", "fsd_user_token", token)
+        mocker.patch(
+            "app.assess.routes.get_assessor_task_list_state",
+            return_value={
+                "criterias": [],
+                "date_submitted": "2022-10-27T08:32:13.383999",
+                "fund_id": "47aef2f5-3fcb-4d45-acb5-f0152b5f03c4",
+                "funding_amount_requested": 4600.0,
+                "project_name": "Remodel the beautiful cinema in Cardiff",
+                "sections": [],
+                "short_id": "COF-R2W2-VPWRNH",
+                "workflow_status": "COMPLETED",
+            },
+        )
+        mocker.patch(
+            "app.assess.routes.get_latest_flag",
+            return_value=Flag.from_dict(
+                {
+                    "application_id": "app_123",
+                    "date_created": "2023-01-01T00:00:00",
+                    "flag_type": "FLAGGED",
+                    "id": "flagid",
+                    "justification": "string",
+                    "section_to_flag": "community",
+                    "user_id": "test@example.com",
+                    "is_qa_complete": True,
+                }
+            ),
+        )
+        response = flask_test_client.get(
+            "assess/application/app_123",
+        )
+        app.assess.routes.get_latest_flag.assert_called_once()
+        app.assess.routes.get_latest_flag.assert_called_once_with("app_123")
+
+        assert response.status_code == 200
+        assert b"Marked as QA complete" in response.data
+        assert b"01/01/2023 at 00:00am" in response.data
+        assert b"Flagged" in response.data
+        assert b"Reason" in response.data
+        assert b"Resolve flag" in response.data

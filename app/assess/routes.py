@@ -230,7 +230,7 @@ def qa_complete(application_id):
 
     form = MarkQaCompleteForm()
 
-    if request.method == "POST" and form.validate_on_submit():
+    if form.validate_on_submit():
         submit_flag(
             application_id=application_id,
             flag_type=FlagType.QA_COMPLETED.name,
@@ -337,6 +337,7 @@ def application(application_id):
         f"Fetching data from '{assessor_task_list_metadata}'."
     )
     flag = get_latest_flag(application_id)
+    current_app.logger.error(flag)
     if flag:
         determine_display_status(state, flag)
         accounts = get_bulk_accounts_dict([flag.user_id])
