@@ -26,6 +26,20 @@ def determine_display_status(state, latest_flag=None):
 def resolve_application(
     form, application_id, flag, user_id, justification, section, page_to_render
 ):
+    """ This function is used to resolve an application by submitting a flag, justification, and section for the application.
+
+    Args:
+        form (obj): Form object to be validated and submitted
+        application_id (int): ID of the application
+        flag (str): Flag submitted for the application
+        justification (str): Justification for the flag submitted
+        section (str): Section of the application the flag is submitted for
+        page_to_render (str): Template name to be rendered
+        
+    Returns:
+        redirect: Redirects to the application page if the request method is "POST" and form is valid.
+        render_template: Renders the specified template with the application_id, fund_name, state, form, and referrer as parameters.
+    """
     if request.method == "POST" and form.validate_on_submit():
         submit_flag(application_id, flag, user_id, justification, section)
         return redirect(
