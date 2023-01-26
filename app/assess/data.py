@@ -387,6 +387,7 @@ def submit_flag(
 
     :param application_d: The application the flag belongs to.
     :param flag_type: The type of flag (e.g: 'FLAGGED' or 'STOPPED')
+    :param user_id: The id of the user raising the flag
     :param justification: The justification for raising the flag
     :param section: The assessment section the flag has been raised for.
     """

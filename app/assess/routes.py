@@ -75,10 +75,7 @@ def display_sub_criteria(
         )
 
     fund = get_fund(Config.COF_FUND_ID)
-
     flag = get_latest_flag(application_id)
-    determine_display_status(sub_criteria, flag)
-
     comments = get_comments(
         application_id=application_id,
         sub_criteria_id=sub_criteria_id,
@@ -86,6 +83,7 @@ def display_sub_criteria(
         themes=sub_criteria.themes,
     )
 
+    determine_display_status(sub_criteria, flag)
     common_template_config = {
         "current_theme_id": theme_id,
         "sub_criteria": sub_criteria,
@@ -343,7 +341,6 @@ def application(application_id):
     flag = get_latest_flag(application_id)
     if flag:
         accounts = get_bulk_accounts_dict([flag.user_id])
-    determine_display_status(state, flag)
 
     sub_criteria_status_completed = all_status_completed(state)
     form = AssessmentCompleteForm()
@@ -361,6 +358,7 @@ def application(application_id):
         assessor_task_list_metadata["fund_name"] = fund.name
         state = AssessorTaskList.from_json(assessor_task_list_metadata)
 
+    determine_display_status(state, flag)
     return render_template(
         "assessor_tasklist.html",
         sub_criteria_status_completed=sub_criteria_status_completed,
