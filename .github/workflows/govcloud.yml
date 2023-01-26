@@ -130,7 +130,7 @@ jobs:
   run-shared-tests_test:
     needs: deploy_test
     if: ${{ github.actor != 'dependabot[bot]' && github.ref == 'refs/heads/main' }}
-    uses: communitiesuk/funding-design-service-workflows/.github/workflows/run-shared-tests.yml@main
+    uses: communitiesuk/funding-design-service-workflows/.github/workflows/run-shared-tests.yml@bau-add-assessment-url
     with:
       perf_test_target_url_application_store: https://funding-service-design-application-store-test.london.cloudapps.digital
       perf_test_target_url_fund_store: https://funding-service-design-fund-store-test.london.cloudapps.digital
