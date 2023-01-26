@@ -438,6 +438,7 @@ class TestRoutes:
         app.assess.helpers.submit_flag.assert_called_once_with(
             "app_123",
             "RESOLVED",
+            "lead",
             "Checked with so and so.",
             "section not specified",
         )
@@ -491,6 +492,7 @@ class TestRoutes:
         app.assess.helpers.submit_flag.assert_called_once_with(
             "app_123",
             "RESOLVED",
+            "lead",
             "We should continue the application.",
             "section not specified",
         )
@@ -583,7 +585,7 @@ class TestRoutes:
         assert b"Flagged" in response.data
         assert b"Reason" in response.data
         assert b"Resolve flag" in response.data
-    
+
     def test_route_landing_shows_flagged(self, flask_test_client):
         response = flask_test_client.get("/assess/assessor_dashboard/")
 

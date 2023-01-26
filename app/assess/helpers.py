@@ -24,10 +24,10 @@ def determine_display_status(state, latest_flag=None):
 
 
 def resolve_application(
-    form, application_id, flag, justification, section, page_to_render
+    form, application_id, flag, user_id, justification, section, page_to_render
 ):
     if request.method == "POST" and form.validate_on_submit():
-        submit_flag(application_id, flag, justification, section)
+        submit_flag(application_id, flag, user_id, justification, section)
         return redirect(
             url_for(
                 "assess_bp.application",
