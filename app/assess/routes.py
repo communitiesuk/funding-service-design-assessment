@@ -426,7 +426,6 @@ def resolve_flag(application_id):
         justification=form.justification.data,
         section=section,
         page_to_render="resolve_flag.html",
-        resolution_flag=form.resolution_flag.data,
     )
 
 
