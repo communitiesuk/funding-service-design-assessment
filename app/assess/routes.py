@@ -9,6 +9,7 @@ from app.assess.forms.comments_form import CommentsForm
 from app.assess.forms.continue_application_form import ContinueApplicationForm
 from app.assess.forms.flag_form import FlagApplicationForm
 from app.assess.forms.mark_qa_complete_form import MarkQaCompleteForm
+from app.assess.forms.rescore_form import RescoreForm
 from app.assess.forms.resolve_flag_form import ResolveFlagForm
 from app.assess.forms.scores_and_justifications import ScoreForm
 from app.assess.helpers import determine_display_status
@@ -110,14 +111,19 @@ def display_sub_criteria(
             abort(404)
         # SECURITY SECTION END ######
 
-        form = ScoreForm()
-        score_error = justification_error = scores_submitted = False
+        score_form = ScoreForm()
+        rescore_form = RescoreForm()
+        score_error = (
+            justification_error
+        ) = scores_submitted = is_rescore = False
+        if rescore_form.validate_on_submit():
+            is_rescore = True
         if request.method == "POST":
             current_app.logger.info(f"Processing POST to {request.path}.")
-            if form.validate_on_submit():
-                score = int(form.score.data)
+            if score_form.validate_on_submit():
+                score = int(score_form.score.data)
                 user_id = g.account_id
-                justification = form.justification.data
+                justification = score_form.justification.data
                 submit_score_and_justification(
                     score=score,
                     justification=justification,
@@ -128,9 +134,9 @@ def display_sub_criteria(
                 scores_submitted = True
 
             else:
-                score_error = True if not form.score.data else False
+                score_error = True if not score_form.score.data else False
                 justification_error = (
-                    True if not form.justification.data else False
+                    True if not score_form.justification.data else False
                 )
         # call to assessment store to get latest score
         score_list = get_score_and_justification(
@@ -158,7 +164,9 @@ def display_sub_criteria(
             scores_submitted=scores_submitted,
             score_error=score_error,
             justification_error=justification_error,
-            form=form,
+            score_form=score_form,
+            rescore_form=rescore_form,
+            is_rescore=is_rescore,
             **common_template_config,
         )
 
