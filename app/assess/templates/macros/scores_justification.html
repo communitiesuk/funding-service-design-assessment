@@ -43,21 +43,19 @@
     {% endif %}
     {% endif %}
 
-    {{ is_rescore }}
-
-    {% if scores_submitted or latest_score %}
-    <form id="rescore_form" method="GET">
+    {% if (scores_submitted or latest_score) and not is_rescore %}
+    <form id="rescore_form" method="POST">
         {{ rescore_form.csrf_token }}
         {{govukButton
             ({
                 'text': 'Rescore',
                 'type': 'submit',
                 'classes': 'secondary-button govuk-!-margin-top-4' if not score_list else 'secondary-button',
-                'href': url_for('assess_bp.display_sub_criteria', application_id=application_id, sub_criteria_id=sub_criteria_id, theme_id='score')
             })
         }}
     </form>
-    {% else %}
+    {% endif %}
+    {% if is_rescore or not latest_score %}
     <form id="score_form" method="POST">
         {{ score_form.csrf_token }}
         <div class="govuk-form-group govuk-!-margin-top-4">

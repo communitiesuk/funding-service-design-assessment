@@ -116,10 +116,12 @@ def display_sub_criteria(
         score_error = (
             justification_error
         ) = scores_submitted = is_rescore = False
-        if rescore_form.validate_on_submit():
-            is_rescore = True
         if request.method == "POST":
             current_app.logger.info(f"Processing POST to {request.path}.")
+            if rescore_form.validate_on_submit():
+                is_rescore = True
+                score_error = False
+                justification_error = False
             if score_form.validate_on_submit():
                 score = int(score_form.score.data)
                 user_id = g.account_id
@@ -132,8 +134,7 @@ def display_sub_criteria(
                     sub_criteria_id=sub_criteria_id,
                 )
                 scores_submitted = True
-
-            else:
+                is_rescore = False
                 score_error = True if not score_form.score.data else False
                 justification_error = (
                     True if not score_form.justification.data else False
