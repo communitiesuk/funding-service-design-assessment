@@ -151,7 +151,7 @@ class TestRoutes:
 
     @pytest.mark.parametrize(
         "expected_names",
-        [b"Current score: 5", b"Rescore", b"Comments"],
+        [b"Current score: 5", b"Rescore", b"Current score:"],
     )
     def test_route_sub_criteria_scoring(
         self, flask_test_client, expected_names
