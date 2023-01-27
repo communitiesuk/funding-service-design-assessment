@@ -3,7 +3,7 @@ import logging
 from os import getenv
 
 from config.envs.default import DefaultConfig
-from fsd_utils import CommonConfig
+from fsd_utils import CommonConfig  # noqa
 from fsd_utils import configclass
 
 
@@ -22,8 +22,8 @@ class DevelopmentConfig(DefaultConfig):
     # USE_LOCAL_DATA = True
     # if USE_LOCAL_DATA:
     #     ACCOUNT_STORE_API_HOST = CommonConfig.TEST_ACCOUNT_STORE_API_HOST
-    #     APPLICATION_STORE_API_HOST = CommonConfig.TEST_APPLICATION_STORE_API_HOST
-    #     ASSESSMENT_STORE_API_HOST = CommonConfig.TEST_ASSESSMENT_STORE_API_HOST
+    #     APPLICATION_STORE_API_HOST = CommonConfig.TEST_APPLICATION_STORE_API_HOST # noqa
+    #     ASSESSMENT_STORE_API_HOST = CommonConfig.TEST_ASSESSMENT_STORE_API_HOST # noqa
     #     FUND_STORE_API_HOST = CommonConfig.TEST_FUND_STORE_API_HOST
 
     # for testing with docker runner:
@@ -33,7 +33,11 @@ class DevelopmentConfig(DefaultConfig):
     SSO_LOGIN_URL = AUTHENTICATOR_HOST + "/sso/login"
     SSO_LOGOUT_URL = AUTHENTICATOR_HOST + "/sso/logout"
 
-    DEBUG_USER_ROLE = getenv("DEBUG_USER_ROLE", "LEAD_ASSESSOR")
+    DEBUG_USER_ON = False  # Set to True to use DEBUG user
+
+    DEBUG_USER_ROLE = getenv(
+        "DEBUG_USER_ROLE", "LEAD_ASSESSOR" if DEBUG_USER_ON else ""
+    )
 
     DEBUG_USER = {
         "full_name": "Development User",

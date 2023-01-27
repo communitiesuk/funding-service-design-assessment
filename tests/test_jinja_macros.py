@@ -195,9 +195,9 @@ class TestJinjaMacros(object):
 
     def test_score_macro(self, request_ctx):
         rendered_html = render_template_string(
-            "{{scores(score_form_name, score_list, score_error)}}",
+            "{{scores(form, score_list, score_error)}}",
             scores=get_template_attribute("macros/scores.html", "scores"),
-            score_form_name="Score",
+            form=ScoreForm(),
             score_list=[
                 (5, "Strong"),
                 (4, "Good"),
@@ -592,6 +592,26 @@ class TestJinjaMacros(object):
             r'<a href="/assess/flag/12345".*Flag application.*</a>',
             rendered_html,
         ), "Flag application button not found"
+
+    def test_mark_qa_complete_button(self, request_ctx):
+        rendered_html = render_template_string(
+            "{{mark_qa_complete_button(12345)}}",
+            mark_qa_complete_button=get_template_attribute(
+                "macros/mark_qa_complete_button.html",
+                "mark_qa_complete_button",
+            ),
+        )
+
+        rendered_html = rendered_html.replace("\n", "")
+
+        assert re.search(
+            r'<div class="govuk-grid-row govuk-!-text-align-right">.*</div>',
+            rendered_html,
+        ), "Mark QA complete button container not found"
+        assert re.search(
+            r'<a href="/assess/qa_complete/12345".*Mark QA complete.*</a>',
+            rendered_html,
+        ), "Mark QA complete button not found"
 
     def test_stopped_assessment_flag(self, request_ctx):
         rendered_html = render_template_string(

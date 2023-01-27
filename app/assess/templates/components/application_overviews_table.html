@@ -106,7 +106,9 @@
                 <td class="govuk-table__cell">&pound;{{ "{:,.2f}".format(overview.funding_amount_requested|int|round) }}</td>
                 <td class="govuk-table__cell">{{ overview.location_json_blob.country}}</td>
                 <td class="govuk-table__cell">
-                {% if overview.flags
+                {% if overview.is_qa_complete and not overview.flags[-1].flag_type in ("FLAGGED", "STOPPED") %}
+                <span class="">QA complete</span>
+                {% elif overview.flags
                     and overview.flags[-1].flag_type == "STOPPED"
                 %}
                 <span class="stopped-tag">

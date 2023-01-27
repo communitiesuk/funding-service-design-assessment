@@ -8,6 +8,7 @@ from app.assess.forms.assessment_form import AssessmentCompleteForm
 from app.assess.forms.comments_form import CommentsForm
 from app.assess.forms.continue_application_form import ContinueApplicationForm
 from app.assess.forms.flag_form import FlagApplicationForm
+from app.assess.forms.mark_qa_complete_form import MarkQaCompleteForm
 from app.assess.forms.resolve_flag_form import ResolveFlagForm
 from app.assess.forms.scores_and_justifications import ScoreForm
 from app.assess.helpers import determine_display_status
@@ -74,11 +75,7 @@ def display_sub_criteria(
         )
 
     fund = get_fund(Config.COF_FUND_ID)
-
     flag = get_latest_flag(application_id)
-    if flag:
-        determine_display_status(sub_criteria, flag)
-
     comments = get_comments(
         application_id=application_id,
         sub_criteria_id=sub_criteria_id,
@@ -86,6 +83,7 @@ def display_sub_criteria(
         themes=sub_criteria.themes,
     )
 
+    determine_display_status(sub_criteria, flag)
     common_template_config = {
         "current_theme_id": theme_id,
         "sub_criteria": sub_criteria,
@@ -133,7 +131,7 @@ def display_sub_criteria(
                 score_error = True if not form.score.data else False
                 justification_error = (
                     True if not form.justification.data else False
-                )      
+                )
         # call to assessment store to get latest score
         score_list = get_score_and_justification(
             application_id, sub_criteria_id, score_history=True
@@ -151,7 +149,6 @@ def display_sub_criteria(
             (2, "Partial"),
             (1, "Poor"),
         ]
-
         return render_template(
             "sub_criteria.html",
             on_summary=True,
@@ -193,6 +190,7 @@ def flag(application_id):
         submit_flag(
             application_id,
             FlagType.FLAGGED.name,
+            g.account_id,
             form.justification.data,
             form.section.data,
         )
@@ -204,13 +202,54 @@ def flag(application_id):
         )
 
     flag = get_latest_flag(application_id)
-    if flag and flag.flag_type is not FlagType.RESOLVED:
+    if flag and flag.flag_type not in (
+        FlagType.RESOLVED,
+        FlagType.QA_COMPLETED,
+    ):
         abort(400, "Application already flagged")
     banner_state = get_banner_state(application_id)
     fund = get_fund(banner_state.fund_id)
 
     return render_template(
         "flag_application.html",
+        application_id=application_id,
+        fund_name=fund.name,
+        banner_state=banner_state,
+        form=form,
+        referrer=request.referrer,
+    )
+
+
+@assess_bp.route("/qa_complete/<application_id>", methods=["GET", "POST"])
+@login_required(roles_required=["LEAD_ASSESSOR"])
+def qa_complete(application_id):
+    """
+    QA complete form html page:
+    Allows you to mark an application as QA_completed by submitting the form.
+    Once submitted, a call is made to the application store endpoint to save
+    the QA_COMPLETED flag in the database for the given application_id
+    """
+
+    form = MarkQaCompleteForm()
+
+    if form.validate_on_submit():
+        submit_flag(
+            application_id=application_id,
+            flag_type=FlagType.QA_COMPLETED.name,
+            user_id=g.account_id,
+        )
+        return redirect(
+            url_for(
+                "assess_bp.application",
+                application_id=application_id,
+            )
+        )
+
+    banner_state = get_banner_state(application_id)
+    fund = get_fund(banner_state.fund_id)
+
+    return render_template(
+        "mark_qa_complete.html",
         application_id=application_id,
         fund_name=fund.name,
         banner_state=banner_state,
@@ -301,7 +340,6 @@ def application(application_id):
     )
     flag = get_latest_flag(application_id)
     if flag:
-        determine_display_status(state, flag)
         accounts = get_bulk_accounts_dict([flag.user_id])
 
     sub_criteria_status_completed = all_status_completed(state)
@@ -320,6 +358,7 @@ def application(application_id):
         assessor_task_list_metadata["fund_name"] = fund.name
         state = AssessorTaskList.from_json(assessor_task_list_metadata)
 
+    determine_display_status(state, flag)
     return render_template(
         "assessor_tasklist.html",
         sub_criteria_status_completed=sub_criteria_status_completed,
@@ -382,6 +421,7 @@ def resolve_flag(application_id):
         form=form,
         application_id=application_id,
         flag=form.resolution_flag.data,
+        user_id=g.account_id,
         justification=form.justification.data,
         section=section,
         page_to_render="resolve_flag.html",
@@ -398,6 +438,7 @@ def continue_assessment(application_id):
         form=form,
         application_id=application_id,
         flag=FlagType.RESOLVED.name,
+        user_id=g.account_id,
         justification=form.reason.data,
         section="NA",
         page_to_render="continue_assessment.html",

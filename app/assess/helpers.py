@@ -9,12 +9,14 @@ from flask import request
 from flask import url_for
 
 
-def determine_display_status(state, latest_flag):
+def determine_display_status(state, latest_flag=None):
     """
     Deduce whether to override display_status with a
     flag.
     """
-    if latest_flag.flag_type == FlagType.RESOLVED:
+    if not latest_flag:
+        state.display_status = state.workflow_status
+    elif latest_flag and latest_flag.flag_type == FlagType.RESOLVED:
         state.display_status = state.workflow_status
         state.flag_resolved = True
     else:
@@ -22,10 +24,24 @@ def determine_display_status(state, latest_flag):
 
 
 def resolve_application(
-    form, application_id, flag, justification, section, page_to_render
+    form, application_id, flag, user_id, justification, section, page_to_render
 ):
+    """ This function is used to resolve an application by submitting a flag, justification, and section for the application.
+
+    Args:
+        form (obj): Form object to be validated and submitted
+        application_id (int): ID of the application
+        flag (str): Flag submitted for the application
+        justification (str): Justification for the flag submitted
+        section (str): Section of the application the flag is submitted for
+        page_to_render (str): Template name to be rendered
+        
+    Returns:
+        redirect: Redirects to the application page if the request method is "POST" and form is valid.
+        render_template: Renders the specified template with the application_id, fund_name, state, form, and referrer as parameters.
+    """
     if request.method == "POST" and form.validate_on_submit():
-        submit_flag(application_id, flag, justification, section)
+        submit_flag(application_id, flag, user_id, justification, section)
         return redirect(
             url_for(
                 "assess_bp.application",

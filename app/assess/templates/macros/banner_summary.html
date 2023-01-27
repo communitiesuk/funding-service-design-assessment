@@ -13,9 +13,19 @@
                         name: {{ project_name }}</h3>
                     <h3 class="govuk-body-l fsd-banner-content">Total funding requested:
                         &pound;{{ "{:,.2f}".format(funding_amount_requested | float) }}</h3>
+                    {% if flag and flag.is_qa_complete and display_status not in ('FLAGGED', 'STOPPPED')  %}
                     <h3 class="govuk-body-l fsd-banner-content fsd-banner-collapse-padding">
-                        {{ 'Assessment complete' if display_status=='COMPLETED' else display_status | all_caps_to_human }}
+                        QA complete
                     </h3>
+                    {% elif display_status=='COMPLETED' %}
+                    <h3 class="govuk-body-l fsd-banner-content fsd-banner-collapse-padding">
+                        Assessment complete
+                    </h3>
+                    {% else %}
+                    <h3 class="govuk-body-l fsd-banner-content fsd-banner-collapse-padding">
+                        {{ display_status | all_caps_to_human }}
+                    </h3>
+                    {% endif %}
                 </div>
             </div>
         </div>
