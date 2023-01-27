@@ -500,7 +500,6 @@ class TestRoutes:
         assert response.status_code == 302
         assert response.headers["Location"] == "/assess/application/app_123"
 
-
     def test_qa_complete_flag_displayed(self, flask_test_client, mocker):
         token = create_valid_token(test_lead_assessor_claims)
         flask_test_client.set_cookie("localhost", "fsd_user_token", token)
