@@ -5,7 +5,7 @@
     {% for sub_criteria in criteria.sub_criterias %}
         {% set _ = rows.append([
             {
-                "html": '<a class="govuk-link" href="{}">{}</a>'.format(
+                "html": '<a class="govuk-link" id="sub_criteria_name" href="{}">{}</a>'.format(
                     url_for(
                         'assess_bp.display_sub_criteria',
                          application_id=application_id,
@@ -15,7 +15,7 @@
                 )
             },
             { "text": sub_criteria.score or "", "format": "numeric" } if g.user.highest_role in ["ASSESSOR","LEAD_ASSESSOR"] else None,
-            { "html": '<span class="govuk-tag--scored-criteria">{}</span>'.format(sub_criteria.status|all_caps_to_human),
+            { "html": '<span class="{}">{}</span>'.format('govuk-tag--scored-criteria' if sub_criteria.status == 'NOT_STARTED' else '', 'Complete' if sub_criteria.status=='COMPLETED' else sub_criteria.status|all_caps_to_human),
                 "format": "numeric" }
         ]) %}
     {% endfor %}

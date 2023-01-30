@@ -101,7 +101,7 @@
             <tr class="govuk-table__row">
 
                 <td class="govuk-table__cell">{{overview.short_id[-6:]}}</td>
-                <td class="govuk-table__cell"><a class="govuk-link" href="{{url_for('assess_bp.application',application_id=overview.application_id)}}">{{overview.project_name}}</a></td>
+                <td class="govuk-table__cell"><a class="govuk-link" id="project_name" href="{{url_for('assess_bp.application',application_id=overview.application_id)}}">{{overview.project_name}}</a></td>
                 <td class="govuk-table__cell">{{asset_types[overview.asset_type]}}</td>
                 <td class="govuk-table__cell">&pound;{{ "{:,.2f}".format(overview.funding_amount_requested|int|round) }}</td>
                 <td class="govuk-table__cell">{{ overview.location_json_blob.country}}</td>
@@ -122,6 +122,10 @@
                 </span>
                 {% elif overview.workflow_status == "NOT_STARTED" %}
                 <span class="not-started-tag">
+                  {{assessment_statuses[overview.workflow_status]}}
+                </span>
+                {% elif overview.workflow_status == "COMPLETED" %}
+                <span>
                   {{assessment_statuses[overview.workflow_status]}}
                 </span>
                 {% else %}

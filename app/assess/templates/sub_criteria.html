@@ -15,8 +15,10 @@
 
     <div class="govuk-phase-banner flex-parent-element">
         <p class="govuk-!-text-align-left flex-parent-element flexed-element-margins-collapse">
-            {{ govukBackLink({'href': url_for("assess_bp.application", application_id=application_id), 'text': 'Back to assessment overview'}) }}
+            <a href="{{url_for('assess_bp.application', application_id=application_id)}}" class="govuk-back-link" id="back-to-assessment-overview-link">
+                Back to assessment overview</a>
         </p>
+
         {{ logout_partial(sso_logout_url) }}
     </div>
 
@@ -27,7 +29,6 @@
         sub_criteria.funding_amount_requested,
         sub_criteria.display_status
     ) }}
-
     <div class="govuk-width-container">
         {% if not is_flagged and g.user.highest_role in ("ASSESSOR", "LEAD_ASSESSOR") %}
             {{ flag_application_button(application_id) }}
