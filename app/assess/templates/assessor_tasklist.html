@@ -16,8 +16,7 @@
 
 <div class="govuk-phase-banner flex-parent-element">
     <p class="govuk-!-text-align-left flex-parent-element flexed-element-margins-collapse">
-        <a href="{{url_for('assess_bp.landing')}}" class="govuk-back-link" id="back-to-assessment-dashboard">
-            Back to <b>assessment dashboard</b></a>
+        {{ govukBackLink({'href': url_for("assess_bp.landing"), 'html': 'Back to <b>assessment dashboard</b>', 'attributes': {'id': 'back-to-assessment-dashboard'}}) }}
     </p>
 
     {{ logout_partial(sso_logout_url) }}
