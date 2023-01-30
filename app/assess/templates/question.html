@@ -4,7 +4,7 @@
 {%- from 'govuk_frontend_jinja/components/back-link/macro.html' import govukBackLink -%}
 
 {% block beforeContent %}
-<a href="{{url_for('assess_bp.application', application_id=application.identifier)}}" class="govuk-back-link" id="back-to-link">
+<a href="{{url_for('assess_bp.application', application_id=application.identifier)}}" class="govuk-back-link">
   Back to <b>{{application.identifier}}</b></a>
 {% endblock %}
 
