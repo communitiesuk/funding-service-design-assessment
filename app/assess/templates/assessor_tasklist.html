@@ -46,6 +46,7 @@
                     </p>
                 </div>
             </div>
+        </div>
     {% elif sub_criteria_status_completed and not flag.is_qa_complete %}
     <form method="POST" action="{{ url_for('assess_bp.application', application_id=application_id) }}">
         {{ form.csrf_token }}
