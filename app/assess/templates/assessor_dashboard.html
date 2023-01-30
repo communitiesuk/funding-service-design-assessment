@@ -4,7 +4,7 @@
 {% import 'components/application_overviews_table.html' as application_overviews_table-%}
 {% from "macros/banner_summary.html" import banner_summary %}
 {% from "macros/logout_partial.html" import logout_partial %}
-
+{% set pageHeading %}Team dashboard{% endset %}
 {% block content %}
     <div class="govuk-phase-banner flex-parent-element">
         {{ logout_partial(sso_logout_url) }}
@@ -15,7 +15,7 @@
             <div class="govuk-grid-row">
                 <div class="govuk-grid-column-full">
                     <div class="govuk-grid-column-two-thirds">
-                        <h1 class="govuk-heading-xl fsd-banner-content">Team dashboard</h1>
+                        <h1 class="govuk-heading-xl fsd-banner-content">{{pageHeading}}</h1>
                         {% if user.highest_role == "LEAD_ASSESSOR" %}
                             <div class="govuk-body fsd-banner-content lead-dashboard-stats">
                                 <div class="lead-dashboard-stat">

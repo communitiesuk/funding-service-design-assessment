@@ -9,8 +9,9 @@
 {% from "macros/comments_summary.html" import comment_summary %}
 {% from "macros/comments_box.html" import comment_box %}
 {% from "macros/logout_partial.html" import logout_partial %}
-
-
+{% set pageHeading %}
+{{ sub_criteria.name }} -  {{sub_criteria.project_name}}
+{% endset %}
 {% block content %}
 
     <div class="govuk-phase-banner flex-parent-element">
