@@ -194,10 +194,12 @@ class TestJinjaMacros(object):
         ), "Should have 1 table body"
 
     def test_score_macro(self, request_ctx):
+        form = ScoreForm()
+        form.score.errors = True
         rendered_html = render_template_string(
-            "{{scores(form, score_list, score_error)}}",
+            "{{scores(form, score_list)}}",
             scores=get_template_attribute("macros/scores.html", "scores"),
-            form=ScoreForm(),
+            form=form,
             score_list=[
                 (5, "Strong"),
                 (4, "Good"),
@@ -205,7 +207,6 @@ class TestJinjaMacros(object):
                 (2, "Partial"),
                 (1, "Poor"),
             ],
-            score_error=False,
         )
 
         # replacing new lines to more easily regex match the html
@@ -249,13 +250,14 @@ class TestJinjaMacros(object):
         ), "Save comment button not found"
 
     def test_justification_macro(self, request_ctx):
+        form = ScoreForm()
+        form.justification.errors = True
         rendered_html = render_template_string(
-            "{{justification(form, justification_error)}}",
+            "{{justification(form)}}",
             justification=get_template_attribute(
                 "macros/justification.html", "justification"
             ),
-            form=ScoreForm(),
-            justification_error=True,
+            form=form,
         )
 
         # replacing new lines to more easily regex match the html

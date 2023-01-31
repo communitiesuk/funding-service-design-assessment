@@ -16,8 +16,9 @@
 
 <div class="govuk-phase-banner flex-parent-element">
     <p class="govuk-!-text-align-left flex-parent-element flexed-element-margins-collapse">
-        {{ govukBackLink({'href': url_for("assess_bp.landing"), 'text': 'Back to assessment dashboard'}) }}
+        {{ govukBackLink({'href': url_for("assess_bp.landing"), 'html': 'Back to <b>assessment dashboard</b>', 'attributes': {'id': 'back-to-assessment-dashboard'}}) }}
     </p>
+
     {{ logout_partial(sso_logout_url) }}
 </div>
 
@@ -44,6 +45,7 @@
                     </p>
                 </div>
             </div>
+        </div>
     {% elif sub_criteria_status_completed and not flag.is_qa_complete %}
     <form method="POST" action="{{ url_for('assess_bp.application', application_id=application_id) }}">
         {{ form.csrf_token }}
