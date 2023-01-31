@@ -6,7 +6,7 @@ from wtforms.validators import InputRequired
 
 class ScoreForm(FlaskForm):
     """
-    Given class is a form class model for search fund
+    Given class is a form class model for scoring a sub-criteria fund
     """
 
     score = RadioField(

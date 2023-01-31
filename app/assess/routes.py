@@ -111,6 +111,7 @@ def display_sub_criteria(
             abort(404)
         # SECURITY SECTION END ######
 
+        # Forms for scoring a sub-criteria
         score_form = ScoreForm()
         rescore_form = RescoreForm()
         score_error = (
