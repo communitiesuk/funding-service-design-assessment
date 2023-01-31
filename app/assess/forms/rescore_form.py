@@ -1,4 +1,6 @@
 from flask_wtf import FlaskForm
+from wtforms import HiddenField
+from wtforms.validators import DataRequired
 
 
 class RescoreForm(FlaskForm):
@@ -8,4 +10,4 @@ class RescoreForm(FlaskForm):
     rescored.
     """
 
-    pass
+    hidden = HiddenField("Hidden", validators=[DataRequired()])

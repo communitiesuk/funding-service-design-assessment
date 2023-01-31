@@ -114,16 +114,10 @@ def display_sub_criteria(
         # Forms for scoring a sub-criteria
         score_form = ScoreForm()
         rescore_form = RescoreForm()
-        score_error = (
-            justification_error
-        ) = scores_submitted = is_rescore = False
-        if request.method == "POST":
-            current_app.logger.info(f"Processing POST to {request.path}.")
-            if rescore_form.validate_on_submit():
-                is_rescore = True
-                score_error = False
-                justification_error = False
+        is_rescore = rescore_form.validate_on_submit()
+        if not is_rescore:
             if score_form.validate_on_submit():
+                current_app.logger.info(f"Processing POST to {request.path}.")
                 score = int(score_form.score.data)
                 user_id = g.account_id
                 justification = score_form.justification.data
@@ -134,12 +128,9 @@ def display_sub_criteria(
                     user_id=user_id,
                     sub_criteria_id=sub_criteria_id,
                 )
-                scores_submitted = True
-                is_rescore = False
-                score_error = True if not score_form.score.data else False
-                justification_error = (
-                    True if not score_form.justification.data else False
-                )
+            else:
+                is_rescore = True
+
         # call to assessment store to get latest score
         score_list = get_score_and_justification(
             application_id, sub_criteria_id, score_history=True
@@ -163,9 +154,6 @@ def display_sub_criteria(
             score_list=score_list or None,
             latest_score=latest_score,
             COF_score_list=COF_score_list,
-            scores_submitted=scores_submitted,
-            score_error=score_error,
-            justification_error=justification_error,
             score_form=score_form,
             rescore_form=rescore_form,
             is_rescore=is_rescore,

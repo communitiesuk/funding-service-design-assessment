@@ -46,7 +46,7 @@
             </div>
             <div class="theme govuk-grid-column-two-thirds">
                 {% if on_summary and g.user.highest_role in ["ASSESSOR","LEAD_ASSESSOR"] %}
-                    {{scores_justification(scores_submitted, score_form, rescore_form, is_rescore, score_list, latest_score, application_id, sub_criteria.id, COF_score_list, score_error, justification_error)}}
+                    {{scores_justification(score_form, rescore_form, is_rescore, score_list, latest_score, application_id, sub_criteria.id, COF_score_list)}}
                 {% else %}
                     {{theme(current_theme_id, answers_meta)}}
                 {% endif %}
