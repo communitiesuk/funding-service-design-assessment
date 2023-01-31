@@ -78,9 +78,7 @@ flag
             <button class="govuk-button primary-button" data-module="govuk-button">
               Submit
             </button>
-            <a href="{{ referrer }}" class="govuk-button secondary-button govuk-link--no-visited-state">
-              Cancel
-            </a>
+            <a href="{{url_for('assess_bp.application', application_id=application_id)}}" class="govuk-button secondary-button govuk-link--no-visited-state">Cancel</a>
           </div>
         </form>
       </div>
