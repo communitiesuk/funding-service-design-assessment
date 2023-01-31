@@ -4,7 +4,7 @@
 {%- from 'govuk_frontend_jinja/components/textarea/macro.html' import govukTextarea -%}
 {% from "macros/banner_summary.html" import banner_summary %}
 {% from "macros/logout_partial.html" import logout_partial %}
-
+{% set pageHeading = "Flag application" %}
 {% block content %}
 <div class="govuk-phase-banner flex-parent-element">
     <p class="govuk-!-text-align-left flex-parent-element flexed-element-margins-collapse">
@@ -29,7 +29,7 @@
                     <div class="govuk-grid-column-two-thirds">
                         <form method="POST">
                             {{ form.csrf_token }}
-                            <h1 class="govuk-heading govuk-heading-l">Flag application</h1>
+                            <h1 class="govuk-heading govuk-heading-l">{{pageHeading}}</h1>
                             <p class="govuk-body">
                                 Flag a section to a lead assessor. They will review the responses
                                 to either resolve your query, or stop the assessment.
