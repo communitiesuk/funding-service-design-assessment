@@ -32,7 +32,7 @@
         {{ assessment_stopped(flag, flag_user_info, application_id, current_user_role) }}
     {% endif %}
 
-    {% if state.workflow_status=="COMPLETED" and not flag.is_qa_complete %}
+    {% if state.workflow_status=="COMPLETED" and current_user_role != "COMMENTER" and not flag.is_qa_complete %}
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-full">
                 <div class="assessment-complete  govuk-margin-bottom-8">
@@ -46,7 +46,8 @@
                 </div>
             </div>
         </div>
-    {% elif sub_criteria_status_completed and not flag.is_qa_complete %}
+        
+    {% elif sub_criteria_status_completed and current_user_role != "COMMENTER" and not flag.is_qa_complete %}
     <form method="POST" action="{{ url_for('assess_bp.application', application_id=application_id) }}">
         {{ form.csrf_token }}
         <div class="govuk-grid-row">
