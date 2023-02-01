@@ -115,7 +115,7 @@ def display_sub_criteria(
         score_form = ScoreForm()
         rescore_form = RescoreForm()
         is_rescore = rescore_form.validate_on_submit()
-        if not is_rescore:
+        if not is_rescore and request.method == "POST":
             if score_form.validate_on_submit():
                 current_app.logger.info(f"Processing POST to {request.path}.")
                 score = int(score_form.score.data)
