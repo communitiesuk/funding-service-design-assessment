@@ -124,6 +124,10 @@
                 <span class="not-started-tag">
                   {{assessment_statuses[overview.workflow_status]}}
                 </span>
+                {% elif overview.workflow_status == "COMPLETED" %}
+                <span>
+                  {{assessment_statuses[overview.workflow_status]}}
+                </span>
                 {% else %}
                 <span>
                   {{assessment_statuses[overview.workflow_status]}}
