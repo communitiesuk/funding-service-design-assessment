@@ -2,7 +2,7 @@
 {% from "macros/justification.html" import justification %}
 {%- from "govuk_frontend_jinja/components/button/macro.html" import govukButton -%}
 
-{% macro scores_justification(scores_submitted, form, score_list, latest_score, application_id, sub_criteria_id, COF_score_list, score_error, justification_error) %}
+{% macro scores_justification(score_form, rescore_form, is_rescore, score_list, latest_score, application_id, sub_criteria_id, COF_score_list) %}
 
 <div class="govuk-grid-column-full s26-scoring">
     {% if latest_score %}
@@ -43,18 +43,22 @@
     {% endif %}
     {% endif %}
 
-    {% if scores_submitted %}
+    {% if latest_score and not is_rescore %}
+    <form id="rescore_form" method="POST">
+        {{ rescore_form.csrf_token }}
         {{govukButton
             ({
                 'text': 'Rescore',
                 'type': 'submit',
                 'classes': 'secondary-button govuk-!-margin-top-4' if not score_list else 'secondary-button',
-                'href': url_for('assess_bp.display_sub_criteria', application_id=application_id, sub_criteria_id=sub_criteria_id, theme_id='score')
             })
         }}
-    {% else %}
-    <form method="POST">
-        {{ form.csrf_token }}
+        <input type="hidden" name="hidden" value="is_rescore">
+    </form>
+    {% endif %}
+    {% if is_rescore or not latest_score %}
+    <form id="score_form" method="POST">
+        {{ score_form.csrf_token }}
         <div class="govuk-form-group govuk-!-margin-top-4">
             {% if latest_score %}
             <h2 class="govuk-heading-m">Rescore</h2>
@@ -66,8 +70,8 @@
                 the&nbsp;<a class="govuk-link govuk-link--no-visited-state" href="https://mhclg.sharepoint.com/:w:/s/CommunityOwnershipFund/Ecv3iM7U0AtKtyHnzRrQ9dsB0HdMPvHWqAoGn1WrWM7EMA?e=6QpdUT">assessment
                     criteria</a>.</p>
             <p class="govuk-body">You can rescore at any point.</p>
-            {{scores(form, COF_score_list, score_error)}}
-            {{justification(form, justification_error)}}
+            {{scores(score_form, COF_score_list)}}
+            {{justification(score_form)}}
         </div>
         {% if latest_score %}
             {{govukButton({'text': 'Save a new score', 'type':'submit', 'classes': 'primary-button'})}}
