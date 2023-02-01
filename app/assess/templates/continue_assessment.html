@@ -8,7 +8,8 @@
 {% block content %}
 <div class="govuk-phase-banner flex-parent-element">
     <p class="govuk-!-text-align-left flex-parent-element flexed-element-margins-collapse">
-        {{ govukBackLink({'href': url_for("assess_bp.landing"), 'text': 'Back to <b>assessment dashboard</b>'}) }}
+        <a href="{{url_for('assess_bp.landing')}}" class="govuk-back-link" id="back-to-assessment-dashboard">
+            Back to <b>assessment dashboard</b></a>
     </p>
     {{ logout_partial(sso_logout_url) }}
 </div>
