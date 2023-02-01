@@ -333,9 +333,6 @@ def application(application_id):
     assessor_task_list_metadata["fund_name"] = fund.name
 
     state = AssessorTaskList.from_json(assessor_task_list_metadata)
-    current_app.logger.info(
-        f"Fetching data from '{assessor_task_list_metadata}'."
-    )
     flag = get_latest_flag(application_id)
     if flag:
         accounts = get_bulk_accounts_dict([flag.user_id])
