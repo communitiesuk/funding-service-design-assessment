@@ -16,11 +16,10 @@ asset_types = {
 
 assessment_statuses = {
     "ALL": "All",
-    "NOT_STARTED": "Not Started",
-    "IN_PROGRESS": "In Progress",
-    "QA_READY": "Ready for QA",
-    "QA_COMPLETE": "QA Complete",
-    "FLAGGED": "Flagged",
-    "INELIGIBLE": "Ineligible",
+    "NOT_STARTED": "Not started",
+    "IN_PROGRESS": "In progress",
     "COMPLETED": "Assessment complete",
+    "QA_COMPLETED": "QA complete",
+    "FLAGGED": "Flagged",
+    "STOPPED": "Stopped",
 }
