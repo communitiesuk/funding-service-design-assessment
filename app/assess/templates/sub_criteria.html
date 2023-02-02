@@ -10,11 +10,7 @@
 {% from "macros/comments_box.html" import comment_box %}
 {% from "macros/logout_partial.html" import logout_partial %}
 {% set pageHeading %}
-{% if current_theme.id == sub_criteria.id %}
-{{ sub_criteria.name }} -  {{sub_criteria.project_name}}
-{% else %}
-{{current_theme.name}} - {{ sub_criteria.name }} -  {{sub_criteria.project_name}}
-{% endif %}
+{{current_theme_id|all_caps_to_human}} - {{ sub_criteria.name }} -  {{sub_criteria.project_name}}
 {% endset %}
 {% block content %}
 
@@ -47,20 +43,20 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
             <div class="govuk-grid-column-one-third">
-                {{ navbar(application_id, sub_criteria, current_theme.id, on_summary) }}
+                {{ navbar(application_id, sub_criteria, current_theme_id, on_summary) }}
             </div>
             <div class="theme govuk-grid-column-two-thirds">
                 {% if on_summary and g.user.highest_role in ["ASSESSOR","LEAD_ASSESSOR"] %}
                     {{scores_justification(score_form, rescore_form, is_rescore, score_list, latest_score, application_id, sub_criteria.id, COF_score_list)}}
                 {% else %}
-                    {{theme(current_theme.id, answers_meta)}}
+                    {{theme(current_theme_id, answers_meta)}}
                 {% endif %}
-                {%if current_theme.id == "score"%}
+                {%if current_theme_id == "score"%}
                 {{comment_summary(comments,sub_criteria.themes)}}
                 {% else %}
                 {{comment(comments)}}
                 {% endif %}
-                {% if display_comment_box != True and current_theme.id != "score" %}
+                {% if display_comment_box != True and current_theme_id != "score" %}
                     <a
                         id="comment"
                         class="govuk-button secondary-button govuk-!-margin-top-2 govuk-!-margin-bottom-6"
@@ -70,7 +66,7 @@
                             "assess_bp.display_sub_criteria",
                             application_id=application_id,
                             sub_criteria_id=sub_criteria.id,
-                            theme_id=current_theme.id,
+                            theme_id=current_theme_id,
                             add_comment="1",
                             _anchor="comment"
                         ) }}"
