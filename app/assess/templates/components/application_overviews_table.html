@@ -1,7 +1,7 @@
 {% from "govuk_frontend_jinja/components/input/macro.html" import govukInput %}
 
 
-{% macro render(application_overviews, query_params, asset_types, assessment_statuses, show_clear_filters) -%}
+{% macro render(application_overviews, query_params, asset_types, assessment_statuses, show_clear_filters, user_role) -%}
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full search-bar-flex-container">
     <div>
@@ -89,9 +89,11 @@
         Location
       </th>
 
+      {% if user_role != "COMMENTER" %}
       <th scope="col" class="govuk-table__header">
         Status
       </th>
+      {% endif %}
 
     </tr>
   </thead>
@@ -105,6 +107,8 @@
                 <td class="govuk-table__cell">{{asset_types[overview.asset_type]}}</td>
                 <td class="govuk-table__cell">&pound;{{ "{:,.2f}".format(overview.funding_amount_requested|int|round) }}</td>
                 <td class="govuk-table__cell">{{ overview.location_json_blob.country}}</td>
+
+                {% if user_role != "COMMENTER" %}
                 <td class="govuk-table__cell">
                 {% if overview.is_qa_complete and not overview.flags[-1].flag_type in ("FLAGGED", "STOPPED") %}
                 <span class="">QA complete</span>
@@ -135,6 +139,7 @@
                 </span>
                 {% endif %}
                 </td>
+                {% endif %}
             </tr>
         {% endfor %}
   </tbody>
