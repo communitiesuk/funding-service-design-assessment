@@ -46,7 +46,7 @@
                 </div>
             </div>
         </div>
-        
+
     {% elif sub_criteria_status_completed and current_user_role != "COMMENTER" and not flag.is_qa_complete %}
     <form method="POST" action="{{ url_for('assess_bp.application', application_id=application_id) }}">
         {{ form.csrf_token }}
@@ -92,7 +92,7 @@
                     </div>
                     <div class="govuk-grid-column-one-third govuk-!-margin-top-2 govuk-button-group">
                         <span>
-                              {% if g.user.highest_role == "LEAD_ASSESSOR" and state.workflow_status=="COMPLETED" and not flag.is_qa_complete and not flag.flag_type.name == "STOPPED" %}
+                              {% if g.user.highest_role == "LEAD_ASSESSOR" and state.workflow_status=="COMPLETED" and not flag.is_qa_complete and not (flag and flag.flag_type.name == "STOPPED") %}
                                 {{ mark_qa_complete_button(application_id) }}
                               {% endif %}
                         </span>
