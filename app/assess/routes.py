@@ -15,6 +15,7 @@ from app.assess.forms.scores_and_justifications import ScoreForm
 from app.assess.helpers import determine_display_status
 from app.assess.helpers import resolve_application
 from app.assess.models.flag import FlagType
+from app.assess.models.theme import Theme
 from app.assess.models.ui import applicants_response
 from app.assess.models.ui.assessor_task_list import AssessorTaskList
 from app.assess.status import all_status_completed
@@ -52,6 +53,13 @@ def display_sub_criteria(
     current_app.logger.info(f"Processing GET to {request.path}.")
     sub_criteria = get_sub_criteria(application_id, sub_criteria_id)
     theme_id = request.args.get("theme_id", sub_criteria.themes[0].id)
+    try:
+        current_theme: Theme = next(
+            iter(t for t in sub_criteria.themes if t.id == theme_id)
+        )
+    except StopIteration:
+        current_app.logger.warn("Unknown theme ID requested: " + theme_id)
+        abort(404)
     comment_form = CommentsForm()
 
     add_comment_argument = request.args.get("add_comment") == "1"
@@ -62,7 +70,7 @@ def display_sub_criteria(
             application_id=application_id,
             sub_criteria_id=sub_criteria_id,
             user_id=g.account_id,
-            theme_id=theme_id,
+            theme_id=current_theme.id,
         )
 
         return redirect(
@@ -70,7 +78,7 @@ def display_sub_criteria(
                 "assess_bp.display_sub_criteria",
                 application_id=application_id,
                 sub_criteria_id=sub_criteria_id,
-                theme_id=theme_id,
+                theme_id=current_theme.id,
                 _anchor="comments",
             )
         )
@@ -80,7 +88,7 @@ def display_sub_criteria(
     comments = get_comments(
         application_id=application_id,
         sub_criteria_id=sub_criteria_id,
-        theme_id=theme_id,
+        theme_id=current_theme.id,
         themes=sub_criteria.themes,
     )
 
@@ -94,6 +102,7 @@ def display_sub_criteria(
         "is_flagged": bool(flag),
         "display_comment_box": add_comment_argument,
         "comment_form": comment_form,
+        "current_theme": current_theme,
     }
 
     if theme_id == "score" and sub_criteria.is_scored:
@@ -140,7 +149,7 @@ def display_sub_criteria(
             if (score_list is not None and len(score_list) > 0)
             else None
         )
-        # TODO make COF_score_list extendable to other funds
+        # TODO make COF_score_list ettendable to other funds
         COF_score_list = [
             (5, "Strong"),
             (4, "Good"),
