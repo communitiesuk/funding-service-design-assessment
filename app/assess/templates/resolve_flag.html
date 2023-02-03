@@ -4,7 +4,7 @@
 {%- from "govuk_frontend_jinja/components/radios/macro.html" import govukRadios %}
 {% from "macros/banner_summary.html" import banner_summary %}
 {% from "macros/logout_partial.html" import logout_partial %}
-
+{% set pageHeading = "Resolve flag" %}
 {% block content %}
 <div class="govuk-phase-banner flex-parent-element">
   <p class="govuk-!-text-align-left flex-parent-element flexed-element-margins-collapse">
@@ -27,7 +27,7 @@ flag
       <div class="govuk-grid-column-two-thirds flagging-container">
         <form method="POST">
           {{ form.csrf_token }}
-          <h1 class="govuk-heading govuk-heading-l">Resolve flag</h1>
+          <h1 class="govuk-heading govuk-heading-l">{{pageHeading}}</h1>
           {{ govukRadios({
           "id": form.resolution_flag.id,
           "name": form.resolution_flag.id,

@@ -4,6 +4,7 @@ import app
 import pytest
 from app.assess.models.flag import Flag
 from app.assess.models.score import Score
+from bs4 import BeautifulSoup
 from config import Config
 from flask import session
 from tests.conftest import create_valid_token
@@ -35,6 +36,9 @@ class TestRoutes:
             assert (
                 b"Team dashboard" in response.data
             ), "Response does not contain expected heading"
+
+            soup = BeautifulSoup(response.data, "html.parser")
+            assert soup.title.string == "Team dashboard - Assessment Hub"
 
     def test_route_landing_filter_status(self, flask_test_client):
         with mock.patch(
@@ -196,6 +200,11 @@ class TestRoutes:
 
             # Assert that the response has the expected status code
             assert 200 == response.status_code, "Wrong status code on response"
+            soup = BeautifulSoup(response.data, "html.parser")
+            assert (
+                soup.title.string
+                == "Score - Engagement - Community Gym - Assessment Hub"
+            )
 
             # Assert that the response contains the expected ids
             assert (
@@ -408,6 +417,8 @@ class TestRoutes:
         assert b"Query resolved" in response.data
         assert b"Stop assessment" in response.data
         assert b"Reason" in response.data
+        soup = BeautifulSoup(response.data, "html.parser")
+        assert soup.title.string == "Resolve flag - Assessment Hub"
 
     def test_post_resolved_flag(self, flask_test_client, mocker):
         token = create_valid_token(test_lead_assessor_claims)
@@ -602,3 +613,18 @@ class TestRoutes:
         assert (
             b"Resolved" not in response.data
         ), "Resolved Flag is displaying and should not"
+
+    def test_page_title_subcriteria_theme_match(self, flask_test_client):
+        # Mocking fsd-user-token cookie
+        token = create_valid_token(test_commenter_claims)
+        flask_test_client.set_cookie("localhost", "fsd_user_token", token)
+
+        # Send a request to the route you want to test
+        response = flask_test_client.get(
+            "/assess/application_id/app_123/sub_criteria_id/business_plan"  # noqa
+        )
+        soup = BeautifulSoup(response.data, "html.parser")
+        assert (
+            soup.title.string
+            == "Business plan - Community Gym - Assessment Hub"
+        )
