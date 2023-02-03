@@ -6,10 +6,10 @@ asset_types = {
     "museum": "Museum",
     "music-venue": "Music venue",
     "park": "Park",
-    "post-office": "Post office building",
+    "post-office": "Post office",
     "pub": "Pub",
     "shop": "Shop",
-    "sporting": "Sporting or leisure facility",
+    "sporting": "Sporting leisure facility",
     "theatre": "Theatre",
     "other": "Other",
 }
