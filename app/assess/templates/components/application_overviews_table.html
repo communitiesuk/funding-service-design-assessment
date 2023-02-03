@@ -23,10 +23,12 @@
                   {% for item in asset_types %}
                         <option value='{{ item }}' {% if query_params.asset_type == item %} selected=""{%endif%}>{{asset_types[item]}}</option>
                   {% endfor %}
-
             </select>
+            {% if user_role == "COMMENTER" %}
+            <button class="govuk-button search-button" aria-label="Search" type="submit">Search</button>
+            {% endif %}
       </div>
-
+      {% if user_role != "COMMENTER" %}
       <div class="govuk-form-group govuk-!-display-inline-block govuk-!-padding-right-2">
             <label class="govuk-label" for="filter_status">
             Filter by status
@@ -38,6 +40,7 @@
             </select>
             <button class="govuk-button search-button" aria-label="Search" type="submit">Search</button>
       </div>
+      {% endif %}
   </form>
   </div>
   {% if show_clear_filters == true %}
