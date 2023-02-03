@@ -12,11 +12,11 @@
 {% set pageHeading %}
 {# Hardcode to workaround misuse of score as a theme_id #}
 {% if current_theme_id == "score" %}
-Score - {{ sub_criteria.name }} -  {{sub_criteria.project_name}}
+Score - {{ sub_criteria.name }} - {{sub_criteria.project_name}}
 {% elif current_theme.id == sub_criteria.id %}
 {{ sub_criteria.name }} -  {{sub_criteria.project_name}}
 {% else %}
-{{current_theme.name}} - {{ sub_criteria.name }} -  {{sub_criteria.project_name}}
+{{current_theme.name}} - {{ sub_criteria.name }} - {{sub_criteria.project_name}}
 {% endif %}
 {% endset %}
 {% block content %}

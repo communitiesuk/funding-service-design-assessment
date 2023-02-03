@@ -4,6 +4,7 @@ import app
 import pytest
 from app.assess.models.flag import Flag
 from app.assess.models.score import Score
+from bs4 import BeautifulSoup
 from config import Config
 from flask import session
 from tests.conftest import create_valid_token
@@ -35,6 +36,9 @@ class TestRoutes:
             assert (
                 b"Team dashboard" in response.data
             ), "Response does not contain expected heading"
+
+            soup = BeautifulSoup(response.data, "html.parser")
+            assert soup.title.string == "Team dashboard - Assessment Hub"
 
     def test_route_landing_filter_status(self, flask_test_client):
         with mock.patch(
@@ -196,6 +200,13 @@ class TestRoutes:
 
             # Assert that the response has the expected status code
             assert 200 == response.status_code, "Wrong status code on response"
+            soup = BeautifulSoup(response.data, "html.parser")
+            print(soup.title.string)
+            breakpoint()
+            assert (
+                soup.title.string
+                == "Score - Engagement - Community Gym - Assessment Hub"
+            )
 
             # Assert that the response contains the expected ids
             assert (
