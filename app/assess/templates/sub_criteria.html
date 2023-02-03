@@ -9,14 +9,11 @@
 {% from "macros/comments_summary.html" import comment_summary %}
 {% from "macros/comments_box.html" import comment_box %}
 {% from "macros/logout_partial.html" import logout_partial %}
-{% set pageHeading %}
 {# Hardcode to workaround misuse of score as a theme_id #}
+{# Deliberate long line to avoid newline characters #}
+{% set pageHeading -%}
 {% if current_theme_id == "score" %}
-Score - {{ sub_criteria.name }} - {{sub_criteria.project_name}}
-{% elif current_theme.id == sub_criteria.id %}
-{{ sub_criteria.name }} -  {{sub_criteria.project_name}}
-{% else %}
-{{current_theme.name}} - {{ sub_criteria.name }} - {{sub_criteria.project_name}}
+Score - {{ sub_criteria.name }} - {{sub_criteria.project_name}}{% elif current_theme.id == sub_criteria.id %}{{ sub_criteria.name }} -  {{sub_criteria.project_name}}{% else %}{{current_theme.name}} - {{ sub_criteria.name }} - {{sub_criteria.project_name}}
 {% endif %}
 {% endset %}
 {% block content %}

@@ -201,8 +201,6 @@ class TestRoutes:
             # Assert that the response has the expected status code
             assert 200 == response.status_code, "Wrong status code on response"
             soup = BeautifulSoup(response.data, "html.parser")
-            print(soup.title.string)
-            breakpoint()
             assert (
                 soup.title.string
                 == "Score - Engagement - Community Gym - Assessment Hub"
@@ -419,6 +417,8 @@ class TestRoutes:
         assert b"Query resolved" in response.data
         assert b"Stop assessment" in response.data
         assert b"Reason" in response.data
+        soup = BeautifulSoup(response.data, "html.parser")
+        assert soup.title.string == "Resolve flag - Assessment Hub"
 
     def test_post_resolved_flag(self, flask_test_client, mocker):
         token = create_valid_token(test_lead_assessor_claims)
@@ -613,3 +613,18 @@ class TestRoutes:
         assert (
             b"Resolved" not in response.data
         ), "Resolved Flag is displaying and should not"
+
+    def test_page_title_subcriteria_theme_match(self, flask_test_client):
+        # Mocking fsd-user-token cookie
+        token = create_valid_token(test_commenter_claims)
+        flask_test_client.set_cookie("localhost", "fsd_user_token", token)
+
+        # Send a request to the route you want to test
+        response = flask_test_client.get(
+            "/assess/application_id/app_123/sub_criteria_id/business_plan"  # noqa
+        )
+        soup = BeautifulSoup(response.data, "html.parser")
+        assert (
+            soup.title.string
+            == "Business plan -  Community Gym - Assessment Hub"
+        )

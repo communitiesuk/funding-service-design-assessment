@@ -669,6 +669,31 @@
     "workflow_status": "NOT_STARTED",
     "short_id": "COF-123-LKMBNS"
   },
+  "assessment_store/sub_criteria_overview/app_123/business_plan": {
+    "fund_id": "47aef2f5-3fcb-4d45-acb5-f0152b5f03c4",
+    "funding_amount_requested": 0,
+    "id": "business_plan",
+    "is_scored": false,
+    "name": "Business plan",
+    "project_name": "Community Gym",
+    "short_id": "COF-123-LKMBNS",
+    "themes": [
+      {
+        "answers": [
+          {
+            "field_id": "rFXeZo",
+            "field_type": "fileUploadField",
+            "form_name": "upload-business-plan",
+            "presentation_type": "file",
+            "question": "Business plan (document upload)"
+          }
+        ],
+        "id": "business_plan",
+        "name": "Business plan"
+      }
+    ],
+    "workflow_status": "NOT_STARTED"
+  },
   "assessment_store/application_overviews/app_123": {
     "criterias": [
       {
