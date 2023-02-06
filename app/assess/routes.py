@@ -15,6 +15,7 @@ from app.assess.forms.scores_and_justifications import ScoreForm
 from app.assess.helpers import determine_display_status
 from app.assess.helpers import resolve_application
 from app.assess.models.flag import FlagType
+from app.assess.models.theme import Theme
 from app.assess.models.ui import applicants_response
 from app.assess.models.ui.assessor_task_list import AssessorTaskList
 from app.assess.status import all_status_completed
@@ -53,7 +54,20 @@ def display_sub_criteria(
     sub_criteria = get_sub_criteria(application_id, sub_criteria_id)
     theme_id = request.args.get("theme_id", sub_criteria.themes[0].id)
     comment_form = CommentsForm()
-
+    # We misuse the theme_id parameter to
+    # also indicate if we are on the scoring page,
+    # so we need to override to not throw an exception in that case
+    # TODO: Move Score page into separate route
+    if theme_id == "score":
+        current_theme = None
+    else:
+        try:
+            current_theme: Theme = next(
+                iter(t for t in sub_criteria.themes if t.id == theme_id)
+            )
+        except StopIteration:
+            current_app.logger.warn("Unknown theme ID requested: " + theme_id)
+            abort(404)
     add_comment_argument = request.args.get("add_comment") == "1"
     if add_comment_argument and comment_form.validate_on_submit():
         comment = comment_form.comment.data
@@ -94,6 +108,7 @@ def display_sub_criteria(
         "is_flagged": bool(flag),
         "display_comment_box": add_comment_argument,
         "comment_form": comment_form,
+        "current_theme": current_theme,
     }
 
     if theme_id == "score" and sub_criteria.is_scored:

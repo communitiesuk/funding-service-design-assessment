@@ -9,10 +9,17 @@
 {% from "macros/comments_summary.html" import comment_summary %}
 {% from "macros/comments_box.html" import comment_box %}
 {% from "macros/logout_partial.html" import logout_partial %}
-
-
+{% set pageHeading -%}
+{# Hardcode to workaround misuse of score as a theme_id #}
+{% if current_theme_id == "score" %}
+Score - {{ sub_criteria.name }} - {{sub_criteria.project_name}}
+{% elif current_theme.id == sub_criteria.id %}
+{{ sub_criteria.name }} - {{sub_criteria.project_name}}
+{% else %}
+{{current_theme.name}} - {{ sub_criteria.name }} - {{sub_criteria.project_name}}
+{% endif %}
+{% endset %}
 {% block content %}
-
     <div class="govuk-phase-banner flex-parent-element">
         <p class="govuk-!-text-align-left flex-parent-element flexed-element-margins-collapse">
             <a href="{{url_for('assess_bp.application', application_id=application_id)}}" class="govuk-back-link" id="back-to-assessment-overview-link">
