@@ -69,8 +69,9 @@
         state.short_id,
         state.project_name,
         state.funding_amount_requested,
-        state.display_status if g.user.highest_role != "COMMENTER" else " ",
-        flag
+        state.display_status,
+        g.user.highest_role,
+        flag,
     ) }}
 
     <div class="govuk-width-container">
