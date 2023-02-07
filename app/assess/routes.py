@@ -205,8 +205,67 @@ def score(
 
     if not sub_criteria.is_scored:
         abort(404)
+    theme_id = request.args.get(sub_criteria.themes[0].id)
+    fund = get_fund(Config.COF_FUND_ID)
+    flag = get_latest_flag(application_id)
+    comments = get_comments(
+        application_id=application_id,
+        sub_criteria_id=sub_criteria_id,
+        theme_id=theme_id,
+        themes=sub_criteria.themes,
+    )
+    # TODO: Refactor this function so it doesn't rely on side-effects
+    # and mutating SubCriteria model
+    determine_display_status(sub_criteria, flag)
+    score_form = ScoreForm()
+    rescore_form = RescoreForm()
+    is_rescore = rescore_form.validate_on_submit()
+    if not is_rescore and request.method == "POST":
+        if score_form.validate_on_submit():
+            current_app.logger.info(f"Processing POST to {request.path}.")
+            score = int(score_form.score.data)
+            user_id = g.account_id
+            justification = score_form.justification.data
+            submit_score_and_justification(
+                score=score,
+                justification=justification,
+                application_id=application_id,
+                user_id=user_id,
+                sub_criteria_id=sub_criteria_id,
+            )
+        else:
+            is_rescore = True
 
-    return "IN HERE"
+    # call to assessment store to get latest score
+    score_list = get_score_and_justification(
+        application_id, sub_criteria_id, score_history=True
+    )
+    latest_score = (
+        score_list.pop(0)
+        if (score_list is not None and len(score_list) > 0)
+        else None
+    )
+    # TODO make COF_score_list extendable to other funds
+    COF_score_list = [
+        (5, "Strong"),
+        (4, "Good"),
+        (3, "Satisfactory"),
+        (2, "Partial"),
+        (1, "Poor"),
+    ]
+    return render_template(
+        "score.html",
+        on_summary=True,
+        score_list=score_list or None,
+        latest_score=latest_score,
+        COF_score_list=COF_score_list,
+        score_form=score_form,
+        rescore_form=rescore_form,
+        is_rescore=is_rescore,
+        sub_criteria=sub_criteria,
+        fund=fund,
+        comments=comments,
+    )
 
 
 @assess_bp.route(
