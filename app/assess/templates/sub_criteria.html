@@ -34,7 +34,8 @@ Score - {{ sub_criteria.name }} - {{sub_criteria.project_name}}
         sub_criteria.short_id,
         sub_criteria.project_name,
         sub_criteria.funding_amount_requested,
-        sub_criteria.display_status
+        sub_criteria.display_status,
+        g.user.highest_role,
     ) }}
     <div class="govuk-width-container">
         {% if not is_flagged and g.user.highest_role in ("ASSESSOR", "LEAD_ASSESSOR") %}

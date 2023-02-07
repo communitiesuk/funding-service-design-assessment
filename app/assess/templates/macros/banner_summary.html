@@ -1,4 +1,4 @@
-{% macro banner_summary(fund_name, project_reference, project_name, funding_amount_requested, display_status, flag) %}
+{% macro banner_summary(fund_name, project_reference, project_name, funding_amount_requested, display_status, user_role, flag) %}
 
 </div> {# This div is here on purpose. #}
 <div class="fsd-banner-background">
@@ -13,6 +13,8 @@
                         name: {{ project_name }}</h3>
                     <h3 class="govuk-body-l fsd-banner-content">Total funding requested:
                         &pound;{{ "{:,.2f}".format(funding_amount_requested | float) }}</h3>
+
+                    {% if user_role != "COMMENTER" %}
                     {% if flag and flag.is_qa_complete and display_status not in ('FLAGGED', 'STOPPPED')  %}
                     <h3 class="govuk-body-l fsd-banner-content fsd-banner-collapse-padding">
                         QA complete
@@ -25,6 +27,7 @@
                     <h3 class="govuk-body-l fsd-banner-content fsd-banner-collapse-padding">
                         {{ display_status | all_caps_to_human }}
                     </h3>
+                    {% endif %}
                     {% endif %}
                 </div>
             </div>
