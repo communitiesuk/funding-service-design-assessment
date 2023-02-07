@@ -1,7 +1,7 @@
 {% from "govuk_frontend_jinja/components/input/macro.html" import govukInput %}
 
 
-{% macro render(application_overviews, query_params, asset_types, assessment_statuses, show_clear_filters) -%}
+{% macro render(application_overviews, query_params, asset_types, assessment_statuses, show_clear_filters, user_role) -%}
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full search-bar-flex-container">
     <div>
@@ -23,10 +23,12 @@
                   {% for item in asset_types %}
                         <option value='{{ item }}' {% if query_params.asset_type == item %} selected=""{%endif%}>{{asset_types[item]}}</option>
                   {% endfor %}
-
             </select>
+            {% if user_role == "COMMENTER" %}
+            <button class="govuk-button search-button" aria-label="Search" type="submit">Search</button>
+            {% endif %}
       </div>
-
+      {% if user_role != "COMMENTER" %}
       <div class="govuk-form-group govuk-!-display-inline-block govuk-!-padding-right-2">
             <label class="govuk-label" for="filter_status">
             Filter by status
@@ -38,6 +40,7 @@
             </select>
             <button class="govuk-button search-button" aria-label="Search" type="submit">Search</button>
       </div>
+      {% endif %}
   </form>
   </div>
   {% if show_clear_filters == true %}
@@ -89,9 +92,11 @@
         Location
       </th>
 
+      {% if user_role != "COMMENTER" %}
       <th scope="col" class="govuk-table__header">
         Status
       </th>
+      {% endif %}
 
     </tr>
   </thead>
@@ -105,6 +110,8 @@
                 <td class="govuk-table__cell">{{asset_types[overview.asset_type]}}</td>
                 <td class="govuk-table__cell">&pound;{{ "{:,.2f}".format(overview.funding_amount_requested|int|round) }}</td>
                 <td class="govuk-table__cell">{{ overview.location_json_blob.country}}</td>
+
+                {% if user_role != "COMMENTER" %}
                 <td class="govuk-table__cell">
                 {% if overview.is_qa_complete and not overview.flags[-1].flag_type in ("FLAGGED", "STOPPED") %}
                 <span class="">QA complete</span>
@@ -135,6 +142,7 @@
                 </span>
                 {% endif %}
                 </td>
+                {% endif %}
             </tr>
         {% endfor %}
   </tbody>

@@ -10,6 +10,7 @@
         {{ logout_partial(sso_logout_url) }}
     </div>
     </div>
+
     <div class="fsd-banner-background">
         <div class="govuk-width-container">
             <div class="govuk-grid-row">
@@ -37,6 +38,6 @@
         </div>
     </div>
     <div class="govuk-width-container">
-      {{ application_overviews_table.render(application_overviews, query_params, asset_types, assessment_statuses, show_clear_filters) }}
+      {{ application_overviews_table.render(application_overviews, query_params, asset_types, assessment_statuses, show_clear_filters, user.highest_role) }}
  </div>
 {% endblock %}
