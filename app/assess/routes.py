@@ -255,6 +255,7 @@ def score(
     ]
     return render_template(
         "score.html",
+        application_id=application_id,
         on_summary=True,
         score_list=score_list or None,
         latest_score=latest_score,
