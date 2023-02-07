@@ -191,6 +191,17 @@ def display_sub_criteria(
 
 
 @assess_bp.route(
+    "/application_id/<application_id>/sub_criteria_id/<sub_criteria_id>/score",
+    methods=["POST", "GET"],
+)
+def score(
+    application_id,
+    sub_criteria_id,
+):
+    return "IN HERE"
+
+
+@assess_bp.route(
     "/flag/<application_id>",
     methods=["GET", "POST"],
 )
