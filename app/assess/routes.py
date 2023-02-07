@@ -194,10 +194,18 @@ def display_sub_criteria(
     "/application_id/<application_id>/sub_criteria_id/<sub_criteria_id>/score",
     methods=["POST", "GET"],
 )
+@login_required(roles_required=["LEAD_ASSESSOR", "ASSESSOR"])
 def score(
     application_id,
     sub_criteria_id,
 ):
+    sub_criteria: SubCriteria = get_sub_criteria(
+        application_id, sub_criteria_id
+    )
+
+    if not sub_criteria.is_scored:
+        abort(404)
+
     return "IN HERE"
 
 
