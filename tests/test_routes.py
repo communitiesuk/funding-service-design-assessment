@@ -195,7 +195,7 @@ class TestRoutes:
 
             # Send a request to the route you want to test
             response = flask_test_client.get(
-                "/assess/application_id/app_123/sub_criteria_id/1a2b3c4d?theme_id=score"  # noqa
+                "/assess/application_id/app_123/sub_criteria_id/1a2b3c4d/score"  # noqa
             )
 
             # Assert that the response has the expected status code
@@ -254,13 +254,17 @@ class TestRoutes:
 
         # Send a request to the route you want to test
         response = flask_test_client.get(
-            "/assess/application_id/app_123/sub_criteria_id/1a2b3c4d?theme_id=score"  # noqa
+            "/assess/application_id/app_123/sub_criteria_id/1a2b3c4d/score"  # noqa
         )
 
         # Assert that the response has the expected status code
-        assert 404 == response.status_code, (
-            "Commenter should receive a 404 when trying to access the sub"
-            " criteria scoring page"
+        assert 302 == response.status_code, (
+            "Commenter should receive a 302 to authenticator when trying to"
+            " access the sub criteria scoring page"
+        )
+        assert (
+            response.location
+            == "https://authenticator/service/user?roles_required=LEAD_ASSESSOR|ASSESSOR"  # noqa
         )
 
     def test_homepage_route_accessible(self, flask_test_client):

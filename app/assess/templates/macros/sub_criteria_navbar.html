@@ -1,7 +1,7 @@
-{% macro navbar(application_id, sub_criteria, current_theme_id, on_summary) %}
-
+{% macro navbar(application_id, sub_criteria, current_theme_id, is_score_page=False) %}
 <nav class="assessment-navigation">
     <ul class="govuk-list">
+        {# TODO: Make these unlinked if current page rather than changing link class #}
         {%for theme in sub_criteria.themes%}
         <li><a class="{{'govuk-link--no-underline govuk-list' if theme.id|string == current_theme_id|string else 'govuk-link--no-visited-state'}}"
                 href="{{ url_for('assess_bp.display_sub_criteria',application_id=application_id,sub_criteria_id=sub_criteria.id,theme_id=theme.id) }}">{{theme.name}}</a>
@@ -10,9 +10,10 @@
     </ul>
 
 {% if g.user.highest_role in ["ASSESSOR","LEAD_ASSESSOR"] %}
-    {% if current_theme_id != "score" and sub_criteria.is_scored == True %}
+    {# TODO: Make this visible but un-linked on score page #}
+    {% if not is_score_page and sub_criteria.is_scored %}
     <ul class="govuk-list">
-        <li><a id="score-subcriteria-link" class="{{'govuk-link--no-underline govuk-list' if on_summary else 'govuk-link--no-visited-state'}}" href="{{ url_for('assess_bp.display_sub_criteria',application_id=application_id,sub_criteria_id=sub_criteria.id,theme_id='score') }}">Score the subcriteria</a></li>
+        <li><a id="score-subcriteria-link" class="{{'govuk-link--no-underline govuk-list' if is_score_page else 'govuk-link--no-visited-state'}}" href="{{ url_for('assess_bp.score',application_id=application_id,sub_criteria_id=sub_criteria.id) }}">Score the subcriteria</a></li>
     </ul>
     {% endif %}
 {% endif %}
