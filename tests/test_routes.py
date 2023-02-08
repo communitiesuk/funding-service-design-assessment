@@ -628,3 +628,21 @@ class TestRoutes:
             soup.title.string
             == "Business plan - Community Gym - Assessment Hub"
         )
+
+    def test_generate_docs_for_download(
+        self,
+        flask_test_client,
+        mock_get_banner_state,
+        mock_get_fund,
+        templates_rendered,
+    ):
+        token = create_valid_token(test_lead_assessor_claims)
+        flask_test_client.set_cookie("localhost", "fsd_user_token", token)
+        response = flask_test_client.post(
+            "/assess/generate_documents", data={"application_id": "abc123"}
+        )
+        assert 200 == response.status_code
+        assert 1 == len(templates_rendered)
+        rendered_template = templates_rendered[0]
+        assert "contract_downloads.html" == rendered_template[0].name
+        assert "abc123" == rendered_template[1]["application_id"]

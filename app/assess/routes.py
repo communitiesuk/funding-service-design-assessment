@@ -455,7 +455,7 @@ def continue_assessment(application_id):
     )
 
 
-@assess_bp.route("/generate_docs", methods=["POST"])
+@assess_bp.route("/generate_documents", methods=["POST"])
 @login_required(roles_required=["LEAD_ASSESSOR", "ASSESSOR"])
 def generate_docs_for_download():
     application_id = request.form.get("application_id")
