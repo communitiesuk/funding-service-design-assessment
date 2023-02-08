@@ -34,7 +34,7 @@ def auth_protect(minimum_roles_required, unprotected_routes):
         and not g.is_authenticated
     ):
         g.is_authenticated = True
-        g.account_id = "dev-account-id"
+        g.account_id = "dc84658f-8f58-4234-b1f0-a52713278bb2"
         g.user = User(**Config.DEBUG_USER)
         if request.path in ["/"]:
             return redirect(Config.DASHBOARD_ROUTE)
