@@ -54,20 +54,13 @@ def display_sub_criteria(
     sub_criteria = get_sub_criteria(application_id, sub_criteria_id)
     theme_id = request.args.get("theme_id", sub_criteria.themes[0].id)
     comment_form = CommentsForm()
-    # We misuse the theme_id parameter to
-    # also indicate if we are on the scoring page,
-    # so we need to override to not throw an exception in that case
-    # TODO: Move Score page into separate route
-    if theme_id == "score":
-        current_theme = None
-    else:
-        try:
-            current_theme: Theme = next(
-                iter(t for t in sub_criteria.themes if t.id == theme_id)
-            )
-        except StopIteration:
-            current_app.logger.warn("Unknown theme ID requested: " + theme_id)
-            abort(404)
+    try:
+        current_theme: Theme = next(
+            iter(t for t in sub_criteria.themes if t.id == theme_id)
+        )
+    except StopIteration:
+        current_app.logger.warn("Unknown theme ID requested: " + theme_id)
+        abort(404)
     add_comment_argument = request.args.get("add_comment") == "1"
     if add_comment_argument and comment_form.validate_on_submit():
         comment = comment_form.comment.data
@@ -111,70 +104,6 @@ def display_sub_criteria(
         "current_theme": current_theme,
     }
 
-    if theme_id == "score" and sub_criteria.is_scored:
-        # SECURITY SECTION START ######
-        # Prevent non-assessors from accessing
-        # the scoring version of this page
-        if g.user.highest_role not in [
-            "LEAD_ASSESSOR",
-            "ASSESSOR",
-        ]:
-            current_app.logger.info(
-                "Non-assessor attempted to access scoring view"
-                f" {request.path}."
-            )
-            abort(404)
-        # SECURITY SECTION END ######
-
-        # Forms for scoring a sub-criteria
-        score_form = ScoreForm()
-        rescore_form = RescoreForm()
-        is_rescore = rescore_form.validate_on_submit()
-        if not is_rescore and request.method == "POST":
-            if score_form.validate_on_submit():
-                current_app.logger.info(f"Processing POST to {request.path}.")
-                score = int(score_form.score.data)
-                user_id = g.account_id
-                justification = score_form.justification.data
-                submit_score_and_justification(
-                    score=score,
-                    justification=justification,
-                    application_id=application_id,
-                    user_id=user_id,
-                    sub_criteria_id=sub_criteria_id,
-                )
-            else:
-                is_rescore = True
-
-        # call to assessment store to get latest score
-        score_list = get_score_and_justification(
-            application_id, sub_criteria_id, score_history=True
-        )
-        latest_score = (
-            score_list.pop(0)
-            if (score_list is not None and len(score_list) > 0)
-            else None
-        )
-        # TODO make COF_score_list extendable to other funds
-        COF_score_list = [
-            (5, "Strong"),
-            (4, "Good"),
-            (3, "Satisfactory"),
-            (2, "Partial"),
-            (1, "Poor"),
-        ]
-        return render_template(
-            "sub_criteria.html",
-            is_score_page=True,
-            score_list=score_list or None,
-            latest_score=latest_score,
-            COF_score_list=COF_score_list,
-            score_form=score_form,
-            rescore_form=rescore_form,
-            is_rescore=is_rescore,
-            **common_template_config,
-        )
-
     theme_answers_response = get_sub_criteria_theme_answers(
         application_id, theme_id
     )
@@ -184,7 +113,6 @@ def display_sub_criteria(
 
     return render_template(
         "sub_criteria.html",
-        is_score_page=False,
         answers_meta=answers_meta,
         **common_template_config,
     )
@@ -256,7 +184,6 @@ def score(
     return render_template(
         "score.html",
         application_id=application_id,
-        is_score_page=True,
         score_list=score_list or None,
         latest_score=latest_score,
         COF_score_list=COF_score_list,
