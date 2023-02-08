@@ -634,7 +634,7 @@ class TestRoutes:
             == "Business plan - Community Gym - Assessment Hub"
         )
 
-    def test_generate_docs_for_download(
+    def test_get_docs_for_download(
         self,
         flask_test_client,
         mock_get_banner_state,
