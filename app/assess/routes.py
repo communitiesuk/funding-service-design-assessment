@@ -133,7 +133,7 @@ def score(
 
     if not sub_criteria.is_scored:
         abort(404)
-    theme_id = request.args.get(sub_criteria.themes[0].id)
+    theme_id = sub_criteria.themes[0].id
     fund = get_fund(Config.COF_FUND_ID)
     flag = get_latest_flag(application_id)
     comments = get_comments(
