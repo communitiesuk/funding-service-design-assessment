@@ -133,13 +133,15 @@ def score(
 
     if not sub_criteria.is_scored:
         abort(404)
-    theme_id = sub_criteria.themes[0].id
     fund = get_fund(Config.COF_FUND_ID)
     flag = get_latest_flag(application_id)
     comments = get_comments(
         application_id=application_id,
         sub_criteria_id=sub_criteria_id,
-        theme_id=theme_id,
+        # Comments endpoint uses theme_id=score as a proxy to get all comments
+        # TODO: refactor endpoint so it returns all
+        # comments by default or using explicit parameter.
+        theme_id="score",
         themes=sub_criteria.themes,
     )
     # TODO: Refactor this function so it doesn't rely on side-effects
