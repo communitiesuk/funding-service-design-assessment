@@ -1,5 +1,5 @@
 {% macro link_to_download_contract_docs(csrf_token, application_id) %}
-<form method="POST" action="{{ url_for('assess_bp.generate_docs_for_download') }}">
+<form method="POST" action="{{ url_for('assess_bp.generate_doc_list_for_download') }}">
     {{ csrf_token }}
     <input type="hidden" name="application_id" value="{{application_id}}"/>
     <button class="govuk-button govuk-button--secondary" type="submit">Export assessment data</button>

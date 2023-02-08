@@ -29,16 +29,16 @@ flag
 
             <h2 class="govuk-heading-l govuk-!-margin-top-8">Export assessment data</h2>
             <p class="govuk-body">
-                The following documents are available to download to attach to a contract:
-            <ul>
-                <li>Application question and answers</li>
-                <li>A business plan</li>
-                <li>Some other document</li>
-            </ul>
+                Put some useful guidance here!
             </p>
-
+            <ul class="govuk-list">
+                {% for document in list_of_documents %}
+                   <li><a class="govuk-link" href="{{ document[1]}}">{{document[0]}}</a></li>
+                {%endfor%}
+            </ul>
         </div>
     </div>
 </div>
 
+</p>
 {% endblock %}
