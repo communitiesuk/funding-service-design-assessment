@@ -458,3 +458,24 @@ def continue_assessment(application_id):
         section="NA",
         page_to_render="continue_assessment.html",
     )
+
+
+@assess_bp.route("/generate_docs", methods=["POST"])
+@login_required(roles_required=["LEAD_ASSESSOR", "ASSESSOR"])
+def generate_docs_for_download():
+    application_id = request.form.get("application_id")
+    current_app.logger.info(
+        f"Generating docs for application id {application_id}"
+    )
+    state = get_banner_state(application_id)
+    latest_flag = get_latest_flag(application_id)
+    if latest_flag:
+        determine_display_status(state, latest_flag)
+
+    fund = get_fund(state.fund_id)
+    return render_template(
+        "contract_downloads.html",
+        application_id=application_id,
+        fund_name=fund.name,
+        state=state,
+    )
