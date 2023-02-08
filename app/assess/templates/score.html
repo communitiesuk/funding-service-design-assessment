@@ -42,7 +42,7 @@ Score - {{ sub_criteria.name }} - {{sub_criteria.project_name}}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
             <div class="govuk-grid-column-one-third">
-                {{ navbar(application_id, sub_criteria, current_theme_id, on_summary) }}
+                {{ navbar(application_id, sub_criteria, current_theme_id, is_score_page) }}
             </div>
             <div class="theme govuk-grid-column-two-thirds">
                 {{scores_justification(score_form, rescore_form, is_rescore, score_list, latest_score, application_id, sub_criteria.id, COF_score_list)}}

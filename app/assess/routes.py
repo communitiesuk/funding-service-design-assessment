@@ -165,7 +165,7 @@ def display_sub_criteria(
         ]
         return render_template(
             "sub_criteria.html",
-            on_summary=True,
+            is_score_page=True,
             score_list=score_list or None,
             latest_score=latest_score,
             COF_score_list=COF_score_list,
@@ -184,7 +184,7 @@ def display_sub_criteria(
 
     return render_template(
         "sub_criteria.html",
-        on_summary=False,
+        is_score_page=False,
         answers_meta=answers_meta,
         **common_template_config,
     )
@@ -256,7 +256,7 @@ def score(
     return render_template(
         "score.html",
         application_id=application_id,
-        on_summary=True,
+        is_score_page=True,
         score_list=score_list or None,
         latest_score=latest_score,
         COF_score_list=COF_score_list,
