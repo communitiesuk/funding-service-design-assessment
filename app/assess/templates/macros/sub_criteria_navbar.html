@@ -1,21 +1,33 @@
 {% macro navbar(application_id, sub_criteria, current_theme_id, is_score_page=False) %}
 <nav class="assessment-navigation">
     <ul class="govuk-list">
-        {# TODO: Make these unlinked if current page rather than changing link class #}
         {%for theme in sub_criteria.themes%}
-        <li><a class="{{'govuk-link--no-underline govuk-list' if theme.id|string == current_theme_id|string else 'govuk-link--no-visited-state'}}"
-                href="{{ url_for('assess_bp.display_sub_criteria',application_id=application_id,sub_criteria_id=sub_criteria.id,theme_id=theme.id) }}">{{theme.name}}</a>
+        {% set is_current_url = (current_theme_id == theme.id) and not is_score_page %}
+        <li>
+            {% if not is_current_url %}
+            <a class="govuk-link govuk-link--no-visited-state"
+            href="{{ url_for('assess_bp.display_sub_criteria',application_id=application_id,sub_criteria_id=sub_criteria.id,theme_id=theme.id) }}">
+            {% endif %}
+            {{theme.name}}
+            {% if not is_current_url %}
+            </a>
+            {% endif %}
         </li>
         {%endfor%}
     </ul>
 
-{% if g.user.highest_role in ["ASSESSOR","LEAD_ASSESSOR"] %}
-    {# TODO: Make this visible but un-linked on score page #}
-    {% if not is_score_page and sub_criteria.is_scored %}
+{% if g.user.highest_role in ["ASSESSOR","LEAD_ASSESSOR"] and sub_criteria.is_scored %}
     <ul class="govuk-list">
-        <li><a id="score-subcriteria-link" class="{{'govuk-link--no-underline govuk-list' if is_score_page else 'govuk-link--no-visited-state'}}" href="{{ url_for('assess_bp.score',application_id=application_id,sub_criteria_id=sub_criteria.id) }}">Score the subcriteria</a></li>
+        <li>
+            {% if not is_score_page %}
+            <a id="score-subcriteria-link" class="govuk-link govuk-link--no-visited-state" href="{{ url_for('assess_bp.score',application_id=application_id,sub_criteria_id=sub_criteria.id) }}">
+            {% endif %}
+            Score the subcriteria
+            {% if not is_score_page %}
+            </a>
+            {% endif %}
+        </li>
     </ul>
-    {% endif %}
 {% endif %}
 </nav>
 
