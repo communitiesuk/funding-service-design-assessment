@@ -121,7 +121,7 @@ def create_app() -> Flask:
         def ensure_minimum_required_roles():
             return auth_protect(
                 minimum_roles_required=["COMMENTER"],
-                unprotected_routes=["/", "/healthcheck"],
+                unprotected_routes=["/", "/healthcheck", "/help"],
             )
 
         @flask_app.after_request

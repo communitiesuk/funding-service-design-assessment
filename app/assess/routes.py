@@ -440,16 +440,3 @@ def continue_assessment(application_id):
         section="NA",
         page_to_render="continue_assessment.html",
     )
-
-
-@assess_bp.route("/help", methods=["GET"])
-def get_help():
-    round_data = get_default_round_data() or {}
-    return render_template(
-        "get_help.html",
-        # this contact information is for the round, so different email.
-        # contact_details=round_data.get('contact_details'),
-        contact_details={"email_address": "FSD.Support@levellingup.gov.uk"},
-        support_availability=round_data.get("support_availability"),
-        referrer=request.referrer,
-    )
