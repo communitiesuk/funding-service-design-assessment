@@ -454,11 +454,9 @@ def get_comments(
         k: v for k, v in query_params.items() if v is not None
     }
     comment_endpoint = (
-        Config.ASSESSMENT_STORE_API_HOST
-        + "/comment?"
-        + urlencode(query=query_params_strip_nones)
+        f"{Config.ASSESSMENT_COMMENT_ENDPOINT}"
+        f"?{urlencode(query=query_params_strip_nones)}"
     )
-
     comment_response = get_data(comment_endpoint)
 
     if not comment_response or len(comment_response) == 0:
