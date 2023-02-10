@@ -205,6 +205,7 @@ class TestRoutes:
                 soup.title.string
                 == "Score - Engagement - Community Gym - Assessment Hub"
             )
+            assert b"This is a comment" in response.data
 
             # Assert that the response contains the expected ids
             assert (

@@ -138,10 +138,7 @@ def score(
     comments = get_comments(
         application_id=application_id,
         sub_criteria_id=sub_criteria_id,
-        # Comments endpoint uses theme_id=score as a proxy to get all comments
-        # TODO: refactor endpoint so it returns all
-        # comments by default or using explicit parameter.
-        theme_id="score",
+        theme_id=None,
         themes=sub_criteria.themes,
     )
     # TODO: Refactor this function so it doesn't rely on side-effects

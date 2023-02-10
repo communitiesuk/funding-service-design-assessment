@@ -432,24 +432,31 @@ def get_sub_criteria_theme_answers(
         abort(404, description=msg)
 
 
-def get_comments(application_id: str, sub_criteria_id: str, theme_id, themes):
-    """_summary_: Function is set up to retrieve
-    the data from application store with
-    get_data() function.
+def get_comments(
+    application_id: str, sub_criteria_id: str, theme_id: str | None, themes
+):
+    """_summary_: Get comments from the assessment store
     Args:
-        application_id: Takes an application_id, sub_criteria_id: takes a sub_criteria_id # noqa
+        application_id: application_id,
+        sub_criteria_id: sub_criteria_id
+        theme_id: optional theme_id (else returns all comments for subcriteria)
+        themes: list of subcriteria themes
     Returns:
         Returns a dictionary of comments.
     """
+    query_params = {
+        "application_id": application_id,
+        "sub_criteria_id": sub_criteria_id,
+        "theme_id": theme_id,
+    }
+    # Strip theme_id from dict if None
+    query_params_strip_nones = {
+        k: v for k, v in query_params.items() if v is not None
+    }
     comment_endpoint = (
-        Config.ASSESSMENT_STORE_API_HOST
-        + Config.COMMENTS_ENDPOINT.format(
-            application_id=application_id,
-            sub_criteria_id=sub_criteria_id,
-            theme_id=theme_id,
-        )
+        f"{Config.ASSESSMENT_COMMENT_ENDPOINT}"
+        f"?{urlencode(query=query_params_strip_nones)}"
     )
-
     comment_response = get_data(comment_endpoint)
 
     if not comment_response or len(comment_response) == 0:
