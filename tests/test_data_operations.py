@@ -125,11 +125,11 @@ class TestDataOperations:
         expected_output = [
             (
                 "file1.txt",
-                "http://localhost/assess_bp/get_file/test_application_id/file1.txt",  # noqa
+                "http://fsd/test_application_id/file1.txt",
             ),
             (
                 "file1.txt",
-                "http://localhost/assess_bp/get_file/test_application_id/file1.txt",  # noqa
+                "http://fsd/test_application_id/file1.txt",
             ),
         ]
 
@@ -155,10 +155,8 @@ class TestDataOperations:
             mock_bucket.objects.filter.return_value = [mock_file1, mock_file2]
 
             with mock.patch("app.assess.data.url_for") as mock_url_for:
-                mock_url_for.return_value = (
-                    "http://localhost/assess_bp/get_file/{}/{}".format(
-                        application_id, file_name
-                    )
+                mock_url_for.return_value = "http://fsd/{}/{}".format(
+                    application_id, file_name
                 )
 
                 assert (
