@@ -6,7 +6,6 @@ from typing import Union
 from urllib.parse import quote_plus
 from urllib.parse import urlencode
 
-import boto3
 import requests
 from app.assess.models.application import Application
 from app.assess.models.banner import Banner
@@ -16,11 +15,14 @@ from app.assess.models.fund import Fund
 from app.assess.models.round import Round
 from app.assess.models.score import Score
 from app.assess.models.sub_criteria import SubCriteria
+from boto3 import client
+from boto3 import resource
 from botocore.exceptions import ClientError
 from config import Config
 from flask import abort
 from flask import current_app
 from flask import Response
+from flask import url_for
 
 
 def get_data(
@@ -424,6 +426,8 @@ def get_sub_criteria_theme_answers(
     )
     theme_answers_response = get_data(theme_answers_endpoint)
 
+    current_app.logger.error(theme_answers_response)
+
     if theme_answers_response:
         return theme_answers_response
     else:
@@ -523,7 +527,7 @@ def get_file_response(file_name: str, application_id: str):
 
     prefixed_file_name = application_id + "/" + file_name
 
-    s3_client = boto3.client(
+    s3_client = client(
         "s3",
         aws_access_key_id=Config.AWS_ACCESS_KEY_ID,
         aws_secret_access_key=Config.AWS_SECRET_ACCESS_KEY,
@@ -551,3 +555,44 @@ def get_file_response(file_name: str, application_id: str):
     except ClientError as e:
         current_app.logger.error(e)
         raise Exception(e)
+
+
+def get_file_names_for_application_upload_fields(
+    application_id: str,
+) -> List[tuple]:
+    """
+    This function retrieves the file names and download links
+    for a specific application in an S3 bucket.
+    The function filters the files based on the file metadata
+    'componentname' (file upload field keys).
+
+    Parameters:
+    application_id (str): The unique identifier of the application.
+
+    Returns:
+    List[tuple]: A list of tuples, where each tuple contains the
+    file name and its download link.
+    """
+    s3 = resource(
+        "s3",
+        aws_access_key_id=Config.AWS_ACCESS_KEY_ID,
+        aws_secret_access_key=Config.AWS_SECRET_ACCESS_KEY,
+        region_name=Config.AWS_REGION,
+    )
+    bucket = s3.Bucket(Config.AWS_BUCKET_NAME)
+    file_upload_field_key_list = ["ArVrka", "rFXeZo", "EEBFao", "ozgwXq"]
+    # breakpoint()
+    files = [
+        (
+            file.key.split("/")[-1],
+            url_for(
+                "assess_bp.get_file",
+                application_id=application_id,
+                file_name=file.key.split("/")[-1],
+            ),
+        )
+        for file in bucket.objects.filter(Prefix=f"{application_id}/")
+        if file.Object().metadata.get("componentname")
+        in file_upload_field_key_list
+    ]
+    return files

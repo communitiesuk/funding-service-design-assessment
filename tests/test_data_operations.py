@@ -1,5 +1,9 @@
+from unittest import mock
+from unittest.mock import MagicMock
+
 from app.assess.data import get_application_overviews
 from app.assess.data import get_comments
+from app.assess.data import get_file_names_for_application_upload_fields
 from app.assess.data import get_fund
 from app.assess.data import get_round
 from app.assess.models.theme import Theme
@@ -114,3 +118,52 @@ class TestDataOperations:
                 "app_123", "1a2b3c4d", "general-information", themes
             )
         assert 3 == len(comments), "wrong number of comments"
+
+    def test_get_file_names_for_application_upload_fields(self):
+        application_id = "test_application_id"
+        file_name = "file1.txt"
+        expected_output = [
+            (
+                "file1.txt",
+                "http://localhost/assess_bp/get_file/test_application_id/file1.txt",  # noqa
+            ),
+            (
+                "file1.txt",
+                "http://localhost/assess_bp/get_file/test_application_id/file1.txt",  # noqa
+            ),
+        ]
+
+        with mock.patch("app.assess.data.resource") as mock_boto3_resource:
+
+            # Create a mock S3 resource
+            mock_s3 = MagicMock()
+            mock_boto3_resource.return_value = mock_s3
+
+            # Create a mock S3 Bucket
+            mock_bucket = MagicMock()
+            mock_s3.Bucket.return_value = mock_bucket
+
+            mock_file1 = MagicMock(key="test_application_id/file1.txt")
+            mock_file1.Object = lambda: MagicMock(
+                metadata={"componentname": "ArVrka"}
+            )
+            mock_file2 = MagicMock(key="test_application_id/file1.txt")
+            mock_file2.Object = lambda: MagicMock(
+                metadata={"componentname": "EEBFao"}
+            )
+
+            mock_bucket.objects.filter.return_value = [mock_file1, mock_file2]
+
+            with mock.patch("app.assess.data.url_for") as mock_url_for:
+                mock_url_for.return_value = (
+                    "http://localhost/assess_bp/get_file/{}/{}".format(
+                        application_id, file_name
+                    )
+                )
+
+                assert (
+                    get_file_names_for_application_upload_fields(
+                        application_id
+                    )
+                    == expected_output
+                )

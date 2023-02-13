@@ -456,7 +456,9 @@ def continue_assessment(application_id):
 
 
 @assess_bp.route("/generate_documents", methods=["POST"])
-@login_required(roles_required=["LEAD_ASSESSOR", "ASSESSOR"])
+@login_required(
+    roles_required=["LEAD_ASSESSOR", "ASSESSOR"]
+)  # who can access it?
 def generate_doc_list_for_download():
     application_id = request.form.get("application_id")
     current_app.logger.info(
@@ -468,7 +470,12 @@ def generate_doc_list_for_download():
         determine_display_status(state, latest_flag)
 
     fund = get_fund(state.fund_id)
-    list_of_documents = [("Application questions and answers", "/myfile.txt")]
+    list_of_files = get_file_names_for_application_upload_fields(
+        application_id=application_id
+    )
+    list_of_documents = [
+        ("Application questions and answers", "/myfile.txt")
+    ] + list_of_files
     return render_template(
         "contract_downloads.html",
         application_id=application_id,
