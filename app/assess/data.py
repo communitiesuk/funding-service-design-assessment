@@ -21,6 +21,7 @@ from config import Config
 from flask import abort
 from flask import current_app
 from flask import Response
+from fsd_utils.locale_selector.get_lang import get_lang
 
 
 def get_data(
@@ -558,3 +559,12 @@ def get_file_response(file_name: str, application_id: str):
     except ClientError as e:
         current_app.logger.error(e)
         raise Exception(e)
+
+
+def get_default_round_data():
+    language = {"language": get_lang()}
+    round_request_url = Config.GET_ROUND_DATA_FOR_FUND_ENDPOINT.format(
+        fund_id=Config.DEFAULT_FUND_ID, round_id=Config.DEFAULT_ROUND_ID
+    )
+    round_response = get_data(round_request_url, language)
+    return round_response

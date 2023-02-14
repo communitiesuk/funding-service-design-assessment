@@ -1,5 +1,10 @@
-{% macro logout_partial(sso_logout_url) %}
+{% macro logout_partial(sso_logout_url, show_get_help=True) %}
 <p class="flex-parent-element flexed-element-margins-collapse govuk-!-text-align-right">
+    {% if show_get_help %}
+    <a href="{{ url_for('default_bp.get_help') }}"
+       class="govuk-link govuk-link--no-underline govuk-!-margin-right-5">
+        Get help</a>
+    {% endif %}
     <a href="{{ sso_logout_url }}" class="govuk-link govuk-link--no-underline">
         Log out
     </a>

@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{%- from 'govuk_frontend_jinja/components/back-link/macro.html' import govukBackLink -%}
+{% from "macros/logout_partial.html" import logout_partial %}
+
+{% block content %}
+
+    </div> {# This div is here on purpose. #}
+    {% if g.user %}
+        <div class="fsd-login-banner-background govuk-!-margin-bottom-0"></div>
+        <div class="govuk-width-container">
+            <div class="govuk-phase-banner flex-parent-element">
+                {% if request.referrer %}
+                    <p class="govuk-!-text-align-left flex-parent-element flexed-element-margins-collapse">
+                        {{ govukBackLink({'href': request.referrer, 'text': 'Back'}) }}
+                    </p>
+                {% endif %}
+
+                {{ logout_partial(sso_logout_url, show_get_help=False) }}
+            </div>
+        </div>
+    {% else %}
+        <div class="fsd-login-banner-background"></div>
+    {% endif %}
+    </div>
+    <div class="govuk-width-container">
+        <h1 class="govuk-heading-l">Get help</h1>
+        <p class="govuk-body">Problems with the assessment tool?</p>
+        {% if contact_details %}
+            <p class="govuk-body">Email <a class="govuk-link"
+                                           href="mailto:{{ contact_details.email_address }}">
+                {{ contact_details.email_address }}</a></p>
+        {% endif %}
+        {% if support_availability %}
+            <p class="govuk-body">
+                <strong class="govuk-!-font-weight-bold">Opening times:</strong><br>
+                {{ support_availability.days }}: {{ support_availability.time }}<br>
+                Closed: {{ support_availability.closed }}
+            </p>
+        {% endif %}
+        <p class="govuk-body">
+            For questions about the assessment process, or the fund itself, contact
+            your lead assessor.
+        </p>
+
+    </div>
+
+{% endblock %}

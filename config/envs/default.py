@@ -68,6 +68,9 @@ class DefaultConfig:
     # Fund Store Endpoints
     FUNDS_ENDPOINT = CommonConfig.FUNDS_ENDPOINT
     FUND_ENDPOINT = CommonConfig.FUND_ENDPOINT
+    GET_ROUND_DATA_FOR_FUND_ENDPOINT = (
+        FUND_STORE_API_HOST + "/funds/{fund_id}/rounds/{round_id}"
+    )
 
     # Round Store Endpoints
 
@@ -127,6 +130,9 @@ class DefaultConfig:
 
     COF_FUND_ID = CommonConfig.COF_FUND_ID
     COF_ROUND2_ID = CommonConfig.COF_ROUND_2_ID
+
+    DEFAULT_FUND_ID = CommonConfig.COF_FUND_ID
+    DEFAULT_ROUND_ID = CommonConfig.get_default_round_id()
 
     USE_LOCAL_DATA = strtobool(getenv("USE_LOCAL_DATA", "False"))
 
