@@ -29,6 +29,7 @@ from flask import request
 from flask import url_for
 from fsd_utils.authentication.decorators import login_required
 
+
 assess_bp = Blueprint(
     "assess_bp",
     __name__,
