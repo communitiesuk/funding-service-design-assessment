@@ -157,27 +157,6 @@ def get_round(fund_id: str, round_id: str) -> Union[Round, None]:
     return None
 
 
-def get_round_with_applications(
-    fund_id: str, round_id: str
-) -> Union[Round, None]:
-    round_response = get_round(fund_id, round_id)
-    if round_response:
-        fund_round = Round.from_json(round_response)
-        applications_response = call_search_applications(
-            {
-                "fund_id": fund_id,
-                "datetime_start": fund_round.opens,
-                "datetime_end": fund_round.deadline,
-            }
-        )
-        if applications_response and len(applications_response) > 0:
-            for application in applications_response:
-                fund_round.add_application(Application.from_json(application))
-
-        return fund_round
-    return None
-
-
 def get_bulk_accounts_dict(account_ids: List):
     account_url = Config.BULK_ACCOUNTS_ENDPOINT
     account_params = {"account_id": account_ids}
@@ -267,19 +246,6 @@ def get_assessments_stats(fund_id: str, round_id: str) -> Dict | None:
     )
     current_app.logger.info(f"Endpoint '{assessments_stats_endpoint}'.")
     return get_data(assessments_stats_endpoint)
-
-
-def get_application(identifier: str) -> Union[Application, None]:
-    application_endpoint = (
-        Config.APPLICATION_STORE_API_HOST
-        + Config.APPLICATION_ENDPOINT.format(application_id=identifier)
-    )
-    application_response = get_data(application_endpoint)
-    if application_response and "id" in application_response:
-        application = Application.from_json(application_response)
-
-        return application
-    return None
 
 
 def get_assessor_task_list_state(application_id: str) -> Union[dict, None]:
