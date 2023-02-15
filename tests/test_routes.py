@@ -635,12 +635,11 @@ class TestRoutes:
         mock_get_banner_state,
         mock_get_fund,
         templates_rendered,
+        mock_get_file_names_for_application_upload_fields,
     ):
         token = create_valid_token(test_lead_assessor_claims)
         flask_test_client.set_cookie("localhost", "fsd_user_token", token)
-        response = flask_test_client.post(
-            "/assess/generate_documents", data={"application_id": "abc123"}
-        )
+        response = flask_test_client.get("/assess/application/abc123/export")
         assert 200 == response.status_code
         assert 1 == len(templates_rendered)
         rendered_template = templates_rendered[0]

@@ -3,7 +3,6 @@ import os
 from typing import Dict
 from typing import List
 from typing import Union
-from urllib.parse import quote_plus
 from urllib.parse import urlencode
 
 import requests
@@ -21,7 +20,6 @@ from botocore.exceptions import ClientError
 from config import Config
 from flask import abort
 from flask import current_app
-from flask import Response
 from flask import url_for
 
 
@@ -512,7 +510,7 @@ def submit_comment(
     return response.ok
 
 
-def get_file_response(file_name: str, application_id: str):
+def get_file_for_download_from_aws(file_name: str, application_id: str):
     """_summary_: Function is set up to retrieve
     files from aws bucket.
     Args:
@@ -542,23 +540,14 @@ def get_file_response(file_name: str, application_id: str):
         mimetype = obj["ResponseMetadata"]["HTTPHeaders"]["content-type"]
         data = obj["Body"].read()
 
-        response = Response(
-            data,
-            mimetype=mimetype,
-            headers={
-                "Content-Disposition": (
-                    f"attachment;filename={quote_plus(file_name)}"
-                )
-            },
-        )
-        return response
+        return data, mimetype
     except ClientError as e:
         current_app.logger.error(e)
         raise Exception(e)
 
 
 def get_file_names_for_application_upload_fields(
-    application_id: str,
+    application_id: str, short_id: str
 ) -> List[tuple]:
     """
     This function retrieves the file names and download links
@@ -589,6 +578,7 @@ def get_file_names_for_application_upload_fields(
                 "assess_bp.get_file",
                 application_id=application_id,
                 file_name=file.key.split("/")[-1],
+                short_id=short_id,
             ),
         )
         for file in bucket.objects.filter(Prefix=f"{application_id}/")

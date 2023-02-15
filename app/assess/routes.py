@@ -415,16 +415,6 @@ def sub_crit_scoring():
     )
 
 
-@assess_bp.route("/file/<application_id>/<file_name>", methods=["GET"])
-def get_file(application_id: str, file_name: str):
-
-    response = get_file_response(
-        application_id=application_id, file_name=file_name
-    )
-
-    return response
-
-
 @assess_bp.route("/resolve_flag/<application_id>", methods=["GET", "POST"])
 @login_required(roles_required=["LEAD_ASSESSOR"])
 def resolve_flag(application_id):
@@ -458,27 +448,28 @@ def continue_assessment(application_id):
     )
 
 
-@assess_bp.route("/export_application_data", methods=["POST"])
+@assess_bp.route("/application/<application_id>/export", methods=["GET"])
 @login_required(roles_required=["LEAD_ASSESSOR"])
-def generate_doc_list_for_download():
-    application_id = request.form.get("application_id")
+def generate_doc_list_for_download(application_id):
     current_app.logger.info(
         f"Generating docs for application id {application_id}"
     )
     state = get_banner_state(application_id)
+    short_id = state.short_id[-6:]
     latest_flag = get_latest_flag(application_id)
     if latest_flag:
         determine_display_status(state, latest_flag)
 
     fund = get_fund(state.fund_id)
     supporting_evidence = get_file_names_for_application_upload_fields(
-        application_id=application_id
+        application_id=application_id, short_id=short_id
     )
     application_answers = (
         "Application answers",
         url_for(
             "assess_bp.download_application_answers",
             application_id=application_id,
+            short_id=short_id,
         ),
     )
 
@@ -492,9 +483,9 @@ def generate_doc_list_for_download():
     )
 
 
-@assess_bp.route("/application_answers/<application_id>")
+@assess_bp.route("/application/<application_id>/export/<short_id>/answers.txt")
 @login_required(roles_required=["LEAD_ASSESSOR"])
-def download_application_answers(application_id: str):
+def download_application_answers(application_id: str, short_id: str):
     current_app.logger.info(
         f"Generating application Q+A download for application {application_id}"
     )
@@ -504,14 +495,28 @@ def download_application_answers(application_id: str):
     )
     text = generate_text_of_application(qanda_dict)
 
-    response = Response(
-        text,
-        mimetype="text/plain",
+    return download_file(text, "text/plain", f"{short_id}_answers.txt")
+
+
+@assess_bp.route(
+    "/application/<application_id>/export/<short_id>/<file_name>",
+    methods=["GET"],
+)
+def get_file(application_id: str, file_name: str, short_id: str):
+    data, mimetype = get_file_for_download_from_aws(
+        application_id=application_id, file_name=file_name
+    )
+
+    return download_file(data, mimetype, f"{short_id}_{file_name}")
+
+
+def download_file(data, mimetype, file_name):
+    return Response(
+        data,
+        mimetype=mimetype,
         headers={
-            "Content-Disposition": "attachment;filename=answers_"
-            + f"{application_json['short_id']}.txt"
+            "Content-Disposition": (
+                f"attachment;filename={quote_plus(file_name)}"
+            )
         },
     )
-    return response
-
-    return qanda_dict

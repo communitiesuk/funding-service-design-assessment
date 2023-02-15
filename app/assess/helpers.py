@@ -102,7 +102,6 @@ def extract_questions_and_answers_from_json_blob(
 
 def generate_text_of_application(q_and_a: dict):
     output = StringIO()
-    # output = BytesIO()
 
     output.write(f"********* {Config.COF_FUND_NAME} **********\n")
     for section_name, values in q_and_a.items():
