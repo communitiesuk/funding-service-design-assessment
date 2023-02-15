@@ -2,6 +2,6 @@
 <form method="POST" action="{{ url_for('assess_bp.generate_doc_list_for_download') }}">
     {{ csrf_token }}
     <input type="hidden" name="application_id" value="{{application_id}}"/>
-    <button class="govuk-button govuk-button--secondary" type="submit">Export assessment data</button>
+    <button class="govuk-button govuk-button--secondary" type="submit">Export application data</button>
 </form>
 {% endmacro %}

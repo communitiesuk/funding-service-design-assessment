@@ -27,14 +27,19 @@ flag
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
 
-            <h2 class="govuk-heading-l govuk-!-margin-top-8">Export assessment data</h2>
-            <p class="govuk-body">
-                Put some useful guidance here!
-            </p>
+            <h2 class="govuk-heading-l govuk-!-margin-top-4">Export application data</h2>
             <ul class="govuk-list">
-                {% for document in list_of_documents %}
-                   <li><a class="govuk-link" href="{{ document[1]}}">{{document[0]}}</a></li>
-                {%endfor%}
+                <li><a class="govuk-link" href="{{ application_answers[1]}}">{{application_answers[0]}}</a></li>
+            </ul>
+            <h3 class="govuk-heading-l govuk-!-margin-top-4">Supporting evidence</h3>
+            <ul class="govuk-list">
+                {% if supporting_evidence | length > 0 %}
+                    {% for document in supporting_evidence %}
+                    <li><a class="govuk-link" href="{{ document[1]}}">{{document[0]}}</a></li>
+                    {%endfor%}
+                {% else %}
+                    There are no supporting evidence documents available.
+                {% endif %}
             </ul>
         </div>
     </div>

@@ -1,5 +1,7 @@
 from app.assess.helpers import extract_questions_and_answers_from_json_blob
+from app.assess.helpers import generate_text_of_application
 from tests.api_data.test_data import single_application_json_blob
+from tests.api_data.test_data import test_application_answers
 
 
 class TestExport:
@@ -18,3 +20,7 @@ class TestExport:
                 " for your project"
             ]
         )
+
+    def test_generate_text(self):
+        result = generate_text_of_application(test_application_answers)
+        assert "Community Ownership Fund" in result

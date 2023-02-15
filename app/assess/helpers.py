@@ -1,10 +1,12 @@
 from collections import defaultdict
+from io import StringIO
 
 from app.assess.data import get_banner_state
 from app.assess.data import get_fund
 from app.assess.data import get_latest_flag
 from app.assess.data import submit_flag
 from app.assess.models.flag import FlagType
+from config import Config
 from flask import redirect
 from flask import render_template
 from flask import request
@@ -96,3 +98,17 @@ def extract_questions_and_answers_from_json_blob(
 
                 questions_answers[form_name][question_title] = answer
     return questions_answers
+
+
+def generate_text_of_application(q_and_a: dict):
+    output = StringIO()
+    # output = BytesIO()
+
+    output.write(f"********* {Config.COF_FUND_NAME} **********\n")
+    for section_name, values in q_and_a.items():
+        title = section_name.split("-")
+        output.write(f"\n* {' '.join(title).capitalize()}\n\n")
+        for questions, answers in values.items():
+            output.write(f"  Q) {questions}\n")
+            output.write(f"  A) {answers}\n\n")
+    return output.getvalue()

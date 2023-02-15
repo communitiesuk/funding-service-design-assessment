@@ -572,6 +572,14 @@ def get_file_names_for_application_upload_fields(
     return files
 
 
+def get_application_json(application_id):
+    endpoint = Config.APPLICATION_JSON_ENDPOINT.format(
+        application_id=application_id
+    )
+    response = requests.get(endpoint)
+    return response.json()
+
+
 def get_default_round_data():
     language = {"language": get_lang()}
     round_request_url = Config.GET_ROUND_DATA_FOR_FUND_ENDPOINT.format(
