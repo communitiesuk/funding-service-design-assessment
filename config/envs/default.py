@@ -89,6 +89,10 @@ class DefaultConfig:
         "/application_overviews/{application_id}"
     )
 
+    APPLICATION_JSON_ENDPOINT = (
+        ASSESSMENT_STORE_API_HOST + "/application/{application_id}/json"
+    )
+
     SUB_CRITERIA_THEME_ANSWERS_ENDPOINT = (
         "/sub_criteria_themes/{application_id}/{theme_id}"
     )
@@ -132,6 +136,7 @@ class DefaultConfig:
 
     COF_FUND_ID = CommonConfig.COF_FUND_ID
     COF_ROUND2_ID = CommonConfig.COF_ROUND_2_ID
+    COF_FUND_NAME = "Community Ownership Fund"
 
     USE_LOCAL_DATA = strtobool(getenv("USE_LOCAL_DATA", "False"))
 

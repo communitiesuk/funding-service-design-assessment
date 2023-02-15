@@ -596,3 +596,11 @@ def get_file_names_for_application_upload_fields(
         in file_upload_field_key_list
     ]
     return files
+
+
+def get_application_json(application_id):
+    endpoint = Config.APPLICATION_JSON_ENDPOINT.format(
+        application_id=application_id
+    )
+    response = requests.get(endpoint)
+    return response.json()

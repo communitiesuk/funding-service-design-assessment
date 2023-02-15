@@ -1,4 +1,5 @@
 from app.assess.data import *
+from app.assess.data import get_application_json
 from app.assess.data import get_application_overviews
 from app.assess.data import get_assessments_stats
 from app.assess.data import submit_score_and_justification
@@ -13,6 +14,8 @@ from app.assess.forms.rescore_form import RescoreForm
 from app.assess.forms.resolve_flag_form import ResolveFlagForm
 from app.assess.forms.scores_and_justifications import ScoreForm
 from app.assess.helpers import determine_display_status
+from app.assess.helpers import extract_questions_and_answers_from_json_blob
+from app.assess.helpers import generate_text_of_application
 from app.assess.helpers import resolve_application
 from app.assess.models.flag import FlagType
 from app.assess.models.theme import Theme
@@ -455,10 +458,8 @@ def continue_assessment(application_id):
     )
 
 
-@assess_bp.route("/generate_documents", methods=["POST"])
-@login_required(
-    roles_required=["LEAD_ASSESSOR", "ASSESSOR"]
-)  # who can access it?
+@assess_bp.route("/export_application_data", methods=["POST"])
+@login_required(roles_required=["LEAD_ASSESSOR"])
 def generate_doc_list_for_download():
     application_id = request.form.get("application_id")
     current_app.logger.info(
@@ -470,16 +471,47 @@ def generate_doc_list_for_download():
         determine_display_status(state, latest_flag)
 
     fund = get_fund(state.fund_id)
-    list_of_files = get_file_names_for_application_upload_fields(
+    supporting_evidence = get_file_names_for_application_upload_fields(
         application_id=application_id
     )
-    list_of_documents = [
-        ("Application questions and answers", "/myfile.txt")
-    ] + list_of_files
+    application_answers = (
+        "Application answers",
+        url_for(
+            "assess_bp.download_application_answers",
+            application_id=application_id,
+        ),
+    )
+
     return render_template(
         "contract_downloads.html",
         application_id=application_id,
         fund_name=fund.name,
         state=state,
-        list_of_documents=list_of_documents,
+        application_answers=application_answers,
+        supporting_evidence=supporting_evidence,
     )
+
+
+@assess_bp.route("/application_answers/<application_id>")
+@login_required(roles_required=["LEAD_ASSESSOR"])
+def download_application_answers(application_id: str):
+    current_app.logger.info(
+        f"Generating application Q+A download for application {application_id}"
+    )
+    application_json = get_application_json(application_id)
+    qanda_dict = extract_questions_and_answers_from_json_blob(
+        application_json["jsonb_blob"]
+    )
+    text = generate_text_of_application(qanda_dict)
+
+    response = Response(
+        text,
+        mimetype="text/plain",
+        headers={
+            "Content-Disposition": "attachment;filename=answers_"
+            + f"{application_json['short_id']}.txt"
+        },
+    )
+    return response
+
+    return qanda_dict
