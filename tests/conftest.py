@@ -199,3 +199,15 @@ def mock_get_fund(mocker, scope="function"):
         short_name="FSD-UT",
     )
     mocker.patch("app.assess.routes.get_fund", return_value=mock_fund_info)
+
+
+@pytest.fixture(scope="function")
+def mock_get_file_names_for_application_upload_fields(mocker):
+    return_values = [
+        ("/path/to/file/1", "File1.txt"),
+        ("/path/to/file/2", "File2.txt"),
+    ]
+    mocker.patch(
+        "app.assess.routes.get_file_names_for_application_upload_fields",
+        return_value=return_values,
+    )
