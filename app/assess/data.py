@@ -391,8 +391,6 @@ def get_sub_criteria_theme_answers(
     )
     theme_answers_response = get_data(theme_answers_endpoint)
 
-    current_app.logger.error(theme_answers_response)
-
     if theme_answers_response:
         return theme_answers_response
     else:
