@@ -20,8 +20,8 @@ from botocore.exceptions import ClientError
 from config import Config
 from flask import abort
 from flask import current_app
-from fsd_utils.locale_selector.get_lang import get_lang
 from flask import url_for
+from fsd_utils.locale_selector.get_lang import get_lang
 
 
 def get_data(

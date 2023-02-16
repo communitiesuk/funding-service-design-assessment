@@ -96,6 +96,10 @@ class DefaultConfig:
         ASSESSMENT_STORE_API_HOST + "/application/{application_id}/json"
     )
 
+    APPLICATION_JSON_ENDPOINT = (
+        ASSESSMENT_STORE_API_HOST + "/application/{application_id}/json"
+    )
+
     SUB_CRITERIA_THEME_ANSWERS_ENDPOINT = (
         "/sub_criteria_themes/{application_id}/{theme_id}"
     )
