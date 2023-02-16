@@ -509,6 +509,7 @@ def download_application_answers(application_id: str, short_id: str):
     "/application/<application_id>/export/<short_id>/<file_name>",
     methods=["GET"],
 )
+@login_required
 def get_file(application_id: str, file_name: str, short_id: str = None):
     data, mimetype = get_file_for_download_from_aws(
         application_id=application_id, file_name=file_name
