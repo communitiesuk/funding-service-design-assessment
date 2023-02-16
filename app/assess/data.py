@@ -570,7 +570,7 @@ def get_file_names_for_application_upload_fields(
     )
     bucket = s3.Bucket(Config.AWS_BUCKET_NAME)
     file_upload_field_key_list = ["ArVrka", "rFXeZo", "EEBFao", "ozgwXq"]
-    # breakpoint()
+
     files = [
         (
             file.key.split("/")[-1],
