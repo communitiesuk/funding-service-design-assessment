@@ -84,6 +84,7 @@ def display_sub_criteria(
 
     fund = get_fund(Config.COF_FUND_ID)
     flag = get_latest_flag(application_id)
+
     comments = get_comments(
         application_id=application_id,
         sub_criteria_id=sub_criteria_id,
@@ -91,7 +92,9 @@ def display_sub_criteria(
         themes=sub_criteria.themes,
     )
 
-    determine_display_status(sub_criteria, flag)
+    display_status = determine_display_status(
+        sub_criteria.workflow_status, flag
+    )
     common_template_config = {
         "current_theme_id": theme_id,
         "sub_criteria": sub_criteria,
@@ -102,6 +105,7 @@ def display_sub_criteria(
         "display_comment_box": add_comment_argument,
         "comment_form": comment_form,
         "current_theme": current_theme,
+        "display_status": display_status,
     }
 
     theme_answers_response = get_sub_criteria_theme_answers(
@@ -143,7 +147,7 @@ def score(
     )
     # TODO: Refactor this function so it doesn't rely on side-effects
     # and mutating SubCriteria model
-    determine_display_status(sub_criteria, flag)
+    determine_display_status(sub_criteria.workflow_status, flag)
     score_form = ScoreForm()
     rescore_form = RescoreForm()
     is_rescore = rescore_form.validate_on_submit()
@@ -372,8 +376,8 @@ def application(application_id):
             abort(404)
         assessor_task_list_metadata["fund_name"] = fund.name
         state = AssessorTaskList.from_json(assessor_task_list_metadata)
-
-    determine_display_status(state, flag)
+    is_flaggable = not flag or flag.flag_type == FlagType.RESOLVED
+    display_status = determine_display_status(state.workflow_status, flag)
     return render_template(
         "assessor_tasklist.html",
         sub_criteria_status_completed=sub_criteria_status_completed,
@@ -383,6 +387,8 @@ def application(application_id):
         flag=flag,
         current_user_role=g.user.highest_role,
         flag_user_info=accounts.get(flag.user_id) if flag else None,
+        is_flaggable=is_flaggable,
+        display_status=display_status,
     )
 
 

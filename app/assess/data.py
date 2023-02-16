@@ -2,6 +2,7 @@ import json
 import os
 from typing import Dict
 from typing import List
+from typing import Optional
 from typing import Union
 from urllib.parse import quote_plus
 from urllib.parse import urlencode
@@ -328,7 +329,7 @@ def get_banner_state(application_id: str):
         abort(404, description=msg)
 
 
-def get_latest_flag(application_id: str) -> list[Flag] | None:
+def get_latest_flag(application_id: str) -> Optional[Flag]:
     flag = get_data(
         Config.ASSESSMENT_LATEST_FLAG_ENDPOINT.format(
             application_id=application_id
