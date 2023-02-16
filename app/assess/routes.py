@@ -507,15 +507,21 @@ def download_application_answers(application_id: str, short_id: str):
 
 
 @assess_bp.route(
+    "/application/<application_id>/export/<file_name>",
+    methods=["GET"],
+)
+@assess_bp.route(
     "/application/<application_id>/export/<short_id>/<file_name>",
     methods=["GET"],
 )
-def get_file(application_id: str, file_name: str, short_id: str):
+def get_file(application_id: str, file_name: str, short_id: str = None):
     data, mimetype = get_file_for_download_from_aws(
         application_id=application_id, file_name=file_name
     )
+    if short_id:
+        return download_file(data, mimetype, f"{short_id}_{file_name}")
 
-    return download_file(data, mimetype, f"{short_id}_{file_name}")
+    return download_file(data, mimetype, file_name)
 
 
 def download_file(data, mimetype, file_name):
