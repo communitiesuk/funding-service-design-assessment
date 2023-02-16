@@ -23,4 +23,6 @@ class TestExport:
 
     def test_generate_text(self):
         result = generate_text_of_application(test_application_answers)
-        assert "Community Ownership Fund" in result
+        assert "********* Community Ownership Fund" in result
+        assert "Q) Capital funding" in result
+        assert "A) 2300" in result

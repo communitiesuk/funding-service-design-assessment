@@ -121,6 +121,7 @@ class TestDataOperations:
 
     def test_get_file_names_for_application_upload_fields(self):
         application_id = "test_application_id"
+        short_id = "ABCDEF"
         file_name = "file1.txt"
         expected_output = [
             (
@@ -161,7 +162,7 @@ class TestDataOperations:
 
                 assert (
                     get_file_names_for_application_upload_fields(
-                        application_id
+                        application_id, short_id
                     )
                     == expected_output
                 )
