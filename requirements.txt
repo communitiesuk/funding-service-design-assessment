@@ -162,6 +162,7 @@ requests==2.28.1
     # via
     #   -r requirements.in
     #   connexion
+    #   funding-service-design-utils
     #   prance
     #   webdriver-manager
 rich==12.6.0
