@@ -517,7 +517,7 @@ def get_file_for_download_from_aws(file_name: str, application_id: str):
         filename: Takes an filename
         application_id: Takes an application_id # noqa
     Returns:
-        Returns a response with a file from aws.
+        Returns a tuple of (file_content, mime_type)
     """
 
     if file_name is None:

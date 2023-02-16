@@ -95,7 +95,12 @@ def extract_questions_and_answers_from_json_blob(
 
                     if isinstance(answer, str):
                         answer = answer.split("/")[-1]
-
+                elif (
+                    # if it's a bool we display yes/no instead of true/false
+                    isinstance(answer, bool)
+                    and field["type"] == "list"
+                ):
+                    answer = "Yes" if answer else "No"
                 questions_answers[form_name][question_title] = answer
     return questions_answers
 
