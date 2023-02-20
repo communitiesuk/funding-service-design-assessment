@@ -1,7 +1,10 @@
+from typing import Optional
+
 from app.assess.data import get_banner_state
 from app.assess.data import get_fund
 from app.assess.data import get_latest_flag
 from app.assess.data import submit_flag
+from app.assess.models.flag import Flag
 from app.assess.models.flag import FlagType
 from flask import redirect
 from flask import render_template
@@ -9,24 +12,33 @@ from flask import request
 from flask import url_for
 
 
-def determine_display_status(state, latest_flag=None):
+def determine_display_status(
+    workflow_status: str,
+    latest_flag: Optional[Flag] = None,
+) -> str:
     """
     Deduce whether to override display_status with a
     flag.
     """
-    if not latest_flag:
-        state.display_status = state.workflow_status
-    elif latest_flag and latest_flag.flag_type == FlagType.RESOLVED:
-        state.display_status = state.workflow_status
-        state.flag_resolved = True
+    if not latest_flag or (
+        latest_flag and latest_flag.flag_type == FlagType.RESOLVED
+    ):
+        return workflow_status
     else:
-        state.display_status = latest_flag.flag_type.name
+        return latest_flag.flag_type.name
+
+
+def is_flaggable(latest_flag: Optional[Flag]):
+    return not latest_flag or (
+        latest_flag.flag_type in [FlagType.RESOLVED, FlagType.QA_COMPLETED]
+    )
 
 
 def resolve_application(
     form, application_id, flag, user_id, justification, section, page_to_render
 ):
-    """ This function is used to resolve an application by submitting a flag, justification, and section for the application.
+    """This function is used to resolve an application
+      by submitting a flag, justification, and section for the application.
 
     Args:
         form (obj): Form object to be validated and submitted
@@ -35,10 +47,10 @@ def resolve_application(
         justification (str): Justification for the flag submitted
         section (str): Section of the application the flag is submitted for
         page_to_render (str): Template name to be rendered
-        
+
     Returns:
-        redirect: Redirects to the application page if the request method is "POST" and form is valid.
-        render_template: Renders the specified template with the application_id, fund_name, state, form, and referrer as parameters.
+        redirect: Redirects to the application page if the request method is "POST" and form is valid. # noqa: E501
+        render_template: Renders the specified template with the application_id, fund_name, state, form, and referrer as parameters. # noqa: E501
     """
     if request.method == "POST" and form.validate_on_submit():
         submit_flag(application_id, flag, user_id, justification, section)
@@ -51,7 +63,9 @@ def resolve_application(
     state = get_banner_state(application_id)
     latest_flag = get_latest_flag(application_id)
     if latest_flag:
-        determine_display_status(state, latest_flag)
+        display_status = determine_display_status(
+            state.workflow_status, latest_flag
+        )
 
     fund = get_fund(state.fund_id)
     return render_template(
@@ -61,4 +75,5 @@ def resolve_application(
         state=state,
         form=form,
         referrer=request.referrer,
+        display_status=display_status,
     )
