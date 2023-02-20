@@ -13,6 +13,7 @@ from app.assess.forms.rescore_form import RescoreForm
 from app.assess.forms.resolve_flag_form import ResolveFlagForm
 from app.assess.forms.scores_and_justifications import ScoreForm
 from app.assess.helpers import determine_display_status
+from app.assess.helpers import is_flaggable
 from app.assess.helpers import resolve_application
 from app.assess.models.flag import FlagType
 from app.assess.models.theme import Theme
@@ -145,9 +146,9 @@ def score(
         theme_id=None,
         themes=sub_criteria.themes,
     )
-    # TODO: Refactor this function so it doesn't rely on side-effects
-    # and mutating SubCriteria model
-    determine_display_status(sub_criteria.workflow_status, flag)
+    display_status = determine_display_status(
+        sub_criteria.workflow_status, flag
+    )
     score_form = ScoreForm()
     rescore_form = RescoreForm()
     is_rescore = rescore_form.validate_on_submit()
@@ -196,6 +197,8 @@ def score(
         sub_criteria=sub_criteria,
         fund=fund,
         comments=comments,
+        display_status=display_status,
+        is_flaggable=is_flaggable(flag),
     )
 
 
@@ -376,7 +379,7 @@ def application(application_id):
             abort(404)
         assessor_task_list_metadata["fund_name"] = fund.name
         state = AssessorTaskList.from_json(assessor_task_list_metadata)
-    is_flaggable = not flag or flag.flag_type == FlagType.RESOLVED
+
     display_status = determine_display_status(state.workflow_status, flag)
     return render_template(
         "assessor_tasklist.html",
@@ -387,7 +390,7 @@ def application(application_id):
         flag=flag,
         current_user_role=g.user.highest_role,
         flag_user_info=accounts.get(flag.user_id) if flag else None,
-        is_flaggable=is_flaggable,
+        is_flaggable=is_flaggable(flag),
         display_status=display_status,
     )
 

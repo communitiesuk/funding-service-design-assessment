@@ -1,10 +1,10 @@
-from enum import Flag
 from typing import Optional
 
 from app.assess.data import get_banner_state
 from app.assess.data import get_fund
 from app.assess.data import get_latest_flag
 from app.assess.data import submit_flag
+from app.assess.models.flag import Flag
 from app.assess.models.flag import FlagType
 from flask import redirect
 from flask import render_template
@@ -26,6 +26,12 @@ def determine_display_status(
         return workflow_status
     else:
         return latest_flag.flag_type.name
+
+
+def is_flaggable(latest_flag: Optional[Flag]):
+    return not latest_flag or (
+        latest_flag.flag_type in [FlagType.RESOLVED, FlagType.QA_COMPLETED]
+    )
 
 
 def resolve_application(
