@@ -23,6 +23,10 @@ from jinja2 import ChoiceLoader
 from jinja2 import PackageLoader
 from jinja2 import PrefixLoader
 
+from flask_redis import FlaskRedis
+from fsd_utils.healthchecks.checkers import RedisChecker
+
+redis_toggles = FlaskRedis(config_prefix="redis_toggles")
 
 def create_app() -> Flask:
     init_sentry()
@@ -58,6 +62,9 @@ def create_app() -> Flask:
     Compress(flask_app)
 
     logging.init_app(flask_app)
+
+    # Initialise Redis Magic Links Store
+    redis_toggles.init_app(flask_app)
 
     # Configure application security with Talisman
     Talisman(flask_app, **Config.TALISMAN_SETTINGS)
@@ -99,6 +106,7 @@ def create_app() -> Flask:
 
         health = Healthcheck(flask_app)
         health.add_check(FlaskRunningChecker())
+        health.add_check(RedisChecker(redis_toggles))
 
         @flask_app.before_request
         @login_requested

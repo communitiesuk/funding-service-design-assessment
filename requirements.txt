@@ -4,6 +4,8 @@
 #
 #    pip-compile requirements.in
 #
+async-timeout==4.0.2
+    # via redis
 attrs==22.1.0
     # via
     #   jsonschema
@@ -20,6 +22,8 @@ botocore==1.29.33
     #   s3transfer
 brotli==1.0.9
     # via flask-compress
+cachelib==0.10.2
+    # via flask-session
 certifi==2022.9.24
     # via
     #   requests
@@ -55,6 +59,8 @@ flask==2.1.1
     #   flask-assets
     #   flask-babel
     #   flask-compress
+    #   flask-redis
+    #   flask-session
     #   flask-wtf
     #   funding-service-design-utils
     #   sentry-sdk
@@ -64,11 +70,15 @@ flask-babel==2.0.0
     # via funding-service-design-utils
 flask-compress==1.10.1
     # via -r requirements.in
+flask-redis==0.4.0
+    # via -r requirements.in
+flask-session==0.4.0
+    # via -r requirements.in
 flask-talisman==0.8.1
     # via -r requirements.in
 flask-wtf==1.0.0
     # via -r requirements.in
-funding-service-design-utils==1.0.22
+funding-service-design-utils==1.0.23
     # via -r requirements.in
 govuk-frontend-jinja==2.0.0
     # via -r requirements.in
@@ -158,10 +168,13 @@ pyyaml==6.0
     #   funding-service-design-utils
     #   jsonschema-spec
     #   openapi-spec-validator
+redis==4.5.1
+    # via flask-redis
 requests==2.28.1
     # via
     #   -r requirements.in
     #   connexion
+    #   funding-service-design-utils
     #   prance
     #   webdriver-manager
 rich==12.6.0
