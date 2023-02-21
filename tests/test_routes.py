@@ -640,7 +640,6 @@ class TestRoutes:
         mock_get_banner_state,
         mock_get_fund,
         templates_rendered,
-        mock_get_files_for_application_upload_fields,
         mocker,
     ):
         token = create_valid_token(test_lead_assessor_claims)

@@ -473,6 +473,11 @@ def generate_doc_list_for_download(application_id):
     )
     state = get_banner_state(application_id)
     short_id = state.short_id[-6:]
+    latest_flag = get_latest_flag(application_id)
+    display_status = determine_display_status(
+        state.workflow_status, latest_flag
+    )
+
     fund = get_fund(state.fund_id)
     application_json = get_application_json(application_id)
     supporting_evidence = get_files_for_application_upload_fields(
@@ -496,6 +501,7 @@ def generate_doc_list_for_download(application_id):
         state=state,
         application_answers=application_answers,
         supporting_evidence=supporting_evidence,
+        display_status=display_status,
     )
 
 
