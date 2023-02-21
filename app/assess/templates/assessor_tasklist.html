@@ -28,7 +28,7 @@
 
     {% if flag and current_user_role in ("ASSESSOR", "LEAD_ASSESSOR") and flag.flag_type.name == "FLAGGED" %}
         {{ assessment_flagged(flag, flag_user_info, application_id, current_user_role) }}
-    {% elif flag and current_user_role in ("ASSESSOR", "LEAD_ASSESSOR") and state.display_status == "STOPPED" %}
+    {% elif flag and current_user_role in ("ASSESSOR", "LEAD_ASSESSOR") and display_status == "STOPPED" %}
         {{ assessment_stopped(flag, flag_user_info, application_id, current_user_role) }}
     {% endif %}
 
@@ -69,7 +69,7 @@
         state.short_id,
         state.project_name,
         state.funding_amount_requested,
-        state.display_status,
+        display_status,
         g.user.highest_role,
         flag,
     ) }}
@@ -98,7 +98,7 @@
                               {% endif %}
                         </span>
                        <span>
-                          {% if (not flag or state.flag_resolved or flag.flag_type.name == "QA_COMPLETED") and g.user.highest_role in ("ASSESSOR", "LEAD_ASSESSOR") %}
+                          {% if is_flaggable and g.user.highest_role in ("ASSESSOR", "LEAD_ASSESSOR") %}
                             {{ flag_application_button(application_id) }}
                           {% endif %}
                         </span>
