@@ -50,3 +50,5 @@ git+https://github.com/SergeyPirogov/webdriver_manager@dc73f4a27e8f40cd81dc4718a
 #-----------------------------------
 flask-redis==0.4.0
 Flask-Session==0.4.0
+
+flipper-client

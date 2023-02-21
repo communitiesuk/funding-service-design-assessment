@@ -67,8 +67,4 @@ class DevelopmentConfig(DefaultConfig):
     AWS_REGION = "eu-west-2"
 
     # Redis
-
-    REDIS_INSTANCE_URI = getenv("REDIS_INSTANCE_URI", "redis://localhost:6379")
-    REDIS_MLINKS_URL = f"{REDIS_INSTANCE_URI}/0"
-    REDIS_SESSIONS_URL = f"{REDIS_INSTANCE_URI}/1"
-    SESSION_REDIS = redis.from_url(REDIS_SESSIONS_URL)
+    REDIS_URL = getenv("REDIS_INSTANCE_URI", "redis://localhost:6379")

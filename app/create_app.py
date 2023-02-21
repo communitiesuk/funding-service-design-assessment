@@ -26,7 +26,7 @@ from jinja2 import PrefixLoader
 from flask_redis import FlaskRedis
 from fsd_utils.healthchecks.checkers import RedisChecker
 
-redis_toggles = FlaskRedis(config_prefix="redis_toggles")
+redis_store = FlaskRedis()
 
 def create_app() -> Flask:
     init_sentry()
@@ -63,8 +63,8 @@ def create_app() -> Flask:
 
     logging.init_app(flask_app)
 
-    # Initialise Redis Magic Links Store
-    redis_toggles.init_app(flask_app)
+    # Initialise Redis Store
+    redis_store.init_app(flask_app)
 
     # Configure application security with Talisman
     Talisman(flask_app, **Config.TALISMAN_SETTINGS)
@@ -106,7 +106,7 @@ def create_app() -> Flask:
 
         health = Healthcheck(flask_app)
         health.add_check(FlaskRunningChecker())
-        health.add_check(RedisChecker(redis_toggles))
+        health.add_check(RedisChecker(redis_store))
 
         @flask_app.before_request
         @login_requested
@@ -127,5 +127,17 @@ def create_app() -> Flask:
 
         return flask_app
 
+from app.assess.features import feature_configuration
+from flipper import FeatureFlagClient, RedisFeatureFlagStore
 
 app = create_app()
+
+
+# Add feature flagging using Redis store
+store = RedisFeatureFlagStore(redis_store, base_key='feature')
+features = FeatureFlagClient(store)
+
+for feature, toggle in feature_configuration.items():
+    features.create(feature)
+    if toggle:
+        features.enable(feature)

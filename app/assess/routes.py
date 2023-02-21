@@ -327,6 +327,22 @@ def landing():
         else application_overviews
     )
 
+    ### FEATURE FLAG SPIKE ###
+    from app import redis_store
+    all_toggles = f"All toggles: {redis_store.keys('*')}"
+    current_app.logger.info(all_toggles)
+
+    from app import features
+    from app.assess.features import feature_configuration
+    enable_flagging = features.is_enabled("FLAGGING")
+    current_app.logger.info("flagging is enabled") if enable_flagging else current_app.logger.error("flagging is not enabled")
+
+    # Up to date Redis feature toggles (factoring in any Redis changes since app start)
+    up_to_date_feature_configration = {}
+    for feature, toggle in feature_configuration.items():
+        current_toggle = features.is_enabled(feature)
+        up_to_date_feature_configration[feature] = current_toggle
+
     return render_template(
         "assessor_dashboard.html",
         user=g.user,
@@ -337,6 +353,7 @@ def landing():
         assessment_statuses=assessment_statuses,
         show_clear_filters=show_clear_filters,
         stats=stats,
+        toggles=up_to_date_feature_configration
     )
 
 
