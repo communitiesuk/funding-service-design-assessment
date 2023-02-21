@@ -640,10 +640,15 @@ class TestRoutes:
         mock_get_banner_state,
         mock_get_fund,
         templates_rendered,
-        mock_get_file_names_for_application_upload_fields,
+        mock_get_files_for_application_upload_fields,
+        mocker,
     ):
         token = create_valid_token(test_lead_assessor_claims)
         flask_test_client.set_cookie("localhost", "fsd_user_token", token)
+        mocker.patch(
+            "app.assess.routes.get_application_json",
+            return_value={"jsonb_blob": "mock"},
+        )
         response = flask_test_client.get("/assess/application/abc123/export")
         assert 200 == response.status_code
         assert 1 == len(templates_rendered)

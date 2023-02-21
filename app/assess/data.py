@@ -16,12 +16,12 @@ from app.assess.models.round import Round
 from app.assess.models.score import Score
 from app.assess.models.sub_criteria import SubCriteria
 from boto3 import client
-from boto3 import resource
 from botocore.exceptions import ClientError
 from config import Config
 from flask import abort
 from flask import current_app
 from flask import url_for
+from fsd_utils import NotifyConstants
 from fsd_utils.locale_selector.get_lang import get_lang
 
 
@@ -519,44 +519,43 @@ def get_file_for_download_from_aws(file_name: str, application_id: str):
         raise Exception(e)
 
 
-def get_file_names_for_application_upload_fields(
-    application_id: str, short_id: str
+def get_files_for_application_upload_fields(
+    application_id: str, short_id: str, application_json: dict
 ) -> List[tuple]:
     """
-    This function retrieves the file names and download links
-    for a specific application in an S3 bucket.
-    The function filters the files based on the file metadata
-    'componentname' (file upload field keys).
+    This function retrieves the file names from an application_json
+    then uses this to create a lsit of tuples containing the file name
+    and download link for this file.
 
     Parameters:
     application_id (str): The unique identifier of the application.
+    short_id (str): The unique short-hand identifier of the application.
+    application_json (dict): The jsonified data for an application
 
     Returns:
     List[tuple]: A list of tuples, where each tuple contains the
     file name and its download link.
     """
-    s3 = resource(
-        "s3",
-        aws_access_key_id=Config.AWS_ACCESS_KEY_ID,
-        aws_secret_access_key=Config.AWS_SECRET_ACCESS_KEY,
-        region_name=Config.AWS_REGION,
-    )
-    bucket = s3.Bucket(Config.AWS_BUCKET_NAME)
-    file_upload_field_key_list = ["ArVrka", "rFXeZo", "EEBFao", "ozgwXq"]
+    forms = application_json["jsonb_blob"]["forms"]
+    file_names = []
+
+    for form in forms:
+        for question in form[NotifyConstants.APPLICATION_QUESTIONS_FIELD]:
+            for field in question["fields"]:
+                if field["type"] == "file":
+                    file_names.append(field["answer"])
 
     files = [
         (
-            file.key.split("/")[-1],
+            file,
             url_for(
                 "assess_bp.get_file",
                 application_id=application_id,
-                file_name=file.key.split("/")[-1],
+                file_name=file,
                 short_id=short_id,
             ),
         )
-        for file in bucket.objects.filter(Prefix=f"{application_id}/")
-        if file.Object().metadata.get("componentname")
-        in file_upload_field_key_list
+        for file in file_names
     ]
     return files
 

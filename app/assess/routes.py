@@ -478,8 +478,11 @@ def generate_doc_list_for_download(application_id):
         determine_display_status(state, latest_flag)
 
     fund = get_fund(state.fund_id)
-    supporting_evidence = get_file_names_for_application_upload_fields(
-        application_id=application_id, short_id=short_id
+    application_json = get_application_json(application_id)
+    supporting_evidence = get_files_for_application_upload_fields(
+        application_id=application_id,
+        short_id=short_id,
+        application_json=application_json,
     )
     application_answers = (
         "Application answers",
