@@ -648,12 +648,23 @@ class TestRoutes:
             "app.assess.routes.get_application_json",
             return_value={"jsonb_blob": "mock"},
         )
-        response = flask_test_client.get("/assess/application/abc123/export")
-        assert 200 == response.status_code
-        assert 1 == len(templates_rendered)
-        rendered_template = templates_rendered[0]
-        assert "contract_downloads.html" == rendered_template[0].name
-        assert "abc123" == rendered_template[1]["application_id"]
+        with mock.patch(
+            "app.assess.routes.get_files_for_application_upload_fields",
+            return_value=[
+                ("sample1.doc", "mock/url/for/get/file"),
+                ("sample2.doc", "mock/url/for/get/file"),
+            ],
+        ):
+            response = flask_test_client.get(
+                "/assess/application/abc123/export"
+            )
+            assert 200 == response.status_code
+            assert 1 == len(templates_rendered)
+            rendered_template = templates_rendered[0]
+            assert "contract_downloads.html" == rendered_template[0].name
+            assert "abc123" == rendered_template[1]["application_id"]
+            assert b"sample1.doc" in response.data
+            assert b"sample2.doc" in response.data
 
     def test_download_q_and_a(self, flask_test_client, mocker):
 
