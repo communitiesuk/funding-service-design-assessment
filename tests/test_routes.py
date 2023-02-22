@@ -705,7 +705,7 @@ class TestRoutes:
             "app.assess.routes.download_file", return_value=""
         ) as mock_download_file:
             flask_test_client.get(
-                "/assess/application/abc123/export/QWERTY/business_plan.txt"
+                "/assess/application/abc123/export/business_plan.txt?short_id=QWERTY"  # noqa
             )
             mock_download_file.assert_called_once_with(
                 "some file contents",
