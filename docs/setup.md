@@ -47,6 +47,19 @@ Then to install the upgraded dependencies:
 
 ### Upgrade existing dependencies
 
+This repository uses GitHub's [Dependabot](https://github.com/dependabot) to keep the repository requirements up to date. The following Dependabot tools are active:
+
+- Dependabot alerts
+Alerts for vulnerabilities that affect dependencies and generates Dependabot pull requests to resolve these vulnerabilities.
+
+- Dependabot security updates
+Dependabot opens pull requests automatically to resolve Dependabot alerts.
+
+- Dependabot version updates
+Dependabot opens pull requests automatically to keep dependencies up-to-date when new versions are available. This can be configured in the **dependabot.yml** file within the repositories '.github' folder.
+
+**Manually upgrade dependencies**
+
 To ensure that dependencies are using the most recent compatible versions available we can run a pip-tools upgrade. To upgrade dependency versions in the existing .txt files, run (in the following order):
 
     pip-compile requirements.in --upgrade
@@ -55,7 +68,7 @@ To ensure that dependencies are using the most recent compatible versions availa
 
 This will upgrade the versions in the .txt files, whilst maintaining the version restrictions specified in the .in files.
 
-Then to install the upgraded dependencies:
+Then to install the upgraded dependencies locally:
 
     pip install -r requirements-dev.txt
 
