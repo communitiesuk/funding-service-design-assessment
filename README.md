@@ -113,13 +113,11 @@ These are the current pipelines running on the repo:
 
 # Testing
 
-## Unit & Accessibility Testing
+## Unit Testing
 
-To run all tests including aXe accessibility tests (using Chrome driver for Selenium) in a development environment run:
+To run all tests in a development environment run:
 
     pytest
-
-The aXe reports are printed at /axe_reports
 
 
 ## Performance Testing
