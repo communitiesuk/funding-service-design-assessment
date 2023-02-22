@@ -20,6 +20,31 @@ Score - {{ sub_criteria.name }} - {{sub_criteria.project_name}}
         {{ logout_partial(sso_logout_url) }}
     </div>
 
+    {% if score_form.errors.get('score') or score_form.errors.get('justification') %}
+            <div class="govuk-error-summary" data-module="govuk-error-summary">
+                <div role="alert">
+                <h2 class="govuk-error-summary__title">
+                    There is a problem
+                </h2>
+                <div class="govuk-error-summary__body">
+                    <ul class="govuk-list govuk-error-summary__list">
+                        {% if score_form.errors.get('score') %}
+                            <li>
+                                <a href="#score-div">Select a score</a>
+                            </li>
+                        {% endif %}
+                        {% if score_form.errors.get('justification') %}
+                            <li>
+                                <a href="#just-text-area">Add rationale for score</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+                </div>
+            </div>
+        {% endif %}
+
+
     {{ banner_summary(
         fund.name,
         sub_criteria.short_id,
