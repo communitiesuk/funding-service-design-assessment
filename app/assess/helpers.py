@@ -120,7 +120,8 @@ def extract_questions_and_answers_from_json_blob(
 
 def generate_text_of_application(q_and_a: dict):
     output = StringIO()
-
+    # TODO: we need to fetch the fund info and make this
+    # TODO: dynamic once we're running multiple funds
     output.write(f"********* {Config.COF_FUND_NAME} **********\n")
     for section_name, values in q_and_a.items():
         title = section_name.split("-")
