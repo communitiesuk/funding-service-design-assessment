@@ -160,7 +160,7 @@ def get_round(fund_id: str, round_id: str) -> Union[Round, None]:
 
 def get_bulk_accounts_dict(account_ids: List):
     account_url = Config.BULK_ACCOUNTS_ENDPOINT
-    account_params = {"account_id": account_ids}
+    account_params = {"account_id": list(set(account_ids))}
     return get_data(account_url, account_params)
 
 
