@@ -633,3 +633,108 @@ class TestRoutes:
             soup.title.string
             == "Business plan - Community Gym - Assessment Hub"
         )
+
+    def test_get_docs_for_download(
+        self,
+        flask_test_client,
+        mock_get_banner_state,
+        mock_get_fund,
+        templates_rendered,
+        mocker,
+    ):
+        token = create_valid_token(test_lead_assessor_claims)
+        flask_test_client.set_cookie("localhost", "fsd_user_token", token)
+        mocker.patch(
+            "app.assess.routes.get_application_json",
+            return_value={"jsonb_blob": "mock"},
+        )
+        with mock.patch(
+            "app.assess.routes.get_files_for_application_upload_fields",
+            return_value=[
+                ("sample1.doc", "mock/url/for/get/file"),
+                ("sample2.doc", "mock/url/for/get/file"),
+            ],
+        ):
+            response = flask_test_client.get(
+                "/assess/application/abc123/export"
+            )
+            assert 200 == response.status_code
+            assert 1 == len(templates_rendered)
+            rendered_template = templates_rendered[0]
+            assert "contract_downloads.html" == rendered_template[0].name
+            assert "abc123" == rendered_template[1]["application_id"]
+            assert b"sample1.doc" in response.data
+            assert b"sample2.doc" in response.data
+
+    def test_download_q_and_a(self, flask_test_client, mocker):
+
+        token = create_valid_token(test_lead_assessor_claims)
+        flask_test_client.set_cookie("localhost", "fsd_user_token", token)
+        mock_q_and_a = "Q) What is your quest?\nA) The holy grail"
+        mocker.patch(
+            "app.assess.routes.get_application_json",
+            return_value={"jsonb_blob": "mock"},
+        )
+        mocker.patch(
+            "app.assess.routes.extract_questions_and_answers_from_json_blob",
+            return_value={"What is your quest?": "The holy grail"},
+        )
+        mocker.patch(
+            "app.assess.routes.generate_text_of_application",
+            return_value=mock_q_and_a,
+        )
+        with mock.patch(
+            "app.assess.routes.download_file", return_value=""
+        ) as mock_download_file:
+
+            flask_test_client.get(
+                "/assess/application/abc123/export/QWERTY/answers.txt"
+            )
+            mock_download_file.assert_called_once_with(
+                mock_q_and_a, "text/plain", "QWERTY_answers.txt"
+            )
+
+    def test_get_file_with_short_id(self, flask_test_client, mocker):
+        token = create_valid_token(test_lead_assessor_claims)
+        flask_test_client.set_cookie("localhost", "fsd_user_token", token)
+        mocker.patch(
+            "app.assess.routes.get_file_for_download_from_aws",
+            return_value=("some file contents", "mock_mimetype"),
+        )
+        with mock.patch(
+            "app.assess.routes.download_file", return_value=""
+        ) as mock_download_file:
+            flask_test_client.get(
+                "/assess/application/abc123/export/business_plan.txt?short_id=QWERTY"  # noqa
+            )
+            mock_download_file.assert_called_once_with(
+                "some file contents",
+                "mock_mimetype",
+                "QWERTY_business_plan.txt",
+            )
+
+    def test_get_file_without_short_id(self, flask_test_client, mocker):
+        token = create_valid_token(test_lead_assessor_claims)
+        flask_test_client.set_cookie("localhost", "fsd_user_token", token)
+        mocker.patch(
+            "app.assess.routes.get_file_for_download_from_aws",
+            return_value=("some file contents", "mock_mimetype"),
+        )
+        with mock.patch(
+            "app.assess.routes.download_file", return_value=""
+        ) as mock_download_file:
+            flask_test_client.get(
+                "/assess/application/abc123/export/business_plan.txt"
+            )
+            mock_download_file.assert_called_once_with(
+                "some file contents", "mock_mimetype", "business_plan.txt"
+            )
+
+    def test_get_file(self, flask_test_client):
+        from app.assess.routes import download_file
+
+        response = download_file("file_data", "text/plain", "file_name.abc")
+        assert "text/plain" in response.content_type
+        assert "attachment;filename=file_name.abc" == response.headers.get(
+            "Content-Disposition"
+        )

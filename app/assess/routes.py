@@ -1,4 +1,7 @@
+from urllib.parse import quote_plus
+
 from app.assess.data import *
+from app.assess.data import get_application_json
 from app.assess.data import get_application_overviews
 from app.assess.data import get_assessments_stats
 from app.assess.data import submit_score_and_justification
@@ -13,6 +16,8 @@ from app.assess.forms.rescore_form import RescoreForm
 from app.assess.forms.resolve_flag_form import ResolveFlagForm
 from app.assess.forms.scores_and_justifications import ScoreForm
 from app.assess.helpers import determine_display_status
+from app.assess.helpers import extract_questions_and_answers_from_json_blob
+from app.assess.helpers import generate_text_of_application
 from app.assess.helpers import is_flaggable
 from app.assess.helpers import resolve_application
 from app.assess.models.flag import FlagType
@@ -28,6 +33,7 @@ from flask import g
 from flask import redirect
 from flask import render_template
 from flask import request
+from flask import Response
 from flask import url_for
 from fsd_utils.authentication.decorators import login_required
 
@@ -426,16 +432,6 @@ def sub_crit_scoring():
     )
 
 
-@assess_bp.route("/file/<application_id>/<file_name>", methods=["GET"])
-def get_file(application_id: str, file_name: str):
-
-    response = get_file_response(
-        application_id=application_id, file_name=file_name
-    )
-
-    return response
-
-
 @assess_bp.route("/resolve_flag/<application_id>", methods=["GET", "POST"])
 @login_required(roles_required=["LEAD_ASSESSOR"])
 def resolve_flag(application_id):
@@ -466,4 +462,87 @@ def continue_assessment(application_id):
         justification=form.reason.data,
         section="NA",
         page_to_render="continue_assessment.html",
+    )
+
+
+@assess_bp.route("/application/<application_id>/export", methods=["GET"])
+@login_required(roles_required=["LEAD_ASSESSOR"])
+def generate_doc_list_for_download(application_id):
+    current_app.logger.info(
+        f"Generating docs for application id {application_id}"
+    )
+    state = get_banner_state(application_id)
+    short_id = state.short_id[-6:]
+    latest_flag = get_latest_flag(application_id)
+    display_status = determine_display_status(
+        state.workflow_status, latest_flag
+    )
+
+    fund = get_fund(state.fund_id)
+    application_json = get_application_json(application_id)
+    supporting_evidence = get_files_for_application_upload_fields(
+        application_id=application_id,
+        short_id=short_id,
+        application_json=application_json,
+    )
+    application_answers = (
+        "Application answers",
+        url_for(
+            "assess_bp.download_application_answers",
+            application_id=application_id,
+            short_id=short_id,
+        ),
+    )
+
+    return render_template(
+        "contract_downloads.html",
+        application_id=application_id,
+        fund_name=fund.name,
+        state=state,
+        application_answers=application_answers,
+        supporting_evidence=supporting_evidence,
+        display_status=display_status,
+    )
+
+
+@assess_bp.route("/application/<application_id>/export/<short_id>/answers.txt")
+@login_required(roles_required=["LEAD_ASSESSOR"])
+def download_application_answers(application_id: str, short_id: str):
+    current_app.logger.info(
+        f"Generating application Q+A download for application {application_id}"
+    )
+    application_json = get_application_json(application_id)
+    qanda_dict = extract_questions_and_answers_from_json_blob(
+        application_json["jsonb_blob"]
+    )
+    text = generate_text_of_application(qanda_dict)
+
+    return download_file(text, "text/plain", f"{short_id}_answers.txt")
+
+
+@assess_bp.route(
+    "/application/<application_id>/export/<file_name>",
+    methods=["GET"],
+)
+@login_required
+def get_file(application_id: str, file_name: str):
+    short_id = request.args.get("short_id")
+    data, mimetype = get_file_for_download_from_aws(
+        application_id=application_id, file_name=file_name
+    )
+    if short_id:
+        return download_file(data, mimetype, f"{short_id}_{file_name}")
+
+    return download_file(data, mimetype, file_name)
+
+
+def download_file(data, mimetype, file_name):
+    return Response(
+        data,
+        mimetype=mimetype,
+        headers={
+            "Content-Disposition": (
+                f"attachment;filename={quote_plus(file_name)}"
+            )
+        },
     )

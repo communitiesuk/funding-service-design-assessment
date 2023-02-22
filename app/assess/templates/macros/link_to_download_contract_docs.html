@@ -1,0 +1,8 @@
+{% macro link_to_download_contract_docs(csrf_token, application_id, current_user_role) %}
+    {% if current_user_role in ["LEAD_ASSESSOR"] %}
+        <a href="{{ url_for('assess_bp.generate_doc_list_for_download', application_id=application_id) }}"
+            class="govuk-button secondary-button" data-module="govuk-button">
+            Export application data
+        </a>
+    {% endif %}
+{% endmacro %}

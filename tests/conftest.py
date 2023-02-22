@@ -5,6 +5,7 @@ from pathlib import Path
 import jwt as jwt
 import pytest
 from app.create_app import create_app
+from flask import template_rendered
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
@@ -110,20 +111,33 @@ def app():
 
 
 @pytest.fixture(scope="function")
-def flask_test_client(user_token=None):
+def templates_rendered(app):
+    recorded = []
+
+    def record(sender, template, context, **extra):
+        recorded.append((template, context))
+
+    template_rendered.connect(record, app)
+    try:
+        yield recorded
+    finally:
+        template_rendered.disconnect(record, app)
+
+
+@pytest.fixture(scope="function")
+def flask_test_client(app, user_token=None):
     """
     Creates the test client we will be using to test the responses
     from our app, this is a test fixture.
     :return: A flask test client.
     """
-    with create_app().app_context() as app_context:
-        with app_context.app.test_client() as test_client:
-            test_client.set_cookie(
-                "localhost",
-                "fsd_user_token",
-                user_token or create_valid_token(),
-            )
-            yield test_client
+    with app.test_client() as test_client:
+        test_client.set_cookie(
+            "localhost",
+            "fsd_user_token",
+            user_token or create_valid_token(),
+        )
+        yield test_client
 
 
 @pytest.fixture(scope="class")
@@ -172,3 +186,16 @@ def mock_get_banner_state(mocker, scope="function"):
         "app.assess.routes.get_banner_state",
         return_value=mock_banner_info,
     )
+
+
+@pytest.fixture(scope="function")
+def mock_get_fund(mocker, scope="function"):
+    from app.assess.models.fund import Fund
+
+    mock_fund_info = Fund(
+        name="Funding Service Design Unit Test Fund",
+        id="funding-service-design",
+        description="unit testing fund",
+        short_name="FSD-UT",
+    )
+    mocker.patch("app.assess.routes.get_fund", return_value=mock_fund_info)
