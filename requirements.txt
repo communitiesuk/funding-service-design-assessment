@@ -4,31 +4,27 @@
 #
 #    pip-compile requirements.in
 #
-attrs==22.1.0
-    # via
-    #   jsonschema
-    #   openapi-schema-validator
+attrs==22.2.0
+    # via jsonschema
 babel==2.11.0
     # via flask-babel
 blinker==1.5
     # via sentry-sdk
-boto3==1.26.33
+boto3==1.26.78
     # via -r requirements.in
-botocore==1.29.33
+botocore==1.29.78
     # via
     #   boto3
     #   s3transfer
 brotli==1.0.9
     # via flask-compress
-certifi==2022.9.24
+certifi==2022.12.7
     # via
     #   requests
     #   sentry-sdk
 cffi==1.15.1
     # via cryptography
-chardet==4.0.0
-    # via prance
-charset-normalizer==2.1.1
+charset-normalizer==3.0.1
     # via requests
 click==8.1.3
     # via
@@ -38,17 +34,17 @@ clickclick==20.10.2
     # via connexion
 commonmark==0.9.1
     # via rich
-connexion==2.14.1
+connexion==2.14.2
     # via -r requirements.in
-cryptography==38.0.4
+cryptography==39.0.1
     # via pyjwt
 cssmin==0.2.0
     # via -r requirements.in
-dnspython==2.2.1
+dnspython==2.3.0
     # via email-validator
-email-validator==1.2.1
+email-validator==1.3.1
     # via -r requirements.in
-flask==2.1.1
+flask==2.2.3
     # via
     #   -r requirements.in
     #   connexion
@@ -62,15 +58,15 @@ flask-assets==2.0
     # via -r requirements.in
 flask-babel==2.0.0
     # via funding-service-design-utils
-flask-compress==1.10.1
+flask-compress==1.13
     # via -r requirements.in
-flask-talisman==0.8.1
+flask-talisman==1.0.0
     # via -r requirements.in
-flask-wtf==1.0.0
+flask-wtf==1.1.1
     # via -r requirements.in
-funding-service-design-utils==1.0.22
+funding-service-design-utils==1.0.24
     # via -r requirements.in
-govuk-frontend-jinja==2.0.0
+govuk-frontend-jinja==2.5.0
     # via -r requirements.in
 gunicorn==20.1.0
     # via funding-service-design-utils
@@ -78,8 +74,6 @@ idna==3.4
     # via
     #   email-validator
     #   requests
-importlib-resources==5.10.0
-    # via openapi-spec-validator
 inflection==0.5.1
     # via connexion
 itsdangerous==2.1.2
@@ -105,36 +99,30 @@ jsonschema==4.17.3
     #   jsonschema-spec
     #   openapi-schema-validator
     #   openapi-spec-validator
-jsonschema-spec==0.1.2
+jsonschema-spec==0.1.3
     # via openapi-spec-validator
-lazy-object-proxy==1.8.0
+lazy-object-proxy==1.9.0
     # via openapi-spec-validator
-markupsafe==2.1.1
+markupsafe==2.1.2
     # via
     #   jinja2
     #   werkzeug
     #   wtforms
-openapi-schema-validator==0.3.4
+openapi-schema-validator==0.4.3
     # via openapi-spec-validator
-openapi-spec-validator==0.5.1
+openapi-spec-validator==0.5.5
     # via -r requirements.in
-packaging==21.3
-    # via
-    #   connexion
-    #   prance
+packaging==23.0
+    # via connexion
 pathable==0.4.3
     # via jsonschema-spec
-prance==0.22.11.4.0
-    # via -r requirements.in
 pycparser==2.21
     # via cffi
-pygments==2.13.0
+pygments==2.14.0
     # via rich
 pyjwt[crypto]==2.6.0
     # via funding-service-design-utils
-pyparsing==3.0.9
-    # via packaging
-pyrsistent==0.19.2
+pyrsistent==0.19.3
     # via jsonschema
 pyscss==1.4.0
     # via -r requirements.in
@@ -144,9 +132,9 @@ python-dotenv==0.20.0
     # via
     #   funding-service-design-utils
     #   webdriver-manager
-python-json-logger==2.0.4
+python-json-logger==2.0.7
     # via funding-service-design-utils
-pytz==2022.6
+pytz==2022.7.1
     # via
     #   babel
     #   flask-babel
@@ -157,39 +145,32 @@ pyyaml==6.0
     #   connexion
     #   funding-service-design-utils
     #   jsonschema-spec
-    #   openapi-spec-validator
-requests==2.28.1
+requests==2.28.2
     # via
     #   -r requirements.in
     #   connexion
     #   funding-service-design-utils
-    #   prance
     #   webdriver-manager
+rfc3339-validator==0.1.4
+    # via openapi-schema-validator
 rich==12.6.0
     # via funding-service-design-utils
-ruamel-yaml==0.17.21
-    # via prance
-ruamel-yaml-clib==0.2.7
-    # via ruamel-yaml
 s3transfer==0.6.0
     # via boto3
-semver==2.13.0
-    # via prance
-sentry-sdk[flask]==1.11.1
+sentry-sdk[flask]==1.15.0
     # via funding-service-design-utils
 six==1.16.0
     # via
-    #   flask-talisman
-    #   prance
     #   pyscss
     #   python-dateutil
+    #   rfc3339-validator
 swagger-ui-bundle==0.0.9
     # via -r requirements.in
 tqdm==4.64.1
     # via webdriver-manager
-typing-extensions==4.4.0
+typing-extensions==4.5.0
     # via jsonschema-spec
-urllib3==1.26.13
+urllib3==1.26.14
     # via
     #   botocore
     #   requests
@@ -198,7 +179,7 @@ webassets==2.0
     # via flask-assets
 webdriver-manager @ git+https://github.com/SergeyPirogov/webdriver_manager@dc73f4a27e8f40cd81dc4718a3f26c22ede29586
     # via -r requirements.in
-werkzeug==2.2.2
+werkzeug==2.2.3
     # via
     #   connexion
     #   flask

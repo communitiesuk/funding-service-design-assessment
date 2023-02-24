@@ -1,34 +1,34 @@
 #-----------------------------------
 #   FSD Utils
 #-----------------------------------
-funding-service-design-utils>=1.0.22,<1.1.0
+funding-service-design-utils
 requests
 
 #-----------------------------------
 #   Flask Version
 #-----------------------------------
-Flask==2.1.1
+Flask
 
 #-----------------------------------
 #   Security
 #-----------------------------------
-flask-talisman==0.8.1
+flask-talisman
 
 #-----------------------------------
 #   Static Assets
 #-----------------------------------
-Flask-Assets==2.0
-Flask-Compress==1.10.1
-cssmin==0.2.0
-pyScss==1.4.0
-jsmin==3.0.1
-govuk-frontend-jinja==2.0.0
+Flask-Assets
+Flask-Compress
+cssmin
+pyScss
+jsmin
+govuk-frontend-jinja
 
 #-----------------------------------
 #   Forms
 #-----------------------------------
-Flask-WTF==1.0.0
-email-validator==1.2.1
+Flask-WTF
+email-validator
 
 #-----------------------------------
 #   Connexion APIs
@@ -36,7 +36,7 @@ email-validator==1.2.1
 connexion
 swagger-ui-bundle
 openapi-spec-validator
-prance
+
 
 #-----------------------------------
 #   AWS
