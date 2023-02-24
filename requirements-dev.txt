@@ -8,6 +8,12 @@ async-generator==1.10
     # via
     #   trio
     #   trio-websocket
+async-timeout==4.0.2
+    # via
+    #   -r requirements.txt
+    #   redis
+atomicwrites==1.4.1
+    # via pytest
 attrs==22.1.0
     # via
     #   -r requirements.txt
@@ -36,6 +42,7 @@ boto3==1.26.33
     # via
     #   -r requirements-dev.in
     #   -r requirements.txt
+    #   flipper-client
 botocore==1.29.33
     # via
     #   -r requirements.txt
@@ -47,6 +54,10 @@ brotli==1.0.9
     #   flask-compress
 build==0.8.0
     # via pip-tools
+cachetools==4.2.4
+    # via
+    #   -r requirements.txt
+    #   flipper-client
 certifi==2022.9.24
     # via
     #   -r requirements.txt
@@ -57,6 +68,7 @@ cffi==1.15.1
     # via
     #   -r requirements.txt
     #   cryptography
+    #   trio
 cfgv==3.3.1
     # via pre-commit
 chardet==4.0.0
@@ -78,6 +90,14 @@ clickclick==20.10.2
     # via
     #   -r requirements.txt
     #   connexion
+colorama==0.4.6
+    # via
+    #   -r requirements.txt
+    #   bandit
+    #   build
+    #   click
+    #   pytest
+    #   tqdm
 commonmark==0.9.1
     # via
     #   -r requirements.txt
@@ -111,6 +131,7 @@ flask==2.1.1
     #   flask-assets
     #   flask-babel
     #   flask-compress
+    #   flask-redis
     #   flask-wtf
     #   funding-service-design-utils
     #   pytest-flask
@@ -123,11 +144,19 @@ flask-babel==2.0.0
     #   funding-service-design-utils
 flask-compress==1.10.1
     # via -r requirements.txt
+flask-redis==0.4.0
+    # via
+    #   -r requirements.txt
+    #   funding-service-design-utils
 flask-talisman==0.8.1
     # via -r requirements.txt
 flask-wtf==1.0.0
     # via -r requirements.txt
-funding-service-design-utils==1.0.22
+flipper-client==1.3.1
+    # via
+    #   -r requirements.txt
+    #   funding-service-design-utils
+funding-service-design-utils @ git+https://github.com/communitiesuk/funding-service-design-utils.git@fs-2277-toggles
     # via -r requirements.txt
 gitdb==4.0.9
     # via gitpython
@@ -254,6 +283,10 @@ pycparser==2.21
     # via
     #   -r requirements.txt
     #   cffi
+pyee==6.0.0
+    # via
+    #   -r requirements.txt
+    #   flipper-client
 pygments==2.13.0
     # via
     #   -r requirements.txt
@@ -304,6 +337,10 @@ pytest-selenium==2.0.1
     # via -r requirements-dev.in
 pytest-variables==2.0.0
     # via pytest-selenium
+python-consul==1.1.0
+    # via
+    #   -r requirements.txt
+    #   flipper-client
 python-dateutil==2.8.2
     # via
     #   -r requirements.txt
@@ -333,6 +370,11 @@ pyyaml==6.0
     #   jsonschema-spec
     #   openapi-spec-validator
     #   pre-commit
+redis==4.5.1
+    # via
+    #   -r requirements.txt
+    #   flask-redis
+    #   flipper-client
 requests==2.28.1
     # via
     #   -r requirements.txt
@@ -341,6 +383,7 @@ requests==2.28.1
     #   prance
     #   pytest-base-url
     #   pytest-selenium
+    #   python-consul
     #   webdriver-manager
 rich==12.6.0
     # via
@@ -377,8 +420,10 @@ six==1.16.0
     #   flask-talisman
     #   prance
     #   pyscss
+    #   python-consul
     #   python-dateutil
     #   tenacity
+    #   thrift
     #   virtualenv
 smmap==5.0.0
     # via gitdb
@@ -394,6 +439,10 @@ swagger-ui-bundle==0.0.9
     # via -r requirements.txt
 tenacity==6.3.1
     # via pytest-selenium
+thrift==0.16.0
+    # via
+    #   -r requirements.txt
+    #   flipper-client
 toml==0.10.2
     # via pre-commit
 tomli==2.0.1
