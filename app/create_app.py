@@ -86,27 +86,11 @@ def create_app() -> Flask:
             internal_server_error,
         )
         from app.assess.routes import assess_bp
-        from app.assess.api import api_bp
-        from app.assess.views.assess import AssessQuestionView
 
         flask_app.register_error_handler(404, not_found)
         flask_app.register_error_handler(500, internal_server_error)
         flask_app.register_blueprint(default_bp)
         flask_app.register_blueprint(assess_bp)
-        flask_app.register_blueprint(api_bp)
-        flask_app.add_url_rule(
-            "/".join(
-                [
-                    Config.ASSESSMENT_HUB_ROUTE,
-                    "application",
-                    "<application_id>",
-                    "question",
-                    "<question_id>",
-                ]
-            )
-            + "/",
-            view_func=AssessQuestionView.as_view("application_question"),
-        )
 
         # Bundle and compile assets
         assets = Environment()

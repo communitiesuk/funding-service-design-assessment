@@ -2,11 +2,10 @@ import json
 import os
 from typing import Dict
 from typing import List
+from typing import Optional
 from typing import Union
-from urllib.parse import quote_plus
 from urllib.parse import urlencode
 
-import boto3
 import requests
 from app.assess.models.application import Application
 from app.assess.models.banner import Banner
@@ -16,11 +15,13 @@ from app.assess.models.fund import Fund
 from app.assess.models.round import Round
 from app.assess.models.score import Score
 from app.assess.models.sub_criteria import SubCriteria
+from boto3 import client
 from botocore.exceptions import ClientError
 from config import Config
 from flask import abort
 from flask import current_app
-from flask import Response
+from flask import url_for
+from fsd_utils import NotifyConstants
 from fsd_utils.locale_selector.get_lang import get_lang
 
 
@@ -157,30 +158,9 @@ def get_round(fund_id: str, round_id: str) -> Union[Round, None]:
     return None
 
 
-def get_round_with_applications(
-    fund_id: str, round_id: str
-) -> Union[Round, None]:
-    round_response = get_round(fund_id, round_id)
-    if round_response:
-        fund_round = Round.from_json(round_response)
-        applications_response = call_search_applications(
-            {
-                "fund_id": fund_id,
-                "datetime_start": fund_round.opens,
-                "datetime_end": fund_round.deadline,
-            }
-        )
-        if applications_response and len(applications_response) > 0:
-            for application in applications_response:
-                fund_round.add_application(Application.from_json(application))
-
-        return fund_round
-    return None
-
-
 def get_bulk_accounts_dict(account_ids: List):
     account_url = Config.BULK_ACCOUNTS_ENDPOINT
-    account_params = {"account_id": account_ids}
+    account_params = {"account_id": list(set(account_ids))}
     return get_data(account_url, account_params)
 
 
@@ -269,19 +249,6 @@ def get_assessments_stats(fund_id: str, round_id: str) -> Dict | None:
     return get_data(assessments_stats_endpoint)
 
 
-def get_application(identifier: str) -> Union[Application, None]:
-    application_endpoint = (
-        Config.APPLICATION_STORE_API_HOST
-        + Config.APPLICATION_ENDPOINT.format(application_id=identifier)
-    )
-    application_response = get_data(application_endpoint)
-    if application_response and "id" in application_response:
-        application = Application.from_json(application_response)
-
-        return application
-    return None
-
-
 def get_assessor_task_list_state(application_id: str) -> Union[dict, None]:
     overviews_endpoint = (
         Config.ASSESSMENT_STORE_API_HOST
@@ -362,7 +329,7 @@ def get_banner_state(application_id: str):
         abort(404, description=msg)
 
 
-def get_latest_flag(application_id: str) -> list[Flag] | None:
+def get_latest_flag(application_id: str) -> Optional[Flag]:
     flag = get_data(
         Config.ASSESSMENT_LATEST_FLAG_ENDPOINT.format(
             application_id=application_id
@@ -516,14 +483,14 @@ def submit_comment(
     return response.ok
 
 
-def get_file_response(file_name: str, application_id: str):
+def get_file_for_download_from_aws(file_name: str, application_id: str):
     """_summary_: Function is set up to retrieve
     files from aws bucket.
     Args:
         filename: Takes an filename
         application_id: Takes an application_id # noqa
     Returns:
-        Returns a response with a file from aws.
+        Returns a tuple of (file_content, mime_type)
     """
 
     if file_name is None:
@@ -531,7 +498,7 @@ def get_file_response(file_name: str, application_id: str):
 
     prefixed_file_name = application_id + "/" + file_name
 
-    s3_client = boto3.client(
+    s3_client = client(
         "s3",
         aws_access_key_id=Config.AWS_ACCESS_KEY_ID,
         aws_secret_access_key=Config.AWS_SECRET_ACCESS_KEY,
@@ -546,19 +513,59 @@ def get_file_response(file_name: str, application_id: str):
         mimetype = obj["ResponseMetadata"]["HTTPHeaders"]["content-type"]
         data = obj["Body"].read()
 
-        response = Response(
-            data,
-            mimetype=mimetype,
-            headers={
-                "Content-Disposition": (
-                    f"attachment;filename={quote_plus(file_name)}"
-                )
-            },
-        )
-        return response
+        return data, mimetype
     except ClientError as e:
         current_app.logger.error(e)
         raise Exception(e)
+
+
+def get_files_for_application_upload_fields(
+    application_id: str, short_id: str, application_json: dict
+) -> List[tuple]:
+    """
+    This function retrieves the file names from an application_json
+    then uses this to create a lsit of tuples containing the file name
+    and download link for this file.
+
+    Parameters:
+    application_id (str): The unique identifier of the application.
+    short_id (str): The unique short-hand identifier of the application.
+    application_json (dict): The jsonified data for an application
+
+    Returns:
+    List[tuple]: A list of tuples, where each tuple contains the
+    file name and its download link.
+    """
+    forms = application_json["jsonb_blob"]["forms"]
+    file_names = []
+
+    for form in forms:
+        for question in form[NotifyConstants.APPLICATION_QUESTIONS_FIELD]:
+            for field in question["fields"]:
+                if field["type"] == "file":
+                    file_names.append(field["answer"])
+
+    files = [
+        (
+            file,
+            url_for(
+                "assess_bp.get_file",
+                application_id=application_id,
+                file_name=file,
+                short_id=short_id,
+            ),
+        )
+        for file in file_names
+    ]
+    return files
+
+
+def get_application_json(application_id):
+    endpoint = Config.APPLICATION_JSON_ENDPOINT.format(
+        application_id=application_id
+    )
+    response = requests.get(endpoint)
+    return response.json()
 
 
 def get_default_round_data():

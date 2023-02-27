@@ -1,6 +1,5 @@
 -r requirements.txt
 bandit
-black
 deepdiff
 invoke
 pip-tools
@@ -8,10 +7,10 @@ pre-commit
 pytest
 pytest-env
 pytest-flask
-pytest-mock==3.7.0
-pytest-selenium==2.0.1
+pytest-mock
 pip-tools
-selenium==4.2.0
-webdriver-manager==3.7.0
+selenium
+webdriver-manager
 boto3
 beautifulsoup4
+black
