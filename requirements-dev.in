@@ -9,8 +9,6 @@ pytest-env
 pytest-flask
 pytest-mock
 pip-tools
-axe-selenium-python
-json2html
 selenium
 webdriver-manager
 boto3
