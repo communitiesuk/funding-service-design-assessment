@@ -95,12 +95,12 @@
                     </div>
                     <div class="govuk-grid-column-one-third govuk-!-margin-top-2 govuk-button-group">
                         <span>
-                              {% if g.user.highest_role == "LEAD_ASSESSOR" and state.workflow_status=="COMPLETED" and not flag.is_qa_complete and not (flag and flag.flag_type.name == "STOPPED") %}
+                              {% if g.user.highest_role == "LEAD_ASSESSOR" and state.workflow_status=="COMPLETED" and not flag.is_qa_complete and not (flag and flag.flag_type.name == "STOPPED") and toggle_dict.get("FLAGGING") %}
                                 {{ mark_qa_complete_button(application_id) }}
                               {% endif %}
                         </span>
                        <span>
-                          {% if is_flaggable and g.user.highest_role in ("ASSESSOR", "LEAD_ASSESSOR") %}
+                          {% if is_flaggable and g.user.highest_role in ("ASSESSOR", "LEAD_ASSESSOR") and toggle_dict.get("FLAGGING") %}
                             {{ flag_application_button(application_id) }}
                           {% endif %}
                         </span>

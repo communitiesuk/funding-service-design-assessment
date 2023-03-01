@@ -19,6 +19,9 @@ from fsd_utils.authentication.decorators import login_requested
 from fsd_utils.healthchecks.checkers import FlaskRunningChecker
 from fsd_utils.healthchecks.healthcheck import Healthcheck
 from fsd_utils.logging import logging
+from fsd_utils.toggles.toggles import create_toggles_client
+from fsd_utils.toggles.toggles import initialise_toggles_redis_store
+from fsd_utils.toggles.toggles import load_toggles
 from jinja2 import ChoiceLoader
 from jinja2 import PackageLoader
 from jinja2 import PrefixLoader
@@ -58,6 +61,10 @@ def create_app() -> Flask:
     Compress(flask_app)
 
     logging.init_app(flask_app)
+    initialise_toggles_redis_store(flask_app)
+    toggle_client = create_toggles_client()
+    load_toggles(toggle_client)
+    # toggle_client.enable("FLAGGING")
 
     # Configure application security with Talisman
     Talisman(flask_app, **Config.TALISMAN_SETTINGS)
@@ -77,6 +84,10 @@ def create_app() -> Flask:
             service_meta_author="DLUHC",
             sso_logout_url=flask_app.config.get("SSO_LOGOUT_URL"),
             g=g,
+            toggle_dict={
+                feature.name: feature.is_enabled()
+                for feature in toggle_client.list()
+            },
         )
 
     with flask_app.app_context():
