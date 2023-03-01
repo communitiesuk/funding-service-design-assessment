@@ -63,9 +63,9 @@ def create_app() -> Flask:
     logging.init_app(flask_app)
     initialise_toggles_redis_store(flask_app)
     toggle_client = create_toggles_client()
-    load_toggles(toggle_client)
+    load_toggles(Config.FEATURE_CONFIG, toggle_client)
     # uncomment line below to toggle on FLAGGING:
-    # toggle_client.enable("FLAGGING")
+    # toggle_client.disable("FLAGGING")
 
     # Configure application security with Talisman
     Talisman(flask_app, **Config.TALISMAN_SETTINGS)

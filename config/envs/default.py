@@ -158,3 +158,9 @@ class DefaultConfig:
             AWS_ACCESS_KEY_ID = s3_credentials["aws_access_key_id"]
             AWS_SECRET_ACCESS_KEY = s3_credentials["aws_secret_access_key"]
             AWS_BUCKET_NAME = s3_credentials["bucket_name"]
+
+    """
+    Feature Toggles
+    """
+
+    FEATURE_CONFIG = CommonConfig.dev_feature_configuration
