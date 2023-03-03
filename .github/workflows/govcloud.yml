@@ -29,7 +29,7 @@ jobs:
       - name: Run Accessability tests
         run: pytest
       - name: 'Upload Accessibility Testing reports'
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: accessibility-test-report
           path: /home/runner/work/funding-service-design-assessment/funding-service-design-assessment/axe_reports/*.html
