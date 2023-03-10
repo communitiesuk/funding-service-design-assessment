@@ -13,6 +13,7 @@ jobs:
     with:
       app_name: ${{ github.event.repository.name }}
       api: false
+      assets_required: true
       deploy_to_dev: true
       users: 2
       spawn-rate: 2
