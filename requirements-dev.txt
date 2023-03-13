@@ -19,7 +19,7 @@ babel==2.11.0
     # via
     #   -r requirements.txt
     #   flask-babel
-bandit==1.7.4
+bandit==1.7.5
     # via -r requirements-dev.in
 beautifulsoup4==4.11.2
     # via -r requirements-dev.in
@@ -305,6 +305,7 @@ rfc3339-validator==0.1.4
 rich==12.6.0
     # via
     #   -r requirements.txt
+    #   bandit
     #   funding-service-design-utils
 s3transfer==0.6.0
     # via
