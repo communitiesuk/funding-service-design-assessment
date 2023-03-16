@@ -51,9 +51,10 @@ def update_ar_status_to_completed(application_id):
     response = requests.post(
         Config.ASSESSMENT_UPDATE_STATUS.format(application_id=application_id)
     )
-    if response.status_code ==204:
-        current_app.logger.info("The application status has been updated to COMPLETE")
+    if response.status_code == 204:
+        current_app.logger.info(
+            "The application status has been updated to COMPLETE"
+        )
         return response
     else:
         current_app.logger.error("Not Found: application_id not found")
-     

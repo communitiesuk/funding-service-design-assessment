@@ -208,7 +208,7 @@ def _ui_component_from_factory(item: dict, application_id: str):
 
 
 def _convert_heading_description_amount(
-        response: Iterable[dict],
+    response: Iterable[dict],
 ) -> tuple[list[dict], set[str]]:
     """Convert a list of dictionaries representing a response question and
     answers into a tuple of a list of dictionaries representing grouped fields
@@ -271,9 +271,9 @@ def _convert_heading_description_amount(
 
 
 def _build_item(
-        question: str,
-        field_id: str,
-        presentation_type: str = "text",
+    question: str,
+    field_id: str,
+    presentation_type: str = "text",
 ) -> dict:
     return {
         "question": question,
@@ -284,7 +284,7 @@ def _build_item(
 
 
 def _get_item_by_presentation_type_index(
-        response: list[dict], presentation_type: str, index: int
+    response: list[dict], presentation_type: str, index: int
 ) -> dict:
     """Gets an item from a response dictionary based on its presentation type
     and index.
@@ -322,7 +322,7 @@ def _get_item_by_presentation_type_index(
 
 
 def _convert_checkbox_items(
-        response: Iterable[dict],
+    response: Iterable[dict],
 ) -> tuple[list[dict], set[str]]:
     """Convert checkbox items in the response into a tuple of a list of
     dictionary items and a set of field IDs.
@@ -396,7 +396,7 @@ def _flatten_field_ids(field_id: str | tuple | list) -> list[str]:
 
 
 def _convert_non_number_grouped_fields(
-        response: Iterable[dict],
+    response: Iterable[dict],
 ) -> tuple[list[dict], set[str]]:
     """This function takes a response, an iterable of dictionaries
     representing data fields, and returns a tuple containing a list of
@@ -432,8 +432,7 @@ def _convert_non_number_grouped_fields(
         item
         for item in response
         if item["presentation_type"] == "grouped_fields"
-           and item["field_type"]
-           != "numberField"
+        and item["field_type"] != "numberField"
         # we ignore number fields as they are handled separately # noqa
     ]
 
@@ -446,7 +445,7 @@ def _convert_non_number_grouped_fields(
             continue
 
         for question_answer_tuple, field_id in zip(
-                item["answer"], item["field_id"]
+            item["answer"], item["field_id"]
         ):
             question, answer = question_answer_tuple
             text_items.append(
@@ -474,7 +473,7 @@ def _make_field_ids_hashable(item: dict) -> dict:
 
 
 def create_ui_components(
-        response_with_some_unhashable_fields: list[dict], application_id: str
+    response_with_some_unhashable_fields: list[dict], application_id: str
 ) -> List[ApplicantResponseComponent]:
     """Creates UI components for displaying applicant responses.
 
@@ -514,10 +513,10 @@ def create_ui_components(
         i for i in response if i["field_id"] not in processed_field_ids
     ]
     post_processed_items = (
-            grouped_fields_items
-            + text_items_from_checkbox
-            + text_items_from_grouped_fields
-            + unprocessed_items
+        grouped_fields_items
+        + text_items_from_checkbox
+        + text_items_from_grouped_fields
+        + unprocessed_items
     )
 
     field_ids_in_order = []
