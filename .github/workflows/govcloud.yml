@@ -14,7 +14,7 @@ jobs:
       app_name: ${{ github.event.repository.name }}
       api: false
       assets_required: true
-      include_rsa256_base64: true
+      include_rsa256_base64_public: true
       deploy_to_dev: true
       users: 2
       spawn-rate: 2
