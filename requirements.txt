@@ -110,7 +110,7 @@ markupsafe==2.1.2
     #   wtforms
 openapi-schema-validator==0.4.3
     # via openapi-spec-validator
-openapi-spec-validator==0.5.5
+openapi-spec-validator==0.5.6
     # via -r requirements.in
 packaging==23.0
     # via connexion

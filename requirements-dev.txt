@@ -197,7 +197,7 @@ openapi-schema-validator==0.4.3
     # via
     #   -r requirements.txt
     #   openapi-spec-validator
-openapi-spec-validator==0.5.5
+openapi-spec-validator==0.5.6
     # via -r requirements.txt
 ordered-set==4.1.0
     # via deepdiff
