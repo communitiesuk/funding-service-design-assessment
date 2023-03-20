@@ -15,7 +15,6 @@ jobs:
       api: false
       assets_required: true
       deploy_to_dev: true
-      run-time: 11s
       run_performance_tests: true
       run_e2e_tests: true
     secrets:
