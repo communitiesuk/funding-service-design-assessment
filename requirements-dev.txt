@@ -8,6 +8,10 @@ async-generator==1.10
     # via
     #   trio
     #   trio-websocket
+async-timeout==4.0.2
+    # via
+    #   -r requirements.txt
+    #   redis
 attrs==22.2.0
     # via
     #   -r requirements.txt
@@ -33,6 +37,7 @@ boto3==1.26.89
     # via
     #   -r requirements-dev.in
     #   -r requirements.txt
+    #   flipper-client
 botocore==1.29.89
     # via
     #   -r requirements.txt
@@ -44,6 +49,10 @@ brotli==1.0.9
     #   flask-compress
 build==0.10.0
     # via pip-tools
+cachetools==4.2.4
+    # via
+    #   -r requirements.txt
+    #   flipper-client
 certifi==2022.12.7
     # via
     #   -r requirements.txt
@@ -102,6 +111,7 @@ flask==2.2.3
     #   flask-assets
     #   flask-babel
     #   flask-compress
+    #   flask-redis
     #   flask-wtf
     #   funding-service-design-utils
     #   pytest-flask
@@ -114,11 +124,19 @@ flask-babel==2.0.0
     #   funding-service-design-utils
 flask-compress==1.13
     # via -r requirements.txt
+flask-redis==0.4.0
+    # via
+    #   -r requirements.txt
+    #   funding-service-design-utils
 flask-talisman==1.0.0
     # via -r requirements.txt
 flask-wtf==1.1.1
     # via -r requirements.txt
-funding-service-design-utils==1.0.24
+flipper-client==1.3.1
+    # via
+    #   -r requirements.txt
+    #   funding-service-design-utils
+funding-service-design-utils==1.0.25
     # via -r requirements.txt
 gitdb==4.0.10
     # via gitpython
@@ -234,6 +252,10 @@ pycparser==2.21
     # via
     #   -r requirements.txt
     #   cffi
+pyee==6.0.0
+    # via
+    #   -r requirements.txt
+    #   flipper-client
 pygments==2.14.0
     # via
     #   -r requirements.txt
@@ -264,6 +286,10 @@ pytest-flask==1.2.0
     # via -r requirements-dev.in
 pytest-mock==3.10.0
     # via -r requirements-dev.in
+python-consul==1.1.0
+    # via
+    #   -r requirements.txt
+    #   flipper-client
 python-dateutil==2.8.2
     # via
     #   -r requirements.txt
@@ -292,11 +318,17 @@ pyyaml==6.0
     #   funding-service-design-utils
     #   jsonschema-spec
     #   pre-commit
+redis==4.5.1
+    # via
+    #   -r requirements.txt
+    #   flask-redis
+    #   flipper-client
 requests==2.28.2
     # via
     #   -r requirements.txt
     #   connexion
     #   funding-service-design-utils
+    #   python-consul
     #   webdriver-manager
 rfc3339-validator==0.1.4
     # via
@@ -321,8 +353,10 @@ six==1.16.0
     # via
     #   -r requirements.txt
     #   pyscss
+    #   python-consul
     #   python-dateutil
     #   rfc3339-validator
+    #   thrift
 smmap==5.0.0
     # via gitdb
 sniffio==1.3.0
@@ -335,6 +369,10 @@ stevedore==5.0.0
     # via bandit
 swagger-ui-bundle==0.0.9
     # via -r requirements.txt
+thrift==0.16.0
+    # via
+    #   -r requirements.txt
+    #   flipper-client
 tqdm==4.64.1
     # via
     #   -r requirements.txt
