@@ -38,7 +38,7 @@ def get_data(
             current_app.logger.info(
                 f"Fetching data from '{endpoint}', with payload: {payload}."
             )
-            response = requests.get(endpoint, payload, timeout=60)
+            response = requests.get(endpoint, payload)
         else:
             current_app.logger.info(f"Fetching data from '{endpoint}'.")
             response = requests.get(endpoint)
