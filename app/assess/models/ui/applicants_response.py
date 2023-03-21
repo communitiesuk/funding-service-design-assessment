@@ -1,3 +1,4 @@
+# flake8: noqa
 from abc import ABC
 from abc import abstractmethod
 from dataclasses import dataclass
