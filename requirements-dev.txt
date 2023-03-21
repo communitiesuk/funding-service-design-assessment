@@ -19,7 +19,7 @@ babel==2.11.0
     # via
     #   -r requirements.txt
     #   flask-babel
-bandit==1.7.4
+bandit==1.7.5
     # via -r requirements-dev.in
 beautifulsoup4==4.11.2
     # via -r requirements-dev.in
@@ -29,11 +29,11 @@ blinker==1.5
     # via
     #   -r requirements.txt
     #   sentry-sdk
-boto3==1.26.83
+boto3==1.26.89
     # via
     #   -r requirements-dev.in
     #   -r requirements.txt
-botocore==1.29.83
+botocore==1.29.89
     # via
     #   -r requirements.txt
     #   boto3
@@ -220,7 +220,7 @@ pathspec==0.11.0
     # via black
 pbr==5.11.1
     # via stevedore
-pip-tools==6.12.2
+pip-tools==6.12.3
     # via -r requirements-dev.in
 platformdirs==3.0.0
     # via
@@ -228,7 +228,7 @@ platformdirs==3.0.0
     #   virtualenv
 pluggy==1.0.0
     # via pytest
-pre-commit==3.1.0
+pre-commit==3.1.1
     # via -r requirements-dev.in
 pycparser==2.21
     # via
@@ -305,6 +305,7 @@ rfc3339-validator==0.1.4
 rich==12.6.0
     # via
     #   -r requirements.txt
+    #   bandit
     #   funding-service-design-utils
 s3transfer==0.6.0
     # via
