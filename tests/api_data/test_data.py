@@ -312,6 +312,24 @@ single_application_json_blob = {
             "status": "COMPLETED",
         },
         {
+            "name": "upload-no-plan",
+            "questions": [
+                {
+                    "fields": [
+                        {
+                            # Intentionally missing "answer" key for testing
+                            "key": "rFXeZo",
+                            "title": "Upload NO plan",
+                            "type": "file",
+                        }
+                    ],
+                    "question": "Management case",
+                    "status": "COMPLETED",
+                }
+            ],
+            "status": "COMPLETED",
+        },
+        {
             "name": "project-information",
             "questions": [
                 {
