@@ -542,7 +542,7 @@ def get_files_for_application_upload_fields(
     for form in forms:
         for question in form[NotifyConstants.APPLICATION_QUESTIONS_FIELD]:
             for field in question["fields"]:
-                if field["type"] == "file":
+                if field["type"] == "file" and field.get("answer"):
                     file_names.append(field["answer"])
 
     files = [
