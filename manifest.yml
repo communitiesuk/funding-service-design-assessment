@@ -21,6 +21,7 @@ applications:
     GITHUB_SHA: ((GITHUB_SHA))
   health-check-http-endpoint: /healthcheck
   health-check-type: http
+  health-check-invocation-timeout: 10
   services:
     - form-uploads-dev
 
@@ -46,3 +47,4 @@ applications:
     - form-uploads-test
   health-check-http-endpoint: /healthcheck
   health-check-type: http
+  health-check-invocation-timeout: 10
