@@ -5,7 +5,7 @@
     {% for sub_criteria in sub_criterias %}
         {% set _ = rows.append([
             {
-                'html': '<a class="govuk-link" id="sub_criteria_name" href="{}">{}</a>'.format(
+                'html': '<a class="govuk-link" data-qa="sub_criteria_name" href="{}">{}</a>'.format(
                     url_for(
                         'assess_bp.display_sub_criteria',
                          application_id=application_id,
