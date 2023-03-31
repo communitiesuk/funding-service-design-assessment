@@ -99,8 +99,10 @@ def display_sub_criteria(
     )
 
     # TODO add test for this function in data_operations
-    theme_matched_comments = match_comment_to_theme(
-        comment_response, themes=sub_criteria.themes
+    theme_matched_comments = (
+        match_comment_to_theme(comment_response, themes=sub_criteria.themes)
+        if comment_response
+        else None
     )
 
     display_status = determine_display_status(
@@ -157,8 +159,10 @@ def score(
         theme_id=None,
     )
 
-    theme_matched_comments = match_comment_to_theme(
-        comment_response, themes=sub_criteria.themes
+    theme_matched_comments = (
+        match_comment_to_theme(comment_response, themes=sub_criteria.themes)
+        if comment_response
+        else None
     )
 
     display_status = determine_display_status(
