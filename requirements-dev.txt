@@ -19,7 +19,7 @@ babel==2.11.0
     # via
     #   -r requirements.txt
     #   flask-babel
-bandit==1.7.5
+bandit==1.7.4
     # via -r requirements-dev.in
 beautifulsoup4==4.11.2
     # via -r requirements-dev.in
