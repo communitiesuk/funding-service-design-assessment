@@ -103,7 +103,6 @@ def display_sub_criteria(
         sub_criteria.workflow_status, flag
     )
     common_template_config = {
-        "current_theme_id": theme_id,
         "sub_criteria": sub_criteria,
         "application_id": application_id,
         "fund": fund,
