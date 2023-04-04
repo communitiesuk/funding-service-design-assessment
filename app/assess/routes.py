@@ -108,7 +108,7 @@ def display_sub_criteria(
         "application_id": application_id,
         "fund": fund,
         "comments": comments,
-        "is_flagged": bool(flag),
+        "flag": flag,
         "display_comment_box": add_comment_argument,
         "comment_form": comment_form,
         "current_theme": current_theme,
@@ -395,7 +395,8 @@ def application(application_id):
         application_id=application_id,
         flag=flag,
         current_user_role=g.user.highest_role,
-        flag_user_info=accounts.get(flag.user_id) if flag else None,
+        flag_user_info=accounts.get(flag.user_id) if (
+            flag and accounts) else None,
         is_flaggable=is_flaggable(flag),
         display_status=display_status,
     )
