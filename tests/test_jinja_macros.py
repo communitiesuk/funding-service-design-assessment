@@ -507,8 +507,10 @@ class TestJinjaMacros(object):
         assessment_flag = None
 
         rendered_html = render_template_string(
-            "{{ banner_summary(fund_name, project_reference, project_name,"
-            " funding_amount_requested, workflow_status, flag) }}",
+            (
+                "{{ banner_summary(fund_name, project_reference, project_name,"
+                " funding_amount_requested, workflow_status, flag) }}"
+            ),
             banner_summary=get_template_attribute(
                 "macros/banner_summary.html", "banner_summary"
             ),
@@ -558,8 +560,10 @@ class TestJinjaMacros(object):
         }
 
         rendered_html = render_template_string(
-            "{{ banner_summary(fund_name, project_reference, project_name,"
-            " funding_amount_requested, display_status, flag) }}",
+            (
+                "{{ banner_summary(fund_name, project_reference, project_name,"
+                " funding_amount_requested, display_status, flag) }}"
+            ),
             banner_summary=get_template_attribute(
                 "macros/banner_summary.html", "banner_summary"
             ),

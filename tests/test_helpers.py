@@ -54,7 +54,6 @@ STOPPED_FLAG = Flag.from_dict(
 
 
 def test_determine_display_status():
-
     assert (
         determine_display_status(
             workflow_status="IN_PROGRESS", latest_flag=None

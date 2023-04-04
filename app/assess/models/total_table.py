@@ -5,20 +5,17 @@ from typing import List
 
 
 def remove_currency_symbols(currency_str):
-
     return re.sub("[,$£]", "", currency_str)
 
 
 @dataclass
 class TotalMoneyTableView:
-
     total: int
     table_elements: List[Dict[str, int]]
     prefix: str = "£"
 
     @classmethod
     def from_question_json(cls, question_json):
-
         table_elements = {"rows": []}
 
         table_elements["rows"] = [
@@ -39,7 +36,6 @@ class TotalMoneyTableView:
         return TotalMoneyTableView(total, table_elements=table_elements)
 
     def row_dict(self):
-
         return {
             "rows": [
                 *self.table_elements["rows"],

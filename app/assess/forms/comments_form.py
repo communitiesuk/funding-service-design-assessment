@@ -6,7 +6,6 @@ from wtforms.validators import length
 
 
 class CommentsForm(FlaskForm):
-
     comment = TextAreaField(
         "Comment",
         validators=[

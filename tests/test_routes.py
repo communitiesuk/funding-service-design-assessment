@@ -224,7 +224,6 @@ class TestRoutes:
     def test_route_sub_criteria_side_bar_lead_assessor(
         self, flask_test_client, monkeypatch, expected_ids, expected_names
     ):
-
         # Mocking fsd-user-token cookie
         token = create_valid_token(test_lead_assessor_claims)
         flask_test_client.set_cookie("localhost", "fsd_user_token", token)
@@ -248,7 +247,6 @@ class TestRoutes:
     def test_route_sub_criteria_scoring_inaccessible_to_commenters(
         self, flask_test_client
     ):
-
         # Mocking fsd-user-token cookie
         token = create_valid_token(test_commenter_claims)
         flask_test_client.set_cookie("localhost", "fsd_user_token", token)
@@ -269,7 +267,6 @@ class TestRoutes:
         )
 
     def test_homepage_route_accessible(self, flask_test_client):
-
         # Remove fsd-user-token cookie
         flask_test_client.set_cookie("localhost", "fsd_user_token", "")
 
@@ -290,7 +287,6 @@ class TestRoutes:
         ), "Homepage route should be accessible"
 
     def test_healthcheck_route_accessible(self, flask_test_client):
-
         # Remove fsd-user-token cookie
         flask_test_client.set_cookie("localhost", "fsd_user_token", "")
 
@@ -667,7 +663,6 @@ class TestRoutes:
             assert b"sample2.doc" in response.data
 
     def test_download_q_and_a(self, flask_test_client, mocker):
-
         token = create_valid_token(test_lead_assessor_claims)
         flask_test_client.set_cookie("localhost", "fsd_user_token", token)
         mock_q_and_a = "Q) What is your quest?\nA) The holy grail"
@@ -686,7 +681,6 @@ class TestRoutes:
         with mock.patch(
             "app.assess.routes.download_file", return_value=""
         ) as mock_download_file:
-
             flask_test_client.get(
                 "/assess/application/abc123/export/QWERTY/answers.txt"
             )

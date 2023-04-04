@@ -9,7 +9,6 @@ from fsd_utils import configclass
 
 @configclass
 class DevelopmentConfig(DefaultConfig):
-
     # RSA 256 KEYS
     if not hasattr(DefaultConfig, "RSA256_PUBLIC_KEY"):
         _test_public_key_path = (

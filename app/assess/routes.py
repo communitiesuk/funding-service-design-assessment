@@ -214,7 +214,6 @@ def score(
 )
 @login_required(roles_required=["ASSESSOR"])
 def flag(application_id):
-
     form = FlagApplicationForm()
 
     if request.method == "POST" and form.validate_on_submit():
@@ -406,7 +405,6 @@ def sub_crit_scoring():
     form = ScoreForm()
 
     if form.validate_on_submit():
-
         score = int(form.score.data)
         just = form.justification.data
 

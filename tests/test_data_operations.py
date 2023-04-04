@@ -8,11 +8,9 @@ from flask import Flask
 
 
 class TestDataOperations:
-
     test_app = Flask("app")
 
     def test_get_application_overviews(self):
-
         with self.test_app.app_context():
             params = {
                 "search_term": "",
@@ -27,7 +25,6 @@ class TestDataOperations:
         assert 3 == len(result), "wrong number of application overviews"
 
     def test_get_application_overviews_search_ref(self):
-
         with self.test_app.app_context():
             params = {
                 "search_term": "AJTRIB",
@@ -42,7 +39,6 @@ class TestDataOperations:
         assert 1 == len(result), "wrong number of application overviews"
 
     def test_get_application_overviews_search_project_name(self):
-
         with self.test_app.app_context():
             params = {
                 "search_term": "Save our village",
@@ -57,7 +53,6 @@ class TestDataOperations:
         assert 1 == len(result), "wrong number of application overviews"
 
     def test_get_application_overviews_filter_status(self):
-
         with self.test_app.app_context():
             params = {
                 "search_term": "",
@@ -72,7 +67,6 @@ class TestDataOperations:
         assert 1 == len(result), "wrong number of application overviews"
 
     def test_get_application_overviews_filter_asset_type(self):
-
         with self.test_app.app_context():
             params = {
                 "search_term": "",
@@ -87,7 +81,6 @@ class TestDataOperations:
         assert 1 == len(result), "wrong number of application overviews"
 
     def test_get_round(self, flask_test_client):
-
         with self.test_app.app_context():
             round = get_round(
                 DefaultConfig.COF_FUND_ID, DefaultConfig.COF_ROUND2_ID
@@ -96,14 +89,12 @@ class TestDataOperations:
         assert "Round 2 Window 2" == round.title, "Wrong round title"
 
     def test_get_fund(self):
-
         with self.test_app.app_context():
             fund = get_fund(DefaultConfig.COF_FUND_ID)
         assert fund, "No fund returned"
         assert "Community Ownership Fund" == fund.name, "Wrong fund title"
 
     def test_get_comments(self):
-
         with self.test_app.app_context():
             themes = [
                 Theme(id="general-information", name="General information"),

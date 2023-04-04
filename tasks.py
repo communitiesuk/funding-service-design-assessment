@@ -5,7 +5,6 @@ from invoke import task
 
 @task
 def copy_styles(c):
-
     source_path = "./app/static/src/styles/"
     dist_path = "./app/static/dist/styles/"
 

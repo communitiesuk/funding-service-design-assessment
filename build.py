@@ -6,7 +6,6 @@ import zipfile
 
 
 def build_govuk_assets():
-
     DIST_ROOT = "./app/static/dist"
     GOVUK_DIR = "/govuk-frontend"
     GOVUK_URL = (
@@ -61,7 +60,6 @@ def build_govuk_assets():
     cwd = os.getcwd()
     os.chdir(DIST_PATH)
     for css_file in glob.glob("*.css"):
-
         # Read in the file
         with open(css_file, "r") as file:
             filedata = file.read()
@@ -96,5 +94,4 @@ def build_govuk_assets():
 
 
 if __name__ == "__main__":
-
     build_govuk_assets()

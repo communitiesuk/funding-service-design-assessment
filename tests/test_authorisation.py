@@ -237,8 +237,10 @@ class TestAuthorisation:
 
         expected_theme_title = b"General information"
         response = flask_test_client.get(
-            "assess/application_id/app_123/sub_criteria_id/"
-            "1a2b3c4d?theme_id=general-information",
+            (
+                "assess/application_id/app_123/sub_criteria_id/"
+                "1a2b3c4d?theme_id=general-information"
+            ),
             follow_redirects=True,
         )
         assert response.status_code == 200
@@ -283,8 +285,10 @@ class TestAuthorisation:
 
         expected_theme_title = b"General information"
         response = flask_test_client.get(
-            "assess/application_id/app_123/sub_criteria_id/1a2b3c4d?"
-            "theme_id=general-information",
+            (
+                "assess/application_id/app_123/sub_criteria_id/1a2b3c4d?"
+                "theme_id=general-information"
+            ),
             follow_redirects=True,
         )
         assert response.status_code == 200

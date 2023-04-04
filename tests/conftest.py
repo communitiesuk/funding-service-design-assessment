@@ -45,7 +45,6 @@ test_roleless_user_claims = {
 
 
 def create_valid_token(payload=test_assessor_claims):
-
     _test_private_key_path = (
         str(Path(__file__).parent) + "/keys/rsa256/private.pem"
     )
@@ -56,7 +55,6 @@ def create_valid_token(payload=test_assessor_claims):
 
 
 def create_invalid_token():
-
     _test_private_key_path = (
         str(Path(__file__).parent) + "/keys/rsa256/private_invalid.pem"
     )
