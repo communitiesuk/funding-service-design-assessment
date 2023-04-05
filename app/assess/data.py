@@ -421,9 +421,9 @@ def get_comments(
 
 
 def match_comment_to_theme(comment_response, themes):
-    """_summary_: Get comments from the assessment store
+    """_summary_: match the comment response to its theme and account information
     Args:
-        application_id: application_id,
+        comment_response: assessment store comments response for a theme,
         themes: list of subcriteria themes
     Returns:
         Returns a dictionary of comments.
