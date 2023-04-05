@@ -6,6 +6,7 @@ from typing import Iterable
 from typing import List
 from typing import Tuple
 
+from app.assess.data import list_files_in_folder
 from app.assess.views.filters import format_address
 from app.assess.views.filters import format_date
 from app.assess.views.filters import remove_dashes_underscores_capitalize
@@ -131,6 +132,21 @@ class MonetaryKeyValues(ApplicantResponseComponent):
         )
 
 
+@dataclass
+class QuestionAboveHrefAnswerList(ApplicantResponseComponent):
+    question: str
+    files: list[str]
+
+    key = "question_above_href_answer_list"
+
+    @classmethod
+    def from_dict(cls, data: dict, files: list[str]):
+        return cls(
+            question=data["question"],
+            files=files,
+        )
+
+
 def _ui_component_from_factory(item: dict, application_id: str):
     """
     :param item: dict
@@ -199,6 +215,14 @@ def _ui_component_from_factory(item: dict, application_id: str):
             file_name=answer if answer else "",
         )
         return AboveQuestionAnswerPairHref.from_dict(item, href=presigned_url)
+
+    elif presentation_type == "s3bucketPath":
+        folderPath = (
+            f"{application_id}/{item['form_name']}"
+            f"/{item['path']}/{item['field_id']}"
+        )
+        files = list_files_in_folder(folderPath)
+        return QuestionAboveHrefAnswerList.from_dict(item, files)
 
     elif presentation_type == "address":
         return FormattedBesideQuestionAnswerPair.from_dict(
