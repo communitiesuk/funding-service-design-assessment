@@ -22,6 +22,7 @@ class TestRoutes:
     def test_route_landing(
         self,
         flask_test_client,
+        mock_get_fund,
         mock_get_round,
         mock_get_application_overviews,
         mock_get_assessment_stats,
@@ -57,6 +58,7 @@ class TestRoutes:
     def test_route_landing_filter_status(
         self,
         flask_test_client,
+        mock_get_fund,
         mock_get_round,
         mock_get_application_overviews,
         mock_get_assessment_stats,
@@ -85,6 +87,7 @@ class TestRoutes:
     def test_route_landing_filter_asset_type(
         self,
         flask_test_client,
+        mock_get_fund,
         mock_get_round,
         mock_get_application_overviews,
         mock_get_assessment_stats,
@@ -113,6 +116,7 @@ class TestRoutes:
     def test_route_landing_search_term(
         self,
         flask_test_client,
+        mock_get_fund,
         mock_get_round,
         mock_get_application_overviews,
         mock_get_assessment_stats,
@@ -141,6 +145,7 @@ class TestRoutes:
     def test_route_landing_clear_filters(
         self,
         flask_test_client,
+        mock_get_fund,
         mock_get_round,
         mock_get_application_overviews,
         mock_get_assessment_stats,
@@ -562,6 +567,7 @@ class TestRoutes:
     def test_route_landing_shows_flagged(
         self,
         flask_test_client,
+        mock_get_fund,
         mock_get_round,
         mock_get_application_overviews,
         mock_get_assessment_stats,

@@ -221,7 +221,7 @@ def mock_get_round():
         yield mocked_round
 
     mocked_round.assert_called_once_with(
-        Config.COF_FUND_ID, Config.COF_ROUND2_ID
+        Config.COF_FUND_ID, Config.COF_ROUND2_W3_ID
     )
 
 
@@ -247,7 +247,7 @@ def mock_get_application_overviews(request):
         yield mocked_apps_overview
 
     mocked_apps_overview.assert_called_with(
-        Config.COF_FUND_ID, Config.COF_ROUND2_ID, search_params
+        Config.COF_FUND_ID, Config.COF_ROUND2_W3_ID, search_params
     )
 
 
@@ -279,7 +279,7 @@ def mock_get_assessment_stats():
         yield mocked_assessment_stats
 
     mocked_assessment_stats.assert_called_once_with(
-        Config.COF_FUND_ID, Config.COF_ROUND2_ID
+        Config.COF_FUND_ID, Config.COF_ROUND2_W3_ID
     )
 
 
