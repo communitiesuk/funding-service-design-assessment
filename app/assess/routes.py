@@ -395,8 +395,9 @@ def application(application_id):
         application_id=application_id,
         flag=flag,
         current_user_role=g.user.highest_role,
-        flag_user_info=accounts.get(flag.user_id) if (
-            flag and accounts) else None,
+        flag_user_info=accounts.get(flag.user_id)
+        if (flag and accounts)
+        else None,
         is_flaggable=is_flaggable(flag),
         display_status=display_status,
     )
