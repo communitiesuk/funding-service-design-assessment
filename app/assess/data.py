@@ -1,5 +1,3 @@
-import json
-import os
 from typing import Dict
 from typing import List
 from typing import Optional
@@ -25,30 +23,23 @@ from fsd_utils import NotifyConstants
 from fsd_utils.locale_selector.get_lang import get_lang
 
 
-def get_data(
-    endpoint: str,
-    payload: Dict = None,
-    use_local_data: bool = Config.USE_LOCAL_DATA,
-):
-    if use_local_data:
-        current_app.logger.info(f"Fetching local data from '{endpoint}'.")
-        return get_local_data(endpoint)
+def get_data(endpoint: str, payload: Dict = None):
+
+    if payload:
+        current_app.logger.info(
+            f"Fetching data from '{endpoint}', with payload: {payload}."
+        )
+        response = requests.get(endpoint, payload)
     else:
-        if payload:
-            current_app.logger.info(
-                f"Fetching data from '{endpoint}', with payload: {payload}."
-            )
-            response = requests.get(endpoint, payload)
-        else:
-            current_app.logger.info(f"Fetching data from '{endpoint}'.")
-            response = requests.get(endpoint)
-        if response.status_code == 200:
-            return response.json()
-        else:
-            current_app.logger.error(
-                f"Could not get data for endpoint '{endpoint}' "
-            )
-            return None
+        current_app.logger.info(f"Fetching data from '{endpoint}'.")
+        response = requests.get(endpoint)
+    if response.status_code == 200:
+        return response.json()
+    else:
+        current_app.logger.error(
+            f"Could not get data for endpoint '{endpoint}' "
+        )
+        return None
 
 
 def get_assessment_progress(application_metadata):
@@ -77,17 +68,6 @@ def get_assessment_progress(application_metadata):
                 am["progress"] = res.get("progress")
 
     return application_metadata
-
-
-def get_local_data(endpoint: str):
-    api_data_json = os.path.join(
-        Config.FLASK_ROOT, "tests", "api_data", "endpoint_data.json"
-    )
-    fp = open(api_data_json)
-    api_data = json.load(fp)
-    fp.close()
-    if endpoint in api_data:
-        return api_data.get(endpoint)
 
 
 def call_search_applications(params: dict | str):
@@ -185,9 +165,13 @@ def get_score_and_justification(
     current_app.logger.info(
         f"Response from Assessment Store: '{score_response}'."
     )
-    account_ids = [score["user_id"] for score in score_response]
+    return score_response
+
+
+def match_score_to_user_account(scores):
+    account_ids = [score["user_id"] for score in scores]
     bulk_accounts_dict = get_bulk_accounts_dict(account_ids)
-    scores: list[Score] = [
+    scores_with_account: list[Score] = [
         Score.from_dict(
             score
             | {
@@ -202,9 +186,9 @@ def get_score_and_justification(
                 ],
             }
         )
-        for score in score_response
+        for score in scores
     ]
-    return scores
+    return scores_with_account
 
 
 def submit_score_and_justification(
@@ -401,14 +385,13 @@ def get_sub_criteria_theme_answers(
 
 
 def get_comments(
-    application_id: str, sub_criteria_id: str, theme_id: str | None, themes
+    application_id: str, sub_criteria_id: str, theme_id: str | None
 ):
     """_summary_: Get comments from the assessment store
     Args:
         application_id: application_id,
         sub_criteria_id: sub_criteria_id
         theme_id: optional theme_id (else returns all comments for subcriteria)
-        themes: list of subcriteria themes
     Returns:
         Returns a dictionary of comments.
     """
@@ -433,7 +416,18 @@ def get_comments(
             f" sub_criteria_id: {sub_criteria_id}"
         )
         return None
+    else:
+        return comment_response
 
+
+def match_comment_to_theme(comment_response, themes):
+    """_summary_: match the comment response to its theme and account information
+    Args:
+        comment_response: assessment store comments response for a theme,
+        themes: list of subcriteria themes
+    Returns:
+        Returns a dictionary of comments.
+    """
     account_ids = [comment["user_id"] for comment in comment_response]
     bulk_accounts_dict = get_bulk_accounts_dict(account_ids)
 

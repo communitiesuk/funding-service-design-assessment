@@ -2,16 +2,49 @@ from app.assess.data import get_application_overviews
 from app.assess.data import get_comments
 from app.assess.data import get_fund
 from app.assess.data import get_round
-from app.assess.models.theme import Theme
-from config.envs.default import DefaultConfig
 from flask import Flask
+from tests.api_data.test_data import mock_api_results
 
 
 class TestDataOperations:
 
     test_app = Flask("app")
 
-    def test_get_application_overviews(self):
+    def test_get_fund(self, mocker):
+        mock_fund_result = mock_api_results["fund_store/funds/{fund_id}"]
+        get_data_mock = mocker.patch(
+            "app.assess.data.get_data", return_value=mock_fund_result
+        )
+        arg = "test-fund"
+        with self.test_app.app_context():
+            fund = get_fund(arg)
+        assert fund, "No fund returned"
+        assert (
+            "Funding Service Design Unit Test Fund" == fund.name
+        ), "Wrong fund title"
+        assert arg in get_data_mock.call_args.args[0]
+
+    def test_get_round(self, mocker):
+        mock_round_result = mock_api_results[
+            "fund_store/funds/{fund_id}/rounds/{round_id}"
+        ]
+        get_data_mock = mocker.patch(
+            "app.assess.data.get_data", return_value=mock_round_result
+        )
+        args = ("test-fund", "test-round")
+        with self.test_app.app_context():
+            round = get_round(*args)
+        assert round, "No round returned"
+        assert "Test round" == round.title, "Wrong round title"
+        assert all(arg in get_data_mock.call_args.args[0] for arg in args)
+
+    def test_get_application_overviews(self, mocker):
+        mock_fund_result = mock_api_results[
+            "assessment_store/application_overviews/{fund_id}/{round_id}?"
+        ]
+        get_data_mock = mocker.patch(
+            "app.assess.data.get_data", return_value=mock_fund_result
+        )
 
         with self.test_app.app_context():
             params = {
@@ -20,97 +53,44 @@ class TestDataOperations:
                 "asset_type": "ALL",
                 "status": "ALL",
             }
-            result = get_application_overviews(
-                DefaultConfig.COF_FUND_ID, DefaultConfig.COF_ROUND2_ID, params
-            )
+            args = ("test-fund", "test-round")
+            result = get_application_overviews(*args, params)
         assert result, "No result returned"
         assert 3 == len(result), "wrong number of application overviews"
+        assert all(arg in get_data_mock.call_args.args[0] for arg in args)
 
-    def test_get_application_overviews_search_ref(self):
+    def test_get_application_overviews_search_with_params(self, mocker):
+        mock_overview_result = mock_api_results[
+            "assessment_store/application_overviews/{fund_id}/{round_id}?"
+            "search_term=Project+S&search_in=project_name%2Cshort_id&"
+            "asset_type=gallery&status=STOPPED"
+        ]
+        get_data_mock = mocker.patch(
+            "app.assess.data.get_data", return_value=mock_overview_result
+        )
 
         with self.test_app.app_context():
             params = {
-                "search_term": "AJTRIB",
+                "search_term": "Project S",
                 "search_in": "project_name,short_id",
                 "asset_type": "ALL",
                 "status": "ALL",
             }
-            result = get_application_overviews(
-                DefaultConfig.COF_FUND_ID, DefaultConfig.COF_ROUND2_ID, params
-            )
+            args = ("test-fund", "test-round")
+            result = get_application_overviews(*args, params)
         assert result, "No result returned"
+        assert result[0]["short_id"] == "FS"
+        assert result[0]["project_name"] == "Project In prog and Stop"
         assert 1 == len(result), "wrong number of application overviews"
+        assert all(arg in get_data_mock.call_args.args[0] for arg in args)
 
-    def test_get_application_overviews_search_project_name(self):
-
+    def test_get_comments(self, mocker):
+        mock_comments_result = mock_api_results["assessment_store/comment?"]
+        get_data_mock = mocker.patch(
+            "app.assess.data.get_data", return_value=mock_comments_result
+        )
+        args = ("resolved_app", "test_sub_criteria_id", "test_theme_id")
         with self.test_app.app_context():
-            params = {
-                "search_term": "Save our village",
-                "search_in": "project_name,short_id",
-                "asset_type": "ALL",
-                "status": "ALL",
-            }
-            result = get_application_overviews(
-                DefaultConfig.COF_FUND_ID, DefaultConfig.COF_ROUND2_ID, params
-            )
-        assert result, "No result returned"
-        assert 1 == len(result), "wrong number of application overviews"
-
-    def test_get_application_overviews_filter_status(self):
-
-        with self.test_app.app_context():
-            params = {
-                "search_term": "",
-                "search_in": "project_name,short_id",
-                "asset_type": "ALL",
-                "status": "QA_READY",
-            }
-            result = get_application_overviews(
-                DefaultConfig.COF_FUND_ID, DefaultConfig.COF_ROUND2_ID, params
-            )
-        assert result, "No result returned"
-        assert 1 == len(result), "wrong number of application overviews"
-
-    def test_get_application_overviews_filter_asset_type(self):
-
-        with self.test_app.app_context():
-            params = {
-                "search_term": "",
-                "search_in": "project_name,short_id",
-                "asset_type": "pub",
-                "status": "ALL",
-            }
-            result = get_application_overviews(
-                DefaultConfig.COF_FUND_ID, DefaultConfig.COF_ROUND2_ID, params
-            )
-        assert result, "No result returned"
-        assert 1 == len(result), "wrong number of application overviews"
-
-    def test_get_round(self, flask_test_client):
-
-        with self.test_app.app_context():
-            round = get_round(
-                DefaultConfig.COF_FUND_ID, DefaultConfig.COF_ROUND2_ID
-            )
-        assert round, "No round returned"
-        assert "Round 2 Window 2" == round.title, "Wrong round title"
-
-    def test_get_fund(self):
-
-        with self.test_app.app_context():
-            fund = get_fund(DefaultConfig.COF_FUND_ID)
-        assert fund, "No fund returned"
-        assert "Community Ownership Fund" == fund.name, "Wrong fund title"
-
-    def test_get_comments(self):
-
-        with self.test_app.app_context():
-            themes = [
-                Theme(id="general-information", name="General information"),
-                Theme(id="activities", name="Activities"),
-                Theme(id="partnerships", name="Partnerships"),
-            ]
-            comments = get_comments(
-                "app_123", "1a2b3c4d", "general-information", themes
-            )
-        assert 3 == len(comments), "wrong number of comments"
+            comments = get_comments(*args)
+        assert 5 == len(comments), "wrong number of comments"
+        assert all(arg in get_data_mock.call_args.args[0] for arg in args)

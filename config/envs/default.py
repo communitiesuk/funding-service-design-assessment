@@ -5,7 +5,6 @@ from os import environ
 from os import getenv
 from pathlib import Path
 
-from distutils.util import strtobool
 from fsd_utils import CommonConfig
 from fsd_utils import configclass
 
@@ -142,8 +141,6 @@ class DefaultConfig:
 
     DEFAULT_FUND_ID = CommonConfig.COF_FUND_ID
     DEFAULT_ROUND_ID = CommonConfig.get_default_round_id()
-
-    USE_LOCAL_DATA = strtobool(getenv("USE_LOCAL_DATA", "False"))
 
     """
     Aws Config
