@@ -16,9 +16,8 @@
     'question_heading': question_heading,
 } %}
 
-{% macro theme(theme_id, answers_meta) %}
-    <h2 class="govuk-heading-m">{{ theme_id | remove_dashes_underscores_capitalize }}</h2>
-    <h3 class="govuk-heading-s response-title">Applicant's response</h3>
+{% macro theme(answers_meta) %}
+    <h3 class="govuk-heading-m response-title">Applicant's response</h3>
     <div class="template-answer bg-white">
         {% for meta in answers_meta %}
             {% if meta.should_render %}

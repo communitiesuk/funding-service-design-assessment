@@ -64,10 +64,10 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
             <div class="govuk-grid-column-one-third">
-                {{ navbar(application_id, sub_criteria, current_theme_id) }}
+                {{ navbar(application_id, sub_criteria, current_theme.id) }}
             </div>
             <div class="theme govuk-grid-column-two-thirds">
-                {{theme(current_theme_id, answers_meta)}}
+                {{theme(answers_meta)}}
                 {{comment(comments)}}
                 {% if display_comment_box != True %}
                     <a
@@ -79,7 +79,7 @@
                             "assess_bp.display_sub_criteria",
                             application_id=application_id,
                             sub_criteria_id=sub_criteria.id,
-                            theme_id=current_theme_id,
+                            theme_id=current_theme.id,
                             add_comment="1",
                             _anchor="comment"
                         ) }}"
