@@ -138,7 +138,6 @@ class DefaultConfig:
     COF_FUND_ID = CommonConfig.COF_FUND_ID
     COF_ROUND2_ID = CommonConfig.COF_ROUND_2_ID
     COF_ROUND2_W3_ID = CommonConfig.COF_ROUND_2_W3_ID
-    COF_FUND_NAME = "Community Ownership Fund"
 
     DEFAULT_FUND_ID = CommonConfig.COF_FUND_ID
     DEFAULT_ROUND_ID = CommonConfig.get_default_round_id()

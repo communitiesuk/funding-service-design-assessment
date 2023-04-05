@@ -8,7 +8,6 @@ from app.assess.data import get_latest_flag
 from app.assess.data import submit_flag
 from app.assess.models.flag import Flag
 from app.assess.models.flag import FlagType
-from config import Config
 from flask import redirect
 from flask import render_template
 from flask import request
@@ -118,11 +117,9 @@ def extract_questions_and_answers_from_json_blob(
     return questions_answers
 
 
-def generate_text_of_application(q_and_a: dict):
+def generate_text_of_application(q_and_a: dict, fund_name: str):
     output = StringIO()
-    # TODO: we need to fetch the fund info and make this
-    # TODO: dynamic once we're running multiple funds
-    output.write(f"********* {Config.COF_FUND_NAME} **********\n")
+    output.write(f"********* {fund_name} **********\n")
     for section_name, values in q_and_a.items():
         title = section_name.split("-")
         output.write(f"\n* {' '.join(title).capitalize()}\n\n")
