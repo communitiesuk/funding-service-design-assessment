@@ -14,6 +14,32 @@
 
     {{ logout_partial(sso_logout_url) }}
 </div>
+
+{% if form.errors.get("justification") or form.errors.get("section") %}
+<div class="govuk-error-summary" data-module="govuk-error-summary">
+    <div role="alert">
+        <h2 class="govuk-error-summary__title">
+            There is a problem
+        </h2>
+        <div class="govuk-error-summary__body">
+            <ul class="govuk-list govuk-error-summary__list">
+                {% if form.errors.get("justification") %}
+                <li>
+                    <a href=#{{form.justification.id}}>Reason for flagging</a>
+                </li>
+                {% endif %}
+                {% if form.errors.get("section") %}
+                <li>
+                    <a href=#{{form.section.id}}>Section to flag</a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+
     {{ banner_summary(
         fund_name,
         banner_state.short_id,
