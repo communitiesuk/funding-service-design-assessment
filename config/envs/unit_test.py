@@ -8,7 +8,6 @@ from fsd_utils import configclass
 @configclass
 class UnitTestConfig(DefaultConfig):
     DefaultConfig.TALISMAN_SETTINGS["force_https"] = False
-    USE_LOCAL_DATA = True
     FSD_USER_TOKEN_COOKIE_NAME = "fsd_user_token"
     WTF_CSRF_ENABLED = False
 
