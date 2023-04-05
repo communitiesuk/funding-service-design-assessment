@@ -15,7 +15,7 @@
                         &pound;{{ "{:,.2f}".format(funding_amount_requested | float) }}</h3>
 
                     {% if user_role != "COMMENTER" %}
-                    {% if flag and flag.is_qa_complete and display_status not in ('FLAGGED', 'STOPPPED')  %}
+                    {% if flag and flag.is_qa_complete and display_status not in ('FLAGGED', 'STOPPED')  %}
                     <h3 class="govuk-body-l fsd-banner-content fsd-banner-collapse-padding">
                         QA complete
                     </h3>
