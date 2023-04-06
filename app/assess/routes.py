@@ -92,23 +92,28 @@ def display_sub_criteria(
     fund = get_fund(Config.COF_FUND_ID)
     flag = get_latest_flag(application_id)
 
-    comments = get_comments(
+    comment_response = get_comments(
         application_id=application_id,
         sub_criteria_id=sub_criteria_id,
         theme_id=theme_id,
-        themes=sub_criteria.themes,
+    )
+
+    # TODO add test for this function in data_operations
+    theme_matched_comments = (
+        match_comment_to_theme(comment_response, themes=sub_criteria.themes)
+        if comment_response
+        else None
     )
 
     display_status = determine_display_status(
         sub_criteria.workflow_status, flag
     )
     common_template_config = {
-        "current_theme_id": theme_id,
         "sub_criteria": sub_criteria,
         "application_id": application_id,
         "fund": fund,
-        "comments": comments,
-        "is_flagged": bool(flag),
+        "comments": theme_matched_comments,
+        "flag": flag,
         "display_comment_box": add_comment_argument,
         "comment_form": comment_form,
         "current_theme": current_theme,
@@ -146,12 +151,19 @@ def score(
         abort(404)
     fund = get_fund(Config.COF_FUND_ID)
     flag = get_latest_flag(application_id)
-    comments = get_comments(
+
+    comment_response = get_comments(
         application_id=application_id,
         sub_criteria_id=sub_criteria_id,
         theme_id=None,
-        themes=sub_criteria.themes,
     )
+
+    theme_matched_comments = (
+        match_comment_to_theme(comment_response, themes=sub_criteria.themes)
+        if comment_response
+        else None
+    )
+
     display_status = determine_display_status(
         sub_criteria.workflow_status, flag
     )
@@ -178,9 +190,11 @@ def score(
     score_list = get_score_and_justification(
         application_id, sub_criteria_id, score_history=True
     )
+    # TODO add test for this function in data_operations
+    scores_with_account_details = match_score_to_user_account(score_list)
     latest_score = (
-        score_list.pop(0)
-        if (score_list is not None and len(score_list) > 0)
+        scores_with_account_details.pop(0)
+        if (score_list is not None and len(scores_with_account_details) > 0)
         else None
     )
     # TODO make COF_score_list extendable to other funds
@@ -194,7 +208,7 @@ def score(
     return render_template(
         "score.html",
         application_id=application_id,
-        score_list=score_list or None,
+        score_list=scores_with_account_details or None,
         latest_score=latest_score,
         COF_score_list=COF_score_list,
         score_form=score_form,
@@ -202,7 +216,7 @@ def score(
         is_rescore=is_rescore,
         sub_criteria=sub_criteria,
         fund=fund,
-        comments=comments,
+        comments=theme_matched_comments,
         display_status=display_status,
         is_flaggable=is_flaggable(flag),
     )
@@ -313,24 +327,22 @@ def landing():
                 search_params.update({key: value})
                 show_clear_filters = True
 
-    application_overviews = get_application_overviews(
-        Config.COF_FUND_ID, Config.COF_ROUND2_ID, search_params
-    )
     assessment_deadline = get_round(
         Config.COF_FUND_ID, Config.COF_ROUND2_ID
     ).assessment_deadline
 
     stats = get_assessments_stats(Config.COF_FUND_ID, Config.COF_ROUND2_ID)
 
+    application_overviews = get_application_overviews(
+        Config.COF_FUND_ID, Config.COF_ROUND2_ID, search_params
+    )
+    # TODO Can we get rid of get_application_overviews for fund and round
+    # and incorporate into the following function
+    #  (its only used to provide params for this function)
     post_processed_overviews = (
-        (
-            get_assessment_progress(application_overviews)
-            if application_overviews
-            else []
-        )
-        # TODO: remove this when we have local data for post requests.
-        if not Config.USE_LOCAL_DATA
-        else application_overviews
+        get_assessment_progress(application_overviews)
+        if application_overviews
+        else []
     )
 
     return render_template(
@@ -395,7 +407,9 @@ def application(application_id):
         application_id=application_id,
         flag=flag,
         current_user_role=g.user.highest_role,
-        flag_user_info=accounts.get(flag.user_id) if flag else None,
+        flag_user_info=accounts.get(flag.user_id)
+        if (flag and accounts)
+        else None,
         is_flaggable=is_flaggable(flag),
         display_status=display_status,
     )
