@@ -259,6 +259,7 @@ def flag(application_id):
         "flag_application.html",
         application_id=application_id,
         fund_name=fund.name,
+        flag = flag,
         banner_state=banner_state,
         form=form,
         referrer=request.referrer,
@@ -493,6 +494,7 @@ def generate_doc_list_for_download(application_id):
     )
 
     fund = get_fund(state.fund_id)
+    flag = get_latest_flag(application_id)
     application_json = get_application_json(application_id)
     supporting_evidence = get_files_for_application_upload_fields(
         application_id=application_id,
@@ -516,6 +518,7 @@ def generate_doc_list_for_download(application_id):
         application_answers=application_answers,
         supporting_evidence=supporting_evidence,
         display_status=display_status,
+        flag=flag,
     )
 
 
