@@ -1,7 +1,8 @@
 from config import Config
 from flask_wtf import FlaskForm
 from wtforms import TextAreaField
-from wtforms.validators import (InputRequired, length)
+from wtforms.validators import InputRequired
+from wtforms.validators import length
 
 
 class ContinueApplicationForm(FlaskForm):
