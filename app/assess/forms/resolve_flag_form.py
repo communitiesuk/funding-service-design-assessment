@@ -10,12 +10,12 @@ class ResolveFlagForm(FlaskForm):
     resolution_flag = RadioField(
         "resolve",
         choices=["RESOLVED", "STOPPED"],
-        validators=[InputRequired()],
+        validators=[InputRequired(message="Select a resolution")],
     )
     justification = TextAreaField(
         "justification",
         validators=[
-            InputRequired(),
+            InputRequired(message="Provide a reason for resolving the flag"),
             length(max=Config.TEXT_AREA_INPUT_MAX_CHARACTERS),
         ],
     )
