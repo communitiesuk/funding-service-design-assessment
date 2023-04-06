@@ -25,12 +25,12 @@
             <ul class="govuk-list govuk-error-summary__list">
                 {% if form.errors.get("justification") %}
                 <li>
-                    <a href=#{{form.justification.id}}>Reason for flagging</a>
+                    <a href=#{{form.justification.id}}>{{form.errors.get("justification") | join("\n")}}</a>
                 </li>
                 {% endif %}
                 {% if form.errors.get("section") %}
                 <li>
-                    <a href=#{{form.section.id}}>Section to flag</a>
+                    <a href=#{{form.section.id}}>{{form.errors.get("section") | join("\n")}}</a>
                 </li>
                 {% endif %}
             </ul>

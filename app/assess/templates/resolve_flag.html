@@ -24,12 +24,12 @@
       <ul class="govuk-list govuk-error-summary__list">
         {% if form.errors.get(form.resolution_flag.id) %}
         <li>
-          <a href=#{{form.resolution_flag.id}}>This field is required.</a>
+          <a href=#{{form.resolution_flag.id}}>{{form.errors.get(form.resolution_flag.id) | join("\n")}}</a>
         </li>
         {% endif %}
         {% if form.errors.get("justification") %}
         <li>
-          <a href=#{{form.justification.id}}>This field is required.</a>
+          <a href=#{{form.justification.id}}>{{form.errors.get("justification") | join("\n")}}</a>
         </li>
         {% endif %}
       </ul>

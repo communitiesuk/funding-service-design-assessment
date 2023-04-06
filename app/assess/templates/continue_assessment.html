@@ -23,7 +23,7 @@
         <div class="govuk-error-summary__body">
             <ul class="govuk-list govuk-error-summary__list">
                 <li>
-                    <a href=#{{form.reason.id}}>Reason for continuing assessment</a>
+                    <a href=#{{form.reason.id}}>{{form.errors.get("reason") | join("\n")}}</a>
                 </li>
             </ul>
         </div>
