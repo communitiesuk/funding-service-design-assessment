@@ -96,7 +96,7 @@
                                         data-module="govuk-button">
                                     Submit
                                 </button>
-                                <a href="{{ referrer }}"
+                                <a href="{{url_for('assess_bp.application', application_id=application_id)}}"
                                    class="govuk-button secondary-button">
                                     Cancel
                                 </a>
