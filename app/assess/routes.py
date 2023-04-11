@@ -259,14 +259,14 @@ def flag(application_id):
         "flag_application.html",
         application_id=application_id,
         fund_name=fund.name,
-        flag = flag,
+        flag=flag,
         banner_state=banner_state,
         form=form,
         referrer=url_for(
-                    "assess_bp.application",
-                    application_id=application_id,
-                    _external =True
-                ),
+            "assess_bp.application",
+            application_id=application_id,
+            _external=True,
+        ),
     )
 
 
