@@ -3,8 +3,10 @@ from unittest import mock
 from app.assess.data import get_files_for_application_upload_fields
 from app.assess.helpers import extract_questions_and_answers_from_json_blob
 from app.assess.helpers import generate_text_of_application
-from tests.api_data.example_application import single_application_json_blob
 from tests.api_data.example_application_answers import test_application_answers
+from tests.api_data.example_application_json_blob import (
+    single_application_json_blob,
+)
 
 
 class TestExport:
@@ -40,8 +42,10 @@ class TestExport:
         )
 
     def test_generate_text(self):
-        result = generate_text_of_application(test_application_answers)
-        assert "********* Community Ownership Fund" in result
+        result = generate_text_of_application(
+            test_application_answers, "TEST FUND"
+        )
+        assert "********* TEST FUND" in result
         assert "Q) Capital funding" in result
         assert "A) 2300" in result
 

@@ -323,7 +323,11 @@ def landing():
         "asset_type": "ALL",
         "status": "ALL",
     }
-
+    # TODO: Pass fund and round into route
+    fund_id = Config.COF_FUND_ID
+    round_id = Config.COF_ROUND2_W3_ID
+    fund = get_fund(fund_id)
+    round = get_round(fund_id, round_id)
     show_clear_filters = False
     if "clear_filters" not in request.args:
         # Add request arg search params to dict
@@ -332,17 +336,20 @@ def landing():
                 search_params.update({key: value})
                 show_clear_filters = True
 
-    assessment_deadline = get_round(
-        Config.COF_FUND_ID, Config.COF_ROUND2_ID
-    ).assessment_deadline
-
-    stats = get_assessments_stats(Config.COF_FUND_ID, Config.COF_ROUND2_ID)
-
     application_overviews = get_application_overviews(
-        Config.COF_FUND_ID, Config.COF_ROUND2_ID, search_params
+        fund_id, round_id, search_params
     )
+
+    round_details = {
+        "assessment_deadline": round.assessment_deadline,
+        "round_title": round.title,
+        "fund_name": fund.name,
+    }
+
+    stats = get_assessments_stats(fund_id, round_id)
+
     # TODO Can we get rid of get_application_overviews for fund and round
-    # and incorporate into the following function
+    # and incorporate into the following function?
     #  (its only used to provide params for this function)
     post_processed_overviews = (
         get_assessment_progress(application_overviews)
@@ -354,7 +361,7 @@ def landing():
         "assessor_dashboard.html",
         user=g.user,
         application_overviews=post_processed_overviews,
-        assessment_deadline=assessment_deadline,
+        round_details=round_details,
         query_params=search_params,
         asset_types=asset_types,
         assessment_statuses=assessment_statuses,
@@ -536,7 +543,8 @@ def download_application_answers(application_id: str, short_id: str):
     qanda_dict = extract_questions_and_answers_from_json_blob(
         application_json["jsonb_blob"]
     )
-    text = generate_text_of_application(qanda_dict)
+    fund = get_fund(application_json["jsonb_blob"]["fund_id"])
+    text = generate_text_of_application(qanda_dict, fund.name)
 
     return download_file(text, "text/plain", f"{short_id}_answers.txt")
 

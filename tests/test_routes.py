@@ -22,6 +22,7 @@ class TestRoutes:
     def test_route_landing(
         self,
         flask_test_client,
+        mock_get_fund,
         mock_get_round,
         mock_get_application_overviews,
         mock_get_assessment_stats,
@@ -57,6 +58,7 @@ class TestRoutes:
     def test_route_landing_filter_status(
         self,
         flask_test_client,
+        mock_get_fund,
         mock_get_round,
         mock_get_application_overviews,
         mock_get_assessment_stats,
@@ -85,6 +87,7 @@ class TestRoutes:
     def test_route_landing_filter_asset_type(
         self,
         flask_test_client,
+        mock_get_fund,
         mock_get_round,
         mock_get_application_overviews,
         mock_get_assessment_stats,
@@ -113,6 +116,7 @@ class TestRoutes:
     def test_route_landing_search_term(
         self,
         flask_test_client,
+        mock_get_fund,
         mock_get_round,
         mock_get_application_overviews,
         mock_get_assessment_stats,
@@ -141,6 +145,7 @@ class TestRoutes:
     def test_route_landing_clear_filters(
         self,
         flask_test_client,
+        mock_get_fund,
         mock_get_round,
         mock_get_application_overviews,
         mock_get_assessment_stats,
@@ -562,6 +567,7 @@ class TestRoutes:
     def test_route_landing_shows_flagged(
         self,
         flask_test_client,
+        mock_get_fund,
         mock_get_round,
         mock_get_application_overviews,
         mock_get_assessment_stats,
@@ -663,33 +669,21 @@ class TestRoutes:
             assert b"sample1.doc" in response.data
             assert b"sample2.doc" in response.data
 
-    def test_download_q_and_a(self, flask_test_client, mocker):
+    def test_download_q_and_a(
+        self, flask_test_client, mock_get_fund, mock_get_application
+    ):
 
         token = create_valid_token(test_lead_assessor_claims)
         flask_test_client.set_cookie("localhost", "fsd_user_token", token)
-        mock_q_and_a = "Q) What is your quest?\nA) The holy grail"
-        mocker.patch(
-            "app.assess.routes.get_application_json",
-            return_value={"jsonb_blob": "mock"},
+        response = flask_test_client.get(
+            "/assess/application/test_app_id/export/test_short_id/answers.txt"
         )
-        mocker.patch(
-            "app.assess.routes.extract_questions_and_answers_from_json_blob",
-            return_value={"What is your quest?": "The holy grail"},
+        sample_expected_q_a = (
+            "Project information\n\n  Q) Have you been given funding through"
+            " the Community Ownership Fund before?\n  A) Yes\n\n"
         )
-        mocker.patch(
-            "app.assess.routes.generate_text_of_application",
-            return_value=mock_q_and_a,
-        )
-        with mock.patch(
-            "app.assess.routes.download_file", return_value=""
-        ) as mock_download_file:
-
-            flask_test_client.get(
-                "/assess/application/abc123/export/QWERTY/answers.txt"
-            )
-            mock_download_file.assert_called_once_with(
-                mock_q_and_a, "text/plain", "QWERTY_answers.txt"
-            )
+        assert response.status_code == 200
+        assert sample_expected_q_a in response.text
 
     def test_get_file_with_short_id(self, flask_test_client, mocker):
         token = create_valid_token(test_lead_assessor_claims)
