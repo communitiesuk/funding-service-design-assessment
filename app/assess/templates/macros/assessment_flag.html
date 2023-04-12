@@ -1,5 +1,5 @@
 {% macro assessment_flagged(flag, user_info, application_id, current_user_role) %}
-    <div class="assessment-alert assessment-alert--flagged">
+    <div class="assessment-alert assessment-alert--flagged" role="alert">
         <h1 class="assessment-alert__heading govuk-heading-l">
             {{ flag.flag_type.name | title }}
         </h1>
@@ -16,7 +16,7 @@
 {% endmacro %}
 
 {% macro assessment_stopped(flag, user_info, application_id, current_user_role) %}
-    <div class="assessment-alert assessment-alert--stopped">
+    <div class="assessment-alert assessment-alert--stopped" role="alert">
         <h1 class="assessment-alert__heading govuk-heading-l">Assessment {{ flag.flag_type.name | title }}</h1>
         <h2 class="govuk-heading-m">Reason</h2>
         <p class="govuk-body">{{ flag.justification }}</p>

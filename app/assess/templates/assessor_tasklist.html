@@ -36,8 +36,8 @@
     {% if state.workflow_status=="COMPLETED" and current_user_role != "COMMENTER" and not flag.is_qa_complete %}
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-full">
-                <div class="assessment-complete  govuk-margin-bottom-8">
-                    <h2 class="assessment-alert__heading govuk-heading-l govuk-!-margin-top-4">
+                <div class="assessment-complete  govuk-margin-bottom-8" role="alert">
+                    <h2 class="assessment-alert__heading govuk-heading-l govuk-!-margin-top-4" autofocus>
                         Assessment complete</h2>
                     <p class="govuk-body">You have marked this assessment as complete.</p>
                     <p class="govuk-body">
@@ -54,7 +54,7 @@
         {{ form.csrf_token }}
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-full">
-                <div class="assessment-alert  govuk-margin-bottom-8">
+                <div class="assessment-alert  govuk-margin-bottom-8" role="alert">
                     <h2 class="assessment-alert__heading govuk-heading-l govuk-!-margin-top-4">All sections assessed</h2>
                     <p class="govuk-body">You can now mark the assessment as complete when you're ready.</p>
                     <p class="govuk-body">It may be selected for quality assurance (QA) once you've done this.</p>

@@ -6,7 +6,7 @@
 
 <div class="govuk-grid-column-full s26-scoring">
     {% if latest_score %}
-    <div class="score-group" id="score">
+    <div class="score-group" id="score" role="status">
         <h2 class="govuk-heading-m">Current score: {{ latest_score['score'] }}</h2>
         <div>
             <p class="govuk-body-m"><strong>Rationale: </strong>{{ latest_score.justification }}</p>
