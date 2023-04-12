@@ -157,17 +157,17 @@ def get_score_and_justification(
     score_response = get_data(score_url, score_params)
     if score_response:
         current_app.logger.info(
-        f"Response from Assessment Store: '{score_response}'."
-    )
+            f"Response from Assessment Store: '{score_response}'."
+        )
 
     else:
         current_app.logger.info(
             f"No scores found for application: {application_id},"
             f" sub_criteria_id: {sub_criteria_id}"
         )
-    return score_response    
-        
-        
+    return score_response
+
+
 def match_score_to_user_account(scores):
     account_ids = [score["user_id"] for score in scores]
     bulk_accounts_dict = get_bulk_accounts_dict(account_ids)
