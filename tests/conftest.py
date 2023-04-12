@@ -11,6 +11,9 @@ from flask import template_rendered
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
+from tests.api_data.example_get_full_application import (
+    mock_full_application_json,
+)
 from tests.api_data.test_data import mock_api_results
 from webdriver_manager.chrome import ChromeDriverManager
 
@@ -221,7 +224,7 @@ def mock_get_round():
         yield mocked_round
 
     mocked_round.assert_called_once_with(
-        Config.COF_FUND_ID, Config.COF_ROUND2_ID
+        Config.COF_FUND_ID, Config.COF_ROUND2_W3_ID
     )
 
 
@@ -247,7 +250,7 @@ def mock_get_application_overviews(request):
         yield mocked_apps_overview
 
     mocked_apps_overview.assert_called_with(
-        Config.COF_FUND_ID, Config.COF_ROUND2_ID, search_params
+        Config.COF_FUND_ID, Config.COF_ROUND2_W3_ID, search_params
     )
 
 
@@ -279,7 +282,7 @@ def mock_get_assessment_stats():
         yield mocked_assessment_stats
 
     mocked_assessment_stats.assert_called_once_with(
-        Config.COF_FUND_ID, Config.COF_ROUND2_ID
+        Config.COF_FUND_ID, Config.COF_ROUND2_W3_ID
     )
 
 
@@ -392,7 +395,7 @@ def mock_get_comments(request):
 
 
 @pytest.fixture(scope="function")
-def mock_get_scores(request):
+def mock_get_scores():
     mock_scores = mock_api_results["assessment_store/score?"]
     with (
         mock.patch(
@@ -401,3 +404,16 @@ def mock_get_scores(request):
         )
     ):
         yield
+
+
+@pytest.fixture(scope="function")
+def mock_get_application():
+    with (
+        mock.patch(
+            "app.assess.routes.get_application_json",
+            return_value=mock_full_application_json,
+        )
+    ) as mocked_get_application_func:
+        yield mocked_get_application_func
+
+    mocked_get_application_func.assert_called_once()

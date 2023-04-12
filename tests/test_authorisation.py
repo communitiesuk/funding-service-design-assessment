@@ -114,6 +114,7 @@ class TestAuthorisation:
         flask_test_client,
         creds,
         templates_rendered,
+        mock_get_fund,
         mock_get_round,
         mock_get_application_overviews,
         mock_get_assessment_stats,
