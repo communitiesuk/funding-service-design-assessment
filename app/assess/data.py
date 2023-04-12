@@ -140,8 +140,9 @@ def get_round(fund_id: str, round_id: str) -> Union[Round, None]:
 
 def get_bulk_accounts_dict(account_ids: List):
     account_url = Config.BULK_ACCOUNTS_ENDPOINT
-    account_params = {"account_id": list(set(account_ids))}
-    return get_data(account_url, account_params)
+    if account_ids:
+        account_params = {"account_id": list(set(account_ids))}
+        return get_data(account_url, account_params)
 
 
 def get_score_and_justification(
@@ -154,20 +155,19 @@ def get_score_and_justification(
         "score_history": score_history,
     }
     score_response = get_data(score_url, score_params)
+    if score_response:
+        current_app.logger.info(
+        f"Response from Assessment Store: '{score_response}'."
+    )
 
-    if not score_response or len(score_response) == 0:
+    else:
         current_app.logger.info(
             f"No scores found for application: {application_id},"
             f" sub_criteria_id: {sub_criteria_id}"
         )
-        return None
-
-    current_app.logger.info(
-        f"Response from Assessment Store: '{score_response}'."
-    )
-    return score_response
-
-
+    return score_response    
+        
+        
 def match_score_to_user_account(scores):
     account_ids = [score["user_id"] for score in scores]
     bulk_accounts_dict = get_bulk_accounts_dict(account_ids)
