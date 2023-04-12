@@ -143,6 +143,10 @@ def get_bulk_accounts_dict(account_ids: List):
     if account_ids:
         account_params = {"account_id": list(set(account_ids))}
         return get_data(account_url, account_params)
+    else:
+        current_app.logger.info(
+            f"No account ids found,"
+        )
 
 
 def get_score_and_justification(
