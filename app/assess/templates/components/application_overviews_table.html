@@ -54,14 +54,16 @@
 </div>
 
 {% if not application_overviews %}
-<p class="govuk-body">
-  <strong>No matching results.</strong>
-</p>
-<p class="govuk-body">Improve your results by:</p>
-<ul class="govuk-list govuk-list--bullet">
-  <li>removing filters</li>
-  <li>double-checking your spelling</li>
-</ul>
+<div role="status" aria-live="assertive">
+  <p class="govuk-body" autofocus>
+    <strong>No matching results.</strong>
+  </p>
+  <p class="govuk-body">Improve your results by:</p>
+  <ul class="govuk-list govuk-list--bullet">
+    <li>removing filters</li>
+    <li>double-checking your spelling</li>
+  </ul>
+</div>
 {% else %}
 <table class="govuk-table" id="application_overviews_table">
 

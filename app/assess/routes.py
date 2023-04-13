@@ -93,23 +93,28 @@ def display_sub_criteria(
     fund = get_fund(Config.COF_FUND_ID)
     flag = get_latest_flag(application_id)
 
-    comments = get_comments(
+    comment_response = get_comments(
         application_id=application_id,
         sub_criteria_id=sub_criteria_id,
         theme_id=theme_id,
-        themes=sub_criteria.themes,
+    )
+
+    # TODO add test for this function in data_operations
+    theme_matched_comments = (
+        match_comment_to_theme(comment_response, themes=sub_criteria.themes)
+        if comment_response
+        else None
     )
 
     display_status = determine_display_status(
         sub_criteria.workflow_status, flag
     )
     common_template_config = {
-        "current_theme_id": theme_id,
         "sub_criteria": sub_criteria,
         "application_id": application_id,
         "fund": fund,
-        "comments": comments,
-        "is_flagged": bool(flag),
+        "comments": theme_matched_comments,
+        "flag": flag,
         "display_comment_box": add_comment_argument,
         "comment_form": comment_form,
         "current_theme": current_theme,
@@ -147,12 +152,19 @@ def score(
         abort(404)
     fund = get_fund(Config.COF_FUND_ID)
     flag = get_latest_flag(application_id)
-    comments = get_comments(
+
+    comment_response = get_comments(
         application_id=application_id,
         sub_criteria_id=sub_criteria_id,
         theme_id=None,
-        themes=sub_criteria.themes,
     )
+
+    theme_matched_comments = (
+        match_comment_to_theme(comment_response, themes=sub_criteria.themes)
+        if comment_response
+        else None
+    )
+
     display_status = determine_display_status(
         sub_criteria.workflow_status, flag
     )
@@ -179,9 +191,11 @@ def score(
     score_list = get_score_and_justification(
         application_id, sub_criteria_id, score_history=True
     )
+    # TODO add test for this function in data_operations
+    scores_with_account_details = match_score_to_user_account(score_list)
     latest_score = (
-        score_list.pop(0)
-        if (score_list is not None and len(score_list) > 0)
+        scores_with_account_details.pop(0)
+        if (score_list is not None and len(scores_with_account_details) > 0)
         else None
     )
     # TODO make COF_score_list extendable to other funds
@@ -195,7 +209,7 @@ def score(
     return render_template(
         "score.html",
         application_id=application_id,
-        score_list=score_list or None,
+        score_list=scores_with_account_details or None,
         latest_score=latest_score,
         COF_score_list=COF_score_list,
         score_form=score_form,
@@ -203,7 +217,7 @@ def score(
         is_rescore=is_rescore,
         sub_criteria=sub_criteria,
         fund=fund,
-        comments=comments,
+        comments=theme_matched_comments,
         display_status=display_status,
         is_flaggable=is_flaggable(flag),
     )
@@ -245,6 +259,7 @@ def flag(application_id):
         "flag_application.html",
         application_id=application_id,
         fund_name=fund.name,
+        flag=flag,
         banner_state=banner_state,
         form=form,
         referrer=request.referrer,
@@ -317,7 +332,11 @@ def fund_dashboard(fund_id: str, round_id: str):
         "asset_type": "ALL",
         "status": "ALL",
     }
-
+    # TODO: Pass fund and round into route
+    fund_id = Config.COF_FUND_ID
+    round_id = Config.COF_ROUND2_W3_ID
+    fund = get_fund(fund_id)
+    round = get_round(fund_id, round_id)
     show_clear_filters = False
     if "clear_filters" not in request.args:
         # Add request arg search params to dict
@@ -330,24 +349,28 @@ def fund_dashboard(fund_id: str, round_id: str):
         fund_id, round_id, search_params
     )
 
-    round = get_round(fund_id, round_id)
+    round_details = {
+        "assessment_deadline": round.assessment_deadline,
+        "round_title": round.title,
+        "fund_name": fund.name,
+    }
+
     stats = get_assessments_stats(fund_id, round_id)
+
+    # TODO Can we get rid of get_application_overviews for fund and round
+    # and incorporate into the following function?
+    #  (its only used to provide params for this function)
     post_processed_overviews = (
-        (
-            get_assessment_progress(application_overviews)
-            if application_overviews
-            else []
-        )
-        # TODO: remove this when we have local data for post requests.
-        if not Config.USE_LOCAL_DATA
-        else application_overviews
+        get_assessment_progress(application_overviews)
+        if application_overviews
+        else []
     )
 
     return render_template(
         "assessor_dashboard.html",
         user=g.user,
         application_overviews=post_processed_overviews,
-        round=round,
+        round_details=round_details,
         query_params=search_params,
         asset_types=asset_types,
         assessment_statuses=assessment_statuses,
@@ -406,7 +429,7 @@ def application(application_id):
         flag=flag,
         current_user_role=g.user.highest_role,
         flag_user_info=accounts.get(flag.user_id)
-        if flag and accounts
+        if (flag and accounts)
         else None,
         is_flaggable=is_flaggable(flag),
         display_status=display_status,
@@ -491,6 +514,7 @@ def generate_doc_list_for_download(application_id):
     )
 
     fund = get_fund(state.fund_id)
+    flag = get_latest_flag(application_id)
     application_json = get_application_json(application_id)
     supporting_evidence = get_files_for_application_upload_fields(
         application_id=application_id,
@@ -514,6 +538,7 @@ def generate_doc_list_for_download(application_id):
         application_answers=application_answers,
         supporting_evidence=supporting_evidence,
         display_status=display_status,
+        flag=flag,
     )
 
 
@@ -527,7 +552,8 @@ def download_application_answers(application_id: str, short_id: str):
     qanda_dict = extract_questions_and_answers_from_json_blob(
         application_json["jsonb_blob"]
     )
-    text = generate_text_of_application(qanda_dict)
+    fund = get_fund(application_json["jsonb_blob"]["fund_id"])
+    text = generate_text_of_application(qanda_dict, fund.name)
 
     return download_file(text, "text/plain", f"{short_id}_answers.txt")
 

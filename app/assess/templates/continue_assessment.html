@@ -13,6 +13,25 @@
     </p>
     {{ logout_partial(sso_logout_url) }}
 </div>
+
+{% if form.errors.get("reason") %}
+<div class="govuk-error-summary" data-module="govuk-error-summary">
+    <div role="alert">
+        <h2 class="govuk-error-summary__title">
+            There is a problem
+        </h2>
+        <div class="govuk-error-summary__body">
+            <ul class="govuk-list govuk-error-summary__list">
+                <li>
+                    <a href=#{{form.reason.id}}>{{form.errors.get("reason") | join("\n")}}</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+
 {{ banner_summary(
 fund_name,
 state.short_id,
@@ -54,7 +73,7 @@ flag
                         <button class="govuk-button primary-button" data-module="govuk-button">
                             Submit
                         </button>
-                        <a href="{{ referrer }}" class="govuk-button secondary-button govuk-link--no-visited-state">
+                        <a href="{{url_for('assess_bp.application', application_id=application_id)}}" class="govuk-button secondary-button govuk-link--no-visited-state">
                             Cancel
                         </a>
                     </div>

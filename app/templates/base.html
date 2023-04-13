@@ -4,12 +4,8 @@
 
 {% block pageTitle %}{{[pageHeading.rstrip('\n'), service_title]|join(' - ') if pageHeading else service_title}}{% endblock %}
 
-{% block head %}
-  {% include 'head.html' %}
-{% endblock %}
-
 {% block header %}
-  {% include 'header.html' %}
+  {% include 'head.html' %}
 {% endblock %}
 
 {% block footer %}

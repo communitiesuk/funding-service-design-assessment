@@ -491,7 +491,7 @@ class TestJinjaMacros(object):
         meta = clazz.from_dict(**arguments)
 
         rendered_html = render_template_string(
-            "{{ theme('a-theme-id', [meta]) }}",
+            "{{ theme([meta]) }}",
             theme=get_template_attribute("macros/theme.html", "theme"),
             meta=meta,
         )
