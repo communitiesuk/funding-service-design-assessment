@@ -1,0 +1,61 @@
+import datetime
+from dataclasses import dataclass
+
+import pytz
+from app.assess.data import get_assessments_stats
+from app.assess.data import get_rounds
+from app.assess.models.fund import Fund
+from flask import url_for
+
+
+@dataclass
+class Stats:
+    date: str
+    total_received: int
+    completed: int
+    started: int
+    qa_complete: int
+    stopped: int
+
+
+@dataclass
+class FundSummary:
+    name: str
+    is_active_status: bool
+    application_stats: Stats
+    assessments_href: str
+
+
+def create_fund_summaries(fund: Fund) -> list[FundSummary]:
+    summaries = []
+    for round in get_rounds(fund.id):
+        round_stats = get_assessments_stats(fund.id, round.id)
+        summary = FundSummary(
+            name=round.title,
+            is_active_status=is_today_after(round.deadline),
+            application_stats=Stats(
+                date=round.assessment_deadline,
+                total_received=round_stats["total"],
+                completed=round_stats["completed"],
+                started=round_stats["assessing"],
+                qa_complete=round_stats["qa_completed"],
+                stopped=round_stats["stopped"],
+            ),
+            assessments_href=url_for(
+                "assess_bp.fund_dashboard",
+                fund_id=fund.id,
+                round_id=round.id,
+            ),
+        )
+        summaries.append(summary)
+    return summaries
+
+
+def is_today_after(date_str):
+    uk_tz = pytz.timezone("Europe/London")
+    date_format = "%Y-%m-%d %H:%M:%S"
+    dt = datetime.datetime.strptime(date_str, date_format)
+    dt_uk = uk_tz.localize(dt)
+    now_uk = datetime.datetime.now(tz=uk_tz)
+    print(now_uk, dt_uk)
+    return now_uk > dt_uk

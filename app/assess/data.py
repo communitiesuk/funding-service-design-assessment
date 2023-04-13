@@ -142,7 +142,7 @@ def get_rounds(fund_id: str) -> Union[Fund, List]:
     rounds = []
     if response and len(response) > 0:
         for round_data in response:
-            rounds.append(Round.from_json(round_data))
+            rounds.append(Round.from_dict(round_data))
     return rounds
 
 

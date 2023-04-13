@@ -1,3 +1,4 @@
+from datetime import datetime
 from urllib.parse import quote_plus
 
 from app.assess.data import *
@@ -21,6 +22,7 @@ from app.assess.helpers import generate_text_of_application
 from app.assess.helpers import is_flaggable
 from app.assess.helpers import resolve_application
 from app.assess.models.flag import FlagType
+from app.assess.models.fund_summary import create_fund_summaries
 from app.assess.models.theme import Theme
 from app.assess.models.ui import applicants_response
 from app.assess.models.ui.assessor_task_list import AssessorTaskList
@@ -36,7 +38,6 @@ from flask import request
 from flask import Response
 from flask import url_for
 from fsd_utils.authentication.decorators import login_required
-
 
 assess_bp = Blueprint(
     "assess_bp",
@@ -214,7 +215,6 @@ def score(
 )
 @login_required(roles_required=["ASSESSOR"])
 def flag(application_id):
-
     form = FlagApplicationForm()
 
     if request.method == "POST" and form.validate_on_submit():
@@ -289,8 +289,21 @@ def qa_complete(application_id):
     )
 
 
-@assess_bp.route("/assessor_dashboard/", methods=["GET"])
+@assess_bp.route("/assessor_tool_dashboard/", methods=["GET"])
 def landing():
+    funds = get_funds()
+    return render_template(
+        "assessor_tool_dashboard.html",
+        fund_summaries={
+            fund.id: create_fund_summaries(fund) for fund in funds
+        },
+        funds={fund.id: fund for fund in funds},
+        totays_date=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+    )
+
+
+@assess_bp.route("/assessor_dashboard/<fund_id>/<round_id>/", methods=["GET"])
+def fund_dashboard(fund_id: str, round_id: str):
     """
     Landing page for assessors
     Provides a summary of available applications
@@ -314,14 +327,11 @@ def landing():
                 show_clear_filters = True
 
     application_overviews = get_application_overviews(
-        Config.COF_FUND_ID, Config.COF_ROUND2_ID, search_params
+        fund_id, round_id, search_params
     )
-    assessment_deadline = get_round(
-        Config.COF_FUND_ID, Config.COF_ROUND2_ID
-    ).assessment_deadline
 
-    stats = get_assessments_stats(Config.COF_FUND_ID, Config.COF_ROUND2_ID)
-
+    round = get_round(fund_id, round_id)
+    stats = get_assessments_stats(fund_id, round_id)
     post_processed_overviews = (
         (
             get_assessment_progress(application_overviews)
@@ -337,7 +347,7 @@ def landing():
         "assessor_dashboard.html",
         user=g.user,
         application_overviews=post_processed_overviews,
-        assessment_deadline=assessment_deadline,
+        round=round,
         query_params=search_params,
         asset_types=asset_types,
         assessment_statuses=assessment_statuses,
@@ -395,7 +405,9 @@ def application(application_id):
         application_id=application_id,
         flag=flag,
         current_user_role=g.user.highest_role,
-        flag_user_info=accounts.get(flag.user_id) if flag else None,
+        flag_user_info=accounts.get(flag.user_id)
+        if flag and accounts
+        else None,
         is_flaggable=is_flaggable(flag),
         display_status=display_status,
     )

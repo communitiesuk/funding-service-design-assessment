@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from dataclasses import field
 from typing import List
 
 from app.assess.models.round import Round
@@ -10,7 +11,7 @@ class Fund:
     id: str
     description: str
     short_name: str
-    rounds: List[Round] = None
+    rounds: List[Round] = field(default_factory=list)
 
     @staticmethod
     def from_json(data: dict):
