@@ -73,7 +73,8 @@ class TestRoutes:
             return_value=[],
         ) as mock_get_application_overviews_func:
             response = flask_test_client.get(
-                "/assess/assessor_dashboard/",
+                "/assess/assessor_dashboard/"
+                f"{Config.COF_FUND_ID}/{Config.COF_ROUND2_ID}",
                 query_string={"asset_type": "pub"},
             )
 
