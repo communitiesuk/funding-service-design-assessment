@@ -22,7 +22,7 @@ from app.assess.helpers import generate_text_of_application
 from app.assess.helpers import is_flaggable
 from app.assess.helpers import resolve_application
 from app.assess.models.flag import FlagType
-from app.assess.models.fund_summary import create_fund_summaries
+from app.assess.models.fund_summary import create_fund_summaries, is_after_today
 from app.assess.models.theme import Theme
 from app.assess.models.ui import applicants_response
 from app.assess.models.ui.assessor_task_list import AssessorTaskList
@@ -353,6 +353,7 @@ def fund_dashboard(fund_id: str, round_id: str):
     }
 
     stats = get_assessments_stats(fund_id, round_id)
+    is_active_status= is_after_today(round.assessment_deadline)
 
     # TODO Can we get rid of get_application_overviews for fund and round
     # and incorporate into the following function?
@@ -373,6 +374,7 @@ def fund_dashboard(fund_id: str, round_id: str):
         assessment_statuses=assessment_statuses,
         show_clear_filters=show_clear_filters,
         stats=stats,
+        is_active_status=is_active_status
     )
 
 

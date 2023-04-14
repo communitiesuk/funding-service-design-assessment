@@ -27,6 +27,7 @@ class FundSummary:
 
 
 def create_fund_summaries(fund: Fund) -> list[FundSummary]:
+    """Get all the round stats in a fund."""
     summaries = []
     for round in get_rounds(fund.id):
         round_stats = get_assessments_stats(fund.id, round.id)
@@ -51,7 +52,8 @@ def create_fund_summaries(fund: Fund) -> list[FundSummary]:
     return summaries
 
 
-def is_after_today(date_str):
+def is_after_today(date_str: str):
+    """Check if the provided datetime string has passed the current datetime."""
     uk_tz = pytz.timezone("Europe/London")
     date_format = "%Y-%m-%d %H:%M:%S"
     dt = datetime.datetime.strptime(date_str, date_format)
