@@ -7,8 +7,12 @@
 {% set pageHeading %}Team dashboard{% endset %}
 {% block content %}
     <div class="govuk-phase-banner flex-parent-element">
-        {{ logout_partial(sso_logout_url) }}
-    </div>
+        <p class="govuk-!-text-align-left flex-parent-element flexed-element-margins-collapse">
+            <a href="{{url_for('assess_bp.landing')}}" class="govuk-back-link" data-qa="back-to-assessment-overview-link">
+                Back to <b>assessment tool dashboard</b></a>
+        </p>
+
+    {{ logout_partial(sso_logout_url) }}
     </div>
 
     <div class="fsd-banner-background">
