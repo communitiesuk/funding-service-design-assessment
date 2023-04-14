@@ -428,6 +428,8 @@ def application(application_id):
         application_id=application_id,
         flag=flag,
         current_user_role=g.user.highest_role,
+        fund_id = assessor_task_list_metadata["fund_id"],
+        round_id= assessor_task_list_metadata["round_id"],
         flag_user_info=accounts.get(flag.user_id)
         if (flag and accounts)
         else None,
