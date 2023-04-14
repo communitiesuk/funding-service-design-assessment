@@ -332,9 +332,6 @@ def fund_dashboard(fund_id: str, round_id: str):
         "asset_type": "ALL",
         "status": "ALL",
     }
-    # TODO: Pass fund and round into route
-    fund_id = Config.COF_FUND_ID
-    round_id = Config.COF_ROUND2_W3_ID
     fund = get_fund(fund_id)
     round = get_round(fund_id, round_id)
     show_clear_filters = False

@@ -32,7 +32,7 @@ def create_fund_summaries(fund: Fund) -> list[FundSummary]:
         round_stats = get_assessments_stats(fund.id, round.id)
         summary = FundSummary(
             name=round.title,
-            is_active_status=is_today_after(round.deadline),
+            is_active_status=is_after_today(round.assessment_deadline),
             application_stats=Stats(
                 date=round.assessment_deadline,
                 total_received=round_stats["total"],
@@ -51,11 +51,10 @@ def create_fund_summaries(fund: Fund) -> list[FundSummary]:
     return summaries
 
 
-def is_today_after(date_str):
+def is_after_today(date_str):
     uk_tz = pytz.timezone("Europe/London")
     date_format = "%Y-%m-%d %H:%M:%S"
     dt = datetime.datetime.strptime(date_str, date_format)
     dt_uk = uk_tz.localize(dt)
     now_uk = datetime.datetime.now(tz=uk_tz)
-    print(now_uk, dt_uk)
-    return now_uk > dt_uk
+    return dt_uk > now_uk
