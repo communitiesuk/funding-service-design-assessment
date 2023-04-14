@@ -401,7 +401,10 @@ def application(application_id):
 
     # maybe there's a better way to do this?..
     fund = get_fund(assessor_task_list_metadata["fund_id"])
-    round = get_round(assessor_task_list_metadata["fund_id"],assessor_task_list_metadata["round_id"])
+    round = get_round(
+        assessor_task_list_metadata["fund_id"],
+        assessor_task_list_metadata["round_id"],
+    )
     if not fund:
         abort(404)
     assessor_task_list_metadata["fund_name"] = fund.name

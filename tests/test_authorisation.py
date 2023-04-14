@@ -101,11 +101,15 @@ class TestAuthorisation:
             == "https://authenticator/service/user?roles_required=COMMENTER"
         )
 
-    @pytest.mark.mock_functions({
-        "get_assessment_stats": "app.assess.models.fund_summary.get_assessments_stats",
-        "get_rounds":"app.assess.models.fund_summary.get_rounds",
-        "fund_id": "test-fund",
-        "round_id": "test-round"}
+    @pytest.mark.mock_functions(
+        {
+            "get_assessment_stats": (
+                "app.assess.models.fund_summary.get_assessments_stats"
+            ),
+            "get_rounds": "app.assess.models.fund_summary.get_rounds",
+            "fund_id": "test-fund",
+            "round_id": "test-round",
+        }
     )
     @pytest.mark.parametrize(
         "creds",
