@@ -29,6 +29,7 @@ from app.assess.models.ui import applicants_response
 from app.assess.models.ui.assessor_task_list import AssessorTaskList
 from app.assess.status import all_status_completed
 from app.assess.status import update_ar_status_to_completed
+from app.assess.views.filters import utc_to_tz
 from config import Config
 from flask import abort
 from flask import Blueprint
@@ -314,12 +315,15 @@ def landing():
             fund.id: create_fund_summaries(fund) for fund in funds
         },
         funds={fund.id: fund for fund in funds},
-        totays_date=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        totays_date=utc_to_tz(datetime.now().strftime("%Y-%m-%d %H:%M:%S")),
     )
 
 
-@assess_bp.route("/assessor_dashboard/<fund_id>/<round_id>/", methods=["GET"])
-def fund_dashboard(fund_id: str, round_id: str):
+@assess_bp.route(
+    "/assessor_dashboard/<fund_short_name>/<round_short_name>/",
+    methods=["GET"],
+)
+def fund_dashboard(fund_short_name: str, round_short_name: str):
     """
     Landing page for assessors
     Provides a summary of available applications
@@ -333,15 +337,16 @@ def fund_dashboard(fund_id: str, round_id: str):
         "asset_type": "ALL",
         "status": "ALL",
     }
-    fund = get_fund(fund_id)
-    round = get_round(fund_id, round_id)
+    fund = get_fund(fund_short_name, use_short_name=True)
+    round = get_round(fund_short_name, round_short_name, use_short_name=True)
+    fund_id, round_id = fund.id, round.id
+
     show_clear_filters = False
     if "clear_filters" not in request.args:
-        # Add request arg search params to dict
-        for key, value in request.args.items():
-            if key in search_params:
-                search_params.update({key: value})
-                show_clear_filters = True
+        search_params.update(
+            {k: v for k, v in request.args.items() if k in search_params}
+        )
+        show_clear_filters = any(k in request.args for k in search_params)
 
     application_overviews = get_application_overviews(
         fund_id, round_id, search_params
@@ -351,6 +356,8 @@ def fund_dashboard(fund_id: str, round_id: str):
         "assessment_deadline": round.assessment_deadline,
         "round_title": round.title,
         "fund_name": fund.name,
+        "fund_short_name": fund_short_name,
+        "round_short_name": round_short_name,
     }
 
     stats = get_assessments_stats(fund_id, round_id)

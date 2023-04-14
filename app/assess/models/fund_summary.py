@@ -44,8 +44,8 @@ def create_fund_summaries(fund: Fund) -> list[FundSummary]:
             ),
             assessments_href=url_for(
                 "assess_bp.fund_dashboard",
-                fund_id=fund.id,
-                round_id=round.id,
+                fund_short_name=fund.short_name.lower(),
+                round_short_name=round.short_name.lower(),
             ),
         )
         summaries.append(summary)
@@ -53,7 +53,7 @@ def create_fund_summaries(fund: Fund) -> list[FundSummary]:
 
 
 def is_after_today(date_str: str):
-    """Check if the provided datetime string has passed the current datetime."""
+    """Check if the provided datetime string has passed the current datetime"""
     uk_tz = pytz.timezone("Europe/London")
     date_format = "%Y-%m-%d %H:%M:%S"
     dt = datetime.datetime.strptime(date_str, date_format)

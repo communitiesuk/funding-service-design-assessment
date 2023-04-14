@@ -1,5 +1,7 @@
 from datetime import datetime
 
+from pytz import timezone
+
 
 def slash_separated_day_month_year(value: str):
     parsed = datetime.strptime(value, "%Y-%m-%dT%H:%M:%S.%f")
@@ -16,6 +18,12 @@ def datetime_format(value, format):
         .lower()
     )
     return formatted_time
+
+
+def utc_to_tz(value, tz="Europe/London"):
+    utc_time = datetime.strptime(value, "%Y-%m-%d %H:%M:%S")
+    uk_time = utc_time.astimezone(timezone(tz))
+    return uk_time.strftime("%Y-%m-%d %H:%M:%S")
 
 
 def format_date(value, from_, to_):

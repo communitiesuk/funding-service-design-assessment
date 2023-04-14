@@ -19,7 +19,7 @@
             "caption": "",
             "firstCellIsHeader": false,
             "rows": [
-                [{'html': '<strong>Assessment closing date</strong>'}, {'text': application_stats.date}],
+                [{'html': '<strong>Assessment closing date</strong>'}, {'text': application_stats.date | datetime_format("%d %B %Y at %H:%M") }],
                 [{'html': '<strong>Applications received</strong>'}, {'text': application_stats.total_received}],
                 [{'html': '<strong>Assessments completed</strong>'}, {'text': application_stats.completed}],
                 [{'html': '<strong>Assessments started</strong>'}, {'text': application_stats.started}],

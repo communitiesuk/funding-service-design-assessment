@@ -26,7 +26,7 @@
         {% endfor %}
 
         <p class="govuk-!-padding-top-6 govuk-body govuk-!-display-inline-block">
-            Information last updated: [{{ totays_date }}]<br/>
+            Information last updated: [{{ totays_date | datetime_format("%d %B %Y at %H:%M") }}]<br/>
             Refresh page for most up-to-date information.
         </p>
 
