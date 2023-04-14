@@ -401,6 +401,7 @@ def application(application_id):
 
     # maybe there's a better way to do this?..
     fund = get_fund(assessor_task_list_metadata["fund_id"])
+    round = get_round(assessor_task_list_metadata["fund_id"],assessor_task_list_metadata["round_id"])
     if not fund:
         abort(404)
     assessor_task_list_metadata["fund_name"] = fund.name
@@ -435,8 +436,8 @@ def application(application_id):
         application_id=application_id,
         flag=flag,
         current_user_role=g.user.highest_role,
-        fund_id=assessor_task_list_metadata["fund_id"],
-        round_id=assessor_task_list_metadata["round_id"],
+        fund_short_name=fund.short_name,
+        round_short_name=round.short_name,
         flag_user_info=accounts.get(flag.user_id)
         if (flag and accounts)
         else None,
