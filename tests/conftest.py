@@ -225,37 +225,55 @@ def mock_get_funds():
 
 
 @pytest.fixture(scope="function")
-def mock_get_round():
+def mock_get_round(request):
     from app.assess.models.round import Round
+
+    marker = request.node.get_closest_marker("mock_parameters")
+    if marker:
+        params = marker.args[0]
+        mock_func = params.get("get_rounds_path", "app.assess.routes.get_round")
+        fund_short_name = params.get("fund_short_name","TF")
+        round_short_name = params.get("round_short_name","TR")
+        fund_id = params.get("fund_id", "test-fund")
+        round_id = params.get("round_id", "test-round")
+        use_short_name = True if params.get("fund_short_name") else False
+    else:
+        mock_func = "app.assess.routes.get_round"
+        fund_short_name = "TF"
+        round_short_name = "TR"
+        fund_id = "test-fund"
+        round_id = "test-round"
+        use_short_name= False
 
     mock_fund_info = Round.from_dict(
         mock_api_results["fund_store/funds/{fund_id}/rounds/{round_id}"]
     )
 
-    with mock.patch(
-        "app.assess.routes.get_round", return_value=mock_fund_info
-    ) as mocked_round:
+    with mock.patch(mock_func, return_value=mock_fund_info) as mocked_round:
         yield mocked_round
 
-    mocked_round.assert_called_once_with(
-        Config.COF_FUND_ID, Config.COF_ROUND2_W3_ID
+    if use_short_name:
+        mocked_round.assert_called_once_with(
+        fund_short_name, round_short_name, use_short_name=use_short_name
     )
+    else:
+        mocked_round.assert_called_once_with(
+            fund_id, round_id
+        )
 
 
 @pytest.fixture(scope="function")
 def mock_get_rounds(request):
     from app.assess.models.round import Round
 
-    marker = request.node.get_closest_marker("mock_functions")
+    marker = request.node.get_closest_marker("mock_parameters")
     if marker:
         params = marker.args[0]
-        mock_func = params.get("get_rounds")
-        fund_id = params.get("fund_id")
-        round_id = params.get("round_id")
+        mock_func = params.get("get_rounds_path", "app.assess.routes.get_rounds")
+        fund_id = params.get("fund_id", "test-fund")
     else:
         mock_func = "app.assess.routes.get_rounds"
-        fund_id = Config.COF_FUND_ID
-        round_id = Config.COF_ROUND2_W3_ID
+        fund_id = "test-fund"
 
     mock_fund_info = [
         Round.from_dict(
@@ -271,9 +289,12 @@ def mock_get_rounds(request):
 
 @pytest.fixture(scope="function")
 def mock_get_application_overviews(request):
-    marker = request.node.get_closest_marker("expected_search_params")
+    marker = request.node.get_closest_marker("mock_parameters")
     if marker:
-        search_params = marker.args[0]
+        params = marker.args[0]
+        search_params = params.get('expected_search_params')
+        fund_id = params.get("fund_id", "test-fund")
+        round_id = params.get("round_id", "test-round")
     else:
         search_params = {
             "search_term": "",
@@ -281,6 +302,8 @@ def mock_get_application_overviews(request):
             "asset_type": "ALL",
             "status": "ALL",
         }
+        fund_id = "test-fund"
+        round_id = "test-round"
 
     with mock.patch(
         "app.assess.routes.get_application_overviews",
@@ -291,7 +314,7 @@ def mock_get_application_overviews(request):
         yield mocked_apps_overview
 
     mocked_apps_overview.assert_called_with(
-        Config.COF_FUND_ID, Config.COF_ROUND2_W3_ID, search_params
+        fund_id, round_id, search_params
     )
 
 
@@ -314,16 +337,16 @@ def mock_get_assessor_tasklist_state(request):
 @pytest.fixture(scope="function")
 def mock_get_assessment_stats(request):
 
-    marker = request.node.get_closest_marker("mock_functions")
+    marker = request.node.get_closest_marker("mock_parameters")
     if marker:
         params = marker.args[0]
-        mock_func = params.get("get_assessment_stats")
-        fund_id = params.get("fund_id")
-        round_id = params.get("round_id")
+        mock_func = params.get("get_assessment_stats_path", "app.assess.routes.get_assessments_stats")
+        fund_id = params.get("fund_id", "test-fund")
+        round_id = params.get("round_id", "test-round")
     else:
         mock_func = "app.assess.routes.get_assessments_stats"
-        fund_id = Config.COF_FUND_ID
-        round_id = Config.COF_ROUND2_W3_ID
+        fund_id = "test-fund"
+        round_id = "test-round"
 
     with (
         mock.patch(

@@ -101,12 +101,11 @@ class TestAuthorisation:
             == "https://authenticator/service/user?roles_required=COMMENTER"
         )
 
-    @pytest.mark.mock_functions(
+    @pytest.mark.mock_parameters(
         {
-            "get_assessment_stats": (
-                "app.assess.models.fund_summary.get_assessments_stats"
-            ),
-            "get_rounds": "app.assess.models.fund_summary.get_rounds",
+            "get_assessment_stats_path":
+                "app.assess.models.fund_summary.get_assessments_stats",
+            "get_rounds_path": "app.assess.models.fund_summary.get_rounds",
             "fund_id": "test-fund",
             "round_id": "test-round",
         }
@@ -476,6 +475,7 @@ class TestAuthorisation:
         visible,
         mock_get_assessor_tasklist_state,
         mock_get_fund,
+        mock_get_round,
         mock_get_latest_flag,
         mock_get_bulk_accounts,
     ):
