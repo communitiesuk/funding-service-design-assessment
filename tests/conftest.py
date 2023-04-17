@@ -231,9 +231,11 @@ def mock_get_round(request):
     marker = request.node.get_closest_marker("mock_parameters")
     if marker:
         params = marker.args[0]
-        mock_func = params.get("get_rounds_path", "app.assess.routes.get_round")
-        fund_short_name = params.get("fund_short_name","TF")
-        round_short_name = params.get("round_short_name","TR")
+        mock_func = params.get(
+            "get_rounds_path", "app.assess.routes.get_round"
+        )
+        fund_short_name = params.get("fund_short_name", "TF")
+        round_short_name = params.get("round_short_name", "TR")
         fund_id = params.get("fund_id", "test-fund")
         round_id = params.get("round_id", "test-round")
         use_short_name = True if params.get("fund_short_name") else False
@@ -243,7 +245,7 @@ def mock_get_round(request):
         round_short_name = "TR"
         fund_id = "test-fund"
         round_id = "test-round"
-        use_short_name= False
+        use_short_name = False
 
     mock_fund_info = Round.from_dict(
         mock_api_results["fund_store/funds/{fund_id}/rounds/{round_id}"]
@@ -254,12 +256,10 @@ def mock_get_round(request):
 
     if use_short_name:
         mocked_round.assert_called_once_with(
-        fund_short_name, round_short_name, use_short_name=use_short_name
-    )
-    else:
-        mocked_round.assert_called_once_with(
-            fund_id, round_id
+            fund_short_name, round_short_name, use_short_name=use_short_name
         )
+    else:
+        mocked_round.assert_called_once_with(fund_id, round_id)
 
 
 @pytest.fixture(scope="function")
@@ -269,7 +269,9 @@ def mock_get_rounds(request):
     marker = request.node.get_closest_marker("mock_parameters")
     if marker:
         params = marker.args[0]
-        mock_func = params.get("get_rounds_path", "app.assess.routes.get_rounds")
+        mock_func = params.get(
+            "get_rounds_path", "app.assess.routes.get_rounds"
+        )
         fund_id = params.get("fund_id", "test-fund")
     else:
         mock_func = "app.assess.routes.get_rounds"
@@ -292,7 +294,7 @@ def mock_get_application_overviews(request):
     marker = request.node.get_closest_marker("mock_parameters")
     if marker:
         params = marker.args[0]
-        search_params = params.get('expected_search_params')
+        search_params = params.get("expected_search_params")
         fund_id = params.get("fund_id", "test-fund")
         round_id = params.get("round_id", "test-round")
     else:
@@ -313,9 +315,7 @@ def mock_get_application_overviews(request):
     ) as mocked_apps_overview:
         yield mocked_apps_overview
 
-    mocked_apps_overview.assert_called_with(
-        fund_id, round_id, search_params
-    )
+    mocked_apps_overview.assert_called_with(fund_id, round_id, search_params)
 
 
 @pytest.fixture(scope="function")
@@ -340,7 +340,10 @@ def mock_get_assessment_stats(request):
     marker = request.node.get_closest_marker("mock_parameters")
     if marker:
         params = marker.args[0]
-        mock_func = params.get("get_assessment_stats_path", "app.assess.routes.get_assessments_stats")
+        mock_func = params.get(
+            "get_assessment_stats_path",
+            "app.assess.routes.get_assessments_stats",
+        )
         fund_id = params.get("fund_id", "test-fund")
         round_id = params.get("round_id", "test-round")
     else:

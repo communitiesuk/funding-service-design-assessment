@@ -103,8 +103,9 @@ class TestAuthorisation:
 
     @pytest.mark.mock_parameters(
         {
-            "get_assessment_stats_path":
-                "app.assess.models.fund_summary.get_assessments_stats",
+            "get_assessment_stats_path": (
+                "app.assess.models.fund_summary.get_assessments_stats"
+            ),
             "get_rounds_path": "app.assess.models.fund_summary.get_rounds",
             "fund_id": "test-fund",
             "round_id": "test-round",
