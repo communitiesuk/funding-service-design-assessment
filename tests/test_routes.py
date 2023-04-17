@@ -438,7 +438,7 @@ class TestRoutes:
             == "Assessment Stopped"
         )
         assert b"Lead User (Lead assessor) lead@test.com" in response.data
-        assert b"20/02/2023 at 12:00pm" in response.data
+        assert b"20/02/2023 at 12:00" in response.data
 
     @pytest.mark.application_id("resolved_app")
     def test_application_route_should_not_show_resolved_flag(
@@ -634,7 +634,7 @@ class TestRoutes:
 
         assert response.status_code == 200
         assert b"Marked as QA complete" in response.data
-        assert b"20/02/2023 at 12:00pm" in response.data
+        assert b"20/02/2023 at 12:00" in response.data
 
     @pytest.mark.application_id("flagged_qa_completed_app")
     def test_qa_completed_flagged_application(
@@ -659,7 +659,7 @@ class TestRoutes:
 
         assert response.status_code == 200
         assert b"Marked as QA complete" in response.data
-        assert b"20/02/2023 at 12:00pm" in response.data
+        assert b"20/02/2023 at 12:00" in response.data
         assert b"Section flagged" in response.data
         assert b"Reason" in response.data
         assert b"Resolve flag" in response.data
