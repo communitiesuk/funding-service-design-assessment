@@ -35,7 +35,7 @@ class TestRoutes:
         mock_get_assessment_stats,
     ):
 
-        response = flask_test_client.get(f"/assess/assessor_tool_dashboard/")
+        response = flask_test_client.get("/assess/assessor_tool_dashboard/")
         assert 200 == response.status_code, "Wrong status code on response"
         soup = BeautifulSoup(response.data, "html.parser")
         assert (

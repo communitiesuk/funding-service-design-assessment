@@ -15,6 +15,7 @@
                 {% endif %}
             </strong>
 
+            <div class="govuk-!-padding-right-6">
             {{ govukTable({
             "caption": "",
             "firstCellIsHeader": false,
@@ -26,7 +27,8 @@
                 [{'html': '<strong>QA Complete</strong>'}, {'text': application_stats.qa_complete}],
                 [{'html': '<strong>Stopped assessments</strong>'}, {'text': application_stats.stopped}],
             ],
-        }) }}
+            }) }}
+            </div>
 
             <a class="govuk-link" href="{{ assessments_href }}">
                 View all {% if is_active_status %}active{% else %}

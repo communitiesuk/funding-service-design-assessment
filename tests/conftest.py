@@ -6,7 +6,6 @@ from unittest import mock
 import jwt as jwt
 import pytest
 from app.create_app import create_app
-from config import Config
 from flask import template_rendered
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
