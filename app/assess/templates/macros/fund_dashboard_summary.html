@@ -34,7 +34,7 @@
             ],
             }) }}
 
-            <a class="govuk-link" href="{{ assessments_href }}">
+            <a class="govuk-link" data-qa="dashboard_summary" href="{{ assessments_href }}">
                 View all {% if is_active_status %}active{% else %}
                 closed{% endif %} assessments
             </a>
