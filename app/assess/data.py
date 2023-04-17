@@ -106,6 +106,9 @@ def get_fund(fid: str, use_short_name: bool = False) -> Union[Fund, None]:
         fund_id=fid, use_short_name=use_short_name
     )
     response = get_data(endpoint)
+    if not response:
+        return None
+
     fund = Fund.from_json(response)
     if "rounds" in response and len(response["rounds"]) > 0:
         for fund_round in response["rounds"]:

@@ -306,6 +306,11 @@ def qa_complete(application_id):
     )
 
 
+@assess_bp.route("/assessor_dashboard/", methods=["GET"])
+def old_landing():
+    return redirect("/assess/assessor_tool_dashboard/")
+
+
 @assess_bp.route("/assessor_tool_dashboard/", methods=["GET"])
 def landing():
     funds = get_funds()
@@ -331,16 +336,20 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
     of applications and their statuses
     """
 
+    fund = get_fund(fund_short_name, use_short_name=True)
+    if not fund:
+        return redirect("/assess/assessor_tool_dashboard/")
+    _round = get_round(fund_short_name, round_short_name, use_short_name=True)
+    if not _round:
+        return redirect("/assess/assessor_tool_dashboard/")
+    fund_id, round_id = fund.id, _round.id
+
     search_params = {
         "search_term": "",
         "search_in": "project_name,short_id",
         "asset_type": "ALL",
         "status": "ALL",
     }
-    fund = get_fund(fund_short_name, use_short_name=True)
-    round = get_round(fund_short_name, round_short_name, use_short_name=True)
-    fund_id, round_id = fund.id, round.id
-
     show_clear_filters = False
     if "clear_filters" not in request.args:
         search_params.update(
@@ -353,17 +362,17 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
     )
 
     round_details = {
-        "assessment_deadline": round.assessment_deadline,
-        "round_title": round.title,
+        "assessment_deadline": _round.assessment_deadline,
+        "round_title": _round.title,
         "fund_name": fund.name,
         "fund_short_name": fund_short_name,
         "round_short_name": round_short_name,
     }
 
     stats = get_assessments_stats(fund_id, round_id)
-    is_active_status = is_after_today(round.assessment_deadline)
+    is_active_status = is_after_today(_round.assessment_deadline)
 
-    # TODO Can we get rid of get_application_overviews for fund and round
+    # TODO Can we get rid of get_application_overviews for fund and _round
     # and incorporate into the following function?
     #  (its only used to provide params for this function)
     post_processed_overviews = (
