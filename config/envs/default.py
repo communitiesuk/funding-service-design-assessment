@@ -39,7 +39,7 @@ class DefaultConfig:
     TEMPLATES_FOLDER = "templates"
     LOCAL_SERVICE_NAME = "local_flask"
     ASSESSMENT_HUB_ROUTE = "/assess"
-    DASHBOARD_ROUTE = "/assess/assessor_dashboard"
+    DASHBOARD_ROUTE = "/assess/assessor_tool_dashboard"
 
     """
     Security
@@ -66,7 +66,9 @@ class DefaultConfig:
     """
     # Fund Store Endpoints
     FUNDS_ENDPOINT = CommonConfig.FUNDS_ENDPOINT
-    FUND_ENDPOINT = CommonConfig.FUND_ENDPOINT
+    FUND_ENDPOINT = (
+        CommonConfig.FUND_ENDPOINT + "?use_short_name={use_short_name}"
+    )
     GET_ROUND_DATA_FOR_FUND_ENDPOINT = (
         FUND_STORE_API_HOST + "/funds/{fund_id}/rounds/{round_id}"
     )
@@ -74,7 +76,9 @@ class DefaultConfig:
     # Round Store Endpoints
 
     ROUNDS_ENDPOINT = CommonConfig.ROUNDS_ENDPOINT
-    ROUND_ENDPOINT = CommonConfig.ROUND_ENDPOINT
+    ROUND_ENDPOINT = (
+        CommonConfig.ROUND_ENDPOINT + "?use_short_name={use_short_name}"
+    )
 
     # Application Store Endpoints
     APPLICATION_ENDPOINT = CommonConfig.APPLICATION_ENDPOINT

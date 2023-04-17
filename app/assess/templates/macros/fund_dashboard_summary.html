@@ -1,0 +1,43 @@
+{%- from "govuk_frontend_jinja/components/table/macro.html" import govukTable -%}
+
+{% macro fund_summary(name, is_active_status, application_stats, assessments_href) %}
+    <div class="govuk-!-padding-0 govuk-!-padding-right-2 govuk-!-padding-bottom-2 govuk-grid-column-one-third content-container">
+        <h3 class="govuk-heading-s response-title">
+            {{ name }}
+        </h3>
+        <div class="template-answer bg-white govuk-!-padding-bottom-5">
+
+            <strong class="govuk-tag {% if not is_active_status %}govuk-tag--grey{% endif %} govuk-!-margin-bottom-2">
+                {% if is_active_status %}
+                    ASSESSMENT ACTIVE
+                {% else %}
+                    ASSESSMENT CLOSED
+                {% endif %}
+            </strong>
+
+            {{ govukTable({
+            "caption": "",
+            "firstCellIsHeader": false,
+            "rows": [
+                [{'html': '<strong>Assessment closing date</strong>', 'classes': 'govuk-!-width-one-third'},
+                 {'text': application_stats.date | datetime_format("%d %B %Y at %H:%M") }],
+                [{'html': '<strong>Applications received</strong>'},
+                 {'text': application_stats.total_received}],
+                [{'html': '<strong>Assessments completed</strong>'},
+                 {'text': application_stats.completed}],
+                [{'html': '<strong>Assessments started</strong>'},
+                 {'text': application_stats.started}],
+                [{'html': '<strong>QA Complete</strong>'},
+                 {'text': application_stats.qa_complete}],
+                [{'html': '<strong>Stopped assessments</strong>'},
+                 {'text': application_stats.stopped}],
+            ],
+            }) }}
+
+            <a class="govuk-link" href="{{ assessments_href }}">
+                View all {% if is_active_status %}active{% else %}
+                closed{% endif %} assessments
+            </a>
+        </div>
+    </div>
+{% endmacro %}

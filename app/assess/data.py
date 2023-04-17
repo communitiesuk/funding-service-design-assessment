@@ -101,11 +101,14 @@ def get_funds() -> Union[List[Fund], None]:
     return None
 
 
-def get_fund(fund_id: str) -> Union[Fund, None]:
+def get_fund(fid: str, use_short_name: bool = False) -> Union[Fund, None]:
     endpoint = Config.FUND_STORE_API_HOST + Config.FUND_ENDPOINT.format(
-        fund_id=fund_id
+        fund_id=fid, use_short_name=use_short_name
     )
     response = get_data(endpoint)
+    if not response:
+        return None
+
     fund = Fund.from_json(response)
     if "rounds" in response and len(response["rounds"]) > 0:
         for fund_round in response["rounds"]:
@@ -113,7 +116,7 @@ def get_fund(fund_id: str) -> Union[Fund, None]:
     return fund
 
 
-def get_rounds(fund_id: str) -> Union[Fund, List]:
+def get_rounds(fund_id: str) -> list[Round]:
     endpoint = Config.FUND_STORE_API_HOST + Config.ROUNDS_ENDPOINT.format(
         fund_id=fund_id
     )
@@ -122,13 +125,15 @@ def get_rounds(fund_id: str) -> Union[Fund, List]:
     rounds = []
     if response and len(response) > 0:
         for round_data in response:
-            rounds.append(Round.from_json(round_data))
+            rounds.append(Round.from_dict(round_data))
     return rounds
 
 
-def get_round(fund_id: str, round_id: str) -> Union[Round, None]:
+def get_round(
+    fid: str, rid: str, use_short_name: bool = False
+) -> Union[Round, None]:
     round_endpoint = Config.FUND_STORE_API_HOST + Config.ROUND_ENDPOINT.format(
-        fund_id=fund_id, round_id=round_id
+        fund_id=fid, round_id=rid, use_short_name=use_short_name
     )
     round_response = get_data(round_endpoint)
     current_app.logger.info(round_response)

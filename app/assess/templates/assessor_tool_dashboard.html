@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{%- from 'govuk_frontend_jinja/components/inset-text/macro.html' import govukInsetText -%}
+{%- from "govuk_frontend_jinja/components/button/macro.html" import govukButton -%}
+
+
+{% from "macros/banner_summary.html" import banner_summary %}
+{% from "macros/logout_partial.html" import logout_partial %}
+{% from "macros/fund_dashboard_summary.html" import fund_summary %}
+
+
+{% set pageHeading %}Assessment tool dashboard{% endset %}
+{% block content %}
+    <div class="govuk-phase-banner flex-parent-element">
+        {{ logout_partial(sso_logout_url) }}
+    </div>
+
+    <div class="govuk-width-container">
+        <h1 class="govuk-heading-l">Assessment tool dashboard</h1>
+        {% for fund_id in funds %}
+            <h2 class="govuk-heading-m">{{ funds[fund_id].name }}</h2>
+            <div class="govuk-!-padding-0 govuk-grid-column-full">
+                {% for summary in fund_summaries[fund_id] %}
+                    {{ fund_summary(**summary.__dict__) }}
+                {% endfor %}
+            </div>
+        {% endfor %}
+
+        <p class="govuk-!-padding-top-6 govuk-body govuk-!-display-inline-block">
+            Information last updated: [{{ totays_date | datetime_format("%d %B %Y at %H:%M") }}]<br/>
+            Refresh page for most up-to-date information.
+        </p>
+
+    </div>
+
+{% endblock %}

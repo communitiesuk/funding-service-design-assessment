@@ -1,7 +1,7 @@
 {% from "govuk_frontend_jinja/components/input/macro.html" import govukInput %}
 
 
-{% macro render(application_overviews, query_params, asset_types, assessment_statuses, show_clear_filters, user_role) -%}
+{% macro render(application_overviews, round_details, query_params, asset_types, assessment_statuses, show_clear_filters, user_role) -%}
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full search-bar-flex-container">
     <div>
@@ -43,9 +43,16 @@
       {% endif %}
   </form>
   </div>
-  {% if show_clear_filters == true %}
+  {% if show_clear_filters %}
   <p>
-    <a class="govuk-link govuk-link--no-visited-state" href="{{url_for('assess_bp.landing', clear_filters=true)}}" aria-label="Clear Filters">Clear Filters</a>
+    <a class="govuk-link govuk-link--no-visited-state"
+       href="{{url_for(
+           'assess_bp.fund_dashboard',
+           fund_short_name=round_details.fund_short_name,
+           round_short_name=round_details.round_short_name,
+           clear_filters=true
+       )}}"
+       aria-label="Clear Filters">Clear Filters</a>
   </p>
   {%endif%}
 

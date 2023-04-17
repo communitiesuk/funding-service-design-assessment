@@ -1,3 +1,4 @@
+from datetime import datetime
 from urllib.parse import quote_plus
 
 from app.assess.data import *
@@ -21,11 +22,14 @@ from app.assess.helpers import generate_text_of_application
 from app.assess.helpers import is_flaggable
 from app.assess.helpers import resolve_application
 from app.assess.models.flag import FlagType
+from app.assess.models.fund_summary import create_fund_summaries
+from app.assess.models.fund_summary import is_after_today
 from app.assess.models.theme import Theme
 from app.assess.models.ui import applicants_response
 from app.assess.models.ui.assessor_task_list import AssessorTaskList
 from app.assess.status import all_status_completed
 from app.assess.status import update_ar_status_to_completed
+from app.assess.views.filters import utc_to_tz
 from config import Config
 from flask import abort
 from flask import Blueprint
@@ -36,7 +40,6 @@ from flask import request
 from flask import Response
 from flask import url_for
 from fsd_utils.authentication.decorators import login_required
-
 
 assess_bp = Blueprint(
     "assess_bp",
@@ -228,7 +231,6 @@ def score(
 )
 @login_required(roles_required=["ASSESSOR"])
 def flag(application_id):
-
     form = FlagApplicationForm()
 
     if request.method == "POST" and form.validate_on_submit():
@@ -305,7 +307,28 @@ def qa_complete(application_id):
 
 
 @assess_bp.route("/assessor_dashboard/", methods=["GET"])
+def old_landing():
+    return redirect("/assess/assessor_tool_dashboard/")
+
+
+@assess_bp.route("/assessor_tool_dashboard/", methods=["GET"])
 def landing():
+    funds = get_funds()
+    return render_template(
+        "assessor_tool_dashboard.html",
+        fund_summaries={
+            fund.id: create_fund_summaries(fund) for fund in funds
+        },
+        funds={fund.id: fund for fund in funds},
+        totays_date=utc_to_tz(datetime.now().strftime("%Y-%m-%d %H:%M:%S")),
+    )
+
+
+@assess_bp.route(
+    "/assessor_dashboard/<fund_short_name>/<round_short_name>/",
+    methods=["GET"],
+)
+def fund_dashboard(fund_short_name: str, round_short_name: str):
     """
     Landing page for assessors
     Provides a summary of available applications
@@ -313,38 +336,43 @@ def landing():
     of applications and their statuses
     """
 
+    fund = get_fund(fund_short_name, use_short_name=True)
+    if not fund:
+        return redirect("/assess/assessor_tool_dashboard/")
+    _round = get_round(fund_short_name, round_short_name, use_short_name=True)
+    if not _round:
+        return redirect("/assess/assessor_tool_dashboard/")
+    fund_id, round_id = fund.id, _round.id
+
     search_params = {
         "search_term": "",
         "search_in": "project_name,short_id",
         "asset_type": "ALL",
         "status": "ALL",
     }
-    # TODO: Pass fund and round into route
-    fund_id = Config.COF_FUND_ID
-    round_id = Config.COF_ROUND2_W3_ID
-    fund = get_fund(fund_id)
-    round = get_round(fund_id, round_id)
     show_clear_filters = False
     if "clear_filters" not in request.args:
-        # Add request arg search params to dict
-        for key, value in request.args.items():
-            if key in search_params:
-                search_params.update({key: value})
-                show_clear_filters = True
+        search_params.update(
+            {k: v for k, v in request.args.items() if k in search_params}
+        )
+        show_clear_filters = any(k in request.args for k in search_params)
 
     application_overviews = get_application_overviews(
         fund_id, round_id, search_params
     )
 
     round_details = {
-        "assessment_deadline": round.assessment_deadline,
-        "round_title": round.title,
+        "assessment_deadline": _round.assessment_deadline,
+        "round_title": _round.title,
         "fund_name": fund.name,
+        "fund_short_name": fund_short_name,
+        "round_short_name": round_short_name,
     }
 
     stats = get_assessments_stats(fund_id, round_id)
+    is_active_status = is_after_today(_round.assessment_deadline)
 
-    # TODO Can we get rid of get_application_overviews for fund and round
+    # TODO Can we get rid of get_application_overviews for fund and _round
     # and incorporate into the following function?
     #  (its only used to provide params for this function)
     post_processed_overviews = (
@@ -363,6 +391,7 @@ def landing():
         assessment_statuses=assessment_statuses,
         show_clear_filters=show_clear_filters,
         stats=stats,
+        is_active_status=is_active_status,
     )
 
 
@@ -381,6 +410,10 @@ def application(application_id):
 
     # maybe there's a better way to do this?..
     fund = get_fund(assessor_task_list_metadata["fund_id"])
+    round = get_round(
+        assessor_task_list_metadata["fund_id"],
+        assessor_task_list_metadata["round_id"],
+    )
     if not fund:
         abort(404)
     assessor_task_list_metadata["fund_name"] = fund.name
@@ -415,6 +448,8 @@ def application(application_id):
         application_id=application_id,
         flag=flag,
         current_user_role=g.user.highest_role,
+        fund_short_name=fund.short_name,
+        round_short_name=round.short_name,
         flag_user_info=accounts.get(flag.user_id)
         if (flag and accounts)
         else None,

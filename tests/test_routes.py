@@ -11,16 +11,64 @@ from tests.conftest import test_lead_assessor_claims
 
 
 class TestRoutes:
-    @pytest.mark.expected_search_params(
+    @pytest.mark.mock_parameters(
         {
-            "search_term": "",
-            "search_in": "project_name,short_id",
-            "asset_type": "ALL",
-            "status": "ALL",
+            "get_assessment_stats_path": (
+                "app.assess.models.fund_summary.get_assessments_stats"
+            ),
+            "get_rounds_path": "app.assess.models.fund_summary.get_rounds",
+            "fund_id": "test-fund",
+            "round_id": "test-round",
+            "expected_search_params": {
+                "search_term": "",
+                "search_in": "project_name,short_id",
+                "asset_type": "ALL",
+                "status": "ALL",
+            },
         }
     )
     def test_route_landing(
         self,
+        flask_test_client,
+        mock_get_funds,
+        mock_get_rounds,
+        mock_get_assessment_stats,
+    ):
+
+        response = flask_test_client.get("/assess/assessor_tool_dashboard/")
+        assert 200 == response.status_code, "Wrong status code on response"
+        soup = BeautifulSoup(response.data, "html.parser")
+        assert (
+            soup.title.string == "Assessment tool dashboard - Assessment Hub"
+        ), "Response does not contain expected heading"
+        all_table_data_elements = str(
+            soup.find_all("td", class_="govuk-table__cell")
+        )
+        project_titles = [
+            "Assessment closing date",
+            "Applications received",
+            "Assessments completed",
+            "QA Complete",
+        ]
+        assert all(
+            title in all_table_data_elements for title in project_titles
+        )
+
+    @pytest.mark.mock_parameters(
+        {
+            "fund_short_name": "TF",
+            "round_short_name": "TR",
+            "expected_search_params": {
+                "search_term": "",
+                "search_in": "project_name,short_id",
+                "asset_type": "ALL",
+                "status": "ALL",
+            },
+        }
+    )
+    def test_route_fund_dashboard(
+        self,
+        request,
         flask_test_client,
         mock_get_fund,
         mock_get_round,
@@ -29,7 +77,15 @@ class TestRoutes:
         mock_get_assessment_progress,
     ):
 
-        response = flask_test_client.get("/assess/assessor_dashboard/")
+        params = request.node.get_closest_marker("mock_parameters").args[0]
+
+        fund_short_name = params["fund_short_name"]
+        round_short_name = params["round_short_name"]
+
+        response = flask_test_client.get(
+            f"/assess/assessor_dashboard/{fund_short_name}/{round_short_name}",
+            follow_redirects=True,
+        )
         assert 200 == response.status_code, "Wrong status code on response"
         soup = BeautifulSoup(response.data, "html.parser")
         assert (
@@ -47,16 +103,21 @@ class TestRoutes:
             title in all_table_data_elements for title in project_titles
         )
 
-    @pytest.mark.expected_search_params(
+    @pytest.mark.mock_parameters(
         {
-            "search_term": "",
-            "search_in": "project_name,short_id",
-            "asset_type": "ALL",
-            "status": "QA_COMPLETE",
+            "fund_short_name": "TF",
+            "round_short_name": "TR",
+            "expected_search_params": {
+                "search_term": "",
+                "search_in": "project_name,short_id",
+                "asset_type": "ALL",
+                "status": "QA_COMPLETE",
+            },
         }
     )
-    def test_route_landing_filter_status(
+    def test_route_fund_dashboard_filter_status(
         self,
+        request,
         flask_test_client,
         mock_get_fund,
         mock_get_round,
@@ -65,8 +126,13 @@ class TestRoutes:
         mock_get_assessment_progress,
     ):
 
+        params = request.node.get_closest_marker("mock_parameters").args[0]
+        fund_short_name = params["fund_short_name"]
+        round_short_name = params["round_short_name"]
+
         response = flask_test_client.get(
-            "/assess/assessor_dashboard/",
+            f"/assess/assessor_dashboard/{fund_short_name}/{round_short_name}",
+            follow_redirects=True,
             query_string={"status": "QA_COMPLETE"},
         )
 
@@ -76,16 +142,21 @@ class TestRoutes:
             soup.title.string == "Team dashboard - Assessment Hub"
         ), "Response does not contain expected heading"
 
-    @pytest.mark.expected_search_params(
+    @pytest.mark.mock_parameters(
         {
-            "search_term": "",
-            "search_in": "project_name,short_id",
-            "asset_type": "pub",
-            "status": "ALL",
+            "fund_short_name": "TF",
+            "round_short_name": "TR",
+            "expected_search_params": {
+                "search_term": "",
+                "search_in": "project_name,short_id",
+                "asset_type": "pub",
+                "status": "ALL",
+            },
         }
     )
-    def test_route_landing_filter_asset_type(
+    def test_route_fund_dashboard_filter_asset_type(
         self,
+        request,
         flask_test_client,
         mock_get_fund,
         mock_get_round,
@@ -94,8 +165,13 @@ class TestRoutes:
         mock_get_assessment_progress,
     ):
 
+        params = request.node.get_closest_marker("mock_parameters").args[0]
+        fund_short_name = params["fund_short_name"]
+        round_short_name = params["round_short_name"]
+
         response = flask_test_client.get(
-            "/assess/assessor_dashboard/",
+            f"/assess/assessor_dashboard/{fund_short_name}/{round_short_name}",
+            follow_redirects=True,
             query_string={"asset_type": "pub"},
         )
 
@@ -113,8 +189,21 @@ class TestRoutes:
             "status": "ALL",
         }
     )
-    def test_route_landing_search_term(
+    @pytest.mark.mock_parameters(
+        {
+            "fund_short_name": "TF",
+            "round_short_name": "TR",
+            "expected_search_params": {
+                "search_term": "hello",
+                "search_in": "project_name,short_id",
+                "asset_type": "ALL",
+                "status": "ALL",
+            },
+        }
+    )
+    def test_route_fund_dashboard_search_term(
         self,
+        request,
         flask_test_client,
         mock_get_fund,
         mock_get_round,
@@ -123,8 +212,13 @@ class TestRoutes:
         mock_get_assessment_progress,
     ):
 
+        params = request.node.get_closest_marker("mock_parameters").args[0]
+        fund_short_name = params["fund_short_name"]
+        round_short_name = params["round_short_name"]
+
         response = flask_test_client.get(
-            "/assess/assessor_dashboard/",
+            f"/assess/assessor_dashboard/{fund_short_name}/{round_short_name}",
+            follow_redirects=True,
             query_string={"search_term": "hello"},
         )
 
@@ -134,16 +228,21 @@ class TestRoutes:
             soup.title.string == "Team dashboard - Assessment Hub"
         ), "Response does not contain expected heading"
 
-    @pytest.mark.expected_search_params(
+    @pytest.mark.mock_parameters(
         {
-            "search_term": "",
-            "search_in": "project_name,short_id",
-            "asset_type": "ALL",
-            "status": "ALL",
+            "fund_short_name": "TF",
+            "round_short_name": "TR",
+            "expected_search_params": {
+                "search_term": "",
+                "search_in": "project_name,short_id",
+                "asset_type": "ALL",
+                "status": "ALL",
+            },
         }
     )
-    def test_route_landing_clear_filters(
+    def test_route_fund_dashboard_clear_filters(
         self,
+        request,
         flask_test_client,
         mock_get_fund,
         mock_get_round,
@@ -152,8 +251,13 @@ class TestRoutes:
         mock_get_assessment_progress,
     ):
 
+        params = request.node.get_closest_marker("mock_parameters").args[0]
+        fund_short_name = params["fund_short_name"]
+        round_short_name = params["round_short_name"]
+
         response = flask_test_client.get(
-            "/assess/assessor_dashboard/",
+            f"/assess/assessor_dashboard/{fund_short_name}/{round_short_name}",
+            follow_redirects=True,
             query_string={
                 "clear_filters": "",
                 "search_term": "hello",
@@ -314,6 +418,7 @@ class TestRoutes:
         flask_test_client,
         mock_get_assessor_tasklist_state,
         mock_get_fund,
+        mock_get_round,
         mock_get_latest_flag,
         mock_get_bulk_accounts,
     ):
@@ -342,6 +447,7 @@ class TestRoutes:
         flask_test_client,
         mock_get_assessor_tasklist_state,
         mock_get_fund,
+        mock_get_round,
         mock_get_latest_flag,
         mock_get_bulk_accounts,
     ):
@@ -510,6 +616,7 @@ class TestRoutes:
         self,
         request,
         flask_test_client,
+        mock_get_round,
         mock_get_assessor_tasklist_state,
         mock_get_latest_flag,
         mock_get_bulk_accounts,
@@ -536,6 +643,7 @@ class TestRoutes:
         flask_test_client,
         mock_get_assessor_tasklist_state,
         mock_get_fund,
+        mock_get_round,
         mock_get_latest_flag,
         mock_get_bulk_accounts,
     ):
@@ -556,16 +664,21 @@ class TestRoutes:
         assert b"Reason" in response.data
         assert b"Resolve flag" in response.data
 
-    @pytest.mark.expected_search_params(
+    @pytest.mark.mock_parameters(
         {
-            "search_term": "",
-            "search_in": "project_name,short_id",
-            "asset_type": "ALL",
-            "status": "ALL",
+            "fund_short_name": "TF",
+            "round_short_name": "TR",
+            "expected_search_params": {
+                "search_term": "",
+                "search_in": "project_name,short_id",
+                "asset_type": "ALL",
+                "status": "ALL",
+            },
         }
     )
-    def test_route_landing_shows_flagged(
+    def test_route_fund_dashboard_shows_flagged(
         self,
+        request,
         flask_test_client,
         mock_get_fund,
         mock_get_round,
@@ -574,7 +687,13 @@ class TestRoutes:
         mock_get_assessment_progress,
     ):
 
-        response = flask_test_client.get("/assess/assessor_dashboard/")
+        params = request.node.get_closest_marker("mock_parameters").args[0]
+        fund_short_name = params["fund_short_name"]
+        round_short_name = params["round_short_name"]
+        response = flask_test_client.get(
+            f"/assess/assessor_dashboard/{fund_short_name}/{round_short_name}",
+            follow_redirects=True,
+        )
 
         assert 200 == response.status_code, "Wrong status code on response"
 
