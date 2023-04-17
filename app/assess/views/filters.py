@@ -53,3 +53,18 @@ def all_caps_to_human(word):
 def format_project_ref(value: str):
     secions = value.split("-")
     return secions[len(secions) - 1]
+
+
+def utc_to_bst(value, tz="Europe/London"):
+    dt_formats = ["%Y-%m-%dT%H:%M:%S.%f", "%Y-%m-%d %H:%M:%S"]
+    for dt_format in dt_formats:
+        try:
+            utc_time = datetime.strptime(value, dt_format)
+            break
+        except ValueError:
+            pass
+    else:
+        raise ValueError("Invalid datetime format")
+
+    uk_time = utc_time.astimezone(timezone(tz))
+    return uk_time.strftime("%d/%m/%Y at %H:%M")

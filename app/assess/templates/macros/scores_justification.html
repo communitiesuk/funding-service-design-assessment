@@ -18,7 +18,7 @@
                     {{ latest_score.user_email }}
                 {% endif %}
             </p>
-            <p class="govuk-body-s"> <strong>Date/time:</strong> {{ latest_score.date_created|datetime_format("%d/%m/%Y at %H:%M") }}</p>
+            <p class="govuk-body-s"> <strong>Date/time:</strong> {{ latest_score.date_created|utc_to_bst}}</p>
         </div>
     </div>
     {% if score_list %}
@@ -34,7 +34,7 @@
             <p><strong>Score: </strong>{{ score["score"] }}</p>
             <p><strong>Rationale: </strong>{{ score["justification"] }}</p>
             <p class="govuk-body-s"><strong>{{ score["user_full_name"] }}: </strong> {{ score["highest_role"]|all_caps_to_human }}, {{ score["user_email"] }}</p>
-            <p class="govuk-body-s"><strong>Date/time:</strong> {{ score["date_created"]|datetime_format("%d/%m/%Y at %H:%M") }}</p>
+            <p class="govuk-body-s"><strong>Date/time:</strong> {{ score["date_created"]|utc_to_bst}}</p>
             <hr>
             {% endfor %}
           </div>

@@ -8,7 +8,7 @@
             <h2 class="assessment-alert__heading govuk-heading-l govuk-!-margin-top-4">
                 Marked as QA complete </h2>
                 <p class="govuk-body-s">{{ user_info["full_name"] }} ({{ user_info["highest_role"] | all_caps_to_human }}) {{ user_info["email_address"] }}</p>
-                <p class="govuk-body-s">{{ flag.date_created | datetime_format("%d/%m/%Y at %H:%M") }}</p>
+                <p class="govuk-body-s">{{ flag.date_created | utc_to_bst }}</p>
 
                 {{ link_to_download_contract_docs(csrf_token, application_id, current_user_role) }}
         </div>
