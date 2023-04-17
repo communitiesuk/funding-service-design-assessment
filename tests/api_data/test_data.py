@@ -258,6 +258,7 @@ mock_api_results = {
         "short_id": stopped_app["short_id"],
         "workflow_status": stopped_app["workflow_status"],
         "fund_id": test_fund_id,
+        "round_id": test_round_id,
     },
     "assessment_store/application_overviews/resolved_app": {
         "criterias": [
@@ -287,11 +288,13 @@ mock_api_results = {
         "short_id": resolved_app["short_id"],
         "workflow_status": resolved_app["workflow_status"],
         "fund_id": test_fund_id,
+        "round_id": test_round_id,
     },
     "assessment_store/application_overviews/flagged_qa_completed_app": {
         "criterias": [],
         "sections": [],
         "fund_id": test_fund_id,
+        "round_id": test_round_id,
         "project_name": flagged_qa_completed_app["project_name"],
         "short_id": flagged_qa_completed_app["short_id"],
         "workflow_status": flagged_qa_completed_app["workflow_status"],

@@ -101,6 +101,16 @@ class TestAuthorisation:
             == "https://authenticator/service/user?roles_required=COMMENTER"
         )
 
+    @pytest.mark.mock_parameters(
+        {
+            "get_assessment_stats_path": (
+                "app.assess.models.fund_summary.get_assessments_stats"
+            ),
+            "get_rounds_path": "app.assess.models.fund_summary.get_rounds",
+            "fund_id": "test-fund",
+            "round_id": "test-round",
+        }
+    )
     @pytest.mark.parametrize(
         "creds",
         [
@@ -114,11 +124,9 @@ class TestAuthorisation:
         flask_test_client,
         creds,
         templates_rendered,
-        mock_get_fund,
-        mock_get_round,
-        mock_get_application_overviews,
+        mock_get_funds,
+        mock_get_rounds,
         mock_get_assessment_stats,
-        mock_get_assessment_progress,
     ):
         """
         GIVEN an authorised user
@@ -143,7 +151,7 @@ class TestAuthorisation:
         assert 200 == response.status_code
         assert 1 == len(templates_rendered)
         rendered_template = templates_rendered[0]
-        assert "assessor_dashboard.html" == rendered_template[0].name
+        assert "assessor_tool_dashboard.html" == rendered_template[0].name
 
     @pytest.mark.parametrize(
         "claims,ability_to_score",
@@ -468,6 +476,7 @@ class TestAuthorisation:
         visible,
         mock_get_assessor_tasklist_state,
         mock_get_fund,
+        mock_get_round,
         mock_get_latest_flag,
         mock_get_bulk_accounts,
     ):
