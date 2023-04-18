@@ -314,7 +314,7 @@ def old_landing():
 @assess_bp.route("/assessor_tool_dashboard/", methods=["GET"])
 def landing():
     funds = get_funds()
-    
+
     return render_template(
         "assessor_tool_dashboard.html",
         fund_summaries={
