@@ -5,7 +5,7 @@ from app.assess.views.filters import format_address
 from app.assess.views.filters import format_project_ref
 from app.assess.views.filters import remove_dashes_underscores_capitalize
 from app.assess.views.filters import slash_separated_day_month_year
-from app.assess.views.filters import utc_to_tz
+from app.assess.views.filters import utc_to_bst
 from app.assets import compile_static_assets
 from app.auth import auth_protect
 from config import Config
@@ -45,7 +45,7 @@ def create_app() -> Flask:
     flask_app.jinja_env.trim_blocks = True
     flask_app.jinja_env.lstrip_blocks = True
     flask_app.jinja_env.filters["datetime_format"] = datetime_format
-    flask_app.jinja_env.filters["utc_to_tz"] = utc_to_tz
+    flask_app.jinja_env.filters["utc_to_bst"] = utc_to_bst
     flask_app.jinja_env.filters[
         "slash_separated_day_month_year"
     ] = slash_separated_day_month_year

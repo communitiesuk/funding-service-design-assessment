@@ -29,7 +29,7 @@ from app.assess.models.ui import applicants_response
 from app.assess.models.ui.assessor_task_list import AssessorTaskList
 from app.assess.status import all_status_completed
 from app.assess.status import update_ar_status_to_completed
-from app.assess.views.filters import utc_to_tz
+from app.assess.views.filters import utc_to_bst
 from config import Config
 from flask import abort
 from flask import Blueprint
@@ -314,13 +314,14 @@ def old_landing():
 @assess_bp.route("/assessor_tool_dashboard/", methods=["GET"])
 def landing():
     funds = get_funds()
+
     return render_template(
         "assessor_tool_dashboard.html",
         fund_summaries={
             fund.id: create_fund_summaries(fund) for fund in funds
         },
         funds={fund.id: fund for fund in funds},
-        totays_date=utc_to_tz(datetime.now().strftime("%Y-%m-%d %H:%M:%S")),
+        todays_date=utc_to_bst(datetime.now().strftime("%Y-%m-%d %H:%M:%S")),
     )
 
 

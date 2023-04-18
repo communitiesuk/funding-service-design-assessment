@@ -20,7 +20,7 @@
             <div class="comment-group">
                 <p class="govuk-body">{{comment.comment}}</p>
                 <p class="govuk-body-s">{{comment.full_name}} ({{comment.highest_role|all_caps_to_human}}) {{comment.email_address}}</p>
-                <p class="govuk-body-s">{{comment.date_created|datetime_format_24hr}}</p>
+                <p class="govuk-body-s">{{comment.date_created|utc_to_bst}}</p>
             </div>
         {% endif %}
         {% endfor %}
