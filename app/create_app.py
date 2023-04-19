@@ -1,3 +1,6 @@
+import os
+import re
+
 from app.assess.views.filters import all_caps_to_human
 from app.assess.views.filters import datetime_format
 from app.assess.views.filters import datetime_format_24hr
@@ -110,13 +113,29 @@ def create_app() -> Flask:
                 unprotected_routes=["/", "/healthcheck"],
             )
 
+        static_files_list = []
+        for _, _, files in os.walk(os.getcwd() + "/app/static"):
+            for file in files:
+                # append the file name to the list
+                static_files_list.append(file)
+
         @flask_app.after_request
         def set_response_headers(response):
-            response.headers[
-                "Cache-Control"
-            ] = "no-cache, no-store, must-revalidate"
-            response.headers["Pragma"] = "no-cache"
-            response.headers["Expires"] = "0"
+            filename = (
+                re.findall(
+                    "filename=(.+)", response.headers["Content-Disposition"]
+                )[0]
+                if response.headers.get("Content-Disposition")
+                else ""
+            )
+            if filename in static_files_list:
+                response.headers["Cache-Control"] = "public, max-age=3600"
+            else:
+                response.headers[
+                    "Cache-Control"
+                ] = "no-cache, no-store, must-revalidate"
+                response.headers["Pragma"] = "no-cache"
+                response.headers["Expires"] = "0"
             return response
 
         return flask_app
