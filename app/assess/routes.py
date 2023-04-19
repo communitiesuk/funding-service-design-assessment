@@ -221,6 +221,7 @@ def score(
         fund=fund,
         comments=theme_matched_comments,
         display_status=display_status,
+        flag=flag,
         is_flaggable=is_flaggable(flag),
     )
 

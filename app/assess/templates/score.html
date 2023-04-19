@@ -54,7 +54,9 @@ Score - {{ sub_criteria.name }} - {{sub_criteria.project_name}}
         sub_criteria.short_id,
         sub_criteria.project_name,
         sub_criteria.funding_amount_requested,
-        display_status
+        display_status,
+        g.user.highest_role,
+        flag
     ) }}
 
     <div class="govuk-width-container">
