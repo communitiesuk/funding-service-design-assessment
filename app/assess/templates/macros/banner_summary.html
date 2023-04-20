@@ -15,10 +15,16 @@
                         &pound;{{ "{:,.2f}".format(funding_amount_requested | float) }}</h3>
 
                     {% if user_role != "COMMENTER" %}
-                    {% if flag and flag.is_qa_complete and display_status not in ('FLAGGED', 'STOPPED')  %}
+                    {% if flag and flag.is_qa_complete and display_status not in ('FLAGGED', 'STOPPED') %}
                     <h3 class="govuk-body-l fsd-banner-content fsd-banner-collapse-padding">
                         QA complete
                     </h3>
+
+                    {% elif flag and not flag.is_qa_complete and flag.flag_type.name == 'FLAGGED' %}
+                    <h3 class="govuk-body-l fsd-banner-content fsd-banner-collapse-padding">
+                        Flagged
+                    </h3>
+
                     {% elif display_status=='COMPLETED' %}
                     <h3 class="govuk-body-l fsd-banner-content fsd-banner-collapse-padding">
                         Assessment complete
