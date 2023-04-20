@@ -114,7 +114,7 @@ def create_app() -> Flask:
             )
 
         static_files_list = []
-        for _, _, files in os.walk(os.getcwd() + "/app/static"):
+        for _, _, files in os.walk(flask_app.static_url_path):
             for file in files:
                 # append the file name to the list
                 static_files_list.append(file)
