@@ -113,10 +113,10 @@ def create_app() -> Flask:
                 unprotected_routes=["/", "/healthcheck"],
             )
 
+        # Get static filenames list
         static_files_list = []
         for _, _, files in os.walk(flask_app.static_url_path):
             for file in files:
-                # append the file name to the list
                 static_files_list.append(file)
 
         @flask_app.after_request
@@ -128,6 +128,8 @@ def create_app() -> Flask:
                 if response.headers.get("Content-Disposition")
                 else ""
             )
+
+            # enable caching for static files
             if filename in static_files_list:
                 response.headers["Cache-Control"] = "public, max-age=3600"
             else:
