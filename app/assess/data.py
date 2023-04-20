@@ -304,13 +304,15 @@ def get_sub_criteria(application_id, sub_criteria_id):
         abort(404, description=msg)
 
 
-def get_banner_state(application_id: str):
-    banner_state_endpoint = (
+def get_sub_criteria_banner_state(application_id: str):
+    SUB_CRITERIA_BANNER_STATE_ENDPOINT = (
         Config.ASSESSMENT_STORE_API_HOST
-        + Config.BANNER_STATE_ENDPOINT.format(application_id=application_id)
+        + Config.SUB_CRITERIA_BANNER_STATE_ENDPOINT.format(
+            application_id=application_id
+        )
     )
 
-    banner = get_data(banner_state_endpoint)
+    banner = get_data(SUB_CRITERIA_BANNER_STATE_ENDPOINT)
 
     if banner:
         return Banner.from_filtered_dict(banner)

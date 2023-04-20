@@ -2,63 +2,57 @@
 
 
 {% macro render(application_overviews, round_details, query_params, asset_types, assessment_statuses, show_clear_filters, user_role) -%}
-<div class="govuk-grid-row">
-  <div class="govuk-grid-column-full search-bar-flex-container">
-    <div>
-    <form method="get">
-      <div class="govuk-form-group govuk-!-display-inline-block govuk-!-padding-right-2">
-            <div>
-                  <label class="govuk-label" for="application_search">
-                    Search reference or project name
-                  </label>
-                  <input class="govuk-input govuk-input--width-20" type="text" s, assessment_statusespellcheck="false" aria-label="Search reference or project name" id="application_search" name="search_term", value="{{query_params['search_term']}}">
-            </div>
-      </div>
-      <div class="govuk-form-group govuk-!-display-inline-block govuk-!-padding-right-2">
-            <label class="govuk-label" for="filter_asset_type">
-            Filter by asset type
+<nav class="search-bar-flex-container">
+  <form method="get">
+    <div class="govuk-form-group govuk-!-display-inline-block govuk-!-padding-right-2">
+      <div>
+            <label class="govuk-label" for="application_search">
+              Search reference or project name
             </label>
-            <select class="govuk-select" id = "filter_asset_type" name="asset_type">
+            <input class="govuk-input govuk-input--width-20" type="text" s, assessment_statusespellcheck="false" aria-label="Search reference or project name" id="application_search" name="search_term", value="{{query_params['search_term']}}">
+      </div>
+    </div>
+    <div class="govuk-form-group govuk-!-display-inline-block govuk-!-padding-right-2">
+          <label class="govuk-label" for="filter_asset_type">
+          Filter by asset type
+          </label>
+          <select class="govuk-select" id = "filter_asset_type" name="asset_type">
 
-                  {% for item in asset_types %}
-                        <option value='{{ item }}' {% if query_params.asset_type == item %} selected=""{%endif%}>{{asset_types[item]}}</option>
-                  {% endfor %}
-            </select>
-            {% if user_role == "COMMENTER" %}
-            <button class="govuk-button search-button" aria-label="Search" type="submit">Search</button>
-            {% endif %}
-      </div>
-      {% if user_role != "COMMENTER" %}
-      <div class="govuk-form-group govuk-!-display-inline-block govuk-!-padding-right-2">
-            <label class="govuk-label" for="filter_status">
-            Filter by status
-            </label>
-            <select class="govuk-select" name="status" id="filter_status">
-                  {% for item in assessment_statuses %}
-                        <option value='{{ item }}' {% if query_params.status == item %} selected=""{%endif%}>{{assessment_statuses[item]}}</option>
-                  {% endfor %}
-            </select>
-            <button class="govuk-button search-button" aria-label="Search" type="submit">Search</button>
-      </div>
-      {% endif %}
+                {% for item in asset_types %}
+                      <option value='{{ item }}' {% if query_params.asset_type == item %} selected=""{%endif%}>{{asset_types[item]}}</option>
+                {% endfor %}
+          </select>
+          {% if user_role == "COMMENTER" %}
+          <button class="govuk-button search-button" aria-label="Search" type="submit">Search</button>
+          {% endif %}
+    </div>
+    {% if user_role != "COMMENTER" %}
+    <div class="govuk-form-group govuk-!-display-inline-block govuk-!-padding-right-2">
+      <label class="govuk-label" for="filter_status">
+      Filter by status
+      </label>
+      <select class="govuk-select" name="status" id="filter_status">
+            {% for item in assessment_statuses %}
+                  <option value='{{ item }}' {% if query_params.status == item %} selected=""{%endif%}>{{assessment_statuses[item]}}</option>
+            {% endfor %}
+      </select>
+      <button class="govuk-button search-button" aria-label="Search" type="submit">Search</button>
+    </div>
+    {% endif %}
   </form>
-  </div>
   {% if show_clear_filters %}
   <p>
     <a class="govuk-link govuk-link--no-visited-state"
-       href="{{url_for(
-           'assess_bp.fund_dashboard',
-           fund_short_name=round_details.fund_short_name,
-           round_short_name=round_details.round_short_name,
-           clear_filters=true
-       )}}"
-       aria-label="Clear Filters">Clear Filters</a>
+      href="{{url_for(
+          'assess_bp.fund_dashboard',
+          fund_short_name=round_details.fund_short_name,
+          round_short_name=round_details.round_short_name,
+          clear_filters=true
+      )}}"
+      aria-label="Clear Filters">Clear Filters</a>
   </p>
   {%endif%}
-
-  </div>
-
-</div>
+</nav>
 
 {% if not application_overviews %}
 <div role="status" aria-live="assertive">
@@ -73,8 +67,6 @@
 </div>
 {% else %}
 <table class="govuk-table" id="application_overviews_table">
-
-
   <thead class="govuk-table__head">
     <tr class="govuk-table__row">
 
@@ -109,7 +101,6 @@
 
     </tr>
   </thead>
-
   <tbody class="govuk-table__body">
         {% for overview in application_overviews %}
             <tr class="govuk-table__row">
