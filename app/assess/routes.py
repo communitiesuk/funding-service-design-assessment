@@ -221,6 +221,7 @@ def score(
         fund=fund,
         comments=theme_matched_comments,
         display_status=display_status,
+        flag=flag,
         is_flaggable=is_flaggable(flag),
     )
 
@@ -295,6 +296,7 @@ def qa_complete(application_id):
 
     banner_state = get_banner_state(application_id)
     fund = get_fund(banner_state.fund_id)
+    flag = get_latest_flag(application_id)
 
     return render_template(
         "mark_qa_complete.html",
@@ -303,6 +305,7 @@ def qa_complete(application_id):
         banner_state=banner_state,
         form=form,
         referrer=request.referrer,
+        flag=flag,
     )
 
 
