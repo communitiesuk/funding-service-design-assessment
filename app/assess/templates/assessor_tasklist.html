@@ -49,7 +49,7 @@
             </div>
         </div>
 
-    {% elif sub_criteria_status_completed and current_user_role != "COMMENTER" and not flag.is_qa_complete %}
+        {% elif flag.flag_type.name=="RESOLVED" and sub_criteria_status_completed and current_user_role != "COMMENTER" and not flag.is_qa_complete %}
     <form method="POST" action="{{ url_for('assess_bp.application', application_id=application_id) }}">
         {{ form.csrf_token }}
         <div class="govuk-grid-row">
