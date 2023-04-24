@@ -720,7 +720,7 @@ class TestJinjaMacros(object):
             rendered_html,
         ), "Date created not found"
 
-    def test_assessment_completion_macro(self, request_ctx):
+    def test_assessment_completion_state_completed(self, request_ctx):
         rendered_html = render_template_string(
             "{{assessment_complete(state, flag, csrf_token, application_id,"
             " current_user_role)}}",
@@ -735,6 +735,7 @@ class TestJinjaMacros(object):
         )
 
         rendered_html = rendered_html.replace("\n", "")
+
         assert re.search(
             r"Assessment complete</h2>", rendered_html
         ), "Assessment complete not found"
@@ -742,3 +743,27 @@ class TestJinjaMacros(object):
         assert re.search(
             r"You have marked this assessment as complete.</p>", rendered_html
         ), "You have marked this assessment as complete not found"
+
+    def test_assessment_completion_flagged(self, request_ctx):
+        rendered_html = render_template_string(
+            "{{assessment_complete(state, flag, csrf_token, application_id,"
+            " current_user_role)}}",
+            assessment_complete=get_template_attribute(
+                "macros/assessment_completion.html", "assessment_complete"
+            ),
+            state=type("State", (), {"workflow_status": "IN_PROGRESS"})(),
+            flag=type(
+                "Flag",
+                (),
+                {"flag_type": type("FlagType", (), {"name": "RESOLVED"})},
+            )(),
+            csrf_token=generate_csrf(),
+            application_id=1,
+            current_user_role="LEAD_ASSESSOR",
+        )
+
+        rendered_html = rendered_html.replace("\n", "")
+
+        assert re.search(
+            r"All sections assessed</h2>", rendered_html
+        ), "All sections assessed not found"
