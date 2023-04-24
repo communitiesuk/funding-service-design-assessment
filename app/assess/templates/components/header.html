@@ -1,0 +1,23 @@
+{%- from 'govuk_frontend_jinja/components/back-link/macro.html' import govukBackLink -%}
+{% from "macros/logout_partial.html" import logout_partial %}
+
+<header role="banner" data-module="govuk-header">
+    <nav class="govuk-width-container govuk-header__navigation">
+        <div class="govuk-phase-banner flex-parent-element">
+            <p class="govuk-!-text-align-left flex-parent-element flexed-element-margins-collapse">
+                {{ govukBackLink({'href': url_for("assess_bp.application", application_id=application_id), 'html': 'Back to <b>assessment tasklist</b>', 'attributes': {'data-qa': 'back-to-assessment-tasklist'}}) }}
+            </p>
+            {{ logout_partial(sso_logout_url) }}
+        </div>
+    </nav>
+
+    {{ banner_summary(
+        fund.name,
+        sub_criteria.short_id,
+        sub_criteria.project_name,
+        sub_criteria.funding_amount_requested,
+        display_status,
+        g.user.highest_role,
+        flag
+    ) }}
+</header>
