@@ -17,6 +17,7 @@ Score - {{ sub_criteria.name }} - {{sub_criteria.project_name}}
 {% endblock %}
 
 {% block content %}
+
 {% if score_form.errors.get('score') or score_form.errors.get('justification') %}
 <div class="govuk-width-container">
     <div class="govuk-grid-row govuk-error-summary " data-module="govuk-error-summary" role="alert">
@@ -26,14 +27,14 @@ Score - {{ sub_criteria.name }} - {{sub_criteria.project_name}}
         <div class="govuk-error-summary__body">
             <ul class="govuk-list govuk-error-summary__list">
                 {% if score_form.errors.get('score') %}
-                    <li>
-                        <a href="#score-div">Select a score</a>
-                    </li>
+                <li>
+                    <a href="#score-div">Select a score</a>
+                </li>
                 {% endif %}
                 {% if score_form.errors.get('justification') %}
-                    <li>
-                        <a href="#just-text-area">Add rationale for score</a>
-                    </li>
+                <li>
+                    <a href="#just-text-area">Add rationale for score</a>
+                </li>
                 {% endif %}
             </ul>
         </div>
@@ -41,10 +42,10 @@ Score - {{ sub_criteria.name }} - {{sub_criteria.project_name}}
 </div>
 {% endif %}
 
-
 {% if is_flaggable and g.user.highest_role in ("ASSESSOR", "LEAD_ASSESSOR") %}
-    {{ flag_application_button(application_id) }}
+{{ flag_application_button(application_id) }}
 {% endif %}
+
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-one-third content-container">
         <h2 class="govuk-heading-l scoring-heading">{{ sub_criteria.name }}</h2>
@@ -57,10 +58,10 @@ Score - {{ sub_criteria.name }} - {{sub_criteria.project_name}}
             {{ navbar(application_id, sub_criteria, current_theme_id, is_score_page=True) }}
         </div>
         <div class="theme govuk-grid-column-two-thirds">
-            {{scores_justification(score_form, rescore_form, is_rescore, score_list, latest_score, application_id, sub_criteria.id, COF_score_list)}}
+            {{scores_justification(score_form, rescore_form, is_rescore, score_list, latest_score, application_id,
+            sub_criteria.id, COF_score_list)}}
             {{comment_summary(comments,sub_criteria.themes)}}
         </div>
     </div>
 </div>
-
 {% endblock %}

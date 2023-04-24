@@ -221,6 +221,7 @@ def score(
         fund=fund,
         comments=theme_matched_comments,
         display_status=display_status,
+        flag=flag,
         is_flaggable=is_flaggable(flag),
     )
 
@@ -264,6 +265,7 @@ def flag(application_id):
         flag=flag,
         sub_criteria=sub_criteria_banner_state,
         form=form,
+        display_status=sub_criteria_banner_state.workflow_status,
         referrer=request.referrer,
     )
 
@@ -295,6 +297,7 @@ def qa_complete(application_id):
 
     sub_criteria_banner_state = get_sub_criteria_banner_state(application_id)
     fund = get_fund(sub_criteria_banner_state.fund_id)
+    flag = get_latest_flag(application_id)
 
     return render_template(
         "mark_qa_complete.html",
@@ -303,6 +306,8 @@ def qa_complete(application_id):
         sub_criteria=sub_criteria_banner_state,
         form=form,
         referrer=request.referrer,
+        flag=flag,
+        display_status=sub_criteria_banner_state.workflow_status,
     )
 
 

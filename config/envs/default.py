@@ -35,7 +35,7 @@ class DefaultConfig:
     FSD_USER_TOKEN_COOKIE_NAME = "fsd_user_token"
 
     STATIC_FOLDER = "app/static/dist"
-    STATIC_URL_PATH = "/assets"
+    STATIC_URL_PATH = "app/static"
     TEMPLATES_FOLDER = "templates"
     LOCAL_SERVICE_NAME = "local_flask"
     ASSESSMENT_HUB_ROUTE = "/assess"
