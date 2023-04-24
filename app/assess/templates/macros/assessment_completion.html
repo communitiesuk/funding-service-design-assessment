@@ -2,9 +2,7 @@
 
 {% macro assessment_complete(state, flag, csrf_token, application_id, current_user_role) %}
 
-
 {% if (not flag or flag and flag.flag_type.name=="RESOLVED") and state.workflow_status=="IN_PROGRESS" %}
-
 
 <form method="POST" action="{{ url_for('assess_bp.application', application_id=application_id) }}">
     {{ csrf_token }}
@@ -21,9 +19,7 @@
     </div>
     </form>
 
-
 {% elif state and state.workflow_status=="COMPLETED" %}
-
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
         <div class="assessment-complete  govuk-margin-bottom-8" role="alert">
@@ -39,8 +35,6 @@
     </div>
 </div>
 
-
 {% endif %}
-
 
 {% endmacro %}
