@@ -23,6 +23,7 @@ from app.assess.views.filters import format_address
 from flask import g
 from flask import get_template_attribute
 from flask import render_template_string
+from flask_wtf.csrf import generate_csrf
 from fsd_utils.authentication.models import User
 
 
@@ -718,3 +719,26 @@ class TestJinjaMacros(object):
             r"\d{2}/\d{2}/\d{4} at \d{2}:\d{2}",
             rendered_html,
         ), "Date created not found"
+
+    def test_assessment_completion_macro(self, request_ctx):
+        rendered_html = render_template_string(
+            "{{assessment_complete(state, flag, csrf_token, application_id,"
+            " current_user_role)}}",
+            assessment_complete=get_template_attribute(
+                "macros/assessment_completion.html", "assessment_complete"
+            ),
+            state=type("State", (), {"workflow_status": "COMPLETED"})(),
+            flag=None,
+            csrf_token=generate_csrf(),
+            application_id=1,
+            current_user_role="LEAD_ASSESSOR",
+        )
+
+        rendered_html = rendered_html.replace("\n", "")
+        assert re.search(
+            r"Assessment complete</h2>", rendered_html
+        ), "Assessment complete not found"
+
+        assert re.search(
+            r"You have marked this assessment as complete.</p>", rendered_html
+        ), "You have marked this assessment as complete not found"
