@@ -11,7 +11,7 @@
 {% from "macros/assessment_flag.html" import assessment_stopped %}
 {% from "macros/logout_partial.html" import logout_partial %}
 {% from "macros/qa_complete_flag.html" import qa_complete_flag %}
-{% from "macros/assessment_completion.html" import assessment_completion %}
+{% from "macros/assessment_completion.html" import assessment_complete %}
 
 {% set pageHeading = state.project_name %}
 {% block content %}
@@ -36,7 +36,7 @@
 
     {% if sub_criteria_status_completed and current_user_role != "COMMENTER" and not flag.is_qa_complete %}
 
-    {{assessment_completion(state, flag, form.csrf_token, application_id, current_user_role )}}
+    {{assessment_complete(state, flag, form.csrf_token, application_id, current_user_role )}}
 
     {% endif %}
 
