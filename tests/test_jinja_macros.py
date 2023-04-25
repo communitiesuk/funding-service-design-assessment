@@ -20,9 +20,11 @@ from app.assess.models.ui.assessor_task_list import _Criteria
 from app.assess.models.ui.assessor_task_list import _CriteriaSubCriteria
 from app.assess.models.ui.assessor_task_list import _SubCriteria
 from app.assess.views.filters import format_address
+from bs4 import BeautifulSoup
 from flask import g
 from flask import get_template_attribute
 from flask import render_template_string
+from flask_wtf.csrf import generate_csrf
 from fsd_utils.authentication.models import User
 
 
@@ -718,3 +720,54 @@ class TestJinjaMacros(object):
             r"\d{2}/\d{2}/\d{4} at \d{2}:\d{2}",
             rendered_html,
         ), "Date created not found"
+
+    def test_assessment_completion_state_completed(self, request_ctx):
+        rendered_html = render_template_string(
+            "{{assessment_complete(state, flag, csrf_token, application_id,"
+            " current_user_role)}}",
+            assessment_complete=get_template_attribute(
+                "macros/assessment_completion.html", "assessment_complete"
+            ),
+            state=type("State", (), {"workflow_status": "COMPLETED"})(),
+            flag=None,
+            csrf_token=generate_csrf(),
+            application_id=1,
+            current_user_role="LEAD_ASSESSOR",
+        )
+
+        soup = BeautifulSoup(rendered_html, "html.parser")
+
+        assert (
+            soup.find("h2", class_="assessment-alert__heading").string
+            == "Assessment complete"
+        )
+
+        assert (
+            soup.find("p", class_="govuk-body").string
+            == "You have marked this assessment as complete."
+        )
+
+    def test_assessment_completion_flagged(self, request_ctx):
+        rendered_html = render_template_string(
+            "{{assessment_complete(state, flag, csrf_token, application_id,"
+            " current_user_role)}}",
+            assessment_complete=get_template_attribute(
+                "macros/assessment_completion.html", "assessment_complete"
+            ),
+            state=type("State", (), {"workflow_status": "IN_PROGRESS"})(),
+            flag=type(
+                "Flag",
+                (),
+                {"flag_type": type("FlagType", (), {"name": "RESOLVED"})},
+            )(),
+            csrf_token=generate_csrf(),
+            application_id=1,
+            current_user_role="LEAD_ASSESSOR",
+        )
+
+        soup = BeautifulSoup(rendered_html, "html.parser")
+
+        assert (
+            soup.find("h2", class_="assessment-alert__heading").string
+            == "All sections assessed"
+        )

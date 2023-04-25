@@ -11,6 +11,7 @@
 {% from "macros/assessment_flag.html" import assessment_stopped %}
 {% from "macros/logout_partial.html" import logout_partial %}
 {% from "macros/qa_complete_flag.html" import qa_complete_flag %}
+{% from "macros/assessment_completion.html" import assessment_complete %}
 
 {% set pageHeading = state.project_name %}
 
@@ -49,36 +50,8 @@
     {{ assessment_stopped(flag, flag_user_info, application_id, current_user_role) }}
 {% endif %}
 
-{% if state.workflow_status=="COMPLETED" and current_user_role != "COMMENTER" and not flag.is_qa_complete %}
-<div class="govuk-grid-row">
-    <div class="govuk-grid-column-full">
-        <div class="assessment-complete  govuk-margin-bottom-8" role="alert">
-            <h2 class="assessment-alert__heading govuk-heading-l govuk-!-margin-top-4" autofocus>
-                Assessment complete</h2>
-            <p class="govuk-body">You have marked this assessment as complete.</p>
-            <p class="govuk-body">
-                It may now be selected for quality assurance (QA). New scores and rationales could be added if this
-                happens.
-            </p>
-            {{ link_to_download_contract_docs(form.csrf_token, application_id, current_user_role) }}
-        </div>
-    </div>
-</div>
-{% elif sub_criteria_status_completed and current_user_role != "COMMENTER" and not flag.is_qa_complete %}
-<form method="POST" action="{{ url_for('assess_bp.application', application_id=application_id) }}">
-    {{ form.csrf_token }}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-full">
-            <div class="assessment-alert  govuk-margin-bottom-8" role="alert">
-                <h2 class="assessment-alert__heading govuk-heading-l govuk-!-margin-top-4">All sections assessed</h2>
-                <p class="govuk-body">You can now mark the assessment as complete when you're ready.</p>
-                <p class="govuk-body">It may be selected for quality assurance (QA) once you've done this.</p>
-                <button class="govuk-button primary-button" data-module="govuk-button" type="submit">Mark as
-                    complete</button>
-            </div>
-        </div>
-    </div>
-</form>
+{% if sub_criteria_status_completed and current_user_role != "COMMENTER" and not flag.is_qa_complete %}
+{{assessment_complete(state, flag, form.csrf_token, application_id, current_user_role )}}
 {% endif %}
 
 <div class="govuk-grid-row">
