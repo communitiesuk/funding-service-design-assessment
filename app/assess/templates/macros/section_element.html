@@ -1,6 +1,6 @@
 {%- from "govuk_frontend_jinja/components/table/macro.html" import govukTable -%}
 {% macro section_element(name, sub_criterias, application_id) %}
-    <h2 class="govuk-heading-l govuk-!-margin-top-8">{{ name }}</h2>
+    <h2 class="govuk-heading-l govuk-!-margin-top-4">{{ name }}</h2>
     {% set rows = [] %}
     {% for sub_criteria in sub_criterias %}
         {% set _ = rows.append([

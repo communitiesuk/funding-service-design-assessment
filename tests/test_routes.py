@@ -378,7 +378,7 @@ class TestRoutes:
         request,
         flask_test_client,
         mock_get_latest_flag,
-        mock_get_banner_state,
+        mock_get_sub_criteria_banner_state,
         mock_get_fund,
     ):
 
@@ -398,7 +398,7 @@ class TestRoutes:
         request,
         flask_test_client,
         mock_get_latest_flag,
-        mock_get_banner_state,
+        mock_get_sub_criteria_banner_state,
         mock_get_fund,
     ):
 
@@ -493,7 +493,7 @@ class TestRoutes:
         request,
         flask_test_client,
         mock_get_latest_flag,
-        mock_get_banner_state,
+        mock_get_sub_criteria_banner_state,
         mock_get_fund,
     ):
         token = create_valid_token(test_lead_assessor_claims)
@@ -556,7 +556,7 @@ class TestRoutes:
         request,
         flask_test_client,
         mock_get_latest_flag,
-        mock_get_banner_state,
+        mock_get_sub_criteria_banner_state,
         mock_get_fund,
     ):
         application_id = request.node.get_closest_marker(
@@ -620,7 +620,7 @@ class TestRoutes:
         mock_get_assessor_tasklist_state,
         mock_get_latest_flag,
         mock_get_bulk_accounts,
-        mock_get_banner_state,
+        mock_get_sub_criteria_banner_state,
         mock_get_fund,
     ):
         token = create_valid_token(test_lead_assessor_claims)
@@ -754,7 +754,7 @@ class TestRoutes:
         self,
         flask_test_client,
         request,
-        mock_get_banner_state,
+        mock_get_sub_criteria_banner_state,
         mock_get_fund,
         mock_get_latest_flag,
         templates_rendered,

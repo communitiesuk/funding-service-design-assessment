@@ -168,7 +168,7 @@ def selenium_chrome_driver(request, live_server):
 
 
 @pytest.fixture(scope="function")
-def mock_get_banner_state(request):
+def mock_get_sub_criteria_banner_state(request):
     from app.assess.models.banner import Banner
 
     marker = request.node.get_closest_marker("application_id")
@@ -183,11 +183,11 @@ def mock_get_banner_state(request):
 
     with (
         mock.patch(
-            "app.assess.helpers.get_banner_state",
+            "app.assess.helpers.get_sub_criteria_banner_state",
             return_value=mock_banner_info,
         ),
         mock.patch(
-            "app.assess.routes.get_banner_state",
+            "app.assess.routes.get_sub_criteria_banner_state",
             return_value=mock_banner_info,
         ),
     ):

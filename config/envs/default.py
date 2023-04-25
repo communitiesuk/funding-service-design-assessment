@@ -111,7 +111,7 @@ class DefaultConfig:
         "/sub_criteria_overview/{application_id}/{sub_criteria_id}"
     )
 
-    BANNER_STATE_ENDPOINT = (
+    SUB_CRITERIA_BANNER_STATE_ENDPOINT = (
         "/sub_criteria_overview/banner_state/{application_id}"
     )
 

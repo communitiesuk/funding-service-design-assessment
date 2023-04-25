@@ -2,9 +2,9 @@ from collections import defaultdict
 from io import StringIO
 from typing import Optional
 
-from app.assess.data import get_banner_state
 from app.assess.data import get_fund
 from app.assess.data import get_latest_flag
+from app.assess.data import get_sub_criteria_banner_state
 from app.assess.data import submit_flag
 from app.assess.models.flag import Flag
 from app.assess.models.flag import FlagType
@@ -66,19 +66,19 @@ def resolve_application(
                 application_id=application_id,
             )
         )
-    state = get_banner_state(application_id)
+    sub_criteria_banner_state = get_sub_criteria_banner_state(application_id)
     latest_flag = get_latest_flag(application_id)
     if latest_flag:
         display_status = determine_display_status(
-            state.workflow_status, latest_flag
+            sub_criteria_banner_state.workflow_status, latest_flag
         )
 
-    fund = get_fund(state.fund_id)
+    fund = get_fund(sub_criteria_banner_state.fund_id)
     return render_template(
         page_to_render,
         application_id=application_id,
-        fund_name=fund.name,
-        state=state,
+        fund=fund,
+        sub_criteria=sub_criteria_banner_state,
         form=form,
         referrer=request.referrer,
         display_status=display_status,

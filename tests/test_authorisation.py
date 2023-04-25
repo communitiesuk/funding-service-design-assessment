@@ -305,7 +305,7 @@ class TestAuthorisation:
         claim,
         expect_continue_available,
         mock_get_latest_flag,
-        mock_get_banner_state,
+        mock_get_sub_criteria_banner_state,
         mock_get_fund,
     ):
         """
@@ -361,7 +361,7 @@ class TestAuthorisation:
         claim,
         expect_flagging_available,
         mock_get_latest_flag,
-        mock_get_banner_state,
+        mock_get_sub_criteria_banner_state,
         mock_get_fund,
     ):
         """
@@ -418,7 +418,7 @@ class TestAuthorisation:
         claim,
         expect_resolve_flag_available,
         mock_get_latest_flag,
-        mock_get_banner_state,
+        mock_get_sub_criteria_banner_state,
         mock_get_fund,
     ):
         """

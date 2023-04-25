@@ -255,16 +255,17 @@ def flag(application_id):
         FlagType.QA_COMPLETED,
     ):
         abort(400, "Application already flagged")
-    banner_state = get_banner_state(application_id)
-    fund = get_fund(banner_state.fund_id)
+    sub_criteria_banner_state = get_sub_criteria_banner_state(application_id)
+    fund = get_fund(sub_criteria_banner_state.fund_id)
 
     return render_template(
         "flag_application.html",
         application_id=application_id,
-        fund_name=fund.name,
+        fund=fund,
         flag=flag,
-        banner_state=banner_state,
+        sub_criteria=sub_criteria_banner_state,
         form=form,
+        display_status=sub_criteria_banner_state.workflow_status,
         referrer=request.referrer,
     )
 
@@ -294,18 +295,19 @@ def qa_complete(application_id):
             )
         )
 
-    banner_state = get_banner_state(application_id)
-    fund = get_fund(banner_state.fund_id)
+    sub_criteria_banner_state = get_sub_criteria_banner_state(application_id)
+    fund = get_fund(sub_criteria_banner_state.fund_id)
     flag = get_latest_flag(application_id)
 
     return render_template(
         "mark_qa_complete.html",
         application_id=application_id,
-        fund_name=fund.name,
-        banner_state=banner_state,
+        fund=fund,
+        sub_criteria=sub_criteria_banner_state,
         form=form,
         referrer=request.referrer,
         flag=flag,
+        display_status=sub_criteria_banner_state.workflow_status,
     )
 
 
@@ -532,14 +534,14 @@ def generate_doc_list_for_download(application_id):
     current_app.logger.info(
         f"Generating docs for application id {application_id}"
     )
-    state = get_banner_state(application_id)
-    short_id = state.short_id[-6:]
+    sub_criteria_banner_state = get_sub_criteria_banner_state(application_id)
+    short_id = sub_criteria_banner_state.short_id[-6:]
     latest_flag = get_latest_flag(application_id)
     display_status = determine_display_status(
-        state.workflow_status, latest_flag
+        sub_criteria_banner_state.workflow_status, latest_flag
     )
 
-    fund = get_fund(state.fund_id)
+    fund = get_fund(sub_criteria_banner_state.fund_id)
     flag = get_latest_flag(application_id)
     application_json = get_application_json(application_id)
     supporting_evidence = get_files_for_application_upload_fields(
@@ -559,8 +561,8 @@ def generate_doc_list_for_download(application_id):
     return render_template(
         "contract_downloads.html",
         application_id=application_id,
-        fund_name=fund.name,
-        state=state,
+        fund=fund,
+        sub_criteria=sub_criteria_banner_state,
         application_answers=application_answers,
         supporting_evidence=supporting_evidence,
         display_status=display_status,
