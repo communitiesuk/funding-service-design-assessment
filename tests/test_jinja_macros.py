@@ -20,6 +20,7 @@ from app.assess.models.ui.assessor_task_list import _Criteria
 from app.assess.models.ui.assessor_task_list import _CriteriaSubCriteria
 from app.assess.models.ui.assessor_task_list import _SubCriteria
 from app.assess.views.filters import format_address
+from bs4 import BeautifulSoup
 from flask import g
 from flask import get_template_attribute
 from flask import render_template_string
@@ -734,15 +735,17 @@ class TestJinjaMacros(object):
             current_user_role="LEAD_ASSESSOR",
         )
 
-        rendered_html = rendered_html.replace("\n", "")
+        soup = BeautifulSoup(rendered_html, "html.parser")
 
-        assert re.search(
-            r"Assessment complete</h2>", rendered_html
-        ), "Assessment complete not found"
+        assert (
+            soup.find("h2", class_="assessment-alert__heading").string
+            == "Assessment complete"
+        )
 
-        assert re.search(
-            r"You have marked this assessment as complete.</p>", rendered_html
-        ), "You have marked this assessment as complete not found"
+        assert (
+            soup.find("p", class_="govuk-body").string
+            == "You have marked this assessment as complete."
+        )
 
     def test_assessment_completion_flagged(self, request_ctx):
         rendered_html = render_template_string(
@@ -762,8 +765,9 @@ class TestJinjaMacros(object):
             current_user_role="LEAD_ASSESSOR",
         )
 
-        rendered_html = rendered_html.replace("\n", "")
+        soup = BeautifulSoup(rendered_html, "html.parser")
 
-        assert re.search(
-            r"All sections assessed</h2>", rendered_html
-        ), "All sections assessed not found"
+        assert (
+            soup.find("h2", class_="assessment-alert__heading").string
+            == "All sections assessed"
+        )
