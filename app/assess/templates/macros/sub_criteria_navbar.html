@@ -5,7 +5,7 @@
         {% set is_current_url = (current_theme_id == theme.id) and not is_score_page %}
         <li>
             {% if not is_current_url %}
-            <a class="govuk-link govuk-link--no-visited-state"
+            <a class="govuk-link govuk-link--no-visited-state" data-qa="sub_criteria_theme"
             href="{{ url_for('assess_bp.display_sub_criteria',application_id=application_id,sub_criteria_id=sub_criteria.id,theme_id=theme.id) }}">
             {% endif %}
             {{theme.name}}
