@@ -400,21 +400,25 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
         is_active_status=is_active_status,
     )
 
-# TODO: Remove this function if the decision is to keep the default value "Not found".
+
+# TODO: Remove this function if the decision is to keep the...
+# TODO:...default value "Not found".
 def replace_not_found_location(
     post_processed_overviews: list, location: str, replaced_to: str
 ):
-    """
-    Replaces the 'country' value in the 'location_json_blob' dictionary of each input dictionary
-    where it matches the given 'location' string with the provided 'replaced_to' string.
+    """Replaces the 'country' value in the 'location_json_blob' dictionary
+    of each input dictionary where it matches
+    the given 'location' string with the provided 'replaced_to' string and
+    returns a list of dictionaries with the
+    modified 'country' values.
 
     Args:
-        - post_processed_overviews: A list of dictionaries containing post-processed application data.
-        - location: The location string to match the 'country' value against i.e. "Not found".
-        - replaced_to: The string to replace the 'country' value with when a match is found.
-
-    Returns:
-        A list of dictionaries with the modified 'country' values.
+    - post_processed_overviews: A list of dictionaries containing
+    post-processed application data.
+    - location: The location string to match the 'country' value against,
+    e.g., "Not found".
+    - replaced_to: The string to replace the 'country' value with when
+    a match is found.
     """
 
     for country in post_processed_overviews:
