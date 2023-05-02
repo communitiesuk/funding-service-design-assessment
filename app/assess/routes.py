@@ -390,7 +390,7 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
     def get_sorted_application_overviews(
         application_overviews, column, reverse=False
     ):
-        """ Sorts a list of application overviews based on the specified column."""
+        """Sorts a list of application overviews based on the specified column."""
 
         # Define the sorting function based on the specified column
         if column == "location":
