@@ -181,14 +181,6 @@ class TestRoutes:
             soup.title.string == "Team dashboard - Assessment Hub"
         ), "Response does not contain expected heading"
 
-    @pytest.mark.expected_search_params(
-        {
-            "search_term": "hello",
-            "search_in": "project_name,short_id",
-            "asset_type": "ALL",
-            "status": "ALL",
-        }
-    )
     @pytest.mark.mock_parameters(
         {
             "fund_short_name": "TF",
@@ -271,6 +263,113 @@ class TestRoutes:
         assert (
             soup.title.string == "Team dashboard - Assessment Hub"
         ), "Response does not contain expected heading"
+
+    @pytest.mark.mock_parameters(
+        {
+            "fund_short_name": "TF",
+            "round_short_name": "TR",
+            "expected_search_params": {
+                "search_term": "",
+                "search_in": "project_name,short_id",
+                "asset_type": "ALL",
+                "status": "ALL",
+            },
+        }
+    )
+    @pytest.mark.parametrize(
+        "sort_column,sort_order,column_id",
+        [
+            ("location", "asc", 4),
+            ("location", "desc", 4),
+            ("funding_requested", "asc", 3),
+            ("funding_requested", "desc", 3),
+            ("", "", 4),
+        ],
+    )
+    def test_route_fund_dashboard_sort_column(
+        self,
+        request,
+        flask_test_client,
+        mock_get_fund,
+        mock_get_round,
+        mock_get_application_overviews,
+        mock_get_assessment_stats,
+        mock_get_assessment_progress,
+        sort_column,
+        sort_order,
+        column_id,
+    ):
+
+        params = request.node.get_closest_marker("mock_parameters").args[0]
+        fund_short_name = params["fund_short_name"]
+        round_short_name = params["round_short_name"]
+
+        response = flask_test_client.get(
+            f"/assess/assessor_dashboard/{fund_short_name}/{round_short_name}",
+            follow_redirects=True,
+            query_string={
+                "sort_column": sort_column,
+                "sort_order": sort_order,
+            },
+        )
+
+        assert 200 == response.status_code, "Wrong status code on response"
+        soup = BeautifulSoup(response.data, "html.parser")
+
+        # Find the table element by its class name
+        tbody = soup.find("tbody", {"class": "govuk-table__body"})
+
+        # Find all the elements in the column
+        column_data = [
+            row.find_all("td")[column_id].text
+            for idx, row in enumerate(tbody.find_all("tr"))
+        ]
+
+        if sort_order == "asc":
+            all_table_data_elements = str(
+                soup.find_all(
+                    "th",
+                    attrs={
+                        "class": "govuk-table__header",
+                        "aria-sort": "ascending",
+                    },
+                )
+            )
+            assert 'aria-sort="ascending"' in all_table_data_elements
+            assert sort_column in all_table_data_elements
+            # check if the data is in ascending order
+            assert all(
+                column_data[i] <= column_data[i + 1]
+                for i in range(len(column_data) - 1)
+            )
+        elif sort_order == "desc":
+            all_table_data_elements = str(
+                soup.find_all(
+                    "th",
+                    attrs={
+                        "class": "govuk-table__header",
+                        "aria-sort": "descending",
+                    },
+                )
+            )
+            assert 'aria-sort="descending"' in all_table_data_elements
+            assert sort_column in all_table_data_elements
+            # check if the data is in descending order
+            assert all(
+                column_data[i] >= column_data[i + 1]
+                for i in range(len(column_data) - 1)
+            )
+        else:
+            all_table_data_elements = str(
+                soup.find_all(
+                    "th",
+                    attrs={
+                        "class": "govuk-table__header",
+                        "aria-sort": "none",
+                    },
+                )
+            )
+            assert 'aria-sort="none"' in all_table_data_elements
 
     @pytest.mark.application_id("resolved_app")
     @pytest.mark.sub_criteria_id("test_sub_criteria_id")

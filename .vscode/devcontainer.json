@@ -1,0 +1,23 @@
+{
+    "name": "assessment",
+    // Default path to open when attaching to a new container.
+    "workspaceFolder": "/app",
+    // Set *default* container specific settings.json values on container create.
+    "settings": {
+        "terminal.integrated.defaultProfile.linux": "bash"
+	},
+    // Commands to run after attaching to container
+    "postAttachCommand": ["python -m pip install -r requirements-dev.txt --upgrade"],
+    "extensions": [
+		"bierner.markdown-preview-github-styles",
+		"eamodio.gitlens",
+		"esbenp.prettier-vscode",
+		"mhutchie.git-graph",
+		"ms-python.python",
+		"ms-python.vscode-pylance",
+		"redhat.vscode-yaml",
+		"VisualStudioExptTeam.intellicode-api-usage-examples",
+		"VisualStudioExptTeam.vscodeintellicode",
+		"vscode-icons-team.vscode-icons"
+	]
+}

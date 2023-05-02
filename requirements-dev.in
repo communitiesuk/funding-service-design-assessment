@@ -14,3 +14,4 @@ webdriver-manager
 boto3
 beautifulsoup4
 black
+debugpy
