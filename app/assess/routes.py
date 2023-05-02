@@ -420,12 +420,15 @@ def replace_not_found_location(
     - replaced_to: The string to replace the 'country' value with when
     a match is found.
     """
-    
+
     for country in post_processed_overviews:
         if country.get("location_json_blob").get("country") == location:
             country["location_json_blob"]["country"] = replaced_to
         else:
-            current_app.logger.error(f"Couldn't access the country/location i.e. 'Scotland' or 'Not found'")    
+            current_app.logger.error(
+                f"Couldn't access the country/location i.e. 'Scotland' or 'Not"
+                f" found'"
+            )
 
     return post_processed_overviews
 
