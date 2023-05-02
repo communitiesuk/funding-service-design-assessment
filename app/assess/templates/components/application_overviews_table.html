@@ -1,7 +1,7 @@
 {% from "govuk_frontend_jinja/components/input/macro.html" import govukInput %}
 
 
-{% macro render(application_overviews, round_details, query_params, asset_types, assessment_statuses, show_clear_filters, user_role) -%}
+{% macro render(application_overviews, round_details, query_params, asset_types, assessment_statuses, show_clear_filters, user_role, sort_column, sort_order) -%}
 <nav class="search-bar-flex-container">
   <form method="get">
     <div class="govuk-form-group govuk-!-display-inline-block govuk-!-padding-right-2">
@@ -85,12 +85,35 @@
       </th>
 
 
-      <th scope="col" class="govuk-table__header">
-        Funding requested
+      <th scope="col" class="govuk-table__header" aria-sort="{{ 'none' if (sort_column!='funding_requested') else ('ascending' if (sort_order=='asc') else 'descending') }}">
+        <form method="get" action="{{ url_for('assess_bp.fund_dashboard',
+                                  fund_short_name=round_details.fund_short_name,
+                                  round_short_name=round_details.round_short_name
+                                  ) }}">
+          <input type="hidden" name="sort_column" value="funding_requested">
+          {% if sort_column == 'funding_requested' and sort_order == 'asc' %}
+            <input type="hidden" name="sort_order" value="desc">
+          {% else %}
+            <input type="hidden" name="sort_order" value="asc">
+          {% endif %}
+          <button class="button" type="submit" aria-label="Sort by Funding requested">Funding requested</button>
+        </form>
       </th>
 
-      <th scope="col" class="govuk-table__header">
-        Location
+
+      <th scope="col" class="govuk-table__header" aria-sort="{{ 'none' if (sort_column!='location') else ('ascending' if (sort_order=='asc') else 'descending') }}">
+        <form method="get" action="{{ url_for('assess_bp.fund_dashboard',
+                                  fund_short_name=round_details.fund_short_name,
+                                  round_short_name=round_details.round_short_name
+                                  ) }}">
+          <input type="hidden" name="sort_column" value="location">
+          {% if sort_column == 'location' and sort_order == 'asc' %}
+            <input type="hidden" name="sort_order" value="desc">
+          {% else %}
+            <input type="hidden" name="sort_order" value="asc">
+          {% endif %}
+          <button class="button" type="submit" aria-label="Sort by Location">Location</button>
+        </form>
       </th>
 
       {% if user_role != "COMMENTER" %}

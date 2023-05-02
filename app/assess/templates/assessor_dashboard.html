@@ -50,6 +50,6 @@
 
 {% block content %}
 <section class="govuk-grid-column-full">
-    {{ application_overviews_table.render(application_overviews, round_details, query_params, asset_types, assessment_statuses, show_clear_filters, user.highest_role) }}
+    {{ application_overviews_table.render(application_overviews, round_details, query_params, asset_types, assessment_statuses, show_clear_filters, user.highest_role, sort_column, sort_order) }}
 </section>
 {% endblock %}

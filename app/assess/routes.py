@@ -387,6 +387,36 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
         else []
     )
 
+    def get_sorted_application_overviews(
+        application_overviews, column, reverse=False
+    ):
+        """Sorts application_overviews list based on the specified column."""
+
+        # Define the sorting function based on the specified column
+        if column == "location":
+            sort_key = lambda x: x["location_json_blob"]["country"]
+        elif column == "funding_requested":
+            sort_key = lambda x: x["funding_amount_requested"]
+        else:
+            return application_overviews
+
+        # Sort the data based on the key & order
+        sorted_table_data = sorted(
+            application_overviews, key=sort_key, reverse=reverse
+        )
+
+        return sorted_table_data
+
+    # Get the sort column and order from query parameters
+    sort_column = request.args.get("sort_column", "")
+    sort_order = request.args.get("sort_order", "")
+    if sort_column:
+        post_processed_overviews = get_sorted_application_overviews(
+            post_processed_overviews,
+            sort_column,
+            reverse=sort_order != "asc",
+        )
+
     return render_template(
         "assessor_dashboard.html",
         user=g.user,
@@ -398,6 +428,8 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
         show_clear_filters=show_clear_filters,
         stats=stats,
         is_active_status=is_active_status,
+        sort_column=sort_column,
+        sort_order=sort_order,
     )
 
 
