@@ -401,12 +401,10 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
             return application_overviews
 
         # Sort the data based on the key & order
-        if not reverse:
-            sorted_table_data = sorted(application_overviews, key=sort_key)
-        else:
-            sorted_table_data = sorted(
-                application_overviews, key=sort_key, reverse=True
-            )
+        sorted_table_data = sorted(
+            application_overviews, key=sort_key, reverse=reverse
+        )
+
         return sorted_table_data
 
     # Get the sort column and order from query parameters
@@ -416,7 +414,7 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
         post_processed_overviews = get_sorted_application_overviews(
             post_processed_overviews,
             sort_column,
-            reverse=False if sort_order == "asc" else True,
+            reverse=sort_order != "asc",
         )
 
     return render_template(
