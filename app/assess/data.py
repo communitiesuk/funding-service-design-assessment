@@ -486,7 +486,7 @@ def submit_comment(
     return response.ok
 
 
-s3_client = client(
+_S3_CLIENT = client(
     "s3",
     aws_access_key_id=Config.AWS_ACCESS_KEY_ID,
     aws_secret_access_key=Config.AWS_SECRET_ACCESS_KEY,
@@ -510,7 +510,7 @@ def get_file_for_download_from_aws(file_name: str, application_id: str):
     prefixed_file_name = application_id + "/" + file_name
 
     try:
-        obj = s3_client.get_object(
+        obj = _S3_CLIENT.get_object(
             Bucket=Config.AWS_BUCKET_NAME, Key=prefixed_file_name
         )
 
@@ -524,11 +524,12 @@ def get_file_for_download_from_aws(file_name: str, application_id: str):
 
 
 def list_files_in_folder(prefix):
-    response = s3_client.list_objects_v2(
+    response = _S3_CLIENT.list_objects_v2(
         Bucket=Config.AWS_BUCKET_NAME, Prefix=prefix
     )
     keys = []
     for obj in response["Contents"]:
+        # we cut off the application id.
         _, key = obj["Key"].split("/", 1)
         keys.append(key)
     return keys

@@ -12,7 +12,7 @@ def test_list_files_in_folder(monkeypatch):
         }
 
     monkeypatch.setattr(
-        app.assess.data.s3_client, "list_objects_v2", mock_list_objects_v2
+        app.assess.data._S3_CLIENT, "list_objects_v2", mock_list_objects_v2
     )
 
     prefix = "app_id/form_name/path/name/"
