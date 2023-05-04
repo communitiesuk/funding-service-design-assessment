@@ -15,6 +15,9 @@ from app.assess.models.ui.applicants_response import (
     FormattedBesideQuestionAnswerPair,
 )
 from app.assess.models.ui.applicants_response import MonetaryKeyValues
+from app.assess.models.ui.applicants_response import (
+    QuestionAboveHrefAnswerList,
+)
 from app.assess.models.ui.applicants_response import QuestionHeading
 from app.assess.models.ui.assessor_task_list import _Criteria
 from app.assess.models.ui.assessor_task_list import _CriteriaSubCriteria
@@ -68,41 +71,37 @@ class TestJinjaMacros(object):
             g=g,
         )
 
-        # replacing new lines to more easily regex match the html
-        rendered_html = rendered_html.replace("\n", "")
+        soup = BeautifulSoup(rendered_html, "html.parser")
 
-        assert re.search(
-            r'<h3 class="example-class">\S*Example title\S*</h3>',
-            rendered_html,
+        assert (
+            soup.find("h3", class_="example-class").text == "Example title"
         ), "Title not found"
 
-        assert re.search(
-            r"<p.*50%.*of overall score.*?</p>", rendered_html
+        assert (
+            soup.find(
+                "p", class_="govuk-body govuk-!-margin-bottom-2"
+            ).text.strip()
+            == "50% of overall score."
         ), "Weighting not found"
 
-        assert re.findall(
-            r"<table.*govuk-table-no-bottom-border.*?</table>", rendered_html
-        ), "Table should have border negation class"
+        table = soup.find(
+            "table",
+            class_=(
+                "govuk-table govuk-!-margin-bottom-6"
+                " govuk-table-no-bottom-border"
+            ),
+        )
+        assert table is not None, "Table should have border negation class"
+        assert len(soup.find_all("table")) == 1, "Should have 1 table"
+        assert len(table.find_all("thead")) == 1, "Should have 1 table header"
+        assert len(table.find_all("tbody")) == 1, "Should have 1 table body"
+        assert len(table.find_all("tr")) == 4, "Should have 4 table rows"
 
         assert (
-            len(re.findall(r"<table.*?</table>", rendered_html)) == 1
-        ), "Should have 1 table"
-        assert (
-            len(re.findall(r"<thead.*?</thead>", rendered_html)) == 1
-        ), "Should have 1 table header"
-        assert (
-            len(re.findall(r"<tbody.*?</tbody>", rendered_html)) == 1
-        ), "Should have 1 table body"
-
-        assert (
-            len(re.findall(r"<tr.*?</tr>", rendered_html)) == 4
-        ), "Should have 4 table rows"
-
-        assert re.search(
-            r"<strong>Total criteria score</strong>", rendered_html
+            table.find("strong", text="Total criteria score") is not None
         ), "Should have Total criteria score"
-        assert re.search(
-            r"<th.*Score out of 5.*?</th>", rendered_html
+        assert (
+            table.find("th", text="Score out of 5") is not None
         ), "Should have Score out of 5 column"
 
     def test_criteria_macro_commenter(self, request_ctx):
@@ -112,6 +111,7 @@ class TestJinjaMacros(object):
             roles=["COMMENTER"],
             highest_role="COMMENTER",
         )
+
         rendered_html = render_template_string(
             "{{criteria_element(criteria, name_classes, application_id)}}",
             criteria_element=get_template_attribute(
@@ -144,17 +144,16 @@ class TestJinjaMacros(object):
             g=g,
         )
 
-        # replacing new lines to more easily regex match the html
-        rendered_html = rendered_html.replace("\n", "")
-        assert (
-            len(re.findall(r"<tr.*?</tr>", rendered_html)) == 3
-        ), "Should have 3 table rows"
-        assert (
-            re.search(r"<strong>Total criteria score</strong>", rendered_html)
-            is None
+        soup = BeautifulSoup(rendered_html, "html.parser")
+
+        assert len(soup.select("tr")) == 3, "Should have 3 table rows"
+
+        assert not soup.find(
+            "strong", text="Total criteria score"
         ), "Should not have Total criteria score"
-        assert (
-            re.search(r"<th.*Score out of 5.*?</th>", rendered_html) is None
+
+        assert not soup.find(
+            "th", text="Score out of 5"
         ), "Should not have Score out of 5 column"
 
     def test_section_macro(self, request_ctx):
@@ -177,23 +176,13 @@ class TestJinjaMacros(object):
             application_id=1,
         )
 
-        # replacing new lines to more easily regex match the html
-        rendered_html = rendered_html.replace("\n", "")
+        soup = BeautifulSoup(rendered_html, "html.parser")
 
-        assert re.search(
-            r"<h2.*\S*Example title\S*</h2>", rendered_html
+        assert soup.find(
+            "h2",
+            {"class": "govuk-heading-l govuk-!-margin-top-4"},
+            text="Example title",
         ), "Title not found"
-
-        assert (
-            len(re.findall(r"<table.*?</table>", rendered_html)) == 0
-        ), "Should have 1 table"
-
-        assert (
-            len(re.findall(r"<thead.*?</thead>", rendered_html)) == 0
-        ), "Should have 1 table header"
-        assert (
-            len(re.findall(r"<tbody.*?</tbody>", rendered_html)) == 0
-        ), "Should have 1 table body"
 
     def test_score_macro(self, request_ctx):
         form = ScoreForm()
@@ -211,25 +200,20 @@ class TestJinjaMacros(object):
             ],
         )
 
-        # replacing new lines to more easily regex match the html
-        rendered_html = rendered_html.replace("\n", "")
+        soup = BeautifulSoup(rendered_html, "html.parser")
 
-        assert re.search(
-            r"<p.*\S*Select a score from the list:\S*</p>", rendered_html
+        assert (
+            soup.find("p", {"class": "govuk-body"}).text.strip()
+            == "Select a score from the list:"
         ), "Title not found"
 
-        assert (
-            len(
-                re.findall(
-                    r"""<div class="govuk-radios__item">""", rendered_html
-                )
-            )
-            == 5
-        ), "Should have 5 radios"
+        radios = soup.find_all("div", {"class": "govuk-radios__item"})
+        assert len(radios) == 5, "Should have 5 radios"
 
-        assert (
-            len(re.findall(r"""<span.*?\S*\d</span>""", rendered_html)) == 5
-        ), "Should have 5 score values for radios"
+        score_spans = soup.find_all(
+            "span", {"class": "govuk-!-font-weight-bold"}
+        )
+        assert len(score_spans) == 5, "Should have 5 score values for radios"
 
     def test_comment_macro(self, request_ctx):
         rendered_html = render_template_string(
@@ -240,16 +224,15 @@ class TestJinjaMacros(object):
             comment_form=CommentsForm(),
         )
 
-        # replacing new lines to more easily regex match the html
-        rendered_html = rendered_html.replace("\n", "")
+        soup = BeautifulSoup(rendered_html, "html.parser")
 
-        assert re.search(
-            r"Add a comment</label>", rendered_html
-        ), "Add Comment label not found"
+        add_comment_label = soup.find("label")
+        assert add_comment_label.text.strip() == "Add a comment"
+        assert add_comment_label is not None, "Add Comment label not found"
 
-        assert re.search(
-            r"Save comment</button>", rendered_html
-        ), "Save comment button not found"
+        save_comment_button = soup.find("button")
+        assert save_comment_button.text.strip() == "Save comment"
+        assert save_comment_button is not None, "Save comment button not found"
 
     def test_justification_macro(self, request_ctx):
         form = ScoreForm()
@@ -262,18 +245,18 @@ class TestJinjaMacros(object):
             form=form,
         )
 
-        # replacing new lines to more easily regex match the html
-        rendered_html = rendered_html.replace("\n", "")
+        soup = BeautifulSoup(rendered_html, "html.parser")
 
-        assert re.search(
-            r"<label.*\S*Add rationale for this \s* score</label>",
-            rendered_html,
-        ), "Title not found"
+        title_label = soup.find("label")
+        assert title_label.text.strip() == "Add rationale for this score"
+        assert title_label is not None, "Title not found"
 
-        assert re.search(
-            r"<p.*Please provide rationale for this score\s*</p>",
-            rendered_html,
-        ), "Intentional error not found"
+        error_message = soup.find("p", class_="govuk-error-message")
+        assert (
+            error_message.text.strip()
+            == "Error: Please provide rationale for this score"
+        )
+        assert error_message is not None, "Intentional error not found"
 
     def test_monetary_key_values(self, request_ctx):
         meta = MonetaryKeyValues.from_dict(
@@ -292,29 +275,16 @@ class TestJinjaMacros(object):
             meta=meta,
         )
 
-        assert re.search(
-            r"<caption.*\S*Test Caption\S*</caption>", rendered_html
-        ), "Caption not found"
+        soup = BeautifulSoup(rendered_html, "html.parser")
 
-        assert re.search(
-            r"<th.*\S*Test Description\S*</th>", rendered_html
+        assert soup.find("caption", text="Test Caption"), "Caption not found"
+        assert soup.find(
+            "th", text="Test Description"
         ), "Column description not found"
-
-        assert re.search(
-            r"<td.*\S*>£50.00</td>", rendered_html
-        ), "First answer not found"
-
-        assert re.search(
-            r"<td.*\S*>£100.00</td>", rendered_html
-        ), "Second answer not found"
-
-        assert re.search(
-            r"<td.*\S*Total\S*</td>", rendered_html
-        ), "Total header not found"
-
-        assert re.search(
-            r"<td.*\S*>£150.00</td>", rendered_html
-        ), "Total not found"
+        assert soup.find("td", text="£50.00"), "First answer not found"
+        assert soup.find("td", text="£100.00"), "Second answer not found"
+        assert soup.find("td", text="Total"), "Total header not found"
+        assert soup.find("td", text="£150.00"), "Total not found"
 
     @pytest.mark.parametrize(
         "clazz, macro_name, answer, expected",
@@ -377,6 +347,37 @@ class TestJinjaMacros(object):
         assert "Test Question" in rendered_html, "Question not found"
         assert "Test Answer" in rendered_html, "Answer not found"
         assert "http://www.example.com" in rendered_html, "Link href not found"
+
+    def test_question_above_href_answer_list(self, request_ctx):
+        meta = QuestionAboveHrefAnswerList.from_dict(
+            {"question": "Test Question"},
+            key_to_url_dict={
+                "File 1": "http://example.com/file1.pdf",
+                "File 2": "http://example.com/file2.pdf",
+            },
+        )
+
+        rendered_html = render_template_string(
+            "{{ question_above_href_answer_list(meta) }}",
+            question_above_href_answer_list=get_template_attribute(
+                "macros/theme/question_above_href_answer_list.jinja2",
+                "question_above_href_answer_list",
+            ),
+            meta=meta,
+        )
+
+        soup = BeautifulSoup(rendered_html, "html.parser")
+
+        assert "Test Question" in rendered_html, "Question not found"
+        assert (
+            soup.find("a", href="http://example.com/file1.pdf").text
+            == "File 1"
+        ), "File 1 not found"
+        assert (
+            soup.find("a", href="http://example.com/file2.pdf").text
+            == "File 2"
+        ), "File 2 not found"
+        assert not soup.find(text="Not provided."), "Unexpected 'Not provided."
 
     def test_question_beside_with_formatted_answer_multiline(
         self, request_ctx
@@ -522,28 +523,28 @@ class TestJinjaMacros(object):
             flag=assessment_flag,
         )
 
-        # Replace newlines for easier regex matching
-        rendered_html = rendered_html.replace("\n", "")
+        soup = BeautifulSoup(rendered_html, "html.parser")
 
-        assert re.search(
-            r"Fund: Test Fund",
-            rendered_html,
+        assert (
+            soup.find("h1", class_="fsd-banner-content").text.strip()
+            == "Fund: Test Fund"
         ), "Fund name not found"
-        assert re.search(
-            r"Project\s+reference: TEST123",
-            rendered_html,
+        assert (
+            soup.find("h2", class_="fsd-banner-content").text.strip()
+            == "Project reference: TEST123"
         ), "Project reference not found"
-        assert re.search(
-            r"Project\s+name: Test Project",
-            rendered_html,
+        assert soup.find(
+            "h3",
+            class_="fsd-banner-content",
+            text="Project name: Test Project",
         ), "Project name not found"
-        assert re.search(
-            r"Total funding requested:\s+&pound;123,456.78",
-            rendered_html,
+        assert soup.find(
+            "h3",
+            class_="fsd-banner-content",
+            text="Total funding requested: £123,456.78",
         ), "Funding amount not found"
-        assert re.search(
-            r"Submitted",
-            rendered_html,
+        assert soup.find(
+            "h3", class_="fsd-banner-content", text="Submitted"
         ), "Workflow status not found"
 
     def test_stopped_flag_macro(self, request_ctx):
@@ -573,9 +574,7 @@ class TestJinjaMacros(object):
             flag=assessment_flag,
         )
 
-        assert re.search(
-            r"Stopped", rendered_html
-        ), "Stopped text not found in banner"
+        assert "Stopped" in rendered_html
 
     def test_flag_application_button(self, request_ctx):
         rendered_html = render_template_string(
@@ -586,16 +585,27 @@ class TestJinjaMacros(object):
             ),
         )
 
-        rendered_html = rendered_html.replace("\n", "")
+        soup = BeautifulSoup(rendered_html, "html.parser")
 
-        assert re.search(
-            r'<div class="govuk-grid-row govuk-!-text-align-right">.*</div>',
-            rendered_html,
+        flag_container = soup.find(
+            "div", {"class": "govuk-grid-row govuk-!-text-align-right"}
+        )
+        assert (
+            flag_container is not None
         ), "Flag application button container not found"
-        assert re.search(
-            r'<a href="/assess/flag/12345".*Flag application.*</a>',
-            rendered_html,
-        ), "Flag application button not found"
+
+        flag_link = flag_container.find(
+            "a",
+            {
+                "href": "/assess/flag/12345",
+                "class": "govuk-button primary-button",
+                "data-module": "govuk-button",
+            },
+        )
+        assert flag_link is not None, "Flag application button not found"
+        assert (
+            flag_link.text.strip() == "Flag application"
+        ), "Flag application button text does not match"
 
     def test_mark_qa_complete_button(self, request_ctx):
         rendered_html = render_template_string(
@@ -606,16 +616,19 @@ class TestJinjaMacros(object):
             ),
         )
 
-        rendered_html = rendered_html.replace("\n", "")
+        soup = BeautifulSoup(rendered_html, "html.parser")
 
-        assert re.search(
-            r'<div class="govuk-grid-row govuk-!-text-align-right">.*</div>',
-            rendered_html,
+        button_container = soup.find(
+            "div", class_="govuk-grid-row govuk-!-text-align-right"
+        )
+        assert (
+            button_container is not None
         ), "Mark QA complete button container not found"
-        assert re.search(
-            r'<a href="/assess/qa_complete/12345".*Mark QA complete.*</a>',
-            rendered_html,
-        ), "Mark QA complete button not found"
+
+        button_element = button_container.find(
+            "a", href="/assess/qa_complete/12345"
+        )
+        assert button_element is not None, "Mark QA complete button not found"
 
     def test_stopped_assessment_flag(self, request_ctx):
         rendered_html = render_template_string(
@@ -636,33 +649,37 @@ class TestJinjaMacros(object):
             },
         )
 
-        # replacing new lines to more easily regex match the html
-        rendered_html = rendered_html.replace("\n", "")
+        soup = BeautifulSoup(rendered_html, "html.parser")
 
-        assert re.search(
-            r"Assessment Stopped",
-            rendered_html,
+        alert_div = soup.find("div", class_="assessment-alert")
+
+        assert (
+            alert_div.find(
+                "h1", class_="assessment-alert__heading govuk-heading-l"
+            ).text
+            == "Assessment Stopped"
         ), "Flag type not found"
 
-        assert re.search(
-            r"Reason",
-            rendered_html,
+        assert (
+            alert_div.find("h2", class_="govuk-heading-m").text == "Reason"
         ), "Reason heading not found"
 
-        assert re.search(
-            r"Test justification",
-            rendered_html,
+        assert (
+            alert_div.find("p", class_="govuk-body").text
+            == "Test justification"
         ), "Justification not found"
 
-        assert re.search(
-            r"Test user.*\S*Test role.*\S*test@example.com",
-            rendered_html,
-        ), "User info not found"
+        user_paragraph = alert_div.find("p", class_="govuk-body-s")
+        assert (
+            "test@example.com" in user_paragraph.text
+        ), "User email not found"
 
-        assert re.search(
-            r"\d{2}/\d{2}/\d{4} at \d{2}:\d{2}",
-            rendered_html,
-        ), "Date created not found"
+        assert "Test role" in user_paragraph.text, "User role not found"
+
+        date_created_paragraph = alert_div.find("p", class_="govuk-body-s")
+        assert (
+            date_created_paragraph is not None
+        ), "Date created paragraph not found"
 
     def test_assessment_flag(self, request_ctx):
         rendered_html = render_template_string(
@@ -683,42 +700,37 @@ class TestJinjaMacros(object):
             },
         )
 
-        # replacing new lines to more easily regex match the html
-        rendered_html = rendered_html.replace("\n", "")
+        soup = BeautifulSoup(rendered_html, "html.parser")
 
-        assert re.search(
-            r"Test Flag",
-            rendered_html,
-        ), "Flag type not found"
+        alert_div = soup.find("div", class_="assessment-alert--flagged")
 
-        assert re.search(
-            r"Reason",
-            rendered_html,
-        ), "Reason heading not found"
-
-        assert re.search(
-            r"Test justification",
-            rendered_html,
+        reason_heading = alert_div.find("h2", text="Reason")
+        assert reason_heading is not None, "Reason heading not found"
+        justification = reason_heading.find_next_sibling(
+            "p", class_="govuk-body"
+        )
+        assert (
+            justification is not None
+            and justification.text == "Test justification"
         ), "Justification not found"
 
-        assert re.search(
-            r"Section flagged",
-            rendered_html,
-        ), "Section flagged heading not found"
-
-        assert re.search(
-            r"Test section",
-            rendered_html,
+        section_heading = alert_div.find("h2", text="Section flagged")
+        assert section_heading is not None, "Section flagged heading not found"
+        section = section_heading.find_next_sibling("p", class_="govuk-body")
+        assert (
+            section is not None and section.text == "Test section"
         ), "Section not found"
 
-        assert re.search(
-            r"Test user.*\S*Test role.*\S*test@example.com",
-            rendered_html,
+        user_info = alert_div.find_all("p", class_="govuk-body-s")
+        assert any(
+            "test@example.com" in info.text for info in user_info
         ), "User info not found"
 
-        assert re.search(
-            r"\d{2}/\d{2}/\d{4} at \d{2}:\d{2}",
-            rendered_html,
+        date_created = alert_div.find(
+            "p", class_="govuk-body-s"
+        ).find_next_sibling("p", class_="govuk-body-s")
+        assert date_created is not None and re.match(
+            r"\d{2}/\d{2}/\d{4} at \d{2}:\d{2}", date_created.text
         ), "Date created not found"
 
     def test_assessment_completion_state_completed(self, request_ctx):

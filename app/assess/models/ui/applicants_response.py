@@ -6,6 +6,7 @@ from typing import Iterable
 from typing import List
 from typing import Tuple
 
+from app.assess.data import list_files_in_folder
 from app.assess.views.filters import format_address
 from app.assess.views.filters import format_date
 from app.assess.views.filters import remove_dashes_underscores_capitalize
@@ -40,7 +41,7 @@ class QuestionHeading(ApplicantResponseComponent):
 
 
 @dataclass
-class QuestionAnswerPair(ApplicantResponseComponent):
+class QuestionAnswerPair(ApplicantResponseComponent, ABC):
     question: str
     answer: str | float
 
@@ -66,7 +67,7 @@ class BesideQuestionAnswerPair(QuestionAnswerPair):
 
 
 @dataclass
-class QuestionAnswerPairHref(QuestionAnswerPair):
+class QuestionAnswerPairHref(QuestionAnswerPair, ABC):
     answer_href: str
 
     @classmethod
@@ -128,6 +129,21 @@ class MonetaryKeyValues(ApplicantResponseComponent):
                 (desc, float(amt)) for desc, amt in data["answer"]
             ],
             total=sum([float(amt) for _, amt in data["answer"]]),
+        )
+
+
+@dataclass
+class QuestionAboveHrefAnswerList(ApplicantResponseComponent):
+    question: str
+    key_to_url_dict: dict[str, str]
+
+    key = "question_above_href_answer_list"
+
+    @classmethod
+    def from_dict(cls, data: dict, key_to_url_dict: dict[str, str]):
+        return cls(
+            question=data["question"],
+            key_to_url_dict=key_to_url_dict,
         )
 
 
@@ -199,6 +215,22 @@ def _ui_component_from_factory(item: dict, application_id: str):
             file_name=answer if answer else "",
         )
         return AboveQuestionAnswerPairHref.from_dict(item, href=presigned_url)
+
+    elif presentation_type == "s3bucketPath":
+        folder_path = (
+            f"{application_id}/{item['form_name']}"
+            f"/{item['path']}/{item['field_id']}"
+        )
+        file_keys = list_files_in_folder(folder_path)
+        key_to_url_dict = {
+            key: url_for(
+                "assess_bp.get_file",
+                application_id=application_id,
+                file_name=key,
+            )
+            for key in file_keys
+        }
+        return QuestionAboveHrefAnswerList.from_dict(item, key_to_url_dict)
 
     elif presentation_type == "address":
         return FormattedBesideQuestionAnswerPair.from_dict(
@@ -435,8 +467,8 @@ def _convert_non_number_grouped_fields(
         item
         for item in response
         if item["presentation_type"] == "grouped_fields"
-        and item["field_type"]
-        != "numberField"  # we ignore number fields as they are handled separately # noqa
+        and item["field_type"] != "numberField"
+        # we ignore number fields as they are handled separately # noqa
     ]
 
     text_items = []
