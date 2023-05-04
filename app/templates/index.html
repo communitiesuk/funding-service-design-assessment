@@ -2,7 +2,7 @@
 {%- from 'govuk_frontend_jinja/components/inset-text/macro.html' import govukInsetText -%}
 {%- from "govuk_frontend_jinja/components/button/macro.html" import govukButton -%}
 {% block content %}
-    </div>
+    {# djlint:off #}</div>{# djlint:on #}
     <div class="fsd-login-banner-background">
     </div>
     <div class="govuk-width-container">
@@ -27,4 +27,4 @@
             </div>
         </div>
 </div>
-{% endblock %}
+{% endblock content %}

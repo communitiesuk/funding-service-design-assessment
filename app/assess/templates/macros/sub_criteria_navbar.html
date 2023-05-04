@@ -1,19 +1,19 @@
 {% macro navbar(application_id, sub_criteria, current_theme_id, is_score_page=False) %}
 <nav class="assessment-navigation">
     <ul class="govuk-list">
-        {%for theme in sub_criteria.themes%}
+        {% for theme in sub_criteria.themes %}
         {% set is_current_url = (current_theme_id == theme.id) and not is_score_page %}
         <li>
             {% if not is_current_url %}
             <a class="govuk-link govuk-link--no-visited-state" data-qa="sub_criteria_theme"
             href="{{ url_for('assess_bp.display_sub_criteria',application_id=application_id,sub_criteria_id=sub_criteria.id,theme_id=theme.id) }}">
             {% endif %}
-            {{theme.name}}
+            {{ theme.name }}
             {% if not is_current_url %}
             </a>
             {% endif %}
         </li>
-        {%endfor%}
+        {% endfor %}
     </ul>
 
 {% if g.user.highest_role in ["ASSESSOR","LEAD_ASSESSOR"] and sub_criteria.is_scored %}
@@ -31,5 +31,4 @@
 {% endif %}
 </nav>
 
-
-{%endmacro%}
+{% endmacro %}

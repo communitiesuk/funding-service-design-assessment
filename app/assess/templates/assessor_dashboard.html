@@ -2,7 +2,7 @@
 {%- from 'govuk_frontend_jinja/components/inset-text/macro.html' import govukInsetText -%}
 {%- from "govuk_frontend_jinja/components/button/macro.html" import govukButton -%}
 {%- from 'govuk_frontend_jinja/components/back-link/macro.html' import govukBackLink -%}
-{% import 'components/application_overviews_table.html' as application_overviews_table-%}
+{% import "components/application_overviews_table.html" as application_overviews_table -%}
 {% from "macros/banner_summary.html" import banner_summary %}
 {% from "macros/logout_partial.html" import logout_partial %}
 
@@ -13,7 +13,7 @@
     <nav class="govuk-width-container govuk-header__navigation">
         <div class="govuk-phase-banner flex-parent-element">
             <p class="govuk-!-text-align-left flex-parent-element flexed-element-margins-collapse">
-                {{ govukBackLink({'href': url_for("assess_bp.landing"), 'html': 'Back to <b>assessment landing</b>', 'attributes': {'data-qa': 'back-to-assessment-overview-link'}}) }}
+                {{ govukBackLink({'href': url_for("assess_bp.landing"), 'html': 'Back to <b>assessment landing</b>', 'attributes': {'data-qa': 'back-to-assessment-overview-link'} }) }}
             </p>
         {{ logout_partial(sso_logout_url) }}
         </div>
@@ -24,7 +24,7 @@
             <div class="govuk-grid-row">
                 <div class="govuk-grid-column-full">
                     <div class="govuk-grid-column-two-thirds">
-                        <h1 class="govuk-heading-xl fsd-banner-content">{{pageHeading}}</h1>
+                        <h1 class="govuk-heading-xl fsd-banner-content">{{ pageHeading }}</h1>
                         {% if user.highest_role == "LEAD_ASSESSOR" %}
                             <div class="govuk-body fsd-banner-content lead-dashboard-stats">
                                 <div class="lead-dashboard-stat">
@@ -33,23 +33,23 @@
                                 </div>
                                 <div class="lead-dashboard-stat">
                                     <p id="lead-dashboard-stat-assessments-total">{{ stats.total }}</p>
-                                    <p class="">Assessments</p>
+                                    <p>Assessments</p>
                                 </div>
                             </div>
                         {% endif %}
                         <h2 class="govuk-heading-l fsd-banner-content"> {% if is_active_status %}All active assessments{% else %}All closed assessments{% endif %}</h2>
-                        <h3 class="govuk-body-l fsd-banner-content fsd-banner-collapse-padding"><strong>Fund: </strong>{{round_details["fund_name"]}}</h3>
-                        <h3 class="govuk-body-l fsd-banner-content"><strong>Round: </strong>{{round_details["round_title"]}}</h3>
+                        <h3 class="govuk-body-l fsd-banner-content fsd-banner-collapse-padding"><strong>Fund: </strong>{{ round_details["fund_name"] }}</h3>
+                        <h3 class="govuk-body-l fsd-banner-content"><strong>Round: </strong>{{ round_details["round_title"] }}</h3>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </header>
- {% endblock %}
+{% endblock header %}
 
 {% block content %}
 <section class="govuk-grid-column-full">
     {{ application_overviews_table.render(application_overviews, round_details, query_params, asset_types, assessment_statuses, show_clear_filters, user.highest_role, sort_column, sort_order) }}
 </section>
-{% endblock %}
+{% endblock content %}

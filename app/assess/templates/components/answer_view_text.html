@@ -1,6 +1,6 @@
 {% macro render(question) -%}
     {% for field in question.fields %}
-    <p name="qfield_key_{{field.key}}" class="govuk-body-m govuk-!-font-weight-bold govuk-!-margin-bottom-2">{{ field.title }}</p>
-    <p name="qfield_answer_{{field.key}}" class="govuk-body-m">{{ field.answer }}</p>
+    <p name="qfield_key_{{ field.key }}" class="govuk-body-m govuk-!-font-weight-bold govuk-!-margin-bottom-2">{{ field.title }}</p>
+    <p name="qfield_answer_{{ field.key }}" class="govuk-body-m">{{ field.answer }}</p>
     {% endfor %}
 {%- endmacro %}

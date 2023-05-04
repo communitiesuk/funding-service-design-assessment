@@ -11,16 +11,16 @@
         </div>
     {% else %}
     {% for comment_list in comments.values() %}
-        {%for comment in comment_list%}
+        {% for comment in comment_list %}
         {% if g.user.highest_role == "COMMENTER" and (comment.highest_role == "ASSESSOR" or comment.highest_role == "LEAD_ASSESSOR") %}
             <div class="comment-group">
              <p class="govuk-body">Permission required to see comment.</p>
             </div>
         {% else %}
             <div class="comment-group">
-                <p class="govuk-body">{{comment.comment}}</p>
-                <p class="govuk-body-s">{{comment.full_name}} ({{comment.highest_role|all_caps_to_human}}) {{comment.email_address}}</p>
-                <p class="govuk-body-s">{{comment.date_created|utc_to_bst}}</p>
+                <p class="govuk-body">{{ comment.comment }}</p>
+                <p class="govuk-body-s">{{ comment.full_name }} ({{ comment.highest_role|all_caps_to_human }}) {{ comment.email_address }}</p>
+                <p class="govuk-body-s">{{ comment.date_created|utc_to_bst }}</p>
             </div>
         {% endif %}
         {% endfor %}

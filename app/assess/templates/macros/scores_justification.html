@@ -18,7 +18,7 @@
                     {{ latest_score.user_email }}
                 {% endif %}
             </p>
-            <p class="govuk-body-s"> <strong>Date/time:</strong> {{ latest_score.date_created|utc_to_bst}}</p>
+            <p class="govuk-body-s"> <strong>Date/time:</strong> {{ latest_score.date_created|utc_to_bst }}</p>
         </div>
     </div>
     {% if score_list %}
@@ -34,7 +34,7 @@
             <p><strong>Score: </strong>{{ score["score"] }}</p>
             <p><strong>Rationale: </strong>{{ score["justification"] }}</p>
             <p class="govuk-body-s"><strong>{{ score["user_full_name"] }}: </strong> {{ score["highest_role"]|all_caps_to_human }}, {{ score["user_email"] }}</p>
-            <p class="govuk-body-s"><strong>Date/time:</strong> {{ score["date_created"]|utc_to_bst}}</p>
+            <p class="govuk-body-s"><strong>Date/time:</strong> {{ score["date_created"]|utc_to_bst }}</p>
             <hr>
             {% endfor %}
           </div>
@@ -44,9 +44,9 @@
     {% endif %}
 
     {% if latest_score and not is_rescore %}
-    <form id="rescore_form" method="POST">
+    <form id="rescore_form" method="post">
         {{ rescore_form.csrf_token }}
-        {{govukButton
+        {{ govukButton
             ({
                 'text': 'Rescore',
                 'type': 'submit',
@@ -57,7 +57,7 @@
     </form>
     {% endif %}
     {% if is_rescore or not latest_score %}
-    <form id="score_form" method="POST">
+    <form id="score_form" method="post">
         {{ score_form.csrf_token }}
         <div class="govuk-form-group govuk-!-margin-top-4">
             {% if latest_score %}
@@ -70,15 +70,16 @@
                 the&nbsp;<a class="govuk-link govuk-link--no-visited-state" href="https://mhclg.sharepoint.com/:w:/s/CommunityOwnershipFund/Ecv3iM7U0AtKtyHnzRrQ9dsB0HdMPvHWqAoGn1WrWM7EMA?e=6QpdUT">assessment
                     criteria</a>.</p>
             <p class="govuk-body">You can rescore at any point.</p>
-            {{scores(score_form, COF_score_list)}}
-            {{justification(score_form)}}
+            {{ scores(score_form, COF_score_list) }}
+            {{ justification(score_form) }}
         </div>
         {% if latest_score %}
-            {{govukButton({'text': 'Save a new score', 'type':'submit', 'classes': 'primary-button'})}}
+            {{ govukButton({'text': 'Save a new score', 'type':'submit', 'classes': 'primary-button'}) }}
         {% else %}
-            {{govukButton({'text': 'Save score', 'type':'submit', 'classes':'primary-button'})}}
+            {{ govukButton({'text': 'Save score', 'type':'submit', 'classes':'primary-button'}) }}
         {% endif %}
     </form>
     {% endif %}
+</div>
 
 {% endmacro %}

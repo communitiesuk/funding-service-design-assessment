@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 {%- from "govuk_frontend_jinja/components/table/macro.html" import govukTable -%}
-{%- from 'govuk_frontend_jinja/components/textarea/macro.html' import govukTextarea -%}
+{%- from "govuk_frontend_jinja/components/textarea/macro.html" import govukTextarea -%}
 {% from "macros/banner_summary.html" import banner_summary %}
 {% set pageHeading = "Flag application" %}
 
 {% block header %}
-{% include './components/header.html' %}
-{% endblock %}
+{% include "./components/header.html" %}
+{% endblock header %}
 
 {% block content %}
 {% if form.errors.get("justification") or form.errors.get("section") %}
@@ -19,12 +19,12 @@
             <ul class="govuk-list govuk-error-summary__list">
                 {% if form.errors.get("justification") %}
                 <li>
-                    <a href=#{{form.justification.id}}>{{form.errors.get("justification") | join("\n")}}</a>
+                    <a href=#{{ form.justification.id }}>{{ form.errors.get("justification") | join("\n") }}</a>
                 </li>
                 {% endif %}
                 {% if form.errors.get("section") %}
                 <li>
-                    <a href=#{{form.section.id}}>{{form.errors.get("section") | join("\n")}}</a>
+                    <a href=#{{ form.section.id }}>{{ form.errors.get("section") | join("\n") }}</a>
                 </li>
                 {% endif %}
             </ul>
@@ -37,9 +37,9 @@
     <div class="govuk-grid-column-full">
         <div>
             <div class="govuk-grid-column-two-thirds">
-                <form method="POST">
+                <form method="post">
                     {{ form.csrf_token }}
-                    <h1 class="govuk-heading govuk-heading-l">{{pageHeading}}</h1>
+                    <h1 class="govuk-heading govuk-heading-l">{{ pageHeading }}</h1>
                     <p class="govuk-body">
                         Flag a section to a lead assessor. They will review the responses
                         to either resolve your query, or stop the assessment.
@@ -78,7 +78,7 @@
                                 data-module="govuk-button">
                             Submit
                         </button>
-                        <a href="{{url_for('assess_bp.application', application_id=application_id)}}"
+                        <a href="{{ url_for('assess_bp.application', application_id=application_id)}}"
                             class="govuk-button secondary-button">
                             Cancel
                         </a>
@@ -89,4 +89,4 @@
     </div>
 </div>
 
-{% endblock %}
+{% endblock content %}

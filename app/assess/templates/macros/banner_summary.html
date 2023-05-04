@@ -8,7 +8,7 @@
                     <h1 class="govuk-heading-xl fsd-banner-content">Fund: {{ fund_name }}</h1>
                     <h2 class="govuk-heading-l fsd-banner-content">Project reference: {{ project_reference | format_project_ref }}</h2>
                     <h3 class="govuk-body-l fsd-banner-content fsd-banner-collapse-padding">Project name: {{ project_name }}</h3>
-                    <h3 class="govuk-body-l fsd-banner-content">Total funding requested: &pound;{{ "{:,.2f}".format(funding_amount_requested | float) }}</h3>
+                    <h3 class="govuk-body-l fsd-banner-content">Total funding requested: £{{ "{:,.2f}".format(funding_amount_requested | float) }}</h3>
 
                     {% if user_role != "COMMENTER" %}
                     {% if flag and flag.is_qa_complete and display_status not in ('FLAGGED', 'STOPPED') %}

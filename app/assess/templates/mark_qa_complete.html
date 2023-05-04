@@ -4,14 +4,14 @@
 {% from "macros/banner_summary.html" import banner_summary %}
 
 {% block header %}
-{% include './components/header.html' %}
-{% endblock %}
+{% include "./components/header.html" %}
+{% endblock header %}
 
 {% block content %}
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
         <div class="govuk-grid-column-two-thirds">
-            <form method="POST">
+            <form method="post">
                 {{ form.csrf_token }}
                 <h1 class="govuk-heading govuk-heading-l">Mark QA as complete</h1>
 
@@ -32,4 +32,4 @@
     </div>
 </div>
 
-{% endblock %}
+{% endblock content %}

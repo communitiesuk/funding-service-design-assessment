@@ -9,12 +9,12 @@
 {% if score_form.errors.get('score') or score_form.errors.get('justification') %}
 Error:
 {% endif %}
-Score - {{ sub_criteria.name }} - {{sub_criteria.project_name}}
+Score - {{ sub_criteria.name }} - {{ sub_criteria.project_name }}
 {% endset %}
 
 {% block header %}
-{% include './components/header.html' %}
-{% endblock %}
+{% include "./components/header.html" %}
+{% endblock header %}
 
 {% block content %}
 
@@ -58,10 +58,10 @@ Score - {{ sub_criteria.name }} - {{sub_criteria.project_name}}
             {{ navbar(application_id, sub_criteria, current_theme_id, is_score_page=True) }}
         </div>
         <div class="theme govuk-grid-column-two-thirds">
-            {{scores_justification(score_form, rescore_form, is_rescore, score_list, latest_score, application_id,
-            sub_criteria.id, COF_score_list)}}
-            {{comment_summary(comments,sub_criteria.themes)}}
+            {{ scores_justification(score_form, rescore_form, is_rescore, score_list, latest_score, application_id,
+            sub_criteria.id, COF_score_list) }}
+            {{ comment_summary(comments,sub_criteria.themes) }}
         </div>
     </div>
 </div>
-{% endblock %}
+{% endblock content %}

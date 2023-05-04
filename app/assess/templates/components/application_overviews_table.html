@@ -1,6 +1,5 @@
 {% from "govuk_frontend_jinja/components/input/macro.html" import govukInput %}
 
-
 {% macro render(application_overviews, round_details, query_params, asset_types, assessment_statuses, show_clear_filters, user_role, sort_column, sort_order) -%}
 <nav class="search-bar-flex-container">
   <form method="get">
@@ -9,22 +8,22 @@
             <label class="govuk-label" for="application_search">
               Search reference or project name
             </label>
-            <input class="govuk-input govuk-input--width-20" type="text" s, assessment_statusespellcheck="false" aria-label="Search reference or project name" id="application_search" name="search_term", value="{{query_params['search_term']}}">
+            <input class="govuk-input govuk-input--width-20" type="text" spellcheck="false" aria-label="Search reference or project name" id="application_search" name="search_term", value="{{ query_params['search_term'] }}">
       </div>
     </div>
     <div class="govuk-form-group govuk-!-display-inline-block govuk-!-padding-right-2">
-          <label class="govuk-label" for="filter_asset_type">
-          Filter by asset type
-          </label>
-          <select class="govuk-select" id = "filter_asset_type" name="asset_type">
+      <label class="govuk-label" for="filter_asset_type">
+      Filter by asset type
+      </label>
+      <select class="govuk-select" id="filter_asset_type" name="asset_type">
 
-                {% for item in asset_types %}
-                      <option value='{{ item }}' {% if query_params.asset_type == item %} selected=""{%endif%}>{{asset_types[item]}}</option>
-                {% endfor %}
-          </select>
-          {% if user_role == "COMMENTER" %}
-          <button class="govuk-button search-button" aria-label="Search" type="submit">Search</button>
-          {% endif %}
+            {% for item in asset_types %}
+                  <option value='{{ item }}' {% if query_params.asset_type == item %} selected=""{% endif %}>{{ asset_types[item] }}</option>
+            {% endfor %}
+      </select>
+      {% if user_role == "COMMENTER" %}
+      <button class="govuk-button search-button" aria-label="Search" type="submit">Search</button>
+      {% endif %}
     </div>
     {% if user_role != "COMMENTER" %}
     <div class="govuk-form-group govuk-!-display-inline-block govuk-!-padding-right-2">
@@ -33,7 +32,7 @@
       </label>
       <select class="govuk-select" name="status" id="filter_status">
             {% for item in assessment_statuses %}
-                  <option value='{{ item }}' {% if query_params.status == item %} selected=""{%endif%}>{{assessment_statuses[item]}}</option>
+                  <option value='{{ item }}' {% if query_params.status == item %} selected=""{% endif %}>{{ assessment_statuses[item] }}</option>
             {% endfor %}
       </select>
       <button class="govuk-button search-button" aria-label="Search" type="submit">Search</button>
@@ -43,15 +42,15 @@
   {% if show_clear_filters %}
   <p>
     <a class="govuk-link govuk-link--no-visited-state"
-      href="{{url_for(
+      href="{{ url_for(
           'assess_bp.fund_dashboard',
           fund_short_name=round_details.fund_short_name,
           round_short_name=round_details.round_short_name,
           clear_filters=true
-      )}}"
+      ) }}"
       aria-label="Clear Filters">Clear Filters</a>
   </p>
-  {%endif%}
+  {% endif %}
 </nav>
 
 {% if not application_overviews %}
@@ -69,21 +68,17 @@
 <table class="govuk-table" id="application_overviews_table">
   <thead class="govuk-table__head">
     <tr class="govuk-table__row">
-
       <th scope="col" class="govuk-table__header">
           Reference
       </th>
-
 
       <th scope="col" class="govuk-table__header">
             Project name
       </th>
 
-
       <th scope="col" class="govuk-table__header">
         Asset type
       </th>
-
 
       <th scope="col" class="govuk-table__header" aria-sort="{{ 'none' if (sort_column!='funding_requested') else ('ascending' if (sort_order=='asc') else 'descending') }}">
         <form method="get" action="{{ url_for('assess_bp.fund_dashboard',
@@ -99,7 +94,6 @@
           <button class="button" type="submit" aria-label="Sort by Funding requested">Funding requested</button>
         </form>
       </th>
-
 
       <th scope="col" class="govuk-table__header" aria-sort="{{ 'none' if (sort_column!='location') else ('ascending' if (sort_order=='asc') else 'descending') }}">
         <form method="get" action="{{ url_for('assess_bp.fund_dashboard',
@@ -128,40 +122,40 @@
         {% for overview in application_overviews %}
             <tr class="govuk-table__row">
 
-                <td class="govuk-table__cell">{{overview.short_id[-6:]}}</td>
-                <td class="govuk-table__cell"><a class="govuk-link" data-qa="project_name" href="{{url_for('assess_bp.application',application_id=overview.application_id)}}">{{overview.project_name}}</a></td>
-                <td class="govuk-table__cell">{{asset_types[overview.asset_type]}}</td>
-                <td class="govuk-table__cell">&pound;{{ "{:,.2f}".format(overview.funding_amount_requested|int|round) }}</td>
-                <td class="govuk-table__cell">{{ overview.location_json_blob.country}}</td>
+                <td class="govuk-table__cell">{{ overview.short_id[-6:] }}</td>
+                <td class="govuk-table__cell"><a class="govuk-link" data-qa="project_name" href="{{ url_for('assess_bp.application',application_id=overview.application_id) }}">{{ overview.project_name }}</a></td>
+                <td class="govuk-table__cell">{{ asset_types[overview.asset_type] }}</td>
+                <td class="govuk-table__cell">£{{ "{:,.2f}".format(overview.funding_amount_requested|int|round) }}</td>
+                <td class="govuk-table__cell">{{ overview.location_json_blob.country }}</td>
 
                 {% if user_role != "COMMENTER" %}
                 <td class="govuk-table__cell">
                 {% if overview.is_qa_complete and not overview.flags[-1].flag_type in ("FLAGGED", "STOPPED") %}
-                <span class="">QA complete</span>
+                <span>QA complete</span>
                 {% elif overview.flags
                     and overview.flags[-1].flag_type == "STOPPED"
                 %}
                 <span class="stopped-tag">
-                  {{overview.flags[-1].flag_type | capitalize}}
+                  {{ overview.flags[-1].flag_type | capitalize }}
                 </span>
                 {% elif overview.flags
                   and overview.flags[-1].flag_type == "FLAGGED"
                 %}
                 <span class="flagged-tag">
-                  {{overview.flags[-1].flag_type | capitalize}}
+                  {{ overview.flags[-1].flag_type | capitalize }}
                 </span>
                 {% elif overview.workflow_status == "NOT_STARTED" %}
                 <span class="not-started-tag">
-                  {{assessment_statuses[overview.workflow_status]}}
+                  {{ assessment_statuses[overview.workflow_status] }}
                 </span>
                 {% elif overview.workflow_status == "COMPLETED" %}
                 <span>
-                  {{assessment_statuses[overview.workflow_status]}}
+                  {{ assessment_statuses[overview.workflow_status] }}
                 </span>
                 {% else %}
                 <span>
-                  {{assessment_statuses[overview.workflow_status]}}
-                  {{ '(' + overview.progress|string + '%)' if 'progress' in overview else '(0%)'}}
+                  {{ assessment_statuses[overview.workflow_status] }}
+                  {{ '(' + overview.progress|string + '%)' if 'progress' in overview else '(0%)' }}
                 </span>
                 {% endif %}
                 </td>

@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 
-{% block pageTitle %}Sorry, there is a problem with the service – {{ service_title }}{% endblock %}
+{% block pageTitle %}Sorry, there is a problem with the service – {{ service_title }}{% endblock pageTitle %}
 
 {% block content %}
-    </div>
+    {# djlint:off #}</div>{# djlint:on #}
     <div class="fsd-login-banner-background">
     </div>
     <div class="govuk-width-container">
@@ -14,4 +14,4 @@
           </div>
         </div>
     </div>
-{% endblock %}
+{% endblock content %}
