@@ -5,7 +5,7 @@
     <nav class="govuk-width-container govuk-header__navigation">
         <div class="govuk-phase-banner flex-parent-element">
             <p class="govuk-!-text-align-left flex-parent-element flexed-element-margins-collapse">
-                {{ govukBackLink({'href': url_for("assess_bp.application", application_id=application_id), 'html': 'Back to <b>assessment tasklist</b>', 'attributes': {'data-qa': 'back-to-assessment-tasklist'}}) }}
+                {{ govukBackLink({'href': url_for("assess_bp.application", application_id=application_id), 'html': 'Back to <b>assessment tasklist</b>', 'attributes': {'data-qa': 'back-to-assessment-tasklist'} }) }}
             </p>
             {{ logout_partial(sso_logout_url) }}
         </div>

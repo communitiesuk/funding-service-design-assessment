@@ -5,8 +5,8 @@
 {% set pageHeading = "Resolve flag" %}
 
 {% block header %}
-{% include './components/header.html' %}
-{% endblock %}
+{% include "./components/header.html" %}
+{% endblock header %}
 
 {% block content %}
 
@@ -20,12 +20,12 @@
       <ul class="govuk-list govuk-error-summary__list">
         {% if form.errors.get(form.resolution_flag.id) %}
         <li>
-          <a href=#{{form.resolution_flag.id}}>{{form.errors.get(form.resolution_flag.id) | join("\n")}}</a>
+          <a href=#{{ form.resolution_flag.id }}>{{ form.errors.get(form.resolution_flag.id) | join("\n") }}</a>
         </li>
         {% endif %}
         {% if form.errors.get("justification") %}
         <li>
-          <a href=#{{form.justification.id}}>{{form.errors.get("justification") | join("\n")}}</a>
+          <a href=#{{ form.justification.id }}>{{ form.errors.get("justification") | join("\n") }}</a>
         </li>
         {% endif %}
       </ul>
@@ -37,9 +37,9 @@
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
     <div class="govuk-grid-column-two-thirds flagging-container">
-      <form method="POST">
+      <form method="post">
         {{ form.csrf_token }}
-        <h1 class="govuk-heading govuk-heading-l">{{pageHeading}}</h1>
+        <h1 class="govuk-heading govuk-heading-l">{{ pageHeading }}</h1>
         {{ govukRadios({
         "id": form.resolution_flag.id,
         "name": form.resolution_flag.id,
@@ -91,10 +91,10 @@
           <button class="govuk-button primary-button" data-module="govuk-button">
             Submit
           </button>
-          <a href="{{url_for('assess_bp.application', application_id=application_id)}}" class="govuk-button secondary-button govuk-link--no-visited-state">Cancel</a>
+          <a href="{{ url_for('assess_bp.application', application_id=application_id) }}" class="govuk-button secondary-button govuk-link--no-visited-state">Cancel</a>
         </div>
       </form>
     </div>
   </div>
 </div>
-{% endblock %}
+{% endblock content %}

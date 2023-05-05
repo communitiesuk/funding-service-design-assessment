@@ -9,8 +9,8 @@
         <p class="govuk-body">{{ flag.section_to_flag }}</p>
         <p class="govuk-body-s">{{ user_info["full_name"] }} ({{ user_info["highest_role"] | all_caps_to_human }}) {{ user_info["email_address"] }}</p>
         <p class="govuk-body-s">{{ flag.date_created | utc_to_bst }}</p>
-        {% if current_user_role == "LEAD_ASSESSOR"  %}
-            <p class="govuk-body"><a class="govuk-link govuk-link--no-visited-state" href="{{url_for('assess_bp.resolve_flag',application_id=application_id)}}?section={{flag.section_to_flag}}">Resolve flag</a></p>
+        {% if current_user_role == "LEAD_ASSESSOR" %}
+            <p class="govuk-body"><a class="govuk-link govuk-link--no-visited-state" href="{{ url_for('assess_bp.resolve_flag',application_id=application_id)}}?section={{ flag.section_to_flag }}">Resolve flag</a></p>
         {% endif %}
     </div>
 {% endmacro %}
@@ -22,8 +22,8 @@
         <p class="govuk-body">{{ flag.justification }}</p>
         <p class="govuk-body-s">{{ user_info["full_name"] }} ({{ user_info["highest_role"] | all_caps_to_human }}) {{ user_info["email_address"] }}</p>
         <p class="govuk-body-s">{{ flag.date_created | utc_to_bst }}</p>
-        {% if current_user_role == "LEAD_ASSESSOR"  %}
-            <p class="govuk-body"><a class="govuk-link govuk-link--no-visited-state" href="{{url_for('assess_bp.continue_assessment',application_id=application_id)}}">Remove flag and continue assessment</a></p>
+        {% if current_user_role == "LEAD_ASSESSOR" %}
+            <p class="govuk-body"><a class="govuk-link govuk-link--no-visited-state" href="{{ url_for('assess_bp.continue_assessment',application_id=application_id)}}">Remove flag and continue assessment</a></p>
         {% endif %}
     </div>
 {% endmacro %}

@@ -7,15 +7,15 @@
 {% from "macros/comments_box.html" import comment_box %}
 {% set pageHeading -%}
 {% if current_theme.id == sub_criteria.id %}
-{{ sub_criteria.name }} - {{sub_criteria.project_name}}
+{{ sub_criteria.name }} - {{ sub_criteria.project_name }}
 {% else %}
-{{current_theme.name}} - {{ sub_criteria.name }} - {{sub_criteria.project_name}}
+{{ current_theme.name }} - {{ sub_criteria.name }} - {{ sub_criteria.project_name }}
 {% endif %}
 {% endset %}
 
 {% block header %}
-{% include './components/header.html' %}
-{% endblock %}
+{% include "./components/header.html" %}
+{% endblock header %}
 
 {% block content %}
 {% if comment_form.comment.errors %}
@@ -50,8 +50,8 @@
             {{ navbar(application_id, sub_criteria, current_theme.id) }}
         </div>
         <div class="theme govuk-grid-column-two-thirds">
-            {{theme(answers_meta)}}
-            {{comment(comments)}}
+            {{ theme(answers_meta)}}
+            {{ comment(comments)}}
             {% if display_comment_box != True %}
                 <a
                     id="comment"
@@ -70,7 +70,7 @@
                     {% if comments == None %} Add a comment
                     {% else %} Add another comment
                     {% endif %}
-                </a>
+{# djlint:off #}</a>{# djlint:on #}
                 {% endif %}
 
                 {% if display_comment_box == True %}
@@ -79,4 +79,4 @@
         </div>
     </div>
 </div>
-{% endblock %}
+{% endblock content %}
