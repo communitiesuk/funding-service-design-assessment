@@ -1,5 +1,6 @@
 import json  # noqa
 
+import app
 import pytest  # noqa
 from app.assess.models.ui.applicants_response import _convert_checkbox_items
 from app.assess.models.ui.applicants_response import (
@@ -32,6 +33,9 @@ from app.assess.models.ui.applicants_response import (
     FormattedBesideQuestionAnswerPair,
 )
 from app.assess.models.ui.applicants_response import MonetaryKeyValues
+from app.assess.models.ui.applicants_response import (
+    QuestionAboveHrefAnswerList,
+)
 from app.assess.models.ui.applicants_response import QuestionHeading
 from app.assess.routes import assess_bp
 from app.assess.views.filters import format_address
@@ -149,6 +153,20 @@ class TestApplicantResponseComponentConcreteSubclasses:
         assert qa_pair.question == "What is your name?"
         assert qa_pair.answer == ANSWER_NOT_PROVIDED_DEFAULT
         assert qa_pair.answer_href is None
+
+    def test_question_above_href_answer_list_should_render(self):
+        data = {"question": "What are your favorite foods?"}
+        key_to_url_dict = {
+            "Pizza": "https://pizza.com",
+            "Burgers": "https://burgers.com",
+            "Tacos": "https://tacos.com",
+        }
+        question_answer_list = QuestionAboveHrefAnswerList.from_dict(
+            data, key_to_url_dict
+        )
+        assert question_answer_list.question == "What are your favorite foods?"
+        assert question_answer_list.key_to_url_dict == key_to_url_dict
+        assert question_answer_list.should_render is True
 
 
 class TestApplicatorsResponseComponentFactory:
@@ -650,7 +668,7 @@ class TestUtilMethods:
         assert result == expected
 
 
-def test_create_ui_components_retains_order():
+def test_create_ui_components_retains_order(monkeypatch):
     test_app = Flask("app")
     test_app.config["SERVER_NAME"] = "example.org:5000"
     test_app.register_blueprint(assess_bp)
@@ -725,7 +743,23 @@ def test_create_ui_components_retains_order():
             "presentation_type": "file",
             "field_type": "fileUploadField",
         },
+        {
+            "field_id": "field_11",
+            "form_name": "mock_form_name",
+            "path": "mock_path",
+            "question": "Eleventh",
+            "answer": None,
+            "presentation_type": "s3bucketPath",
+            "field_type": "clientSideFileUploadField",
+        },
     ]
+
+    monkeypatch.setattr(
+        app.assess.models.ui.applicants_response,
+        "list_files_in_folder",
+        lambda x: ["form_name/path/name/filename.png"],
+    )
+
     with test_app.app_context():
         ui_components = create_ui_components(
             response_with_unhashable_fields, "app_123"
@@ -736,7 +770,7 @@ def test_create_ui_components_retains_order():
         for ui_component in ui_components
     )
 
-    assert len(ui_components) == 11
+    assert len(ui_components) == 12
 
     assert isinstance(ui_components[0], BesideQuestionAnswerPair)
     assert ui_components[0].question == "First"
@@ -773,3 +807,13 @@ def test_create_ui_components_retains_order():
 
     assert isinstance(ui_components[10], AboveQuestionAnswerPairHref)
     assert ui_components[10].question == "Tenth"
+
+    assert isinstance(ui_components[11], QuestionAboveHrefAnswerList)
+    assert ui_components[11].question == "Eleventh"
+    assert isinstance(ui_components[11].key_to_url_dict, dict)
+    assert ui_components[11].key_to_url_dict == {
+        "form_name/path/name/filename.png": (
+            "http://example.org:5000/assess/application/app_123/export/"
+            "form_name/path/name/filename.png"
+        )
+    }

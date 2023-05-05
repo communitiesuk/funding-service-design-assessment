@@ -486,6 +486,14 @@ def submit_comment(
     return response.ok
 
 
+_S3_CLIENT = client(
+    "s3",
+    aws_access_key_id=Config.AWS_ACCESS_KEY_ID,
+    aws_secret_access_key=Config.AWS_SECRET_ACCESS_KEY,
+    region_name=Config.AWS_REGION,
+)
+
+
 def get_file_for_download_from_aws(file_name: str, application_id: str):
     """_summary_: Function is set up to retrieve
     files from aws bucket.
@@ -501,15 +509,8 @@ def get_file_for_download_from_aws(file_name: str, application_id: str):
 
     prefixed_file_name = application_id + "/" + file_name
 
-    s3_client = client(
-        "s3",
-        aws_access_key_id=Config.AWS_ACCESS_KEY_ID,
-        aws_secret_access_key=Config.AWS_SECRET_ACCESS_KEY,
-        region_name=Config.AWS_REGION,
-    )
-
     try:
-        obj = s3_client.get_object(
+        obj = _S3_CLIENT.get_object(
             Bucket=Config.AWS_BUCKET_NAME, Key=prefixed_file_name
         )
 
@@ -520,6 +521,18 @@ def get_file_for_download_from_aws(file_name: str, application_id: str):
     except ClientError as e:
         current_app.logger.error(e)
         raise Exception(e)
+
+
+def list_files_in_folder(prefix):
+    response = _S3_CLIENT.list_objects_v2(
+        Bucket=Config.AWS_BUCKET_NAME, Prefix=prefix
+    )
+    keys = []
+    for obj in response["Contents"]:
+        # we cut off the application id.
+        _, key = obj["Key"].split("/", 1)
+        keys.append(key)
+    return keys
 
 
 def get_files_for_application_upload_fields(
