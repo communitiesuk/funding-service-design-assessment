@@ -1,5 +1,11 @@
 {% from "govuk_frontend_jinja/components/input/macro.html" import govukInput %}
 
+{% macro render_query_params(query_params) -%}
+{% for key, value in query_params.items() %}
+    <input type="hidden" name="{{ key }}" value="{{ value }}">
+{% endfor %}
+{%- endmacro %}
+
 {% macro render(application_overviews, round_details, query_params, asset_types, assessment_statuses, show_clear_filters, user_role, sort_column, sort_order) -%}
 <nav class="search-bar-flex-container">
   <form method="get">
@@ -91,6 +97,7 @@
           {% else %}
             <input type="hidden" name="sort_order" value="asc">
           {% endif %}
+          {{ render_query_params(query_params) }}
           <button class="button" type="submit" aria-label="Sort by Funding requested">Funding requested</button>
         </form>
       </th>
@@ -106,6 +113,7 @@
           {% else %}
             <input type="hidden" name="sort_order" value="asc">
           {% endif %}
+          {{ render_query_params(query_params) }}
           <button class="button" type="submit" aria-label="Sort by Location">Location</button>
         </form>
       </th>
