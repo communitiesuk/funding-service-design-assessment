@@ -147,6 +147,68 @@ class QuestionAboveHrefAnswerList(ApplicantResponseComponent):
         )
 
 
+@dataclass
+class NewAddAnotherTable(ApplicantResponseComponent):
+    caption: str
+    head: List[dict[str, str]]
+    rows: List[dict[str, str]]
+
+    key = "question_above_href_answer_list"
+
+    @classmethod
+    def from_dict(cls, data: dict):
+        answer = data.get("answer")
+
+        totals, headings = [], []
+        for column_name, values in answer:
+            first_value, *_ = values
+            if isinstance(first_value, (float, int)):
+                column_format = "numeric"
+                totals.append(sum([float(val) for val in values]))
+            else:
+                column_format = ""
+                totals.append(None)
+            headings.append({"text": column_name, "format": column_format})
+
+        rows = []
+        zipped_values = list(zip(*[values for _, values in answer]))
+        for i, zipped_value in enumerate(zipped_values):
+            _, values = answer[i]
+            rows.extend(
+                [
+                    [
+                        {
+                            "text": f"£{val:.2f}"
+                            if isinstance(val, (float, int))
+                            else val,
+                            "format": "numeric"
+                            if isinstance(val, (float, int))
+                            else "",
+                        }
+                        for val in zipped_value
+                    ]
+                ]
+            )
+
+        if any(totals):
+            rows.append(
+                [{"text": "Total", "classes": "govuk-table__header"}]
+                + [
+                    {
+                        "text": f"£{val:.2f}" if val else "",
+                        "format": "numeric" if val else "",
+                    }
+                    for val in totals[1:]
+                ]  # we assume the first column is a string
+            )
+
+        return cls(
+            caption=data["question"],
+            head=headings,
+            rows=rows,
+        )
+
+
 def _ui_component_from_factory(item: dict, application_id: str):
     """
     :param item: dict
@@ -184,6 +246,15 @@ def _ui_component_from_factory(item: dict, application_id: str):
 
     elif presentation_type == "question_heading":
         return QuestionHeading.from_dict(item)
+
+    elif presentation_type == "table":
+        if not item.get("answer"):
+            return BesideQuestionAnswerPair(
+                question=item["question"],
+                answer=ANSWER_NOT_PROVIDED_DEFAULT,
+            )
+
+        return NewAddAnotherTable.from_dict(item)
 
     elif presentation_type in ("text", "list"):
         if field_type in ("multilineTextField",):

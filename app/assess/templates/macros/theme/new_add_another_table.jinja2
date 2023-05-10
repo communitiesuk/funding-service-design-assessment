@@ -1,0 +1,13 @@
+{%- from "govuk_frontend_jinja/components/table/macro.html" import govukTable -%}
+
+{% macro new_add_another_table(meta) %}
+
+    {{ govukTable({
+         'caption': meta.caption,
+         'captionClasses': 'govuk-heading-m',
+         'firstCellIsHeader': False,
+         'head': meta.head,
+         'rows': meta.rows
+    }) }}
+
+{% endmacro %}
