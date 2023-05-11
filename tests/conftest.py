@@ -345,10 +345,17 @@ def mock_get_assessment_stats(request):
         )
         fund_id = params.get("fund_id", "test-fund")
         round_id = params.get("round_id", "test-round")
+        search_params = params.get("expected_search_params", None)
     else:
         mock_func = "app.assess.routes.get_assessments_stats"
         fund_id = "test-fund"
         round_id = "test-round"
+        search_params = {
+            "search_term": "",
+            "search_in": "project_name,short_id",
+            "asset_type": "ALL",
+            "status": "ALL",
+        }
 
     with (
         mock.patch(
@@ -360,7 +367,12 @@ def mock_get_assessment_stats(request):
     ):
         yield mocked_assessment_stats
 
-    mocked_assessment_stats.assert_called_once_with(fund_id, round_id)
+    if search_params:
+        mocked_assessment_stats.assert_called_once_with(
+            fund_id, round_id, search_params
+        )
+    else:
+        mocked_assessment_stats.assert_called_once_with(fund_id, round_id)
 
 
 @pytest.fixture(scope="function")
