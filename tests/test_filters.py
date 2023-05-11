@@ -10,7 +10,7 @@ from app.assess.views.filters import slash_separated_day_month_year
 
 class TestFilters(object):
     def test_datetime(self):
-        time_in = "2023-01-30 12:00:00"
+        time_in = "2023-01-30T12:00:00"
         result = datetime_format(time_in, "%d %B %Y at %H:%M")
         assert "30 January 2023 at 12:00pm" == result, "Wrong format returned"
 

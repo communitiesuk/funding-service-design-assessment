@@ -124,9 +124,9 @@ mock_api_results = {
         "assessment_criteria_weighting": [
             {"id": "crit1", "name": "Test criteria", "value": 1.0}
         ],
-        "assessment_deadline": "2023-03-01 12:00:00",
-        "deadline": "2022-12-01 12:00:00",
-        "opens": "2022-10-01 12:00:00",
+        "assessment_deadline": "2023-03-01T12:00:00",
+        "deadline": "2022-12-01T12:00:00",
+        "opens": "2022-10-01T12:00:00",
     },
     "assessment_store/application_overviews/{fund_id}/{round_id}?": [
         {
