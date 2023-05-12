@@ -91,24 +91,14 @@ def test_is_flaggable(test_input, expected):
     assert is_flaggable(test_input) == expected
 
 
-def test_replace_none_value(app):
-    """This test tests a "replace_none_location" function
-    for expected response.
-    """
-
-    # test with country value is None
-    none_country = POST_PROCESSED_OVERVIEWS["none_country"]
-    response = replace_none_location(none_country)
-    assert "Not found" == response[0]["location_json_blob"]["country"]
-
-    # test when the location_json_blob doesn't exist
-    none_location_json_blob = POST_PROCESSED_OVERVIEWS[
-        "none_location_json_blob"
-    ]
-    response = replace_none_location(none_location_json_blob)
-    assert "Not found" == response[0]["location_json_blob"]["country"]
-
-    # test with valid location data
-    valid_location_data = POST_PROCESSED_OVERVIEWS["valid_location_data"]
-    response = replace_none_location(valid_location_data)
-    assert "Wales" == response[0]["location_json_blob"]["country"]
+@pytest.mark.parametrize(
+    "input_data, expected_output",
+    [
+        (POST_PROCESSED_OVERVIEWS["none_country"], "Not found"),
+        (POST_PROCESSED_OVERVIEWS["none_location_json_blob"], "Not found"),
+        (POST_PROCESSED_OVERVIEWS["valid_location_data"], "Wales"),
+    ],
+)
+def test_replace_none_value(input_data, expected_output):
+    response = replace_none_location(input_data)
+    assert response[0]["location_json_blob"]["country"] == expected_output
