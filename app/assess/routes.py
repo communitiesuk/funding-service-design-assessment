@@ -233,6 +233,12 @@ def score(
 )
 @login_required(roles_required=["ASSESSOR"])
 def flag(application_id):
+    # Get assessor tasks list
+    assessor_task_list_metadata = get_assessor_task_list_state(application_id)
+    fund = get_fund(assessor_task_list_metadata["fund_id"])
+    assessor_task_list_metadata["fund_name"] = fund.name
+    state = AssessorTaskList.from_json(assessor_task_list_metadata)
+
     form = FlagApplicationForm()
 
     if request.method == "POST" and form.validate_on_submit():
@@ -268,6 +274,7 @@ def flag(application_id):
         form=form,
         display_status=sub_criteria_banner_state.workflow_status,
         referrer=request.referrer,
+        state=state,
     )
 
 
