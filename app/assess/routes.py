@@ -20,6 +20,7 @@ from app.assess.helpers import determine_display_status
 from app.assess.helpers import extract_questions_and_answers_from_json_blob
 from app.assess.helpers import generate_text_of_application
 from app.assess.helpers import is_flaggable
+from app.assess.helpers import replace_none_location
 from app.assess.helpers import resolve_application
 from app.assess.models.flag import FlagType
 from app.assess.models.fund_summary import create_fund_summaries
@@ -421,7 +422,7 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
     return render_template(
         "assessor_dashboard.html",
         user=g.user,
-        application_overviews=post_processed_overviews,
+        application_overviews=replace_none_location(post_processed_overviews),
         round_details=round_details,
         query_params=search_params,
         asset_types=asset_types,
@@ -432,40 +433,6 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
         sort_column=sort_column,
         sort_order=sort_order,
     )
-
-
-# TODO: Remove this function if the decision is to keep the...
-# TODO:...default value "Not found".
-def replace_not_found_location(
-    post_processed_overviews: list,
-    replaced_to: str,
-    location: str = "Not found",
-):
-    """Replaces the 'country' value in the 'location_json_blob' dictionary
-    of each input dictionary where it matches
-    the given 'location' string with the provided 'replaced_to' string and
-    returns a list of dictionaries with the
-    modified 'country' values.
-
-    Args:
-    - post_processed_overviews: A list of dictionaries containing
-    post-processed application data.
-    - location: The location string to match the 'country' value against,
-    e.g., "Not found".
-    - replaced_to: The string to replace the 'country' value with when
-    a match is found.
-    """
-
-    for country in post_processed_overviews:
-        if country.get("location_json_blob").get("country") == location:
-            country["location_json_blob"]["country"] = replaced_to
-        else:
-            current_app.logger.error(
-                "Couldn't access the 'Not found' country location. Check"
-                " 'location_json_blob' and 'country "
-            )
-
-    return post_processed_overviews
 
 
 @assess_bp.route("/application/<application_id>", methods=["GET", "POST"])

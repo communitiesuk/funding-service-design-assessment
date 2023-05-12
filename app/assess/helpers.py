@@ -8,6 +8,7 @@ from app.assess.data import get_sub_criteria_banner_state
 from app.assess.data import submit_flag
 from app.assess.models.flag import Flag
 from app.assess.models.flag import FlagType
+from flask import current_app
 from flask import redirect
 from flask import render_template
 from flask import request
@@ -127,3 +128,53 @@ def generate_text_of_application(q_and_a: dict, fund_name: str):
             output.write(f"  Q) {questions}\n")
             output.write(f"  A) {answers}\n\n")
     return output.getvalue()
+
+
+def replace_none_location(
+    post_processed_overviews: list, replaced_with: str = "Not found"
+):
+    """
+    Replaces None values in 'country' field of project overviews with a
+    specified string and adds a default location dictionary to project
+    overviews without location data.
+
+    Args:
+    post_processed_overviews (list): A list of dictionaries, each with a
+    'location_json_blob' key containing a nested dictionary with
+    'country' key-value pair.
+    replaced_with (str): String to replace None values in 'country' field.
+    Default is "Not found".
+
+    Returns:
+    list: Modified list of dictionaries where None values in 'country' field
+    have been replaced with 'replaced_with', and a default location dictionary
+    has been added to any overview without location data."""
+
+    current_app.logger.error(f"raw data:{post_processed_overviews}")
+    for overview in post_processed_overviews:
+        if overview.get("location_json_blob"):
+            location = overview.get("location_json_blob")
+            if location.get("country") is None:
+                location["country"] = replaced_with
+                current_app.logger.error(
+                    "Country location data is None for"
+                    f" {overview.get('project_name')}"
+                )
+            else:
+                current_app.logger.error(
+                    "Location data is correct for"
+                    f" {overview.get('project_name')}"
+                )
+        else:
+            default_location = {
+                "error": True,
+                "postcode": "Not found",
+                "country": "Not found",
+            }
+            overview["location_json_blob"] = default_location
+            current_app.logger.error(
+                "Adding default location_json_blob for"
+                f" {overview.get('project_name')}"
+            )
+
+    return post_processed_overviews
