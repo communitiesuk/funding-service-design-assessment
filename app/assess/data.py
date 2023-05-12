@@ -230,11 +230,13 @@ def get_applications(params: dict) -> Union[List[Application], None]:
     return None
 
 
-def get_assessments_stats(fund_id: str, round_id: str) -> Dict | None:
+def get_assessments_stats(
+    fund_id: str, round_id: str, search_params: dict = {}
+) -> Dict | None:
     assessments_stats_endpoint = (
         Config.ASSESSMENT_STORE_API_HOST
     ) + Config.ASSESSMENTS_STATS_ENDPOINT.format(
-        fund_id=fund_id, round_id=round_id
+        fund_id=fund_id, round_id=round_id, params=urlencode(search_params)
     )
     current_app.logger.info(f"Endpoint '{assessments_stats_endpoint}'.")
     return get_data(assessments_stats_endpoint)
