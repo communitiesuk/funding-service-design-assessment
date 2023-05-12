@@ -376,7 +376,7 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
         "round_short_name": round_short_name,
     }
 
-    stats = get_assessments_stats(fund_id, round_id)
+    stats = get_assessments_stats(fund_id, round_id, search_params)
     is_active_status = is_after_today(_round.assessment_deadline)
 
     # TODO Can we get rid of get_application_overviews for fund and _round
