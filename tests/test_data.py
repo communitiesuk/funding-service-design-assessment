@@ -44,3 +44,44 @@ def test_list_files_in_folder(monkeypatch):
         "form_name/path/name/filename12.xlsx",
         "form_name/path/name/filename13.ods",
     ]
+
+
+POST_PROCESSED_OVERVIEWS = {
+    "none_country": [
+        {
+            "application_id": "app-123",
+            "language": "en",
+            "location_json_blob": {
+                "error": True,
+                "country": None,
+            },
+            "project_name": (
+                "Save the beautiful community centre in Colchester"
+            ),
+        }
+    ],
+    "none_location_json_blob": [
+        {
+            "application_id": "app-123",
+            "language": "en",
+            "project_name": (
+                "Save the beautiful community centre in Colchester"
+            ),
+        }
+    ],
+    "valid_location_data": [
+        {
+            "application_id": "app-123",
+            "language": "en",
+            "location_json_blob": {
+                "error": False,
+                "constituency": "Newport West",
+                "country": "Wales",
+                "county": "Newport",
+                "postcode": "NP108QQ",
+                "region": "Wales",
+            },
+            "project_name": "Restore the derelict museum in Newport",
+        }
+    ],
+}
