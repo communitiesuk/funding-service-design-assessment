@@ -150,29 +150,28 @@ def replace_none_location(
     have been replaced with 'replaced_with', and a default location dictionary
     has been added to any overview without location data."""
 
-    current_app.logger.error(f"raw data:{post_processed_overviews}")
     for overview in post_processed_overviews:
         if overview.get("location_json_blob"):
             location = overview.get("location_json_blob")
             if location.get("country") is None:
                 location["country"] = replaced_with
-                current_app.logger.error(
+                current_app.logger.info(
                     "Country location data is None for"
                     f" {overview.get('project_name')}"
                 )
             else:
-                current_app.logger.error(
+                current_app.logger.info(
                     "Location data is correct for"
                     f" {overview.get('project_name')}"
                 )
         else:
             default_location = {
                 "error": True,
-                "postcode": "Not found",
-                "country": "Not found",
+                "postcode": replaced_with,
+                "country": replaced_with,
             }
             overview["location_json_blob"] = default_location
-            current_app.logger.error(
+            current_app.logger.info(
                 "Adding default location_json_blob for"
                 f" {overview.get('project_name')}"
             )
