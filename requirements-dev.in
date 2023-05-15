@@ -15,3 +15,4 @@ boto3
 beautifulsoup4
 black
 debugpy
+flake8-pyproject

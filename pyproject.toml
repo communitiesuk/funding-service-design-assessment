@@ -6,5 +6,15 @@ authors = ["Version One"]
 license = "MIT License"
 
 [tool.black]
-line-length = 79
+line-length = 120
 experimental-string-processing = 1
+
+[tool.flake8]
+exclude =['.git',
+    '.gitignore',
+    '.vscode',
+    '__pycache__']
+max-complexity = 15
+max-line-length = 120
+ignore = ['E402', 'W503']
+per-file-ignores=['./app/assess/routes.py:F405,F403,E731']

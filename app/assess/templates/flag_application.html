@@ -60,33 +60,25 @@
                         'value': form.justification.data or ""
                     }) }}
 
+                    {# Get list of sub-sections from Assessor task list #}
                     {% set items = [] %}
-                    {% set firstItem = {
-                    'value': "",
-                    'text': "Select section to flag",
-                    'disabled': true,
-                    'selected': true
-                    } %}
-                    {% set addFirstItem = items.append(firstItem) %}
+                    {% set addFirstItem = items.append({'value': "",
+                                                        'text': "Select section to flag",
+                                                        'disabled': true,
+                                                        'selected': true}) %}
 
-                    {# Get list of sub-sections from Unscored & Declaration sections #}
-                    {% for section in state.sections %}
-                        {% for sub_section in section.sub_criterias %}
-                            {% set item_name = sub_section.name + " (" + section.name + ")" %}
-                            {% set addItem = items.append({'value': sub_section.id,
-                                                            'text': item_name,
+                    {% for sub_section in state.get_sub_sections_metadata() %}
+                        {% if sub_section["section_type"] == "Scored" %}
+                            {# Get list of sub-sections from Scored section #}
+                            {% set addItem = items.append({'value': sub_section["sub_section_id"],
+                                                            'text': sub_section["sub_section_name"] + " (Scored - "+ sub_section["parent_section_name"] + ")",
                                                             'disabled': false}) %}
-                        {% endfor %}
-                    {% endfor %}
-
-                    {# Get list of sub-sections from Scored section #}
-                    {% for section in state.criterias %}
-                        {% for sub_section in section.sub_criterias %}
-                            {% set item_name = sub_section.name + " (Scored - "+ section.name + ")" %}
-                            {% set addItem = items.append({'value': sub_section.id,
-                                                            'text': item_name,
+                        {% else %}
+                            {# Get list of sub-sections from Unscored & Declaration sections #}
+                            {% set addItem = items.append({'value': sub_section["sub_section_id"],
+                                                            'text': sub_section["sub_section_name"] + " ("+ sub_section["parent_section_name"] + ")",
                                                             'disabled': false}) %}
-                        {% endfor %}
+                        {% endif %}
                     {% endfor %}
 
                     {{ govukSelect({
