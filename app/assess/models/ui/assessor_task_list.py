@@ -71,7 +71,9 @@ class AssessorTaskList:
                 _Criteria(
                     name=criteria["name"],
                     total_criteria_score=criteria["total_criteria_score"],
-                    total_criteria_score_possible=criteria["total_criteria_score_possible"],
+                    total_criteria_score_possible=criteria[
+                        "total_criteria_score_possible"
+                    ],
                     weighting=criteria["weighting"],
                     sub_criterias=[
                         _CriteriaSubCriteria(
@@ -119,7 +121,9 @@ class AssessorTaskList:
         # Return the final metadata list for sub-sections.
         return sub_sections_list
 
-    def get_section_from_sub_criteria_id(self, sub_criteria_id: str) -> Union[None, Dict]:
+    def get_section_from_sub_criteria_id(
+        self, sub_criteria_id: str
+    ) -> Union[None, Dict]:
         """Retrieve metadata for a specific sub-section using its unique identifier."""
 
         # Get all metadata for all sub-sections.
