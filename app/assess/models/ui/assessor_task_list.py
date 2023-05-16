@@ -1,5 +1,7 @@
 from dataclasses import dataclass
+from typing import Dict
 from typing import List
+from typing import Union
 
 
 @dataclass
@@ -87,3 +89,68 @@ class AssessorTaskList:
                 for criteria in json["criterias"]
             ],
         )
+
+    def get_sub_sections_metadata(self) -> List[Dict]:
+        """This function returns metadata for all sub-sections in a given section.
+
+        Return
+        -------
+        sub_sections_list Eg,. [{"sub_section_name": "Funding breakdown",
+                                "sub_section_id": "funding_breakdown",
+                                "parent_section_name": "Managment case",
+                                "section_type": "Scored",
+                                },...]
+
+        """
+        sub_sections_list = []
+
+        # Loop through each section and its sub-criterias, and append the metadata to the list.
+        for section in self.sections:
+            for sub_section in section.sub_criterias:
+                sub_sections_list.append(
+                    {
+                        "sub_section_name": sub_section.name,
+                        "sub_section_id": sub_section.id,
+                        "parent_section_name": section.name,
+                        "section_type": section.name,
+                    }
+                )
+
+        # Loop through each criteria and its sub-criterias, and append the metadata to the list.
+        for criteria in self.criterias:
+            for sub_section in criteria.sub_criterias:
+                sub_sections_list.append(
+                    {
+                        "sub_section_name": sub_section.name,
+                        "sub_section_id": sub_section.id,
+                        "parent_section_name": criteria.name,
+                        "section_type": "Scored",
+                    }
+                )
+
+        # Return the final metadata list for sub-sections.
+        return sub_sections_list
+
+    def get_section_from_sub_criteria_id(
+        self, sub_criteria_id: str
+    ) -> Union[None, Dict]:
+        """Retrieve metadata for a specific sub-section using its unique identifier.
+
+        Return
+        -------
+        sub_section_metadata  Eg., {"sub_section_name": "Funding breakdown",
+                                    "sub_section_id": "funding_breakdown",
+                                    "parent_section_name": "Managment case",
+                                    "section_type": "Scored",
+                                    }
+        """
+
+        # Get all metadata for all sub-sections.
+        sub_sections_metadata = self.get_sub_sections_metadata()
+
+        # Loop through each item in the metadata list to find the sub-section with the given id.
+        for item in sub_sections_metadata:
+            if sub_criteria_id == item["sub_section_id"]:
+                return item
+
+        return None

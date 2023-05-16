@@ -250,6 +250,12 @@ def flag(application_id):
             )
         )
 
+    # Get assessor tasks list
+    assessor_task_list_metadata = get_assessor_task_list_state(application_id)
+    fund = get_fund(assessor_task_list_metadata["fund_id"])
+    assessor_task_list_metadata["fund_name"] = fund.name
+    state = AssessorTaskList.from_json(assessor_task_list_metadata)
+
     flag = get_latest_flag(application_id)
     if flag and flag.flag_type not in (
         FlagType.RESOLVED,
@@ -257,7 +263,6 @@ def flag(application_id):
     ):
         abort(400, "Application already flagged")
     sub_criteria_banner_state = get_sub_criteria_banner_state(application_id)
-    fund = get_fund(sub_criteria_banner_state.fund_id)
 
     return render_template(
         "flag_application.html",
@@ -268,6 +273,7 @@ def flag(application_id):
         form=form,
         display_status=sub_criteria_banner_state.workflow_status,
         referrer=request.referrer,
+        state=state,
     )
 
 
