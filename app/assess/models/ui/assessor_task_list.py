@@ -91,7 +91,17 @@ class AssessorTaskList:
         )
 
     def get_sub_sections_metadata(self) -> List[Dict]:
-        """This function returns metadata for all sub-sections in a given section."""
+        """This function returns metadata for all sub-sections in a given section.
+
+        Return
+        -------
+        sub_sections_list Eg,. [{"sub_section_name": "Funding breakdown",
+                                "sub_section_id": "funding_breakdown",
+                                "parent_section_name": "Managment case",
+                                "section_type": "Scored",
+                                },...]
+
+        """
         sub_sections_list = []
 
         # Loop through each section and its sub-criterias, and append the metadata to the list.
@@ -124,7 +134,16 @@ class AssessorTaskList:
     def get_section_from_sub_criteria_id(
         self, sub_criteria_id: str
     ) -> Union[None, Dict]:
-        """Retrieve metadata for a specific sub-section using its unique identifier."""
+        """Retrieve metadata for a specific sub-section using its unique identifier.
+
+        Return
+        -------
+        sub_section_metadata  Eg., {"sub_section_name": "Funding breakdown",
+                                    "sub_section_id": "funding_breakdown",
+                                    "parent_section_name": "Managment case",
+                                    "section_type": "Scored",
+                                    }
+        """
 
         # Get all metadata for all sub-sections.
         sub_sections_metadata = self.get_sub_sections_metadata()
