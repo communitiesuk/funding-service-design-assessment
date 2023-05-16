@@ -55,7 +55,7 @@ def create_fund_summaries(fund: Fund) -> list[FundSummary]:
 def is_after_today(date_str: str):
     """Check if the provided datetime string has passed the current datetime"""
     uk_tz = pytz.timezone("Europe/London")
-    date_format = "%Y-%m-%d %H:%M:%S"
+    date_format = "%Y-%m-%dT%H:%M:%S"
     dt = datetime.datetime.strptime(date_str, date_format)
     dt_uk = uk_tz.localize(dt)
     now_uk = datetime.datetime.now(tz=uk_tz)

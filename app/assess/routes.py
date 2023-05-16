@@ -333,7 +333,7 @@ def landing():
             fund.id: create_fund_summaries(fund) for fund in funds
         },
         funds={fund.id: fund for fund in funds},
-        todays_date=utc_to_bst(datetime.now().strftime("%Y-%m-%d %H:%M:%S")),
+        todays_date=utc_to_bst(datetime.now().strftime("%Y-%m-%dT%H:%M:%S")),
     )
 
 
