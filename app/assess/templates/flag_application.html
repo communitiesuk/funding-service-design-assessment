@@ -92,7 +92,8 @@
                         'errorMessage': {
                             'text': form.errors.get("section") | join("\n"),
                         } if form.errors.get("section") else None,
-                        'value': form.section.data or ""
+                        'value': form.section.data or "",
+                        'attributes': { 'data-qa': 'select_section_to_flag' }
                     })
                     }}
 
