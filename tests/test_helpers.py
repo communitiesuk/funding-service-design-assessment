@@ -89,4 +89,3 @@ def test_determine_display_status():
 )
 def test_is_flaggable(test_input, expected):
     assert is_flaggable(test_input) == expected
-
