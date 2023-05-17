@@ -471,6 +471,7 @@ class TestRoutes:
         request,
         flask_test_client,
         mock_get_latest_flag,
+        mock_get_assessor_tasklist_state,
         mock_get_sub_criteria_banner_state,
         mock_get_fund,
     ):
@@ -491,6 +492,7 @@ class TestRoutes:
         request,
         flask_test_client,
         mock_get_latest_flag,
+        mock_get_assessor_tasklist_state,
         mock_get_sub_criteria_banner_state,
         mock_get_fund,
     ):

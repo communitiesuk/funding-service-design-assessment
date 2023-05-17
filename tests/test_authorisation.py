@@ -346,7 +346,7 @@ class TestAuthorisation:
             assert b"Reason for continuing assessment" in response.data
 
     @pytest.mark.parametrize(
-        "claim,expect_flagging_available",
+        "claim,expect_flagging",
         [
             (test_commenter_claims, False),
             (test_assessor_claims, True),
@@ -359,8 +359,9 @@ class TestAuthorisation:
         request,
         flask_test_client,
         claim,
-        expect_flagging_available,
+        expect_flagging,
         mock_get_latest_flag,
+        mock_get_assessor_tasklist_state,
         mock_get_sub_criteria_banner_state,
         mock_get_fund,
     ):
@@ -383,7 +384,7 @@ class TestAuthorisation:
             create_valid_token(claim),
         )
 
-        if not expect_flagging_available:
+        if not expect_flagging:
             with pytest.raises(RuntimeError) as exec_info:
                 flask_test_client.get(
                     f"assess/flag/{application_id}",
@@ -403,7 +404,7 @@ class TestAuthorisation:
             assert b"Flag application" in response.data
 
     @pytest.mark.parametrize(
-        "claim,expect_resolve_flag_available",
+        "claim,expect_flagging",
         [
             (test_commenter_claims, False),
             (test_assessor_claims, False),
@@ -416,7 +417,7 @@ class TestAuthorisation:
         flask_test_client,
         request,
         claim,
-        expect_resolve_flag_available,
+        expect_flagging,
         mock_get_latest_flag,
         mock_get_sub_criteria_banner_state,
         mock_get_fund,
@@ -438,7 +439,7 @@ class TestAuthorisation:
             "fsd_user_token",
             create_valid_token(claim),
         )
-        if not expect_resolve_flag_available:
+        if not expect_flagging:
             with pytest.raises(RuntimeError) as exec_info:
                 flask_test_client.get(
                     f"assess/resolve_flag/{application_id}",
@@ -460,7 +461,7 @@ class TestAuthorisation:
             assert b"Stop assessment" in response.data
 
     @pytest.mark.parametrize(
-        "user_account, visible",
+        "user_account, expect_flagging",
         [
             (test_commenter_claims, False),
             (test_assessor_claims, False),
@@ -473,7 +474,7 @@ class TestAuthorisation:
         flask_test_client,
         request,
         user_account,
-        visible,
+        expect_flagging,
         mock_get_assessor_tasklist_state,
         mock_get_fund,
         mock_get_round,
@@ -490,7 +491,7 @@ class TestAuthorisation:
             f"assess/application/{application_id}"
         )
         assert response.status_code == 200
-        if visible:
+        if expect_flagging:
             assert b"Resolve flag" in response.data
         else:
             assert b"Resolve flag" not in response.data

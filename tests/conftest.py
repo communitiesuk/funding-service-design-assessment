@@ -320,6 +320,11 @@ def mock_get_application_overviews(request):
 @pytest.fixture(scope="function")
 def mock_get_assessor_tasklist_state(request):
     marker = request.node.get_closest_marker("application_id")
+    if "expect_flagging" in request.fixturenames:
+        expect_flagging = request.getfixturevalue("expect_flagging")
+    else:
+        expect_flagging = True
+
     application_id = marker.args[0]
     mock_tasklist_state = mock_api_results[
         f"assessment_store/application_overviews/{application_id}"
@@ -330,7 +335,8 @@ def mock_get_assessor_tasklist_state(request):
     ) as mocked_tasklist_state:
         yield mocked_tasklist_state
 
-    mocked_tasklist_state.assert_called_with(application_id)
+    if expect_flagging:
+        mocked_tasklist_state.assert_called_with(application_id)
 
 
 @pytest.fixture(scope="function")
