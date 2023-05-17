@@ -8,7 +8,7 @@
       "name": "Python: Remote Attach (Outside container)",
       "type": "python",
       "request": "attach",
-      "connect": { "host": "localhost", "port": 5688 },
+      "connect": { "host": "localhost", "port": 5686 },
       "pathMappings": [
         { "localRoot": "${workspaceFolder}", "remoteRoot": "." }
       ],
