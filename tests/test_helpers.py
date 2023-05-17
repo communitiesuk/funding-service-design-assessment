@@ -1,9 +1,8 @@
 import pytest
 from app.assess.helpers import determine_display_status
 from app.assess.helpers import is_flaggable
-from app.assess.helpers import replace_none_location
 from app.assess.models.flag import Flag
-from tests.test_data import POST_PROCESSED_OVERVIEWS
+
 
 FLAGGED_FLAG = Flag.from_dict(
     {
@@ -89,4 +88,3 @@ def test_determine_display_status():
 )
 def test_is_flaggable(test_input, expected):
     assert is_flaggable(test_input) == expected
-

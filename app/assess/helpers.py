@@ -8,7 +8,6 @@ from app.assess.data import get_sub_criteria_banner_state
 from app.assess.data import submit_flag
 from app.assess.models.flag import Flag
 from app.assess.models.flag import FlagType
-from flask import current_app
 from flask import redirect
 from flask import render_template
 from flask import request
