@@ -20,7 +20,6 @@ from app.assess.helpers import determine_display_status
 from app.assess.helpers import extract_questions_and_answers_from_json_blob
 from app.assess.helpers import generate_text_of_application
 from app.assess.helpers import is_flaggable
-from app.assess.helpers import replace_none_location
 from app.assess.helpers import resolve_application
 from app.assess.models.flag import FlagType
 from app.assess.models.fund_summary import create_fund_summaries
@@ -428,7 +427,7 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
     return render_template(
         "assessor_dashboard.html",
         user=g.user,
-        application_overviews=replace_none_location(post_processed_overviews),
+        application_overviews=post_processed_overviews,
         round_details=round_details,
         query_params=search_params,
         asset_types=asset_types,

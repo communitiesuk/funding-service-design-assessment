@@ -90,15 +90,3 @@ def test_determine_display_status():
 def test_is_flaggable(test_input, expected):
     assert is_flaggable(test_input) == expected
 
-
-@pytest.mark.parametrize(
-    "input_data, expected_output",
-    [
-        (POST_PROCESSED_OVERVIEWS["none_country"], "Not found"),
-        (POST_PROCESSED_OVERVIEWS["none_location_json_blob"], "Not found"),
-        (POST_PROCESSED_OVERVIEWS["valid_location_data"], "Wales"),
-    ],
-)
-def test_replace_none_value(input_data, expected_output):
-    response = replace_none_location(input_data)
-    assert response[0]["location_json_blob"]["country"] == expected_output
