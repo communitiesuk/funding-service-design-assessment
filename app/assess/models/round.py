@@ -8,7 +8,6 @@ from .application import Application
 @dataclass
 class Round:
     id: str
-    assessment_criteria_weighting: list
     assessment_deadline: str
     deadline: str
     fund_id: str

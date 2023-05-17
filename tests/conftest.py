@@ -320,6 +320,11 @@ def mock_get_application_overviews(request):
 @pytest.fixture(scope="function")
 def mock_get_assessor_tasklist_state(request):
     marker = request.node.get_closest_marker("application_id")
+    if "expect_flagging" in request.fixturenames:
+        expect_flagging = request.getfixturevalue("expect_flagging")
+    else:
+        expect_flagging = True
+
     application_id = marker.args[0]
     mock_tasklist_state = mock_api_results[
         f"assessment_store/application_overviews/{application_id}"
@@ -330,7 +335,8 @@ def mock_get_assessor_tasklist_state(request):
     ) as mocked_tasklist_state:
         yield mocked_tasklist_state
 
-    mocked_tasklist_state.assert_called_with(application_id)
+    if expect_flagging:
+        mocked_tasklist_state.assert_called_with(application_id)
 
 
 @pytest.fixture(scope="function")
@@ -345,10 +351,17 @@ def mock_get_assessment_stats(request):
         )
         fund_id = params.get("fund_id", "test-fund")
         round_id = params.get("round_id", "test-round")
+        search_params = params.get("expected_search_params", None)
     else:
         mock_func = "app.assess.routes.get_assessments_stats"
         fund_id = "test-fund"
         round_id = "test-round"
+        search_params = {
+            "search_term": "",
+            "search_in": "project_name,short_id",
+            "asset_type": "ALL",
+            "status": "ALL",
+        }
 
     with (
         mock.patch(
@@ -360,7 +373,12 @@ def mock_get_assessment_stats(request):
     ):
         yield mocked_assessment_stats
 
-    mocked_assessment_stats.assert_called_once_with(fund_id, round_id)
+    if search_params:
+        mocked_assessment_stats.assert_called_once_with(
+            fund_id, round_id, search_params
+        )
+    else:
+        mocked_assessment_stats.assert_called_once_with(fund_id, round_id)
 
 
 @pytest.fixture(scope="function")

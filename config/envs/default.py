@@ -86,7 +86,9 @@ class DefaultConfig:
     APPLICATION_SEARCH_ENDPOINT = CommonConfig.APPLICATION_SEARCH_ENDPOINT
 
     # Assessment store endpoints
-    ASSESSMENTS_STATS_ENDPOINT = "/assessments/get-stats/{fund_id}/{round_id}"
+    ASSESSMENTS_STATS_ENDPOINT = (
+        "/assessments/get-stats/{fund_id}/{round_id}?{params}"
+    )
     APPLICATION_OVERVIEW_ENDPOINT_FUND_ROUND_PARAMS = (
         "/application_overviews/{fund_id}/{round_id}?{params}"
     )
@@ -139,12 +141,12 @@ class DefaultConfig:
 
     TALISMAN_SETTINGS = CommonConfig.TALISMAN_SETTINGS
 
-    COF_FUND_ID = CommonConfig.COF_FUND_ID
-    COF_ROUND2_ID = CommonConfig.COF_ROUND_2_ID
-    COF_ROUND2_W3_ID = CommonConfig.COF_ROUND_2_W3_ID
+    COF_FUND_ID = "47aef2f5-3fcb-4d45-acb5-f0152b5f03c4"
+    COF_ROUND_2_ID = "c603d114-5364-4474-a0c4-c41cbf4d3bbd"
+    COF_ROUND_2_W3_ID = "5cf439bf-ef6f-431e-92c5-a1d90a4dd32f"
 
-    DEFAULT_FUND_ID = CommonConfig.COF_FUND_ID
-    DEFAULT_ROUND_ID = CommonConfig.get_default_round_id()
+    DEFAULT_FUND_ID = COF_FUND_ID
+    DEFAULT_ROUND_ID = COF_ROUND_2_W3_ID
 
     """
     Aws Config

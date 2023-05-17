@@ -26,7 +26,7 @@ applications:
     - form-uploads-dev
 
 - name: funding-service-design-assessment-test
-  memory: 64M
+  memory: 256M
   buildpacks:
   - https://github.com/cloudfoundry/python-buildpack.git
   command: gunicorn wsgi:app -c run/gunicorn/devtest.py
@@ -47,4 +47,4 @@ applications:
     - form-uploads-test
   health-check-http-endpoint: /healthcheck
   health-check-type: http
-  health-check-invocation-timeout: 10
+  health-check-invocation-timeout: 20

@@ -19,12 +19,6 @@ class TestRoutes:
             "get_rounds_path": "app.assess.models.fund_summary.get_rounds",
             "fund_id": "test-fund",
             "round_id": "test-round",
-            "expected_search_params": {
-                "search_term": "",
-                "search_in": "project_name,short_id",
-                "asset_type": "ALL",
-                "status": "ALL",
-            },
         }
     )
     def test_route_landing(
@@ -477,6 +471,7 @@ class TestRoutes:
         request,
         flask_test_client,
         mock_get_latest_flag,
+        mock_get_assessor_tasklist_state,
         mock_get_sub_criteria_banner_state,
         mock_get_fund,
     ):
@@ -497,6 +492,7 @@ class TestRoutes:
         request,
         flask_test_client,
         mock_get_latest_flag,
+        mock_get_assessor_tasklist_state,
         mock_get_sub_criteria_banner_state,
         mock_get_fund,
     ):
