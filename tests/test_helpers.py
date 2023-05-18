@@ -3,6 +3,7 @@ from app.assess.helpers import determine_display_status
 from app.assess.helpers import is_flaggable
 from app.assess.models.flag import Flag
 
+
 FLAGGED_FLAG = Flag.from_dict(
     {
         "application_id": "app_123",
