@@ -13,6 +13,7 @@ from app.assess.models.fund import Fund
 from app.assess.models.round import Round
 from app.assess.models.score import Score
 from app.assess.models.sub_criteria import SubCriteria
+from app.assess.models.ui.assessor_task_list import AssessorTaskList
 from boto3 import client
 from botocore.exceptions import ClientError
 from config import Config
@@ -593,3 +594,17 @@ def get_default_round_data():
     )
     round_response = get_data(round_request_url, language)
     return round_response
+
+
+def get_section_state(flag, application_id):
+    if flag and flag.flag_type.name != "RESOLVED":
+        state = AssessorTaskList.from_json(
+            get_assessor_task_list_state(application_id)
+        )
+        section_state = state.get_section_from_sub_criteria_id(
+            sub_criteria_id=flag.section_to_flag
+        )
+    else:
+        section_state = None
+
+    return section_state

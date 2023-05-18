@@ -5,6 +5,7 @@ from app.assess.data import *
 from app.assess.data import get_application_json
 from app.assess.data import get_application_overviews
 from app.assess.data import get_assessments_stats
+from app.assess.data import get_section_state
 from app.assess.data import submit_score_and_justification
 from app.assess.display_value_mappings import assessment_statuses
 from app.assess.display_value_mappings import asset_types
@@ -130,11 +131,13 @@ def display_sub_criteria(
     answers_meta = applicants_response.create_ui_components(
         theme_answers_response, application_id
     )
+    section_state = get_section_state(flag, application_id)
 
     return render_template(
         "sub_criteria.html",
         answers_meta=answers_meta,
         **common_template_config,
+        section_state=section_state,
     )
 
 
@@ -209,6 +212,7 @@ def score(
         (2, "Partial"),
         (1, "Poor"),
     ]
+    section_state = get_section_state(flag, application_id)
     return render_template(
         "score.html",
         application_id=application_id,
@@ -224,6 +228,7 @@ def score(
         display_status=display_status,
         flag=flag,
         is_flaggable=is_flaggable(flag),
+        section_state=section_state,
     )
 
 
@@ -305,6 +310,7 @@ def qa_complete(application_id):
     sub_criteria_banner_state = get_sub_criteria_banner_state(application_id)
     fund = get_fund(sub_criteria_banner_state.fund_id)
     flag = get_latest_flag(application_id)
+    section_state = get_section_state(flag, application_id)
 
     return render_template(
         "mark_qa_complete.html",
@@ -315,6 +321,7 @@ def qa_complete(application_id):
         referrer=request.referrer,
         flag=flag,
         display_status=sub_criteria_banner_state.workflow_status,
+        section_state=section_state,
     )
 
 
@@ -484,6 +491,7 @@ def application(application_id):
         assessor_task_list_metadata["fund_name"] = fund.name
         state = AssessorTaskList.from_json(assessor_task_list_metadata)
 
+    section_state = get_section_state(flag, application_id)
     display_status = determine_display_status(state.workflow_status, flag)
     return render_template(
         "assessor_tasklist.html",
@@ -500,6 +508,7 @@ def application(application_id):
         else None,
         is_flaggable=is_flaggable(flag),
         display_status=display_status,
+        section_state=section_state,
     )
 
 

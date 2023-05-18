@@ -4,6 +4,7 @@ from typing import Optional
 
 from app.assess.data import get_fund
 from app.assess.data import get_latest_flag
+from app.assess.data import get_section_state
 from app.assess.data import get_sub_criteria_banner_state
 from app.assess.data import submit_flag
 from app.assess.models.flag import Flag
@@ -82,6 +83,7 @@ def resolve_application(
         form=form,
         referrer=request.referrer,
         display_status=display_status,
+        section_state=get_section_state(latest_flag, application_id),
     )
 
 
