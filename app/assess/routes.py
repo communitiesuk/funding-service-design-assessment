@@ -233,7 +233,18 @@ def score(
 )
 @login_required(roles_required=["ASSESSOR"])
 def flag(application_id):
-    form = FlagApplicationForm()
+
+    # Get assessor tasks list
+    assessor_task_list_metadata = get_assessor_task_list_state(application_id)
+    fund = get_fund(assessor_task_list_metadata["fund_id"])
+    assessor_task_list_metadata["fund_name"] = fund.name
+    state = AssessorTaskList.from_json(assessor_task_list_metadata)
+    choices = [
+        (item["sub_section_id"], item["sub_section_id"])
+        for item in state.get_sub_sections_metadata()
+    ]
+
+    form = FlagApplicationForm(choices=choices)
 
     if request.method == "POST" and form.validate_on_submit():
         submit_flag(
@@ -249,12 +260,6 @@ def flag(application_id):
                 application_id=application_id,
             )
         )
-
-    # Get assessor tasks list
-    assessor_task_list_metadata = get_assessor_task_list_state(application_id)
-    fund = get_fund(assessor_task_list_metadata["fund_id"])
-    assessor_task_list_metadata["fund_name"] = fund.name
-    state = AssessorTaskList.from_json(assessor_task_list_metadata)
 
     flag = get_latest_flag(application_id)
     if flag and flag.flag_type not in (
