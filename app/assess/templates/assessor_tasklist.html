@@ -72,9 +72,9 @@
         </div>
         <div class="govuk-grid-column-one-third govuk-!-margin-top-2 govuk-button-group">
             <span>
-                    {% if g.user.highest_role == "LEAD_ASSESSOR" and state.workflow_status=="COMPLETED" and not flag.is_qa_complete and not (flag and flag.flag_type.name == "STOPPED") %}
-                    {{ mark_qa_complete_button(application_id) }}
-                    {% endif %}
+                {% if g.user.highest_role == "LEAD_ASSESSOR" and state.workflow_status=="COMPLETED" and not flag.is_qa_complete and not (flag and (flag.flag_type.name == "STOPPED" or flag.flag_type.name == "FLAGGED" )) %}
+                {{ mark_qa_complete_button(application_id) }}
+                {% endif %}
             </span>
             <span>
                 {% if is_flaggable and g.user.highest_role in ("ASSESSOR", "LEAD_ASSESSOR") %}
