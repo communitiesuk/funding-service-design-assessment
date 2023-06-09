@@ -1,16 +1,24 @@
-{% macro assessment_flagged(flag, user_info, application_id, current_user_role) %}
+{% macro assessment_flagged(flag, user_info, application_id, current_user_role, state) %}
     <div class="assessment-alert assessment-alert--flagged" role="alert">
         <h1 class="assessment-alert__heading govuk-heading-l">
             {{ flag.flag_type.name | title }}
         </h1>
         <h2 class="govuk-heading-m">Reason</h2>
         <p class="govuk-body">{{ flag.justification }}</p>
-        <h2 class="govuk-heading-m">Section flagged</h2>
-        <p class="govuk-body">{{ flag.section_to_flag }}</p>
+        <h2 class="govuk-heading-m">Section(s) flagged</h2>
+        {% for sub_section_id in flag.sections_to_flag %}
+            {% set sub_section_data = state.get_section_from_sub_criteria_id(sub_section_id) %}
+            {% if sub_section_data %}
+                <p class="govuk-body"><a class="govuk-link govuk-link--no-visited-state" href="{{ url_for('assess_bp.display_sub_criteria',application_id=application_id ,sub_criteria_id=sub_section_id) }}" target="_blank">{{ sub_section_data["sub_section_name"] }}</a> ({{ sub_section_data["parent_section_name"] }}) (Opens in new tab)</p>
+            {% else %}
+                <p class="govuk-body">{{ sub_section_id }}</p>
+            {% endif %}
+        {% endfor %}
         <p class="govuk-body-s">{{ user_info["full_name"] }} ({{ user_info["highest_role"] | all_caps_to_human }}) {{ user_info["email_address"] }}</p>
         <p class="govuk-body-s">{{ flag.date_created | utc_to_bst }}</p>
+        {# TODO: Resolve flag will be removed #}
         {% if current_user_role == "LEAD_ASSESSOR" %}
-            <p class="govuk-body"><a class="govuk-link govuk-link--no-visited-state" href="{{ url_for('assess_bp.resolve_flag',application_id=application_id)}}?section={{ flag.section_to_flag }}">Resolve flag</a></p>
+            <p class="govuk-body"><a class="govuk-link govuk-link--no-visited-state" href="{{ url_for('assess_bp.resolve_flag',application_id=application_id)}}?section={{ flag.sections_to_flag[0] }}">Resolve flag</a></p>
         {% endif %}
     </div>
 {% endmacro %}
