@@ -1,4 +1,4 @@
-{% macro assessment_flagged(flag, user_info, application_id, current_user_role, state) %}
+{% macro assessment_flagged(state, flag, user_info, application_id, current_user_role) %}
     <div class="assessment-alert assessment-alert--flagged" role="alert">
         <h1 class="assessment-alert__heading govuk-heading-l">
             {{ flag.flag_type.name | title }}

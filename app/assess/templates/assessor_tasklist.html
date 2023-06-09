@@ -45,7 +45,7 @@
 {% endif %}
 
 {% if flag and current_user_role in ("ASSESSOR", "LEAD_ASSESSOR") and flag.flag_type.name == "FLAGGED" %}
-    {{ assessment_flagged(flag, flag_user_info, application_id, current_user_role, state) }}
+    {{ assessment_flagged(state, flag, flag_user_info, application_id, current_user_role) }}
 {% elif flag and current_user_role in ("ASSESSOR", "LEAD_ASSESSOR") and display_status == "STOPPED" %}
     {{ assessment_stopped(flag, flag_user_info, application_id, current_user_role) }}
 {% endif %}
