@@ -5,6 +5,7 @@ import pytz
 from app.assess.data import get_assessments_stats
 from app.assess.data import get_rounds
 from app.assess.models.fund import Fund
+from config import Config
 from flask import url_for
 
 
@@ -30,8 +31,8 @@ def create_fund_summaries(fund: Fund) -> list[FundSummary]:
     """Get all the round stats in a fund."""
     summaries = []
     for round in get_rounds(fund.id):
-        # only show closed rounds in assessment
-        if not is_after_today(round.deadline):
+        # only show closed rounds in assessment unless `SHOW_ALL_ROUNDS`==True
+        if Config.SHOW_ALL_ROUNDS or (not is_after_today(round.deadline)):
             round_stats = get_assessments_stats(fund.id, round.id)
             summary = FundSummary(
                 name=round.title,

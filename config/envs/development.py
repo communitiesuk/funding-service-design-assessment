@@ -26,6 +26,7 @@ class DevelopmentConfig(DefaultConfig):
     SSO_LOGOUT_URL = AUTHENTICATOR_HOST + "/sso/logout"
 
     DEBUG_USER_ON = False  # Set to True to use DEBUG user
+    SHOW_ALL_ROUNDS = True  # Set to True to show all rounds
 
     DEBUG_USER_ROLE = getenv(
         "DEBUG_USER_ROLE", "LEAD_ASSESSOR" if DEBUG_USER_ON else ""

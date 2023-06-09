@@ -5,6 +5,7 @@ from os import environ
 from os import getenv
 from pathlib import Path
 
+from distutils.util import strtobool
 from fsd_utils import CommonConfig
 from fsd_utils import configclass
 
@@ -40,6 +41,9 @@ class DefaultConfig:
     LOCAL_SERVICE_NAME = "local_flask"
     ASSESSMENT_HUB_ROUTE = "/assess"
     DASHBOARD_ROUTE = "/assess/assessor_tool_dashboard"
+
+    # Assessement settings
+    SHOW_ALL_ROUNDS = strtobool(getenv("SHOW_ALL_ROUNDS", "False"))
 
     """
     Security
