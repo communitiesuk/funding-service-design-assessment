@@ -15,7 +15,7 @@ class FlagType(Enum):
 class Flag:
     id: str
     justification: str
-    section_to_flag: str
+    sections_to_flag: str
     flag_type: FlagType | str
     application_id: str
     date_created: str

@@ -556,7 +556,7 @@ class TestJinjaMacros(object):
         assessment_flag = {
             "flag_type": {"name": "STOPPED"},
             "justification": "Test justification",
-            "section_to_flag": "Test section",
+            "sections_to_flag": ["Test section"],
             "date_created": "2020-01-01 12:00:00",
         }
 
@@ -639,7 +639,7 @@ class TestJinjaMacros(object):
             flag={
                 "flag_type": {"name": "STOPPED"},
                 "justification": "Test justification",
-                "section_to_flag": "Test section",
+                "sections_to_flag": ["Test section"],
                 "date_created": "2020-01-01 12:00:00",
             },
             user_info={
@@ -682,15 +682,28 @@ class TestJinjaMacros(object):
         ), "Date created paragraph not found"
 
     def test_assessment_flag(self, request_ctx):
+        def get_section_from_sub_criteria_id(self, sub_criteria_id):
+            return {
+                "sub_section_name": sub_criteria_id,
+                "parent_section_name": "Parent Test section",
+            }
+
         rendered_html = render_template_string(
-            "{{assessment_flagged(flag, user_info)}}",
+            "{{assessment_flagged(state, flag, user_info, state)}}",
             assessment_flagged=get_template_attribute(
                 "macros/assessment_flag.html", "assessment_flagged"
             ),
+            state=type(
+                "State",
+                (),
+                {
+                    "get_section_from_sub_criteria_id": get_section_from_sub_criteria_id
+                },
+            )(),
             flag={
                 "flag_type": {"name": "Test flag"},
                 "justification": "Test justification",
-                "section_to_flag": "Test section",
+                "sections_to_flag": ["Test section"],
                 "date_created": "2020-01-01 12:00:00",
             },
             user_info={
@@ -714,11 +727,15 @@ class TestJinjaMacros(object):
             and justification.text == "Test justification"
         ), "Justification not found"
 
-        section_heading = alert_div.find("h2", text="Section flagged")
-        assert section_heading is not None, "Section flagged heading not found"
+        section_heading = alert_div.find("h2", text="Section(s) flagged")
+        assert (
+            section_heading is not None
+        ), "Section(s) flagged heading not found"
         section = section_heading.find_next_sibling("p", class_="govuk-body")
         assert (
-            section is not None and section.text == "Test section"
+            section is not None
+            and section.text
+            == "Test section (Parent Test section) (Opens in new tab)"
         ), "Section not found"
 
         user_info = alert_div.find_all("p", class_="govuk-body-s")

@@ -1,7 +1,9 @@
 {% extends "base.html" %}
+{% from "govuk_frontend_jinja/components/label/macro.html" import govukLabel %}
 {%- from "govuk_frontend_jinja/components/table/macro.html" import govukTable -%}
+{%- from "govuk_frontend_jinja/components/fieldset/macro.html" import govukFieldset -%}
 {%- from "govuk_frontend_jinja/components/textarea/macro.html" import govukTextarea -%}
-{%- from "govuk_frontend_jinja/components/select/macro.html" import govukSelect -%}
+{%- from "govuk_frontend_jinja/components/checkboxes/macro.html" import govukCheckboxes -%}
 {% from "macros/banner_summary.html" import banner_summary %}
 {% set pageHeading = "Flag application" %}
 
@@ -46,12 +48,13 @@
                         to either resolve your query, or stop the assessment.
                     </p>
 
+                    {# Reason for Flagging #}
                     {{ govukTextarea({
                         'id': form.justification.id,
                         'name': form.justification.id,
                         'label': {
                             'text': 'Reason for flagging',
-                            'classes': 'govuk-label govuk-label--s'
+                            'classes': 'govuk-label govuk-label--m'
                         },
                         'errorMessage': {
                             'text': form.errors.get("justification") | join("\n")
@@ -60,42 +63,99 @@
                         'value': form.justification.data or ""
                     }) }}
 
-                    {# Get list of sub-sections from Assessor task list #}
-                    {% set items = [] %}
-                    {% set addFirstItem = items.append({'value': "",
-                                                        'text': "Select section to flag",
-                                                        'disabled': true,
-                                                        'selected': true}) %}
+                    {# Section(s) to Flag #}
+                    <div class="govuk-form-group">
+                        {{ govukLabel({
+                            'name': form.section.id,
+                            'text': 'Section(s) to flag',
+                            'errorMessage': {
+                                'text': form.errors.get("section") | join("\n")
+                            } if form.errors.get("section") else None,
+                            'value': form.section.data or "",
+                            'classes': 'govuk-label govuk-label--m',
+                            'attributes': { 'data-qa': 'select_section_to_flag' },
+                            'for': form.section.id
+                        }) }}
+                        <div class="govuk-hint">Select all that apply</div>
 
-                    {% for sub_section in state.get_sub_sections_metadata() %}
-                        {% if sub_section["section_type"] == "Scored" %}
-                            {# Get list of sub-sections from Scored section #}
-                            {% set addItem = items.append({'value': sub_section["sub_section_id"],
-                                                            'text': sub_section["sub_section_name"] + " (Scored - "+ sub_section["parent_section_name"] + ")",
-                                                            'disabled': false}) %}
-                        {% else %}
-                            {# Get list of sub-sections from Unscored & Declaration sections #}
-                            {% set addItem = items.append({'value': sub_section["sub_section_id"],
-                                                            'text': sub_section["sub_section_name"] + " ("+ sub_section["parent_section_name"] + ")",
-                                                            'disabled': false}) %}
-                        {% endif %}
-                    {% endfor %}
+                        {# Get list of sub-sections from Unscored section #}
+                        {% set items = [] %}
+                        {% for section in state.sections %}
+                            {% if section.name == 'Unscored' %}
+                                {% for sub_section in section.sub_criterias %}
+                                    {% set addItem = items.append({'value': sub_section["id"],
+                                                                    'text': sub_section["name"]}) %}
+                                {% endfor %}
+                            {% endif %}
+                        {% endfor %}
+                        {{ govukCheckboxes({
+                            'idPrefix': form.section.id,
+                            'name': form.section.id,
+                            'fieldset': {
+                                'legend': {
+                                'html': '<h1 class="govuk-fieldset__heading">Unscored</h1>',
+                                'classes': 'govuk-fieldset__legend--s'
+                                }
+                            },
+                            'items': items,
+                            'classes': 'govuk-checkboxes--small'
+                            })
+                        }}
 
-                    {{ govukSelect({
-                        'id': form.section.id,
-                        'name': form.section.id,
-                        'items': items,
-                        'label': {
-                            'text': 'Section to flag',
-                            'classes': 'govuk-label govuk-label--s'
-                        },
-                        'errorMessage': {
-                            'text': form.errors.get("section") | join("\n"),
-                        } if form.errors.get("section") else None,
-                        'value': form.section.data or "",
-                        'attributes': { 'data-qa': 'select_section_to_flag' }
-                    })
-                    }}
+                        {# Get list of sub-sections from Declaration section #}
+                        {% set items = [] %}
+                        {% for section in state.sections %}
+                            {% if section.name == 'Declarations' %}
+                                {% for sub_section in section.sub_criterias %}
+                                    {% set addItem = items.append({'value': sub_section["id"],
+                                                                'text': sub_section["name"]}) %}
+                                {% endfor %}
+                            {% endif %}
+                        {% endfor %}
+                        {{ govukCheckboxes({
+                            'idPrefix': form.section.id,
+                            'name': form.section.id,
+                            'fieldset': {
+                                'legend': {
+                                'html': '<h1 class="govuk-fieldset__heading">Declarations</h1>',
+                                'classes': 'govuk-fieldset__legend--s'
+                                }
+                            },
+                            'items': items,
+                            'classes': 'govuk-checkboxes--small'
+                            })
+                        }}
+
+                        {# Get list of sub-sections from Scored section #}
+                        {% call govukFieldset({
+                                'legend': {
+                                    'html': "<h1 class=\"govuk-fieldset__heading govuk-!-margin-top-5\">Scored</h1>",
+                                    'classes': 'govuk-fieldset__legend--s'
+                                    }
+                                })
+                        %}
+                        {% for section in state.criterias %}
+                            {% set items = [] %}
+                            {% for sub_section in section.sub_criterias %}
+                                {% set addItem = items.append({'value': sub_section["id"],
+                                                            'text': sub_section["name"]}) %}
+                            {% endfor %}
+                            {{ govukCheckboxes({
+                                'idPrefix': form.section.id,
+                                'name': form.section.id,
+                                'fieldset': {
+                                    'legend': {
+                                    'html': "<h1 class=\"govuk-fieldset__heading\">{}</h1>".format(section["name"]),
+                                    'classes': 'govuk-fieldset__legend--s'
+                                    }
+                                },
+                                'items': items,
+                                'classes': 'govuk-checkboxes--small'
+                                })
+                            }}
+                        {% endfor %}
+                        {% endcall %}
+                    </div>
 
                     <div class="govuk-button-group">
                         <button class="govuk-button primary-button"

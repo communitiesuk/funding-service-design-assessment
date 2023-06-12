@@ -11,7 +11,7 @@ FLAGGED_FLAG = Flag.from_dict(
         "flag_type": "FLAGGED",
         "id": "flagid",
         "justification": "string",
-        "section_to_flag": "community",
+        "sections_to_flag": ["community"],
         "user_id": "test@example.com",
         "is_qa_complete": False,
     }
@@ -23,7 +23,7 @@ RESOLVED_FLAG = Flag.from_dict(
         "flag_type": "RESOLVED",
         "id": "flagid",
         "justification": "string",
-        "section_to_flag": "community",
+        "sections_to_flag": ["community"],
         "user_id": "test@example.com",
         "is_qa_complete": False,
     }
@@ -35,7 +35,7 @@ QA_COMPLETE_FLAG = Flag.from_dict(
         "flag_type": "QA_COMPLETED",
         "id": "flagid",
         "justification": "string",
-        "section_to_flag": "community",
+        "sections_to_flag": ["community"],
         "user_id": "test@example.com",
         "is_qa_complete": True,
     }
@@ -47,7 +47,7 @@ STOPPED_FLAG = Flag.from_dict(
         "flag_type": "STOPPED",
         "id": "flagid",
         "justification": "string",
-        "section_to_flag": "community",
+        "sections_to_flag": ["community"],
         "user_id": "test@example.com",
         "is_qa_complete": True,
     }

@@ -562,8 +562,14 @@ class TestRoutes:
         assert b"flagged" not in response.data
         assert b"Flagged" not in response.data
 
+    @pytest.mark.application_id("resolved_app")
     def test_flag_route_submit_flag(
-        self, flask_test_client, mocker, request_ctx
+        self,
+        flask_test_client,
+        mocker,
+        mock_get_assessor_tasklist_state,
+        mock_get_fund,
+        request_ctx,
     ):
         token = create_valid_token(test_lead_assessor_claims)
         flask_test_client.set_cookie("localhost", "fsd_user_token", token)
@@ -572,15 +578,17 @@ class TestRoutes:
         mocker.patch("app.assess.routes.submit_flag", return_value=None)
 
         response = flask_test_client.post(
-            "assess/flag/1",
+            "assess/flag/resolved_app",
             data={
                 "justification": "Test justification",
-                "section": "Test section",
+                "section": "test_sub_criteria_id",
             },
         )
 
         assert response.status_code == 302
-        assert response.headers["Location"] == "/assess/application/1"
+        assert (
+            response.headers["Location"] == "/assess/application/resolved_app"
+        )
 
     @pytest.mark.application_id("flagged_qa_completed_app")
     def test_flag_route_get_resolve_flag(
@@ -620,7 +628,7 @@ class TestRoutes:
                     "flag_type": "RESOLVED",
                     "id": "flagid",
                     "justification": "string",
-                    "section_to_flag": "community",
+                    "sections_to_flag": ["community"],
                     "user_id": "test@example.com",
                 }
             ),
@@ -681,7 +689,7 @@ class TestRoutes:
                     "flag_type": "RESOLVED",
                     "id": "flagid",
                     "justification": "string",
-                    "section_to_flag": "community",
+                    "sections_to_flag": ["community"],
                     "user_id": "test@example.com",
                 }
             ),
@@ -755,7 +763,7 @@ class TestRoutes:
         assert response.status_code == 200
         assert b"Marked as QA complete" in response.data
         assert b"20/02/2023 at 12:00" in response.data
-        assert b"Section flagged" in response.data
+        assert b"Section(s) flagged" in response.data
         assert b"Reason" in response.data
         assert b"Resolve flag" in response.data
 
