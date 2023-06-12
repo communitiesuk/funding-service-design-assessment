@@ -366,7 +366,7 @@ def submit_flag(
         json={
             "application_id": application_id,
             "justification": justification,
-            "section_to_flag": section,
+            "sections_to_flag": section,
             "flag_type": flag_type,
             "user_id": user_id,
         },

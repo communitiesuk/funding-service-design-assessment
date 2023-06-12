@@ -21,7 +21,7 @@ class FlagApplicationForm(FlaskForm):
         choices=None,
         validators=[
             length(max=Config.TEXT_AREA_INPUT_MAX_CHARACTERS),
-            InputRequired(message="Provide which section you are flagging"),
+            InputRequired(message="Provide which section(s) you are flagging"),
         ],
     )
 
