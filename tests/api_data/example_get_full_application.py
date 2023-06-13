@@ -11,7 +11,7 @@ mock_full_application_json = {
             "flag_type": "FLAGGED",
             "id": "60154c82-cecd-4b31-bf66-6aa76d3b42e2",
             "justification": "dx",
-            "section_to_flag": "xd",
+            "sections_to_flag": ["xd"],
             "user_id": "8c747031-3a63-4a0c-ab59-6e18cf227599",
         },
         {
@@ -20,7 +20,7 @@ mock_full_application_json = {
             "flag_type": "STOPPED",
             "id": "55960517-cc8e-4a6e-b137-62e93991ff5f",
             "justification": "xd",
-            "section_to_flag": "section not specified",
+            "sections_to_flag": ["section not specified"],
             "user_id": "8c747031-3a63-4a0c-ab59-6e18cf227599",
         },
         {
@@ -29,7 +29,7 @@ mock_full_application_json = {
             "flag_type": "RESOLVED",
             "id": "dba2a328-cebe-499c-aae8-8298993763c4",
             "justification": "cont",
-            "section_to_flag": "NA",
+            "sections_to_flag": ["NA"],
             "user_id": "8c747031-3a63-4a0c-ab59-6e18cf227599",
         },
         {
@@ -38,7 +38,7 @@ mock_full_application_json = {
             "flag_type": "FLAGGED",
             "id": "9c3e9c14-55b6-4b43-92f7-60080a7f629b",
             "justification": "test",
-            "section_to_flag": "test",
+            "sections_to_flag": ["test"],
             "user_id": "8c747031-3a63-4a0c-ab59-6e18cf227599",
         },
         {
@@ -47,7 +47,7 @@ mock_full_application_json = {
             "flag_type": "RESOLVED",
             "id": "799e43cc-ad70-4638-bf9a-43f2fab497ab",
             "justification": "Automated Flagging This Application",
-            "section_to_flag": "section not specified",
+            "sections_to_flag": ["section not specified"],
             "user_id": "12b62e4b-f07a-47f4-8192-bde1c1bb6dfa",
         },
         {
@@ -56,7 +56,7 @@ mock_full_application_json = {
             "flag_type": "FLAGGED",
             "id": "33caa2b0-d691-45b5-b8ca-4d1cbdbcc625",
             "justification": "Automated Flagging This Application",
-            "section_to_flag": "All",
+            "sections_to_flag": ["All"],
             "user_id": "12b62e4b-f07a-47f4-8192-bde1c1bb6dfa",
         },
         {
@@ -65,7 +65,7 @@ mock_full_application_json = {
             "flag_type": "RESOLVED",
             "id": "3d3c85fb-4e4a-423b-8660-3d0c7e073a59",
             "justification": "Automated Flagging This Application",
-            "section_to_flag": "section not specified",
+            "sections_to_flag": ["section not specified"],
             "user_id": "12b62e4b-f07a-47f4-8192-bde1c1bb6dfa",
         },
         {
@@ -74,7 +74,7 @@ mock_full_application_json = {
             "flag_type": "FLAGGED",
             "id": "7df5af19-28d1-4476-bafc-3a6e0f524aa2",
             "justification": "Automated Flagging This Application",
-            "section_to_flag": "All",
+            "sections_to_flag": ["All"],
             "user_id": "12b62e4b-f07a-47f4-8192-bde1c1bb6dfa",
         },
         {
@@ -83,7 +83,7 @@ mock_full_application_json = {
             "flag_type": "STOPPED",
             "id": "a1db60e3-864e-4733-bb79-3aa3b75762d8",
             "justification": "Automated Flagging This Application",
-            "section_to_flag": "section not specified",
+            "sections_to_flag": ["section not specified"],
             "user_id": "12b62e4b-f07a-47f4-8192-bde1c1bb6dfa",
         },
         {
@@ -92,7 +92,7 @@ mock_full_application_json = {
             "flag_type": "RESOLVED",
             "id": "91895e90-fa64-40e8-ae51-2675113bb3e1",
             "justification": "Automated Restarting The Assessment",
-            "section_to_flag": "NA",
+            "sections_to_flag": ["NA"],
             "user_id": "12b62e4b-f07a-47f4-8192-bde1c1bb6dfa",
         },
         {
@@ -101,7 +101,7 @@ mock_full_application_json = {
             "flag_type": "QA_COMPLETED",
             "id": "31f30178-3baa-4eed-aced-b554cd75e6c5",
             "justification": None,
-            "section_to_flag": None,
+            "sections_to_flag": [None],
             "user_id": "7e26db1d-5086-4da2-aac0-1894d46de6d7",
         },
         {
@@ -110,7 +110,7 @@ mock_full_application_json = {
             "flag_type": "FLAGGED",
             "id": "ae23042d-8a45-4242-913c-17d80b5b5d9e",
             "justification": "test",
-            "section_to_flag": "test",
+            "sections_to_flag": ["test"],
             "user_id": "7e26db1d-5086-4da2-aac0-1894d46de6d7",
         },
         {
@@ -119,7 +119,7 @@ mock_full_application_json = {
             "flag_type": "RESOLVED",
             "id": "94fe51e6-6a20-4d26-adda-cb2c22769187",
             "justification": "test",
-            "section_to_flag": "section not specified",
+            "sections_to_flag": ["section not specified"],
             "user_id": "7e26db1d-5086-4da2-aac0-1894d46de6d7",
         },
         {
@@ -128,7 +128,7 @@ mock_full_application_json = {
             "flag_type": "FLAGGED",
             "id": "43148685-4fdb-4fdd-b93e-f00c1bb4c990",
             "justification": "test",
-            "section_to_flag": "test",
+            "sections_to_flag": ["test"],
             "user_id": "7e26db1d-5086-4da2-aac0-1894d46de6d7",
         },
         {
@@ -137,7 +137,7 @@ mock_full_application_json = {
             "flag_type": "STOPPED",
             "id": "6fab153a-67d7-4da2-a826-88e32938cc87",
             "justification": "test",
-            "section_to_flag": "section not specified",
+            "sections_to_flag": ["section not specified"],
             "user_id": "7e26db1d-5086-4da2-aac0-1894d46de6d7",
         },
         {
@@ -146,7 +146,7 @@ mock_full_application_json = {
             "flag_type": "RESOLVED",
             "id": "aeac70cf-7435-4e1a-82a7-d5335d9ce963",
             "justification": "test",
-            "section_to_flag": "NA",
+            "sections_to_flag": ["NA"],
             "user_id": "7e26db1d-5086-4da2-aac0-1894d46de6d7",
         },
         {
@@ -155,7 +155,7 @@ mock_full_application_json = {
             "flag_type": "FLAGGED",
             "id": "afaedf32-11a5-4982-9a56-f57b23a55ede",
             "justification": "test",
-            "section_to_flag": "test",
+            "sections_to_flag": ["test"],
             "user_id": "7e26db1d-5086-4da2-aac0-1894d46de6d7",
         },
         {
@@ -164,7 +164,7 @@ mock_full_application_json = {
             "flag_type": "RESOLVED",
             "id": "4db7bed4-f002-4b07-b802-391888a35ff4",
             "justification": "test",
-            "section_to_flag": "section not specified",
+            "sections_to_flag": ["section not specified"],
             "user_id": "7e26db1d-5086-4da2-aac0-1894d46de6d7",
         },
     ],
