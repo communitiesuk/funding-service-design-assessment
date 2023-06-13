@@ -543,7 +543,8 @@ def sub_crit_scoring():
 @login_required(roles_required=["LEAD_ASSESSOR"])
 def resolve_flag(application_id):
     form = ResolveFlagForm()
-    section = request.args.get("section_id", "section not specified")
+    # TODO: Resolve flag for multiple sections flag to be implemented
+    section = [request.args.get("section_id", "section not specified")]
     return resolve_application(
         form=form,
         application_id=application_id,
@@ -561,13 +562,14 @@ def resolve_flag(application_id):
 @login_required(roles_required=["LEAD_ASSESSOR"])
 def continue_assessment(application_id):
     form = ContinueApplicationForm()
+    # TODO: Resolve flag for multiple sections flag to be implemented
     return resolve_application(
         form=form,
         application_id=application_id,
         flag=FlagType.RESOLVED.name,
         user_id=g.account_id,
         justification=form.reason.data,
-        section="NA",
+        section=["NA"],
         page_to_render="continue_assessment.html",
     )
 

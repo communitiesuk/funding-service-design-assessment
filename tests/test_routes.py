@@ -581,7 +581,7 @@ class TestRoutes:
             "assess/flag/resolved_app",
             data={
                 "justification": "Test justification",
-                "section": "test_sub_criteria_id",
+                "section": ["test_sub_criteria_id"],
             },
         )
 
@@ -605,7 +605,7 @@ class TestRoutes:
             "application_id"
         ).args[0]
         response = flask_test_client.get(
-            f"assess/resolve_flag/{application_id}?section=org_info",
+            f"assess/resolve_flag/{application_id}?section_id=org_info",
         )
 
         assert response.status_code == 200
@@ -635,7 +635,7 @@ class TestRoutes:
         )
 
         response = flask_test_client.post(
-            "assess/resolve_flag/app_123?section=org_info",
+            "assess/resolve_flag/app_123?section_id=org_info",
             data={
                 "resolution_flag": "RESOLVED",
                 "justification": "Checked with so and so.",
@@ -647,7 +647,7 @@ class TestRoutes:
             "RESOLVED",
             "lead",
             "Checked with so and so.",
-            "section not specified",
+            ["org_info"],
         )
 
         assert response.status_code == 302
@@ -696,7 +696,7 @@ class TestRoutes:
         )
 
         response = flask_test_client.post(
-            "assess/resolve_flag/app_123?section=org_info",
+            "assess/resolve_flag/app_123?section_id=org_info",
             data={
                 "resolution_flag": "RESOLVED",
                 "justification": "We should continue the application.",
@@ -708,7 +708,7 @@ class TestRoutes:
             "RESOLVED",
             "lead",
             "We should continue the application.",
-            "section not specified",
+            ["org_info"],
         )
 
         assert response.status_code == 302
