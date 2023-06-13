@@ -89,7 +89,7 @@
                             {% endif %}
                         {% endfor %}
                         {{ govukCheckboxes({
-                            'idPrefix': form.section.id,
+                            'idPrefix': 'Unscored',
                             'name': form.section.id,
                             'fieldset': {
                                 'legend': {
@@ -113,7 +113,7 @@
                             {% endif %}
                         {% endfor %}
                         {{ govukCheckboxes({
-                            'idPrefix': form.section.id,
+                            'idPrefix': 'Declarations',
                             'name': form.section.id,
                             'fieldset': {
                                 'legend': {
@@ -141,7 +141,7 @@
                                                             'text': sub_section["name"]}) %}
                             {% endfor %}
                             {{ govukCheckboxes({
-                                'idPrefix': form.section.id,
+                                'idPrefix': 'Scored',
                                 'name': form.section.id,
                                 'fieldset': {
                                     'legend': {

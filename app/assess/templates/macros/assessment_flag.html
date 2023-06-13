@@ -18,7 +18,7 @@
         <p class="govuk-body-s">{{ flag.date_created | utc_to_bst }}</p>
         {# TODO: Resolve flag will be removed #}
         {% if current_user_role == "LEAD_ASSESSOR" %}
-            <p class="govuk-body"><a class="govuk-link govuk-link--no-visited-state" href="{{ url_for('assess_bp.resolve_flag',application_id=application_id)}}?section={{ flag.sections_to_flag[0] }}">Resolve flag</a></p>
+            <p class="govuk-body"><a class="govuk-link govuk-link--no-visited-state" href="{{ url_for('assess_bp.resolve_flag',application_id=application_id)}}?section_id={{ flag.sections_to_flag[0] }}">Resolve flag</a></p>
         {% endif %}
     </div>
 {% endmacro %}
