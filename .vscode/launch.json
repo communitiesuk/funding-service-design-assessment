@@ -5,24 +5,20 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Python: Remote Attach (Outside container)",
+      "name": "Docker-Runner assessment",
       "type": "python",
       "request": "attach",
-      "connect": { "host": "localhost", "port": 5689 },
+      "connect": {
+        "host": "localhost",
+        "port": 5689
+      },
       "pathMappings": [
-        { "localRoot": "${workspaceFolder}", "remoteRoot": "." }
+        {
+          "localRoot": "${workspaceFolder}",
+          "remoteRoot": "."
+        }
       ],
-      "justMyCode": false
-    },
-    {
-      "name": "Python: Remote Attach (Inside container)",
-      "type": "python",
-      "request": "attach",
-      "connect": { "host": "localhost", "port": 5678 },
-      "pathMappings": [
-        { "localRoot": "${workspaceFolder}", "remoteRoot": "." }
-      ],
-      "justMyCode": false
+      "justMyCode": true
     },
     {
       "name": "Python: Flask",
@@ -43,6 +39,7 @@
       "host": "localhost",
       "port": 9091,
       "cwd": "${workspaceFolder}",
+      "env": { "PYTHONPATH":"${workspaceFolder}"},
       "envFile": "${workspaceFolder}/.flaskenv",
       "justMyCode": false
   },
@@ -78,7 +75,7 @@
         "-c",
         "pytest.ini",
         "-k",
-        "test_route_fund_dashboard_shows_flagged"
+        "test_post_resolved_flag" // modify this accordingly
     ],
     "justMyCode": false
 },
