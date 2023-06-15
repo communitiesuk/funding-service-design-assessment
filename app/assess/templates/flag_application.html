@@ -73,7 +73,6 @@
                             } if form.errors.get("section") else None,
                             'value': form.section.data or "",
                             'classes': 'govuk-label govuk-label--m',
-                            'attributes': { 'data-qa': 'select_section_to_flag' },
                             'for': form.section.id
                         }) }}
                         <div class="govuk-hint">Select all that apply</div>
@@ -96,6 +95,9 @@
                                 'html': '<h1 class="govuk-fieldset__heading">Unscored</h1>',
                                 'classes': 'govuk-fieldset__legend--s'
                                 }
+                            },
+                            'attributes': {
+                                'data-qa': 'select_section_to_flag'
                             },
                             'items': items,
                             'classes': 'govuk-checkboxes--small'
@@ -120,6 +122,9 @@
                                 'html': '<h1 class="govuk-fieldset__heading">Declarations</h1>',
                                 'classes': 'govuk-fieldset__legend--s'
                                 }
+                            },
+                            'attributes': {
+                                'data-qa': 'select_section_to_flag'
                             },
                             'items': items,
                             'classes': 'govuk-checkboxes--small'
@@ -148,6 +153,9 @@
                                     'html': "<h1 class=\"govuk-fieldset__heading\">{}</h1>".format(section["name"]),
                                     'classes': 'govuk-fieldset__legend--s'
                                     }
+                                },
+                                'attributes': {
+                                    'data-qa': 'select_section_to_flag'
                                 },
                                 'items': items,
                                 'classes': 'govuk-checkboxes--small'
