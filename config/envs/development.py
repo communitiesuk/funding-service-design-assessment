@@ -3,9 +3,7 @@ import logging
 from os import getenv
 
 from config.envs.default import DefaultConfig
-from fsd_utils import CommonConfig  # noqa
 from fsd_utils import configclass
-from fsd_utils.authentication.utils import enable_debug_user
 
 
 @configclass
@@ -29,19 +27,17 @@ class DevelopmentConfig(DefaultConfig):
     DEBUG_USER_ON = False  # Set to True to use DEBUG user
     SHOW_ALL_ROUNDS = True  # Set to True to show all rounds
 
-    DEBUG_USER_ROLE = getenv(
-        "DEBUG_USER_ROLE", "LEAD_ASSESSOR" if DEBUG_USER_ON else None
-    )
-
     if DEBUG_USER_ON:
-        debug_user_config = enable_debug_user(DEBUG_USER_ROLE)
+        DEBUG_USER_ROLE = getenv(
+            "DEBUG_USER_ROLE", "LEAD_ASSESSOR" if DEBUG_USER_ON else None
+        )
         DEBUG_USER = {
-            "full_name": debug_user_config["full_name"],
-            "email": debug_user_config["email"],
-            "roles": debug_user_config["roles"],
+            "full_name": "Development User",
+            "email": "dev@example.com",
+            "roles": DEBUG_USER_ROLE,
             "highest_role": DEBUG_USER_ROLE,
         }
-        DEBUG_USER_ACCOUNT_ID = debug_user_config["account_id"]
+        DEBUG_USER_ACCOUNT_ID = "00000000-0000-0000-0000-000000000000"
 
     # RSA 256 KEYS
     RSA256_PUBLIC_KEY_BASE64 = getenv("RSA256_PUBLIC_KEY_BASE64")
