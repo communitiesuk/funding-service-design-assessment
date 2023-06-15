@@ -35,6 +35,11 @@ def _get_valid_country_roles(short_name) -> bool:
     return all_roles.intersection(uk_countries)
 
 
+def _get_invalid_country_roles(short_name) -> bool:
+    all_roles, uk_countries = _roles_and_countries(short_name)
+    return all_roles.difference(uk_countries)
+
+
 def _has_at_least_one_uk_country(short_name) -> bool:
     return bool(_get_valid_country_roles(short_name))
 
@@ -52,10 +57,12 @@ def has_relevant_country_role(country, short_name) -> bool:
     return bool(all_roles.intersection({f"{short_name}_{country}".upper()}))
 
 
-# will return all country roles the user has access to
-# probably use for filtering database queries/altering stats?
 def get_relevant_country_roles(short_name) -> set[str]:
     return _get_valid_country_roles(short_name)
+
+
+def get_irrelevant_country_roles(short_name) -> set[str]:
+    return _get_invalid_country_roles(short_name)
 
 
 def ensure_location_access(func):
