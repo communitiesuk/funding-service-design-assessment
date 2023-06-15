@@ -5,6 +5,7 @@ from app.assess.data import *
 from app.assess.data import get_application_json
 from app.assess.data import get_application_overviews
 from app.assess.data import get_assessments_stats
+from app.assess.data import get_flag
 from app.assess.data import submit_score_and_justification
 from app.assess.display_value_mappings import assessment_statuses
 from app.assess.display_value_mappings import asset_types
@@ -543,8 +544,11 @@ def sub_crit_scoring():
 @login_required(roles_required=["LEAD_ASSESSOR"])
 def resolve_flag(application_id):
     form = ResolveFlagForm()
-    # TODO: Resolve flag for multiple sections flag to be implemented
-    section = [request.args.get("section_id", "section not specified")]
+    flag_id = request.args.get("flag_id")
+    if not flag_id:
+        abort(404)
+    flag_data = get_flag(flag_id)
+    section = flag_data.sections_to_flag
     return resolve_application(
         form=form,
         application_id=application_id,

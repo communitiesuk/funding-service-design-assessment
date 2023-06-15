@@ -338,6 +338,16 @@ def get_latest_flag(application_id: str) -> Optional[Flag]:
         return None
 
 
+def get_flag(flag_id: str) -> Optional[Flag]:
+    flag = get_data(Config.ASSESSMENT_FLAG_ENDPOINT.format(flag_id=flag_id))
+    if flag:
+        return Flag.from_dict(flag)
+    else:
+        msg = f"flag for id: '{flag_id}' not found."
+        current_app.logger.warn(msg)
+        return None
+
+
 def submit_flag(
     application_id: str,
     flag_type: str,
