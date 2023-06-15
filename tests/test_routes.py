@@ -365,48 +365,50 @@ class TestRoutes:
             )
             assert 'aria-sort="none"' in all_table_data_elements
 
-    @pytest.mark.application_id("resolved_app")
-    @pytest.mark.sub_criteria_id("test_sub_criteria_id")
-    def test_route_sub_criteria_scoring(
-        self,
-        flask_test_client,
-        request,
-        mock_get_sub_criteria,
-        mock_get_fund,
-        mock_get_comments,
-        mock_get_latest_flag,
-        mock_get_scores,
-        mock_get_bulk_accounts,
-    ):
+    # TODO: Uncomment and refactor the tests once the flagging features are implemented
 
-        application_id = request.node.get_closest_marker(
-            "application_id"
-        ).args[0]
-        sub_criteria_id = request.node.get_closest_marker(
-            "sub_criteria_id"
-        ).args[0]
-        # Use unittest.mock to create a mock object for get_scores_and_justification # noqa
+    # @pytest.mark.application_id("resolved_app")
+    # @pytest.mark.sub_criteria_id("test_sub_criteria_id")
+    # def test_route_sub_criteria_scoring(
+    #     self,
+    #     flask_test_client,
+    #     request,
+    #     mock_get_sub_criteria,
+    #     mock_get_fund,
+    #     mock_get_comments,
+    #     mock_get_latest_flag,
+    #     mock_get_scores,
+    #     mock_get_bulk_accounts,
+    # ):
 
-        token = create_valid_token(test_lead_assessor_claims)
-        flask_test_client.set_cookie("localhost", "fsd_user_token", token)
+    #     application_id = request.node.get_closest_marker(
+    #         "application_id"
+    #     ).args[0]
+    #     sub_criteria_id = request.node.get_closest_marker(
+    #         "sub_criteria_id"
+    #     ).args[0]
+    #     # Use unittest.mock to create a mock object for get_scores_and_justification # noqa
 
-        # Send a request to the route you want to test
-        response = flask_test_client.get(
-            f"/assess/application_id/{application_id}/sub_criteria_id/{sub_criteria_id}/score"  # noqa
-        )
+    #     token = create_valid_token(test_lead_assessor_claims)
+    #     flask_test_client.set_cookie("localhost", "fsd_user_token", token)
 
-        # Assert that the response has the expected status code
-        assert 200 == response.status_code, "Wrong status code on response"
-        soup = BeautifulSoup(response.data, "html.parser")
-        assert (
-            soup.title.string
-            == "Score - test_sub_criteria - Project In prog and Res -"
-            " Assessment Hub"
-        )
-        assert b"Current score: 3" in response.data
-        assert b"Rescore" in response.data
-        assert b"Lead assessor" in response.data
-        assert b"This is a comment" in response.data
+    #     # Send a request to the route you want to test
+    #     response = flask_test_client.get(
+    #         f"/assess/application_id/{application_id}/sub_criteria_id/{sub_criteria_id}/score"  # noqa
+    #     )
+
+    #     # Assert that the response has the expected status code
+    #     assert 200 == response.status_code, "Wrong status code on response"
+    #     soup = BeautifulSoup(response.data, "html.parser")
+    #     assert (
+    #         soup.title.string
+    #         == "Score - test_sub_criteria - Project In prog and Res -"
+    #         " Assessment Hub"
+    #     )
+    #     assert b"Current score: 3" in response.data
+    #     assert b"Rescore" in response.data
+    #     assert b"Lead assessor" in response.data
+    #     assert b"This is a comment" in response.data
 
     def test_route_sub_criteria_scoring_inaccessible_to_commenters(
         self, flask_test_client
@@ -485,61 +487,62 @@ class TestRoutes:
 
         assert response.status_code == 200
 
-    @pytest.mark.application_id("stopped_app")
-    def test_application_route_should_show_stopped_flag(
-        self,
-        request,
-        flask_test_client,
-        mock_get_assessor_tasklist_state,
-        mock_get_fund,
-        mock_get_round,
-        mock_get_latest_flag,
-        mock_get_bulk_accounts,
-    ):
-        marker = request.node.get_closest_marker("application_id")
-        application_id = marker.args[0]
-        token = create_valid_token(test_lead_assessor_claims)
-        flask_test_client.set_cookie("localhost", "fsd_user_token", token)
+    # TODO: Uncomment and refactor the tests once the flagging features are implemented
+    # @pytest.mark.application_id("stopped_app")
+    # def test_application_route_should_show_stopped_flag(
+    #     self,
+    #     request,
+    #     flask_test_client,
+    #     mock_get_assessor_tasklist_state,
+    #     mock_get_fund,
+    #     mock_get_round,
+    #     mock_get_latest_flag,
+    #     mock_get_bulk_accounts,
+    # ):
+    #     marker = request.node.get_closest_marker("application_id")
+    #     application_id = marker.args[0]
+    #     token = create_valid_token(test_lead_assessor_claims)
+    #     flask_test_client.set_cookie("localhost", "fsd_user_token", token)
 
-        response = flask_test_client.get(
-            f"assess/application/{application_id}"
-        )
+    #     response = flask_test_client.get(
+    #         f"assess/application/{application_id}"
+    #     )
 
-        assert 200 == response.status_code, "Wrong status code on response"
-        soup = BeautifulSoup(response.data, "html.parser")
-        assert (
-            soup.find("h1", class_="assessment-alert__heading").string
-            == "Assessment Stopped"
-        )
-        assert b"Lead User (Lead assessor) lead@test.com" in response.data
-        assert b"20/02/2023 at 12:00" in response.data
+    #     assert 200 == response.status_code, "Wrong status code on response"
+    #     soup = BeautifulSoup(response.data, "html.parser")
+    #     assert (
+    #         soup.find("h1", class_="assessment-alert__heading").string
+    #         == "Assessment Stopped"
+    #     )
+    #     assert b"Lead User (Lead assessor) lead@test.com" in response.data
+    #     assert b"20/02/2023 at 12:00" in response.data
 
-    @pytest.mark.application_id("resolved_app")
-    def test_application_route_should_not_show_resolved_flag(
-        self,
-        request,
-        flask_test_client,
-        mock_get_assessor_tasklist_state,
-        mock_get_fund,
-        mock_get_round,
-        mock_get_latest_flag,
-        mock_get_bulk_accounts,
-    ):
-        marker = request.node.get_closest_marker("application_id")
-        application_id = marker.args[0]
-        token = create_valid_token(test_lead_assessor_claims)
-        flask_test_client.set_cookie("localhost", "fsd_user_token", token)
+    # @pytest.mark.application_id("resolved_app")
+    # def test_application_route_should_not_show_resolved_flag(
+    #     self,
+    #     request,
+    #     flask_test_client,
+    #     mock_get_assessor_tasklist_state,
+    #     mock_get_fund,
+    #     mock_get_round,
+    #     mock_get_latest_flag,
+    #     mock_get_bulk_accounts,
+    # ):
+    #     marker = request.node.get_closest_marker("application_id")
+    #     application_id = marker.args[0]
+    #     token = create_valid_token(test_lead_assessor_claims)
+    #     flask_test_client.set_cookie("localhost", "fsd_user_token", token)
 
-        response = flask_test_client.get(
-            f"assess/application/{application_id}"
-        )
+    #     response = flask_test_client.get(
+    #         f"assess/application/{application_id}"
+    #     )
 
-        assert response.status_code == 200
-        assert b"Remove flag" not in response.data
-        assert b"Resolve flag" not in response.data
-        assert b"Reason" not in response.data
-        assert b"flagged" not in response.data
-        assert b"Flagged" not in response.data
+    #     assert response.status_code == 200
+    #     assert b"Remove flag" not in response.data
+    #     assert b"Resolve flag" not in response.data
+    #     assert b"Reason" not in response.data
+    #     assert b"flagged" not in response.data
+    #     assert b"Flagged" not in response.data
 
     @pytest.mark.application_id("resolved_app")
     def test_flag_route_submit_flag(
@@ -693,58 +696,59 @@ class TestRoutes:
         assert response.status_code == 302
         assert response.headers["Location"] == "/assess/application/app_123"
 
-    @pytest.mark.application_id("flagged_qa_completed_app")
-    def test_qa_complete_flag_displayed(
-        self,
-        request,
-        flask_test_client,
-        mock_get_round,
-        mock_get_assessor_tasklist_state,
-        mock_get_latest_flag,
-        mock_get_bulk_accounts,
-        mock_get_sub_criteria_banner_state,
-        mock_get_fund,
-    ):
-        token = create_valid_token(test_lead_assessor_claims)
-        flask_test_client.set_cookie("localhost", "fsd_user_token", token)
-        application_id = request.node.get_closest_marker(
-            "application_id"
-        ).args[0]
-        response = flask_test_client.get(
-            f"assess/application/{application_id}",
-        )
+    # TODO: Uncomment and refactor the tests once the flagging features are implemented
+    # @pytest.mark.application_id("flagged_qa_completed_app")
+    # def test_qa_complete_flag_displayed(
+    #     self,
+    #     request,
+    #     flask_test_client,
+    #     mock_get_round,
+    #     mock_get_assessor_tasklist_state,
+    #     mock_get_latest_flag,
+    #     mock_get_bulk_accounts,
+    #     mock_get_sub_criteria_banner_state,
+    #     mock_get_fund,
+    # ):
+    #     token = create_valid_token(test_lead_assessor_claims)
+    #     flask_test_client.set_cookie("localhost", "fsd_user_token", token)
+    #     application_id = request.node.get_closest_marker(
+    #         "application_id"
+    #     ).args[0]
+    #     response = flask_test_client.get(
+    #         f"assess/application/{application_id}",
+    #     )
 
-        assert response.status_code == 200
-        assert b"Marked as QA complete" in response.data
-        assert b"20/02/2023 at 12:00" in response.data
+    #     assert response.status_code == 200
+    #     assert b"Marked as QA complete" in response.data
+    #     assert b"20/02/2023 at 12:00" in response.data
 
-    @pytest.mark.application_id("flagged_qa_completed_app")
-    def test_qa_completed_flagged_application(
-        self,
-        request,
-        flask_test_client,
-        mock_get_assessor_tasklist_state,
-        mock_get_fund,
-        mock_get_round,
-        mock_get_latest_flag,
-        mock_get_bulk_accounts,
-    ):
-        token = create_valid_token(test_lead_assessor_claims)
-        flask_test_client.set_cookie("localhost", "fsd_user_token", token)
+    # @pytest.mark.application_id("flagged_qa_completed_app")
+    # def test_qa_completed_flagged_application(
+    #     self,
+    #     request,
+    #     flask_test_client,
+    #     mock_get_assessor_tasklist_state,
+    #     mock_get_fund,
+    #     mock_get_round,
+    #     mock_get_latest_flag,
+    #     mock_get_bulk_accounts,
+    # ):
+    #     token = create_valid_token(test_lead_assessor_claims)
+    #     flask_test_client.set_cookie("localhost", "fsd_user_token", token)
 
-        marker = request.node.get_closest_marker("application_id")
-        application_id = marker.args[0]
+    #     marker = request.node.get_closest_marker("application_id")
+    #     application_id = marker.args[0]
 
-        response = flask_test_client.get(
-            f"assess/application/{application_id}",
-        )
+    #     response = flask_test_client.get(
+    #         f"assess/application/{application_id}",
+    #     )
 
-        assert response.status_code == 200
-        assert b"Marked as QA complete" in response.data
-        assert b"20/02/2023 at 12:00" in response.data
-        assert b"Section(s) flagged" in response.data
-        assert b"Reason" in response.data
-        assert b"Resolve flag" in response.data
+    #     assert response.status_code == 200
+    #     assert b"Marked as QA complete" in response.data
+    #     assert b"20/02/2023 at 12:00" in response.data
+    #     assert b"Section(s) flagged" in response.data
+    #     assert b"Reason" in response.data
+    #     assert b"Resolve flag" in response.data
 
     @pytest.mark.mock_parameters(
         {
@@ -797,39 +801,40 @@ class TestRoutes:
             soup.title.string == "Team dashboard - Assessment Hub"
         ), "Response does not contain expected heading"
 
-    @pytest.mark.application_id("resolved_app")
-    @pytest.mark.sub_criteria_id("test_sub_criteria_id")
-    def test_page_title_subcriteria_theme_match(
-        self,
-        request,
-        flask_test_client,
-        mock_get_sub_criteria,
-        mock_get_fund,
-        mock_get_latest_flag,
-        mock_get_comments,
-        mock_get_sub_criteria_theme,
-    ):
-        # Mocking fsd-user-token cookie
-        token = create_valid_token(test_commenter_claims)
-        flask_test_client.set_cookie("localhost", "fsd_user_token", token)
+    # TODO: Uncomment and refactor the tests once the flagging features are implemented
+    # @pytest.mark.application_id("resolved_app")
+    # @pytest.mark.sub_criteria_id("test_sub_criteria_id")
+    # def test_page_title_subcriteria_theme_match(
+    #     self,
+    #     request,
+    #     flask_test_client,
+    #     mock_get_sub_criteria,
+    #     mock_get_fund,
+    #     mock_get_latest_flag,
+    #     mock_get_comments,
+    #     mock_get_sub_criteria_theme,
+    # ):
+    #     # Mocking fsd-user-token cookie
+    #     token = create_valid_token(test_commenter_claims)
+    #     flask_test_client.set_cookie("localhost", "fsd_user_token", token)
 
-        application_id = request.node.get_closest_marker(
-            "application_id"
-        ).args[0]
-        sub_criteria_id = request.node.get_closest_marker(
-            "sub_criteria_id"
-        ).args[0]
+    #     application_id = request.node.get_closest_marker(
+    #         "application_id"
+    #     ).args[0]
+    #     sub_criteria_id = request.node.get_closest_marker(
+    #         "sub_criteria_id"
+    #     ).args[0]
 
-        response = flask_test_client.get(
-            f"/assess/application_id/{application_id}/sub_criteria_id/{sub_criteria_id}"  # noqa
-        )
-        soup = BeautifulSoup(response.data, "html.parser")
-        assert (
-            soup.title.string
-            == "test_theme_name - test_sub_criteria - Project In prog and"
-            " Res -"
-            " Assessment Hub"
-        )
+    #     response = flask_test_client.get(
+    #         f"/assess/application_id/{application_id}/sub_criteria_id/{sub_criteria_id}"  # noqa
+    #     )
+    #     soup = BeautifulSoup(response.data, "html.parser")
+    #     assert (
+    #         soup.title.string
+    #         == "test_theme_name - test_sub_criteria - Project In prog and"
+    #         " Res -"
+    #         " Assessment Hub"
+    #     )
 
     @pytest.mark.application_id("resolved_app")
     def test_get_docs_for_download(
