@@ -29,7 +29,7 @@ class DevelopmentConfig(DefaultConfig):
     SHOW_ALL_ROUNDS = True  # Set to True to show all rounds
 
     DEBUG_USER_ROLE = getenv(
-        "DEBUG_USER_ROLE", "COMMENTER" if DEBUG_USER_ON else ""
+        "DEBUG_USER_ROLE", "LEAD_ASSESSOR" if DEBUG_USER_ON else ""
     )
 
     # CUSTOM_ROLE = "COF_WALES"
@@ -42,6 +42,7 @@ class DevelopmentConfig(DefaultConfig):
         "email": "dev@example.com",
         "roles": [
             "LEAD_ASSESSOR",
+            "ASSESSOR",
             "COF_ENGLAND",
         ],  # should only be able to access english apps, 403 all others
         "highest_role": "LEAD_ASSESSOR",

@@ -6,8 +6,8 @@ from invoke import task
 @task
 def copy_styles(c):
 
-    source_path = "./app/static/src/styles/"
-    dist_path = "./app/static/dist/styles/"
+    source_path = "./app/static/src/"
+    dist_path = "./app/static/dist/"
 
     shutil.copytree(source_path, dist_path, dirs_exist_ok=True)
     print("Copied styles from " + source_path + " to " + dist_path)
