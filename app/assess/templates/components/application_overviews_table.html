@@ -147,6 +147,12 @@
                   {{ overview.flags[-1].flag_type | capitalize }}
                 </span>
                 {% elif overview.flags
+                  and overview.flags[-1].flag_type == "FLAGGED" and overview.flags[-1].sections_to_flag|length > 1
+                %}
+                <span class="flagged-tag">
+                  {{ "Multiple Flags Applied" | capitalize }}
+                </span>
+                {% elif overview.flags
                   and overview.flags[-1].flag_type == "FLAGGED"
                 %}
                 <span class="flagged-tag">
