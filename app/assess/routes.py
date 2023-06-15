@@ -1,6 +1,7 @@
 from datetime import datetime
 from urllib.parse import quote_plus
 
+from app.assess.auth.validation import ensure_location_access
 from app.assess.data import *
 from app.assess.data import get_application_json
 from app.assess.data import get_application_overviews
@@ -36,7 +37,6 @@ from flask import Blueprint
 from flask import g
 from flask import redirect
 from flask import render_template
-from flask import request
 from flask import Response
 from flask import url_for
 from fsd_utils.authentication.decorators import login_required
@@ -53,6 +53,7 @@ assess_bp = Blueprint(
     "/application_id/<application_id>/sub_criteria_id/<sub_criteria_id>",
     methods=["POST", "GET"],
 )
+@ensure_location_access
 def display_sub_criteria(
     application_id,
     sub_criteria_id,
@@ -143,6 +144,7 @@ def display_sub_criteria(
     methods=["POST", "GET"],
 )
 @login_required(roles_required=["LEAD_ASSESSOR", "ASSESSOR"])
+@ensure_location_access
 def score(
     application_id,
     sub_criteria_id,
@@ -232,6 +234,7 @@ def score(
     methods=["GET", "POST"],
 )
 @login_required(roles_required=["ASSESSOR"])
+@ensure_location_access
 def flag(application_id):
 
     # Get assessor tasks list
@@ -284,6 +287,7 @@ def flag(application_id):
 
 @assess_bp.route("/qa_complete/<application_id>", methods=["GET", "POST"])
 @login_required(roles_required=["LEAD_ASSESSOR"])
+@ensure_location_access
 def qa_complete(application_id):
     """
     QA complete form html page:
@@ -367,6 +371,7 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
         "search_in": "project_name,short_id",
         "asset_type": "ALL",
         "status": "ALL",
+        # TODO(tferns): Add a location filter too based on roles.
     }
     show_clear_filters = False
     if "clear_filters" not in request.args:
@@ -446,6 +451,7 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
 
 
 @assess_bp.route("/application/<application_id>", methods=["GET", "POST"])
+@ensure_location_access
 def application(application_id):
     """
     Application summary page
@@ -541,6 +547,7 @@ def sub_crit_scoring():
 
 @assess_bp.route("/resolve_flag/<application_id>", methods=["GET", "POST"])
 @login_required(roles_required=["LEAD_ASSESSOR"])
+@ensure_location_access
 def resolve_flag(application_id):
     form = ResolveFlagForm()
     section = request.args.get("section_id", "section not specified")
@@ -559,6 +566,7 @@ def resolve_flag(application_id):
     "/continue_assessment/<application_id>", methods=["GET", "POST"]
 )
 @login_required(roles_required=["LEAD_ASSESSOR"])
+@ensure_location_access
 def continue_assessment(application_id):
     form = ContinueApplicationForm()
     return resolve_application(
@@ -574,6 +582,7 @@ def continue_assessment(application_id):
 
 @assess_bp.route("/application/<application_id>/export", methods=["GET"])
 @login_required(roles_required=["LEAD_ASSESSOR"])
+@ensure_location_access
 def generate_doc_list_for_download(application_id):
     current_app.logger.info(
         f"Generating docs for application id {application_id}"
@@ -616,6 +625,7 @@ def generate_doc_list_for_download(application_id):
 
 @assess_bp.route("/application/<application_id>/export/<short_id>/answers.txt")
 @login_required(roles_required=["LEAD_ASSESSOR"])
+@ensure_location_access
 def download_application_answers(application_id: str, short_id: str):
     current_app.logger.info(
         f"Generating application Q+A download for application {application_id}"
@@ -635,6 +645,7 @@ def download_application_answers(application_id: str, short_id: str):
     methods=["GET"],
 )
 @login_required
+@ensure_location_access
 def get_file(application_id: str, file_name: str):
     short_id = request.args.get("short_id")
     data, mimetype = get_file_for_download_from_aws(

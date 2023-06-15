@@ -250,8 +250,15 @@ def get_assessor_task_list_state(application_id: str) -> Union[dict, None]:
     )
 
     metadata = get_data(overviews_endpoint)
-
     return metadata
+
+
+def get_application_metadata(application_id: str) -> Union[dict, None]:
+    application_endpoint = Config.ASSESSMENT_METADATA_ENDPOINT.format(
+        application_id=application_id
+    )
+    application_metadata = get_data(application_endpoint)
+    return application_metadata
 
 
 def get_questions(application_id):

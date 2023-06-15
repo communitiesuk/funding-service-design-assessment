@@ -15,6 +15,16 @@ from flask import url_for
 from fsd_utils import NotifyConstants
 
 
+def get_application_id_from_request():
+    application_id = (
+        request.view_args.get("application_id")
+        or request.view_args.get("application")
+        or request.args.get("application_id")
+        or request.args.get("application")
+    )
+    return application_id
+
+
 def determine_display_status(
     workflow_status: str,
     latest_flag: Optional[Flag] = None,

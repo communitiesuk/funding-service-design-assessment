@@ -25,22 +25,26 @@ class DevelopmentConfig(DefaultConfig):
     SSO_LOGIN_URL = AUTHENTICATOR_HOST + "/sso/login"
     SSO_LOGOUT_URL = AUTHENTICATOR_HOST + "/sso/logout"
 
-    DEBUG_USER_ON = False  # Set to True to use DEBUG user
+    DEBUG_USER_ON = True  # Set to True to use DEBUG user
     SHOW_ALL_ROUNDS = True  # Set to True to show all rounds
 
     DEBUG_USER_ROLE = getenv(
-        "DEBUG_USER_ROLE", "LEAD_ASSESSOR" if DEBUG_USER_ON else ""
+        "DEBUG_USER_ROLE", "COMMENTER" if DEBUG_USER_ON else ""
     )
+
+    # CUSTOM_ROLE = "COF_WALES"
+    # CUSTOM_ROLE = "COF_SCOTLAND"
+    # CUSTOM_ROLE = "COF_ENGLAND"
+    # CUSTOM_ROLE = "COF_NORTHERNIRELAND"
 
     DEBUG_USER = {
         "full_name": "Development User",
         "email": "dev@example.com",
-        "roles": {
-            "LEAD_ASSESSOR": ["LEAD_ASSESSOR", "ASSESSOR", "COMMENTER"],
-            "ASSESSOR": ["ASSESSOR", "COMMENTER"],
-            "COMMENTER": ["COMMENTER"],
-        }.get(DEBUG_USER_ROLE),
-        "highest_role": DEBUG_USER_ROLE,
+        "roles": [
+            "LEAD_ASSESSOR",
+            "COF_ENGLAND",
+        ],  # should only be able to access english apps, 403 all others
+        "highest_role": "LEAD_ASSESSOR",
     }
 
     # RSA 256 KEYS
