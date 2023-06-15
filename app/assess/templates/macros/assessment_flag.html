@@ -52,7 +52,7 @@
     {% endfor %}
 {% endmacro %}
 
-{% macro assessment_stopped(flags, user_info, application_id, current_user_role) %}
+{% macro assessment_stopped(flag, user_info, application_id, current_user_role) %}
 
     <div class="assessment-alert assessment-alert--stopped" role="alert">
         <h1 class="assessment-alert__heading govuk-heading-l">Assessment {{ flag.flag_type.name | title }}</h1>
