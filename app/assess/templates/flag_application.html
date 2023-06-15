@@ -73,7 +73,6 @@
                             } if form.errors.get("section") else None,
                             'value': form.section.data or "",
                             'classes': 'govuk-label govuk-label--m',
-                            'attributes': { 'data-qa': 'select_section_to_flag' },
                             'for': form.section.id
                         }) }}
                         <div class="govuk-hint">Select all that apply</div>
@@ -97,6 +96,7 @@
                                 'classes': 'govuk-fieldset__legend--s'
                                 }
                             },
+                            'attributes': {'data-qa': 'select_unscored_section_to_flag'},
                             'items': items,
                             'classes': 'govuk-checkboxes--small'
                             })
@@ -121,6 +121,7 @@
                                 'classes': 'govuk-fieldset__legend--s'
                                 }
                             },
+                            'attributes': {'data-qa': 'select_declaration_section_to_flag'},
                             'items': items,
                             'classes': 'govuk-checkboxes--small'
                             })
@@ -149,6 +150,7 @@
                                     'classes': 'govuk-fieldset__legend--s'
                                     }
                                 },
+                                'attributes': {'data-qa': 'select_scored_section_to_flag'},
                                 'items': items,
                                 'classes': 'govuk-checkboxes--small'
                                 })
