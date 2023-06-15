@@ -9,6 +9,7 @@ from app.assess.models.application import Application
 from app.assess.models.banner import Banner
 from app.assess.models.comment import Comment
 from app.assess.models.flag import Flag
+from app.assess.models.flag import Flags
 from app.assess.models.fund import Fund
 from app.assess.models.round import Round
 from app.assess.models.score import Score
@@ -334,6 +335,18 @@ def get_latest_flag(application_id: str) -> Optional[Flag]:
         return Flag.from_dict(flag)
     else:
         msg = f"flag for application: '{application_id}' not found."
+        current_app.logger.warn(msg)
+        return None
+
+
+def get_flags(application_id: str) -> Optional[Flag]:
+    flags = get_data(
+        Config.ASSESSMENT_FLAGS_ENDPOINT.format(application_id=application_id)
+    )
+    if flags:
+        return Flags.from_dict(flags)
+    else:
+        msg = f"List flag for application: '{application_id}' not found."
         current_app.logger.warn(msg)
         return None
 

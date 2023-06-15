@@ -323,13 +323,20 @@ mock_api_results = {
     "assessment_store/flag?application_id=resolved_app": resolved_app["flags"][
         -1
     ],
+    "assessment_store/flags?application_id=resolved_app": resolved_app[
+        "flags"
+    ],
     "assessment_store/flag?application_id=stopped_app": stopped_app["flags"][
         -1
     ],
+    "assessment_store/flags?application_id=stopped_app": stopped_app["flags"],
     "assessment_store/flag?application_id=flagged_qa_completed_app": flagged_qa_completed_app[
         "flags"
     ][
         -1
+    ],
+    "assessment_store/flags?application_id=flagged_qa_completed_app": flagged_qa_completed_app[
+        "flags"
     ],
     "account_store/bulk-accounts": {
         test_user_id_lead_assessor: {

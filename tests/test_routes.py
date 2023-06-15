@@ -465,27 +465,6 @@ class TestRoutes:
             200 == response.status_code
         ), "Healthcheck route should be accessible"
 
-    @pytest.mark.application_id("flagged_qa_completed_app")
-    def test_flag_route_already_flagged(
-        self,
-        request,
-        flask_test_client,
-        mock_get_latest_flag,
-        mock_get_assessor_tasklist_state,
-        mock_get_sub_criteria_banner_state,
-        mock_get_fund,
-    ):
-
-        application_id = request.node.get_closest_marker(
-            "application_id"
-        ).args[0]
-        token = create_valid_token(test_lead_assessor_claims)
-        flask_test_client.set_cookie("localhost", "fsd_user_token", token)
-
-        response = flask_test_client.get(f"assess/flag/{application_id}")
-
-        assert response.status_code == 400
-
     @pytest.mark.application_id("resolved_app")
     def test_flag_route_works_for_application_with_latest_resolved_flag(
         self,

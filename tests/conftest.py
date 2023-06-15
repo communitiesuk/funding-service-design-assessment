@@ -419,6 +419,24 @@ def mock_get_latest_flag(request):
 
 
 @pytest.fixture(scope="function")
+def mock_get_flags(request):
+    from app.assess.models.flag import Flags
+
+    marker = request.node.get_closest_marker("application_id")
+    application_id = marker.args[0]
+
+    mock_flag_info = Flags.from_dict(
+        mock_api_results[
+            f"assessment_store/flags?application_id={application_id}"
+        ]
+    )
+    with (
+        mock.patch("app.assess.routes.get_flags", return_value=mock_flag_info)
+    ):
+        yield
+
+
+@pytest.fixture(scope="function")
 def mock_get_bulk_accounts(request):
     mock_bulk_accounts = mock_api_results["account_store/bulk-accounts"]
     with (

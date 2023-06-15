@@ -508,10 +508,12 @@ class TestJinjaMacros(object):
         funding_amount_requested = 123456.78
         workflow_status = "SUBMITTED"
         assessment_flag = None
+        assessment_status = ""
 
         rendered_html = render_template_string(
             "{{ banner_summary(fund_name, project_reference, project_name,"
-            " funding_amount_requested, workflow_status, flag) }}",
+            " funding_amount_requested, assessment_status, flag,"
+            " assessment_status) }}",
             banner_summary=get_template_attribute(
                 "macros/banner_summary.html", "banner_summary"
             ),
@@ -519,8 +521,10 @@ class TestJinjaMacros(object):
             project_reference=project_reference,
             project_name=project_name,
             funding_amount_requested=funding_amount_requested,
-            workflow_status=workflow_status,
+            display_status=workflow_status,
+            user_role=None,
             flag=assessment_flag,
+            assessment_status=assessment_status,
         )
 
         soup = BeautifulSoup(rendered_html, "html.parser")

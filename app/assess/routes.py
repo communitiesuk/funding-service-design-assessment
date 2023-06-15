@@ -93,7 +93,9 @@ def display_sub_criteria(
         )
 
     fund = get_fund(Config.COF_FUND_ID)
+    # TODO: should we remove "get_latest_flag" once multiple flags feature set up?
     flag = get_latest_flag(application_id)
+    flags = get_flags(application_id)
 
     comment_response = get_comments(
         application_id=application_id,
@@ -121,6 +123,7 @@ def display_sub_criteria(
         "comment_form": comment_form,
         "current_theme": current_theme,
         "display_status": display_status,
+        "flags": flags,
     }
 
     theme_answers_response = get_sub_criteria_theme_answers(
@@ -154,7 +157,9 @@ def score(
     if not sub_criteria.is_scored:
         abort(404)
     fund = get_fund(Config.COF_FUND_ID)
+    # TODO: should we remove "get_latest_flag" once multiple flags feature set up?
     flag = get_latest_flag(application_id)
+    flags = get_flags(application_id)
 
     comment_response = get_comments(
         application_id=application_id,
@@ -223,6 +228,7 @@ def score(
         comments=theme_matched_comments,
         display_status=display_status,
         flag=flag,
+        flags=flags,
         is_flaggable=is_flaggable(flag),
     )
 
@@ -260,20 +266,12 @@ def flag(application_id):
                 application_id=application_id,
             )
         )
-
-    flag = get_latest_flag(application_id)
-    if flag and flag.flag_type not in (
-        FlagType.RESOLVED,
-        FlagType.QA_COMPLETED,
-    ):
-        abort(400, "Application already flagged")
     sub_criteria_banner_state = get_sub_criteria_banner_state(application_id)
 
     return render_template(
         "flag_application.html",
         application_id=application_id,
         fund=fund,
-        flag=flag,
         sub_criteria=sub_criteria_banner_state,
         form=form,
         display_status=sub_criteria_banner_state.workflow_status,
@@ -469,6 +467,9 @@ def application(application_id):
     assessor_task_list_metadata["fund_name"] = fund.name
 
     state = AssessorTaskList.from_json(assessor_task_list_metadata)
+    flags = get_flags(application_id)
+
+    # TODO: should we remove "get_latest_flag" once multiple flags feature set up?
     flag = get_latest_flag(application_id)
     if flag:
         accounts = get_bulk_accounts_dict([flag.user_id])
@@ -497,6 +498,7 @@ def application(application_id):
         state=state,
         application_id=application_id,
         flag=flag,
+        flags=flags,
         current_user_role=g.user.highest_role,
         fund_short_name=fund.short_name,
         round_short_name=round.short_name,
