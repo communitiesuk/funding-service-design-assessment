@@ -1,7 +1,8 @@
 #-----------------------------------
 #   FSD Utils
 #-----------------------------------
-funding-service-design-utils>=2.0.1,<2.1.0
+# funding-service-design-utils>=2.0.1,<2.1.0
+git+https://github.com/communitiesuk/funding-service-design-utils.git@fs-2291-debug-user
 requests
 
 #-----------------------------------
