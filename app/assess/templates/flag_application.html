@@ -141,7 +141,7 @@
                                                             'text': sub_section["name"]}) %}
                             {% endfor %}
                             {{ govukCheckboxes({
-                                'idPrefix': 'Scored',
+                                'idPrefix': section["name"],
                                 'name': form.section.id,
                                 'fieldset': {
                                     'legend': {
