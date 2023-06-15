@@ -543,11 +543,20 @@ def sub_crit_scoring():
 @assess_bp.route("/resolve_flag/<application_id>", methods=["GET", "POST"])
 @login_required(roles_required=["LEAD_ASSESSOR"])
 def resolve_flag(application_id):
+    # from govuk_frontend_jinja
+
     form = ResolveFlagForm()
     flag_id = request.args.get("flag_id")
+
     if not flag_id:
         abort(404)
     flag_data = get_flag(flag_id)
+    assessor_task_list_metadata = get_assessor_task_list_state(
+        flag_data.application_id
+    )
+    fund = get_fund(assessor_task_list_metadata["fund_id"])
+    assessor_task_list_metadata["fund_name"] = fund.name
+    state = AssessorTaskList.from_json(assessor_task_list_metadata)
     section = flag_data.sections_to_flag
     return resolve_application(
         form=form,
@@ -557,6 +566,8 @@ def resolve_flag(application_id):
         justification=form.justification.data,
         section=section,
         page_to_render="resolve_flag.html",
+        state=state,
+        reason_to_flag=flag_data.justification,
     )
 
 

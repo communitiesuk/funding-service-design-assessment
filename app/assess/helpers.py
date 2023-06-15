@@ -38,7 +38,15 @@ def is_flaggable(latest_flag: Optional[Flag]):
 
 
 def resolve_application(
-    form, application_id, flag, user_id, justification, section, page_to_render
+    form,
+    application_id,
+    flag,
+    user_id,
+    justification,
+    section,
+    page_to_render,
+    state,
+    reason_to_flag,
 ):
     """This function is used to resolve an application
       by submitting a flag, justification, and section for the application.
@@ -82,6 +90,10 @@ def resolve_application(
         form=form,
         referrer=request.referrer,
         display_status=display_status,
+        state=state,
+        flag=flag,
+        sections_to_flag=section,
+        reason_to_flag=reason_to_flag,
     )
 
 
