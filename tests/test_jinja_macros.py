@@ -292,8 +292,8 @@ class TestJinjaMacros(object):
             {
                 "question": "Test Caption",
                 "answer": [
-                    ["Test Description", ["first", "second"]],
-                    ["Test Amount", [100, 50.25]],
+                    ["Test Description", ["first", "second"], "text"],
+                    ["Test Amount", [100, 50.25], "currency"],
                 ],
             }
         )
