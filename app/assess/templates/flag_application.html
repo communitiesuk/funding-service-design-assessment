@@ -64,7 +64,7 @@
                     }) }}
 
                     {# Section(s) to Flag #}
-                    <div class="govuk-form-group">
+                    <div class="{{ 'govuk-form-group govuk-form-group--error' if form.errors.get('section') else 'govuk-form-group' }}" id="{{ form.section.id }}">
                         {{ govukLabel({
                             'name': form.section.id,
                             'text': 'Section(s) to flag',
@@ -77,6 +77,12 @@
                             'for': form.section.id
                         }) }}
                         <div class="govuk-hint">Select all that apply</div>
+
+                        {% if form.errors.get("section") %}
+                            <p id="section-error" name="{{ form.section.id }}" class="govuk-error-message" >
+                            <span class="govuk-visually-hidden">Error:</span> {{ form.errors.get("section")[0] }}
+                            </p>
+                        {% endif %}
 
                         {# Get list of sub-sections from Unscored section #}
                         {% set items = [] %}
