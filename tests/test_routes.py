@@ -487,11 +487,13 @@ class TestRoutes:
         assert response.status_code == 400
 
     @pytest.mark.application_id("resolved_app")
+    @pytest.mark.flag_id("resolved_app")
     def test_flag_route_works_for_application_with_latest_resolved_flag(
         self,
         request,
         flask_test_client,
         mock_get_latest_flag,
+        mock_get_flag,
         mock_get_assessor_tasklist_state,
         mock_get_sub_criteria_banner_state,
         mock_get_fund,
@@ -591,11 +593,14 @@ class TestRoutes:
         )
 
     @pytest.mark.application_id("flagged_qa_completed_app")
+    @pytest.mark.flag_id("flagged_qa_completed_app")
     def test_flag_route_get_resolve_flag(
         self,
         request,
         flask_test_client,
         mock_get_latest_flag,
+        mock_get_flag,
+        mock_get_assessor_tasklist_state,
         mock_get_sub_criteria_banner_state,
         mock_get_fund,
     ):
@@ -604,8 +609,9 @@ class TestRoutes:
         application_id = request.node.get_closest_marker(
             "application_id"
         ).args[0]
+        flag_id = request.node.get_closest_marker("flag_id").args[0]
         response = flask_test_client.get(
-            f"assess/resolve_flag/{application_id}?section_id=org_info",
+            f"assess/resolve_flag/{application_id}?flag_id={flag_id}",
         )
 
         assert response.status_code == 200
@@ -616,26 +622,41 @@ class TestRoutes:
         soup = BeautifulSoup(response.data, "html.parser")
         assert soup.title.string == "Resolve flag - Assessment Hub"
 
-    def test_post_resolved_flag(self, flask_test_client, mocker):
+    @pytest.mark.application_id("flagged_app")
+    @pytest.mark.flag_id("flagged_app")
+    def test_post_resolved_flag(
+        self,
+        request,
+        flask_test_client,
+        mocker,
+        mock_get_latest_flag,
+        mock_get_flag,
+        mock_get_assessor_tasklist_state,
+        mock_get_fund,
+    ):
         token = create_valid_token(test_lead_assessor_claims)
         flask_test_client.set_cookie("localhost", "fsd_user_token", token)
+        application_id = request.node.get_closest_marker(
+            "application_id"
+        ).args[0]
+        flag_id = request.node.get_closest_marker("flag_id").args[0]
         mocker.patch(
             "app.assess.helpers.submit_flag",
             return_value=Flag.from_dict(
                 {
-                    "application_id": "app_123",
+                    "application_id": application_id,
                     "date_created": "2023-01-01T00:00:00",
                     "flag_type": "RESOLVED",
                     "id": "flagid",
-                    "justification": "string",
-                    "sections_to_flag": ["community"],
-                    "user_id": "test@example.com",
+                    "justification": "Checked with so and so.",
+                    "sections_to_flag": ["Test section"],
+                    "user_id": "test_user_lead_assessor",
                 }
             ),
         )
 
         response = flask_test_client.post(
-            "assess/resolve_flag/app_123?section_id=org_info",
+            f"assess/resolve_flag/{application_id}?flag_id={flag_id}",
             data={
                 "resolution_flag": "RESOLVED",
                 "justification": "Checked with so and so.",
@@ -643,15 +664,18 @@ class TestRoutes:
         )
         app.assess.helpers.submit_flag.assert_called_once()
         app.assess.helpers.submit_flag.assert_called_once_with(
-            "app_123",
+            application_id,
             "RESOLVED",
             "lead",
             "Checked with so and so.",
-            ["org_info"],
+            ["Test section"],
         )
 
         assert response.status_code == 302
-        assert response.headers["Location"] == "/assess/application/app_123"
+        assert (
+            response.headers["Location"]
+            == f"/assess/application/{application_id}"
+        )
 
     @pytest.mark.application_id("stopped_app")
     def test_flag_route_get_continue_application(
@@ -689,17 +713,16 @@ class TestRoutes:
                     "flag_type": "RESOLVED",
                     "id": "flagid",
                     "justification": "string",
-                    "sections_to_flag": ["community"],
+                    "sections_to_flag": ["NA"],
                     "user_id": "test@example.com",
                 }
             ),
         )
 
         response = flask_test_client.post(
-            "assess/resolve_flag/app_123?section_id=org_info",
+            "assess/continue_assessment/app_123",
             data={
-                "resolution_flag": "RESOLVED",
-                "justification": "We should continue the application.",
+                "reason": "We should continue the application.",
             },
         )
         app.assess.helpers.submit_flag.assert_called_once()
@@ -708,7 +731,7 @@ class TestRoutes:
             "RESOLVED",
             "lead",
             "We should continue the application.",
-            ["org_info"],
+            ["NA"],
         )
 
         assert response.status_code == 302
