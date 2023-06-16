@@ -9,6 +9,37 @@ test_user_id_commenter = "test_user_commenter"
 test_funding_requested = 5000.0
 
 # application specific config
+flagged_app_id = "flagged_app"
+flagged_app = {
+    "id": flagged_app_id,
+    "workflow_status": "IN_PROGRESS",
+    "project_name": "Project In prog and Res",
+    "short_id": "INP",
+    "flags": [
+        {
+            "id": "1c5e8bea-f5ed-4b74-8823-e64fec27a7db",
+            "flag_type": "FLAGGED",
+            "application_id": flagged_app_id,
+            "date_created": "2023-02-19 12:00:00",
+            "justification": "Test",
+            "sections_to_flag": ["Test section"],
+            "user_id": test_user_id_lead_assessor,
+        },
+    ],
+    "criteria_sub_criteria_name": "test_sub_criteria",
+    "criteria_sub_criteria_id": "test_sub_criteria_id",
+    "theme_id": "test_theme_id",
+    "theme_name": "test_theme_name",
+    "mock_field": {
+        "answer": "Yes",
+        "field_id": "JCACTy",
+        "field_type": "yesNoField",
+        "form_name": "community-engagement",
+        "presentation_type": "text",
+        "question": "Have you done any fundraising in the community?",
+    },
+}
+
 resolved_app_id = "resolved_app"
 resolved_app = {
     "id": resolved_app_id,
@@ -290,6 +321,36 @@ mock_api_results = {
         "fund_id": test_fund_id,
         "round_id": test_round_id,
     },
+    "assessment_store/application_overviews/flagged_app": {
+        "criterias": [
+            {
+                "name": "string",
+                "sub_criterias": [
+                    {
+                        "id": flagged_app["criteria_sub_criteria_id"],
+                        "name": flagged_app["criteria_sub_criteria_name"],
+                        "theme_count": 1,
+                        "score": 4,
+                        "status": "string",
+                    }
+                ],
+                "total_criteria_score": 4,
+                "total_criteria_score_possible": 5,
+                "weighting": 0,
+            }
+        ],
+        "sections": [
+            {
+                "name": "string",
+                "sub_criterias": [{"id": "string", "name": "string"}],
+            }
+        ],
+        "project_name": flagged_app["project_name"],
+        "short_id": flagged_app["short_id"],
+        "workflow_status": flagged_app["workflow_status"],
+        "fund_id": test_fund_id,
+        "round_id": test_round_id,
+    },
     "assessment_store/application_overviews/flagged_qa_completed_app": {
         "criterias": [],
         "sections": [],
@@ -320,6 +381,19 @@ mock_api_results = {
         "workflow_status": flagged_qa_completed_app["workflow_status"],
         "fund_id": test_fund_id,
     },
+    "assessment_store/flag_data?flag_id=flagged_app": flagged_app["flags"][-1],
+    "assessment_store/flag_data?flag_id=resolved_app": resolved_app["flags"][
+        -1
+    ],
+    "assessment_store/flag_data?flag_id=stopped_app": stopped_app["flags"][-1],
+    "assessment_store/flag_data?flag_id=flagged_qa_completed_app": flagged_qa_completed_app[
+        "flags"
+    ][
+        -1
+    ],
+    "assessment_store/flag?application_id=flagged_app": flagged_app["flags"][
+        -1
+    ],
     "assessment_store/flag?application_id=resolved_app": resolved_app["flags"][
         -1
     ],

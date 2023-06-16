@@ -15,6 +15,7 @@ from app.assess.models.ui.applicants_response import (
     FormattedBesideQuestionAnswerPair,
 )
 from app.assess.models.ui.applicants_response import MonetaryKeyValues
+from app.assess.models.ui.applicants_response import NewAddAnotherTable
 from app.assess.models.ui.applicants_response import (
     QuestionAboveHrefAnswerList,
 )
@@ -285,6 +286,41 @@ class TestJinjaMacros(object):
         assert soup.find("td", text="£100.00"), "Second answer not found"
         assert soup.find("td", text="Total"), "Total header not found"
         assert soup.find("td", text="£150.00"), "Total not found"
+
+    def test_new_add_another_table(self, request_ctx):
+        meta = NewAddAnotherTable.from_dict(
+            {
+                "question": "Test Caption",
+                "answer": [
+                    ["Test Description", ["first", "second"], "text"],
+                    ["Test Amount", [100, 50.25], "currency"],
+                ],
+            }
+        )
+
+        rendered_html = render_template_string(
+            "{{ new_add_another_table(meta) }}",
+            new_add_another_table=get_template_attribute(
+                "macros/theme/new_add_another_table.jinja2",
+                "new_add_another_table",
+            ),
+            meta=meta,
+        )
+
+        soup = BeautifulSoup(rendered_html, "html.parser")
+
+        assert soup.find("caption", text="Test Caption")
+        assert soup.find("th", text="Test Description")
+        assert soup.find("th", text="Test Amount")
+
+        assert soup.find("td", text="first")
+        assert soup.find("td", text="£100.00")
+
+        assert soup.find("td", text="second")
+        assert soup.find("td", text="£50.25")
+
+        assert soup.find("td", text="Total")
+        assert soup.find("td", text="£150.25")
 
     @pytest.mark.parametrize(
         "clazz, macro_name, answer, expected",
