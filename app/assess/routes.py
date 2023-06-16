@@ -543,8 +543,6 @@ def sub_crit_scoring():
 @assess_bp.route("/resolve_flag/<application_id>", methods=["GET", "POST"])
 @login_required(roles_required=["LEAD_ASSESSOR"])
 def resolve_flag(application_id):
-    # from govuk_frontend_jinja
-
     form = ResolveFlagForm()
     flag_id = request.args.get("flag_id")
 
