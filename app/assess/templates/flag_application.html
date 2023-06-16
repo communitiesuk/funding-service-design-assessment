@@ -76,13 +76,12 @@
                             'attributes': { 'data-qa': 'select_section_to_flag' },
                             'for': form.section.id
                         }) }}
-                        <div class="govuk-hint">Select all that apply</div>
-
                         {% if form.errors.get("section") %}
                             <p id="section-error" name="{{ form.section.id }}" class="govuk-error-message" >
                             <span class="govuk-visually-hidden">Error:</span> {{ form.errors.get("section")[0] }}
                             </p>
                         {% endif %}
+                        <div class="govuk-hint">Select all that apply</div>
 
                         {# Get list of sub-sections from Unscored section #}
                         {% set items = [] %}
