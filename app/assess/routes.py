@@ -547,7 +547,7 @@ def resolve_flag(application_id):
     flag_id = request.args.get("flag_id")
 
     if not flag_id:
-        current_app.logger.warn("No flag id found in query params")
+        current_app.logger.error("No flag id found in query params")
         abort(404)
     flag_data = get_flag(flag_id)
     assessor_task_list_metadata = get_assessor_task_list_state(
