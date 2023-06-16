@@ -185,7 +185,7 @@ def _ui_component_from_factory(item: dict, application_id: str):
     elif presentation_type == "question_heading":
         return QuestionHeading.from_dict(item)
 
-    elif presentation_type in ("text", "list"):
+    elif presentation_type in ("text", "list", "free_text"):
         if field_type in ("multilineTextField",):
             return AboveQuestionAnswerPair.from_dict(item)
         elif field_type in ("websiteField",):
