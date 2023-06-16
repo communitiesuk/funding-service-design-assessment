@@ -134,6 +134,10 @@ class DefaultConfig:
         ASSESSMENT_STORE_API_HOST + "/flag?application_id={application_id}"
     )
 
+    ASSESSMENT_FLAG_ENDPOINT = (
+        ASSESSMENT_STORE_API_HOST + "/flag_data?flag_id={flag_id}"
+    )
+
     # Account store endpoints
     BULK_ACCOUNTS_ENDPOINT = ACCOUNT_STORE_API_HOST + "/bulk-accounts"
 
