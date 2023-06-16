@@ -84,8 +84,20 @@ class TestApplicantResponseComponentConcreteSubclasses:
             {
                 "question": "Test caption",
                 "answer": [
-                    ["Description", ["first", "second"]],
-                    ["Amount", [100, 50.25]],
+                    ["Example text child", ["test1", "test2"], "text"],
+                    ["Example currency child", [1, 2], "currency"],
+                    [
+                        "Example month year child",
+                        ["2020-01", "2020-02"],
+                        "text",
+                    ],
+                    ["Example yes no child", ["Yes", "No"], "text"],
+                    ["Example radio child", ["Low", "High"], "text"],
+                    [
+                        "Example multiline text child",
+                        ["test\r\n1", "test\r\n2"],
+                        "html",
+                    ],
                 ],
             },
         ],
@@ -98,21 +110,37 @@ class TestApplicantResponseComponentConcreteSubclasses:
         assert isinstance(new_add_another_table, NewAddAnotherTable)
         assert new_add_another_table.caption == "Test caption"
         assert new_add_another_table.head == [
-            {"text": "Description", "format": ""},
-            {"text": "Amount", "format": "numeric"},
+            {"text": "Example text child", "format": ""},
+            {"text": "Example currency child", "format": "numeric"},
+            {"text": "Example month year child", "format": ""},
+            {"text": "Example yes no child", "format": ""},
+            {"text": "Example radio child", "format": ""},
+            {"text": "Example multiline text child", "format": ""},
         ]
         assert new_add_another_table.rows == [
             [
-                {"text": "first", "format": ""},
-                {"text": "£100.00", "format": "numeric"},
+                {"text": "test1", "format": ""},
+                {"text": "£1.00", "format": "numeric"},
+                {"text": "2020-01", "format": ""},
+                {"text": "Yes", "format": ""},
+                {"text": "Low", "format": ""},
+                {"html": "test\r\n1", "format": ""},
             ],
             [
-                {"text": "second", "format": ""},
-                {"text": "£50.25", "format": "numeric"},
+                {"text": "test2", "format": ""},
+                {"text": "£2.00", "format": "numeric"},
+                {"text": "2020-02", "format": ""},
+                {"text": "No", "format": ""},
+                {"text": "High", "format": ""},
+                {"html": "test\r\n2", "format": ""},
             ],
             [
                 {"text": "Total", "classes": "govuk-table__header"},
-                {"text": "£150.25", "format": "numeric"},
+                {"text": "£3.00", "format": "numeric"},
+                {"text": "", "format": ""},
+                {"text": "", "format": ""},
+                {"text": "", "format": ""},
+                {"text": "", "format": ""},
             ],
         ]
 
@@ -798,8 +826,8 @@ def test_create_ui_components_retains_order(monkeypatch):
             "presentation_type": "table",
             "question": "Twelve",
             "answer": [
-                ["Description", ["first", "second"]],
-                ["Amount", [100, 50.25]],
+                ["Description", ["first", "second"], "text"],
+                ["Amount", [100, 50.25], "currency"],
             ],
         },
     ]

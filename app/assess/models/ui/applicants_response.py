@@ -160,9 +160,8 @@ class NewAddAnotherTable(ApplicantResponseComponent):
         answer = data.get("answer")
 
         totals, headings = [], []
-        for column_name, values in answer:
-            first_value, *_ = values
-            if isinstance(first_value, (float, int)):
+        for column_name, values, fmt in answer:
+            if fmt == "currency":
                 column_format = "numeric"
                 totals.append(sum([float(val) for val in values]))
             else:
@@ -171,24 +170,22 @@ class NewAddAnotherTable(ApplicantResponseComponent):
             headings.append({"text": column_name, "format": column_format})
 
         rows = []
-        zipped_values = list(zip(*[values for _, values in answer]))
-        for i, zipped_value in enumerate(zipped_values):
-            _, values = answer[i]
-            rows.extend(
-                [
-                    [
-                        {
-                            "text": f"£{val:.2f}"
-                            if isinstance(val, (float, int))
-                            else val,
-                            "format": "numeric"
-                            if isinstance(val, (float, int))
-                            else "",
-                        }
-                        for val in zipped_value
-                    ]
-                ]
-            )
+        num_columns = len(
+            answer[0][1]
+        )  # Assuming all rows have the same number of values
+        for j in range(num_columns):
+            columns = []
+            for i, (_, values, fmt) in enumerate(answer):
+                render_type = "html" if fmt == "html" else "text"
+                render_val = values[j]
+                format_val = ""
+
+                if fmt == "currency":
+                    render_val = f"£{render_val:.2f}"
+                    format_val = "numeric"
+
+                columns.append({render_type: render_val, "format": format_val})
+            rows.append(columns)
 
         if any(totals):
             rows.append(
