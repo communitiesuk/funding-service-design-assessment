@@ -7,6 +7,9 @@ from app.assess.models.ui.applicants_response import AboveQuestionAnswerPair
 from app.assess.models.ui.applicants_response import (
     AboveQuestionAnswerPairHref,
 )
+from app.assess.models.ui.applicants_response import (
+    AboveQuestionAnswerPairHtml,
+)
 from app.assess.models.ui.applicants_response import BesideQuestionAnswerPair
 from app.assess.models.ui.applicants_response import (
     BesideQuestionAnswerPairHref,
@@ -336,6 +339,12 @@ class TestJinjaMacros(object):
                 "question_beside_answer",
                 "Test Answer",
                 "Test Answer",
+            ),
+            (
+                AboveQuestionAnswerPairHtml,
+                "question_above_answer_html",
+                "<p>This is <strong>free text answer</strong></p>",
+                "<p>This is <strong>free text answer</strong></p>",
             ),
         ],
     )
