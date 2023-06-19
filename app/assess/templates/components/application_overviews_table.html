@@ -1,10 +1,5 @@
 {% from "govuk_frontend_jinja/components/input/macro.html" import govukInput %}
-
-{% macro render_query_params(query_params) -%}
-{% for key, value in query_params.items() %}
-    <input type="hidden" name="{{ key }}" value="{{ value }}">
-{% endfor %}
-{%- endmacro %}
+{% from "macros/sortable_table_header.html" import sortable_table_header %}
 
 {% macro render(application_overviews, round_details, query_params, asset_types, assessment_statuses, show_clear_filters, user_role, sort_column, sort_order) -%}
 <nav class="search-bar-flex-container">
@@ -78,50 +73,16 @@
           Reference
       </th>
 
-      <th scope="col" class="govuk-table__header">
-            Project name
-      </th>
+      {{ sortable_table_header('organisation_name', 'Organisation name', sort_order, sort_column, round_details, query_params) }}
 
-      <th scope="col" class="govuk-table__header">
-        Asset type
-      </th>
+      {{ sortable_table_header('local_authority', 'Local authority name', sort_order, sort_column, round_details, query_params) }}
 
-      <th scope="col" class="govuk-table__header" aria-sort="{{ 'none' if (sort_column!='funding_requested') else ('ascending' if (sort_order=='asc') else 'descending') }}">
-        <form method="get" action="{{ url_for('assess_bp.fund_dashboard',
-                                  fund_short_name=round_details.fund_short_name,
-                                  round_short_name=round_details.round_short_name
-                                  ) }}">
-          <input type="hidden" name="sort_column" value="funding_requested">
-          {% if sort_column == 'funding_requested' and sort_order == 'asc' %}
-            <input type="hidden" name="sort_order" value="desc">
-          {% else %}
-            <input type="hidden" name="sort_order" value="asc">
-          {% endif %}
-          {{ render_query_params(query_params) }}
-          <button class="button" type="submit" aria-label="Sort by Funding requested">Funding requested</button>
-        </form>
-      </th>
+      {{ sortable_table_header('funding_type', 'Funding type', sort_order, sort_column, round_details, query_params) }}
 
-      <th scope="col" class="govuk-table__header" aria-sort="{{ 'none' if (sort_column!='location') else ('ascending' if (sort_order=='asc') else 'descending') }}">
-        <form method="get" action="{{ url_for('assess_bp.fund_dashboard',
-                                  fund_short_name=round_details.fund_short_name,
-                                  round_short_name=round_details.round_short_name
-                                  ) }}">
-          <input type="hidden" name="sort_column" value="location">
-          {% if sort_column == 'location' and sort_order == 'asc' %}
-            <input type="hidden" name="sort_order" value="desc">
-          {% else %}
-            <input type="hidden" name="sort_order" value="asc">
-          {% endif %}
-          {{ render_query_params(query_params) }}
-          <button class="button" type="submit" aria-label="Sort by Location">Location</button>
-        </form>
-      </th>
+      {{ sortable_table_header('funding_requested', 'Funding requested', sort_order, sort_column, round_details, query_params) }}
 
       {% if user_role != "COMMENTER" %}
-      <th scope="col" class="govuk-table__header">
-        Status
-      </th>
+        {{ sortable_table_header('status', 'Status', sort_order, sort_column, round_details, query_params) }}
       {% endif %}
 
     </tr>
@@ -132,9 +93,9 @@
 
                 <td class="govuk-table__cell">{{ overview.short_id[-6:] }}</td>
                 <td class="govuk-table__cell"><a class="govuk-link" data-qa="project_name" href="{{ url_for('assess_bp.application',application_id=overview.application_id) }}">{{ overview.project_name }}</a></td>
+                <td class="govuk-table__cell">{{ overview.location_json_blob.get('country') or "Not found" }}</td>
                 <td class="govuk-table__cell">{{ asset_types[overview.asset_type] }}</td>
                 <td class="govuk-table__cell">£{{ "{:,.2f}".format(overview.funding_amount_requested|int|round) }}</td>
-                <td class="govuk-table__cell">{{ overview.location_json_blob.get('country') or "Not found" }}</td>
 
                 {% if user_role != "COMMENTER" %}
                 <td class="govuk-table__cell">
