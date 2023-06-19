@@ -25,6 +25,16 @@ def get_application_id_from_request():
     return application_id
 
 
+def get_fund_short_name_from_request():
+    fund_short_name = (
+        request.view_args.get("fund_short_name")
+        or request.view_args.get("fund_short_name")
+        or request.args.get("fund_short_name")
+        or request.args.get("fund_short_name")
+    )
+    return fund_short_name
+
+
 def determine_display_status(
     workflow_status: str,
     latest_flag: Optional[Flag] = None,
