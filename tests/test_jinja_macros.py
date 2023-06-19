@@ -366,6 +366,28 @@ class TestJinjaMacros(object):
         assert "Test Question" in rendered_html, "Question not found"
         assert expected in rendered_html, "Answer not found"
 
+    def test_question_above_answer_html(self, request_ctx):
+        meta = AboveQuestionAnswerPairHtml.from_dict(
+            {
+                "question": "Test Caption",
+                "answer": "<p>This is</p> <strong>free text answer</strong>",
+            }
+        )
+
+        rendered_html = render_template_string(
+            "{{ question_above_answer_html(meta) }}",
+            question_above_answer_html=get_template_attribute(
+                "macros/theme/question_above_answer_html.jinja2",
+                "question_above_answer_html",
+            ),
+            meta=meta,
+        )
+
+        soup = BeautifulSoup(rendered_html, "html.parser")
+
+        assert soup.find("p", text="This is") is not None
+        assert soup.find("strong", text="free text answer") is not None
+
     @pytest.mark.parametrize(
         "clazz, macro_name",
         [
