@@ -147,6 +147,65 @@ class QuestionAboveHrefAnswerList(ApplicantResponseComponent):
         )
 
 
+@dataclass
+class NewAddAnotherTable(ApplicantResponseComponent):
+    caption: str
+    head: List[dict[str, str]]
+    rows: List[dict[str, str]]
+
+    key = "question_above_href_answer_list"
+
+    @classmethod
+    def from_dict(cls, data: dict):
+        answer = data.get("answer")
+
+        totals, headings = [], []
+        for column_name, values, fmt in answer:
+            if fmt == "currency":
+                column_format = "numeric"
+                totals.append(sum([float(val) for val in values]))
+            else:
+                column_format = ""
+                totals.append(None)
+            headings.append({"text": column_name, "format": column_format})
+
+        rows = []
+        num_columns = len(
+            answer[0][1]
+        )  # Assuming all rows have the same number of values
+        for j in range(num_columns):
+            columns = []
+            for i, (_, values, fmt) in enumerate(answer):
+                render_type = "html" if fmt == "html" else "text"
+                render_val = values[j]
+                format_val = ""
+
+                if fmt == "currency":
+                    render_val = f"£{render_val:.2f}"
+                    format_val = "numeric"
+
+                columns.append({render_type: render_val, "format": format_val})
+            rows.append(columns)
+
+        if any(totals):
+            rows.append(
+                [{"text": "Total", "classes": "govuk-table__header"}]
+                + [
+                    {
+                        "text": f"£{val:.2f}" if val else "",
+                        "format": "numeric" if val else "",
+                    }
+                    for val in totals[1:]
+                ]  # we assume the first column is a string
+            )
+
+        return cls(
+            caption=data["question"],
+            head=headings,
+            rows=rows,
+        )
+
+
 def _ui_component_from_factory(item: dict, application_id: str):
     """
     :param item: dict
@@ -184,6 +243,15 @@ def _ui_component_from_factory(item: dict, application_id: str):
 
     elif presentation_type == "question_heading":
         return QuestionHeading.from_dict(item)
+
+    elif presentation_type == "table":
+        if not item.get("answer"):
+            return BesideQuestionAnswerPair(
+                question=item["question"],
+                answer=ANSWER_NOT_PROVIDED_DEFAULT,
+            )
+
+        return NewAddAnotherTable.from_dict(item)
 
     elif presentation_type in ("text", "list"):
         if field_type in ("multilineTextField",):

@@ -239,3 +239,9 @@
     color: #505a5f;
     margin-top: -10px;
 }
+
+.debug-user-info {
+    background-color: bisque;
+    padding: 3px;
+    font-family: "GDS Transport", arial, sans-serif;
+}

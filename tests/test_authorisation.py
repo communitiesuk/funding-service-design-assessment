@@ -412,6 +412,7 @@ class TestAuthorisation:
         ],
     )
     @pytest.mark.application_id("resolved_app")
+    @pytest.mark.flag_id("resolved_app")
     def test_different_user_levels_have_correct_permissions_to_resolve_flag(
         self,
         flask_test_client,
@@ -419,6 +420,8 @@ class TestAuthorisation:
         claim,
         expect_flagging,
         mock_get_latest_flag,
+        mock_get_assessor_tasklist_state,
+        mock_get_flag,
         mock_get_sub_criteria_banner_state,
         mock_get_fund,
     ):
@@ -433,6 +436,8 @@ class TestAuthorisation:
         application_id = request.node.get_closest_marker(
             "application_id"
         ).args[0]
+
+        flag_id = request.node.get_closest_marker("flag_id").args[0]
 
         flask_test_client.set_cookie(
             "localhost",
@@ -452,7 +457,7 @@ class TestAuthorisation:
             )
         else:
             response = flask_test_client.get(
-                f"assess/resolve_flag/{application_id}",
+                f"assess/resolve_flag/{application_id}?flag_id={flag_id}",
                 follow_redirects=True,
             )
             assert response.status_code == 200

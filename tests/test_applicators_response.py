@@ -33,6 +33,7 @@ from app.assess.models.ui.applicants_response import (
     FormattedBesideQuestionAnswerPair,
 )
 from app.assess.models.ui.applicants_response import MonetaryKeyValues
+from app.assess.models.ui.applicants_response import NewAddAnotherTable
 from app.assess.models.ui.applicants_response import (
     QuestionAboveHrefAnswerList,
 )
@@ -76,6 +77,72 @@ class TestApplicantResponseComponentConcreteSubclasses:
         assert isinstance(above_qa_pair, AboveQuestionAnswerPair)
         assert above_qa_pair.question == "Test question"
         assert above_qa_pair.answer == ANSWER_NOT_PROVIDED_DEFAULT
+
+    @pytest.mark.parametrize(
+        "new_add_another_data",
+        [
+            {
+                "question": "Test caption",
+                "answer": [
+                    ["Example text child", ["test1", "test2"], "text"],
+                    ["Example currency child", [1, 2], "currency"],
+                    [
+                        "Example month year child",
+                        ["2020-01", "2020-02"],
+                        "text",
+                    ],
+                    ["Example yes no child", ["Yes", "No"], "text"],
+                    ["Example radio child", ["Low", "High"], "text"],
+                    [
+                        "Example multiline text child",
+                        ["test\r\n1", "test\r\n2"],
+                        "html",
+                    ],
+                ],
+            },
+        ],
+    )
+    def test_new_add_another_table_should_render(self, new_add_another_data):
+        new_add_another_table = NewAddAnotherTable.from_dict(
+            new_add_another_data
+        )
+
+        assert isinstance(new_add_another_table, NewAddAnotherTable)
+        assert new_add_another_table.caption == "Test caption"
+        assert new_add_another_table.head == [
+            {"text": "Example text child", "format": ""},
+            {"text": "Example currency child", "format": "numeric"},
+            {"text": "Example month year child", "format": ""},
+            {"text": "Example yes no child", "format": ""},
+            {"text": "Example radio child", "format": ""},
+            {"text": "Example multiline text child", "format": ""},
+        ]
+        assert new_add_another_table.rows == [
+            [
+                {"text": "test1", "format": ""},
+                {"text": "£1.00", "format": "numeric"},
+                {"text": "2020-01", "format": ""},
+                {"text": "Yes", "format": ""},
+                {"text": "Low", "format": ""},
+                {"html": "test\r\n1", "format": ""},
+            ],
+            [
+                {"text": "test2", "format": ""},
+                {"text": "£2.00", "format": "numeric"},
+                {"text": "2020-02", "format": ""},
+                {"text": "No", "format": ""},
+                {"text": "High", "format": ""},
+                {"html": "test\r\n2", "format": ""},
+            ],
+            [
+                {"text": "Total", "classes": "govuk-table__header"},
+                {"text": "£3.00", "format": "numeric"},
+                {"text": "", "format": ""},
+                {"text": "", "format": ""},
+                {"text": "", "format": ""},
+                {"text": "", "format": ""},
+            ],
+        ]
 
     @pytest.mark.parametrize(
         "clazz, data",
@@ -748,9 +815,20 @@ def test_create_ui_components_retains_order(monkeypatch):
             "form_name": "mock_form_name",
             "path": "mock_path",
             "question": "Eleventh",
-            "answer": None,
+            "answer": None,  # we dynamically grab the state of the bucket
             "presentation_type": "s3bucketPath",
             "field_type": "clientSideFileUploadField",
+        },
+        {
+            "field_id": "NdFwgy",
+            "form_name": "funding-required",
+            "field_type": "multiInputField",
+            "presentation_type": "table",
+            "question": "Twelve",
+            "answer": [
+                ["Description", ["first", "second"], "text"],
+                ["Amount", [100, 50.25], "currency"],
+            ],
         },
     ]
 
@@ -770,7 +848,7 @@ def test_create_ui_components_retains_order(monkeypatch):
         for ui_component in ui_components
     )
 
-    assert len(ui_components) == 12
+    assert len(ui_components) == 13
 
     assert isinstance(ui_components[0], BesideQuestionAnswerPair)
     assert ui_components[0].question == "First"
@@ -817,3 +895,24 @@ def test_create_ui_components_retains_order(monkeypatch):
             "form_name/path/name/filename.png"
         )
     }
+
+    assert isinstance(ui_components[12], NewAddAnotherTable)
+    assert ui_components[12].caption == "Twelve"
+    assert ui_components[12].head == [
+        {"text": "Description", "format": ""},
+        {"text": "Amount", "format": "numeric"},
+    ]
+    assert ui_components[12].rows == [
+        [
+            {"text": "first", "format": ""},
+            {"text": "£100.00", "format": "numeric"},
+        ],
+        [
+            {"text": "second", "format": ""},
+            {"text": "£50.25", "format": "numeric"},
+        ],
+        [
+            {"text": "Total", "classes": "govuk-table__header"},
+            {"text": "£150.25", "format": "numeric"},
+        ],
+    ]

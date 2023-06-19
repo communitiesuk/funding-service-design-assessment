@@ -144,12 +144,21 @@ def get_round(
 
 
 def get_bulk_accounts_dict(account_ids: List):
-    account_url = Config.BULK_ACCOUNTS_ENDPOINT
     if account_ids:
-        account_params = {"account_id": list(set(account_ids))}
-        return get_data(account_url, account_params)
+        account_ids_to_retrieve = list(set(account_ids))
+        account_url = Config.BULK_ACCOUNTS_ENDPOINT
+        account_params = {"account_id": account_ids_to_retrieve}
+        users_result = get_data(account_url, account_params)
+        if Config.FLASK_ENV == "development":
+            users_result[Config.DEBUG_USER_ACCOUNT_ID] = {
+                **Config.DEBUG_USER,
+                "email_address": Config.DEBUG_USER["email"],
+            }
+
+        return users_result
     else:
-        current_app.logger.info("No account ids found,")
+        current_app.logger.info("No account ids supplied")
+        return {}
 
 
 def get_score_and_justification(
@@ -341,6 +350,16 @@ def get_latest_flag(application_id: str) -> Optional[Flag]:
         return Flag.from_dict(flag)
     else:
         msg = f"flag for application: '{application_id}' not found."
+        current_app.logger.warn(msg)
+        return None
+
+
+def get_flag(flag_id: str) -> Optional[Flag]:
+    flag = get_data(Config.ASSESSMENT_FLAG_ENDPOINT.format(flag_id=flag_id))
+    if flag:
+        return Flag.from_dict(flag)
+    else:
+        msg = f"flag for id: '{flag_id}' not found."
         current_app.logger.warn(msg)
         return None
 

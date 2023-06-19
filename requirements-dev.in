@@ -2,7 +2,7 @@
 bandit
 deepdiff
 invoke
-pip-tools
+pip-tools>=6.13.0
 pre-commit
 pytest
 pytest-env
