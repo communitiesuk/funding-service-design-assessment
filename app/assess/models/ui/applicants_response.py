@@ -641,26 +641,3 @@ def create_ui_components(
         _ui_component_from_factory(item, application_id)
         for item in post_processed_items
     ]
-
-
-# Do we need to clean html tags from "freeText" field?
-def clean_html_tags(item):
-    from bs4 import BeautifulSoup
-
-    answer = item.get("answer")
-
-    soup = BeautifulSoup(answer, "html.parser")
-
-    if not soup.find():
-        item["answer"] = answer.strip()
-
-    for strong_tag in soup.find_all("strong"):
-        strong_tag.name = "b"
-
-    if not (soup.ul or soup.ol):
-        str_soup = str(soup)
-        cleaned_text = str_soup.replace("<p>", "").replace("</p>", "")
-        cleaned_text = cleaned_text.replace("\xa0", "")
-        item["answer"] = cleaned_text
-
-    return item
