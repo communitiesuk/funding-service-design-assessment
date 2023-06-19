@@ -62,6 +62,10 @@ class AboveQuestionAnswerPair(QuestionAnswerPair):
     key = "question_above_answer"
 
 
+class AboveQuestionAnswerPairHtml(QuestionAnswerPair):
+    key = "question_above_answer_html"
+
+
 class BesideQuestionAnswerPair(QuestionAnswerPair):
     key = "question_beside_answer"
 
@@ -243,6 +247,9 @@ def _ui_component_from_factory(item: dict, application_id: str):
 
     elif presentation_type == "question_heading":
         return QuestionHeading.from_dict(item)
+
+    elif presentation_type == "free_text":
+        return AboveQuestionAnswerPairHtml.from_dict(item)
 
     elif presentation_type == "table":
         if not item.get("answer"):
@@ -634,3 +641,26 @@ def create_ui_components(
         _ui_component_from_factory(item, application_id)
         for item in post_processed_items
     ]
+
+
+# Do we need to clean html tags from "freeText" field?
+def clean_html_tags(item):
+    from bs4 import BeautifulSoup
+
+    answer = item.get("answer")
+
+    soup = BeautifulSoup(answer, "html.parser")
+
+    if not soup.find():
+        item["answer"] = answer.strip()
+
+    for strong_tag in soup.find_all("strong"):
+        strong_tag.name = "b"
+
+    if not (soup.ul or soup.ol):
+        str_soup = str(soup)
+        cleaned_text = str_soup.replace("<p>", "").replace("</p>", "")
+        cleaned_text = cleaned_text.replace("\xa0", "")
+        item["answer"] = cleaned_text
+
+    return item
