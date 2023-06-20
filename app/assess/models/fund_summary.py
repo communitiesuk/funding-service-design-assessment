@@ -46,8 +46,7 @@ def create_fund_summaries(fund: Fund) -> list[FundSummary]:
                     stopped=round_stats["stopped"],
                 ),
                 assessments_href=url_for(
-                    "assess_bp.fund_dashboard",
-                    fund_short_name=fund.short_name.lower(),
+                    f"assess_bp.fund_dashboard_{fund.short_name.upper()}",
                     round_short_name=round.short_name.lower(),
                 ),
             )
