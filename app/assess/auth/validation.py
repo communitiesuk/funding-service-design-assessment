@@ -33,13 +33,6 @@ _HAS_DEVOLVED_AUTHORITY_VALIDATION = defaultdict(
     },  # a dict of fund_round_id: bool, this could eventually be moved to fund store
 )
 
-_UK_COUNTRIES = [
-    "ENGLAND",
-    "SCOTLAND",
-    "WALES",
-    "NORTHERNIRELAND",  # normalise locations
-]
-
 
 def _normalise_country(country: str):
     country = country.casefold()
