@@ -1,4 +1,3 @@
-import re
 from collections import defaultdict
 from functools import wraps
 from typing import Tuple
@@ -27,7 +26,7 @@ _HAS_DEVOLVED_AUTHORITY_VALIDATION = defaultdict(
     lambda *_: False,  # by default, no devolved authority validation
     {
         "47aef2f5-3fcb-4d45-acb5-f0152b5f03c4": True,
-        "COF": True,
+        "cof": True,
     },  # a dict of fund_round_id: bool, this could eventually be moved to fund store
 )
 
@@ -39,7 +38,7 @@ _UK_COUNTRIES = [
 ]
 
 
-def normalise_country(country: str):
+def _normalise_country(country: str):
     country = country.casefold()
     if country in {c.casefold() for c in _UK_COUNTRIES}:
         return country
@@ -48,71 +47,47 @@ def normalise_country(country: str):
     return country
 
 
+def _get_all_country_roles(short_name: str) -> Tuple[set, set]:
+    return {f"{short_name}_{c}".casefold() for c in _UK_COUNTRIES}
+
+
+def _get_all_users_roles() -> Tuple[set, set]:
+    return set(r.casefold() for r in g.user.roles)
+
+
+def get_valid_country_roles(short_name) -> bool:
+    all_roles = _get_all_users_roles()
+    country_roles = _get_all_country_roles(short_name)
+    return all_roles.intersection(country_roles)
+
+
 def get_countries_from_roles(short_name) -> set[str]:
-    all_roles, _ = _roles_and_countries(short_name)
-    country_names = "|".join(_UK_COUNTRIES)
-    regex_pattern = r".*({})$".format(country_names)
-    regex = re.compile(regex_pattern, re.IGNORECASE)
-
-    countries = set()
-    for role in all_roles:
-        match = re.match(regex, role)
-        if match:
-            countries.add(match.group(1).casefold())
-    return countries
+    valid_country_roles = get_valid_country_roles(short_name)
+    partitioned_country_roles = [
+        vcr.partition("_") for vcr in valid_country_roles
+    ]
+    return {country for _, _, country in partitioned_country_roles}
 
 
-def _roles_and_countries(short_name) -> Tuple[set, set]:
-    all_roles = set(r.casefold() for r in g.user.roles)
-    uk_countries = {
-        f"{short_name}_{r}_{c}".casefold()
-        for r in _ROLES
-        for c in _UK_COUNTRIES
-    }
-    return all_roles, uk_countries
-
-
-def _get_valid_country_roles(short_name) -> bool:
-    all_roles, uk_countries = _roles_and_countries(short_name)
-    return all_roles.intersection(uk_countries)
-
-
-def _get_invalid_country_roles(short_name) -> bool:
-    all_roles, uk_countries = _roles_and_countries(short_name)
-    return all_roles.difference(uk_countries)
-
-
-def _has_at_least_one_uk_country(short_name) -> bool:
-    return bool(_get_valid_country_roles(short_name))
-
-
-# Eventually this function will be redundant, we could just add a boolean or something to the fund-store.
-# If a fund supports devolved authorities, then we return True, else False (by default) (fund.has_devolved_authority) ?
-def has_devolved_authority_validation(
-    *, fund_id=None, short_name=None
-) -> bool:
-    return _HAS_DEVOLVED_AUTHORITY_VALIDATION[fund_id or short_name]
-
-
-def has_access_to_fund(short_name: str) -> bool:
-    all_roles, _ = _roles_and_countries(short_name)
-    return any(role.startswith(short_name.casefold()) for role in all_roles)
-
-
-def has_relevant_country_role(country, short_name) -> bool:
-    all_roles, _ = _roles_and_countries(short_name)
-    country_roles = {
-        f"{short_name}_{role}_{country}".casefold() for role in _ROLES
-    }
+def has_relevant_country_role(country: str, short_name: str) -> bool:
+    all_roles = _get_all_users_roles()
+    country_roles = {f"{short_name}_{country}".casefold()}
     return bool(all_roles.intersection(country_roles))
 
 
-def get_relevant_country_roles(short_name) -> set[str]:
-    return _get_valid_country_roles(short_name)
+def has_devolved_authority_validation(
+    *, fund_id=None, short_name=None
+) -> bool:
+    identifier = fund_id or short_name
+    if not identifier:
+        return False
+    identifier = identifier.casefold()
+    return _HAS_DEVOLVED_AUTHORITY_VALIDATION[identifier]
 
 
-def get_irrelevant_country_roles(short_name) -> set[str]:
-    return _get_invalid_country_roles(short_name)
+def has_access_to_fund(short_name: str) -> bool:
+    all_roles = _get_all_users_roles()
+    return any(role.startswith(short_name.casefold()) for role in all_roles)
 
 
 def check_access_application_id(func):
@@ -126,7 +101,7 @@ def check_access_application_id(func):
         if country := application_metadata.get("location_json_blob", {}).get(
             "country"
         ):
-            normalised_country = normalise_country(country)
+            normalised_country = _normalise_country(country)
             short_name = get_fund(application_metadata["fund_id"]).short_name
             if has_access_to_fund(short_name):
                 if not has_devolved_authority_validation(
