@@ -464,7 +464,7 @@ def fund_dashboard(
         )
 
     return render_template(
-        f"assessor_dashboard_{fund_short_name}.html",
+        "assessor_dashboard.html",
         user=g.user,
         application_overviews=post_processed_overviews,
         round_details=round_details,

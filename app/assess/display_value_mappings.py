@@ -28,7 +28,7 @@ assessment_statuses = {
 
 funding_types = {
     ALL_VALUE: "All",
-    "capital_and_revenue": "Capital and revenue",
+    "both-revenue-and-capital": "Capital and revenue",
     "capital": "Capital",
     "revenue": "Revenue",
 }
