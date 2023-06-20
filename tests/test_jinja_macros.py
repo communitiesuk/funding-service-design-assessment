@@ -387,11 +387,6 @@ class TestJinjaMacros(object):
 
         soup = BeautifulSoup(rendered_html, "html.parser")
 
-        data_url = "data:text/html," + quote(
-            "<html><body>" + rendered_html + "</body></html>"
-        )
-        webbrowser.get("chrome").open_new_tab(data_url)
-
         assert (
             soup.find("p", text="This is") is not None
         ), "<p> tag text not found"
