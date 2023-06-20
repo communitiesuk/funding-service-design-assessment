@@ -6,7 +6,7 @@
 {% endfor %}
 {%- endmacro %}
 
-{% macro render(application_overviews, round_details, query_params, asset_types, assessment_statuses, show_clear_filters, user_role, sort_column, sort_order) -%}
+{% macro render(application_overviews, round_details, query_params, asset_types, assessment_statuses, show_clear_filters, sort_column, sort_order) -%}
 <nav class="search-bar-flex-container">
   <form method="get">
     <div class="govuk-form-group govuk-!-display-inline-block govuk-!-padding-right-2">
@@ -27,11 +27,11 @@
                   <option value='{{ item }}' {% if query_params.asset_type == item %} selected=""{% endif %}>{{ asset_types[item] }}</option>
             {% endfor %}
       </select>
-      {% if user_role == "COMMENTER" %}
-      <button class="govuk-button search-button" aria-label="Search" type="submit">Search</button>
+      {% if not g.access_controller.has_any_assessor_role %}
+        <button class="govuk-button search-button" aria-label="Search" type="submit">Search</button>
       {% endif %}
     </div>
-    {% if user_role != "COMMENTER" %}
+    {% if g.access_controller.has_any_assessor_role %}
     <div class="govuk-form-group govuk-!-display-inline-block govuk-!-padding-right-2">
       <label class="govuk-label" for="filter_status">
       Filter by status
@@ -118,7 +118,7 @@
         </form>
       </th>
 
-      {% if user_role != "COMMENTER" %}
+      {% if g.access_controller.has_any_assessor_role %}
       <th scope="col" class="govuk-table__header">
         Status
       </th>
@@ -136,7 +136,7 @@
                 <td class="govuk-table__cell">£{{ "{:,.2f}".format(overview.funding_amount_requested|int|round) }}</td>
                 <td class="govuk-table__cell">{{ overview.location_json_blob.get('country') or "Not found" }}</td>
 
-                {% if user_role != "COMMENTER" %}
+                {% if g.access_controller.has_any_assessor_role %}
                 <td class="govuk-table__cell">
                 {% if overview.is_qa_complete and not overview.flags[-1].flag_type in ("FLAGGED", "STOPPED") %}
                 <span>QA complete</span>

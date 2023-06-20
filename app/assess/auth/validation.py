@@ -1,5 +1,7 @@
 from collections import defaultdict
 from functools import wraps
+from typing import List
+from typing import Sequence
 from typing import Tuple
 
 from app.assess.data import get_application_metadata
@@ -8,6 +10,7 @@ from app.assess.helpers import get_application_id_from_request
 from app.assess.helpers import get_fund_short_name_from_request
 from flask import abort
 from flask import g
+from fsd_utils.authentication.decorators import login_required
 
 _UK_COUNTRIES = [
     "ENGLAND",
@@ -75,6 +78,12 @@ def has_relevant_country_role(country: str, short_name: str) -> bool:
     return bool(all_roles.intersection(country_roles))
 
 
+def _get_roles_by_fund_short_name(
+    short_name: str, roles: Sequence[str]
+) -> list[str]:
+    return [f"{short_name.upper()}_{role.upper()}" for role in roles]
+
+
 def has_devolved_authority_validation(
     *, fund_id=None, short_name=None
 ) -> bool:
@@ -90,7 +99,13 @@ def has_access_to_fund(short_name: str) -> bool:
     return any(role.startswith(short_name.casefold()) for role in all_roles)
 
 
-def check_access_application_id(func):
+def check_access_application_id(func=None, roles_required: List[str] = []):
+
+    if func is None:
+        return lambda f: check_access_application_id(
+            func=f, roles_required=roles_required
+        )
+
     @wraps(func)
     def decorated_function(*args, **kwargs):
         application_id = get_application_id_from_request()
@@ -98,32 +113,78 @@ def check_access_application_id(func):
             abort(404)
 
         application_metadata = get_application_metadata(application_id)
-        if country := application_metadata.get("location_json_blob", {}).get(
-            "country"
+        short_name = get_fund(application_metadata["fund_id"]).short_name
+        if not has_access_to_fund(short_name):
+            abort(403)
+
+        fund_roles_required = _get_roles_by_fund_short_name(
+            short_name, roles_required
+        )
+        login_required_function = login_required(
+            func, roles_required=fund_roles_required
+        )
+
+        if has_devolved_authority_validation(
+            fund_id=application_metadata["fund_id"]
         ):
-            normalised_country = _normalise_country(country)
-            short_name = get_fund(application_metadata["fund_id"]).short_name
-            if has_access_to_fund(short_name):
-                if not has_devolved_authority_validation(
-                    fund_id=application_metadata["fund_id"]
+            if country := application_metadata.get(
+                "location_json_blob", {}
+            ).get("country"):
+                if not has_relevant_country_role(
+                    _normalise_country(country), short_name
                 ):
-                    return func(*args, **kwargs)
-                if has_relevant_country_role(normalised_country, short_name):
-                    return func(*args, **kwargs)
-        abort(403)
+                    abort(403)
+
+        g.access_controller = AssessmentAccessController(short_name)
+        return login_required_function(*args, **kwargs)
 
     return decorated_function
 
 
-def check_access_fund_short_name(func):
+def check_access_fund_short_name(func=None, roles_required: List[str] = []):
+
+    if func is None:
+        return lambda f: check_access_fund_short_name(
+            func=f, roles_required=roles_required
+        )
+
     @wraps(func)
     def decorated_function(*args, **kwargs):
         short_name = get_fund_short_name_from_request()
         if not short_name:
             abort(404)
 
+        fund_roles_required = _get_roles_by_fund_short_name(
+            short_name, roles_required
+        )
+        login_required_function = login_required(
+            func, roles_required=fund_roles_required
+        )
         if has_access_to_fund(short_name):
-            return func(*args, **kwargs)
+            g.access_controller = AssessmentAccessController(short_name)
+            return login_required_function(*args, **kwargs)
+
         abort(403)
 
     return decorated_function
+
+
+class AssessmentAccessController(object):
+    def __init__(self, fund_short_name: str = None):
+        self.fund_short_name = fund_short_name
+
+    @property
+    def is_lead_assessor(self):
+        return f"{self.fund_short_name}_LEAD_ASSESSOR" in g.user.roles
+
+    @property
+    def is_assessor(self):
+        return f"{self.fund_short_name}_ASSESSOR" in g.user.roles
+
+    @property
+    def is_commenter(self):
+        return f"{self.fund_short_name}_COMMENTER" in g.user.roles
+
+    @property
+    def has_any_assessor_role(self):
+        return self.is_lead_assessor or self.is_assessor

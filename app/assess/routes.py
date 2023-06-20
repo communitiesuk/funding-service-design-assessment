@@ -43,7 +43,6 @@ from flask import redirect
 from flask import render_template
 from flask import request
 from flask import Response
-from fsd_utils.authentication.decorators import login_required
 
 assess_bp = Blueprint(
     "assess_bp",
@@ -147,8 +146,7 @@ def display_sub_criteria(
     "/application_id/<application_id>/sub_criteria_id/<sub_criteria_id>/score",
     methods=["POST", "GET"],
 )
-@login_required(roles_required=["LEAD_ASSESSOR", "ASSESSOR"])
-@check_access_application_id
+@check_access_application_id(roles_required=["LEAD_ASSESSOR", "ASSESSOR"])
 def score(
     application_id,
     sub_criteria_id,
@@ -237,8 +235,7 @@ def score(
     "/flag/<application_id>",
     methods=["GET", "POST"],
 )
-@login_required(roles_required=["ASSESSOR"])
-@check_access_application_id
+@check_access_application_id(roles_required=["ASSESSOR"])
 def flag(application_id):
 
     # Get assessor tasks list
@@ -290,8 +287,7 @@ def flag(application_id):
 
 
 @assess_bp.route("/qa_complete/<application_id>", methods=["GET", "POST"])
-@login_required(roles_required=["LEAD_ASSESSOR"])
-@check_access_application_id
+@check_access_application_id(roles_required=["LEAD_ASSESSOR"])
 def qa_complete(application_id):
     """
     QA complete form html page:
@@ -521,7 +517,6 @@ def application(application_id):
         state=state,
         application_id=application_id,
         flag=flag,
-        current_user_role=g.user.highest_role,
         fund_short_name=fund.short_name,
         round_short_name=round.short_name,
         flag_user_info=accounts.get(flag.user_id)
@@ -564,8 +559,7 @@ def sub_crit_scoring():
 
 
 @assess_bp.route("/resolve_flag/<application_id>", methods=["GET", "POST"])
-@login_required(roles_required=["LEAD_ASSESSOR"])
-@check_access_application_id
+@check_access_application_id(roles_required=["LEAD_ASSESSOR"])
 def resolve_flag(application_id):
     form = ResolveFlagForm()
     flag_id = request.args.get("flag_id")
@@ -597,8 +591,7 @@ def resolve_flag(application_id):
 @assess_bp.route(
     "/continue_assessment/<application_id>", methods=["GET", "POST"]
 )
-@login_required(roles_required=["LEAD_ASSESSOR"])
-@check_access_application_id
+@check_access_application_id(roles_required=["LEAD_ASSESSOR"])
 def continue_assessment(application_id):
     form = ContinueApplicationForm()
     # TODO: Resolve flag for multiple sections flag to be implemented
@@ -614,8 +607,7 @@ def continue_assessment(application_id):
 
 
 @assess_bp.route("/application/<application_id>/export", methods=["GET"])
-@login_required(roles_required=["LEAD_ASSESSOR"])
-@check_access_application_id
+@check_access_application_id(roles_required=["LEAD_ASSESSOR"])
 def generate_doc_list_for_download(application_id):
     current_app.logger.info(
         f"Generating docs for application id {application_id}"
@@ -657,8 +649,7 @@ def generate_doc_list_for_download(application_id):
 
 
 @assess_bp.route("/application/<application_id>/export/<short_id>/answers.txt")
-@login_required(roles_required=["LEAD_ASSESSOR"])
-@check_access_application_id
+@check_access_application_id(roles_required=["LEAD_ASSESSOR"])
 def download_application_answers(application_id: str, short_id: str):
     current_app.logger.info(
         f"Generating application Q+A download for application {application_id}"
@@ -677,7 +668,6 @@ def download_application_answers(application_id: str, short_id: str):
     "/application/<application_id>/export/<file_name>",
     methods=["GET"],
 )
-@login_required
 @check_access_application_id
 def get_file(application_id: str, file_name: str):
     short_id = request.args.get("short_id")

@@ -2,6 +2,7 @@ import pytest
 import werkzeug
 from app.assess.auth.validation import _get_all_country_roles
 from app.assess.auth.validation import _get_all_users_roles
+from app.assess.auth.validation import _get_roles_by_fund_short_name
 from app.assess.auth.validation import _normalise_country
 from app.assess.auth.validation import check_access_application_id
 from app.assess.auth.validation import check_access_fund_short_name
@@ -214,6 +215,13 @@ def test_check_access_application_id_can_access_application_when_has_country_rol
     # GIVEN an English COF application/assessment record
     # WHEN the user has the COF_ENGLAND role
     # THEN the user can access the application
+
+    # we're not testing the decorator here, so we can just mock it out
+    monkeypatch.setattr(
+        "app.assess.auth.validation.login_required",
+        lambda *_, **__: lambda *_, **__: ...,
+    )
+
     monkeypatch.setattr(
         "app.assess.auth.validation.get_application_id_from_request",
         lambda: "00000000-0000-0000-0000-000000000000",
@@ -251,6 +259,13 @@ def test_check_access_application_id_can_access_application_when_fund_has_no_dev
     # WHEN the user doesn't have any country role
     # THEN the user can access the application
     # AS NSTF has no devolved authority validation
+
+    # we're not testing the decorator here, so we can just mock it out
+    monkeypatch.setattr(
+        "app.assess.auth.validation.login_required",
+        lambda *_, **__: lambda *_, **__: ...,
+    )
+
     monkeypatch.setattr(
         "app.assess.auth.validation.get_application_id_from_request",
         lambda: "00000000-0000-0000-0000-000000000000",
@@ -354,6 +369,13 @@ def test_check_access_fund_short_name_can_access(request_ctx, monkeypatch):
     # GIVEN a COF fund short name page
     # WHEN the user has the COF role
     # THEN the user can access the page
+
+    # we're not testing the decorator here, so we can just mock it out
+    monkeypatch.setattr(
+        "app.assess.auth.validation.login_required",
+        lambda *_, **__: lambda *_, **__: ...,
+    )
+
     monkeypatch.setattr(
         "app.assess.auth.validation.get_fund_short_name_from_request",
         lambda: "cof",
@@ -364,3 +386,9 @@ def test_check_access_fund_short_name_can_access(request_ctx, monkeypatch):
     )
 
     _dummy_function_check_access_fund_short_name()  # no fail means pass
+
+
+def test__get_roles_by_fund_short_name():
+    assert _get_roles_by_fund_short_name(
+        "cof", ["lead_assessor", "COMMENTER"]
+    ) == ["COF_LEAD_ASSESSOR", "COF_COMMENTER"]

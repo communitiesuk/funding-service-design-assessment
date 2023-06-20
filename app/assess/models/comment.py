@@ -22,3 +22,15 @@ class Comment:
                 if k in inspect.signature(cls).parameters
             }
         )
+
+    @property
+    def from_lead_assessor(self):
+        return self.highest_role == "LEAD_ASSESSOR"
+
+    @property
+    def from_assessor(self):
+        return self.highest_role == "ASSESSOR"
+
+    @property
+    def from_any_assessor(self):
+        return self.from_lead_assessor or self.from_assessor

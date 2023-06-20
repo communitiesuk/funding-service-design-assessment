@@ -42,7 +42,7 @@ Score - {{ sub_criteria.name }} - {{ sub_criteria.project_name }}
 </div>
 {% endif %}
 
-{% if is_flaggable and g.user.highest_role in ("ASSESSOR", "LEAD_ASSESSOR") %}
+{% if is_flaggable and g.access_controller.has_any_assessor_role %}
 {{ flag_application_button(application_id) }}
 {% endif %}
 
