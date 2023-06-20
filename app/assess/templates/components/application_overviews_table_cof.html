@@ -1,6 +1,12 @@
 {% from "govuk_frontend_jinja/components/input/macro.html" import govukInput %}
 {% from "macros/sortable_table_header.html" import sortable_table_header %}
 
+{% macro render_query_params(query_params) -%}
+{% for key, value in query_params.items() %}
+    <input type="hidden" name="{{ key }}" value="{{ value }}">
+{% endfor %}
+{%- endmacro %}
+
 {% macro render(application_overviews, round_details, query_params, asset_types, assessment_statuses, show_clear_filters, user_role, sort_column, sort_order) -%}
 <nav class="search-bar-flex-container">
   <form method="get">
@@ -22,30 +28,28 @@
                   <option value='{{ item }}' {% if query_params.asset_type == item %} selected=""{% endif %}>{{ asset_types[item] }}</option>
             {% endfor %}
       </select>
-      {% if user_role == "COMMENTER" %}
-      <button class="govuk-button search-button" aria-label="Search" type="submit">Search</button>
-      {% endif %}
     </div>
     {% if user_role != "COMMENTER" %}
+      <div class="govuk-form-group govuk-!-display-inline-block govuk-!-padding-right-2">
+        <label class="govuk-label" for="filter_status">
+        Filter by status
+        </label>
+        <select class="govuk-select" name="status" id="filter_status">
+              {% for item in assessment_statuses %}
+                    <option value='{{ item }}' {% if query_params.status == item %} selected=""{% endif %}>{{ assessment_statuses[item] }}</option>
+              {% endfor %}
+        </select>
+      </div>
+    {% endif %}
     <div class="govuk-form-group govuk-!-display-inline-block govuk-!-padding-right-2">
-      <label class="govuk-label" for="filter_status">
-      Filter by status
-      </label>
-      <select class="govuk-select" name="status" id="filter_status">
-            {% for item in assessment_statuses %}
-                  <option value='{{ item }}' {% if query_params.status == item %} selected=""{% endif %}>{{ assessment_statuses[item] }}</option>
-            {% endfor %}
-      </select>
       <button class="govuk-button search-button" aria-label="Search" type="submit">Search</button>
     </div>
-    {% endif %}
   </form>
   {% if show_clear_filters %}
   <p>
     <a class="govuk-link govuk-link--no-visited-state"
       href="{{ url_for(
-          'assess_bp.fund_dashboard',
-          fund_short_name=round_details.fund_short_name,
+          'assess_bp.fund_dashboard_' + round_details.fund_short_name,
           round_short_name=round_details.round_short_name,
           clear_filters=true
       ) }}"
@@ -73,13 +77,11 @@
           Reference
       </th>
 
-      {{ sortable_table_header('organisation_name', 'Organisation name', sort_order, sort_column, round_details, query_params) }}
-
-      {{ sortable_table_header('local_authority', 'Local authority name', sort_order, sort_column, round_details, query_params) }}
-
-      {{ sortable_table_header('funding_type', 'Funding type', sort_order, sort_column, round_details, query_params) }}
+      {{ sortable_table_header('project_name', 'Project name', sort_order, sort_column, round_details, query_params) }}
+      {{ sortable_table_header('asset_type', 'Asset type', sort_order, sort_column, round_details, query_params) }}
 
       {{ sortable_table_header('funding_requested', 'Funding requested', sort_order, sort_column, round_details, query_params) }}
+      {{ sortable_table_header('location', 'Location', sort_order, sort_column, round_details, query_params) }}
 
       {% if user_role != "COMMENTER" %}
         {{ sortable_table_header('status', 'Status', sort_order, sort_column, round_details, query_params) }}
@@ -93,9 +95,9 @@
 
                 <td class="govuk-table__cell">{{ overview.short_id[-6:] }}</td>
                 <td class="govuk-table__cell"><a class="govuk-link" data-qa="project_name" href="{{ url_for('assess_bp.application',application_id=overview.application_id) }}">{{ overview.project_name }}</a></td>
-                <td class="govuk-table__cell">{{ overview.location_json_blob.get('country') or "Not found" }}</td>
                 <td class="govuk-table__cell">{{ asset_types[overview.asset_type] }}</td>
                 <td class="govuk-table__cell">£{{ "{:,.2f}".format(overview.funding_amount_requested|int|round) }}</td>
+                <td class="govuk-table__cell">{{ overview.location_json_blob.get('country') or "Not found" }}</td>
 
                 {% if user_role != "COMMENTER" %}
                 <td class="govuk-table__cell">
