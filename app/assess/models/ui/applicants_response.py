@@ -153,7 +153,7 @@ class NewAddAnotherTable(ApplicantResponseComponent):
     head: List[dict[str, str]]
     rows: List[dict[str, str]]
 
-    key = "question_above_href_answer_list"
+    key = "new_add_another_table"
 
     @classmethod
     def from_dict(cls, data: dict):
