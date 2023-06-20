@@ -19,9 +19,6 @@ from app.assess.models.ui.applicants_response import (
     AboveQuestionAnswerPairHref,
 )
 from app.assess.models.ui.applicants_response import (
-    AboveQuestionAnswerPairHtml,
-)
-from app.assess.models.ui.applicants_response import (
     ANSWER_NOT_PROVIDED_DEFAULT,
 )
 from app.assess.models.ui.applicants_response import (
