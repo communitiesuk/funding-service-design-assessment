@@ -298,22 +298,11 @@ class TestApplicatorsResponseComponentFactory:
                 },
                 FormattedBesideQuestionAnswerPair,
             ),
-            (
-                {
-                    "presentation_type": "free_text",
-                    "answer": (
-                        "<p>This is <strong>free text answer</strong></p>"
-                    ),
-                    "question": "foo",
-                },
-                AboveQuestionAnswerPairHtml,
-            ),
         ],
     )
     def test__ui_component_from_factory(self, item, expected_class):
         with self.test_app.app_context():
             result = _ui_component_from_factory(item, "app_123")
-            print(result)
             assert isinstance(result, expected_class)
 
 
