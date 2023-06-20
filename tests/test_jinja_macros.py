@@ -1,6 +1,4 @@
 import re
-import webbrowser
-from urllib.parse import quote
 
 import pytest
 from app.assess.forms.comments_form import CommentsForm
@@ -386,11 +384,6 @@ class TestJinjaMacros(object):
         )
 
         soup = BeautifulSoup(rendered_html, "html.parser")
-
-        data_url = "data:text/html," + quote(
-            "<html><body>" + rendered_html + "</body></html>"
-        )
-        webbrowser.get("chrome").open_new_tab(data_url)
 
         assert (
             soup.find("p", text="This is") is not None
