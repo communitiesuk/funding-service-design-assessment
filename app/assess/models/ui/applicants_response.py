@@ -62,6 +62,10 @@ class AboveQuestionAnswerPair(QuestionAnswerPair):
     key = "question_above_answer"
 
 
+class AboveQuestionAnswerPairHtml(QuestionAnswerPair):
+    key = "question_above_answer_html"
+
+
 class BesideQuestionAnswerPair(QuestionAnswerPair):
     key = "question_beside_answer"
 
@@ -243,6 +247,9 @@ def _ui_component_from_factory(item: dict, application_id: str):
 
     elif presentation_type == "question_heading":
         return QuestionHeading.from_dict(item)
+
+    elif presentation_type == "free_text":
+        return AboveQuestionAnswerPairHtml.from_dict(item)
 
     elif presentation_type == "table":
         if not item.get("answer"):

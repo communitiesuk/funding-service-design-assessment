@@ -7,6 +7,7 @@
 {% from "macros/theme/question_beside_with_formatted_answer.jinja2" import question_beside_with_formatted_answer %}
 {% from "macros/theme/question_heading.jinja2" import question_heading %}
 {% from "macros/theme/new_add_another_table.jinja2" import new_add_another_table %}
+{% from "macros/theme/question_above_answer_html.jinja2" import question_above_answer_html %}
 
 {% set ui_component_mapping = {
     'monetary_key_values': monetary_key_values,
@@ -18,15 +19,16 @@
     'question_beside_with_formatted_answer': question_beside_with_formatted_answer,
     'question_heading': question_heading,
     'new_add_another_table': new_add_another_table,
+    "question_above_answer_html": question_above_answer_html,
 } %}
 
 {% macro theme(answers_meta) %}
-    <h3 class="govuk-heading-m response-title">Applicant's response</h3>
-    <div class="template-answer bg-white">
-        {% for meta in answers_meta %}
-            {% if meta.should_render %}
-                {{ ui_component_mapping[meta.key](meta) }}
-            {% endif %}
-        {% endfor %}
-    </div>
+<h3 class="govuk-heading-m response-title">Applicant's response</h3>
+<div class="template-answer bg-white">
+    {% for meta in answers_meta %}
+        {% if meta.should_render %}
+          {{ ui_component_mapping[meta.key](meta) }}
+        {% endif %}
+    {% endfor %}
+</div>
 {% endmacro %}
