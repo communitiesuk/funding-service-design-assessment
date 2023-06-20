@@ -1,5 +1,10 @@
 {% macro logout_partial(sso_logout_url, show_get_help=True) %}
 <p class="flex-parent-element flexed-element-margins-collapse govuk-!-text-align-right">
+    {% if g.is_debug_user %}
+        <div class="govuk-body-s govuk-!-margin-right-5 debug-user-info">
+            You are logged in as {{ g.user.email }} ({{ g.account_id }}) with roles {{ g.user.roles }}
+        </div>
+    {% endif %}
     {% if show_get_help %}
     <a href="{{ url_for('default_bp.get_help') }}"
        class="govuk-link govuk-link--no-underline govuk-!-margin-right-5">

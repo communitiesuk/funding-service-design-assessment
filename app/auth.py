@@ -29,13 +29,14 @@ def auth_protect(minimum_roles_required, unprotected_routes):
     """
 
     if (
-        Config.FLASK_ENV == "development"
-        and Config.DEBUG_USER_ROLE
-        and not g.is_authenticated
+        not g.is_authenticated
+        and Config.FLASK_ENV == "development"
+        and Config.DEBUG_USER_ON
     ):
         g.is_authenticated = True
-        g.account_id = "dev-account-id"
+        g.account_id = Config.DEBUG_USER_ACCOUNT_ID
         g.user = User(**Config.DEBUG_USER)
+        g.is_debug_user = True
         if request.path in ["/"]:
             return redirect(Config.DASHBOARD_ROUTE)
 
