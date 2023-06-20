@@ -1,4 +1,6 @@
 import re
+import webbrowser
+from urllib.parse import quote
 
 import pytest
 from app.assess.forms.comments_form import CommentsForm
@@ -385,8 +387,17 @@ class TestJinjaMacros(object):
 
         soup = BeautifulSoup(rendered_html, "html.parser")
 
-        assert soup.find("p", text="This is") is not None, "<p> tag text not found"
-        assert soup.find("strong", text="free text answer") is not None, "<strong> tag text not found"
+        data_url = "data:text/html," + quote(
+            "<html><body>" + rendered_html + "</body></html>"
+        )
+        webbrowser.get("chrome").open_new_tab(data_url)
+
+        assert (
+            soup.find("p", text="This is") is not None
+        ), "<p> tag text not found"
+        assert (
+            soup.find("strong", text="free text answer") is not None
+        ), "<strong> tag text not found"
 
     @pytest.mark.parametrize(
         "clazz, macro_name",
