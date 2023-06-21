@@ -153,11 +153,11 @@ def check_access_fund_short_name(func=None, roles_required: List[str] = []):
         login_required_function = login_required(
             func, roles_required=fund_roles_required
         )
-        if has_access_to_fund(short_name):
-            g.access_controller = AssessmentAccessController(short_name)
-            return login_required_function(*args, **kwargs)
+        if not has_access_to_fund(short_name):
+            abort(403)
 
-        abort(403)
+        g.access_controller = AssessmentAccessController(short_name)
+        return login_required_function(*args, **kwargs)
 
     return decorated_function
 

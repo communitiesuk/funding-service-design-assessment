@@ -23,21 +23,21 @@ test_lead_assessor_claims = {
     "accountId": "lead",
     "email": "lead@test.com",
     "fullName": "Test User",
-    "roles": ["LEAD_ASSESSOR", "ASSESSOR", "COMMENTER"],
+    "roles": ["TF_LEAD_ASSESSOR", "TF_ASSESSOR", "TF_COMMENTER"],
 }
 
 test_assessor_claims = {
     "accountId": "assessor",
     "email": "assessor@test.com",
     "fullName": "Test User",
-    "roles": ["ASSESSOR", "COMMENTER"],
+    "roles": ["TF_ASSESSOR", "TF_COMMENTER"],
 }
 
 test_commenter_claims = {
     "accountId": "commenter",
     "email": "commenter@test.com",
     "fullName": "Test User",
-    "roles": ["COMMENTER"],
+    "roles": ["TF_COMMENTER"],
 }
 
 test_roleless_user_claims = {
@@ -205,6 +205,9 @@ def mock_get_fund():
     with (
         mock.patch("app.assess.routes.get_fund", return_value=mock_fund_info),
         mock.patch("app.assess.helpers.get_fund", return_value=mock_fund_info),
+        mock.patch(
+            "app.assess.auth.validation.get_fund", return_value=mock_fund_info
+        ),
     ):
         yield
 
@@ -218,7 +221,21 @@ def mock_get_funds():
     ]
 
     with (
-        mock.patch("app.assess.routes.get_funds", return_value=mock_fund_info)
+        mock.patch("app.assess.routes.get_funds", return_value=mock_fund_info),
+        mock.patch("app.auth.get_funds", return_value=mock_fund_info),
+    ):
+        yield
+
+
+@pytest.fixture(scope="function")
+def mock_get_application_metadata():
+    with (
+        mock.patch(
+            "app.assess.auth.validation.get_application_metadata",
+            return_value=mock_api_results[
+                "assessment_store/applications/{application_id}"
+            ],
+        ),
     ):
         yield
 
@@ -361,6 +378,7 @@ def mock_get_assessment_stats(request):
             "search_in": "project_name,short_id",
             "asset_type": "ALL",
             "status": "ALL",
+            "countries": "ALL",
         }
 
     with (

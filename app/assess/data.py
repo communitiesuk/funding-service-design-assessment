@@ -457,11 +457,12 @@ def get_comments(
         return comment_response
 
 
-def match_comment_to_theme(comment_response, themes):
+def match_comment_to_theme(comment_response, themes, fund_short_name):
     """_summary_: match the comment response to its theme and account information
     Args:
         comment_response: assessment store comments response for a theme,
         themes: list of subcriteria themes
+        fund_short_name: fund short name
     Returns:
         Returns a dictionary of comments.
     """
@@ -481,6 +482,7 @@ def match_comment_to_theme(comment_response, themes):
                 "highest_role": bulk_accounts_dict[comment["user_id"]][
                     "highest_role"
                 ],
+                "fund_short_name": fund_short_name,
             }
         )
         for comment in comment_response

@@ -11,6 +11,7 @@ class Comment:
     full_name: str
     highest_role: str
     theme_id: str
+    fund_short_name: str
 
     @classmethod
     def from_dict(cls, d: dict):
@@ -25,11 +26,11 @@ class Comment:
 
     @property
     def from_lead_assessor(self):
-        return self.highest_role == "LEAD_ASSESSOR"
+        return self.highest_role == f"{self.fund_short_name}_LEAD_ASSESSOR"
 
     @property
     def from_assessor(self):
-        return self.highest_role == "ASSESSOR"
+        return self.highest_role == f"{self.fund_short_name}_ASSESSOR"
 
     @property
     def from_any_assessor(self):

@@ -409,19 +409,19 @@ mock_api_results = {
         test_user_id_lead_assessor: {
             "user_id": test_user_id_lead_assessor,
             "full_name": "Lead User",
-            "highest_role": "LEAD_ASSESSOR",
+            "highest_role": "TF_LEAD_ASSESSOR",
             "email_address": "lead@test.com",
         },
         test_user_id_commenter: {
             "user_id": test_user_id_commenter,
             "full_name": "Commenter User",
-            "highest_role": "COMMENTER",
+            "highest_role": "TF_COMMENTER",
             "email_address": "commenter@test.com",
         },
         test_user_id_assessor: {
             "user_id": test_user_id_assessor,
             "full_name": "Commenter User",
-            "highest_role": "ASSESSOR",
+            "highest_role": "TF_ASSESSOR",
             "email_address": "assessor@test.com",
         },
     },
@@ -497,4 +497,7 @@ mock_api_results = {
             "user_id": test_user_id_lead_assessor,
         },
     ],
+    "assessment_store/applications/{application_id}": {
+        "fund_id": "TF",
+    },
 }

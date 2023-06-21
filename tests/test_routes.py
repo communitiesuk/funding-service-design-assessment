@@ -57,6 +57,7 @@ class TestRoutes:
                 "search_in": "project_name,short_id",
                 "asset_type": "ALL",
                 "status": "ALL",
+                "countries": "ALL",
             },
         }
     )
@@ -65,6 +66,7 @@ class TestRoutes:
         request,
         flask_test_client,
         mock_get_fund,
+        mock_get_funds,
         mock_get_round,
         mock_get_application_overviews,
         mock_get_assessment_stats,
@@ -106,6 +108,7 @@ class TestRoutes:
                 "search_in": "project_name,short_id",
                 "asset_type": "ALL",
                 "status": "QA_COMPLETE",
+                "countries": "ALL",
             },
         }
     )
@@ -114,6 +117,7 @@ class TestRoutes:
         request,
         flask_test_client,
         mock_get_fund,
+        mock_get_funds,
         mock_get_round,
         mock_get_application_overviews,
         mock_get_assessment_stats,
@@ -145,6 +149,7 @@ class TestRoutes:
                 "search_in": "project_name,short_id",
                 "asset_type": "pub",
                 "status": "ALL",
+                "countries": "ALL",
             },
         }
     )
@@ -153,6 +158,7 @@ class TestRoutes:
         request,
         flask_test_client,
         mock_get_fund,
+        mock_get_funds,
         mock_get_round,
         mock_get_application_overviews,
         mock_get_assessment_stats,
@@ -184,6 +190,7 @@ class TestRoutes:
                 "search_in": "project_name,short_id",
                 "asset_type": "ALL",
                 "status": "ALL",
+                "countries": "ALL",
             },
         }
     )
@@ -192,6 +199,7 @@ class TestRoutes:
         request,
         flask_test_client,
         mock_get_fund,
+        mock_get_funds,
         mock_get_round,
         mock_get_application_overviews,
         mock_get_assessment_stats,
@@ -223,6 +231,7 @@ class TestRoutes:
                 "search_in": "project_name,short_id",
                 "asset_type": "ALL",
                 "status": "ALL",
+                "countries": "ALL",
             },
         }
     )
@@ -231,6 +240,7 @@ class TestRoutes:
         request,
         flask_test_client,
         mock_get_fund,
+        mock_get_funds,
         mock_get_round,
         mock_get_application_overviews,
         mock_get_assessment_stats,
@@ -249,6 +259,7 @@ class TestRoutes:
                 "search_term": "hello",
                 "asset_type": "cinema",
                 "status": "in-progress",
+                "countries": "ALL",
             },
         )
 
@@ -267,6 +278,7 @@ class TestRoutes:
                 "search_in": "project_name,short_id",
                 "asset_type": "ALL",
                 "status": "ALL",
+                "countries": "ALL",
             },
         }
     )
@@ -285,6 +297,7 @@ class TestRoutes:
         request,
         flask_test_client,
         mock_get_fund,
+        mock_get_funds,
         mock_get_round,
         mock_get_application_overviews,
         mock_get_assessment_stats,
@@ -373,6 +386,8 @@ class TestRoutes:
         request,
         mock_get_sub_criteria,
         mock_get_fund,
+        mock_get_funds,
+        mock_get_application_metadata,
         mock_get_comments,
         mock_get_latest_flag,
         mock_get_scores,
@@ -405,11 +420,15 @@ class TestRoutes:
         )
         assert b"Current score: 3" in response.data
         assert b"Rescore" in response.data
-        assert b"Lead assessor" in response.data
+        assert b"Tf lead assessor" in response.data
         assert b"This is a comment" in response.data
 
     def test_route_sub_criteria_scoring_inaccessible_to_commenters(
-        self, flask_test_client
+        self,
+        flask_test_client,
+        mock_get_funds,
+        mock_get_application_metadata,
+        mock_get_fund,
     ):
 
         # Mocking fsd-user-token cookie
@@ -428,10 +447,12 @@ class TestRoutes:
         )
         assert (
             response.location
-            == "https://authenticator/service/user?roles_required=LEAD_ASSESSOR|ASSESSOR"  # noqa
+            == "https://authenticator/service/user?roles_required=TF_LEAD_ASSESSOR|TF_ASSESSOR"  # noqa
         )
 
-    def test_homepage_route_accessible(self, flask_test_client):
+    def test_homepage_route_accessible(
+        self, flask_test_client, mock_get_funds
+    ):
 
         # Remove fsd-user-token cookie
         flask_test_client.set_cookie("localhost", "fsd_user_token", "")
@@ -452,7 +473,9 @@ class TestRoutes:
             200 == response.status_code
         ), "Homepage route should be accessible"
 
-    def test_healthcheck_route_accessible(self, flask_test_client):
+    def test_healthcheck_route_accessible(
+        self, flask_test_client, mock_get_funds
+    ):
 
         # Remove fsd-user-token cookie
         flask_test_client.set_cookie("localhost", "fsd_user_token", "")
@@ -474,6 +497,8 @@ class TestRoutes:
         mock_get_assessor_tasklist_state,
         mock_get_sub_criteria_banner_state,
         mock_get_fund,
+        mock_get_funds,
+        mock_get_application_metadata,
     ):
 
         application_id = request.node.get_closest_marker(
@@ -497,6 +522,8 @@ class TestRoutes:
         mock_get_assessor_tasklist_state,
         mock_get_sub_criteria_banner_state,
         mock_get_fund,
+        mock_get_funds,
+        mock_get_application_metadata,
     ):
 
         marker = request.node.get_closest_marker("application_id")
@@ -515,6 +542,8 @@ class TestRoutes:
         flask_test_client,
         mock_get_assessor_tasklist_state,
         mock_get_fund,
+        mock_get_funds,
+        mock_get_application_metadata,
         mock_get_round,
         mock_get_latest_flag,
         mock_get_bulk_accounts,
@@ -534,7 +563,7 @@ class TestRoutes:
             soup.find("h1", class_="assessment-alert__heading").string
             == "Assessment Stopped"
         )
-        assert b"Lead User (Lead assessor) lead@test.com" in response.data
+        assert b"Lead User (Tf lead assessor) lead@test.com" in response.data
         assert b"20/02/2023 at 12:00" in response.data
 
     @pytest.mark.application_id("resolved_app")
@@ -544,6 +573,8 @@ class TestRoutes:
         flask_test_client,
         mock_get_assessor_tasklist_state,
         mock_get_fund,
+        mock_get_funds,
+        mock_get_application_metadata,
         mock_get_round,
         mock_get_latest_flag,
         mock_get_bulk_accounts,
@@ -571,6 +602,8 @@ class TestRoutes:
         mocker,
         mock_get_assessor_tasklist_state,
         mock_get_fund,
+        mock_get_funds,
+        mock_get_application_metadata,
         request_ctx,
     ):
         token = create_valid_token(test_lead_assessor_claims)
@@ -603,6 +636,8 @@ class TestRoutes:
         mock_get_assessor_tasklist_state,
         mock_get_sub_criteria_banner_state,
         mock_get_fund,
+        mock_get_funds,
+        mock_get_application_metadata,
     ):
         token = create_valid_token(test_lead_assessor_claims)
         flask_test_client.set_cookie("localhost", "fsd_user_token", token)
@@ -633,6 +668,8 @@ class TestRoutes:
         mock_get_flag,
         mock_get_assessor_tasklist_state,
         mock_get_fund,
+        mock_get_funds,
+        mock_get_application_metadata,
     ):
         token = create_valid_token(test_lead_assessor_claims)
         flask_test_client.set_cookie("localhost", "fsd_user_token", token)
@@ -685,6 +722,8 @@ class TestRoutes:
         mock_get_latest_flag,
         mock_get_sub_criteria_banner_state,
         mock_get_fund,
+        mock_get_funds,
+        mock_get_application_metadata,
     ):
         application_id = request.node.get_closest_marker(
             "application_id"
@@ -701,7 +740,14 @@ class TestRoutes:
         assert b"Reason for continuing assessment" in response.data
         assert b"Project In prog and Stop" in response.data
 
-    def test_post_continue_application(self, flask_test_client, mocker):
+    def test_post_continue_application(
+        self,
+        flask_test_client,
+        mocker,
+        mock_get_funds,
+        mock_get_application_metadata,
+        mock_get_fund,
+    ):
         token = create_valid_token(test_lead_assessor_claims)
         flask_test_client.set_cookie("localhost", "fsd_user_token", token)
         mocker.patch(
@@ -748,6 +794,8 @@ class TestRoutes:
         mock_get_bulk_accounts,
         mock_get_sub_criteria_banner_state,
         mock_get_fund,
+        mock_get_funds,
+        mock_get_application_metadata,
     ):
         token = create_valid_token(test_lead_assessor_claims)
         flask_test_client.set_cookie("localhost", "fsd_user_token", token)
@@ -769,6 +817,8 @@ class TestRoutes:
         flask_test_client,
         mock_get_assessor_tasklist_state,
         mock_get_fund,
+        mock_get_funds,
+        mock_get_application_metadata,
         mock_get_round,
         mock_get_latest_flag,
         mock_get_bulk_accounts,
@@ -799,6 +849,7 @@ class TestRoutes:
                 "search_in": "project_name,short_id",
                 "asset_type": "ALL",
                 "status": "ALL",
+                "countries": "ALL",
             },
         }
     )
@@ -807,6 +858,7 @@ class TestRoutes:
         request,
         flask_test_client,
         mock_get_fund,
+        mock_get_funds,
         mock_get_round,
         mock_get_application_overviews,
         mock_get_assessment_stats,
@@ -849,6 +901,8 @@ class TestRoutes:
         flask_test_client,
         mock_get_sub_criteria,
         mock_get_fund,
+        mock_get_funds,
+        mock_get_application_metadata,
         mock_get_latest_flag,
         mock_get_comments,
         mock_get_sub_criteria_theme,
@@ -882,6 +936,8 @@ class TestRoutes:
         request,
         mock_get_sub_criteria_banner_state,
         mock_get_fund,
+        mock_get_funds,
+        mock_get_application_metadata,
         mock_get_latest_flag,
         templates_rendered,
         mocker,
@@ -915,7 +971,12 @@ class TestRoutes:
             assert b"sample2.doc" in response.data
 
     def test_download_q_and_a(
-        self, flask_test_client, mock_get_fund, mock_get_application
+        self,
+        flask_test_client,
+        mock_get_fund,
+        mock_get_application,
+        mock_get_funds,
+        mock_get_application_metadata,
     ):
 
         token = create_valid_token(test_lead_assessor_claims)
@@ -930,7 +991,14 @@ class TestRoutes:
         assert response.status_code == 200
         assert sample_expected_q_a in response.text
 
-    def test_get_file_with_short_id(self, flask_test_client, mocker):
+    def test_get_file_with_short_id(
+        self,
+        flask_test_client,
+        mocker,
+        mock_get_funds,
+        mock_get_fund,
+        mock_get_application_metadata,
+    ):
         token = create_valid_token(test_lead_assessor_claims)
         flask_test_client.set_cookie("localhost", "fsd_user_token", token)
         mocker.patch(
@@ -949,7 +1017,14 @@ class TestRoutes:
                 "QWERTY_business_plan.txt",
             )
 
-    def test_get_file_without_short_id(self, flask_test_client, mocker):
+    def test_get_file_without_short_id(
+        self,
+        flask_test_client,
+        mocker,
+        mock_get_funds,
+        mock_get_fund,
+        mock_get_application_metadata,
+    ):
         token = create_valid_token(test_lead_assessor_claims)
         flask_test_client.set_cookie("localhost", "fsd_user_token", token)
         mocker.patch(
