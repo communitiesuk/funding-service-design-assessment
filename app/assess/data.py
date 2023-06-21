@@ -549,6 +549,7 @@ def list_files_in_folder(prefix):
         Bucket=Config.AWS_BUCKET_NAME, Prefix=prefix
     )
     keys = []
+    current_app.logger.info(f"Response: {response}")
     for obj in response["Contents"]:
         # we cut off the application id.
         _, key = obj["Key"].split("/", 1)
