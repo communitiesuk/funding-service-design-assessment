@@ -366,9 +366,6 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
         return redirect("/assess/assessor_tool_dashboard/")
     fund_id, round_id = fund.id, _round.id
 
-    # access control - only show applications for funds/countries the user has access to
-    if not has_access_to_fund(fund.short_name):
-        abort(403)
     countries = {"ALL"}
     if has_devolved_authority_validation(fund_id=fund_id):
         countries = get_countries_from_roles(fund.short_name)
