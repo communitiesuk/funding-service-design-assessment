@@ -1,6 +1,6 @@
 {% macro question_above_answer_html(meta) %}
 
     <h2 class="govuk-heading-s"><strong> {{ meta.question }} </strong></h2>
-   {{ meta.answer | safe }}
+    <span class="govuk-body"> {{ meta.answer | safe }} </span>
 
 {% endmacro %}
