@@ -203,7 +203,7 @@ def score(
         else None
     )
     # TODO make COF_score_list extendable to other funds
-    COF_score_list = [
+    score_list = [
         (5, "Strong"),
         (4, "Good"),
         (3, "Satisfactory"),
@@ -213,9 +213,8 @@ def score(
     return render_template(
         "score.html",
         application_id=application_id,
-        score_list=scores_with_account_details or None,
+        score_list=score_list or None,
         latest_score=latest_score,
-        COF_score_list=COF_score_list,
         score_form=score_form,
         rescore_form=rescore_form,
         is_rescore=is_rescore,
