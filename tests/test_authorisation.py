@@ -172,6 +172,7 @@ class TestAuthorisation:
         mock_get_latest_flag,
         mock_get_comments,
         mock_get_sub_criteria_theme,
+        mock_get_assessor_tasklist_state,
         claims,
         ability_to_score,
     ):
@@ -239,6 +240,7 @@ class TestAuthorisation:
         mock_get_latest_flag,
         mock_get_comments,
         mock_get_sub_criteria_theme,
+        mock_get_assessor_tasklist_state,
     ):
         """
         GIVEN authorized users
