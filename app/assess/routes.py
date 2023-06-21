@@ -98,7 +98,6 @@ def display_sub_criteria(
     if not assessor_task_list_metadata:
         abort(404)
 
-    # maybe there's a better way to do this?..
     fund = get_fund(assessor_task_list_metadata["fund_id"])
     flag = get_latest_flag(application_id)
 
@@ -166,7 +165,6 @@ def score(
     if not assessor_task_list_metadata:
         abort(404)
 
-    # maybe there's a better way to do this?..
     fund = get_fund(assessor_task_list_metadata["fund_id"])
     flag = get_latest_flag(application_id)
 
