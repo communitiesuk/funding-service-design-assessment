@@ -93,7 +93,13 @@ def display_sub_criteria(
             )
         )
 
-    fund = get_fund(Config.COF_FUND_ID)
+    assessor_task_list_metadata = get_assessor_task_list_state(application_id)
+
+    if not assessor_task_list_metadata:
+        abort(404)
+
+    # maybe there's a better way to do this?..
+    fund = get_fund(assessor_task_list_metadata["fund_id"])
     flag = get_latest_flag(application_id)
 
     comment_response = get_comments(
@@ -154,7 +160,14 @@ def score(
 
     if not sub_criteria.is_scored:
         abort(404)
-    fund = get_fund(Config.COF_FUND_ID)
+
+    assessor_task_list_metadata = get_assessor_task_list_state(application_id)
+
+    if not assessor_task_list_metadata:
+        abort(404)
+
+    # maybe there's a better way to do this?..
+    fund = get_fund(assessor_task_list_metadata["fund_id"])
     flag = get_latest_flag(application_id)
 
     comment_response = get_comments(
@@ -203,7 +216,7 @@ def score(
         else None
     )
     # TODO make COF_score_list extendable to other funds
-    COF_score_list = [
+    scoring_list = [
         (5, "Strong"),
         (4, "Good"),
         (3, "Satisfactory"),
@@ -215,7 +228,7 @@ def score(
         application_id=application_id,
         score_list=scores_with_account_details or None,
         latest_score=latest_score,
-        COF_score_list=COF_score_list,
+        scoring_list=scoring_list,
         score_form=score_form,
         rescore_form=rescore_form,
         is_rescore=is_rescore,
