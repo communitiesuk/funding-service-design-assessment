@@ -42,7 +42,7 @@ search_params_cof = {
 }
 search_params_nstf = {
     "search_term": "",
-    "search_in": "org_name,short_id",
+    "search_in": "organisation_name,short_id",
     "funding_type": ALL_VALUE,
     "status": ALL_VALUE,
 }

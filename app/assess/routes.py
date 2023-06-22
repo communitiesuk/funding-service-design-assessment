@@ -359,7 +359,7 @@ def fund_dashboard_COF(round_short_name: str):
     current_app.logger.info(
         f"Loading assessor_dashboard for COF {round_short_name}"
     )
-    return fund_dashboard("COF", round_short_name, search_params_cof)
+    return fund_dashboard("COF", round_short_name, {**search_params_cof})
 
 
 @assess_bp.route(
@@ -374,13 +374,9 @@ def fund_dashboard_NSTF(round_short_name: str):
     current_app.logger.info(
         f"Loading assessor_dashboard for NSTF {round_short_name}"
     )
-    return fund_dashboard("NSTF", round_short_name, search_params_nstf)
+    return fund_dashboard("NSTF", round_short_name, {**search_params_nstf})
 
 
-# @assess_bp.route(
-#     "/assessor_dashboard/<fund_short_name>/<round_short_name>/",
-#     methods=["GET"],
-# )
 def fund_dashboard(
     fund_short_name: str, round_short_name: str, search_params: map
 ):
