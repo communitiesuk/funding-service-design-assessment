@@ -20,7 +20,7 @@ def auth_protect(minimum_roles_required, unprotected_routes):
 
     Args:
         minimum_roles_required: List[str]
-            - a list of minimum roles a user must have to access the service
+            - a list of minimum roles a user must at least one of to be authorised
         unprotected_routes: List[str]
             - a list of routes e.g. ["/"]
                 that can be accessed without authentication
@@ -54,7 +54,7 @@ def auth_protect(minimum_roles_required, unprotected_routes):
     elif g.is_authenticated:
         # Ensure that authenticated users have
         # all minimum required roles
-        if not g.user.roles or not all(
+        if not g.user.roles or not any(  # any of the minimum roles are present
             role_required in g.user.roles
             for role_required in minimum_roles_required
         ):
