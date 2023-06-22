@@ -25,6 +25,7 @@ from app.assess.forms.scores_and_justifications import ScoreForm
 from app.assess.helpers import determine_display_status
 from app.assess.helpers import extract_questions_and_answers_from_json_blob
 from app.assess.helpers import generate_text_of_application
+from app.assess.helpers import get_ttl_hash
 from app.assess.helpers import is_flaggable
 from app.assess.helpers import resolve_application
 from app.assess.models.flag import FlagType
@@ -338,7 +339,11 @@ def old_landing():
 
 @assess_bp.route("/assessor_tool_dashboard/", methods=["GET"])
 def landing():
-    funds = [f for f in get_funds() if has_access_to_fund(f.short_name)]
+    funds = [
+        f
+        for f in get_funds(get_ttl_hash(seconds=300))
+        if has_access_to_fund(f.short_name)
+    ]
     return render_template(
         "assessor_tool_dashboard.html",
         fund_summaries={

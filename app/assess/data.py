@@ -1,3 +1,4 @@
+from functools import lru_cache
 from typing import Dict
 from typing import List
 from typing import Optional
@@ -90,7 +91,10 @@ def get_application_overviews(fund_id, round_id, search_params):
     return overviews_response
 
 
-def get_funds() -> Union[List[Fund], None]:
+@lru_cache(maxsize=1)
+def get_funds(ttl_hash=None) -> Union[List[Fund], None]:
+    del ttl_hash  # unused, but required for lru_cache
+    current_app.logger.info("Fetching funds from fund store.")
     endpoint = Config.FUND_STORE_API_HOST + Config.FUNDS_ENDPOINT
     response = get_data(endpoint)
     if response and len(response) > 0:

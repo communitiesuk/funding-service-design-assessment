@@ -1,4 +1,5 @@
 from app.assess.data import get_funds
+from app.assess.helpers import get_ttl_hash
 from config import Config
 from flask import g
 from flask import redirect
@@ -32,7 +33,9 @@ def auth_protect(minimum_roles_required, unprotected_routes):
     # expand roles to include all fund short names as a prefix, e.g. "COMMENTER" becomes "COF_COMMENTER"
     minimum_roles_required = [
         f"{fund.short_name}_{role}".upper()
-        for fund in get_funds()
+        for fund in get_funds(
+            get_ttl_hash(seconds=300)
+        )  # expensive call, so cache it & refresh every 5 minutes
         for role in minimum_roles_required
     ]
 

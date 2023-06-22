@@ -1,3 +1,4 @@
+import time
 from collections import defaultdict
 from io import StringIO
 from typing import Optional
@@ -13,6 +14,10 @@ from flask import render_template
 from flask import request
 from flask import url_for
 from fsd_utils import NotifyConstants
+
+
+def get_ttl_hash(seconds=3600):
+    return round(time.time() / seconds)
 
 
 def get_application_id_from_request():
