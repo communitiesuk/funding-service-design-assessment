@@ -16,7 +16,7 @@
             }
         ]) %}
     {% endfor %}
-    {% if name == "Unscored" %}
+    {% if name != "Declarations" %}
     {{ govukTable({
         "caption": "Use for due diligence checks.",
         "firstCellIsHeader":false,

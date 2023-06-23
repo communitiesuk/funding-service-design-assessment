@@ -564,7 +564,7 @@ def list_files_in_folder(prefix):
         Bucket=Config.AWS_BUCKET_NAME, Prefix=prefix
     )
     keys = []
-    for obj in response["Contents"]:
+    for obj in response.get("Contents") or []:
         # we cut off the application id.
         _, key = obj["Key"].split("/", 1)
         keys.append(key)
