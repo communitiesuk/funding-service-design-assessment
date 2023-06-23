@@ -377,7 +377,17 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
 
     countries = {"ALL"}
     if has_devolved_authority_validation(fund_id=fund_id):
+        current_app.logger.error(
+            f"Fund id: {fund_id} has devolved authority validation."
+        )
         countries = get_countries_from_roles(fund.short_name)
+        current_app.logger.error(
+            f"Fund id: {fund_id} has countries: {countries}"
+        )
+    else:
+        current_app.logger.error(
+            f"Fund id: {fund_id} does not have devolved authority validation."
+        )
 
     search_params = {
         "search_term": "",
@@ -403,6 +413,10 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
     application_overviews = get_application_overviews(
         fund_id, round_id, search_params
     )
+
+    # this is only used for querying applications, so remove it from the search params,
+    # so it's not reflected on the user interface
+    del search_params["countries"]
 
     round_details = {
         "assessment_deadline": _round.assessment_deadline,
