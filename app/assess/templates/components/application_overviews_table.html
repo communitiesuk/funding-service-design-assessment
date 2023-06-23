@@ -152,6 +152,12 @@
                 <span class="flagged-tag">
                   {{ overview.flags[-1].flag_type | capitalize }}
                 </span>
+                {% elif overview.flags
+                  and overview.flags | length > 1
+                %}
+                <span class="flagged-tag">
+                  {{ "Multple Flags Applied"| capitalize }}
+                </span>
                 {% elif overview.workflow_status == "NOT_STARTED" %}
                 <span class="not-started-tag">
                   {{ assessment_statuses[overview.workflow_status] }}

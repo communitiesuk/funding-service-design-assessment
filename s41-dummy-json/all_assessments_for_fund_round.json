@@ -1,0 +1,347 @@
+[
+    {
+      "application_id": "ce946e9e-369e-472a-a9c3-c60cd124471b",
+      "asset_type": "sporting",
+      "flags": [
+        {
+            "id": "b0ac84e5-bb97-4851-9ba3-4d1101030e9f",
+            "status": "RAISED",
+            "allocation": "TEAM_1",
+            "sections_to_flag": [
+                "benefits",
+                "engagement"
+            ],
+            "updates": [
+                {
+                    "id": "316f607a-03b7-4592-b927-5021a28b7d6a",
+                    "user_id": "00000000-0000-0000-0000-000000000000",
+                    "date_created": "2023-06-15T13:26:36.695671",
+                    "justification": "Not enough info in benefits or engagement",
+                    "status": "RAISED",
+                    "allocation": "TEAM_1"
+                }
+            ]
+        },
+        {
+            "id": "f60f816e-0497-47a7-9211-1515f7939fbe",
+            "status": "RESOLVED",
+            "allocation": "TEAM_2",
+            "sections_to_flag": [
+                "financial_and_risk_forecasts"
+            ],
+            "updates": [
+                {
+                    "id": "70b723be-1244-43a9-a613-69ac75188dab",
+                    "user_id": "00000000-0000-0000-0000-000000000000",
+                    "date_created": "2023-05-15T09:33:36.695671",
+                    "justification": "Not happy with risk mitigation strategies",
+                    "status": "RAISED",
+                    "allocation": "TEAM_2"
+                },
+                {
+                    "id": "b5d01d22-cc5c-4191-a468-219f00ff9af6",
+                    "user_id": "00000000-0000-0000-0000-000000000000",
+                    "date_created": "2023-05-17T11:54:36.695671",
+                    "justification": "Clarity given on risk mitigation, ok to proceed",
+                    "status": "RESOLVED",
+                    "allocation": "TEAM_2"
+                }
+            ]
+        }
+      ],
+      "fund_id": "47aef2f5-3fcb-4d45-acb5-f0152b5f03c4",
+      "funding_amount_requested": 9000,
+      "is_qa_complete": false,
+      "language": "en",
+      "location_json_blob": {
+        "constituency": "test-constituency",
+        "country": "Scotland",
+        "county": "test-county",
+        "error": false,
+        "postcode": "QQ12QQ",
+        "region": "Scotland"
+      },
+      "project_name": "Rebuild the old skatepark in Dundee",
+      "round_id": "5cf439bf-ef6f-431e-92c5-a1d90a4dd32f",
+      "short_id": "COF-R2W3-FMQHTN",
+      "type_of_application": "COF",
+      "workflow_status": "NOT_STARTED"
+    },
+    {
+      "application_id": "b8cb30b4-21b8-4255-ba33-6b53144964c4",
+      "asset_type": "sporting",
+      "flags": [],
+      "fund_id": "47aef2f5-3fcb-4d45-acb5-f0152b5f03c4",
+      "funding_amount_requested": 4500,
+      "is_qa_complete": false,
+      "language": "en",
+      "location_json_blob": {
+        "constituency": "test-constituency",
+        "country": "England",
+        "county": "test-county",
+        "error": false,
+        "postcode": "QQ12QQ",
+        "region": "England"
+      },
+      "project_name": "Restore the vintage skatepark in Birmingham",
+      "round_id": "5cf439bf-ef6f-431e-92c5-a1d90a4dd32f",
+      "short_id": "COF-R2W3-TILXJS",
+      "type_of_application": "COF",
+      "workflow_status": "IN_PROGRESS"
+    },
+    {
+      "application_id": "4147f32f-580d-47a7-8a69-d0ebe4b6795d",
+      "asset_type": "pub",
+      "flags": [
+        {
+            "id": "619b322f-b01e-473b-97cb-9170870052a2",
+            "status": "RESOLVED",
+            "allocation": "ANOTHER_TEAM",
+            "sections_to_flag": [
+                "funding_breakdown"
+            ],
+            "updates": [
+                {
+                    "id": "7b49761b-6d6e-4132-a231-989d46dc0ad8",
+                    "user_id": "00000000-0000-0000-0000-000000000000",
+                    "date_created": "2023-05-05T09:33:36.695671",
+                    "justification": "Not clear what funding will be spent on",
+                    "status": "RAISED",
+                    "allocation": "ANOTHER_TEAM"
+                },
+                {
+                    "id": "3a4253c2-efc9-4840-9edb-3056242e2eb5",
+                    "user_id": "00000000-0000-0000-0000-000000000000",
+                    "date_created": "2023-05-07T11:54:36.695671",
+                    "justification": "Further detail provided to commercial team",
+                    "status": "RESOLVED",
+                    "allocation": "ANOTHER_TEAM"
+                }
+            ]
+        },
+        {
+            "id": "8ee1e574-1788-4ccc-a261-5f44992c0a49",
+            "status": "RESOLVED",
+            "allocation": "TEAM_1",
+            "sections_to_flag": [
+                "value_to_the_community",
+                "community_benefits"
+            ],
+            "updates": [
+                {
+                    "id": "bccc176d-8a22-43f9-9613-05b4d2a43359",
+                    "user_id": "00000000-0000-0000-0000-000000000000",
+                    "date_created": "2023-05-29T09:33:36.695671",
+                    "justification": "Need to double check community benefits and value",
+                    "status": "RAISED",
+                    "allocation": "TEAM_1"
+                },
+                {
+                    "id": "8f58cd08-9ea6-4648-960d-0a68ac539ec0",
+                    "user_id": "00000000-0000-0000-0000-000000000000",
+                    "date_created": "2023-05-30T11:54:36.695671",
+                    "justification": "All good, happy to proceed",
+                    "status": "RESOLVED",
+                    "allocation": "TEAM_1"
+                }
+            ]
+        }
+    ],
+      "fund_id": "47aef2f5-3fcb-4d45-acb5-f0152b5f03c4",
+      "funding_amount_requested": 4600,
+      "is_qa_complete": false,
+      "language": "en",
+      "location_json_blob": {
+        "constituency": "test-constituency",
+        "country": "Wales",
+        "county": "test-county",
+        "error": false,
+        "postcode": "NP10 8QQ",
+        "region": "Wales"
+      },
+      "project_name": "Refurbish the humble pub in Newport",
+      "round_id": "5cf439bf-ef6f-431e-92c5-a1d90a4dd32f",
+      "short_id": "COF-R2W3-YHPEOS",
+      "type_of_application": "COF",
+      "workflow_status": "NOT_STARTED"
+    },
+    {
+      "application_id": "0302354c-b478-4839-995b-6f9ebe0c0cd8",
+      "asset_type": "gallery",
+      "flags": [
+            {
+                "id": "7d1e274e-9ced-45bc-a82f-f53aa56690b7",
+                "status": "STOPPED",
+                "allocation": "TEAM_1",
+                "sections_to_flag": [
+                    "value_to_the_community",
+                    "community_benefits"
+                ],
+                "updates": [
+                    {
+                        "id": "fd9ba3eb-365c-4d26-b106-b7a28f85f02a",
+                        "user_id": "00000000-0000-0000-0000-000000000000",
+                        "date_created": "2023-05-29T09:33:36.695671",
+                        "justification": "Concerns about real value",
+                        "status": "RAISED",
+                        "allocation": "TEAM_1"
+                    },
+                    {
+                        "id": "f6d1b483-5712-47ef-9e27-087c9db95f3d",
+                        "user_id": "00000000-0000-0000-0000-000000000000",
+                        "date_created": "2023-05-30T11:54:36.695671",
+                        "justification": "Don't go any further",
+                        "status": "STOPPED",
+                        "allocation": "TEAM_1"
+                    }
+                ]
+            }
+        ],
+      "fund_id": "47aef2f5-3fcb-4d45-acb5-f0152b5f03c4",
+      "funding_amount_requested": 2000,
+      "is_qa_complete": false,
+      "language": "en",
+      "location_json_blob": {
+        "constituency": "test-constituency",
+        "country": "England",
+        "county": "test-county",
+        "error": false,
+        "postcode": "QQ12QQ",
+        "region": "England"
+      },
+      "project_name": "Restore the loved gallery in Chichester",
+      "round_id": "5cf439bf-ef6f-431e-92c5-a1d90a4dd32f",
+      "short_id": "COF-R2W3-SAZKDO",
+      "type_of_application": "COF",
+      "workflow_status": "NOT_STARTED"
+    },
+    {
+      "application_id": "47f04631-cc36-44cd-95fa-8401bf55436c",
+      "asset_type": "sporting",
+      "flags": [
+        {
+            "id": "ca043f32-bebd-4588-8667-ea10aa8e1fa8",
+            "status": "RAISED",
+            "allocation": "TEAM_1",
+            "sections_to_flag": [
+                "benefits",
+                "engagement"
+            ],
+            "updates": [
+                {
+                    "id": "69ed7a8c-682b-4646-81fa-330d23238f2f",
+                    "user_id": "00000000-0000-0000-0000-000000000000",
+                    "date_created": "2023-06-15T13:26:36.695671",
+                    "justification": "Not enough info in benefits or engagement",
+                    "status": "RAISED",
+                    "allocation": "TEAM_1"
+                }
+            ]
+        },
+        {
+            "id": "12c61886-5ae0-4d1a-9f4c-733bd4a559cd",
+            "status": "STOPPED",
+            "allocation": "TEAM_2",
+            "sections_to_flag": [
+                "value_to_the_community",
+                "community_benefits"
+            ],
+            "updates": [
+                {
+                    "id": "e4d47e53-befe-467e-9b9d-0704d759a48a",
+                    "user_id": "00000000-0000-0000-0000-000000000000",
+                    "date_created": "2023-05-29T09:33:36.695671",
+                    "justification": "Concerns about real value",
+                    "status": "RAISED",
+                    "allocation": "TEAM_2"
+                },
+                {
+                    "id": "de64be15-d1f4-4eb3-b632-79b89e8c8283",
+                    "user_id": "00000000-0000-0000-0000-000000000000",
+                    "date_created": "2023-05-30T11:54:36.695671",
+                    "justification": "Don't go any further",
+                    "status": "STOPPED",
+                    "allocation": "TEAM_2"
+                }
+            ]
+        }
+
+      ],
+      "fund_id": "47aef2f5-3fcb-4d45-acb5-f0152b5f03c4",
+      "funding_amount_requested": 2000,
+      "is_qa_complete": false,
+      "language": "en",
+      "location_json_blob": {
+        "constituency": "test-constituency",
+        "country": "England",
+        "county": "test-county",
+        "error": false,
+        "postcode": "B90 3AQ",
+        "region": "England"
+      },
+      "project_name": "Restore the humble skatepark in Solihull",
+      "round_id": "5cf439bf-ef6f-431e-92c5-a1d90a4dd32f",
+      "short_id": "COF-R2W3-BJEZSM",
+      "type_of_application": "COF",
+      "workflow_status": "NOT_STARTED"
+    },
+    {
+      "application_id": "53762a02-e996-46e2-9ab4-d8ecfb91f3f9",
+      "asset_type": "gallery",
+      "flags": [
+        {
+            "id": "a825d47b-4270-4250-8f72-39e1d18cb0a8",
+            "status": "STOPPED",
+            "allocation": "TEAM_2",
+            "sections_to_flag": [
+                "value_to_the_community",
+                "community_benefits"
+            ],
+            "updates": [
+                {
+                    "id": "693512c2-4ccd-4ac1-b02a-ea8b7afbc275",
+                    "user_id": "00000000-0000-0000-0000-000000000000",
+                    "date_created": "2023-05-29T09:33:36.695671",
+                    "justification": "Concerns about real value",
+                    "status": "RAISED",
+                    "allocation": "TEAM_2"
+                },
+                {
+                    "id": "1d43ff67-517a-4634-a0f5-cc05dc8873c7",
+                    "user_id": "00000000-0000-0000-0000-000000000000",
+                    "date_created": "2023-05-30T11:54:36.695671",
+                    "justification": "Don't go any further",
+                    "status": "STOPPED",
+                    "allocation": "TEAM_2"
+                },
+                {
+                    "id": "ec0375e2-26aa-4dec-ab42-abbf9ed9a683",
+                    "user_id": "00000000-0000-0000-0000-000000000000",
+                    "date_created": "2023-05-31T11:54:36.695671",
+                    "justification": "Actually it's fine, carry on!",
+                    "status": "RESOLVED",
+                    "allocation": "TEAM_2"
+                }
+            ]
+        }
+
+      ],
+      "fund_id": "47aef2f5-3fcb-4d45-acb5-f0152b5f03c4",
+      "funding_amount_requested": 5250,
+      "is_qa_complete": false,
+      "language": "en",
+      "location_json_blob": {
+        "constituency": "test-constituency",
+        "country": "England",
+        "county": "test-county",
+        "error": false,
+        "postcode": "QQ12QQ",
+        "region": "England"
+      },
+      "project_name": "Save the loved gallery in Hereford",
+      "round_id": "5cf439bf-ef6f-431e-92c5-a1d90a4dd32f",
+      "short_id": "COF-R2W3-NXRBCK",
+      "type_of_application": "COF",
+      "workflow_status": "NOT_STARTED"
+    }
+]

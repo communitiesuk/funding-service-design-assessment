@@ -1,3 +1,4 @@
+import json
 from datetime import datetime
 from urllib.parse import quote_plus
 
@@ -405,7 +406,7 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
     # TODO Can we get rid of get_application_overviews for fund and _round
     # and incorporate into the following function?
     #  (its only used to provide params for this function)
-    post_processed_overviews = (
+    post_processed_overviews = (  # noqa: F841
         get_assessment_progress(application_overviews)
         if application_overviews
         else []
@@ -432,6 +433,14 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
         return sorted_table_data
 
     # Get the sort column and order from query parameters
+
+    # TODO remove this befor pushing to main as we are using dummy data for front end changes
+    data = {}
+    with open(
+        "s41-dummy-json/all_assessments_for_fund_round.json", "r"
+    ) as file:
+        data = json.load(file)
+
     sort_column = request.args.get("sort_column", "")
     sort_order = request.args.get("sort_order", "")
     if sort_column:
@@ -444,7 +453,7 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
     return render_template(
         "assessor_dashboard.html",
         user=g.user,
-        application_overviews=post_processed_overviews,
+        application_overviews=data,
         round_details=round_details,
         query_params=search_params,
         asset_types=asset_types,
