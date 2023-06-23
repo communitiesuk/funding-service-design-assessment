@@ -190,7 +190,7 @@ def get_score_and_justification(
     return score_response
 
 
-def match_score_to_user_account(scores):
+def match_score_to_user_account(scores, fund_short_name):
     account_ids = [score["user_id"] for score in scores]
     bulk_accounts_dict = get_bulk_accounts_dict(account_ids)
     scores_with_account: list[Score] = [
@@ -204,8 +204,8 @@ def match_score_to_user_account(scores):
                     "email_address"
                 ],
                 "highest_role": bulk_accounts_dict[score["user_id"]][
-                    "highest_role"
-                ],
+                    "highest_role_map"
+                ][fund_short_name],
             }
         )
         for score in scores

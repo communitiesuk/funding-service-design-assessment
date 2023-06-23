@@ -215,7 +215,9 @@ def score(
         application_id, sub_criteria_id, score_history=True
     )
     # TODO add test for this function in data_operations
-    scores_with_account_details = match_score_to_user_account(score_list)
+    scores_with_account_details = match_score_to_user_account(
+        score_list, fund.short_name
+    )
     latest_score = (
         scores_with_account_details.pop(0)
         if (score_list is not None and len(scores_with_account_details) > 0)

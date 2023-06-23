@@ -414,7 +414,7 @@ class TestRoutes:
         )
         assert b"Current score: 3" in response.data
         assert b"Rescore" in response.data
-        assert b"Tf lead assessor" in response.data
+        assert b"Lead assessor" in response.data
         assert b"This is a comment" in response.data
 
     def test_route_sub_criteria_scoring_inaccessible_to_commenters(
@@ -557,7 +557,7 @@ class TestRoutes:
             soup.find("h1", class_="assessment-alert__heading").string
             == "Assessment Stopped"
         )
-        assert b"Lead User (Tf lead assessor) lead@test.com" in response.data
+        assert b"Lead User (Lead assessor) lead@test.com" in response.data
         assert b"20/02/2023 at 12:00" in response.data
 
     @pytest.mark.application_id("resolved_app")
