@@ -1,3 +1,4 @@
+from copy import deepcopy
 from functools import lru_cache
 from typing import Dict
 from typing import List
@@ -154,10 +155,11 @@ def get_bulk_accounts_dict(account_ids: List):
         account_params = {"account_id": account_ids_to_retrieve}
         users_result = get_data(account_url, account_params)
         if Config.FLASK_ENV == "development":
-            users_result[Config.DEBUG_USER_ACCOUNT_ID] = {
-                **Config.DEBUG_USER,
-                "email_address": Config.DEBUG_USER["email"],
-            }
+            debug_user_config = deepcopy(Config.DEBUG_USER)
+            debug_user_config["email_address"] = Config.DEBUG_USER["email"]
+            debug_user_config["highest_role_map"] = {"COF": "LEAD_ASSESSOR"}
+            del debug_user_config["highest_role"]
+            users_result[Config.DEBUG_USER_ACCOUNT_ID] = debug_user_config
 
         return users_result
     else:
@@ -484,8 +486,8 @@ def match_comment_to_theme(comment_response, themes, fund_short_name):
                     "email_address"
                 ],
                 "highest_role": bulk_accounts_dict[comment["user_id"]][
-                    "highest_role"
-                ],
+                    "highest_role_map"
+                ][fund_short_name],
                 "fund_short_name": fund_short_name,
             }
         )
