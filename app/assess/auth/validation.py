@@ -1,8 +1,9 @@
 from collections import defaultdict
 from functools import wraps
+from typing import Callable
 from typing import List
+from typing import Mapping
 from typing import Sequence
-from typing import Tuple
 
 from app.assess.data import get_application_metadata
 from app.assess.data import get_fund
@@ -12,20 +13,20 @@ from flask import abort
 from flask import g
 from fsd_utils.authentication.decorators import login_required
 
-_UK_COUNTRIES = [
+_UK_COUNTRIES: list[str] = [
     "ENGLAND",
     "SCOTLAND",
     "WALES",
     "NORTHERNIRELAND",  # normalise locations
 ]
 
-_ROLES = [
+_ROLES: list[str] = [
     "LEAD_ASSESSOR",
     "ASSESSOR",
     "COMMENTER",
 ]
 
-_HAS_DEVOLVED_AUTHORITY_VALIDATION = defaultdict(
+_HAS_DEVOLVED_AUTHORITY_VALIDATION: Mapping[str, bool] = defaultdict(
     lambda *_: False,  # by default, no devolved authority validation
     {
         "47aef2f5-3fcb-4d45-acb5-f0152b5f03c4": True,
@@ -34,7 +35,7 @@ _HAS_DEVOLVED_AUTHORITY_VALIDATION = defaultdict(
 )
 
 
-def _normalise_country(country: str):
+def _normalise_country(country: str) -> str:
     country = country.casefold()
     if country in {c.casefold() for c in _UK_COUNTRIES}:
         return country
@@ -43,32 +44,30 @@ def _normalise_country(country: str):
     return country
 
 
-def _get_all_country_roles(short_name: str) -> Tuple[set, set]:
-    return {f"{short_name}_{c}".casefold() for c in _UK_COUNTRIES}
+def _get_all_country_roles(short_name: str) -> frozenset[str]:
+    return frozenset(f"{short_name}_{c}".casefold() for c in _UK_COUNTRIES)
 
 
-def _get_all_users_roles() -> Tuple[set, set]:
-    return set(r.casefold() for r in g.user.roles)
+def _get_all_users_roles() -> frozenset[str]:
+    return frozenset(r.casefold() for r in g.user.roles)
 
 
-def get_valid_country_roles(short_name) -> bool:
+def get_valid_country_roles(short_name: str) -> frozenset[str]:
     all_roles = _get_all_users_roles()
     country_roles = _get_all_country_roles(short_name)
-    return all_roles.intersection(country_roles)
+    return frozenset(all_roles.intersection(country_roles))
 
 
-def get_countries_from_roles(short_name) -> set[str]:
+def get_countries_from_roles(short_name: str) -> frozenset[str]:
     valid_country_roles = get_valid_country_roles(short_name)
-    partitioned_country_roles = [
+    partitioned_country_roles = (
         vcr.partition("_") for vcr in valid_country_roles
-    ]
-    return {country for _, _, country in partitioned_country_roles}
+    )
+    return frozenset(country for _, _, country in partitioned_country_roles)
 
 
 def has_relevant_country_role(country: str, short_name: str) -> bool:
-    all_roles = _get_all_users_roles()
-    country_roles = {f"{short_name}_{country}".casefold()}
-    return bool(all_roles.intersection(country_roles))
+    return f"{short_name}_{country}".casefold() in _get_all_users_roles()
 
 
 def _get_roles_by_fund_short_name(
@@ -78,7 +77,7 @@ def _get_roles_by_fund_short_name(
 
 
 def has_devolved_authority_validation(
-    *, fund_id=None, short_name=None
+    *, fund_id: str = None, short_name: str = None
 ) -> bool:
     identifier = fund_id or short_name
     if not identifier:
@@ -92,7 +91,9 @@ def has_access_to_fund(short_name: str) -> bool:
     return any(role.startswith(short_name.casefold()) for role in all_roles)
 
 
-def check_access_application_id(func=None, roles_required: List[str] = []):
+def check_access_application_id(
+    func: Callable = None, roles_required: List[str] = []
+) -> Callable:
 
     if func is None:
         return lambda f: check_access_application_id(
@@ -134,7 +135,9 @@ def check_access_application_id(func=None, roles_required: List[str] = []):
     return decorated_function
 
 
-def check_access_fund_short_name(func=None, roles_required: List[str] = []):
+def check_access_fund_short_name(
+    func: Callable = None, roles_required: List[str] = []
+) -> Callable:
 
     if func is None:
         return lambda f: check_access_fund_short_name(
@@ -167,17 +170,17 @@ class AssessmentAccessController(object):
         self.fund_short_name = fund_short_name
 
     @property
-    def is_lead_assessor(self):
+    def is_lead_assessor(self) -> bool:
         return f"{self.fund_short_name}_LEAD_ASSESSOR" in g.user.roles
 
     @property
-    def is_assessor(self):
+    def is_assessor(self) -> bool:
         return f"{self.fund_short_name}_ASSESSOR" in g.user.roles
 
     @property
-    def is_commenter(self):
+    def is_commenter(self) -> bool:
         return f"{self.fund_short_name}_COMMENTER" in g.user.roles
 
     @property
-    def has_any_assessor_role(self):
+    def has_any_assessor_role(self) -> bool:
         return self.is_lead_assessor or self.is_assessor

@@ -16,11 +16,11 @@ from flask import url_for
 from fsd_utils import NotifyConstants
 
 
-def get_ttl_hash(seconds=3600):
+def get_ttl_hash(seconds=3600) -> int:
     return round(time.time() / seconds)
 
 
-def get_application_id_from_request():
+def get_application_id_from_request() -> str | None:
     application_id = (
         request.view_args.get("application_id")
         or request.view_args.get("application")
@@ -30,7 +30,7 @@ def get_application_id_from_request():
     return application_id
 
 
-def get_fund_short_name_from_request():
+def get_fund_short_name_from_request() -> str | None:
     fund_short_name = (
         request.view_args.get("fund_short_name")
         or request.view_args.get("fund_short_name")
