@@ -514,7 +514,7 @@ def application(application_id):
     state = AssessorTaskList.from_json(assessor_task_list_metadata)
     flag = get_latest_flag(application_id)
     if flag:
-        accounts = get_bulk_accounts_dict([flag.user_id])
+        accounts = get_bulk_accounts_dict([flag.user_id], fund.short_name)
 
     sub_criteria_status_completed = all_status_completed(state)
     form = AssessmentCompleteForm()

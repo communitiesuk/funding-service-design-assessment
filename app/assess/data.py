@@ -148,7 +148,7 @@ def get_round(
     return None
 
 
-def get_bulk_accounts_dict(account_ids: List):
+def get_bulk_accounts_dict(account_ids: List, fund_short_name: str):
     if account_ids:
         account_ids_to_retrieve = list(set(account_ids))
         account_url = Config.BULK_ACCOUNTS_ENDPOINT
@@ -160,6 +160,12 @@ def get_bulk_accounts_dict(account_ids: List):
             debug_user_config["highest_role_map"] = {"COF": "LEAD_ASSESSOR"}
             del debug_user_config["highest_role"]
             users_result[Config.DEBUG_USER_ACCOUNT_ID] = debug_user_config
+
+        # we only need the highest role for the fund we are currently viewing
+        users_result["highest_role"] = users_result["highest_role_map"][
+            fund_short_name
+        ]
+        del users_result["highest_role_map"]
 
         return users_result
     else:
@@ -192,7 +198,7 @@ def get_score_and_justification(
 
 def match_score_to_user_account(scores, fund_short_name):
     account_ids = [score["user_id"] for score in scores]
-    bulk_accounts_dict = get_bulk_accounts_dict(account_ids)
+    bulk_accounts_dict = get_bulk_accounts_dict(account_ids, fund_short_name)
     scores_with_account: list[Score] = [
         Score.from_dict(
             score
@@ -204,8 +210,8 @@ def match_score_to_user_account(scores, fund_short_name):
                     "email_address"
                 ],
                 "highest_role": bulk_accounts_dict[score["user_id"]][
-                    "highest_role_map"
-                ][fund_short_name],
+                    "highest_role"
+                ],
             }
         )
         for score in scores
@@ -473,7 +479,7 @@ def match_comment_to_theme(comment_response, themes, fund_short_name):
         Returns a dictionary of comments.
     """
     account_ids = [comment["user_id"] for comment in comment_response]
-    bulk_accounts_dict = get_bulk_accounts_dict(account_ids)
+    bulk_accounts_dict = get_bulk_accounts_dict(account_ids, fund_short_name)
 
     comments: list[Comment] = [
         Comment.from_dict(
@@ -486,8 +492,8 @@ def match_comment_to_theme(comment_response, themes, fund_short_name):
                     "email_address"
                 ],
                 "highest_role": bulk_accounts_dict[comment["user_id"]][
-                    "highest_role_map"
-                ][fund_short_name],
+                    "highest_role"
+                ],
                 "fund_short_name": fund_short_name,
             }
         )
