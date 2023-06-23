@@ -2,7 +2,7 @@
 {% from "macros/justification.html" import justification %}
 {%- from "govuk_frontend_jinja/components/button/macro.html" import govukButton -%}
 
-{% macro scores_justification(score_form, rescore_form, is_rescore, score_list, latest_score, application_id, sub_criteria_id, COF_score_list) %}
+{% macro scores_justification(score_form, rescore_form, is_rescore, score_list, latest_score, application_id, sub_criteria_id, scoring_list) %}
 
 <div class="govuk-grid-column-full s26-scoring">
     {% if latest_score %}
@@ -70,7 +70,7 @@
                 the&nbsp;<a class="govuk-link govuk-link--no-visited-state" href="https://mhclg.sharepoint.com/:w:/s/CommunityOwnershipFund/Ecv3iM7U0AtKtyHnzRrQ9dsB0HdMPvHWqAoGn1WrWM7EMA?e=6QpdUT">assessment
                     criteria</a>.</p>
             <p class="govuk-body">You can rescore at any point.</p>
-            {{ scores(score_form, COF_score_list) }}
+            {{ scores(score_form, scoring_list) }}
             {{ justification(score_form) }}
         </div>
         {% if latest_score %}

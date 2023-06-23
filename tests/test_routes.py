@@ -385,6 +385,7 @@ class TestRoutes:
         mock_get_latest_flag,
         mock_get_scores,
         mock_get_bulk_accounts,
+        mock_get_assessor_tasklist_state,
     ):
 
         application_id = request.node.get_closest_marker(
@@ -898,6 +899,7 @@ class TestRoutes:
         mock_get_latest_flag,
         mock_get_comments,
         mock_get_sub_criteria_theme,
+        mock_get_assessor_tasklist_state,
     ):
         # Mocking fsd-user-token cookie
         token = create_valid_token(test_commenter_claims)

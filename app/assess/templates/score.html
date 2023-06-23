@@ -59,7 +59,7 @@ Score - {{ sub_criteria.name }} - {{ sub_criteria.project_name }}
         </div>
         <div class="theme govuk-grid-column-two-thirds">
             {{ scores_justification(score_form, rescore_form, is_rescore, score_list, latest_score, application_id,
-            sub_criteria.id, COF_score_list) }}
+            sub_criteria.id, scoring_list) }}
             {{ comment_summary(comments,sub_criteria.themes) }}
         </div>
     </div>

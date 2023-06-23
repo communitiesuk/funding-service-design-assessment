@@ -62,6 +62,10 @@ class AboveQuestionAnswerPair(QuestionAnswerPair):
     key = "question_above_answer"
 
 
+class AboveQuestionAnswerPairHtml(QuestionAnswerPair):
+    key = "question_above_answer_html"
+
+
 class BesideQuestionAnswerPair(QuestionAnswerPair):
     key = "question_beside_answer"
 
@@ -153,7 +157,7 @@ class NewAddAnotherTable(ApplicantResponseComponent):
     head: List[dict[str, str]]
     rows: List[dict[str, str]]
 
-    key = "question_above_href_answer_list"
+    key = "new_add_another_table"
 
     @classmethod
     def from_dict(cls, data: dict):
@@ -244,6 +248,9 @@ def _ui_component_from_factory(item: dict, application_id: str):
     elif presentation_type == "question_heading":
         return QuestionHeading.from_dict(item)
 
+    elif presentation_type == "free_text":
+        return AboveQuestionAnswerPairHtml.from_dict(item)
+
     elif presentation_type == "table":
         if not item.get("answer"):
             return BesideQuestionAnswerPair(
@@ -253,7 +260,7 @@ def _ui_component_from_factory(item: dict, application_id: str):
 
         return NewAddAnotherTable.from_dict(item)
 
-    elif presentation_type in ("text", "list"):
+    elif presentation_type in ("text", "list", "free_text"):
         if field_type in ("multilineTextField",):
             return AboveQuestionAnswerPair.from_dict(item)
         elif field_type in ("websiteField",):
