@@ -242,7 +242,7 @@ def _ui_component_from_factory(item: dict, application_id: str):
         if presentation_type not in ("grouped_fields",):
             item["answer"] = float(item["answer"])
 
-    if item.get("branched_field", "False") == "True":
+    if item.get("branched_field"):
         # In the case of the same question asked in two places (but with differing fields ids)
         # for example when asked in multiple paths within a form (branched_fields),
         # we specify the multiple field_id's ids in a grouping to pick up each possible form branch
