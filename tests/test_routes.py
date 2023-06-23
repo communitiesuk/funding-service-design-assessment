@@ -57,7 +57,6 @@ class TestRoutes:
                 "search_in": "project_name,short_id",
                 "asset_type": "ALL",
                 "status": "ALL",
-                "countries": "ALL",
             },
         }
     )
@@ -108,7 +107,6 @@ class TestRoutes:
                 "search_in": "project_name,short_id",
                 "asset_type": "ALL",
                 "status": "QA_COMPLETE",
-                "countries": "ALL",
             },
         }
     )
@@ -149,7 +147,6 @@ class TestRoutes:
                 "search_in": "project_name,short_id",
                 "asset_type": "pub",
                 "status": "ALL",
-                "countries": "ALL",
             },
         }
     )
@@ -190,7 +187,6 @@ class TestRoutes:
                 "search_in": "project_name,short_id",
                 "asset_type": "ALL",
                 "status": "ALL",
-                "countries": "ALL",
             },
         }
     )
@@ -231,7 +227,6 @@ class TestRoutes:
                 "search_in": "project_name,short_id",
                 "asset_type": "ALL",
                 "status": "ALL",
-                "countries": "ALL",
             },
         }
     )
@@ -259,7 +254,6 @@ class TestRoutes:
                 "search_term": "hello",
                 "asset_type": "cinema",
                 "status": "in-progress",
-                "countries": "ALL",
             },
         )
 
@@ -278,7 +272,6 @@ class TestRoutes:
                 "search_in": "project_name,short_id",
                 "asset_type": "ALL",
                 "status": "ALL",
-                "countries": "ALL",
             },
         }
     )
@@ -849,7 +842,6 @@ class TestRoutes:
                 "search_in": "project_name,short_id",
                 "asset_type": "ALL",
                 "status": "ALL",
-                "countries": "ALL",
             },
         }
     )

@@ -378,7 +378,6 @@ def mock_get_assessment_stats(request):
             "search_in": "project_name,short_id",
             "asset_type": "ALL",
             "status": "ALL",
-            "countries": "ALL",
         }
 
     with (

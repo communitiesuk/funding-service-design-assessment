@@ -377,17 +377,7 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
 
     countries = {"ALL"}
     if has_devolved_authority_validation(fund_id=fund_id):
-        current_app.logger.error(
-            f"Fund id: {fund_id} has devolved authority validation."
-        )
         countries = get_countries_from_roles(fund.short_name)
-        current_app.logger.error(
-            f"Fund id: {fund_id} has countries: {countries}"
-        )
-    else:
-        current_app.logger.error(
-            f"Fund id: {fund_id} does not have devolved authority validation."
-        )
 
     search_params = {
         "search_term": "",
