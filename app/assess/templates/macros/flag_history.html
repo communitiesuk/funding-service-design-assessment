@@ -1,5 +1,4 @@
 {%- from "govuk_frontend_jinja/components/table/macro.html" import govukTable -%}
-{%- from "govuk_frontend_jinja/components/details/macro.html" import govukDetails -%}
 {%- from "govuk_frontend_jinja/components/tabs/macro.html" import govukTabs -%}
 
 {% macro flag_table(state, application_id, flag_data, accounts_list) %}
@@ -65,8 +64,13 @@
         }) }}
     {% endset %}
 
-    {{ govukDetails({
-        'summaryText': "Flag history",
-        'html': TabsData
-    }) }}
+    <details class="govuk-details" data-module="govuk-details" open="">
+        <summary class="govuk-details__summary">
+        <span class="govuk-details__summary-text">
+            Flag history
+        </span>
+        </summary><br><br>
+        {{ TabsData }}
+    </details>
+
 {% endmacro %}
