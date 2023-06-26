@@ -822,15 +822,6 @@ def test_create_ui_components_retains_order(monkeypatch):
             "field_type": "websiteField",
         },
         {
-            "caption": "Person count",
-            "question": ["Person count", "Person count"],
-            "field_id": ["field_7", "field_8"],
-            "answer": [("Person count", 1)],
-            "branched_field": "1",
-            "presentation_type": "grouped_fields",
-            "field_type": "numberField",
-        },
-        {
             "field_id": "field_9",
             "question": "Ninth",
             "answer": "Yes",
