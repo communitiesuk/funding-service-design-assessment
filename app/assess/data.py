@@ -363,11 +363,12 @@ def get_flags(application_id: str) -> Optional[Flag]:
         Config.ASSESSMENT_FLAGS_ENDPOINT.format(application_id=application_id)
     )
     # TODO: Remove mock data used for flag history development
-    if application_id == "81480ade-0487-4097-8dec-bba3116ee7f3":
+    test_application_id = "81480ade-0487-4097-8dec-bba3116ee7f3"
+    if application_id == test_application_id:
         flags = [
             {
                 "id": "b0ac84e5-bb97-4851-9ba3-4d1101030e9f",
-                "application_id": "81480ade-0487-4097-8dec-bba3116ee7f3",
+                "application_id": test_application_id,
                 "status": "RAISED",
                 "allocation": "TEAM_1",
                 "sections_to_flag": ["benefits", "engagement"],
@@ -386,7 +387,7 @@ def get_flags(application_id: str) -> Optional[Flag]:
             },
             {
                 "id": "f60f816e-0497-47a7-9211-1515f7939fbe",
-                "application_id": "81480ade-0487-4097-8dec-bba3116ee7f3",
+                "application_id": test_application_id,
                 "status": "RESOLVED",
                 "allocation": "TEAM_2",
                 "sections_to_flag": ["financial_and_risk_forecasts"],

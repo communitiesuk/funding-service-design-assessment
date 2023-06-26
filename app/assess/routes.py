@@ -482,18 +482,23 @@ def application(application_id):
 
     state = AssessorTaskList.from_json(assessor_task_list_metadata)
     flag = get_latest_flag(application_id)
-    flags_list = get_flags(application_id)
-    user_id_list = []
-    for flag_data in flags_list:
-        for flag_item in flag_data.updates:
-            if flag_item["user_id"] not in user_id_list:
-                user_id_list.append(flag_item["user_id"])
-
     if flag:
         accounts = get_bulk_accounts_dict([flag.user_id])
 
-    if flags_list:
-        accounts_list = get_bulk_accounts_dict(user_id_list)
+    # TODO: Remove mock data used for flag history development
+    if application_id == "81480ade-0487-4097-8dec-bba3116ee7f3":
+        flags_list = get_flags(application_id)
+        user_id_list = []
+        for flag_data in flags_list:
+            for flag_item in flag_data.updates:
+                if flag_item["user_id"] not in user_id_list:
+                    user_id_list.append(flag_item["user_id"])
+        if flags_list:
+            accounts_list = get_bulk_accounts_dict(user_id_list)
+
+    else:
+        flags_list = []
+        accounts_list = []
 
     sub_criteria_status_completed = all_status_completed(state)
     form = AssessmentCompleteForm()

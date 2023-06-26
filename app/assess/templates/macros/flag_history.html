@@ -2,22 +2,27 @@
 {%- from "govuk_frontend_jinja/components/details/macro.html" import govukDetails -%}
 {%- from "govuk_frontend_jinja/components/tabs/macro.html" import govukTabs -%}
 
-{% macro flag_table(state, flag_data, accounts_list) %}
+{% macro flag_table(state, application_id, flag_data, accounts_list) %}
     {% set items = [] %}
     {% for data in flag_data.updates %}
         {% set FlagDetails %}
-            <p><strong>Reason</strong><br>{{ data['justification'] }}</p>
-            <p><strong>Section(s) flagged</strong><br></p>
-            {% for sub_section_id in flag_data['sections_to_flag'] %}
-                {% set sub_section_data = state.get_section_from_sub_criteria_id(sub_section_id) %}
-                {% if sub_section_data %}
-                    <p><a class="govuk-link govuk-link--no-visited-state" href="{{ url_for('assess_bp.display_sub_criteria',application_id=application_id ,sub_criteria_id=sub_section_id) }}" target="_blank">{{ sub_section_data["sub_section_name"] }}</a> ({{ sub_section_data["parent_section_name"] }}) (Opens in new tab)</p>
-                {% else %}
-                    <p>{{ sub_section_id }}</p>
-                {% endif %}
-            {% endfor %}
-            <p><strong>Flag allocation</strong><br>Flagged for {{ flag_data.allocation }}</p>
-            <p><strong>Notification sent</strong><br>No</p>
+            {% if data['status']!='RESOLVED' %}
+                <p><strong>Reason</strong><br>{{ data['justification'] }}</p>
+                <p><strong>Section(s) flagged</strong><br></p>
+                {% for sub_section_id in flag_data['sections_to_flag'] %}
+                    {% set sub_section_data = state.get_section_from_sub_criteria_id(sub_section_id) %}
+                    {% if sub_section_data %}
+                        <p><a class="govuk-link govuk-link--no-visited-state" href="{{ url_for('assess_bp.display_sub_criteria',application_id=application_id ,sub_criteria_id=sub_section_id) }}" target="_blank">{{ sub_section_data["sub_section_name"] }}</a> ({{ sub_section_data["parent_section_name"] }}) (Opens in new tab)</p>
+                    {% else %}
+                        <p>{{ sub_section_id }}</p>
+                    {% endif %}
+                {% endfor %}
+                <p><strong>Flag allocation</strong><br> <span class="flagged-tag">Flagged for {{ flag_data.allocation }}</span></p>
+                <p><strong>Notification sent</strong><br>No</p>
+            {% else %}
+                <p><strong>Resolve flag action</strong><br>Query resolved</p>
+                <p><strong>Reason</strong><br>{{ data['justification'] }}</p>
+            {% endif %}
 
         {% endset %}
 
@@ -43,7 +48,7 @@
     })}}
 {% endmacro %}
 
-{% macro flag_tabs(state, flags_list, accounts_list) %}
+{% macro flag_tabs(state, application_id, flags_list, accounts_list) %}
     {% set TabsData %}
         {% set items = [] %}
         {% for flag_item in flags_list %}
@@ -51,7 +56,7 @@
             'label': "Flagged for " + flag_item.allocation,
             'id': "tab-" + flag_item.allocation,
             'panel': {
-                'html': flag_table(state, flag_item, accounts_list)}
+                'html': flag_table(state, application_id, flag_item, accounts_list)}
             })%}
         {% endfor %}
 
