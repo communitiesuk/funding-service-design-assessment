@@ -242,6 +242,16 @@ def _ui_component_from_factory(item: dict, application_id: str):
         if presentation_type not in ("grouped_fields",):
             item["answer"] = float(item["answer"])
 
+    if item.get("branched_field"):
+        # In the case of the same question asked in two places (but with differing fields ids)
+        # for example when asked in multiple paths within a form (branched_fields),
+        # we specify the multiple field_id's ids in a grouping to pick up each possible form branch
+        # we should only get one answer here so extract the first and only answer
+        item["answer"] = item["answer"][0][1] if "answer" in item else None
+        item["presentation_type"] = "text"
+        item["question"] = item["question"][0]
+        presentation_type = "text"
+
     if presentation_type == "grouped_fields":
         return MonetaryKeyValues.from_dict(item)
 
