@@ -92,6 +92,18 @@
                                 {% endfor %}
                             {% endif %}
                         {% endfor %}
+                        <!-- vvv Remove once assessment_store uses fund-store db vvv -->
+                        {% if state.fund_name == "Night Shelter Transformation Fund" %}
+                            {% for section in state.sections %}
+                                {% if section.name == 'Your organisation' %}
+                                    {% for sub_section in section.sub_criterias %}
+                                        {% set addItem = items.append({'value': sub_section["id"],
+                                                                        'text': sub_section["name"]}) %}
+                                    {% endfor %}
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                        <!-- ^^^ Remove once assessment_store uses fund-store db ^^^ -->
                         {{ govukCheckboxes({
                             'idPrefix': 'Unscored',
                             'name': form.section.id,
