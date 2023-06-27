@@ -94,22 +94,19 @@
                         {% endfor %}
                         <!-- vvv Remove once assessment_store uses fund-store db vvv -->
                         {% if state.fund_name == "Night Shelter Transformation Fund" %}
-                            {% for section in state.sections %}
-                                {% if section.name == 'Your organisation' %}
-                                    {% for sub_section in section.sub_criterias %}
-                                        {% set addItem = items.append({'value': sub_section["id"],
-                                                                        'text': sub_section["name"]}) %}
-                                    {% endfor %}
-                                {% endif %}
-                            {% endfor %}
+                            {% set unscored_heading = '<h1 class="govuk-fieldset__heading">Unscored</h1>
+                                                        <br>
+                                                        <h1 class="govuk-fieldset__heading">Your Organisation</h1>' %}
+                        {% else %}
+                            {% set unscored_heading = '<h1 class="govuk-fieldset__heading">Unscored</h1>' %}
+                        {% endif %}
+                        <!-- ^^^ Remove once assessment_store uses fund-store db ^^^ -->
                             {{ govukCheckboxes({
                                 'idPrefix': 'Unscored',
                                 'name': form.section.id,
                                 'fieldset': {
                                     'legend': {
-                                        'html': '<h1 class="govuk-fieldset__heading">Unscored</h1>
-                                                <br>
-                                                <h1 class="govuk-fieldset__heading">Your Organisation</h1>',
+                                        'html': unscored_heading,
                                     'classes': 'govuk-fieldset__legend--s'
                                     }
                                 },
@@ -118,8 +115,6 @@
                                 'classes': 'govuk-checkboxes--small'
                                 })
                             }}
-                        {% else %}
-                        <!-- ^^^ Remove once assessment_store uses fund-store db ^^^ -->
                         {{ govukCheckboxes({
                             'idPrefix': 'Unscored',
                             'name': form.section.id,
