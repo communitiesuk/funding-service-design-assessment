@@ -740,22 +740,25 @@ class TestRoutes:
         )
 
     @pytest.mark.application_id("stopped_app")
+    @pytest.mark.flag_id("stopped_app")
     def test_flag_route_get_continue_application(
         self,
         request,
         flask_test_client,
         mock_get_latest_flag,
+        mock_get_flag,
         mock_get_sub_criteria_banner_state,
         mock_get_fund,
     ):
         application_id = request.node.get_closest_marker(
             "application_id"
         ).args[0]
+        flag_id = request.node.get_closest_marker("flag_id").args[0]
         token = create_valid_token(test_lead_assessor_claims)
         flask_test_client.set_cookie("localhost", "fsd_user_token", token)
 
         response = flask_test_client.get(
-            f"/assess/continue_assessment/{application_id}",
+            f"/assess/continue_assessment/{application_id}?flag_id={flag_id}",
         )
 
         assert response.status_code == 200
@@ -763,7 +766,11 @@ class TestRoutes:
         assert b"Reason for continuing assessment" in response.data
         assert b"Project In prog and Stop" in response.data
 
-    def test_post_continue_application(self, flask_test_client, mocker):
+    @pytest.mark.flag_id("stopped_app")
+    def test_post_continue_application(
+        self, request, flask_test_client, mocker, mock_get_flag
+    ):
+        flag_id = request.node.get_closest_marker("flag_id").args[0]
         token = create_valid_token(test_lead_assessor_claims)
         flask_test_client.set_cookie("localhost", "fsd_user_token", token)
         mocker.patch(
@@ -782,7 +789,7 @@ class TestRoutes:
         )
 
         response = flask_test_client.post(
-            "assess/continue_assessment/app_123",
+            f"assess/continue_assessment/app_123?flag_id={flag_id}",
             data={
                 "reason": "We should continue the application.",
             },

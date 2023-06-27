@@ -480,6 +480,21 @@ def application(application_id):
     if flag:
         accounts = get_bulk_accounts_dict([flag.user_id])
 
+    # TODO: Remove mock data used for flag history development and
+    # Refactor below code after schema changes made for multiple flags
+    try:
+        flags_list = get_flags(application_id)
+        user_id_list = []
+        for flag_data in flags_list:
+            for flag_item in flag_data.updates:
+                if flag_item["user_id"] not in user_id_list:
+                    user_id_list.append(flag_item["user_id"])
+        if flags_list:
+            accounts_list = get_bulk_accounts_dict(user_id_list)
+    except Exception:
+        flags_list = []
+        accounts_list = []
+
     sub_criteria_status_completed = all_status_completed(state)
     form = AssessmentCompleteForm()
 
@@ -504,6 +519,8 @@ def application(application_id):
         state=state,
         application_id=application_id,
         flag=flag,
+        accounts_list=accounts_list,
+        flags_list=flags_list,
         current_user_role=g.user.highest_role,
         fund_short_name=fund.short_name,
         round_short_name=round.short_name,
@@ -582,7 +599,12 @@ def resolve_flag(application_id):
 @login_required(roles_required=["LEAD_ASSESSOR"])
 def continue_assessment(application_id):
     form = ContinueApplicationForm()
-    # TODO: Resolve flag for multiple sections flag to be implemented
+    flag_id = request.args.get("flag_id")
+
+    if not flag_id:
+        current_app.logger.error("No flag id found in query params")
+        abort(404)
+    flag_data = get_flag(flag_id)
     return resolve_application(
         form=form,
         application_id=application_id,
@@ -591,6 +613,7 @@ def continue_assessment(application_id):
         justification=form.reason.data,
         section=["NA"],
         page_to_render="continue_assessment.html",
+        reason_to_flag=flag_data.justification,
     )
 
 
