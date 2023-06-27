@@ -2,6 +2,7 @@
 {%- from 'govuk_frontend_jinja/components/textarea/macro.html' import govukTextarea -%}
 {%- from "govuk_frontend_jinja/components/fieldset/macro.html" import govukFieldset -%}
 {%- from "govuk_frontend_jinja/components/radios/macro.html" import govukRadios %}
+{% from "macros/flag_history.html" import display_flagged_sections %}
 {% from "macros/banner_summary.html" import banner_summary %}
 {% set pageHeading = "Resolve flag" %}
 
@@ -54,14 +55,10 @@
           <h3>Flag details</h3>
           <p><strong>Reason</strong><br>{{ reason_to_flag }}</p>
           <p><strong>Section(s) to flag</strong><br></p>
-          {% for sub_section_id in sections_to_flag %}
-              {% set sub_section_data = state.get_section_from_sub_criteria_id(sub_section_id) %}
-              {% if sub_section_data %}
-                  <p><a class="govuk-link govuk-link--no-visited-state" href="{{ url_for('assess_bp.display_sub_criteria',application_id=application_id ,sub_criteria_id=sub_section_id) }}" target="_blank">{{ sub_section_data["sub_section_name"] }}</a> ({{ sub_section_data["parent_section_name"] }}) (Opens in new tab)</p>
-              {% else %}
-                  <p class="govuk-body">{{ sub_section_id }}</p>
-              {% endif %}
-          {% endfor %}
+          {{ display_flagged_sections(state, application_id, sections_to_flag) }}
+          <p><strong>Flag allocation</strong><br>{{ 'Flagged for ' + allocated_team if allocated_team else 'N/A' }}</p>
+          {# TODO: Notification is hardcoded. Change it once notification is implemented #}
+          <p><strong>Notification sent</strong><br>No</p>
           </div>
           {{ govukRadios({
           "id": form.resolution_flag.id,
