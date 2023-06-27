@@ -485,8 +485,9 @@ def application(application_id):
     if flag:
         accounts = get_bulk_accounts_dict([flag.user_id])
 
-    # TODO: Remove mock data used for flag history development
-    if application_id == "81480ade-0487-4097-8dec-bba3116ee7f3":
+    # TODO: Remove mock data used for flag history development and
+    # Refactor below code after schema changes made for multiple flags
+    try:
         flags_list = get_flags(application_id)
         user_id_list = []
         for flag_data in flags_list:
@@ -495,8 +496,7 @@ def application(application_id):
                     user_id_list.append(flag_item["user_id"])
         if flags_list:
             accounts_list = get_bulk_accounts_dict(user_id_list)
-
-    else:
+    except Exception:
         flags_list = []
         accounts_list = []
 

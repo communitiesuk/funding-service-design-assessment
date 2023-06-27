@@ -41,6 +41,7 @@ class Flag:
         )
 
 
+# TODO: Refactor below class after assessment-store schema changes for multiple flags
 @dataclass()
 class Flags:
     id: str
@@ -54,6 +55,9 @@ class Flags:
     allocation: str
 
     def __post_init__(self):
+        # TODO: Uncomment below code after Enum types are upodated with ESCALATED & RAISED
+        # in assessment-store and in above class `FlagType`
+
         # if self.flag_type:
         #     self.flag_type = FlagType[self.flag_type]
 

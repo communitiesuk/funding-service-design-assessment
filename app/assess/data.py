@@ -362,7 +362,8 @@ def get_flags(application_id: str) -> Optional[Flag]:
     flags = get_data(
         Config.ASSESSMENT_FLAGS_ENDPOINT.format(application_id=application_id)
     )
-    # TODO: Remove mock data used for flag history development
+    # TODO: Remove mock data used for flag history development and
+    # Refactor below code after schema changes made for multiple flags
     test_application_id = "81480ade-0487-4097-8dec-bba3116ee7f3"
     if application_id == test_application_id:
         flags = [
