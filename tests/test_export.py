@@ -1,8 +1,8 @@
 from unittest import mock
 
 from app.assess.data import get_files_for_application_upload_fields
-from app.assess.helpers import extract_questions_and_answers_from_json_blob
-from app.assess.helpers import generate_text_of_application
+from fsd_utils import extract_questions_and_answers_from_json_blob
+from fsd_utils import generate_text_of_application
 from tests.api_data.example_application_answers import test_application_answers
 from tests.api_data.example_application_json_blob import (
     single_application_json_blob,

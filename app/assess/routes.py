@@ -18,8 +18,6 @@ from app.assess.forms.rescore_form import RescoreForm
 from app.assess.forms.resolve_flag_form import ResolveFlagForm
 from app.assess.forms.scores_and_justifications import ScoreForm
 from app.assess.helpers import determine_display_status
-from app.assess.helpers import extract_questions_and_answers_from_json_blob
-from app.assess.helpers import generate_text_of_application
 from app.assess.helpers import is_flaggable
 from app.assess.helpers import resolve_application
 from app.assess.models.flag import FlagType
@@ -40,6 +38,8 @@ from flask import render_template
 from flask import request
 from flask import Response
 from flask import url_for
+from fsd_utils import extract_questions_and_answers_from_json_blob
+from fsd_utils import generate_text_of_application
 from fsd_utils.authentication.decorators import login_required
 
 assess_bp = Blueprint(
