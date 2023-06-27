@@ -10,7 +10,6 @@ from tests.api_data.example_application_json_blob import (
 
 
 class TestExport:
-    
     def test_get_files_for_application_upload_fields(self):
         application_id = "dummy_id"
         short_id = "d_id"
