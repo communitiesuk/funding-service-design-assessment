@@ -9,6 +9,9 @@ from app.assess.data import get_flag
 from app.assess.data import submit_score_and_justification
 from app.assess.display_value_mappings import assessment_statuses
 from app.assess.display_value_mappings import asset_types
+from app.assess.display_value_mappings import funding_types
+from app.assess.display_value_mappings import search_params_cof
+from app.assess.display_value_mappings import search_params_nstf
 from app.assess.forms.assessment_form import AssessmentCompleteForm
 from app.assess.forms.comments_form import CommentsForm
 from app.assess.forms.continue_application_form import ContinueApplicationForm
@@ -34,6 +37,7 @@ from app.assess.views.filters import utc_to_bst
 from config import Config
 from flask import abort
 from flask import Blueprint
+from flask import current_app
 from flask import g
 from flask import redirect
 from flask import render_template
@@ -359,27 +363,20 @@ def landing():
     methods=["GET"],
 )
 def fund_dashboard(fund_short_name: str, round_short_name: str):
-    """
-    Landing page for assessors
-    Provides a summary of available applications
-    with a keyword searchable and filterable list
-    of applications and their statuses
-    """
+    if fund_short_name.upper() == "NSTF":
+        search_params = {**search_params_nstf}
+    else:
+        search_params = {**search_params_cof}
 
     fund = get_fund(fund_short_name, use_short_name=True)
     if not fund:
         return redirect("/assess/assessor_tool_dashboard/")
-    _round = get_round(fund_short_name, round_short_name, use_short_name=True)
-    if not _round:
+    round = get_round(fund_short_name, round_short_name, use_short_name=True)
+    if not round:
         return redirect("/assess/assessor_tool_dashboard/")
-    fund_id, round_id = fund.id, _round.id
 
-    search_params = {
-        "search_term": "",
-        "search_in": "project_name,short_id",
-        "asset_type": "ALL",
-        "status": "ALL",
-    }
+    fund_id, round_id = fund.id, round.id
+
     show_clear_filters = False
     if "clear_filters" not in request.args:
         search_params.update(
@@ -392,15 +389,15 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
     )
 
     round_details = {
-        "assessment_deadline": _round.assessment_deadline,
-        "round_title": _round.title,
+        "assessment_deadline": round.assessment_deadline,
+        "round_title": round.title,
         "fund_name": fund.name,
         "fund_short_name": fund_short_name,
         "round_short_name": round_short_name,
     }
 
     stats = get_assessments_stats(fund_id, round_id, search_params)
-    is_active_status = is_after_today(_round.assessment_deadline)
+    is_active_status = is_after_today(round.assessment_deadline)
 
     # TODO Can we get rid of get_application_overviews for fund and _round
     # and incorporate into the following function?
@@ -416,20 +413,17 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
     ):
         """Sorts application_overviews list based on the specified column."""
 
+        sort_field_to_lambda = {
+            "location": lambda x: x["location_json_blob"]["country"],
+            "funding_requested": lambda x: x["funding_amount_requested"],
+            "local_authority": lambda x: x["local_authority"],
+        }
+
         # Define the sorting function based on the specified column
-        if column == "location":
-            sort_key = lambda x: x["location_json_blob"]["country"]
-        elif column == "funding_requested":
-            sort_key = lambda x: x["funding_amount_requested"]
+        if sort_key := sort_field_to_lambda.get(column, None):
+            return sorted(application_overviews, key=sort_key, reverse=reverse)
         else:
             return application_overviews
-
-        # Sort the data based on the key & order
-        sorted_table_data = sorted(
-            application_overviews, key=sort_key, reverse=reverse
-        )
-
-        return sorted_table_data
 
     # Get the sort column and order from query parameters
 
@@ -449,6 +443,7 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
         round_details=round_details,
         query_params=search_params,
         asset_types=asset_types,
+        funding_types=funding_types,
         assessment_statuses=assessment_statuses,
         show_clear_filters=show_clear_filters,
         stats=stats,
