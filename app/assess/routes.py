@@ -251,8 +251,6 @@ def flag(application_id):
     fund = get_fund(assessor_task_list_metadata["fund_id"])
     assessor_task_list_metadata["fund_name"] = fund.name
     state = AssessorTaskList.from_json(assessor_task_list_metadata)
-    current_app.logger.error(state)
-    current_app.logger.error(state)
     choices = [
         (item["sub_section_id"], item["sub_section_name"])
         for item in state.get_sub_sections_metadata()
