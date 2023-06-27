@@ -295,6 +295,31 @@ class TestApplicatorsResponseComponentFactory:
                 },
                 FormattedBesideQuestionAnswerPair,
             ),
+            (
+                {
+                    "presentation_type": "grouped_fields",
+                    "answer": [("foo", "1"), ("bar", "2")],
+                    "question": ["foo", "foo"],
+                },
+                MonetaryKeyValues,
+            ),
+            (
+                {
+                    "answer": [["Both revenue and capital", "1"]],
+                    "branched_field": "1",
+                    "field_id": ("pVBwci", "GRWtfV"),
+                    "field_type": "numberField",
+                    "form_name": "funding-required-ns",
+                    "presentation_type": "grouped_fields",
+                    "question": [
+                        "How much revenue are you applying for? 1 April 2023"
+                        " to 31 March 2024",
+                        "How much revenue are you applying for? 1 April 2023"
+                        " to 31 March 2024",
+                    ],
+                },
+                BesideQuestionAnswerPair,
+            ),
         ],
     )
     def test__ui_component_from_factory(self, item, expected_class):

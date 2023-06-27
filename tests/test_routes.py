@@ -50,7 +50,54 @@ class TestRoutes:
 
     @pytest.mark.mock_parameters(
         {
-            "fund_short_name": "TF",
+            "fund_short_name": "NSTF",
+            "round_short_name": "TR",
+            "expected_search_params": {
+                "search_term": "",
+                "search_in": "organisation_name,short_id",
+                "funding_type": "ALL",
+                "status": "ALL",
+            },
+        }
+    )
+    def test_route_fund_dashboard_NSTF(
+        self,
+        request,
+        flask_test_client,
+        mock_get_fund,
+        mock_get_round,
+        mock_get_application_overviews,
+        mock_get_assessment_stats,
+        mock_get_assessment_progress,
+    ):
+
+        params = request.node.get_closest_marker("mock_parameters").args[0]
+
+        fund_short_name = params["fund_short_name"]
+        round_short_name = params["round_short_name"]
+
+        response = flask_test_client.get(
+            f"/assess/assessor_dashboard/{fund_short_name}/{round_short_name}",
+            follow_redirects=True,
+        )
+        assert 200 == response.status_code, "Wrong status code on response"
+        soup = BeautifulSoup(response.data, "html.parser")
+
+        all_table_headings = str(
+            soup.find_all("th", class_="govuk-table__header")
+        )
+        expected_titles = [
+            "Reference",
+            "Organisation name",
+            "Funding type",
+            "Funding requested",
+            "Status",
+        ]
+        assert all(title in all_table_headings for title in expected_titles)
+
+    @pytest.mark.mock_parameters(
+        {
+            "fund_short_name": "COF",
             "round_short_name": "TR",
             "expected_search_params": {
                 "search_term": "",
@@ -60,7 +107,7 @@ class TestRoutes:
             },
         }
     )
-    def test_route_fund_dashboard(
+    def test_route_fund_dashboard_COF(
         self,
         request,
         flask_test_client,
@@ -85,6 +132,20 @@ class TestRoutes:
         assert (
             soup.title.string == "Team dashboard - Assessment Hub"
         ), "Response does not contain expected heading"
+
+        all_table_headings = str(
+            soup.find_all("th", class_="govuk-table__header")
+        )
+        expected_titles = [
+            "Reference",
+            "Project name",
+            "Asset type",
+            "Funding requested",
+            "Location",
+            "Status",
+        ]
+        assert all(title in all_table_headings for title in expected_titles)
+
         all_table_data_elements = str(
             soup.find_all("td", class_="govuk-table__cell")
         )
@@ -260,7 +321,7 @@ class TestRoutes:
 
     @pytest.mark.mock_parameters(
         {
-            "fund_short_name": "TF",
+            "fund_short_name": "COF",
             "round_short_name": "TR",
             "expected_search_params": {
                 "search_term": "",
@@ -800,7 +861,7 @@ class TestRoutes:
 
     @pytest.mark.mock_parameters(
         {
-            "fund_short_name": "TF",
+            "fund_short_name": "COF",
             "round_short_name": "TR",
             "expected_search_params": {
                 "search_term": "",

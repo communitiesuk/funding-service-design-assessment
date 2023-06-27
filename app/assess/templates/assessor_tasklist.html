@@ -64,6 +64,7 @@
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
         <div class="govuk-grid-column-two-thirds">
+            <h2 class="govuk-heading-l govuk-!-margin-top-8">Unscored</h2>
             {% for section in state.sections %}
                 {{ section_element(section.name, section.sub_criterias, application_id) }}
             {% endfor %}
