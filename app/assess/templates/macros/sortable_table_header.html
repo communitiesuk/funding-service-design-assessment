@@ -1,0 +1,24 @@
+{%- from 'govuk_frontend_jinja/components/textarea/macro.html' import govukTextarea -%}
+{%- from "govuk_frontend_jinja/components/button/macro.html" import govukButton -%}
+
+{% macro sortable_table_header(column_name, column_text, sort_order, sort_column, round_details, query_params) %}
+
+    <th scope="col" class="govuk-table__header" aria-sort="{{ 'none' if (sort_column!=column_name) else ('ascending' if (sort_order=='asc') else 'descending') }}">
+
+        <form method="get" action="{{ url_for('assess_bp.fund_dashboard', fund_short_name=round_details.fund_short_name,
+                                round_short_name=round_details.round_short_name
+                                ) }}">
+            <input type="hidden" name="sort_column" value="{{ column_name }}">
+            {% if (sort_column == column_name) and sort_order == 'asc' %}
+                <input type="hidden" name="sort_order" value="desc">
+            {% else %}
+                <input type="hidden" name="sort_order" value="asc">
+            {% endif %}
+
+            {% for key, value in query_params.items() %}
+                <input type="hidden" name="{{ key }}" value="{{ value }}">
+            {% endfor %}
+            <button class="button" type="submit" aria-label="Sort by {{ column_text }}">{{ column_text }}</button>
+        </form>
+    </th>
+{% endmacro %}

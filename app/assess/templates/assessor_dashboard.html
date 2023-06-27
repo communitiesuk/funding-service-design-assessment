@@ -2,7 +2,8 @@
 {%- from 'govuk_frontend_jinja/components/inset-text/macro.html' import govukInsetText -%}
 {%- from "govuk_frontend_jinja/components/button/macro.html" import govukButton -%}
 {%- from 'govuk_frontend_jinja/components/back-link/macro.html' import govukBackLink -%}
-{% import "components/application_overviews_table.html" as application_overviews_table -%}
+{% import "components/application_overviews_table_nstf.html" as application_overviews_table_nstf -%}
+{% import "components/application_overviews_table_cof.html" as application_overviews_table_cof -%}
 {% from "macros/banner_summary.html" import banner_summary %}
 {% from "macros/logout_partial.html" import logout_partial %}
 
@@ -49,7 +50,11 @@
 {% endblock header %}
 
 {% block content %}
-<section class="govuk-grid-column-full">
-    {{ application_overviews_table.render(application_overviews, round_details, query_params, asset_types, assessment_statuses, show_clear_filters, user.highest_role, sort_column, sort_order) }}
-</section>
+    <section class="govuk-grid-column-full">
+        {% if round_details.fund_short_name.upper() == 'NSTF' %}
+            {{ application_overviews_table_nstf.render(application_overviews, round_details, query_params, funding_types, assessment_statuses, show_clear_filters, user.highest_role, sort_column, sort_order) }}
+        {% elif round_details.fund_short_name.upper() == "COF" %}
+            {{ application_overviews_table_cof.render(application_overviews, round_details, query_params, asset_types, assessment_statuses, show_clear_filters, user.highest_role, sort_column, sort_order) }}
+        {% endif %}
+    </section>
 {% endblock content %}
