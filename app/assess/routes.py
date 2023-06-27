@@ -402,7 +402,7 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
     # TODO Can we get rid of get_application_overviews for fund and _round
     # and incorporate into the following function?
     #  (its only used to provide params for this function)
-    post_processed_overviews = (  # noqa: F841
+    post_processed_overviews = (
         get_assessment_progress(application_overviews)
         if application_overviews
         else []
@@ -426,7 +426,6 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
             return application_overviews
 
     # Get the sort column and order from query parameters
-
     sort_column = request.args.get("sort_column", "")
     sort_order = request.args.get("sort_order", "")
     if sort_column:
