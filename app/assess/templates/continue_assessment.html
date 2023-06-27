@@ -34,6 +34,11 @@
 
                     <p class="govuk-body">This will remove the flag and allow assessment to continue.</p>
 
+                    <div class="govuk-inset-text">
+                        <p><strong>Stop assessment reason</strong><br>{{ reason_to_flag }}</p>
+                        <p><strong>Flag allocation</strong><br>{{ 'Flagged for ' + allocated_team if allocated_team else 'N/A' }}</p>
+                    </div>
+
                     <div class="govuk-form-group">
 
                         {{ govukTextarea({

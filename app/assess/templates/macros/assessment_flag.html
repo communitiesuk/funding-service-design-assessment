@@ -1,22 +1,19 @@
+{% from "macros/flag_history.html" import display_flagged_sections %}
+
 {% macro assessment_flagged(state, flag, user_info, application_id, current_user_role) %}
     <div class="assessment-alert assessment-alert--flagged" role="alert">
         <h1 class="assessment-alert__heading govuk-heading-l">
             {{ flag.flag_type.name | title }}
         </h1>
-        <h2 class="govuk-heading-m">Reason</h2>
-        <p class="govuk-body">{{ flag.justification }}</p>
-        <h2 class="govuk-heading-m">Section(s) flagged</h2>
-        {% for sub_section_id in flag.sections_to_flag %}
-            {% set sub_section_data = state.get_section_from_sub_criteria_id(sub_section_id) %}
-            {% if sub_section_data %}
-                <p class="govuk-body"><a class="govuk-link govuk-link--no-visited-state" href="{{ url_for('assess_bp.display_sub_criteria',application_id=application_id ,sub_criteria_id=sub_section_id) }}" target="_blank">{{ sub_section_data["sub_section_name"] }}</a> ({{ sub_section_data["parent_section_name"] }}) (Opens in new tab)</p>
-            {% else %}
-                <p class="govuk-body">{{ sub_section_id }}</p>
-            {% endif %}
-        {% endfor %}
+        <h2>Reason</h2>
+        <p>{{ flag.justification }}</p>
+        <h2>Section(s) flagged</h2>
+        {{ display_flagged_sections(state, application_id, flag.sections_to_flag) }}
+        {# TODO: Notification is hardcoded. Change it once notification is implemented #}
+        <h2>Notification sent</h2>
+        <p>No</p><br>
         <p class="govuk-body-s">{{ user_info["full_name"] }} ({{ user_info["highest_role"] | all_caps_to_human }}) {{ user_info["email_address"] }}</p>
         <p class="govuk-body-s">{{ flag.date_created | utc_to_bst }}</p>
-        {# TODO: Resolve flag will be removed #}
         {% if current_user_role == "LEAD_ASSESSOR" %}
             <p class="govuk-body"><a class="govuk-link govuk-link--no-visited-state" href="{{ url_for('assess_bp.resolve_flag',application_id=application_id)}}?flag_id={{ flag.id }}">Resolve flag</a></p>
         {% endif %}
@@ -31,7 +28,7 @@
         <p class="govuk-body-s">{{ user_info["full_name"] }} ({{ user_info["highest_role"] | all_caps_to_human }}) {{ user_info["email_address"] }}</p>
         <p class="govuk-body-s">{{ flag.date_created | utc_to_bst }}</p>
         {% if current_user_role == "LEAD_ASSESSOR" %}
-            <p class="govuk-body"><a class="govuk-link govuk-link--no-visited-state" href="{{ url_for('assess_bp.continue_assessment',application_id=application_id)}}">Remove flag and continue assessment</a></p>
+            <p class="govuk-body"><a class="govuk-link govuk-link--no-visited-state" href="{{ url_for('assess_bp.continue_assessment',application_id=application_id)}}?flag_id={{ flag.id }}">Remove flag and continue assessment</a></p>
         {% endif %}
     </div>
 {% endmacro %}
