@@ -97,19 +97,25 @@
 
                 {% if user_role != "COMMENTER" %}
                 <td class="govuk-table__cell">
-                {% if overview.is_qa_complete and not overview.flags[-1].flag_type in ("FLAGGED", "STOPPED") %}
+                {% if overview.is_qa_complete and not overview.flags[-1].status in ("FLAGGED", "STOPPED") %}
                 <span>QA complete</span>
                 {% elif overview.flags
-                    and overview.flags[-1].flag_type == "STOPPED"
-                %}
-                <span class="stopped-tag">
-                  {{ overview.flags[-1].flag_type | capitalize }}
-                </span>
-                {% elif overview.flags
-                  and overview.flags[-1].flag_type == "FLAGGED"
+                  and overview.flags | length > 1
                 %}
                 <span class="flagged-tag">
-                  {{ overview.flags[-1].flag_type | capitalize }}
+                  {{ "Multple Flags To Resolve"| capitalize }}
+                </span>
+                {% elif overview.flags
+                    and overview.flags[-1].status == "STOPPED"
+                %}
+                <span class="stopped-tag">
+                  {{ overview.flags[-1].status | capitalize }}
+                </span>
+                {% elif overview.flags
+                  and overview.flags[-1].status == "FLAGGED"
+                %}
+                <span class="flagged-tag">
+                  {{ overview.flags[-1].status | capitalize }}
                 </span>
                 {% elif overview.workflow_status == "NOT_STARTED" %}
                 <span class="not-started-tag">
