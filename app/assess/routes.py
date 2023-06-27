@@ -604,7 +604,12 @@ def resolve_flag(application_id):
 @login_required(roles_required=["LEAD_ASSESSOR"])
 def continue_assessment(application_id):
     form = ContinueApplicationForm()
-    # TODO: Resolve flag for multiple sections flag to be implemented
+    flag_id = request.args.get("flag_id")
+
+    if not flag_id:
+        current_app.logger.error("No flag id found in query params")
+        abort(404)
+    flag_data = get_flag(flag_id)
     return resolve_application(
         form=form,
         application_id=application_id,
@@ -613,6 +618,7 @@ def continue_assessment(application_id):
         justification=form.reason.data,
         section=["NA"],
         page_to_render="continue_assessment.html",
+        reason_to_flag=flag_data.justification,
     )
 
 

@@ -1,6 +1,17 @@
 {%- from "govuk_frontend_jinja/components/table/macro.html" import govukTable -%}
 {%- from "govuk_frontend_jinja/components/tabs/macro.html" import govukTabs -%}
 
+{% macro display_flagged_sections(state, application_id, sections_to_flag) %}
+    {% for sub_section_id in sections_to_flag %}
+        {% set sub_section_data = state.get_section_from_sub_criteria_id(sub_section_id) %}
+        {% if sub_section_data %}
+            <p><a class="govuk-link govuk-link--no-visited-state" href="{{ url_for('assess_bp.display_sub_criteria',application_id=application_id ,sub_criteria_id=sub_section_id) }}" target="_blank">{{ sub_section_data["sub_section_name"] }}</a> ({{ sub_section_data["parent_section_name"] }}) (Opens in new tab) </p>
+        {% else %}
+            <p>{{ sub_section_id }}</p>
+        {% endif %}
+    {% endfor %}
+{% endmacro %}
+
 {% macro flag_table(state, application_id, flag_data, accounts_list) %}
     {% set items = [] %}
     {% for data in flag_data.updates %}
@@ -8,14 +19,7 @@
             {% if data['status']!='RESOLVED' %}
                 <p><strong>Reason</strong><br>{{ data['justification'] }}</p>
                 <p><strong>Section(s) flagged</strong><br></p>
-                {% for sub_section_id in flag_data['sections_to_flag'] %}
-                    {% set sub_section_data = state.get_section_from_sub_criteria_id(sub_section_id) %}
-                    {% if sub_section_data %}
-                        <p><a class="govuk-link govuk-link--no-visited-state" href="{{ url_for('assess_bp.display_sub_criteria',application_id=application_id ,sub_criteria_id=sub_section_id) }}" target="_blank">{{ sub_section_data["sub_section_name"] }}</a> ({{ sub_section_data["parent_section_name"] }}) (Opens in new tab)</p>
-                    {% else %}
-                        <p>{{ sub_section_id }}</p>
-                    {% endif %}
-                {% endfor %}
+                {{ display_flagged_sections(state, application_id, flag_data['sections_to_flag']) }}
                 <p><strong>Flag allocation</strong><br> <span class="flagged-tag">Flagged for {{ flag_data.allocation }}</span></p>
                 <p><strong>Notification sent</strong><br>No</p>
             {% else %}
@@ -32,7 +36,7 @@
         {% set addItem = items.append([{'html': CreatedBy},
                                         {'text': FlagDetails},
                                         {'html': ResolvedBy},
-                                        {'text': data['status']}]) %}
+                                        {'text': data['status'] | capitalize}]) %}
     {% endfor %}
 
     <h2 class="govuk-heading-l">Flagged for {{ flag_data.allocation }}</h2>
