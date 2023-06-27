@@ -359,38 +359,14 @@ def landing():
 
 
 @assess_bp.route(
-    "/assessor_dashboard/COF/<round_short_name>/",
+    "/assessor_dashboard/<fund_short_name>/<round_short_name>/",
     methods=["GET"],
 )
-@assess_bp.route(
-    "/assessor_dashboard/cof/<round_short_name>/",
-    methods=["GET"],
-)
-def fund_dashboard_COF(round_short_name: str):
-    current_app.logger.info(
-        f"Loading assessor_dashboard for COF {round_short_name}"
-    )
-    return fund_dashboard("COF", round_short_name, {**search_params_cof})
-
-
-@assess_bp.route(
-    "/assessor_dashboard/NSTF/<round_short_name>/",
-    methods=["GET"],
-)
-@assess_bp.route(
-    "/assessor_dashboard/nstf/<round_short_name>/",
-    methods=["GET"],
-)
-def fund_dashboard_NSTF(round_short_name: str):
-    current_app.logger.info(
-        f"Loading assessor_dashboard for NSTF {round_short_name}"
-    )
-    return fund_dashboard("NSTF", round_short_name, {**search_params_nstf})
-
-
-def fund_dashboard(
-    fund_short_name: str, round_short_name: str, search_params: map
-):
+def fund_dashboard(fund_short_name: str, round_short_name: str):
+    if fund_short_name.upper() == "NSTF":
+        search_params = {**search_params_nstf}
+    else:
+        search_params = {**search_params_cof}
 
     fund = get_fund(fund_short_name, use_short_name=True)
     if not fund:

@@ -49,7 +49,7 @@
   <p>
     <a class="govuk-link govuk-link--no-visited-state"
       href="{{ url_for(
-          'assess_bp.fund_dashboard_' + round_details.fund_short_name,
+          'assess_bp.fund_dashboard', fund_short_name=round_details.fund_short_name,
           round_short_name=round_details.round_short_name,
           clear_filters=true
       ) }}"
