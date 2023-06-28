@@ -25,6 +25,7 @@ from app.assess.helpers import extract_questions_and_answers_from_json_blob
 from app.assess.helpers import generate_text_of_application
 from app.assess.helpers import is_flaggable
 from app.assess.helpers import resolve_application
+from app.assess.helpers import set_application_status_in_overview
 from app.assess.models.flag import FlagType
 from app.assess.models.fund_summary import create_fund_summaries
 from app.assess.models.fund_summary import is_after_today
@@ -408,6 +409,11 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
         else []
     )
 
+    # get and set application status
+    post_processed_overviews = set_application_status_in_overview(
+        post_processed_overviews
+    )
+
     def get_sorted_application_overviews(
         application_overviews, column, reverse=False
     ):
@@ -417,6 +423,11 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
             "location": lambda x: x["location_json_blob"]["country"],
             "funding_requested": lambda x: x["funding_amount_requested"],
             "local_authority": lambda x: x["local_authority"],
+            "project_name": lambda x: x["project_name"],
+            "asset_type": lambda x: x["asset_type"],
+            "organisation_name": lambda x: x["organisation_name"],
+            "funding_type": lambda x: x["funding_type"],
+            "status": lambda x: x["application_status"],
         }
 
         # Define the sorting function based on the specified column

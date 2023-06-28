@@ -37,6 +37,30 @@ def is_flaggable(latest_flag: Optional[Flag]):
     )
 
 
+def set_application_status_in_overview(application_overviews):
+    """Add the 'application_status' key and return the modified list of application overviews."""
+    for overview in application_overviews:
+        if overview["is_qa_complete"] and not overview["flags"][-1][
+            "flag_type"
+        ] in ["FLAGGED", "STOPPED"]:
+            status = "QA_COMPLETED"
+        elif (
+            overview["flags"]
+            and overview["flags"][-1]["flag_type"] == "STOPPED"
+        ):
+            status = overview["flags"][-1]["flag_type"]
+        elif (
+            overview["flags"]
+            and overview["flags"][-1]["flag_type"] == "FLAGGED"
+        ):
+            status = overview["flags"][-1]["flag_type"]
+        else:
+            status = overview["workflow_status"]
+        overview["application_status"] = status
+
+    return application_overviews
+
+
 def resolve_application(
     form,
     application_id,

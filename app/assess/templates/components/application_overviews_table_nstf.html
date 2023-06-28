@@ -97,31 +97,27 @@
 
                 {% if user_role != "COMMENTER" %}
                 <td class="govuk-table__cell">
-                {% if overview.is_qa_complete and not overview.flags[-1].flag_type in ("FLAGGED", "STOPPED") %}
-                <span>QA complete</span>
-                {% elif overview.flags
-                    and overview.flags[-1].flag_type == "STOPPED"
-                %}
+                {% if overview.application_status == "QA_COMPLETED" %}
+                <span>{{ assessment_statuses[overview.application_status] }}</span>
+                {% elif overview.application_status == "STOPPED" %}
                 <span class="stopped-tag">
-                  {{ overview.flags[-1].flag_type | capitalize }}
+                  {{ assessment_statuses[overview.application_status] }}
                 </span>
-                {% elif overview.flags
-                  and overview.flags[-1].flag_type == "FLAGGED"
-                %}
+                {% elif overview.application_status == "FLAGGED" %}
                 <span class="flagged-tag">
-                  {{ overview.flags[-1].flag_type | capitalize }}
+                  {{ assessment_statuses[overview.application_status] }}
                 </span>
-                {% elif overview.workflow_status == "NOT_STARTED" %}
+                {% elif overview.application_status == "NOT_STARTED" %}
                 <span class="not-started-tag">
-                  {{ assessment_statuses[overview.workflow_status] }}
+                  {{ assessment_statuses[overview.application_status] }}
                 </span>
-                {% elif overview.workflow_status == "COMPLETED" %}
+                {% elif overview.application_status == "COMPLETED" %}
                 <span>
-                  {{ assessment_statuses[overview.workflow_status] }}
+                  {{ assessment_statuses[overview.application_status] }}
                 </span>
                 {% else %}
                 <span>
-                  {{ assessment_statuses[overview.workflow_status] }}
+                  {{ assessment_statuses[overview.application_status] }}
                   {{ '(' + overview.progress|string + '%)' if 'progress' in overview else '(0%)' }}
                 </span>
                 {% endif %}
