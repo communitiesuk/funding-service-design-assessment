@@ -649,10 +649,8 @@ def download_application_answers(application_id: str, short_id: str):
     )
     application_json = get_application_json(application_id)
     application_json_blob = application_json["jsonb_blob"]
-    
-    qanda_dict = extract_questions_and_answers(
-    application_json_blob["forms"]
-    )
+
+    qanda_dict = extract_questions_and_answers(application_json_blob["forms"])
     fund = get_fund(application_json["jsonb_blob"]["fund_id"])
     text = generate_text_of_application(qanda_dict, fund.name)
 

@@ -12,7 +12,7 @@ from tests.api_data.example_application_json_blob import (
 class TestExport:
     def test_extract_q_and_a(self, app):
         result = extract_questions_and_answers(
-            single_application_json_blob['forms']
+            single_application_json_blob["forms"]
         )
         assert (
             "sample1.doc"
