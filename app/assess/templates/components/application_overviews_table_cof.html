@@ -119,6 +119,10 @@
                 <span>
                   {{ assessment_statuses[overview.application_status] }}
                 </span>
+                {% elif overview.application_status == "MULTIPLE_FLAGS" %}
+                <span class="flagged-tag">
+                  {{ assessment_statuses[overview.application_status] }}
+                </span>
                 {% else %}
                 <span>
                   {{ assessment_statuses[overview.application_status] }}

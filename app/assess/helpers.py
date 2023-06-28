@@ -44,6 +44,8 @@ def set_application_status_in_overview(application_overviews):
             "flag_type"
         ] in ["FLAGGED", "STOPPED"]:
             status = "QA_COMPLETED"
+        elif len(overview["flags"]) > 1:
+            status = "MULTIPLE_FLAGS"
         elif (
             overview["flags"]
             and overview["flags"][-1]["flag_type"] == "STOPPED"
