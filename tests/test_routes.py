@@ -6,6 +6,7 @@ from app.assess.models.flag import Flag
 from bs4 import BeautifulSoup
 from flask import session
 from tests.conftest import create_valid_token
+from tests.conftest import fund_specific_claim_map
 from tests.conftest import test_commenter_claims
 from tests.conftest import test_lead_assessor_claims
 
@@ -50,7 +51,62 @@ class TestRoutes:
 
     @pytest.mark.mock_parameters(
         {
-            "fund_short_name": "TF",
+            "fund_short_name": "NSTF",
+            "round_short_name": "TR",
+            "expected_search_params": {
+                "search_term": "",
+                "search_in": "organisation_name,short_id",
+                "funding_type": "ALL",
+                "status": "ALL",
+            },
+        }
+    )
+    @pytest.mark.application_id("resolved_app")
+    def test_route_fund_dashboard_NSTF(
+        self,
+        request,
+        flask_test_client,
+        mock_get_fund,
+        mock_get_funds,
+        mock_get_round,
+        mock_get_application_overviews,
+        mock_get_assessment_stats,
+        mock_get_assessment_progress,
+        mock_get_application_metadata,
+    ):
+        flask_test_client.set_cookie(
+            "localhost",
+            "fsd_user_token",
+            create_valid_token(fund_specific_claim_map["NSTF"]["ASSESSOR"]),
+        )
+
+        params = request.node.get_closest_marker("mock_parameters").args[0]
+
+        fund_short_name = params["fund_short_name"]
+        round_short_name = params["round_short_name"]
+
+        response = flask_test_client.get(
+            f"/assess/assessor_dashboard/{fund_short_name}/{round_short_name}",
+            follow_redirects=True,
+        )
+        assert 200 == response.status_code, "Wrong status code on response"
+        soup = BeautifulSoup(response.data, "html.parser")
+
+        all_table_headings = str(
+            soup.find_all("th", class_="govuk-table__header")
+        )
+        expected_titles = [
+            "Reference",
+            "Organisation name",
+            "Funding type",
+            "Funding requested",
+            "Status",
+        ]
+        assert all(title in all_table_headings for title in expected_titles)
+
+    @pytest.mark.mock_parameters(
+        {
+            "fund_short_name": "COF",
             "round_short_name": "TR",
             "expected_search_params": {
                 "search_term": "",
@@ -60,7 +116,8 @@ class TestRoutes:
             },
         }
     )
-    def test_route_fund_dashboard(
+    @pytest.mark.application_id("resolved_app")
+    def test_route_fund_dashboard_COF(
         self,
         request,
         flask_test_client,
@@ -71,6 +128,11 @@ class TestRoutes:
         mock_get_assessment_stats,
         mock_get_assessment_progress,
     ):
+        flask_test_client.set_cookie(
+            "localhost",
+            "fsd_user_token",
+            create_valid_token(fund_specific_claim_map["COF"]["ASSESSOR"]),
+        )
 
         params = request.node.get_closest_marker("mock_parameters").args[0]
 
@@ -86,6 +148,20 @@ class TestRoutes:
         assert (
             soup.title.string == "Team dashboard - Assessment Hub"
         ), "Response does not contain expected heading"
+
+        all_table_headings = str(
+            soup.find_all("th", class_="govuk-table__header")
+        )
+        expected_titles = [
+            "Reference",
+            "Project name",
+            "Asset type",
+            "Funding requested",
+            "Location",
+            "Status",
+        ]
+        assert all(title in all_table_headings for title in expected_titles)
+
         all_table_data_elements = str(
             soup.find_all("td", class_="govuk-table__cell")
         )
@@ -214,6 +290,7 @@ class TestRoutes:
 
         assert 200 == response.status_code, "Wrong status code on response"
         soup = BeautifulSoup(response.data, "html.parser")
+        soup = BeautifulSoup(response.data, "html.parser")
         assert (
             soup.title.string == "Team dashboard - Assessment Hub"
         ), "Response does not contain expected heading"
@@ -265,7 +342,7 @@ class TestRoutes:
 
     @pytest.mark.mock_parameters(
         {
-            "fund_short_name": "TF",
+            "fund_short_name": "COF",
             "round_short_name": "TR",
             "expected_search_params": {
                 "search_term": "",
@@ -295,10 +372,17 @@ class TestRoutes:
         mock_get_application_overviews,
         mock_get_assessment_stats,
         mock_get_assessment_progress,
+        mock_get_application_metadata,
         sort_column,
         sort_order,
         column_id,
     ):
+
+        flask_test_client.set_cookie(
+            "localhost",
+            "fsd_user_token",
+            create_valid_token(fund_specific_claim_map["COF"]["ASSESSOR"]),
+        )
 
         params = request.node.get_closest_marker("mock_parameters").args[0]
         fund_short_name = params["fund_short_name"]
@@ -709,11 +793,13 @@ class TestRoutes:
         )
 
     @pytest.mark.application_id("stopped_app")
+    @pytest.mark.flag_id("stopped_app")
     def test_flag_route_get_continue_application(
         self,
         request,
         flask_test_client,
         mock_get_latest_flag,
+        mock_get_flag,
         mock_get_sub_criteria_banner_state,
         mock_get_fund,
         mock_get_funds,
@@ -722,11 +808,12 @@ class TestRoutes:
         application_id = request.node.get_closest_marker(
             "application_id"
         ).args[0]
+        flag_id = request.node.get_closest_marker("flag_id").args[0]
         token = create_valid_token(test_lead_assessor_claims)
         flask_test_client.set_cookie("localhost", "fsd_user_token", token)
 
         response = flask_test_client.get(
-            f"/assess/continue_assessment/{application_id}",
+            f"/assess/continue_assessment/{application_id}?flag_id={flag_id}",
         )
 
         assert response.status_code == 200
@@ -734,14 +821,18 @@ class TestRoutes:
         assert b"Reason for continuing assessment" in response.data
         assert b"Project In prog and Stop" in response.data
 
+    @pytest.mark.flag_id("stopped_app")
     def test_post_continue_application(
         self,
+        request,
         flask_test_client,
         mocker,
         mock_get_funds,
         mock_get_application_metadata,
         mock_get_fund,
+        mock_get_flag,
     ):
+        flag_id = request.node.get_closest_marker("flag_id").args[0]
         token = create_valid_token(test_lead_assessor_claims)
         flask_test_client.set_cookie("localhost", "fsd_user_token", token)
         mocker.patch(
@@ -760,7 +851,7 @@ class TestRoutes:
         )
 
         response = flask_test_client.post(
-            "assess/continue_assessment/app_123",
+            f"assess/continue_assessment/app_123?flag_id={flag_id}",
             data={
                 "reason": "We should continue the application.",
             },
@@ -836,7 +927,7 @@ class TestRoutes:
 
     @pytest.mark.mock_parameters(
         {
-            "fund_short_name": "TF",
+            "fund_short_name": "COF",
             "round_short_name": "TR",
             "expected_search_params": {
                 "search_term": "",
@@ -857,6 +948,11 @@ class TestRoutes:
         mock_get_assessment_stats,
         mock_get_assessment_progress,
     ):
+        flask_test_client.set_cookie(
+            "localhost",
+            "fsd_user_token",
+            create_valid_token(fund_specific_claim_map["COF"]["ASSESSOR"]),
+        )
 
         params = request.node.get_closest_marker("mock_parameters").args[0]
         fund_short_name = params["fund_short_name"]

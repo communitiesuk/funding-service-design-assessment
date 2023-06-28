@@ -103,7 +103,7 @@ class TestAuthorisation:
         assert response.status_code == 302
         assert (
             response.location
-            == "https://authenticator/service/user?roles_required=TF_COMMENTER"
+            == "https://authenticator/service/user?roles_required=TF_COMMENTER|NSTF_COMMENTER|COF_COMMENTER"
         )
 
     @pytest.mark.mock_parameters(
@@ -310,6 +310,7 @@ class TestAuthorisation:
         ],
     )
     @pytest.mark.application_id("stopped_app")
+    @pytest.mark.flag_id("stopped_app")
     def test_user_levels_have_correct_permissions_to_restart_an_assessment(
         self,
         flask_test_client,
@@ -317,6 +318,7 @@ class TestAuthorisation:
         claim,
         expect_continue_available,
         mock_get_latest_flag,
+        mock_get_flag,
         mock_get_sub_criteria_banner_state,
         mock_get_fund,
         mock_get_funds,
@@ -333,6 +335,7 @@ class TestAuthorisation:
         application_id = request.node.get_closest_marker(
             "application_id"
         ).args[0]
+        flag_id = request.node.get_closest_marker("flag_id").args[0]
         flask_test_client.set_cookie(
             "localhost",
             "fsd_user_token",
@@ -352,7 +355,7 @@ class TestAuthorisation:
             )
         else:
             response = flask_test_client.get(
-                f"assess/continue_assessment/{application_id}",
+                f"assess/continue_assessment/{application_id}?flag_id={flag_id}",
                 follow_redirects=True,
             )
             assert response.status_code == 200

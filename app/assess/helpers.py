@@ -72,6 +72,7 @@ def resolve_application(
     page_to_render,
     state=None,
     reason_to_flag="",
+    allocated_team="",
 ):
     """This function is used to resolve an application
       by submitting a flag, justification, and section for the application.
@@ -118,6 +119,7 @@ def resolve_application(
         state=state,
         sections_to_flag=section,
         reason_to_flag=reason_to_flag,
+        allocated_team=allocated_team,
     )
 
 

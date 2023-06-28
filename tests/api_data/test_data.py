@@ -147,6 +147,18 @@ mock_api_results = {
         "short_name": "TF",
         "description": "unit testing fund",
     },
+    "fund_store/funds/NSTF": {
+        "id": "NSTF",
+        "name": "Night Shelter Test Fund",
+        "short_name": "NSTF",
+        "description": "unit testing fund",
+    },
+    "fund_store/funds/COF": {
+        "id": "COF",
+        "name": "Community Ownership Fund",
+        "short_name": "COF",
+        "description": "unit testing fund",
+    },
     "fund_store/funds/{fund_id}/rounds/{round_id}": {
         "id": test_round_id,
         "fund_id": test_fund_id,

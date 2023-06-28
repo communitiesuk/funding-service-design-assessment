@@ -14,6 +14,9 @@ from app.assess.data import get_flag
 from app.assess.data import submit_score_and_justification
 from app.assess.display_value_mappings import assessment_statuses
 from app.assess.display_value_mappings import asset_types
+from app.assess.display_value_mappings import funding_types
+from app.assess.display_value_mappings import search_params_cof
+from app.assess.display_value_mappings import search_params_nstf
 from app.assess.forms.assessment_form import AssessmentCompleteForm
 from app.assess.forms.comments_form import CommentsForm
 from app.assess.forms.continue_application_form import ContinueApplicationForm
@@ -39,6 +42,7 @@ from app.assess.status import update_ar_status_to_completed
 from app.assess.views.filters import utc_to_bst
 from config import Config
 from flask import Blueprint
+from flask import current_app
 from flask import g
 from flask import redirect
 from flask import render_template
@@ -373,12 +377,10 @@ def landing():
 )
 @check_access_fund_short_name
 def fund_dashboard(fund_short_name: str, round_short_name: str):
-    """
-    Landing page for assessors
-    Provides a summary of available applications
-    with a keyword searchable and filterable list
-    of applications and their statuses
-    """
+    if fund_short_name.upper() == "NSTF":
+        search_params = {**search_params_nstf}
+    else:
+        search_params = {**search_params_cof}
 
     fund = get_fund(fund_short_name, use_short_name=True)
     if not fund:
@@ -387,16 +389,12 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
     if not _round:
         return redirect("/assess/assessor_tool_dashboard/")
     fund_id, round_id = fund.id, _round.id
-
     countries = {"ALL"}
     if has_devolved_authority_validation(fund_id=fund_id):
         countries = get_countries_from_roles(fund.short_name)
 
     search_params = {
-        "search_term": "",
-        "search_in": "project_name,short_id",
-        "asset_type": "ALL",
-        "status": "ALL",
+        **search_params,
         "countries": ",".join(countries),
     }
 
@@ -446,20 +444,17 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
     ):
         """Sorts application_overviews list based on the specified column."""
 
+        sort_field_to_lambda = {
+            "location": lambda x: x["location_json_blob"]["country"],
+            "funding_requested": lambda x: x["funding_amount_requested"],
+            "local_authority": lambda x: x["local_authority"],
+        }
+
         # Define the sorting function based on the specified column
-        if column == "location":
-            sort_key = lambda x: x["location_json_blob"]["country"]
-        elif column == "funding_requested":
-            sort_key = lambda x: x["funding_amount_requested"]
+        if sort_key := sort_field_to_lambda.get(column, None):
+            return sorted(application_overviews, key=sort_key, reverse=reverse)
         else:
             return application_overviews
-
-        # Sort the data based on the key & order
-        sorted_table_data = sorted(
-            application_overviews, key=sort_key, reverse=reverse
-        )
-
-        return sorted_table_data
 
     # Get the sort column and order from query parameters
     sort_column = request.args.get("sort_column", "")
@@ -478,6 +473,7 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
         round_details=round_details,
         query_params=search_params,
         asset_types=asset_types,
+        funding_types=funding_types,
         assessment_statuses=assessment_statuses,
         show_clear_filters=show_clear_filters,
         stats=stats,
@@ -516,6 +512,21 @@ def application(application_id):
     if flag:
         accounts = get_bulk_accounts_dict([flag.user_id], fund.short_name)
 
+    # TODO: Remove mock data used for flag history development and
+    # Refactor below code after schema changes made for multiple flags
+    try:
+        flags_list = get_flags(application_id)
+        user_id_list = []
+        for flag_data in flags_list:
+            for flag_item in flag_data.updates:
+                if flag_item["user_id"] not in user_id_list:
+                    user_id_list.append(flag_item["user_id"])
+        if flags_list:
+            accounts_list = get_bulk_accounts_dict(user_id_list)
+    except Exception:
+        flags_list = []
+        accounts_list = []
+
     sub_criteria_status_completed = all_status_completed(state)
     form = AssessmentCompleteForm()
 
@@ -540,6 +551,9 @@ def application(application_id):
         state=state,
         application_id=application_id,
         flag=flag,
+        accounts_list=accounts_list,
+        flags_list=flags_list,
+        current_user_role=g.user.highest_role,
         fund_short_name=fund.short_name,
         round_short_name=round.short_name,
         flag_user_info=accounts.get(flag.user_id)
@@ -617,7 +631,12 @@ def resolve_flag(application_id):
 @check_access_application_id(roles_required=["LEAD_ASSESSOR"])
 def continue_assessment(application_id):
     form = ContinueApplicationForm()
-    # TODO: Resolve flag for multiple sections flag to be implemented
+    flag_id = request.args.get("flag_id")
+
+    if not flag_id:
+        current_app.logger.error("No flag id found in query params")
+        abort(404)
+    flag_data = get_flag(flag_id)
     return resolve_application(
         form=form,
         application_id=application_id,
@@ -626,6 +645,7 @@ def continue_assessment(application_id):
         justification=form.reason.data,
         section=["NA"],
         page_to_render="continue_assessment.html",
+        reason_to_flag=flag_data.justification,
     )
 
 
