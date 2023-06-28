@@ -43,7 +43,7 @@ def set_application_status_in_overview(application_overviews):
         if overview["is_qa_complete"] and not overview["flags"][-1][
             "flag_type"
         ] in ["FLAGGED", "STOPPED"]:
-            status = overview["flags"][-1]["flag_type"]
+            status = "QA_COMPLETED"
         elif (
             overview["flags"]
             and overview["flags"][-1]["flag_type"] == "STOPPED"
