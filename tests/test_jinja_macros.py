@@ -791,7 +791,7 @@ class TestJinjaMacros(object):
         reason_heading = alert_div.find("h2", text="Reason")
         assert reason_heading is not None, "Reason heading not found"
         justification = reason_heading.find_next_sibling(
-            "p", class_="govuk-body"
+            "p",
         )
         assert (
             justification is not None
@@ -802,12 +802,21 @@ class TestJinjaMacros(object):
         assert (
             section_heading is not None
         ), "Section(s) flagged heading not found"
-        section = section_heading.find_next_sibling("p", class_="govuk-body")
+        section = section_heading.find_next_sibling("p")
         assert (
             section is not None
             and section.text
-            == "Test section (Parent Test section) (Opens in new tab)"
+            == "Test section (Parent Test section) (Opens in new tab) "
         ), "Section not found"
+
+        notification_heading = alert_div.find("h2", text="Notification sent")
+        assert (
+            notification_heading is not None
+        ), "Notification sent heading not found"
+        notification = notification_heading.find_next_sibling("p")
+        assert (
+            notification is not None and notification.text == "No"
+        ), "Notification not found"
 
         user_info = alert_div.find_all("p", class_="govuk-body-s")
         assert any(
