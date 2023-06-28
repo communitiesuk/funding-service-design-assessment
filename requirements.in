@@ -37,6 +37,10 @@ connexion
 swagger-ui-bundle
 openapi-spec-validator
 
+#-----------------------------------
+#   Beautiful soup
+#-----------------------------------
+beautifulsoup4==4.12.2
 
 #-----------------------------------
 #   AWS
