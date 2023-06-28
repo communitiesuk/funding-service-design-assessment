@@ -38,7 +38,7 @@ from flask import render_template
 from flask import request
 from flask import Response
 from flask import url_for
-from fsd_utils import extract_questions_and_answers_from_json_blob
+from fsd_utils import extract_questions_and_answers
 from fsd_utils import generate_text_of_application
 from fsd_utils.authentication.decorators import login_required
 
@@ -648,8 +648,10 @@ def download_application_answers(application_id: str, short_id: str):
         f"Generating application Q+A download for application {application_id}"
     )
     application_json = get_application_json(application_id)
-    qanda_dict = extract_questions_and_answers_from_json_blob(
-        application_json["jsonb_blob"]
+    application_json_blob = application_json["jsonb_blob"]
+    
+    qanda_dict = extract_questions_and_answers(
+    application_json_blob["forms"]
     )
     fund = get_fund(application_json["jsonb_blob"]["fund_id"])
     text = generate_text_of_application(qanda_dict, fund.name)
