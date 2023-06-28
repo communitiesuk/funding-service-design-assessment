@@ -92,6 +92,34 @@
                                 {% endfor %}
                             {% endif %}
                         {% endfor %}
+                        <!-- vvv Remove once assessment_store uses fund-store db vvv -->
+                        {% if state.fund_name == "Night Shelter Transformation Fund" %}
+                            {% for section in state.sections %}
+                                {% if section.name == 'Your organisation' %}
+                                    {% for sub_section in section.sub_criterias %}
+                                        {% set addItem = items.append({'value': sub_section["id"],
+                                                                        'text': sub_section["name"]}) %}
+                                    {% endfor %}
+                                {% endif %}
+                            {% endfor %}
+                            {{ govukCheckboxes({
+                                'idPrefix': 'Unscored',
+                                'name': form.section.id,
+                                'fieldset': {
+                                    'legend': {
+                                        'html': '<h1 class="govuk-fieldset__heading">Unscored</h1>
+                                                <br>
+                                                <h1 class="govuk-fieldset__heading">Your Organisation</h1>',
+                                    'classes': 'govuk-fieldset__legend--s'
+                                    }
+                                },
+                                'attributes': {'data-qa': 'select_unscored_section_to_flag'},
+                                'items': items,
+                                'classes': 'govuk-checkboxes--small'
+                                })
+                            }}
+                        {% else %}
+                        <!-- ^^^ Remove once assessment_store uses fund-store db ^^^ -->
                         {{ govukCheckboxes({
                             'idPrefix': 'Unscored',
                             'name': form.section.id,
@@ -106,6 +134,7 @@
                             'classes': 'govuk-checkboxes--small'
                             })
                         }}
+                        {% endif %}
 
                         {# Get list of sub-sections from Declaration section #}
                         {% set items = [] %}
