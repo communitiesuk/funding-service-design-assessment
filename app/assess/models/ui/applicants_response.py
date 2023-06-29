@@ -271,6 +271,8 @@ def _ui_component_from_factory(item: dict, application_id: str):
         return NewAddAnotherTable.from_dict(item)
 
     elif presentation_type in ("text", "list", "free_text"):
+        if field_type in ("radiosField") and item.get("answer"):
+            item["answer"] = item["answer"].replace("-", " ").capitalize()
         if field_type in ("multilineTextField",):
             return AboveQuestionAnswerPair.from_dict(item)
         elif field_type in ("websiteField",):
