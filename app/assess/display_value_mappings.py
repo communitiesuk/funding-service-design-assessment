@@ -24,6 +24,7 @@ assessment_statuses = {
     "QA_COMPLETED": "QA complete",
     "FLAGGED": "Flagged",
     "STOPPED": "Stopped",
+    "MULTIPLE_FLAGS": "Multiple Flags To Resolve",
 }
 
 funding_types = {
