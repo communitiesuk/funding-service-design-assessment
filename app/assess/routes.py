@@ -21,10 +21,9 @@ from app.assess.forms.rescore_form import RescoreForm
 from app.assess.forms.resolve_flag_form import ResolveFlagForm
 from app.assess.forms.scores_and_justifications import ScoreForm
 from app.assess.helpers import determine_display_status
-from app.assess.helpers import extract_questions_and_answers_from_json_blob
-from app.assess.helpers import generate_text_of_application
 from app.assess.helpers import is_flaggable
 from app.assess.helpers import resolve_application
+from app.assess.helpers import set_application_status_in_overview
 from app.assess.models.flag import FlagType
 from app.assess.models.fund_summary import create_fund_summaries
 from app.assess.models.fund_summary import is_after_today
@@ -44,6 +43,8 @@ from flask import render_template
 from flask import request
 from flask import Response
 from flask import url_for
+from fsd_utils import extract_questions_and_answers
+from fsd_utils import generate_text_of_application
 from fsd_utils.authentication.decorators import login_required
 
 assess_bp = Blueprint(
@@ -408,6 +409,11 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
         else []
     )
 
+    # get and set application status
+    post_processed_overviews = set_application_status_in_overview(
+        post_processed_overviews
+    )
+
     def get_sorted_application_overviews(
         application_overviews, column, reverse=False
     ):
@@ -417,6 +423,11 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
             "location": lambda x: x["location_json_blob"]["country"],
             "funding_requested": lambda x: x["funding_amount_requested"],
             "local_authority": lambda x: x["local_authority"],
+            "project_name": lambda x: x["project_name"],
+            "asset_type": lambda x: x["asset_type"],
+            "organisation_name": lambda x: x["organisation_name"],
+            "funding_type": lambda x: x["funding_type"],
+            "status": lambda x: x["application_status"],
         }
 
         # Define the sorting function based on the specified column
@@ -666,9 +677,9 @@ def download_application_answers(application_id: str, short_id: str):
         f"Generating application Q+A download for application {application_id}"
     )
     application_json = get_application_json(application_id)
-    qanda_dict = extract_questions_and_answers_from_json_blob(
-        application_json["jsonb_blob"]
-    )
+    application_json_blob = application_json["jsonb_blob"]
+
+    qanda_dict = extract_questions_and_answers(application_json_blob["forms"])
     fund = get_fund(application_json["jsonb_blob"]["fund_id"])
     text = generate_text_of_application(qanda_dict, fund.name)
 
