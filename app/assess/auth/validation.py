@@ -9,8 +9,8 @@ from app.assess.data import get_application_metadata
 from app.assess.data import get_fund
 from app.assess.helpers import get_application_id_from_request
 from app.assess.helpers import get_fund_short_name_from_request
+from config import Config
 from flask import abort
-from flask import Config
 from flask import g
 from fsd_utils.authentication.decorators import login_required
 
