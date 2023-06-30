@@ -23,21 +23,64 @@ test_lead_assessor_claims = {
     "accountId": "lead",
     "email": "lead@test.com",
     "fullName": "Test User",
-    "roles": ["LEAD_ASSESSOR", "ASSESSOR", "COMMENTER"],
+    "roles": ["TF_LEAD_ASSESSOR", "TF_ASSESSOR", "TF_COMMENTER"],
 }
 
 test_assessor_claims = {
     "accountId": "assessor",
     "email": "assessor@test.com",
     "fullName": "Test User",
-    "roles": ["ASSESSOR", "COMMENTER"],
+    "roles": ["TF_ASSESSOR", "TF_COMMENTER"],
 }
 
 test_commenter_claims = {
     "accountId": "commenter",
     "email": "commenter@test.com",
     "fullName": "Test User",
-    "roles": ["COMMENTER"],
+    "roles": ["TF_COMMENTER"],
+}
+
+fund_specific_claim_map = {
+    "NSTF": {
+        "LEAD_ASSESSOR": {
+            "accountId": "nstf-lead-assessor",
+            "email": "nstf-lead-assessor@test.com",
+            "fullName": "Test User",
+            "roles": ["NSTF_LEAD_ASSESSOR", "NSTF_ASSESSOR", "NSTF_COMMENTER"],
+        },
+        "ASSESSOR": {
+            "accountId": "nstf-assessor",
+            "email": "nstf-assessor@test.com",
+            "fullName": "Test User",
+            "roles": ["NSTF_ASSESSOR", "NSTF_COMMENTER"],
+        },
+        "COMMENTER": {
+            "accountId": "nstf-commenter",
+            "email": "nstf-commenter@test.com",
+            "fullName": "Test User",
+            "roles": ["NSTF_COMMENTER"],
+        },
+    },
+    "COF": {
+        "LEAD_ASSESSOR": {
+            "accountId": "cof-lead-assessor",
+            "email": "cof-lead-assessor@test.com",
+            "fullName": "Test User",
+            "roles": ["COF_LEAD_ASSESSOR", "COF_ASSESSOR", "COF_COMMENTER"],
+        },
+        "ASSESSOR": {
+            "accountId": "cof-assessor",
+            "email": "cof-assessor@test.com",
+            "fullName": "Test User",
+            "roles": ["COF_ASSESSOR", "COF_COMMENTER"],
+        },
+        "COMMENTER": {
+            "accountId": "cof-commenter",
+            "email": "cof-commenter@test.com",
+            "fullName": "Test User",
+            "roles": ["COF_COMMENTER"],
+        },
+    },
 }
 
 test_roleless_user_claims = {
@@ -205,6 +248,9 @@ def mock_get_fund():
     with (
         mock.patch("app.assess.routes.get_fund", return_value=mock_fund_info),
         mock.patch("app.assess.helpers.get_fund", return_value=mock_fund_info),
+        mock.patch(
+            "app.assess.auth.validation.get_fund", return_value=mock_fund_info
+        ),
     ):
         yield
 
@@ -214,11 +260,27 @@ def mock_get_funds():
     from app.assess.models.fund import Fund
 
     mock_fund_info = [
-        Fund.from_json(mock_api_results["fund_store/funds/{fund_id}"])
+        Fund.from_json(mock_api_results["fund_store/funds/{fund_id}"]),
+        Fund.from_json(mock_api_results["fund_store/funds/NSTF"]),
+        Fund.from_json(mock_api_results["fund_store/funds/COF"]),
     ]
 
     with (
-        mock.patch("app.assess.routes.get_funds", return_value=mock_fund_info)
+        mock.patch("app.assess.routes.get_funds", return_value=mock_fund_info),
+        mock.patch("app.auth.get_funds", return_value=mock_fund_info),
+    ):
+        yield
+
+
+@pytest.fixture(scope="function")
+def mock_get_application_metadata():
+    with (
+        mock.patch(
+            "app.assess.auth.validation.get_application_metadata",
+            return_value=mock_api_results[
+                "assessment_store/applications/{application_id}"
+            ],
+        ),
     ):
         yield
 

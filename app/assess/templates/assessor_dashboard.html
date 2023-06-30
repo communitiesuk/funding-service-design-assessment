@@ -26,7 +26,7 @@
                 <div class="govuk-grid-column-full">
                     <div class="govuk-grid-column-two-thirds">
                         <h1 class="govuk-heading-xl fsd-banner-content">{{ pageHeading }}</h1>
-                        {% if user.highest_role == "LEAD_ASSESSOR" %}
+                        {% if g.access_controller.is_lead_assessor %}
                             <div class="govuk-body fsd-banner-content lead-dashboard-stats">
                                 <div class="lead-dashboard-stat">
                                     <p id="lead-dashboard-stat-assessments-qa-completed">{{ stats.qa_completed }}</p>
@@ -52,9 +52,9 @@
 {% block content %}
     <section class="govuk-grid-column-full">
         {% if round_details.fund_short_name.upper() == 'NSTF' %}
-            {{ application_overviews_table_nstf.render(application_overviews, round_details, query_params, funding_types, assessment_statuses, show_clear_filters, user.highest_role, sort_column, sort_order) }}
+            {{ application_overviews_table_nstf.render(application_overviews, round_details, query_params, funding_types, assessment_statuses, show_clear_filters, sort_column, sort_order) }}
         {% elif round_details.fund_short_name.upper() == "COF" %}
-            {{ application_overviews_table_cof.render(application_overviews, round_details, query_params, asset_types, assessment_statuses, show_clear_filters, user.highest_role, sort_column, sort_order) }}
+            {{ application_overviews_table_cof.render(application_overviews, round_details, query_params, asset_types, assessment_statuses, show_clear_filters, sort_column, sort_order) }}
         {% endif %}
     </section>
 {% endblock content %}

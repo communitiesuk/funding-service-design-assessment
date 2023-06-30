@@ -1,6 +1,7 @@
 import re
 
 import pytest
+from app.assess.auth.validation import AssessmentAccessController
 from app.assess.forms.comments_form import CommentsForm
 from app.assess.forms.scores_and_justifications import ScoreForm
 from app.assess.models.ui.applicants_response import AboveQuestionAnswerPair
@@ -35,14 +36,19 @@ from flask_wtf.csrf import generate_csrf
 from fsd_utils.authentication.models import User
 
 
+def default_flask_g():
+    g.user = User(
+        full_name="Test Lead Assessor",
+        email="test@example.com",
+        roles=["COF_LEAD_ASSESSOR", "COF_ASSESSOR", "COF_COMMENTER"],
+        highest_role="COF_LEAD_ASSESSOR",
+    )
+    g.access_controller = AssessmentAccessController("COF")
+    return g
+
+
 class TestJinjaMacros(object):
     def test_criteria_macro_lead_assessor(self, request_ctx):
-        g.user = User(
-            full_name="Test Lead Assessor",
-            email="test@example.com",
-            roles=["LEAD_ASSESSOR", "ASSESSOR", "COMMENTER"],
-            highest_role="LEAD_ASSESSOR",
-        )
         rendered_html = render_template_string(
             "{{criteria_element(criteria, name_classes, application_id)}}",
             criteria_element=get_template_attribute(
@@ -72,7 +78,7 @@ class TestJinjaMacros(object):
             ),
             name_classes="example-class",
             application_id=1,
-            g=g,
+            g=default_flask_g(),
         )
 
         soup = BeautifulSoup(rendered_html, "html.parser")
@@ -112,10 +118,10 @@ class TestJinjaMacros(object):
         g.user = User(
             full_name="Test Commenter",
             email="test@example.com",
-            roles=["COMMENTER"],
-            highest_role="COMMENTER",
+            roles=["COF_COMMENTER"],
+            highest_role="COF_COMMENTER",
         )
-
+        g.access_controller = AssessmentAccessController("COF")
         rendered_html = render_template_string(
             "{{criteria_element(criteria, name_classes, application_id)}}",
             criteria_element=get_template_attribute(
@@ -592,6 +598,7 @@ class TestJinjaMacros(object):
             funding_amount_requested=funding_amount_requested,
             workflow_status=workflow_status,
             flag=assessment_flag,
+            g=default_flask_g(),
         )
 
         soup = BeautifulSoup(rendered_html, "html.parser")
@@ -643,6 +650,7 @@ class TestJinjaMacros(object):
             funding_amount_requested=funding_amount_requested,
             display_status=display_status,
             flag=assessment_flag,
+            g=default_flask_g(),
         )
 
         assert "Stopped" in rendered_html
@@ -718,6 +726,7 @@ class TestJinjaMacros(object):
                 "highest_role": "Test role",
                 "email_address": "test@example.com",
             },
+            g=default_flask_g(),
         )
 
         soup = BeautifulSoup(rendered_html, "html.parser")
@@ -782,6 +791,7 @@ class TestJinjaMacros(object):
                 "highest_role": "Test role",
                 "email_address": "test@example.com",
             },
+            g=default_flask_g(),
         )
 
         soup = BeautifulSoup(rendered_html, "html.parser")
@@ -832,8 +842,7 @@ class TestJinjaMacros(object):
 
     def test_assessment_completion_state_completed(self, request_ctx):
         rendered_html = render_template_string(
-            "{{assessment_complete(state, flag, csrf_token, application_id,"
-            " current_user_role)}}",
+            "{{assessment_complete(state, flag, csrf_token, application_id)}}",
             assessment_complete=get_template_attribute(
                 "macros/assessment_completion.html", "assessment_complete"
             ),
@@ -841,7 +850,7 @@ class TestJinjaMacros(object):
             flag=None,
             csrf_token=generate_csrf(),
             application_id=1,
-            current_user_role="LEAD_ASSESSOR",
+            g=default_flask_g(),
         )
 
         soup = BeautifulSoup(rendered_html, "html.parser")
@@ -858,8 +867,7 @@ class TestJinjaMacros(object):
 
     def test_assessment_completion_flagged(self, request_ctx):
         rendered_html = render_template_string(
-            "{{assessment_complete(state, flag, csrf_token, application_id,"
-            " current_user_role)}}",
+            "{{assessment_complete(state, flag, csrf_token, application_id)}}",
             assessment_complete=get_template_attribute(
                 "macros/assessment_completion.html", "assessment_complete"
             ),
@@ -871,7 +879,7 @@ class TestJinjaMacros(object):
             )(),
             csrf_token=generate_csrf(),
             application_id=1,
-            current_user_role="LEAD_ASSESSOR",
+            g=default_flask_g(),
         )
 
         soup = BeautifulSoup(rendered_html, "html.parser")

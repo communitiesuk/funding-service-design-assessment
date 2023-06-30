@@ -1,6 +1,7 @@
 import pytest
 from bs4 import BeautifulSoup
 from config import Config
+from flask import g
 from tests.conftest import create_invalid_token
 from tests.conftest import create_valid_token
 from tests.conftest import test_assessor_claims
@@ -10,7 +11,9 @@ from tests.conftest import test_roleless_user_claims
 
 
 class TestAuthorisation:
-    def test_any_unauthorised_route_redirects_to_home(self, flask_test_client):
+    def test_any_unauthorised_route_redirects_to_home(
+        self, flask_test_client, mock_get_funds
+    ):
         """
         GIVEN an unauthorised user
         WHEN the user tries to access any route
@@ -29,7 +32,7 @@ class TestAuthorisation:
         assert response.location == "/"
 
     def test_any_invalid_token_route_redirects_to_home(
-        self, flask_test_client
+        self, flask_test_client, mock_get_funds
     ):
         """
         GIVEN an unauthorised user
@@ -53,7 +56,7 @@ class TestAuthorisation:
         assert response.location == "/"
 
     def test_any_unauthorised_visit_to_route_prompts_user_to_sign_in(
-        self, flask_test_client
+        self, flask_test_client, mock_get_funds
     ):
         """
         GIVEN an unauthorised user
@@ -77,7 +80,9 @@ class TestAuthorisation:
             in response.data
         )
 
-    def test_roleless_user_redirected_to_roles_error(self, flask_test_client):
+    def test_roleless_user_redirected_to_roles_error(
+        self, flask_test_client, mock_get_funds
+    ):
         """
         GIVEN an authorised user with no roles
         WHEN the user tries to access any route
@@ -98,7 +103,7 @@ class TestAuthorisation:
         assert response.status_code == 302
         assert (
             response.location
-            == "https://authenticator/service/user?roles_required=COMMENTER"
+            == "https://authenticator/service/user?roles_required=TF_COMMENTER|NSTF_COMMENTER|COF_COMMENTER"
         )
 
     @pytest.mark.mock_parameters(
@@ -169,8 +174,10 @@ class TestAuthorisation:
         request,
         mock_get_sub_criteria,
         mock_get_fund,
+        mock_get_funds,
         mock_get_latest_flag,
         mock_get_comments,
+        mock_get_application_metadata,
         mock_get_sub_criteria_theme,
         mock_get_assessor_tasklist_state,
         claims,
@@ -237,6 +244,8 @@ class TestAuthorisation:
         expect_all_comments_available,
         mock_get_sub_criteria,
         mock_get_fund,
+        mock_get_funds,
+        mock_get_application_metadata,
         mock_get_latest_flag,
         mock_get_comments,
         mock_get_sub_criteria_theme,
@@ -281,6 +290,7 @@ class TestAuthorisation:
         is_lead_assessor_comment_visible = (
             b"This is a comment" in response.data
         )
+        assert g.user.roles is not None
 
         if expect_all_comments_available:
             assert is_lead_assessor_comment_visible
@@ -311,6 +321,8 @@ class TestAuthorisation:
         mock_get_flag,
         mock_get_sub_criteria_banner_state,
         mock_get_fund,
+        mock_get_funds,
+        mock_get_application_metadata,
     ):
         """
         GIVEN authorised users
@@ -369,6 +381,8 @@ class TestAuthorisation:
         mock_get_assessor_tasklist_state,
         mock_get_sub_criteria_banner_state,
         mock_get_fund,
+        mock_get_funds,
+        mock_get_application_metadata,
     ):
         """
         GIVEN authorised users
@@ -427,6 +441,8 @@ class TestAuthorisation:
         mock_get_latest_flag,
         mock_get_assessor_tasklist_state,
         mock_get_flag,
+        mock_get_funds,
+        mock_get_application_metadata,
         mock_get_sub_criteria_banner_state,
         mock_get_fund,
     ):
@@ -487,6 +503,8 @@ class TestAuthorisation:
         expect_flagging,
         mock_get_assessor_tasklist_state,
         mock_get_fund,
+        mock_get_funds,
+        mock_get_application_metadata,
         mock_get_round,
         mock_get_latest_flag,
         mock_get_bulk_accounts,

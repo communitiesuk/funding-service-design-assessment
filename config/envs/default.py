@@ -141,6 +141,10 @@ class DefaultConfig:
         ASSESSMENT_STORE_API_HOST + "/flags?application_id={application_id}"
     )
 
+    ASSESSMENT_METADATA_ENDPOINT = (
+        ASSESSMENT_STORE_API_HOST + "/application/{application_id}/metadata"
+    )
+
     # Account store endpoints
     BULK_ACCOUNTS_ENDPOINT = ACCOUNT_STORE_API_HOST + "/bulk-accounts"
 

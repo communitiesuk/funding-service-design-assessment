@@ -1,3 +1,4 @@
+import time
 from typing import Optional
 
 from app.assess.data import get_fund
@@ -10,6 +11,30 @@ from flask import redirect
 from flask import render_template
 from flask import request
 from flask import url_for
+
+
+def get_ttl_hash(seconds=3600) -> int:
+    return round(time.time() / seconds)
+
+
+def get_application_id_from_request() -> str | None:
+    application_id = (
+        request.view_args.get("application_id")
+        or request.view_args.get("application")
+        or request.args.get("application_id")
+        or request.args.get("application")
+    )
+    return application_id
+
+
+def get_fund_short_name_from_request() -> str | None:
+    fund_short_name = (
+        request.view_args.get("fund_short_name")
+        or request.view_args.get("fund_short_name")
+        or request.args.get("fund_short_name")
+        or request.args.get("fund_short_name")
+    )
+    return fund_short_name
 
 
 def determine_display_status(

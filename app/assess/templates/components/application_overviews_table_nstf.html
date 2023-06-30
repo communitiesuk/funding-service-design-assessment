@@ -1,7 +1,7 @@
 {% from "govuk_frontend_jinja/components/input/macro.html" import govukInput %}
 {% from "macros/sortable_table_header.html" import sortable_table_header %}
 
-{% macro render(application_overviews, round_details, query_params, funding_types, assessment_statuses, show_clear_filters, user_role, sort_column, sort_order) -%}
+{% macro render(application_overviews, round_details, query_params, funding_types, assessment_statuses, show_clear_filters, sort_column, sort_order) -%}
 <nav class="search-bar-flex-container">
   <form method="get">
     <div class="govuk-form-group govuk-!-display-inline-block govuk-!-padding-right-2">
@@ -23,7 +23,7 @@
             {% endfor %}
       </select>
     </div>
-    {% if user_role != "COMMENTER" %}
+    {% if g.access_controller.has_any_assessor_role %}
       <div class="govuk-form-group govuk-!-display-inline-block govuk-!-padding-right-2">
         <label class="govuk-label" for="filter_status">
         Filter by status
@@ -79,7 +79,7 @@
 
       {{ sortable_table_header('funding_requested', 'Funding requested', sort_order, sort_column, round_details, query_params) }}
 
-      {% if user_role != "COMMENTER" %}
+      {% if g.access_controller.has_any_assessor_role %}
         {{ sortable_table_header('status', 'Status', sort_order, sort_column, round_details, query_params) }}
       {% endif %}
 
@@ -95,7 +95,7 @@
                 <td class="govuk-table__cell">{{ funding_types[overview.funding_type] }}</td>
                 <td class="govuk-table__cell">£{{ "{:,.2f}".format(overview.funding_amount_requested|int|round) }}</td>
 
-                {% if user_role != "COMMENTER" %}
+                {% if g.access_controller.has_any_assessor_role %}
                 <td class="govuk-table__cell">
                 {% if overview.application_status == "QA_COMPLETED" %}
                 <span>{{ assessment_statuses[overview.application_status] }}</span>

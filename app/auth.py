@@ -1,3 +1,5 @@
+from app.assess.data import get_funds
+from app.assess.helpers import get_ttl_hash
 from config import Config
 from flask import g
 from flask import redirect
@@ -18,7 +20,7 @@ def auth_protect(minimum_roles_required, unprotected_routes):
 
     Args:
         minimum_roles_required: List[str]
-            - a list of minimum roles a user must have to access the service
+            - a list of minimum roles a user must at least one of to be authorised
         unprotected_routes: List[str]
             - a list of routes e.g. ["/"]
                 that can be accessed without authentication
@@ -27,6 +29,15 @@ def auth_protect(minimum_roles_required, unprotected_routes):
         redirect (302) or None if authorised
 
     """
+
+    # expand roles to include all fund short names as a prefix, e.g. "COMMENTER" becomes "COF_COMMENTER"
+    minimum_roles_required = [
+        f"{fund.short_name}_{role}".upper()
+        for fund in get_funds(
+            get_ttl_hash(seconds=300)
+        )  # expensive call, so cache it & refresh every 5 minutes
+        for role in minimum_roles_required
+    ]
 
     if (
         not g.is_authenticated
@@ -43,7 +54,7 @@ def auth_protect(minimum_roles_required, unprotected_routes):
     elif g.is_authenticated:
         # Ensure that authenticated users have
         # all minimum required roles
-        if not g.user.roles or not all(
+        if not g.user.roles or not any(  # any of the minimum roles are present
             role_required in g.user.roles
             for role_required in minimum_roles_required
         ):

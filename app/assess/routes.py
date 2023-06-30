@@ -1,6 +1,11 @@
 from datetime import datetime
 from urllib.parse import quote_plus
 
+from app.assess.auth.validation import check_access_application_id
+from app.assess.auth.validation import check_access_fund_short_name
+from app.assess.auth.validation import get_countries_from_roles
+from app.assess.auth.validation import has_access_to_fund
+from app.assess.auth.validation import has_devolved_authority_validation
 from app.assess.data import *
 from app.assess.data import get_application_json
 from app.assess.data import get_application_overviews
@@ -21,6 +26,7 @@ from app.assess.forms.rescore_form import RescoreForm
 from app.assess.forms.resolve_flag_form import ResolveFlagForm
 from app.assess.forms.scores_and_justifications import ScoreForm
 from app.assess.helpers import determine_display_status
+from app.assess.helpers import get_ttl_hash
 from app.assess.helpers import is_flaggable
 from app.assess.helpers import resolve_application
 from app.assess.helpers import set_application_status_in_overview
@@ -34,7 +40,6 @@ from app.assess.status import all_status_completed
 from app.assess.status import update_ar_status_to_completed
 from app.assess.views.filters import utc_to_bst
 from config import Config
-from flask import abort
 from flask import Blueprint
 from flask import current_app
 from flask import g
@@ -45,7 +50,6 @@ from flask import Response
 from flask import url_for
 from fsd_utils import extract_questions_and_answers
 from fsd_utils import generate_text_of_application
-from fsd_utils.authentication.decorators import login_required
 
 assess_bp = Blueprint(
     "assess_bp",
@@ -59,6 +63,7 @@ assess_bp = Blueprint(
     "/application_id/<application_id>/sub_criteria_id/<sub_criteria_id>",
     methods=["POST", "GET"],
 )
+@check_access_application_id
 def display_sub_criteria(
     application_id,
     sub_criteria_id,
@@ -114,7 +119,9 @@ def display_sub_criteria(
 
     # TODO add test for this function in data_operations
     theme_matched_comments = (
-        match_comment_to_theme(comment_response, themes=sub_criteria.themes)
+        match_comment_to_theme(
+            comment_response, sub_criteria.themes, fund.short_name
+        )
         if comment_response
         else None
     )
@@ -153,7 +160,7 @@ def display_sub_criteria(
     "/application_id/<application_id>/sub_criteria_id/<sub_criteria_id>/score",
     methods=["POST", "GET"],
 )
-@login_required(roles_required=["LEAD_ASSESSOR", "ASSESSOR"])
+@check_access_application_id(roles_required=["LEAD_ASSESSOR", "ASSESSOR"])
 def score(
     application_id,
     sub_criteria_id,
@@ -180,7 +187,9 @@ def score(
     )
 
     theme_matched_comments = (
-        match_comment_to_theme(comment_response, themes=sub_criteria.themes)
+        match_comment_to_theme(
+            comment_response, sub_criteria.themes, fund.short_name
+        )
         if comment_response
         else None
     )
@@ -212,7 +221,9 @@ def score(
         application_id, sub_criteria_id, score_history=True
     )
     # TODO add test for this function in data_operations
-    scores_with_account_details = match_score_to_user_account(score_list)
+    scores_with_account_details = match_score_to_user_account(
+        score_list, fund.short_name
+    )
     latest_score = (
         scores_with_account_details.pop(0)
         if (score_list is not None and len(scores_with_account_details) > 0)
@@ -248,7 +259,7 @@ def score(
     "/flag/<application_id>",
     methods=["GET", "POST"],
 )
-@login_required(roles_required=["ASSESSOR"])
+@check_access_application_id(roles_required=["ASSESSOR"])
 def flag(application_id):
 
     # Get assessor tasks list
@@ -300,7 +311,7 @@ def flag(application_id):
 
 
 @assess_bp.route("/qa_complete/<application_id>", methods=["GET", "POST"])
-@login_required(roles_required=["LEAD_ASSESSOR"])
+@check_access_application_id(roles_required=["LEAD_ASSESSOR"])
 def qa_complete(application_id):
     """
     QA complete form html page:
@@ -347,8 +358,11 @@ def old_landing():
 
 @assess_bp.route("/assessor_tool_dashboard/", methods=["GET"])
 def landing():
-    funds = get_funds()
-
+    funds = [
+        f
+        for f in get_funds(get_ttl_hash(seconds=300))
+        if has_access_to_fund(f.short_name)
+    ]
     return render_template(
         "assessor_tool_dashboard.html",
         fund_summaries={
@@ -363,6 +377,7 @@ def landing():
     "/assessor_dashboard/<fund_short_name>/<round_short_name>/",
     methods=["GET"],
 )
+@check_access_fund_short_name
 def fund_dashboard(fund_short_name: str, round_short_name: str):
     if fund_short_name.upper() == "NSTF":
         search_params = {**search_params_nstf}
@@ -372,33 +387,50 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
     fund = get_fund(fund_short_name, use_short_name=True)
     if not fund:
         return redirect("/assess/assessor_tool_dashboard/")
-    round = get_round(fund_short_name, round_short_name, use_short_name=True)
-    if not round:
+    _round = get_round(fund_short_name, round_short_name, use_short_name=True)
+    if not _round:
         return redirect("/assess/assessor_tool_dashboard/")
+    fund_id, round_id = fund.id, _round.id
+    countries = {"ALL"}
+    if has_devolved_authority_validation(fund_id=fund_id):
+        countries = get_countries_from_roles(fund.short_name)
 
-    fund_id, round_id = fund.id, round.id
+    search_params = {
+        **search_params,
+        "countries": ",".join(countries),
+    }
 
     show_clear_filters = False
     if "clear_filters" not in request.args:
         search_params.update(
-            {k: v for k, v in request.args.items() if k in search_params}
+            {
+                k: v
+                for k, v in request.args.items()
+                if k in search_params and k != "countries"
+            }
         )
-        show_clear_filters = any(k in request.args for k in search_params)
+        show_clear_filters = any(
+            k in request.args for k in search_params if k != "countries"
+        )
 
     application_overviews = get_application_overviews(
         fund_id, round_id, search_params
     )
 
+    # this is only used for querying applications, so remove it from the search params,
+    # so it's not reflected on the user interface
+    del search_params["countries"]
+
     round_details = {
-        "assessment_deadline": round.assessment_deadline,
-        "round_title": round.title,
+        "assessment_deadline": _round.assessment_deadline,
+        "round_title": _round.title,
         "fund_name": fund.name,
         "fund_short_name": fund_short_name,
         "round_short_name": round_short_name,
     }
 
     stats = get_assessments_stats(fund_id, round_id, search_params)
-    is_active_status = is_after_today(round.assessment_deadline)
+    is_active_status = is_after_today(_round.assessment_deadline)
 
     # TODO Can we get rid of get_application_overviews for fund and _round
     # and incorporate into the following function?
@@ -464,6 +496,7 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
 
 
 @assess_bp.route("/application/<application_id>", methods=["GET", "POST"])
+@check_access_application_id
 def application(application_id):
     """
     Application summary page
@@ -489,7 +522,7 @@ def application(application_id):
     state = AssessorTaskList.from_json(assessor_task_list_metadata)
     flag = get_latest_flag(application_id)
     if flag:
-        accounts = get_bulk_accounts_dict([flag.user_id])
+        accounts = get_bulk_accounts_dict([flag.user_id], fund.short_name)
 
     # TODO: Remove mock data used for flag history development and
     # Refactor below code after schema changes made for multiple flags
@@ -575,7 +608,7 @@ def sub_crit_scoring():
 
 
 @assess_bp.route("/resolve_flag/<application_id>", methods=["GET", "POST"])
-@login_required(roles_required=["LEAD_ASSESSOR"])
+@check_access_application_id(roles_required=["LEAD_ASSESSOR"])
 def resolve_flag(application_id):
     form = ResolveFlagForm()
     flag_id = request.args.get("flag_id")
@@ -607,7 +640,7 @@ def resolve_flag(application_id):
 @assess_bp.route(
     "/continue_assessment/<application_id>", methods=["GET", "POST"]
 )
-@login_required(roles_required=["LEAD_ASSESSOR"])
+@check_access_application_id(roles_required=["LEAD_ASSESSOR"])
 def continue_assessment(application_id):
     form = ContinueApplicationForm()
     flag_id = request.args.get("flag_id")
@@ -629,7 +662,7 @@ def continue_assessment(application_id):
 
 
 @assess_bp.route("/application/<application_id>/export", methods=["GET"])
-@login_required(roles_required=["LEAD_ASSESSOR"])
+@check_access_application_id(roles_required=["LEAD_ASSESSOR"])
 def generate_doc_list_for_download(application_id):
     current_app.logger.info(
         f"Generating docs for application id {application_id}"
@@ -671,7 +704,7 @@ def generate_doc_list_for_download(application_id):
 
 
 @assess_bp.route("/application/<application_id>/export/<short_id>/answers.txt")
-@login_required(roles_required=["LEAD_ASSESSOR"])
+@check_access_application_id(roles_required=["LEAD_ASSESSOR"])
 def download_application_answers(application_id: str, short_id: str):
     current_app.logger.info(
         f"Generating application Q+A download for application {application_id}"
@@ -690,7 +723,7 @@ def download_application_answers(application_id: str, short_id: str):
     "/application/<application_id>/export/<file_name>",
     methods=["GET"],
 )
-@login_required
+@check_access_application_id
 def get_file(application_id: str, file_name: str):
     short_id = request.args.get("short_id")
     data, mimetype = get_file_for_download_from_aws(

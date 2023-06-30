@@ -14,7 +14,7 @@
                     sub_criteria.name
                 )
             },
-            { "text": sub_criteria.score or "", "format": "numeric" } if g.user.highest_role in ["ASSESSOR","LEAD_ASSESSOR"] else None,
+            { "text": sub_criteria.score or "", "format": "numeric" } if g.access_controller.has_any_assessor_role else None,
             { "html": '<span class="{}">{}</span>'.format('govuk-tag--scored-criteria' if sub_criteria.status == 'NOT_STARTED' else '', 'Complete' if sub_criteria.status=='COMPLETED' else sub_criteria.status|all_caps_to_human),
                 "format": "numeric" }
         ]) %}
@@ -24,7 +24,7 @@
         { "html": "<strong>Total criteria score</strong>" },
         { "text": "" },
         { "text": "{} of {}".format(criteria.total_criteria_score, criteria.total_criteria_score_possible), "format": "numeric" },
-    ]) if g.user.highest_role in ["ASSESSOR","LEAD_ASSESSOR"] %}
+    ]) if g.access_controller.has_any_assessor_role %}
 
     <h3 class="{{ name_classes or '' }}">{{ criteria.name }}</h3>
     <p class="govuk-body govuk-!-margin-bottom-2">
@@ -36,7 +36,7 @@
         "firstCellIsHeader":false,
         "head": [
             { "text": "Assessment sub criteria", "classes": "govuk-!-width-one-half"  },
-            { "text": "Score out of 5", "format": "numeric" } if g.user.highest_role in ["ASSESSOR","LEAD_ASSESSOR"] else None,
+            { "text": "Score out of 5", "format": "numeric" } if g.access_controller.has_any_assessor_role else None,
             { "text": "Status", "format": "numeric" }
         ],
         "rows": rows,

@@ -8,7 +8,7 @@ This is the most basic set of tests.
 """
 
 
-def test_flask_initiates(flask_test_client):
+def test_flask_initiates(flask_test_client, mock_get_funds):
     """
     GIVEN Our Flask Application
     WHEN the '/' page (index) is requested (GET)
@@ -25,7 +25,7 @@ def test_flask_initiates(flask_test_client):
     assert response.status_code == 200
 
 
-def testHealthcheckRoute(flask_test_client):
+def testHealthcheckRoute(flask_test_client, mock_get_funds):
     result = flask_test_client.get("/healthcheck")
     assert result.status_code == 200, "Unexpected status code"
     assert {"check_flask_running": "OK"} in result.json["checks"]
