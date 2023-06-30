@@ -9,6 +9,7 @@ from app.assess.data import get_application_metadata
 from app.assess.data import get_fund
 from app.assess.helpers import get_application_id_from_request
 from app.assess.helpers import get_fund_short_name_from_request
+from config import Config
 from flask import abort
 from flask import g
 from fsd_utils.authentication.decorators import login_required
@@ -79,6 +80,8 @@ def _get_roles_by_fund_short_name(
 def has_devolved_authority_validation(
     *, fund_id: str = None, short_name: str = None
 ) -> bool:
+    if Config.FORCE_DISABLE_DEVOLVED_AUTHORITY_AUTH:
+        return False
     identifier = fund_id or short_name
     if not identifier:
         return False
@@ -87,6 +90,8 @@ def has_devolved_authority_validation(
 
 
 def has_access_to_fund(short_name: str) -> bool:
+    if Config.FORCE_ALL_FUNDS_ACCESSIBLE:
+        return True
     all_roles = _get_all_users_roles()
     return any(role.startswith(short_name.casefold()) for role in all_roles)
 
@@ -102,6 +107,9 @@ def check_access_application_id(
 
     @wraps(func)
     def decorated_function(*args, **kwargs):
+        if Config.FORCE_ALL_FUNDS_ACCESSIBLE:
+            return func(*args, **kwargs)
+
         application_id = get_application_id_from_request()
         if not application_id:
             abort(404)
@@ -146,6 +154,9 @@ def check_access_fund_short_name(
 
     @wraps(func)
     def decorated_function(*args, **kwargs):
+        if Config.FORCE_ALL_FUNDS_ACCESSIBLE:
+            return func(*args, **kwargs)
+
         short_name = get_fund_short_name_from_request()
         if not short_name:
             abort(404)
