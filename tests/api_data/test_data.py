@@ -48,15 +48,6 @@ resolved_app = {
     "short_id": "INP",
     "flags": [
         {
-            "id": "1c5e8bea-f5ed-4b74-8823-e64fec27a7db",
-            "flag_type": "FLAGGED",
-            "application_id": resolved_app_id,
-            "date_created": "2023-02-19 12:00:00",
-            "justification": "Test",
-            "sections_to_flag": ["Test section"],
-            "user_id": test_user_id_lead_assessor,
-        },
-        {
             "id": "1c5e8bea-f5ed-4b74-8823-e64fec27a7dc",
             "flag_type": "RESOLVED",
             "application_id": resolved_app_id,
@@ -88,15 +79,6 @@ stopped_app = {
     "short_id": "FS",
     "asset_type": "gallery",
     "flags": [
-        {
-            "id": "1c5e8bea-f5ed-4b74-8823-e64fec27a7aa",
-            "flag_type": "FLAGGED",
-            "application_id": stopped_app_id,
-            "date_created": "2023-02-19 12:00:00",
-            "justification": "Test",
-            "sections_to_flag": ["Test section"],
-            "user_id": test_user_id_lead_assessor,
-        },
         {
             "id": "1c5e8bea-f5ed-4b74-8823-e64fec27a7bd",
             "flag_type": "STOPPED",
