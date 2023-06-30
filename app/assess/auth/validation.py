@@ -108,6 +108,7 @@ def check_access_application_id(
     @wraps(func)
     def decorated_function(*args, **kwargs):
         if Config.FORCE_ALL_FUNDS_ACCESSIBLE:
+            g.access_controller = AllAccessAccessController()
             return func(*args, **kwargs)
 
         application_id = get_application_id_from_request()
@@ -155,6 +156,7 @@ def check_access_fund_short_name(
     @wraps(func)
     def decorated_function(*args, **kwargs):
         if Config.FORCE_ALL_FUNDS_ACCESSIBLE:
+            g.access_controller = AllAccessAccessController()
             return func(*args, **kwargs)
 
         short_name = get_fund_short_name_from_request()
@@ -195,3 +197,17 @@ class AssessmentAccessController(object):
     @property
     def has_any_assessor_role(self) -> bool:
         return self.is_lead_assessor or self.is_assessor
+
+
+class AllAccessAccessController(AssessmentAccessController):
+    @property
+    def is_lead_assessor(self) -> bool:
+        return True
+
+    @property
+    def is_assessor(self) -> bool:
+        return True
+
+    @property
+    def is_commenter(self) -> bool:
+        return True
