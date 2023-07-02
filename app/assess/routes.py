@@ -25,6 +25,7 @@ from app.assess.helpers import is_flaggable
 from app.assess.helpers import resolve_application
 from app.assess.helpers import set_application_status_in_overview
 from app.assess.models.flag import FlagType
+from app.assess.models.flag_v2 import FlagV2
 from app.assess.models.fund_summary import create_fund_summaries
 from app.assess.models.fund_summary import is_after_today
 from app.assess.models.theme import Theme
@@ -491,6 +492,8 @@ def application(application_id):
     if flag:
         accounts = get_bulk_accounts_dict([flag.user_id])
 
+    flaggable = True if isinstance(flag, FlagV2) else is_flaggable(flag)
+
     # TODO: Remove mock data used for flag history development and
     # Refactor below code after schema changes made for multiple flags
     try:
@@ -538,7 +541,7 @@ def application(application_id):
         flag_user_info=accounts.get(flag.user_id)
         if (flag and accounts)
         else None,
-        is_flaggable=is_flaggable(flag),
+        is_flaggable=flaggable,
         display_status=display_status,
     )
 
@@ -583,7 +586,7 @@ def resolve_flag(application_id):
     if not flag_id:
         current_app.logger.error("No flag id found in query params")
         abort(404)
-    flag_data = get_flag(flag_id)
+    flag_data = get_flag(application_id, flag_id)
     assessor_task_list_metadata = get_assessor_task_list_state(
         flag_data.application_id
     )
@@ -615,7 +618,7 @@ def continue_assessment(application_id):
     if not flag_id:
         current_app.logger.error("No flag id found in query params")
         abort(404)
-    flag_data = get_flag(flag_id)
+    flag_data = get_flag(application_id, flag_id)
     return resolve_application(
         form=form,
         application_id=application_id,

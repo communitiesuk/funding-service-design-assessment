@@ -10,6 +10,8 @@ from app.assess.models.banner import Banner
 from app.assess.models.comment import Comment
 from app.assess.models.flag import Flag
 from app.assess.models.flag import Flags
+from app.assess.models.flag_v2 import FlagTypeV2
+from app.assess.models.flag_v2 import FlagV2
 from app.assess.models.fund import Fund
 from app.assess.models.round import Round
 from app.assess.models.score import Score
@@ -22,6 +24,12 @@ from flask import current_app
 from flask import url_for
 from fsd_utils import NotifyConstants
 from fsd_utils.locale_selector.get_lang import get_lang
+
+# TODO : Need to remove this once old rounds are migrated to use new flags
+rounds_using_old_flags = [
+    "c603d114-5364-4474-a0c4-c41cbf4d3bbd",
+    "5cf439bf-ef6f-431e-92c5-a1d90a4dd32f",
+]
 
 
 def get_data(endpoint: str, payload: Dict = None):
@@ -335,95 +343,89 @@ def get_sub_criteria_banner_state(application_id: str):
 
 
 def get_latest_flag(application_id: str) -> Optional[Flag]:
-    flag = get_data(
-        Config.ASSESSMENT_LATEST_FLAG_ENDPOINT.format(
+    # TODO : Need to rework this function once old rounds are migrated to use flags_v2
+    metadata = requests.get(
+        Config.APPLICATION_METADATA_ENDPOINT.format(
             application_id=application_id
         )
-    )
-    if flag:
-        return Flag.from_dict(flag)
+    ).json()
+
+    if metadata["round_id"] in rounds_using_old_flags:
+        flag = get_data(
+            Config.ASSESSMENT_LATEST_FLAG_ENDPOINT.format(
+                application_id=application_id
+            )
+        )
+        if flag:
+            return Flag.from_dict(flag)
+        else:
+            msg = f"flag for application: '{application_id}' not found."
+            current_app.logger.warn(msg)
+            return None
     else:
-        msg = f"flag for application: '{application_id}' not found."
-        current_app.logger.warn(msg)
-        return None
+        flag = get_data(
+            Config.ASSESSMENT_FLAGS_V2_ENDPOINT.format(
+                application_id=application_id
+            )
+        )[0]
+        if flag:
+            return FlagV2.from_dict(flag)
+        else:
+            msg = f"flag for application: '{application_id}' not found."
+            current_app.logger.warn(msg)
+            return None
 
 
-def get_flag(flag_id: str) -> Optional[Flag]:
-    flag = get_data(Config.ASSESSMENT_FLAG_ENDPOINT.format(flag_id=flag_id))
-    if flag:
-        return Flag.from_dict(flag)
+def get_flag(application_id: str, flag_id: str) -> Optional[Flag]:
+    # TODO : Need to rework this function once old rounds are migrated to use flags_v2
+    metadata = requests.get(
+        Config.APPLICATION_METADATA_ENDPOINT.format(
+            application_id=application_id
+        )
+    ).json()
+    if metadata["round_id"] in rounds_using_old_flags:
+        flag = get_data(
+            Config.ASSESSMENT_FLAG_ENDPOINT.format(flag_id=flag_id)
+        )
+        if flag:
+            return Flag.from_dict(flag)
+        else:
+            msg = f"flag for id: '{flag_id}' not found."
+            current_app.logger.warn(msg)
+            return None
     else:
-        msg = f"flag for id: '{flag_id}' not found."
-        current_app.logger.warn(msg)
-        return None
+        flag = get_data(
+            Config.ASSESSMENT_FLAG_V2_ENDPOINT.format(flag_id=flag_id)
+        )
+        if flag:
+            return Flag.from_dict(flag)
+        else:
+            msg = f"flag for id: '{flag_id}' not found."
+            current_app.logger.warn(msg)
+            return None
 
 
 def get_flags(application_id: str) -> Optional[Flag]:
-    flags = get_data(
-        Config.ASSESSMENT_FLAGS_ENDPOINT.format(application_id=application_id)
-    )
-    # TODO: Remove mock data used for flag history development and
-    # Refactor below code after schema changes made for multiple flags
-    test_application_id = "81480ade-0487-4097-8dec-bba3116ee7f3"
-    if application_id == test_application_id:
-        flags = [
-            {
-                "id": "b0ac84e5-bb97-4851-9ba3-4d1101030e9f",
-                "application_id": test_application_id,
-                "status": "RAISED",
-                "allocation": "TEAM_1",
-                "sections_to_flag": ["benefits", "engagement"],
-                "updates": [
-                    {
-                        "id": "316f607a-03b7-4592-b927-5021a28b7d6a",
-                        "user_id": "00000000-0000-0000-0000-000000000000",
-                        "date_created": "2023-06-15T13:26:36.695671",
-                        "justification": (
-                            "Not enough info in benefits or engagement"
-                        ),
-                        "status": "RAISED",
-                        "allocation": "TEAM_1",
-                    }
-                ],
-            },
-            {
-                "id": "f60f816e-0497-47a7-9211-1515f7939fbe",
-                "application_id": test_application_id,
-                "status": "RESOLVED",
-                "allocation": "TEAM_2",
-                "sections_to_flag": ["financial_and_risk_forecasts"],
-                "updates": [
-                    {
-                        "id": "70b723be-1244-43a9-a613-69ac75188dab",
-                        "user_id": "00000000-0000-0000-0000-000000000000",
-                        "date_created": "2023-05-15T09:33:36.695671",
-                        "justification": (
-                            "Not happy with risk mitigation strategies"
-                        ),
-                        "status": "RAISED",
-                        "allocation": "TEAM_2",
-                    },
-                    {
-                        "id": "b5d01d22-cc5c-4191-a468-219f00ff9af6",
-                        "user_id": "00000000-0000-0000-0000-000000000000",
-                        "date_created": "2023-05-17T11:54:36.695671",
-                        "justification": (
-                            "Clarity given on risk mitigation, ok to proceed"
-                        ),
-                        "status": "RESOLVED",
-                        "allocation": "TEAM_2",
-                    },
-                ],
-            },
-        ]
+    # TODO : Need to rework this function once old rounds are migrated to use flags_v2
+    metadata = requests.get(
+        Config.APPLICATION_METADATA_ENDPOINT.format(
+            application_id=application_id
+        )
+    ).json()
 
-    if flags:
-        flags_list = Flags.from_dict(flags)
-        return flags_list
-    else:
-        msg = f"List flag for application: '{application_id}' not found."
-        current_app.logger.warn(msg)
-        return None
+    if metadata["round_id"] not in rounds_using_old_flags:
+        flags = get_data(
+            Config.ASSESSMENT_FLAGS_ENDPOINT.format(
+                application_id=application_id
+            )
+        )
+        if flags:
+            flags_list = Flags.from_dict(flags)
+            return flags_list
+        else:
+            msg = f"List flag for application: '{application_id}' not found."
+            current_app.logger.warn(msg)
+            return None
 
 
 def submit_flag(
@@ -432,6 +434,7 @@ def submit_flag(
     user_id: str,
     justification: str = None,
     section: str = None,
+    allocation: str = None,
 ) -> Flag | None:
     """Submits a new flag to the assessment store for an application.
     Returns Flag if a flag is created
@@ -442,26 +445,64 @@ def submit_flag(
     :param justification: The justification for raising the flag
     :param section: The assessment section the flag has been raised for.
     """
-    current_app.logger.info(
-        "POSTing new flag to endpoint"
-        f" '{Config.ASSESSMENT_LATEST_FLAG_ENDPOINT}'.\n"
-        "Details: \n"
-        f" - flag_type: {flag_type} \n"
-        f" - application_id: '{application_id}') \n"
-    )
-    flag = requests.post(
-        Config.ASSESSMENT_LATEST_FLAG_ENDPOINT,
-        json={
-            "application_id": application_id,
-            "justification": justification,
-            "sections_to_flag": section,
-            "flag_type": flag_type,
-            "user_id": user_id,
-        },
-    )
-    if flag:
-        flag_json = flag.json()
-        return Flag.from_dict(flag_json)
+    # TODO : Need to rework this function once old rounds are migrated to use flags_v2
+    metadata = requests.get(
+        Config.APPLICATION_METADATA_ENDPOINT.format(
+            application_id=application_id
+        )
+    ).json()
+
+    if metadata["round_id"] in rounds_using_old_flags:
+        current_app.logger.info(
+            "POSTing new flag to endpoint"
+            f" '{Config.ASSESSMENT_LATEST_FLAG_ENDPOINT}'.\n"
+            "Details: \n"
+            f" - flag_type: {flag_type} \n"
+            f" - application_id: '{application_id}') \n"
+        )
+        flag = requests.post(
+            Config.ASSESSMENT_LATEST_FLAG_ENDPOINT,
+            json={
+                "application_id": application_id,
+                "justification": justification,
+                "sections_to_flag": section,
+                "flag_type": flag_type,
+                "user_id": user_id,
+            },
+        )
+        if flag:
+            flag_json = flag.json()
+            return Flag.from_dict(flag_json)
+    else:
+        # if flag_type != 'QA_COMPLETED':
+        flag_type = FlagTypeV2[
+            "RAISED" if flag_type == "FLAGGED" else flag_type
+        ]
+        flag = requests.post(
+            Config.ASSESSMENT_FLAGS_V2_POST_ENDPOINT,
+            json={
+                "application_id": application_id,
+                "justification": justification,
+                "sections_to_flag": section,
+                "user_id": user_id,
+                "allocation": allocation,
+                "status": flag_type.value,
+            },
+        )
+        if flag:
+            flag_json = flag.json()
+            return FlagV2.from_dict(flag_json)
+        # else:
+        #     response = requests.post(
+        #         Config.ASSESSMENT_UPDATE_QA_STATUS.format(application_id=application_id)
+        #     )
+        #     if response.status_code == 204:
+        #         current_app.logger.info(
+        #             "The application status has been updated to COMPLETE"
+        #         )
+        #         return response
+        #     else:
+        #         current_app.logger.error("Not Found: application_id not found")
 
 
 def get_sub_criteria_theme_answers(
