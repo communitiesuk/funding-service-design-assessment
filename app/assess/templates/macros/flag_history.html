@@ -16,18 +16,18 @@
     {% set items = [] %}
     {% for data in flag_data.updates %}
         {% set FlagDetails %}
-            {% if data['status']=='RAISED' %}
+            {% if data['status'].name=='RAISED' %}
                 <p><strong>Reason</strong><br>{{ data['justification'] }}</p>
                 <p><strong>Section(s) flagged</strong><br></p>
                 {{ display_flagged_sections(state, application_id, flag_data['sections_to_flag']) }}
-                <p><strong>Flag allocation</strong><br> <span class="flagged-tag">Flagged for {{ data['allocation'] }}</span></p>
+                <p><strong>Flag allocation</strong><br> <span class="flagged-tag"> {{ "Flagged for"+ data['allocation'] if data['allocation'] else "N/A" }}</span></p>
                 <p><strong>Notification sent</strong><br>No</p>
             {% else %}
-                {% if data['status']=='STOPPED' %}
+                {% if data['status'].name=='STOPPED' %}
                     <p><strong>Resolve flag action</strong><br>Stop assessment</p>
-                {% elif data['status']=='ESCALATED' %}
+                {% elif data['status'].name=='ESCALATED' %}
                     <p><strong>Resolve flag action</strong><br>Flag escalated to {{ data['allocation'] }}</p>
-                {% elif data['status']=='RESOLVED' %}
+                {% elif data['status'].name=='RESOLVED' %}
                     <p><strong>Resolve flag action</strong><br>Query resolved</p>
                 {% endif %}
                 <p><strong>Reason</strong><br>{{ data['justification'] }}</p>
@@ -36,16 +36,16 @@
         {% endset %}
 
         {% set username_date = '('+ accounts_list[data['user_id']]['full_name'] + ')<br>'+ data['date_created'] | utc_to_bst %}
-        {% set CreatedBy = username_date if data['status']=='RAISED' else 'N/A' %}
-        {% set ResolvedBy = username_date if data['status']!='RAISED' else 'N/A' %}
+        {% set CreatedBy = username_date if data['status'].name=='RAISED' else 'N/A' %}
+        {% set ResolvedBy = username_date if data['status'].name!='RAISED' else 'N/A' %}
 
         {% set addItem = items.append([{'html': CreatedBy},
                                         {'text': FlagDetails},
                                         {'html': ResolvedBy},
-                                        {'text': data['status'] | capitalize}]) %}
+                                        {'text': data['status'].name | capitalize}]) %}
     {% endfor %}
 
-    <h2 class="govuk-heading-l">Flagged for {{ flag_data.allocation }}</h2>
+    <h2 class="govuk-heading-l">{{ "Flagged for "+ flag_data.latest_allocation if flag_data.latest_allocation else "Flagged" }}</h2>
     {{ govukTable({
     'head': [
         {'text': "Created by"},
@@ -62,8 +62,8 @@
         {% set items = [] %}
         {% for flag_item in flags_list %}
             {% set addItem = items.append({
-            'label': "Flagged for " + flag_item.allocation,
-            'id': "tab-" + flag_item.allocation,
+            'label': ("Flagged for " + flag_item.latest_allocation) if flag_item.latest_allocation else ("Flag " + (loop.index0 +1) | string),
+            'id': "tab-" + (flag_item.latest_allocation if flag_item.latest_allocation else loop.index0 | string),
             'panel': {
                 'html': flag_table(state, application_id, flag_item, accounts_list)}
             })%}

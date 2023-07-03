@@ -1,13 +1,16 @@
 import time
+from typing import List
 from typing import Optional
 
+from app.assess.data import get_flags
 from app.assess.data import get_fund
-from app.assess.data import get_latest_flag
 from app.assess.data import get_sub_criteria_banner_state
 from app.assess.data import submit_flag
+from app.assess.display_value_mappings import assessment_statuses
 from app.assess.models.flag import Flag
 from app.assess.models.flag import FlagType
 from app.assess.models.flag_v2 import FlagTypeV2
+from app.assess.models.flag_v2 import FlagV2
 from flask import redirect
 from flask import render_template
 from flask import request
@@ -38,25 +41,41 @@ def get_fund_short_name_from_request() -> str | None:
     return fund_short_name
 
 
-def determine_display_status(
-    workflow_status: str,
-    latest_flag: Optional[Flag] = None,
-) -> str:
+def determine_display_status(workflow_status: str, Flags: List[FlagV2]) -> str:
     """
     Deduce whether to override display_status with a
     flag.
     """
-    if latest_flag:
-        status = (
-            FlagType(getattr(latest_flag, "flag_type")).name
-            if getattr(latest_flag, "flag_type", None)
-            else FlagTypeV2(getattr(latest_flag, "latest_status")).name
-        )
-        if status and status == "RESOLVED":
-            return workflow_status
-        return status
+    display_status = ""
+
+    flags_list = (
+        [
+            (FlagV2.from_dict(flag) if isinstance(flag, dict) else flag)
+            for flag in Flags
+        ]
+        if Flags
+        else []
+    )
+    all_latest_status = [flag.latest_status for flag in flags_list]
+
+    if FlagTypeV2.STOPPED in all_latest_status:
+        display_status = "Stopped"
+    elif all_latest_status.count(FlagTypeV2.RAISED) > 1:
+        display_status = "Multiple Flags To Resolve"
+    elif all_latest_status.count(FlagTypeV2.RAISED) == 1:
+        for flag in flags_list:
+            if flag.latest_status == FlagTypeV2.RAISED:
+                display_status = (
+                    ("Flagged for " + flag.latest_allocation)
+                    if flag.latest_allocation
+                    else "Flagged"
+                )
+    elif FlagTypeV2.QA_COMPLETED in all_latest_status:
+        display_status = "QA complete"
     else:
-        return workflow_status
+        display_status = assessment_statuses[workflow_status]
+
+    return display_status
 
 
 def is_flaggable(latest_flag: Optional[Flag]):
@@ -68,24 +87,16 @@ def is_flaggable(latest_flag: Optional[Flag]):
 def set_application_status_in_overview(application_overviews):
     """Add the 'application_status' key and return the modified list of application overviews."""
     for overview in application_overviews:
-        if overview["is_qa_complete"] and not overview["flags"][-1][
-            "flag_type"
-        ] in ["FLAGGED", "STOPPED"]:
-            status = "QA_COMPLETED"
-        elif len(overview["flags"]) > 1:
-            status = "MULTIPLE_FLAGS"
-        elif (
-            overview["flags"]
-            and overview["flags"][-1]["flag_type"] == "STOPPED"
-        ):
-            status = overview["flags"][-1]["flag_type"]
-        elif (
-            overview["flags"]
-            and overview["flags"][-1]["flag_type"] == "FLAGGED"
-        ):
-            status = overview["flags"][-1]["flag_type"]
-        else:
-            status = overview["workflow_status"]
+        display_status = determine_display_status(
+            overview["workflow_status"], overview["flags_v2"]
+        )
+        status = ""
+        for key, val in assessment_statuses.items():
+            if val == display_status:
+                status = key
+                break
+        if not status:
+            status = display_status
         overview["application_status"] = status
 
     return application_overviews
@@ -102,6 +113,7 @@ def resolve_application(
     state=None,
     reason_to_flag="",
     allocated_team="",
+    flag_id="",
 ):
     """This function is used to resolve an application
       by submitting a flag, justification, and section for the application.
@@ -122,7 +134,15 @@ def resolve_application(
                          as parameters.
     """
     if request.method == "POST" and form.validate_on_submit():
-        submit_flag(application_id, flag, user_id, justification, section)
+        submit_flag(
+            application_id,
+            flag,
+            user_id,
+            justification,
+            section,
+            allocated_team,
+            flag_id,
+        )
         return redirect(
             url_for(
                 "assess_bp.application",
@@ -130,11 +150,10 @@ def resolve_application(
             )
         )
     sub_criteria_banner_state = get_sub_criteria_banner_state(application_id)
-    latest_flag = get_latest_flag(application_id)
-    if latest_flag:
-        display_status = determine_display_status(
-            sub_criteria_banner_state.workflow_status, latest_flag
-        )
+    flags_list = get_flags(application_id)
+    display_status = determine_display_status(
+        state.workflow_status, flags_list
+    )
 
     fund = get_fund(sub_criteria_banner_state.fund_id)
     return render_template(

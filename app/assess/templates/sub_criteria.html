@@ -35,7 +35,7 @@
     </div>
 {% endif %}
 
-{% if not flag and g.access_controller.has_any_assessor_role %}
+{% if is_flaggable and g.access_controller.has_any_assessor_role %}
     {{ flag_application_button(application_id) }}
 {% endif %}
 <div class="govuk-grid-row">
