@@ -159,7 +159,7 @@ def get_bulk_accounts_dict(account_ids: List, fund_short_name: str):
             debug_user_config = deepcopy(Config.DEBUG_USER)
             debug_user_config["email_address"] = Config.DEBUG_USER["email"]
             debug_user_config["highest_role_map"] = {
-                fund_short_name: "LEAD_ASSESSOR"
+                fund_short_name: Config.DEBUG_USER_ROLE
             }
             del debug_user_config["highest_role"]
             users_result[Config.DEBUG_USER_ACCOUNT_ID] = debug_user_config
@@ -383,61 +383,6 @@ def get_flags(application_id: str) -> Optional[Flag]:
     flags = get_data(
         Config.ASSESSMENT_FLAGS_ENDPOINT.format(application_id=application_id)
     )
-    # TODO: Remove mock data used for flag history development and
-    # Refactor below code after schema changes made for multiple flags
-    test_application_id = "81480ade-0487-4097-8dec-bba3116ee7f3"
-    if application_id == test_application_id:
-        flags = [
-            {
-                "id": "b0ac84e5-bb97-4851-9ba3-4d1101030e9f",
-                "application_id": test_application_id,
-                "status": "RAISED",
-                "allocation": "TEAM_1",
-                "sections_to_flag": ["benefits", "engagement"],
-                "updates": [
-                    {
-                        "id": "316f607a-03b7-4592-b927-5021a28b7d6a",
-                        "user_id": "00000000-0000-0000-0000-000000000000",
-                        "date_created": "2023-06-15T13:26:36.695671",
-                        "justification": (
-                            "Not enough info in benefits or engagement"
-                        ),
-                        "status": "RAISED",
-                        "allocation": "TEAM_1",
-                    }
-                ],
-            },
-            {
-                "id": "f60f816e-0497-47a7-9211-1515f7939fbe",
-                "application_id": test_application_id,
-                "status": "RESOLVED",
-                "allocation": "TEAM_2",
-                "sections_to_flag": ["financial_and_risk_forecasts"],
-                "updates": [
-                    {
-                        "id": "70b723be-1244-43a9-a613-69ac75188dab",
-                        "user_id": "00000000-0000-0000-0000-000000000000",
-                        "date_created": "2023-05-15T09:33:36.695671",
-                        "justification": (
-                            "Not happy with risk mitigation strategies"
-                        ),
-                        "status": "RAISED",
-                        "allocation": "TEAM_2",
-                    },
-                    {
-                        "id": "b5d01d22-cc5c-4191-a468-219f00ff9af6",
-                        "user_id": "00000000-0000-0000-0000-000000000000",
-                        "date_created": "2023-05-17T11:54:36.695671",
-                        "justification": (
-                            "Clarity given on risk mitigation, ok to proceed"
-                        ),
-                        "status": "RESOLVED",
-                        "allocation": "TEAM_2",
-                    },
-                ],
-            },
-        ]
-
     if flags:
         flags_list = Flags.from_dict(flags)
         return flags_list
