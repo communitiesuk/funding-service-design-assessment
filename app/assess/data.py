@@ -158,7 +158,9 @@ def get_bulk_accounts_dict(account_ids: List, fund_short_name: str):
         if Config.FLASK_ENV == "development":
             debug_user_config = deepcopy(Config.DEBUG_USER)
             debug_user_config["email_address"] = Config.DEBUG_USER["email"]
-            debug_user_config["highest_role_map"] = {"COF": "LEAD_ASSESSOR"}
+            debug_user_config["highest_role_map"] = {
+                fund_short_name: "LEAD_ASSESSOR"
+            }
             del debug_user_config["highest_role"]
             users_result[Config.DEBUG_USER_ACCOUNT_ID] = debug_user_config
 
