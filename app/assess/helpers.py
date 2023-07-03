@@ -7,6 +7,7 @@ from app.assess.data import get_sub_criteria_banner_state
 from app.assess.data import submit_flag
 from app.assess.models.flag import Flag
 from app.assess.models.flag import FlagType
+from app.assess.models.flag_v2 import FlagTypeV2
 from flask import redirect
 from flask import render_template
 from flask import request
@@ -45,12 +46,17 @@ def determine_display_status(
     Deduce whether to override display_status with a
     flag.
     """
-    if not latest_flag or (
-        latest_flag and latest_flag.flag_type == FlagType.RESOLVED
-    ):
-        return workflow_status
+    if latest_flag:
+        status = (
+            FlagType(getattr(latest_flag, "flag_type")).name
+            if getattr(latest_flag, "flag_type", None)
+            else FlagTypeV2(getattr(latest_flag, "latest_status")).name
+        )
+        if status and status == "RESOLVED":
+            return workflow_status
+        return status
     else:
-        return latest_flag.flag_type.name
+        return workflow_status
 
 
 def is_flaggable(latest_flag: Optional[Flag]):

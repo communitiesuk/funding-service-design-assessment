@@ -13,12 +13,6 @@ class FlagType(Enum):
     RAISED = 4
 
 
-class FlagTypeV2(Enum):
-    RAISED = 0
-    STOPPED = 1
-    RESOLVED = 3
-
-
 @dataclass()
 class Flag:
     id: str

@@ -166,15 +166,17 @@ def get_bulk_accounts_dict(account_ids: List, fund_short_name: str):
         if Config.FLASK_ENV == "development":
             debug_user_config = deepcopy(Config.DEBUG_USER)
             debug_user_config["email_address"] = Config.DEBUG_USER["email"]
-            debug_user_config["highest_role_map"] = {"COF": "LEAD_ASSESSOR"}
+            debug_user_config["highest_role_map"] = {
+                fund_short_name: fund_short_name + "_" + Config.DEBUG_USER_ROLE
+            }
             del debug_user_config["highest_role"]
             users_result[Config.DEBUG_USER_ACCOUNT_ID] = debug_user_config
 
-        # we only need the highest role for the fund we are currently viewing
-        users_result["highest_role"] = users_result["highest_role_map"][
-            fund_short_name
-        ]
-        del users_result["highest_role_map"]
+        for user_result in users_result.values():
+            # we only need the highest role for the fund we are currently viewing
+            highest_role = user_result["highest_role_map"][fund_short_name]
+            user_result["highest_role"] = highest_role
+            del user_result["highest_role_map"]
 
         return users_result
     else:
@@ -284,7 +286,7 @@ def get_assessor_task_list_state(application_id: str) -> Union[dict, None]:
 
 
 def get_application_metadata(application_id: str) -> Union[dict, None]:
-    application_endpoint = Config.ASSESSMENT_METADATA_ENDPOINT.format(
+    application_endpoint = Config.APPLICATION_METADATA_ENDPOINT.format(
         application_id=application_id
     )
     application_metadata = get_data(application_endpoint)
@@ -386,9 +388,9 @@ def get_latest_flag(application_id: str) -> Optional[Flag]:
             Config.ASSESSMENT_FLAGS_V2_ENDPOINT.format(
                 application_id=application_id
             )
-        )[0]
+        )
         if flag:
-            return FlagV2.from_dict(flag)
+            return FlagV2.from_list(flag)[0]
         else:
             msg = f"flag for application: '{application_id}' not found."
             current_app.logger.warn(msg)

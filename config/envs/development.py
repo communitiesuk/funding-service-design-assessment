@@ -27,15 +27,18 @@ class DevelopmentConfig(DefaultConfig):
     DEBUG_USER_ON = True  # Set to True to use DEBUG user
     SHOW_ALL_ROUNDS = True  # Set to True to show all rounds
 
-    DEBUG_USER_ROLE = "COF_LEAD_ASSESSOR"
+    DEBUG_USER_ROLE = "LEAD_ASSESSOR"
     DEBUG_USER = {
         "full_name": "Development User",
         "email": "dev@example.com",
         "roles": [
-            DEBUG_USER_ROLE,
+            "COF_LEAD_ASSESSOR",
             "COF_ENGLAND",
             "COF_ASSESSOR",
             "COF_COMMENTER",
+            "NSTF_LEAD_ASSESSOR",
+            "NSTF_ASSESSOR",
+            "NSTF_COMMENTER",
         ],
         "highest_role": DEBUG_USER_ROLE,
     }

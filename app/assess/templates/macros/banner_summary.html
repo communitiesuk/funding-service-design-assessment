@@ -11,7 +11,7 @@
                     <h3 class="govuk-body-l fsd-banner-content">Total funding requested: £{{ "{:,.2f}".format(funding_amount_requested | float) }}</h3>
 
                     {% if g.access_controller.has_any_assessor_role %}
-                        {% if flag and flag.is_qa_complete and display_status not in ('FLAGGED', 'STOPPED') %}
+                        {# {% if flag and flag.is_qa_complete and display_status not in ('FLAGGED', 'STOPPED') %}
                             <h3 class="govuk-body-l fsd-banner-content fsd-banner-collapse-padding">
                                 QA complete
                             </h3>
@@ -23,9 +23,9 @@
                             <h3 class="govuk-body-l fsd-banner-content fsd-banner-collapse-padding">
                                 Assessment complete
                             </h3>
-                        {% else %}
+                        {% else %} #}
                             <h3 class="govuk-body-l fsd-banner-content fsd-banner-collapse-padding">{{ display_status | all_caps_to_human }}</h3>
-                        {% endif %}
+                        {# {% endif %} #}
                     {% endif %}
                 </div>
             </div>

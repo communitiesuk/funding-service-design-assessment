@@ -17,6 +17,7 @@ class FlagV2:
     id: str
     sections_to_flag: list
     latest_status: FlagTypeV2 | str
+    latest_allocation: str
     application_id: str
     updates: list
 
@@ -27,6 +28,10 @@ class FlagV2:
             item["date_created"] = datetime.fromisoformat(
                 item["date_created"]
             ).strftime("%Y-%m-%d %X")
+
+        self.latest_user_id = (
+            self.updates[-1]["user_id"] if self.updates else ""
+        )
 
     @classmethod
     def from_dict(cls, d: dict):
@@ -39,10 +44,24 @@ class FlagV2:
             }
         )
 
+    @classmethod
+    def from_list(cls, lst: list):
+        all_flags = [
+            cls(
+                **{
+                    k: v
+                    for k, v in d.items()
+                    if k in inspect.signature(cls).parameters
+                }
+            )
+            for d in lst
+        ]
+        return all_flags
+
 
 # TODO: Refactor below class after assessment-store schema changes for multiple flags
 @dataclass()
-class Flags:
+class FlagsV2:
     id: str
     # justification: str
     sections_to_flag: str

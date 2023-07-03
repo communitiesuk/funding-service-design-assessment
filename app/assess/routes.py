@@ -523,7 +523,14 @@ def application(application_id):
     state = AssessorTaskList.from_json(assessor_task_list_metadata)
     flag = get_latest_flag(application_id)
     if flag:
-        accounts = get_bulk_accounts_dict([flag.user_id], fund.short_name)
+        if hasattr(flag, "user_id"):
+            accounts = get_bulk_accounts_dict([flag.user_id], fund.short_name)
+            flag_user_info = accounts.get(flag.user_id)
+        else:
+            accounts = get_bulk_accounts_dict(
+                [flag.latest_user_id], fund.short_name
+            )
+            flag_user_info = accounts.get(flag.latest_user_id)
 
     flaggable = True if isinstance(flag, FlagV2) else is_flaggable(flag)
 
@@ -537,7 +544,9 @@ def application(application_id):
                 if flag_item["user_id"] not in user_id_list:
                     user_id_list.append(flag_item["user_id"])
         if flags_list:
-            accounts_list = get_bulk_accounts_dict(user_id_list)
+            accounts_list = get_bulk_accounts_dict(
+                user_id_list, fund.short_name
+            )
     except Exception:
         flags_list = []
         accounts_list = []
@@ -571,9 +580,7 @@ def application(application_id):
         current_user_role=g.user.highest_role,
         fund_short_name=fund.short_name,
         round_short_name=round.short_name,
-        flag_user_info=accounts.get(flag.user_id)
-        if (flag and accounts)
-        else None,
+        flag_user_info=flag_user_info if (flag and accounts) else None,
         is_flaggable=flaggable,
         display_status=display_status,
     )
