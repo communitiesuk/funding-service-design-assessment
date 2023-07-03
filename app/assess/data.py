@@ -91,13 +91,25 @@ def call_search_applications(params: dict | str):
 
 
 def get_application_overviews(fund_id, round_id, search_params):
-    overviews_endpoint = (
-        Config.ASSESSMENT_STORE_API_HOST
-    ) + Config.APPLICATION_OVERVIEW_ENDPOINT_FUND_ROUND_PARAMS.format(
-        fund_id=fund_id, round_id=round_id, params=urlencode(search_params)
-    )
-    current_app.logger.info(f"Endpoint '{overviews_endpoint}'.")
-    overviews_response = get_data(overviews_endpoint)
+    # TODO : Need to rework this function once old rounds are migrated to use flags_v2
+    if round_id in rounds_using_old_flags:
+        overviews_endpoint = (
+            Config.ASSESSMENT_STORE_API_HOST
+        ) + Config.APPLICATION_OVERVIEW_ENDPOINT_FUND_ROUND_PARAMS.format(
+            fund_id=fund_id, round_id=round_id, params=urlencode(search_params)
+        )
+        current_app.logger.info(f"Endpoint '{overviews_endpoint}'.")
+        overviews_response = get_data(overviews_endpoint)
+
+    else:
+        overviews_endpoint = (
+            Config.ASSESSMENT_STORE_API_HOST
+        ) + Config.APPLICATION_OVERVIEW_FLAGS_V2_ENDPOINT_FUND_ROUND_PARAMS.format(
+            fund_id=fund_id, round_id=round_id, params=urlencode(search_params)
+        )
+        current_app.logger.info(f"Endpoint '{overviews_endpoint}'.")
+        overviews_response = get_data(overviews_endpoint)
+
     return overviews_response
 
 
