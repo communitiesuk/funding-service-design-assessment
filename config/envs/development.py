@@ -33,9 +33,15 @@ class DevelopmentConfig(DefaultConfig):
         "email": "dev@example.com",
         "roles": [
             DEBUG_USER_ROLE,
-            "COF_ENGLAND",
             "COF_ASSESSOR",
             "COF_COMMENTER",
+            "COF_ENGLAND",
+            "COF_SCOTLAND",
+            "COF_WALES",
+            "COF_NORTHERNIRELAND",
+            "NSTF_LEAD_ASSESSOR",
+            "NSTF_ASSESSOR",
+            "NSTF_COMMENTER",
         ],
         "highest_role": DEBUG_USER_ROLE,
     }
