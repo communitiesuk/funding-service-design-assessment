@@ -162,11 +162,11 @@ def get_bulk_accounts_dict(account_ids: List, fund_short_name: str):
             del debug_user_config["highest_role"]
             users_result[Config.DEBUG_USER_ACCOUNT_ID] = debug_user_config
 
-        # we only need the highest role for the fund we are currently viewing
-        users_result["highest_role"] = users_result["highest_role_map"][
-            fund_short_name
-        ]
-        del users_result["highest_role_map"]
+        for user_result in users_result.values():
+            # we only need the highest role for the fund we are currently viewing
+            highest_role = user_result["highest_role_map"][fund_short_name]
+            user_result["highest_role"] = highest_role
+            del user_result["highest_role_map"]
 
         return users_result
     else:
