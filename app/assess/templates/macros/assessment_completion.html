@@ -1,6 +1,6 @@
 {% from "macros/link_to_download_contract_docs.html" import link_to_download_contract_docs %}
 
-{% macro assessment_complete(state, flag, csrf_token, application_id, current_user_role) %}
+{% macro assessment_complete(state, flag, csrf_token, application_id) %}
 
 {% if (not flag or flag and flag.flag_type.name=="RESOLVED") and state.workflow_status=="IN_PROGRESS" %}
 
@@ -29,7 +29,9 @@
                 It may now be selected for quality assurance (QA). New scores and rationales could be added if this
                 happens.
             </p>
-            {{ link_to_download_contract_docs(csrf_token, application_id, current_user_role) }}
+            {% if is_lead_assessor %}
+                {{ link_to_download_contract_docs(csrf_token, application_id) }}
+            {% endif %}
         </div>
     </div>
 </div>

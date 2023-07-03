@@ -1,3 +1,5 @@
+from copy import deepcopy
+from functools import lru_cache
 from typing import Dict
 from typing import List
 from typing import Optional
@@ -99,7 +101,10 @@ def get_application_overviews(fund_id, round_id, search_params):
     return overviews_response
 
 
-def get_funds() -> Union[List[Fund], None]:
+@lru_cache(maxsize=1)
+def get_funds(ttl_hash=None) -> Union[List[Fund], None]:
+    del ttl_hash  # unused, but required for lru_cache
+    current_app.logger.info("Fetching funds from fund store.")
     endpoint = Config.FUND_STORE_API_HOST + Config.FUNDS_ENDPOINT
     response = get_data(endpoint)
     if response and len(response) > 0:
@@ -152,17 +157,24 @@ def get_round(
     return None
 
 
-def get_bulk_accounts_dict(account_ids: List):
+def get_bulk_accounts_dict(account_ids: List, fund_short_name: str):
     if account_ids:
         account_ids_to_retrieve = list(set(account_ids))
         account_url = Config.BULK_ACCOUNTS_ENDPOINT
         account_params = {"account_id": account_ids_to_retrieve}
         users_result = get_data(account_url, account_params)
         if Config.FLASK_ENV == "development":
-            users_result[Config.DEBUG_USER_ACCOUNT_ID] = {
-                **Config.DEBUG_USER,
-                "email_address": Config.DEBUG_USER["email"],
-            }
+            debug_user_config = deepcopy(Config.DEBUG_USER)
+            debug_user_config["email_address"] = Config.DEBUG_USER["email"]
+            debug_user_config["highest_role_map"] = {"COF": "LEAD_ASSESSOR"}
+            del debug_user_config["highest_role"]
+            users_result[Config.DEBUG_USER_ACCOUNT_ID] = debug_user_config
+
+        # we only need the highest role for the fund we are currently viewing
+        users_result["highest_role"] = users_result["highest_role_map"][
+            fund_short_name
+        ]
+        del users_result["highest_role_map"]
 
         return users_result
     else:
@@ -193,9 +205,9 @@ def get_score_and_justification(
     return score_response
 
 
-def match_score_to_user_account(scores):
+def match_score_to_user_account(scores, fund_short_name):
     account_ids = [score["user_id"] for score in scores]
-    bulk_accounts_dict = get_bulk_accounts_dict(account_ids)
+    bulk_accounts_dict = get_bulk_accounts_dict(account_ids, fund_short_name)
     scores_with_account: list[Score] = [
         Score.from_dict(
             score
@@ -268,8 +280,15 @@ def get_assessor_task_list_state(application_id: str) -> Union[dict, None]:
     )
 
     metadata = get_data(overviews_endpoint)
-
     return metadata
+
+
+def get_application_metadata(application_id: str) -> Union[dict, None]:
+    application_endpoint = Config.ASSESSMENT_METADATA_ENDPOINT.format(
+        application_id=application_id
+    )
+    application_metadata = get_data(application_endpoint)
+    return application_metadata
 
 
 def get_questions(application_id):
@@ -560,16 +579,17 @@ def get_comments(
         return comment_response
 
 
-def match_comment_to_theme(comment_response, themes):
+def match_comment_to_theme(comment_response, themes, fund_short_name):
     """_summary_: match the comment response to its theme and account information
     Args:
         comment_response: assessment store comments response for a theme,
         themes: list of subcriteria themes
+        fund_short_name: fund short name
     Returns:
         Returns a dictionary of comments.
     """
     account_ids = [comment["user_id"] for comment in comment_response]
-    bulk_accounts_dict = get_bulk_accounts_dict(account_ids)
+    bulk_accounts_dict = get_bulk_accounts_dict(account_ids, fund_short_name)
 
     comments: list[Comment] = [
         Comment.from_dict(
@@ -584,6 +604,7 @@ def match_comment_to_theme(comment_response, themes):
                 "highest_role": bulk_accounts_dict[comment["user_id"]][
                     "highest_role"
                 ],
+                "fund_short_name": fund_short_name,
             }
         )
         for comment in comment_response

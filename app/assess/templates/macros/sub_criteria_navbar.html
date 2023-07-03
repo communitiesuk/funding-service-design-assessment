@@ -16,7 +16,7 @@
         {% endfor %}
     </ul>
 
-{% if g.user.highest_role in ["ASSESSOR","LEAD_ASSESSOR"] and sub_criteria.is_scored %}
+{% if g.access_controller.has_any_assessor_role and sub_criteria.is_scored %}
     <ul class="govuk-list">
         <li>
             {% if not is_score_page %}

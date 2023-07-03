@@ -57,6 +57,13 @@ class DefaultConfig:
     if RSA256_PUBLIC_KEY_BASE64:
         RSA256_PUBLIC_KEY = base64.b64decode(RSA256_PUBLIC_KEY_BASE64).decode()
 
+    FORCE_ALL_FUNDS_ACCESSIBLE = bool(
+        getenv("FORCE_ALL_FUNDS_ACCESSIBLE", False)
+    )
+    FORCE_DISABLE_DEVOLVED_AUTHORITY_AUTH = bool(
+        getenv("FORCE_DISABLE_DEVOLVED_AUTHORITY_AUTH", False)
+    )
+
     """
     APIs Config
     """

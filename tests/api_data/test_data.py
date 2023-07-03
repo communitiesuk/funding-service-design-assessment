@@ -129,6 +129,18 @@ mock_api_results = {
         "short_name": "TF",
         "description": "unit testing fund",
     },
+    "fund_store/funds/NSTF": {
+        "id": "NSTF",
+        "name": "Night Shelter Test Fund",
+        "short_name": "NSTF",
+        "description": "unit testing fund",
+    },
+    "fund_store/funds/COF": {
+        "id": "COF",
+        "name": "Community Ownership Fund",
+        "short_name": "COF",
+        "description": "unit testing fund",
+    },
     "fund_store/funds/{fund_id}/rounds/{round_id}": {
         "id": test_round_id,
         "fund_id": test_fund_id,
@@ -402,7 +414,7 @@ mock_api_results = {
         },
         test_user_id_assessor: {
             "user_id": test_user_id_assessor,
-            "full_name": "Commenter User",
+            "full_name": "Assessor User",
             "highest_role": "ASSESSOR",
             "email_address": "assessor@test.com",
         },
@@ -479,4 +491,7 @@ mock_api_results = {
             "user_id": test_user_id_lead_assessor,
         },
     ],
+    "assessment_store/applications/{application_id}": {
+        "fund_id": "TF",
+    },
 }

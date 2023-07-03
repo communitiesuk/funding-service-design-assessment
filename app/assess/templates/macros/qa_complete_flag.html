@@ -1,7 +1,7 @@
 
 {% from "macros/link_to_download_contract_docs.html" import link_to_download_contract_docs %}
 
-{% macro qa_complete_flag(flag, user_info, csrf_token, application_id, current_user_role) %}
+{% macro qa_complete_flag(flag, user_info, csrf_token, application_id) %}
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
         <div class="assessment-complete  govuk-margin-bottom-8" role="alert">
@@ -10,7 +10,9 @@
                 <p class="govuk-body-s">{{ user_info["full_name"] }} ({{ user_info["highest_role"] | all_caps_to_human }}) {{ user_info["email_address"] }}</p>
                 <p class="govuk-body-s">{{ flag.date_created | utc_to_bst }}</p>
 
-                {{ link_to_download_contract_docs(csrf_token, application_id, current_user_role) }}
+                {% if is_lead_assessor %}
+                    {{ link_to_download_contract_docs(csrf_token, application_id) }}
+                {% endif %}
         </div>
     </div>
 </div>

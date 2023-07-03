@@ -12,7 +12,7 @@
     {% else %}
     {% for comment_list in comments.values() %}
         {% for comment in comment_list %}
-        {% if g.user.highest_role == "COMMENTER" and (comment.highest_role == "ASSESSOR" or comment.highest_role == "LEAD_ASSESSOR") %}
+        {% if not g.access_controller.has_any_assessor_role and comment.from_any_assessor %}
             <div class="comment-group">
              <p class="govuk-body">Permission required to see comment.</p>
             </div>

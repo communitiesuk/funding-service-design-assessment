@@ -27,13 +27,16 @@ class DevelopmentConfig(DefaultConfig):
     DEBUG_USER_ON = True  # Set to True to use DEBUG user
     SHOW_ALL_ROUNDS = True  # Set to True to show all rounds
 
-    DEBUG_USER_ROLE = getenv(
-        "DEBUG_USER_ROLE", "LEAD_ASSESSOR" if DEBUG_USER_ON else None
-    )
+    DEBUG_USER_ROLE = "COF_LEAD_ASSESSOR"
     DEBUG_USER = {
         "full_name": "Development User",
         "email": "dev@example.com",
-        "roles": DEBUG_USER_ROLE,
+        "roles": [
+            DEBUG_USER_ROLE,
+            "COF_ENGLAND",
+            "COF_ASSESSOR",
+            "COF_COMMENTER",
+        ],
         "highest_role": DEBUG_USER_ROLE,
     }
     DEBUG_USER_ACCOUNT_ID = "00000000-0000-0000-0000-000000000000"

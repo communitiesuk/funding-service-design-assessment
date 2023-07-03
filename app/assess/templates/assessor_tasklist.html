@@ -7,7 +7,6 @@
 {% from "macros/banner_summary.html" import banner_summary %}
 {% from "macros/flag_application_button.html" import flag_application_button %}
 {% from "macros/mark_qa_complete_button.html" import mark_qa_complete_button %}
-{% from "macros/link_to_download_contract_docs.html" import link_to_download_contract_docs %}
 {% from "macros/assessment_flag.html" import assessment_flagged %}
 {% from "macros/assessment_flag.html" import assessment_stopped %}
 {% from "macros/logout_partial.html" import logout_partial %}
@@ -33,7 +32,6 @@
         state.project_name,
         state.funding_amount_requested,
         display_status,
-        g.user.highest_role,
         flag,
     ) }}
 </header>
@@ -46,18 +44,18 @@
 </div>
 
 <div>
-    {% if flag and current_user_role in ["ASSESSOR", "LEAD_ASSESSOR"] and flag.is_qa_complete %}
-        {{ qa_complete_flag(flag, flag_user_info, form.csrf_token, application_id, current_user_role) }}
+    {% if flag and g.access_controller.has_any_assessor_role and flag.is_qa_complete %}
+        {{ qa_complete_flag(flag, flag_user_info, form.csrf_token, application_id) }}
     {% endif %}
 
-    {% if flag and current_user_role in ("ASSESSOR", "LEAD_ASSESSOR") and flag.flag_type.name == "FLAGGED" %}
-        {{ assessment_flagged(state, flag, flag_user_info, application_id, current_user_role) }}
-    {% elif flag and current_user_role in ("ASSESSOR", "LEAD_ASSESSOR") and display_status == "STOPPED" %}
-        {{ assessment_stopped(flag, flag_user_info, application_id, current_user_role) }}
+    {% if flag and g.access_controller.has_any_assessor_role and flag.flag_type.name == "FLAGGED" %}
+        {{ assessment_flagged(state, flag, flag_user_info, application_id) }}
+    {% elif flag and g.access_controller.has_any_assessor_role and display_status == "STOPPED" %}
+        {{ assessment_stopped(flag, flag_user_info, application_id) }}
     {% endif %}
 
-    {% if sub_criteria_status_completed and current_user_role != "COMMENTER" and not flag.is_qa_complete %}
-    {{ assessment_complete(state, flag, form.csrf_token, application_id, current_user_role )}}
+    {% if sub_criteria_status_completed and g.access_controller.has_any_assessor_role and not flag.is_qa_complete %}
+        {{ assessment_complete(state, flag, form.csrf_token, application_id)}}
     {% endif %}
 </div>
 
@@ -80,12 +78,12 @@
         </div>
         <div class="govuk-grid-column-one-third govuk-!-margin-top-2 govuk-button-group">
             <span>
-                {% if g.user.highest_role == "LEAD_ASSESSOR" and state.workflow_status=="COMPLETED" and not flag.is_qa_complete and not (flag and (flag.flag_type.name == "STOPPED" or flag.flag_type.name == "FLAGGED" )) %}
+                {% if g.access_controller.is_lead_assessor and state.workflow_status=="COMPLETED" and not flag.is_qa_complete and not (flag and (flag.flag_type.name == "STOPPED" or flag.flag_type.name == "FLAGGED" )) %}
                 {{ mark_qa_complete_button(application_id) }}
                 {% endif %}
             </span>
             <span>
-                {% if is_flaggable and g.user.highest_role in ("ASSESSOR", "LEAD_ASSESSOR") %}
+                {% if is_flaggable and g.access_controller.has_any_assessor_role %}
                 {{ flag_application_button(application_id) }}
                 {% endif %}
             </span>
