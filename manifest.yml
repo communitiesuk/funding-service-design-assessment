@@ -43,8 +43,6 @@ applications:
     SENTRY_DSN: https://cae245fff7d8483e9d73c73b30137ffc@o1432034.ingest.sentry.io/4504418515550208
     ACCOUNT_STORE_API_HOST: https://funding-service-design-account-store-test.london.cloudapps.digital
     GITHUB_SHA: ((GITHUB_SHA))
-#    FORCE_ALL_FUNDS_ACCESSIBLE: true
-#    FORCE_DISABLE_DEVOLVED_AUTHORITY_AUTH: true
   services:
     - form-uploads-test
   health-check-http-endpoint: /healthcheck
