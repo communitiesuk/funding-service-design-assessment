@@ -114,6 +114,10 @@
                 <span class="flagged-tag">
                   {{ assessment_statuses[overview.application_status] }}
                 </span>
+                {% elif "Flagged" in overview.application_status %}
+                <span class="flagged-tag">
+                  {{ overview.application_status }}
+                </span>
                 {% elif overview.application_status == "NOT_STARTED" %}
                 <span class="not-started-tag">
                   {{ assessment_statuses[overview.application_status] }}

@@ -1,4 +1,4 @@
-{% macro banner_summary(fund_name, project_reference, project_name, funding_amount_requested, display_status, flag) %}
+{% macro banner_summary(fund_name, project_reference, project_name, funding_amount_requested, display_status) %}
 
 <div class="fsd-banner-background">
     <div class="govuk-width-container">
@@ -11,21 +11,7 @@
                     <h3 class="govuk-body-l fsd-banner-content">Total funding requested: £{{ "{:,.2f}".format(funding_amount_requested | float) }}</h3>
 
                     {% if g.access_controller.has_any_assessor_role %}
-                        {% if flag and flag.is_qa_complete and display_status not in ('FLAGGED', 'STOPPED') %}
-                            <h3 class="govuk-body-l fsd-banner-content fsd-banner-collapse-padding">
-                                QA complete
-                            </h3>
-                        {% elif flag and not flag.is_qa_complete and flag.flag_type.name == 'FLAGGED' %}
-                            <h3 class="govuk-body-l fsd-banner-content fsd-banner-collapse-padding">
-                                Flagged
-                            </h3>
-                        {% elif display_status=='COMPLETED' %}
-                            <h3 class="govuk-body-l fsd-banner-content fsd-banner-collapse-padding">
-                                Assessment complete
-                            </h3>
-                        {% else %}
-                            <h3 class="govuk-body-l fsd-banner-content fsd-banner-collapse-padding">{{ display_status | all_caps_to_human }}</h3>
-                        {% endif %}
+                        <h3 class="govuk-body-l fsd-banner-content fsd-banner-collapse-padding">{{ display_status | all_caps_to_human }}</h3>
                     {% endif %}
                 </div>
             </div>

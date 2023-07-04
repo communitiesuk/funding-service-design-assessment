@@ -4,6 +4,7 @@
 {%- from "govuk_frontend_jinja/components/fieldset/macro.html" import govukFieldset -%}
 {%- from "govuk_frontend_jinja/components/textarea/macro.html" import govukTextarea -%}
 {%- from "govuk_frontend_jinja/components/checkboxes/macro.html" import govukCheckboxes -%}
+{%- from "govuk_frontend_jinja/components/radios/macro.html" import govukRadios %}
 {% from "macros/banner_summary.html" import banner_summary %}
 {% set pageHeading = "Flag application" %}
 
@@ -191,6 +192,32 @@
                                     })
                                 }}
                             {% endfor %}
+                            {% if teams_available %}
+                            <div class="govuk-form-group">
+                                <label class="govuk-label govuk-label--m">Flag allocation</label>
+                                {% set items = [] %}
+                                    {% for team in teams_available %}
+                                        {% set addItem = items.append({
+                                                                        "value": team["value"],
+                                                                        "text": team["value"],
+                                                                        "label": {
+                                                                        "text": "teams_available",
+                                                                        "for": form.teams_available.id
+                                                                        },
+                                                                        "checked": form.teams_available.data==team["value"]
+                                                                        }) %}
+                                    {% endfor %}
+                                {{ govukRadios({
+                                    "id": form.teams_available.id,
+                                    "name": form.teams_available.id,
+                                    "items": items,
+                                    "errorMessage": {
+                                    "text": form.errors.get(form.teams_available.id) | join("\n"),
+                                    } if form.errors.get(form.teams_available.id) else None
+                                    }) }}
+
+                            </div>
+                            {% endif %}
                             {% endcall %}
                         </div>
                     </div>
