@@ -83,6 +83,11 @@ class DefaultConfig:
     GET_ROUND_DATA_FOR_FUND_ENDPOINT = (
         FUND_STORE_API_HOST + "/funds/{fund_id}/rounds/{round_id}"
     )
+    # TODO: Rework on the avialable teams allocated after implemented in fundstore
+    GET_AVIALABLE_TEAMS_FOR_FUND = (
+        FUND_STORE_API_HOST
+        + "/funds/{fund_id}/rounds/{round_id}/available_flag_allocations"
+    )
 
     # Round Store Endpoints
 
@@ -103,6 +108,9 @@ class DefaultConfig:
     APPLICATION_OVERVIEW_ENDPOINT_FUND_ROUND_PARAMS = (
         "/application_overviews/{fund_id}/{round_id}?{params}"
     )
+    APPLICATION_OVERVIEW_FLAGS_V2_ENDPOINT_FUND_ROUND_PARAMS = (
+        "/application_overviews_flags_v2/{fund_id}/{round_id}?{params}"
+    )
 
     APPLICATION_OVERVIEW_ENDPOINT_APPLICATION_ID = (
         "/application_overviews/{application_id}"
@@ -114,6 +122,10 @@ class DefaultConfig:
 
     APPLICATION_JSON_ENDPOINT = (
         ASSESSMENT_STORE_API_HOST + "/application/{application_id}/json"
+    )
+
+    APPLICATION_METADATA_ENDPOINT = (
+        ASSESSMENT_STORE_API_HOST + "/application/{application_id}/metadata"
     )
 
     SUB_CRITERIA_THEME_ANSWERS_ENDPOINT = (
@@ -133,6 +145,10 @@ class DefaultConfig:
         ASSESSMENT_STORE_API_HOST
         + "/application/{application_id}/status/complete"
     )
+    ASSESSMENT_UPDATE_QA_STATUS = (
+        ASSESSMENT_STORE_API_HOST
+        + "/application/{application_id}/status/qa_complete"
+    )
 
     ASSESSMENT_COMMENT_ENDPOINT = ASSESSMENT_STORE_API_HOST + "/comment"
     ASSESSMENT_PROGRESS_ENDPOINT = ASSESSMENT_STORE_API_HOST + "/progress"
@@ -148,8 +164,15 @@ class DefaultConfig:
         ASSESSMENT_STORE_API_HOST + "/flags?application_id={application_id}"
     )
 
-    ASSESSMENT_METADATA_ENDPOINT = (
-        ASSESSMENT_STORE_API_HOST + "/application/{application_id}/metadata"
+    # TODO : Need to rework on this once old rounds are migrated to use new flags
+    ASSESSMENT_FLAGS_V2_ENDPOINT = (
+        ASSESSMENT_STORE_API_HOST + "/flags_v2/{application_id}"
+    )
+    ASSESSMENT_FLAGS_V2_POST_ENDPOINT = (
+        ASSESSMENT_STORE_API_HOST + "/flags_v2/"
+    )
+    ASSESSMENT_FLAG_V2_ENDPOINT = (
+        ASSESSMENT_STORE_API_HOST + "/flag_data_v2?flag_id={flag_id}"
     )
 
     # Account store endpoints

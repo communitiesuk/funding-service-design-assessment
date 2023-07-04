@@ -30,7 +30,7 @@ from app.assess.helpers import get_ttl_hash
 from app.assess.helpers import is_flaggable
 from app.assess.helpers import resolve_application
 from app.assess.helpers import set_application_status_in_overview
-from app.assess.models.flag import FlagType
+from app.assess.models.flag_v2 import FlagTypeV2
 from app.assess.models.fund_summary import create_fund_summaries
 from app.assess.models.fund_summary import is_after_today
 from app.assess.models.theme import Theme
@@ -109,7 +109,7 @@ def display_sub_criteria(
         abort(404)
 
     fund = get_fund(assessor_task_list_metadata["fund_id"])
-    flag = get_latest_flag(application_id)
+    flags_list = get_flags(application_id)
 
     comment_response = get_comments(
         application_id=application_id,
@@ -127,14 +127,14 @@ def display_sub_criteria(
     )
 
     display_status = determine_display_status(
-        sub_criteria.workflow_status, flag
+        sub_criteria.workflow_status, flags_list
     )
     common_template_config = {
         "sub_criteria": sub_criteria,
         "application_id": application_id,
         "fund": fund,
         "comments": theme_matched_comments,
-        "flag": flag,
+        "is_flaggable": is_flaggable(display_status),
         "display_comment_box": add_comment_argument,
         "comment_form": comment_form,
         "current_theme": current_theme,
@@ -178,7 +178,7 @@ def score(
         abort(404)
 
     fund = get_fund(assessor_task_list_metadata["fund_id"])
-    flag = get_latest_flag(application_id)
+    flags_list = get_flags(application_id)
 
     comment_response = get_comments(
         application_id=application_id,
@@ -195,7 +195,7 @@ def score(
     )
 
     display_status = determine_display_status(
-        sub_criteria.workflow_status, flag
+        sub_criteria.workflow_status, flags_list
     )
     score_form = ScoreForm()
     rescore_form = RescoreForm()
@@ -250,8 +250,7 @@ def score(
         fund=fund,
         comments=theme_matched_comments,
         display_status=display_status,
-        flag=flag,
-        is_flaggable=is_flaggable(flag),
+        is_flaggable=is_flaggable(display_status),
     )
 
 
@@ -272,15 +271,31 @@ def flag(application_id):
         for item in state.get_sub_sections_metadata()
     ]
 
-    form = FlagApplicationForm(choices=choices)
+    # TODO: Rework on the avialable teams after implemented in fundstore
+    response = requests.get(
+        Config.GET_AVIALABLE_TEAMS_FOR_FUND.format(
+            fund_id=assessor_task_list_metadata["fund_id"],
+            round_id=assessor_task_list_metadata["round_id"],
+        )
+    )
+    if response.status_code == 200:
+        teams_available = response.json()
+    else:
+        teams_available = []
+
+    form = FlagApplicationForm(
+        section_choices=choices,
+        team_choices=[team["value"] for team in teams_available],
+    )
 
     if request.method == "POST" and form.validate_on_submit():
         submit_flag(
             application_id,
-            FlagType.FLAGGED.name,
+            FlagTypeV2.RAISED.name,
             g.account_id,
             form.justification.data,
             form.section.data,
+            form.teams_available.data,
         )
         return redirect(
             url_for(
@@ -289,12 +304,6 @@ def flag(application_id):
             )
         )
 
-    flag = get_latest_flag(application_id)
-    if flag and flag.flag_type not in (
-        FlagType.RESOLVED,
-        FlagType.QA_COMPLETED,
-    ):
-        abort(400, "Application already flagged")
     sub_criteria_banner_state = get_sub_criteria_banner_state(application_id)
 
     return render_template(
@@ -307,6 +316,7 @@ def flag(application_id):
         display_status=sub_criteria_banner_state.workflow_status,
         referrer=request.referrer,
         state=state,
+        teams_available=teams_available,
     )
 
 
@@ -325,7 +335,7 @@ def qa_complete(application_id):
     if form.validate_on_submit():
         submit_flag(
             application_id=application_id,
-            flag_type=FlagType.QA_COMPLETED.name,
+            flag_type=FlagTypeV2.QA_COMPLETED.name,
             user_id=g.account_id,
         )
         return redirect(
@@ -337,7 +347,6 @@ def qa_complete(application_id):
 
     sub_criteria_banner_state = get_sub_criteria_banner_state(application_id)
     fund = get_fund(sub_criteria_banner_state.fund_id)
-    flag = get_latest_flag(application_id)
 
     return render_template(
         "mark_qa_complete.html",
@@ -346,7 +355,6 @@ def qa_complete(application_id):
         sub_criteria=sub_criteria_banner_state,
         form=form,
         referrer=request.referrer,
-        flag=flag,
         display_status=sub_criteria_banner_state.workflow_status,
     )
 
@@ -520,24 +528,26 @@ def application(application_id):
     assessor_task_list_metadata["fund_name"] = fund.name
 
     state = AssessorTaskList.from_json(assessor_task_list_metadata)
-    flag = get_latest_flag(application_id)
-    if flag:
-        accounts = get_bulk_accounts_dict([flag.user_id], fund.short_name)
+    flags_list = get_flags(application_id)
+    accounts_list = []
 
-    # TODO: Remove mock data used for flag history development and
-    # Refactor below code after schema changes made for multiple flags
-    try:
-        flags_list = get_flags(application_id)
+    display_status = determine_display_status(
+        state.workflow_status, flags_list
+    )
+
+    # TODO : Need to resolve this for multiple flags
+    if flags_list:
         user_id_list = []
         for flag_data in flags_list:
             for flag_item in flag_data.updates:
                 if flag_item["user_id"] not in user_id_list:
                     user_id_list.append(flag_item["user_id"])
-        if flags_list:
-            accounts_list = get_bulk_accounts_dict(user_id_list)
-    except Exception:
+
+                accounts_list = get_bulk_accounts_dict(
+                    user_id_list, fund.short_name
+                )
+    else:
         flags_list = []
-        accounts_list = []
 
     sub_criteria_status_completed = all_status_completed(state)
     form = AssessmentCompleteForm()
@@ -555,23 +565,18 @@ def application(application_id):
         assessor_task_list_metadata["fund_name"] = fund.name
         state = AssessorTaskList.from_json(assessor_task_list_metadata)
 
-    display_status = determine_display_status(state.workflow_status, flag)
     return render_template(
         "assessor_tasklist.html",
         sub_criteria_status_completed=sub_criteria_status_completed,
         form=form,
         state=state,
         application_id=application_id,
-        flag=flag,
         accounts_list=accounts_list,
         flags_list=flags_list,
         current_user_role=g.user.highest_role,
         fund_short_name=fund.short_name,
         round_short_name=round.short_name,
-        flag_user_info=accounts.get(flag.user_id)
-        if (flag and accounts)
-        else None,
-        is_flaggable=is_flaggable(flag),
+        is_flaggable=is_flaggable(display_status),
         display_status=display_status,
     )
 
@@ -633,7 +638,9 @@ def resolve_flag(application_id):
         section=section,
         page_to_render="resolve_flag.html",
         state=state,
-        reason_to_flag=flag_data.justification,
+        reason_to_flag=flag_data.updates[-1]["justification"],
+        allocated_team=flag_data.updates[-1]["allocation"],
+        flag_id=flag_id,
     )
 
 
@@ -652,12 +659,14 @@ def continue_assessment(application_id):
     return resolve_application(
         form=form,
         application_id=application_id,
-        flag=FlagType.RESOLVED.name,
+        flag=FlagTypeV2.RESOLVED.name,
         user_id=g.account_id,
         justification=form.reason.data,
         section=["NA"],
         page_to_render="continue_assessment.html",
-        reason_to_flag=flag_data.justification,
+        reason_to_flag=flag_data.updates[-1]["justification"],
+        allocated_team=flag_data.updates[-1]["allocation"],
+        flag_id=flag_id,
     )
 
 
@@ -669,13 +678,12 @@ def generate_doc_list_for_download(application_id):
     )
     sub_criteria_banner_state = get_sub_criteria_banner_state(application_id)
     short_id = sub_criteria_banner_state.short_id[-6:]
-    latest_flag = get_latest_flag(application_id)
+    flags_list = get_flags(application_id)
     display_status = determine_display_status(
-        sub_criteria_banner_state.workflow_status, latest_flag
+        sub_criteria_banner_state.workflow_status, flags_list
     )
 
     fund = get_fund(sub_criteria_banner_state.fund_id)
-    flag = get_latest_flag(application_id)
     application_json = get_application_json(application_id)
     supporting_evidence = get_files_for_application_upload_fields(
         application_id=application_id,
@@ -699,7 +707,6 @@ def generate_doc_list_for_download(application_id):
         application_answers=application_answers,
         supporting_evidence=supporting_evidence,
         display_status=display_status,
-        flag=flag,
     )
 
 

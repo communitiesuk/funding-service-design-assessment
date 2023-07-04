@@ -58,8 +58,8 @@ class Flags:
         # TODO: Uncomment below code after Enum types are upodated with ESCALATED & RAISED
         # in assessment-store and in above class `FlagType`
 
-        # if self.flag_type:
-        #     self.flag_type = FlagType[self.flag_type]
+        if self.flag_type:
+            self.flag_type = FlagType[self.flag_type]
 
         for item in self.updates:
             item["date_created"] = datetime.fromisoformat(

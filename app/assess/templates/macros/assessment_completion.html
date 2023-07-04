@@ -2,7 +2,7 @@
 
 {% macro assessment_complete(state, flag, csrf_token, application_id) %}
 
-{% if (not flag or flag and flag.flag_type.name=="RESOLVED") and state.workflow_status=="IN_PROGRESS" %}
+{% if (not flag or flag and flag.latest_status.name=="RESOLVED") and state.workflow_status=="IN_PROGRESS" %}
 
 <form method="post" action="{{ url_for('assess_bp.application', application_id=application_id) }}">
     {{ csrf_token }}

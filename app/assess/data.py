@@ -11,7 +11,8 @@ from app.assess.models.application import Application
 from app.assess.models.banner import Banner
 from app.assess.models.comment import Comment
 from app.assess.models.flag import Flag
-from app.assess.models.flag import Flags
+from app.assess.models.flag_v2 import FlagTypeV2
+from app.assess.models.flag_v2 import FlagV2
 from app.assess.models.fund import Fund
 from app.assess.models.round import Round
 from app.assess.models.score import Score
@@ -85,11 +86,12 @@ def call_search_applications(params: dict | str):
 def get_application_overviews(fund_id, round_id, search_params):
     overviews_endpoint = (
         Config.ASSESSMENT_STORE_API_HOST
-    ) + Config.APPLICATION_OVERVIEW_ENDPOINT_FUND_ROUND_PARAMS.format(
+    ) + Config.APPLICATION_OVERVIEW_FLAGS_V2_ENDPOINT_FUND_ROUND_PARAMS.format(
         fund_id=fund_id, round_id=round_id, params=urlencode(search_params)
     )
     current_app.logger.info(f"Endpoint '{overviews_endpoint}'.")
     overviews_response = get_data(overviews_endpoint)
+
     return overviews_response
 
 
@@ -280,7 +282,7 @@ def get_assessor_task_list_state(application_id: str) -> Union[dict, None]:
 
 
 def get_application_metadata(application_id: str) -> Union[dict, None]:
-    application_endpoint = Config.ASSESSMENT_METADATA_ENDPOINT.format(
+    application_endpoint = Config.APPLICATION_METADATA_ENDPOINT.format(
         application_id=application_id
     )
     application_metadata = get_data(application_endpoint)
@@ -371,25 +373,26 @@ def get_latest_flag(application_id: str) -> Optional[Flag]:
         return None
 
 
-def get_flag(flag_id: str) -> Optional[Flag]:
-    flag = get_data(Config.ASSESSMENT_FLAG_ENDPOINT.format(flag_id=flag_id))
+def get_flag(flag_id: str) -> Optional[FlagV2]:
+    flag = get_data(Config.ASSESSMENT_FLAG_V2_ENDPOINT.format(flag_id=flag_id))
     if flag:
-        return Flag.from_dict(flag)
+        return FlagV2.from_dict(flag)
     else:
         msg = f"flag for id: '{flag_id}' not found."
         current_app.logger.warn(msg)
         return None
 
 
-def get_flags(application_id: str) -> Optional[Flag]:
-    flags = get_data(
-        Config.ASSESSMENT_FLAGS_ENDPOINT.format(application_id=application_id)
+def get_flags(application_id: str) -> List[FlagV2]:
+    flag = get_data(
+        Config.ASSESSMENT_FLAGS_V2_ENDPOINT.format(
+            application_id=application_id
+        )
     )
-    if flags:
-        flags_list = Flags.from_dict(flags)
-        return flags_list
+    if flag:
+        return FlagV2.from_list(flag)
     else:
-        msg = f"List flag for application: '{application_id}' not found."
+        msg = f"flag for application: '{application_id}' not found."
         current_app.logger.warn(msg)
         return None
 
@@ -400,7 +403,9 @@ def submit_flag(
     user_id: str,
     justification: str = None,
     section: str = None,
-) -> Flag | None:
+    allocation: str = None,
+    flag_id: str = None,
+) -> FlagV2 | None:
     """Submits a new flag to the assessment store for an application.
     Returns Flag if a flag is created
 
@@ -410,26 +415,33 @@ def submit_flag(
     :param justification: The justification for raising the flag
     :param section: The assessment section the flag has been raised for.
     """
-    current_app.logger.info(
-        "POSTing new flag to endpoint"
-        f" '{Config.ASSESSMENT_LATEST_FLAG_ENDPOINT}'.\n"
-        "Details: \n"
-        f" - flag_type: {flag_type} \n"
-        f" - application_id: '{application_id}') \n"
-    )
-    flag = requests.post(
-        Config.ASSESSMENT_LATEST_FLAG_ENDPOINT,
-        json={
-            "application_id": application_id,
-            "justification": justification,
-            "sections_to_flag": section,
-            "flag_type": flag_type,
-            "user_id": user_id,
-        },
-    )
+    flag_type = FlagTypeV2[flag_type]
+    if flag_id:
+        flag = requests.put(
+            Config.ASSESSMENT_FLAGS_V2_POST_ENDPOINT,
+            json={
+                "assessment_flag_id": flag_id,
+                "justification": justification,
+                "user_id": user_id,
+                "allocation": allocation,
+                "status": flag_type.value,
+            },
+        )
+    else:
+        flag = requests.post(
+            Config.ASSESSMENT_FLAGS_V2_POST_ENDPOINT,
+            json={
+                "application_id": application_id,
+                "justification": justification,
+                "sections_to_flag": section,
+                "user_id": user_id,
+                "allocation": allocation,
+                "status": flag_type.value,
+            },
+        )
     if flag:
         flag_json = flag.json()
-        return Flag.from_dict(flag_json)
+        return FlagV2.from_dict(flag_json)
 
 
 def get_sub_criteria_theme_answers(
