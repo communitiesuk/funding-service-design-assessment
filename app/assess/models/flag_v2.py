@@ -36,12 +36,11 @@ class FlagV2:
         )
 
     def get_enum_status(self, status):
-        return (
-            FlagTypeV2(status)
-            if isinstance(status, int)
-            else (FlagTypeV2[status] if isinstance(status, str) else status)
-        )
-
+        if isinstance(status, int):
+            return FlagTypeV2(status)
+        elif isinstance(status, str):
+            return FlagTypeV2[status]
+        return status
     @classmethod
     def from_dict(cls, d: dict):
         # Filter unknown fields from JSON dictionary
