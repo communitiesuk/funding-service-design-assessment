@@ -1,14 +1,12 @@
 import time
 from typing import List
-from typing import Optional
 
+from app.assess.data import get_application_metadata
 from app.assess.data import get_flags
 from app.assess.data import get_fund
 from app.assess.data import get_sub_criteria_banner_state
 from app.assess.data import submit_flag
 from app.assess.display_value_mappings import assessment_statuses
-from app.assess.models.flag import Flag
-from app.assess.models.flag import FlagType
 from app.assess.models.flag_v2 import FlagTypeV2
 from app.assess.models.flag_v2 import FlagV2
 from flask import redirect
@@ -78,10 +76,8 @@ def determine_display_status(workflow_status: str, Flags: List[FlagV2]) -> str:
     return display_status
 
 
-def is_flaggable(latest_flag: Optional[Flag]):
-    return not latest_flag or (
-        latest_flag.flag_type in [FlagType.RESOLVED, FlagType.QA_COMPLETED]
-    )
+def is_flaggable(display_status: str):
+    return display_status != "Stopped"
 
 
 def set_application_status_in_overview(application_overviews):
@@ -152,7 +148,10 @@ def resolve_application(
     sub_criteria_banner_state = get_sub_criteria_banner_state(application_id)
     flags_list = get_flags(application_id)
     display_status = determine_display_status(
-        state.workflow_status, flags_list
+        state.workflow_status
+        if state
+        else get_application_metadata(application_id)["workflow_status"],
+        flags_list,
     )
 
     fund = get_fund(sub_criteria_banner_state.fund_id)

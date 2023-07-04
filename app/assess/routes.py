@@ -27,9 +27,10 @@ from app.assess.forms.resolve_flag_form import ResolveFlagForm
 from app.assess.forms.scores_and_justifications import ScoreForm
 from app.assess.helpers import determine_display_status
 from app.assess.helpers import get_ttl_hash
+from app.assess.helpers import is_flaggable
 from app.assess.helpers import resolve_application
 from app.assess.helpers import set_application_status_in_overview
-from app.assess.models.flag import FlagType
+from app.assess.models.flag_v2 import FlagTypeV2
 from app.assess.models.fund_summary import create_fund_summaries
 from app.assess.models.fund_summary import is_after_today
 from app.assess.models.theme import Theme
@@ -133,7 +134,7 @@ def display_sub_criteria(
         "application_id": application_id,
         "fund": fund,
         "comments": theme_matched_comments,
-        "is_flaggable": True,
+        "is_flaggable": is_flaggable(display_status),
         "display_comment_box": add_comment_argument,
         "comment_form": comment_form,
         "current_theme": current_theme,
@@ -249,7 +250,7 @@ def score(
         fund=fund,
         comments=theme_matched_comments,
         display_status=display_status,
-        is_flaggable=True,
+        is_flaggable=is_flaggable(display_status),
     )
 
 
@@ -270,15 +271,31 @@ def flag(application_id):
         for item in state.get_sub_sections_metadata()
     ]
 
-    form = FlagApplicationForm(choices=choices)
+    # TODO: Rework on the avialable teams after implemented in fundstore
+    response = requests.get(
+        Config.GET_AVIALABLE_TEAMS_FOR_FUND.format(
+            fund_id=assessor_task_list_metadata["fund_id"],
+            round_id=assessor_task_list_metadata["round_id"],
+        )
+    )
+    if response.status_code == 200:
+        teams_available = response.json()
+    else:
+        teams_available = []
+
+    form = FlagApplicationForm(
+        section_choices=choices,
+        team_choices=[team["value"] for team in teams_available],
+    )
 
     if request.method == "POST" and form.validate_on_submit():
         submit_flag(
             application_id,
-            FlagType.FLAGGED.name,
+            FlagTypeV2.RAISED.name,
             g.account_id,
             form.justification.data,
             form.section.data,
+            form.teams_available.data,
         )
         return redirect(
             url_for(
@@ -299,6 +316,7 @@ def flag(application_id):
         display_status=sub_criteria_banner_state.workflow_status,
         referrer=request.referrer,
         state=state,
+        teams_available=teams_available,
     )
 
 
@@ -317,7 +335,7 @@ def qa_complete(application_id):
     if form.validate_on_submit():
         submit_flag(
             application_id=application_id,
-            flag_type=FlagType.QA_COMPLETED.name,
+            flag_type=FlagTypeV2.QA_COMPLETED.name,
             user_id=g.account_id,
         )
         return redirect(
@@ -531,8 +549,6 @@ def application(application_id):
     else:
         flags_list = []
 
-    flaggable = True
-
     sub_criteria_status_completed = all_status_completed(state)
     form = AssessmentCompleteForm()
 
@@ -560,7 +576,7 @@ def application(application_id):
         current_user_role=g.user.highest_role,
         fund_short_name=fund.short_name,
         round_short_name=round.short_name,
-        is_flaggable=flaggable,
+        is_flaggable=is_flaggable(display_status),
         display_status=display_status,
     )
 
@@ -643,7 +659,7 @@ def continue_assessment(application_id):
     return resolve_application(
         form=form,
         application_id=application_id,
-        flag=FlagType.RESOLVED.name,
+        flag=FlagTypeV2.RESOLVED.name,
         user_id=g.account_id,
         justification=form.reason.data,
         section=["NA"],

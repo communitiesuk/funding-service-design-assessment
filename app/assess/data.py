@@ -409,7 +409,7 @@ def submit_flag(
     section: str = None,
     allocation: str = None,
     flag_id: str = None,
-) -> Flag | None:
+) -> FlagV2 | None:
     """Submits a new flag to the assessment store for an application.
     Returns Flag if a flag is created
 

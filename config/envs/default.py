@@ -83,6 +83,11 @@ class DefaultConfig:
     GET_ROUND_DATA_FOR_FUND_ENDPOINT = (
         FUND_STORE_API_HOST + "/funds/{fund_id}/rounds/{round_id}"
     )
+    # TODO: Rework on the avialable teams allocated after implemented in fundstore
+    GET_AVIALABLE_TEAMS_FOR_FUND = (
+        FUND_STORE_API_HOST
+        + "/funds/{fund_id}/rounds/{round_id}/available_flag_allocations"
+    )
 
     # Round Store Endpoints
 

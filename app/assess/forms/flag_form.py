@@ -1,5 +1,6 @@
 from config import Config
 from flask_wtf import FlaskForm
+from wtforms import RadioField
 from wtforms import SelectMultipleField
 from wtforms import TextAreaField
 from wtforms.validators import InputRequired
@@ -25,6 +26,15 @@ class FlagApplicationForm(FlaskForm):
         ],
     )
 
-    def __init__(self, choices=None):
+    # TODO: Rework on the avialable teams after implemented in fundstore
+    teams_available = RadioField(
+        "teams_available",
+        choices=None,
+        # validators=[InputRequired(message="Select a team")],
+        validate_choice=False,
+    )
+
+    def __init__(self, section_choices=None, team_choices=None):
         super().__init__()
-        self.section.choices = choices
+        self.section.choices = section_choices
+        self.teams_available.choices = team_choices
