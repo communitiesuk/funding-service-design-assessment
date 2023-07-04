@@ -130,7 +130,7 @@ def display_sub_criteria(
     # TODO add test for this function in data_operations
     theme_matched_comments = (
         match_comment_to_theme(
-            comment_response, sub_criteria.themes, fund.short_name
+            comment_response, sub_criteria.themes, state.fund_short_name
         )
         if comment_response
         else None

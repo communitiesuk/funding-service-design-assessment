@@ -464,6 +464,7 @@ class TestRoutes:
         mock_get_sub_criteria,
         mock_get_fund,
         mock_get_funds,
+        mock_get_round,
         mock_get_application_metadata,
         mock_get_comments,
         mock_get_flags,
@@ -577,6 +578,7 @@ class TestRoutes:
         mock_get_sub_criteria_banner_state,
         mock_get_fund,
         mock_get_funds,
+        mock_get_round,
         mock_get_application_metadata,
     ):
 
@@ -603,6 +605,7 @@ class TestRoutes:
         mock_get_sub_criteria_banner_state,
         mock_get_fund,
         mock_get_funds,
+        mock_get_round,
         mock_get_application_metadata,
     ):
 
@@ -684,6 +687,7 @@ class TestRoutes:
         mock_get_assessor_tasklist_state,
         mock_get_available_teams,
         mock_get_fund,
+        mock_get_round,
         mock_get_funds,
         mock_get_application_metadata,
         request_ctx,
@@ -719,6 +723,7 @@ class TestRoutes:
         mock_get_sub_criteria_banner_state,
         mock_get_fund,
         mock_get_funds,
+        mock_get_round,
         mock_get_application_metadata,
     ):
         token = create_valid_token(test_lead_assessor_claims)
@@ -751,6 +756,7 @@ class TestRoutes:
         mock_get_assessor_tasklist_state,
         mock_get_fund,
         mock_get_funds,
+        mock_get_round,
         mock_get_application_metadata,
     ):
         token = create_valid_token(test_lead_assessor_claims)
@@ -1017,6 +1023,7 @@ class TestRoutes:
         mock_get_sub_criteria,
         mock_get_fund,
         mock_get_funds,
+        mock_get_round,
         mock_get_application_metadata,
         mock_get_flags,
         mock_get_comments,

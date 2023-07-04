@@ -312,6 +312,11 @@ def mock_get_round(request):
         round_id = "test-round"
         use_short_name = False
 
+    if "expect_flagging" in request.fixturenames:
+        expect_flagging = request.getfixturevalue("expect_flagging")
+    else:
+        expect_flagging = True
+
     mock_fund_info = Round.from_dict(
         mock_api_results["fund_store/funds/{fund_id}/rounds/{round_id}"]
     )
@@ -319,12 +324,15 @@ def mock_get_round(request):
     with mock.patch(mock_func, return_value=mock_fund_info) as mocked_round:
         yield mocked_round
 
-    if use_short_name:
-        mocked_round.assert_called_once_with(
-            fund_short_name, round_short_name, use_short_name=use_short_name
-        )
-    else:
-        mocked_round.assert_called_once_with(fund_id, round_id)
+    if expect_flagging:
+        if use_short_name:
+            mocked_round.assert_called_once_with(
+                fund_short_name,
+                round_short_name,
+                use_short_name=use_short_name,
+            )
+        else:
+            mocked_round.assert_called_once_with(fund_id, round_id)
 
 
 @pytest.fixture(scope="function")

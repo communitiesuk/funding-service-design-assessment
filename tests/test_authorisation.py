@@ -175,6 +175,7 @@ class TestAuthorisation:
         mock_get_sub_criteria,
         mock_get_fund,
         mock_get_funds,
+        mock_get_round,
         mock_get_flags,
         mock_get_comments,
         mock_get_application_metadata,
@@ -245,6 +246,7 @@ class TestAuthorisation:
         mock_get_sub_criteria,
         mock_get_fund,
         mock_get_funds,
+        mock_get_round,
         mock_get_application_metadata,
         mock_get_flags,
         mock_get_comments,
@@ -383,6 +385,7 @@ class TestAuthorisation:
         mock_get_sub_criteria_banner_state,
         mock_get_fund,
         mock_get_funds,
+        mock_get_round,
         mock_get_application_metadata,
     ):
         """
@@ -446,6 +449,7 @@ class TestAuthorisation:
         mock_get_application_metadata,
         mock_get_sub_criteria_banner_state,
         mock_get_fund,
+        mock_get_round,
     ):
         """
         GIVEN authorised users
