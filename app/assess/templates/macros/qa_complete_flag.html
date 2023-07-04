@@ -10,7 +10,7 @@
                 <p class="govuk-body-s">{{ user_info["full_name"] }} ({{ user_info["highest_role"] | all_caps_to_human }}) {{ user_info["email_address"] }}</p>
                 <p class="govuk-body-s">{{ flag.date_created | utc_to_bst }}</p>
 
-                {% if is_lead_assessor %}
+                {% if g.access_controller.is_lead_assessor %}
                     {{ link_to_download_contract_docs(csrf_token, application_id) }}
                 {% endif %}
         </div>
