@@ -15,15 +15,23 @@ flagged_app = {
     "workflow_status": "IN_PROGRESS",
     "project_name": "Project In prog and Res",
     "short_id": "INP",
-    "flags": [
+    "flags_v2": [
         {
             "id": "1c5e8bea-f5ed-4b74-8823-e64fec27a7db",
-            "flag_type": "FLAGGED",
+            "latest_status": "RAISED",
+            "latest_allocation": None,
             "application_id": flagged_app_id,
-            "date_created": "2023-02-19 12:00:00",
-            "justification": "Test",
             "sections_to_flag": ["Test section"],
-            "user_id": test_user_id_lead_assessor,
+            "updates": [
+                {
+                    "id": "316f607a-03b7-4592-b927-5021a28b7d6a",
+                    "user_id": test_user_id_lead_assessor,
+                    "date_created": "2023-02-19 12:00:00",
+                    "justification": "Test",
+                    "status": "RAISED",
+                    "allocation": None,
+                }
+            ],
         },
     ],
     "criteria_sub_criteria_name": "test_sub_criteria",
@@ -46,15 +54,23 @@ resolved_app = {
     "workflow_status": "IN_PROGRESS",
     "project_name": "Project In prog and Res",
     "short_id": "INP",
-    "flags": [
+    "flags_v2": [
         {
             "id": "1c5e8bea-f5ed-4b74-8823-e64fec27a7dc",
-            "flag_type": "RESOLVED",
+            "latest_status": "RESOLVED",
+            "latest_allocation": None,
             "application_id": resolved_app_id,
-            "date_created": "2023-02-20 12:00:00",
-            "justification": "Test",
             "sections_to_flag": ["Test section"],
-            "user_id": test_user_id_lead_assessor,
+            "updates": [
+                {
+                    "id": "316f607a-03b7-4592-b927-5021a28b7d6a",
+                    "user_id": test_user_id_lead_assessor,
+                    "date_created": "2023-02-20 12:00:00",
+                    "justification": "Test",
+                    "status": "RESOLVED",
+                    "allocation": None,
+                }
+            ],
         },
     ],
     "criteria_sub_criteria_name": "test_sub_criteria",
@@ -78,15 +94,23 @@ stopped_app = {
     "project_name": "Project In prog and Stop",
     "short_id": "FS",
     "asset_type": "gallery",
-    "flags": [
+    "flags_v2": [
         {
             "id": "1c5e8bea-f5ed-4b74-8823-e64fec27a7bd",
-            "flag_type": "STOPPED",
+            "latest_status": "STOPPED",
+            "latest_allocation": None,
             "application_id": stopped_app_id,
-            "date_created": "2023-02-20 12:00:00",
-            "justification": "Test",
             "sections_to_flag": ["Test section"],
-            "user_id": test_user_id_lead_assessor,
+            "updates": [
+                {
+                    "id": "316f607a-03b7-4592-b927-5021a28b7d6a",
+                    "user_id": test_user_id_lead_assessor,
+                    "date_created": "2023-02-20 12:00:00",
+                    "justification": "Test",
+                    "status": "STOPPED",
+                    "allocation": None,
+                }
+            ],
         },
     ],
 }
@@ -97,26 +121,42 @@ flagged_qa_completed_app = {
     "workflow_status": "COMPLETED",
     "project_name": "Project Completed Flag and QA",
     "short_id": "FQAC",
-    "flags": [
+    "flags_v2": [
         {
             "id": "1c5e8bea-f5ed-4b74-8823-e64fec27a7aa",
-            "flag_type": "QA_COMPLETED",
+            "latest_status": "QA_COMPLETED",
+            "latest_allocation": None,
             "application_id": flagged_qa_completed_app_id,
-            "date_created": "2023-02-19 12:00:00",
             "justification": "Test",
             "sections_to_flag": ["Test section"],
-            "is_qa_complete": True,
-            "user_id": test_user_id_lead_assessor,
+            "updates": [
+                {
+                    "id": "316f607a-03b7-4592-b927-5021a28b7d6a",
+                    "user_id": test_user_id_lead_assessor,
+                    "date_created": "2023-02-19 12:00:00",
+                    "justification": "Test",
+                    "status": "QA_COMPLETED",
+                    "allocation": None,
+                }
+            ],
         },
         {
             "id": "1c5e8bea-f5ed-4b74-8823-e64fec27a7bd",
-            "flag_type": "FLAGGED",
+            "latest_status": "RAISED",
+            "latest_allocation": None,
             "application_id": flagged_qa_completed_app_id,
-            "date_created": "2023-02-20 12:00:00",
             "justification": "Test",
             "sections_to_flag": ["Test section"],
-            "is_qa_complete": True,
-            "user_id": test_user_id_lead_assessor,
+            "updates": [
+                {
+                    "id": "316f607a-03b7-4592-b927-5021a28b7d6b",
+                    "user_id": test_user_id_lead_assessor,
+                    "date_created": "2023-02-20 12:00:00",
+                    "justification": "Test",
+                    "status": "RAISED",
+                    "allocation": None,
+                }
+            ],
         },
     ],
 }
@@ -159,7 +199,7 @@ mock_api_results = {
             "round_id": test_round_id,
             "application_id": flagged_qa_completed_app_id,
             "asset_type": "gallery",
-            "flags": flagged_qa_completed_app["flags"],
+            "flags_v2": flagged_qa_completed_app["flags_v2"],
             "funding_amount_requested": test_funding_requested + 2000,
             "is_qa_complete": True,
             "language": "en",
@@ -181,7 +221,7 @@ mock_api_results = {
             "round_id": test_round_id,
             "application_id": stopped_app_id,
             "asset_type": stopped_app["asset_type"],
-            "flags": stopped_app["flags"],
+            "flags_v2": stopped_app["flags_v2"],
             "funding_amount_requested": test_funding_requested + 1000,
             "is_qa_complete": False,
             "language": "en",
@@ -203,7 +243,7 @@ mock_api_results = {
             "round_id": test_round_id,
             "application_id": resolved_app_id,
             "asset_type": "gallery",
-            "flags": resolved_app["flags"],
+            "flags_v2": resolved_app["flags_v2"],
             "funding_amount_requested": test_funding_requested,
             "is_qa_complete": False,
             "language": "en",
@@ -227,7 +267,7 @@ mock_api_results = {
             "round_id": test_round_id,
             "application_id": stopped_app_id,
             "asset_type": stopped_app["asset_type"],
-            "flags": stopped_app["flags"],
+            "flags_v2": stopped_app["flags_v2"],
             "funding_amount_requested": test_funding_requested,
             "is_qa_complete": False,
             "language": "en",
@@ -375,29 +415,31 @@ mock_api_results = {
         "workflow_status": flagged_qa_completed_app["workflow_status"],
         "fund_id": test_fund_id,
     },
-    "assessment_store/flag_data?flag_id=flagged_app": flagged_app["flags"][-1],
-    "assessment_store/flag_data?flag_id=resolved_app": resolved_app["flags"][
-        -1
-    ],
-    "assessment_store/flag_data?flag_id=stopped_app": stopped_app["flags"][-1],
-    "assessment_store/flag_data?flag_id=flagged_qa_completed_app": flagged_qa_completed_app[
-        "flags"
+    "assessment_store/flag_data_v2?flag_id=flagged_app": flagged_app[
+        "flags_v2"
+    ][-1],
+    "assessment_store/flag_data_v2?flag_id=resolved_app": resolved_app[
+        "flags_v2"
+    ][-1],
+    "assessment_store/flag_data_v2?flag_id=stopped_app": stopped_app[
+        "flags_v2"
+    ][-1],
+    "assessment_store/flag_data_v2?flag_id=flagged_qa_completed_app": flagged_qa_completed_app[
+        "flags_v2"
     ][
         -1
     ],
-    "assessment_store/flag?application_id=flagged_app": flagged_app["flags"][
-        -1
+    "assessment_store/flags_v2?application_id=flagged_app": flagged_app[
+        "flags_v2"
     ],
-    "assessment_store/flag?application_id=resolved_app": resolved_app["flags"][
-        -1
+    "assessment_store/flags_v2?application_id=resolved_app": resolved_app[
+        "flags_v2"
     ],
-    "assessment_store/flag?application_id=stopped_app": stopped_app["flags"][
-        -1
+    "assessment_store/flags_v2?application_id=stopped_app": stopped_app[
+        "flags_v2"
     ],
-    "assessment_store/flag?application_id=flagged_qa_completed_app": flagged_qa_completed_app[
-        "flags"
-    ][
-        -1
+    "assessment_store/flags_v2?application_id=flagged_qa_completed_app": flagged_qa_completed_app[
+        "flags_v2"
     ],
     "account_store/bulk-accounts": {
         test_user_id_lead_assessor: {
@@ -493,5 +535,27 @@ mock_api_results = {
     ],
     "assessment_store/applications/{application_id}": {
         "fund_id": "TF",
+    },
+    "/application/stopped_app/metadata": {
+        "fund_id": test_fund_id,
+        "round_id": test_round_id,
+        "application_id": stopped_app_id,
+        "asset_type": stopped_app["asset_type"],
+        "flags_v2": stopped_app["flags_v2"],
+        "funding_amount_requested": test_funding_requested + 1000,
+        "is_qa_complete": False,
+        "language": "en",
+        "location_json_blob": {
+            "constituency": "test-constituency",
+            "country": "Wales",
+            "county": "test-county",
+            "error": False,
+            "postcode": "QQ12QQ",
+            "region": "Wales",
+        },
+        "project_name": stopped_app["project_name"],
+        "short_id": stopped_app["short_id"],
+        "type_of_application": "COF",
+        "workflow_status": stopped_app["workflow_status"],
     },
 }

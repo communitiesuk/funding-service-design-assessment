@@ -151,6 +151,17 @@ def get_round(
     return None
 
 
+def get_available_teams(fund_id: str, round_id: str) -> list:
+    # TODO: Rework on the avialable teams after implemented in fundstore
+    teams_available = get_data(
+        Config.GET_AVIALABLE_TEAMS_FOR_FUND.format(
+            fund_id=fund_id,
+            round_id=round_id,
+        )
+    )
+    return teams_available or []
+
+
 def get_bulk_accounts_dict(account_ids: List, fund_short_name: str):
     if account_ids:
         account_ids_to_retrieve = list(set(account_ids))
