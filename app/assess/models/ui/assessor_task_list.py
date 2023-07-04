@@ -43,11 +43,15 @@ class AssessorTaskList:
     project_reference: str
     sections: List[_Section]
     criterias: List[_Criteria]
+    fund_short_name: str
+    round_short_name: str
 
     @classmethod
     def from_json(cls, json: dict):
         return AssessorTaskList(
             fund_name=json.get("fund_name"),
+            fund_short_name=json.get("fund_short_name"),
+            round_short_name=json.get("round_short_name"),
             short_id=json.get("short_id"),
             project_name=json.get("project_name"),
             date_submitted=json.get("date_submitted"),

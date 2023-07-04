@@ -59,6 +59,20 @@ assess_bp = Blueprint(
 )
 
 
+def get_state_for_tasklist_banner(application_id):
+    assessor_task_list_metadata = get_assessor_task_list_state(application_id)
+    fund = get_fund(assessor_task_list_metadata["fund_id"])
+    round = get_round(
+        assessor_task_list_metadata["fund_id"],
+        assessor_task_list_metadata["round_id"],
+    )
+    assessor_task_list_metadata["fund_name"] = fund.name
+    assessor_task_list_metadata["fund_short_name"] = fund.short_name
+    assessor_task_list_metadata["round_short_name"] = round.short_name
+    state = AssessorTaskList.from_json(assessor_task_list_metadata)
+    return state
+
+
 @assess_bp.route(
     "/application_id/<application_id>/sub_criteria_id/<sub_criteria_id>",
     methods=["POST", "GET"],
@@ -262,10 +276,7 @@ def score(
 def flag(application_id):
 
     # Get assessor tasks list
-    assessor_task_list_metadata = get_assessor_task_list_state(application_id)
-    fund = get_fund(assessor_task_list_metadata["fund_id"])
-    assessor_task_list_metadata["fund_name"] = fund.name
-    state = AssessorTaskList.from_json(assessor_task_list_metadata)
+    state = get_state_for_tasklist_banner(application_id)
     choices = [
         (item["sub_section_id"], item["sub_section_name"])
         for item in state.get_sub_sections_metadata()
@@ -274,8 +285,8 @@ def flag(application_id):
     # TODO: Rework on the avialable teams after implemented in fundstore
     response = requests.get(
         Config.GET_AVIALABLE_TEAMS_FOR_FUND.format(
-            fund_id=assessor_task_list_metadata["fund_id"],
-            round_id=assessor_task_list_metadata["round_id"],
+            fund_id=state["fund_id"],
+            round_id=state["round_id"],
         )
     )
     if response.status_code == 200:
@@ -517,17 +528,7 @@ def application(application_id):
     if not assessor_task_list_metadata:
         abort(404)
 
-    # maybe there's a better way to do this?..
-    fund = get_fund(assessor_task_list_metadata["fund_id"])
-    round = get_round(
-        assessor_task_list_metadata["fund_id"],
-        assessor_task_list_metadata["round_id"],
-    )
-    if not fund:
-        abort(404)
-    assessor_task_list_metadata["fund_name"] = fund.name
-
-    state = AssessorTaskList.from_json(assessor_task_list_metadata)
+    state = get_state_for_tasklist_banner(application_id)
     flags_list = get_flags(application_id)
     accounts_list = []
 
@@ -574,8 +575,6 @@ def application(application_id):
         accounts_list=accounts_list,
         flags_list=flags_list,
         current_user_role=g.user.highest_role,
-        fund_short_name=fund.short_name,
-        round_short_name=round.short_name,
         is_flaggable=is_flaggable(display_status),
         display_status=display_status,
     )
@@ -622,12 +621,7 @@ def resolve_flag(application_id):
         current_app.logger.error("No flag id found in query params")
         abort(404)
     flag_data = get_flag(flag_id)
-    assessor_task_list_metadata = get_assessor_task_list_state(
-        flag_data.application_id
-    )
-    fund = get_fund(assessor_task_list_metadata["fund_id"])
-    assessor_task_list_metadata["fund_name"] = fund.name
-    state = AssessorTaskList.from_json(assessor_task_list_metadata)
+    state = get_state_for_tasklist_banner(application_id)
     section = flag_data.sections_to_flag
     return resolve_application(
         form=form,
