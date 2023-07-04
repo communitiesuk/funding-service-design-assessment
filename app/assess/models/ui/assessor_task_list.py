@@ -35,6 +35,8 @@ class _Criteria:
 @dataclass
 class AssessorTaskList:
     fund_name: str
+    fund_short_name: str
+    round_short_name: str
     project_name: str
     short_id: str
     workflow_status: str
@@ -45,6 +47,8 @@ class AssessorTaskList:
     criterias: List[_Criteria]
     fund_short_name: str
     round_short_name: str
+    fund_id: str
+    round_id: str
 
     @classmethod
     def from_json(cls, json: dict):
@@ -52,6 +56,8 @@ class AssessorTaskList:
             fund_name=json.get("fund_name"),
             fund_short_name=json.get("fund_short_name"),
             round_short_name=json.get("round_short_name"),
+            round_id=json.get("round_id"),
+            fund_id=json.get("fund_id"),
             short_id=json.get("short_id"),
             project_name=json.get("project_name"),
             date_submitted=json.get("date_submitted"),
