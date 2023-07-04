@@ -26,12 +26,6 @@ from flask import url_for
 from fsd_utils import NotifyConstants
 from fsd_utils.locale_selector.get_lang import get_lang
 
-# TODO : Need to remove this once old rounds are migrated to use new flags
-rounds_using_old_flags = [
-    "c603d114-5364-4474-a0c4-c41cbf4d3bbd",
-    "5cf439bf-ef6f-431e-92c5-a1d90a4dd32f",
-]
-
 
 def get_data(endpoint: str, payload: Dict = None):
 

@@ -4,13 +4,11 @@ from datetime import datetime
 from enum import Enum
 
 
-# TODO : Need to rework this module once old rounds are migrated to use flags_v2
 class FlagType(Enum):
     FLAGGED = 0
     STOPPED = 1
     QA_COMPLETED = 2
     RESOLVED = 3
-    RAISED = 4
 
 
 @dataclass()
