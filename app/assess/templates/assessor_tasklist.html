@@ -20,7 +20,7 @@
     <nav class="govuk-width-container govuk-header__navigation">
         <div class="govuk-phase-banner flex-parent-element">
             <p class="govuk-!-text-align-left flex-parent-element flexed-element-margins-collapse">
-                {{ govukBackLink({'href': url_for("assess_bp.fund_dashboard", fund_short_name=fund_short_name, round_short_name=round_short_name), 'html': 'Back to <b>assessment dashboard</b>', 'attributes': {'data-qa': 'back-to-assessment-dashboard'} }) }}
+                {{ govukBackLink({'href': url_for("assess_bp.fund_dashboard", fund_short_name=state['fund_short_name'], round_short_name=state['round_short_name']), 'html': 'Back to <b>assessment dashboard</b>', 'attributes': {'data-qa': 'back-to-assessment-dashboard'} }) }}
             </p>
             {{ logout_partial(sso_logout_url) }}
         </div>

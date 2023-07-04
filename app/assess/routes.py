@@ -60,6 +60,20 @@ assess_bp = Blueprint(
 )
 
 
+def get_state_for_tasklist_banner(application_id) -> AssessorTaskList:
+    assessor_task_list_metadata = get_assessor_task_list_state(application_id)
+    fund = get_fund(assessor_task_list_metadata["fund_id"])
+    round = get_round(
+        assessor_task_list_metadata["fund_id"],
+        assessor_task_list_metadata["round_id"],
+    )
+    assessor_task_list_metadata["fund_name"] = fund.name
+    assessor_task_list_metadata["fund_short_name"] = fund.short_name
+    assessor_task_list_metadata["round_short_name"] = round.short_name
+    state = AssessorTaskList.from_json(assessor_task_list_metadata)
+    return state
+
+
 @assess_bp.route(
     "/application_id/<application_id>/sub_criteria_id/<sub_criteria_id>",
     methods=["POST", "GET"],
@@ -104,12 +118,7 @@ def display_sub_criteria(
             )
         )
 
-    assessor_task_list_metadata = get_assessor_task_list_state(application_id)
-
-    if not assessor_task_list_metadata:
-        abort(404)
-
-    fund = get_fund(assessor_task_list_metadata["fund_id"])
+    state = get_state_for_tasklist_banner(application_id)
     flags_list = get_flags(application_id)
 
     comment_response = get_comments(
@@ -133,7 +142,6 @@ def display_sub_criteria(
     common_template_config = {
         "sub_criteria": sub_criteria,
         "application_id": application_id,
-        "fund": fund,
         "comments": theme_matched_comments,
         "is_flaggable": is_flaggable(display_status),
         "display_comment_box": add_comment_argument,
@@ -153,6 +161,7 @@ def display_sub_criteria(
     return render_template(
         "sub_criteria.html",
         answers_meta=answers_meta,
+        state=state,
         **common_template_config,
     )
 
@@ -173,12 +182,8 @@ def score(
     if not sub_criteria.is_scored:
         abort(404)
 
-    assessor_task_list_metadata = get_assessor_task_list_state(application_id)
+    state = get_state_for_tasklist_banner(application_id)
 
-    if not assessor_task_list_metadata:
-        abort(404)
-
-    fund = get_fund(assessor_task_list_metadata["fund_id"])
     flags_list = get_flags(application_id)
 
     comment_response = get_comments(
@@ -189,7 +194,7 @@ def score(
 
     theme_matched_comments = (
         match_comment_to_theme(
-            comment_response, sub_criteria.themes, fund.short_name
+            comment_response, sub_criteria.themes, state.fund_short_name
         )
         if comment_response
         else None
@@ -223,7 +228,7 @@ def score(
     )
     # TODO add test for this function in data_operations
     scores_with_account_details = match_score_to_user_account(
-        score_list, fund.short_name
+        score_list, state.fund_short_name
     )
     latest_score = (
         scores_with_account_details.pop(0)
@@ -248,7 +253,7 @@ def score(
         rescore_form=rescore_form,
         is_rescore=is_rescore,
         sub_criteria=sub_criteria,
-        fund=fund,
+        state=state,
         comments=theme_matched_comments,
         display_status=display_status,
         is_flaggable=is_flaggable(display_status),
@@ -263,18 +268,15 @@ def score(
 def flag(application_id):
 
     # Get assessor tasks list
-    assessor_task_list_metadata = get_assessor_task_list_state(application_id)
-    fund = get_fund(assessor_task_list_metadata["fund_id"])
-    assessor_task_list_metadata["fund_name"] = fund.name
-    state = AssessorTaskList.from_json(assessor_task_list_metadata)
+    state = get_state_for_tasklist_banner(application_id)
     choices = [
         (item["sub_section_id"], item["sub_section_name"])
         for item in state.get_sub_sections_metadata()
     ]
 
     teams_available = get_available_teams(
-        assessor_task_list_metadata["fund_id"],
-        assessor_task_list_metadata["round_id"],
+        state.fund_id,
+        state.round_id,
     )
 
     form = FlagApplicationForm(
@@ -303,7 +305,6 @@ def flag(application_id):
     return render_template(
         "flag_application.html",
         application_id=application_id,
-        fund=fund,
         flag=flag,
         sub_criteria=sub_criteria_banner_state,
         form=form,
@@ -507,21 +508,11 @@ def application(application_id):
     :param application_id:
     :return:
     """
-    assessor_task_list_metadata = get_assessor_task_list_state(application_id)
-    if not assessor_task_list_metadata:
-        abort(404)
 
-    # maybe there's a better way to do this?..
-    fund = get_fund(assessor_task_list_metadata["fund_id"])
-    round = get_round(
-        assessor_task_list_metadata["fund_id"],
-        assessor_task_list_metadata["round_id"],
-    )
-    if not fund:
-        abort(404)
-    assessor_task_list_metadata["fund_name"] = fund.name
+    if request.method == "POST":
+        update_ar_status_to_completed(application_id)
 
-    state = AssessorTaskList.from_json(assessor_task_list_metadata)
+    state = get_state_for_tasklist_banner(application_id)
     flags_list = get_flags(application_id)
     accounts_list = []
 
@@ -530,6 +521,7 @@ def application(application_id):
     )
 
     # TODO : Need to resolve this for multiple flags
+
     if flags_list:
         user_id_list = []
         for flag_data in flags_list:
@@ -538,7 +530,7 @@ def application(application_id):
                     user_id_list.append(flag_item["user_id"])
 
                 accounts_list = get_bulk_accounts_dict(
-                    user_id_list, fund.short_name
+                    user_id_list, state.fund_short_name
                 )
     else:
         flags_list = []
@@ -546,30 +538,21 @@ def application(application_id):
     sub_criteria_status_completed = all_status_completed(state)
     form = AssessmentCompleteForm()
 
-    if request.method == "POST":
-        update_ar_status_to_completed(application_id)
-        assessor_task_list_metadata = get_assessor_task_list_state(
-            application_id
-        )
-        if not assessor_task_list_metadata:
-            abort(404)
-        fund = get_fund(assessor_task_list_metadata["fund_id"])
-        if not fund:
-            abort(404)
-        assessor_task_list_metadata["fund_name"] = fund.name
-        state = AssessorTaskList.from_json(assessor_task_list_metadata)
-
     return render_template(
         "assessor_tasklist.html",
         sub_criteria_status_completed=sub_criteria_status_completed,
+        tags=[
+            {"value": "Commercial pass", "colour": "green"},
+            {"value": "Recommend no", "colour": "red"},
+            {"value": "Ed the Duck", "colour": "grey"},
+            {"value": "Further discussion", "colour": "yellow"},
+        ],
         form=form,
         state=state,
         application_id=application_id,
         accounts_list=accounts_list,
         flags_list=flags_list,
         current_user_role=g.user.highest_role,
-        fund_short_name=fund.short_name,
-        round_short_name=round.short_name,
         is_flaggable=is_flaggable(display_status),
         display_status=display_status,
     )
@@ -616,12 +599,7 @@ def resolve_flag(application_id):
         current_app.logger.error("No flag id found in query params")
         abort(404)
     flag_data = get_flag(flag_id)
-    assessor_task_list_metadata = get_assessor_task_list_state(
-        flag_data.application_id
-    )
-    fund = get_fund(assessor_task_list_metadata["fund_id"])
-    assessor_task_list_metadata["fund_name"] = fund.name
-    state = AssessorTaskList.from_json(assessor_task_list_metadata)
+    state = get_state_for_tasklist_banner(application_id)
     section = flag_data.sections_to_flag
     return resolve_application(
         form=form,
