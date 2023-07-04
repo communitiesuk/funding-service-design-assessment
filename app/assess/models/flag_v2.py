@@ -41,6 +41,7 @@ class FlagV2:
         elif isinstance(status, str):
             return FlagTypeV2[status]
         return status
+
     @classmethod
     def from_dict(cls, d: dict):
         # Filter unknown fields from JSON dictionary
