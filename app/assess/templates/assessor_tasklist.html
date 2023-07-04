@@ -8,6 +8,7 @@
 {% from "macros/flag_application_button.html" import flag_application_button %}
 {% from "macros/mark_qa_complete_button.html" import mark_qa_complete_button %}
 {% from "macros/assessment_flag.html" import assessment_flagged %}
+{% from "macros/assessment_flag.html" import assessment_flags %}
 {% from "macros/assessment_flag.html" import assessment_stopped %}
 {% from "macros/logout_partial.html" import logout_partial %}
 {% from "macros/qa_complete_flag.html" import qa_complete_flag %}
@@ -48,8 +49,9 @@
         {{ qa_complete_flag(flags_list[-1], accounts_list[flags_list[-1].latest_user_id], form.csrf_token, application_id) }}
     {% endif %}
 
-    {% if g.access_controller.has_any_assessor_role and (display_status == "Multiple Flags To Resolve" or "Flagged" in display_status) %}
-        {{ assessment_flagged(state, flags_list[-1], accounts_list[flags_list[-1].latest_user_id], application_id) }}
+        {% if g.access_controller.has_any_assessor_role and (display_status == "Multiple Flags To Resolve" or "Flagged" in display_status) %}
+        {{ assessment_flags(state, flags_list, application_id) }}
+
     {% elif g.access_controller.has_any_assessor_role and display_status == "Stopped" %}
         {{ assessment_stopped(flags_list[-1], accounts_list[flags_list[-1].latest_user_id], application_id) }}
     {% endif %}

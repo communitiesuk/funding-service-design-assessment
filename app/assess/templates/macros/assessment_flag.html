@@ -33,3 +33,36 @@
         {% endif %}
     </div>
 {% endmacro %}
+
+{% macro assessment_flags(state, flags_list, application_id) %}
+{% for flag in flags_list %}
+{% if flag.latest_status.name != "RESOLVED" %}
+
+<div class="assessment-alert assessment-alert--flagged" role="alert">
+    <h1 class="assessment-alert__heading govuk-heading-l">
+        {{ ("Flagged for "+ flag.latest_allocation if flag.latest_allocation else "Flagged") | title }}
+    </h1>
+
+    <h2>Reason</h2>
+    {% for f in flag.updates %}
+    {% if f.status.name == "RAISED" %}
+    <p>{{ f['justification'] }}</p>
+    {% endif %}
+    {% endfor %}
+
+    <h2>Section(s) flagged</h2>
+    {{ display_flagged_sections(state, application_id, flag.sections_to_flag) }}
+    {# TODO: Notification is hardcoded. Change it once notification is implemented #}
+    <h2>Notification sent</h2>
+    <p>No</p><br>
+    <p class="govuk-body-s">{{ flag.user_name }} ({{ flag.user_highest_role }}) {{ flag.user_email_address }}</p>
+    <p class="govuk-body-s">{{ flag.date_created | utc_to_bst }}</p>
+    {# TODO: Resolve flag will be removed #}
+    {% if g.access_controller.is_lead_assessor %}
+        <p class="govuk-body"><a class="govuk-link govuk-link--no-visited-state" href="{{ url_for('assess_bp.resolve_flag',application_id=application_id)}}?flag_id={{ flag.id }}">Resolve flag</a></p>
+    {% endif %}
+</div>
+{% endif %}
+{% endfor %}
+
+{% endmacro %}

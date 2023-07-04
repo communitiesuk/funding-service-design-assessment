@@ -31,6 +31,7 @@ from app.assess.helpers import is_flaggable
 from app.assess.helpers import resolve_application
 from app.assess.helpers import set_application_status_in_overview
 from app.assess.models.flag_v2 import FlagTypeV2
+from app.assess.models.flag_v2 import FlagV2
 from app.assess.models.fund_summary import create_fund_summaries
 from app.assess.models.fund_summary import is_after_today
 from app.assess.models.theme import Theme
@@ -542,13 +543,11 @@ def application(application_id):
             for flag_item in flag_data.updates:
                 if flag_item["user_id"] not in user_id_list:
                     user_id_list.append(flag_item["user_id"])
-
-                accounts_list = get_bulk_accounts_dict(
-                    user_id_list, fund.short_name
-                )
+        accounts_list = get_bulk_accounts_dict(user_id_list, fund.short_name)
     else:
         flags_list = []
 
+    FlagV2.update_user_details(flags_list, accounts_list)
     sub_criteria_status_completed = all_status_completed(state)
     form = AssessmentCompleteForm()
 
@@ -564,7 +563,6 @@ def application(application_id):
             abort(404)
         assessor_task_list_metadata["fund_name"] = fund.name
         state = AssessorTaskList.from_json(assessor_task_list_metadata)
-
     return render_template(
         "assessor_tasklist.html",
         sub_criteria_status_completed=sub_criteria_status_completed,

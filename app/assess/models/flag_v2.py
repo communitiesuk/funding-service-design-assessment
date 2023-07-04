@@ -19,6 +19,9 @@ class FlagV2:
     latest_allocation: str
     application_id: str
     updates: list
+    user_name: str = ""
+    user_email_address: str = ""
+    user_highest_role: str = ""
 
     def __post_init__(self):
         if isinstance(self.latest_status, int):
@@ -53,10 +56,24 @@ class FlagV2:
             cls(
                 **{
                     k: v
-                    for k, v in d.items()
                     if k in inspect.signature(cls).parameters
+                    else getattr(cls(), k)
+                    for k, v in d.items()
                 }
             )
             for d in lst
         ]
         return all_flags
+
+    @classmethod
+    def update_user_details(cls, flags_list, account_list):
+        for flag in flags_list:
+            if flag.updates:
+                for user in flag.updates:
+                    user_id = user["user_id"]
+                    if user_id in account_list:
+                        user_details = account_list[user_id]
+                        flag.user_name = user_details["full_name"]
+                        flag.user_email_address = user_details["email_address"]
+                        flag.user_highest_role = user_details["highest_role"]
+        return flags_list
