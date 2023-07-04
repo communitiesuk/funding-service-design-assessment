@@ -166,7 +166,9 @@ def get_bulk_accounts_dict(account_ids: List, fund_short_name: str):
 
         for user_result in users_result.values():
             # we only need the highest role for the fund we are currently viewing
-            highest_role = user_result["highest_role_map"][fund_short_name]
+            highest_role = user_result["highest_role_map"].get(
+                fund_short_name, ""
+            )
             user_result["highest_role"] = highest_role
             del user_result["highest_role_map"]
 
