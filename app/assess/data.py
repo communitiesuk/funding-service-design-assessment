@@ -159,7 +159,7 @@ def get_available_teams(fund_id: str, round_id: str) -> list:
             round_id=round_id,
         )
     )
-    return [] if not teams_available else teams_available
+    return teams_available or []
 
 
 def get_bulk_accounts_dict(account_ids: List, fund_short_name: str):
