@@ -73,7 +73,7 @@ class FlagV2:
 
     @classmethod
     def update_user_details(cls, flags_list, account_list):
-        """ Maps the user_id with accounts metadata and update the flag class 
+        """Maps the user_id with accounts metadata and update the flag class
         with user information
         """
         for flag in flags_list:
