@@ -12,7 +12,7 @@
     </nav>
 
     {{ banner_summary(
-        state.fund_name,
+        (state.fund_name if state else fund.name),
         sub_criteria.short_id,
         sub_criteria.project_name,
         sub_criteria.funding_amount_requested,

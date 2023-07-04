@@ -21,10 +21,9 @@ class FlagV2:
     updates: list
 
     def __post_init__(self):
-        if isinstance(self.latest_status, int):
-            self.latest_status = FlagTypeV2(self.latest_status)
+        self.latest_status = self.get_enum_status(self.latest_status)
         for item in self.updates:
-            item["status"] = FlagTypeV2(item["status"])
+            item["status"] = self.get_enum_status(item["status"])
             item["date_created"] = datetime.fromisoformat(
                 item["date_created"]
             ).strftime("%Y-%m-%d %X")
@@ -35,6 +34,13 @@ class FlagV2:
         self.date_created = (
             self.updates[0]["date_created"] if self.updates else ""
         )
+
+    def get_enum_status(self, status):
+        if isinstance(status, int):
+            return FlagTypeV2(status)
+        elif isinstance(status, str):
+            return FlagTypeV2[status]
+        return status
 
     @classmethod
     def from_dict(cls, d: dict):

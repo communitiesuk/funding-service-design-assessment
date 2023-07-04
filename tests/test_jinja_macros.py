@@ -584,11 +584,10 @@ class TestJinjaMacros(object):
         project_name = "Test Project"
         funding_amount_requested = 123456.78
         workflow_status = "SUBMITTED"
-        assessment_flag = None
 
         rendered_html = render_template_string(
             "{{ banner_summary(fund_name, project_reference, project_name,"
-            " funding_amount_requested, workflow_status, flag) }}",
+            " funding_amount_requested, workflow_status) }}",
             banner_summary=get_template_attribute(
                 "macros/banner_summary.html", "banner_summary"
             ),
@@ -597,7 +596,6 @@ class TestJinjaMacros(object):
             project_name=project_name,
             funding_amount_requested=funding_amount_requested,
             workflow_status=workflow_status,
-            flag=assessment_flag,
             g=default_flask_g(),
         )
 
@@ -631,16 +629,10 @@ class TestJinjaMacros(object):
         project_name = "Test Project"
         funding_amount_requested = 123456.78
         display_status = "STOPPED"
-        assessment_flag = {
-            "flag_type": {"name": "STOPPED"},
-            "justification": "Test justification",
-            "sections_to_flag": ["Test section"],
-            "date_created": "2020-01-01 12:00:00",
-        }
 
         rendered_html = render_template_string(
             "{{ banner_summary(fund_name, project_reference, project_name,"
-            " funding_amount_requested, display_status, flag) }}",
+            " funding_amount_requested, display_status) }}",
             banner_summary=get_template_attribute(
                 "macros/banner_summary.html", "banner_summary"
             ),
@@ -649,7 +641,6 @@ class TestJinjaMacros(object):
             project_name=project_name,
             funding_amount_requested=funding_amount_requested,
             display_status=display_status,
-            flag=assessment_flag,
             g=default_flask_g(),
         )
 
@@ -716,7 +707,7 @@ class TestJinjaMacros(object):
                 "macros/assessment_flag.html", "assessment_stopped"
             ),
             flag={
-                "flag_type": {"name": "STOPPED"},
+                "latest_status": {"name": "STOPPED"},
                 "justification": "Test justification",
                 "sections_to_flag": ["Test section"],
                 "date_created": "2020-01-01 12:00:00",
@@ -875,7 +866,11 @@ class TestJinjaMacros(object):
             flag=type(
                 "Flag",
                 (),
-                {"flag_type": type("FlagType", (), {"name": "RESOLVED"})},
+                {
+                    "latest_status": type(
+                        "FlagTypeV2", (), {"name": "RESOLVED"}
+                    )
+                },
             )(),
             csrf_token=generate_csrf(),
             application_id=1,

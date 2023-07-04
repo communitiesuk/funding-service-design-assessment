@@ -10,6 +10,7 @@ from app.assess.data import *
 from app.assess.data import get_application_json
 from app.assess.data import get_application_overviews
 from app.assess.data import get_assessments_stats
+from app.assess.data import get_available_teams
 from app.assess.data import get_flag
 from app.assess.data import submit_score_and_justification
 from app.assess.display_value_mappings import assessment_statuses
@@ -129,7 +130,7 @@ def display_sub_criteria(
     # TODO add test for this function in data_operations
     theme_matched_comments = (
         match_comment_to_theme(
-            comment_response, sub_criteria.themes, fund.short_name
+            comment_response, sub_criteria.themes, state.fund_short_name
         )
         if comment_response
         else None
@@ -273,17 +274,10 @@ def flag(application_id):
         for item in state.get_sub_sections_metadata()
     ]
 
-    # TODO: Rework on the avialable teams after implemented in fundstore
-    response = requests.get(
-        Config.GET_AVIALABLE_TEAMS_FOR_FUND.format(
-            fund_id=state.fund_id,
-            round_id=state.round_id,
-        )
+    teams_available = get_available_teams(
+        state.fund_id,
+        state.round_id,
     )
-    if response.status_code == 200:
-        teams_available = response.json()
-    else:
-        teams_available = []
 
     form = FlagApplicationForm(
         section_choices=choices,
