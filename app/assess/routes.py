@@ -341,18 +341,15 @@ def qa_complete(application_id):
                 application_id=application_id,
             )
         )
-
-    sub_criteria_banner_state = get_sub_criteria_banner_state(application_id)
-    fund = get_fund(sub_criteria_banner_state.fund_id)
+    state = get_state_for_tasklist_banner(application_id)
 
     return render_template(
         "mark_qa_complete.html",
         application_id=application_id,
-        fund=fund,
-        sub_criteria=sub_criteria_banner_state,
+        state=state,
         form=form,
         referrer=request.referrer,
-        display_status=sub_criteria_banner_state.workflow_status,
+        display_status=state.workflow_status,
     )
 
 
@@ -736,5 +733,8 @@ def load_change_tags(application_id):
         state.fund_id, state.round_id
     )
     return render_template(
-        "change_tags.html", state=state, available_tags=available_tags
+        "change_tags.html",
+        state=state,
+        available_tags=available_tags,
+        application_id=application_id,
     )
