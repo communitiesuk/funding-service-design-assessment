@@ -922,9 +922,8 @@ class TestRoutes:
         )
 
         assert response.status_code == 200
-        # TODO: Uncomment & fix it after multiple flags is implemented (FS-2776)
-        # assert b"Marked as QA complete" in response.data
-        # assert b"20/02/2023 at 12:00" in response.data
+        assert b"Marked as QA complete" in response.data
+        assert b"20/02/2023 at 12:00" in response.data
 
     @pytest.mark.application_id("flagged_qa_completed_app")
     def test_qa_completed_flagged_application(
@@ -950,12 +949,11 @@ class TestRoutes:
         )
 
         assert response.status_code == 200
-        # TODO: Uncomment & fix it after multiple flags is implemented (FS-2776)
-        # assert b"Marked as QA complete" in response.data
-        # assert b"20/02/2023 at 12:00" in response.data
-        # assert b"Section(s) flagged" in response.data
-        # assert b"Reason" in response.data
-        # assert b"Resolve flag" in response.data
+        assert b"Marked as QA complete" in response.data
+        assert b"20/02/2023 at 12:00" in response.data
+        assert b"Section(s) flagged" in response.data
+        assert b"Reason" in response.data
+        assert b"Resolve flag" in response.data
 
     @pytest.mark.mock_parameters(
         {
