@@ -29,6 +29,7 @@ from app.assess.forms.scores_and_justifications import ScoreForm
 from app.assess.helpers import determine_display_status
 from app.assess.helpers import get_ttl_hash
 from app.assess.helpers import is_flaggable
+from app.assess.helpers import is_qa_complete
 from app.assess.helpers import resolve_application
 from app.assess.helpers import set_application_status_in_overview
 from app.assess.models.flag_v2 import FlagTypeV2
@@ -554,6 +555,7 @@ def application(application_id):
         flags_list=flags_list,
         current_user_role=g.user.highest_role,
         is_flaggable=is_flaggable(display_status),
+        is_qa_complete=is_qa_complete(flags_list),
         display_status=display_status,
     )
 

@@ -80,6 +80,19 @@ def is_flaggable(display_status: str):
     return display_status != "Stopped"
 
 
+def is_qa_complete(Flags: List[FlagV2]) -> bool:
+    flags_list = (
+        [
+            (FlagV2.from_dict(flag) if isinstance(flag, dict) else flag)
+            for flag in Flags
+        ]
+        if Flags
+        else []
+    )
+    all_latest_status = [flag.latest_status for flag in flags_list]
+    return FlagTypeV2.QA_COMPLETED in all_latest_status or False
+
+
 def set_application_status_in_overview(application_overviews):
     """Add the 'application_status' key and return the modified list of application overviews."""
     for overview in application_overviews:
