@@ -202,3 +202,8 @@ class DefaultConfig:
             AWS_ACCESS_KEY_ID = s3_credentials["aws_access_key_id"]
             AWS_SECRET_ACCESS_KEY = s3_credentials["aws_secret_access_key"]
             AWS_BUCKET_NAME = s3_credentials["bucket_name"]
+
+    # Redis Feature Toggle Configuration
+    REDIS_INSTANCE_URI = getenv("REDIS_INSTANCE_URI", "redis://localhost:6379")
+    TOGGLES_URL = REDIS_INSTANCE_URI + "/0"
+    FEATURE_CONFIG = {"TAGGING": False}
