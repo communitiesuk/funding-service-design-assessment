@@ -50,11 +50,13 @@
         {{ qa_complete_flag(flags_list[-1], accounts_list[flags_list[-1].latest_user_id], form.csrf_token, application_id) }}
     {% endif %}
 
-    {% if g.access_controller.has_any_assessor_role and (display_status == "Multiple Flags To Resolve" or "Flagged" in display_status) %}
-        {{ assessment_flagged(state, flags_list[-1], accounts_list[flags_list[-1].latest_user_id], application_id) }}
-    {% elif g.access_controller.has_any_assessor_role and display_status == "Stopped" %}
-        {{ assessment_stopped(flags_list[-1], accounts_list[flags_list[-1].latest_user_id], application_id) }}
-    {% endif %}
+    {% for flag in flags_list %}
+        {% if g.access_controller.has_any_assessor_role and (display_status == "Multiple Flags To Resolve" or "Flagged" in display_status) and (display_status != "Stopped") and (flag.latest_status.name != "RESOLVED") %}
+            {{ assessment_flagged(state, flag, accounts_list[flag.latest_user_id], application_id) }}
+        {% elif g.access_controller.has_any_assessor_role and display_status == "Stopped" and (flag.latest_status.name == "STOPPED")%}
+            {{ assessment_stopped(flag, accounts_list[flag.latest_user_id], application_id) }}
+        {% endif %}
+    {% endfor %}
 
     {% if sub_criteria_status_completed and g.access_controller.has_any_assessor_role and (not is_qa_complete) %}
         {{ assessment_complete(state, flags_list[-1], form.csrf_token, application_id)}}
