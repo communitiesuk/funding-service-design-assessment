@@ -44,7 +44,7 @@
 
 {# TODO: Display multiple flag banner #}
 <div>
-    {% if g.access_controller.has_any_assessor_role and display_status == "QA complete" %}
+    {% if g.access_controller.has_any_assessor_role and is_qa_complete %}
         {{ qa_complete_flag(flags_list[-1], accounts_list[flags_list[-1].latest_user_id], form.csrf_token, application_id) }}
     {% endif %}
 
@@ -54,7 +54,7 @@
         {{ assessment_stopped(flags_list[-1], accounts_list[flags_list[-1].latest_user_id], application_id) }}
     {% endif %}
 
-    {% if sub_criteria_status_completed and g.access_controller.has_any_assessor_role and display_status != "QA complete" %}
+    {% if sub_criteria_status_completed and g.access_controller.has_any_assessor_role and (not is_qa_complete) %}
         {{ assessment_complete(state, flags_list[-1], form.csrf_token, application_id)}}
     {% endif %}
 </div>
@@ -78,7 +78,7 @@
         </div>
         <div class="govuk-grid-column-one-third govuk-!-margin-top-2 govuk-button-group">
             <span>
-                {% if g.access_controller.is_lead_assessor and state.workflow_status=="COMPLETED" and display_status not in ["QA complete", "Stopped", "Flagged", "Multiple Flags To Resolve"] and "Flagged" not in display_status %}
+                {% if g.access_controller.is_lead_assessor and state.workflow_status=="COMPLETED" and (not is_qa_complete) and display_status not in ["Stopped", "Flagged", "Multiple Flags To Resolve"] and "Flagged" not in display_status %}
                 {{ mark_qa_complete_button(application_id) }}
                 {% endif %}
             </span>
