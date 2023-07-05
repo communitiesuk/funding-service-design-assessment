@@ -5,6 +5,7 @@ from typing import List
 from typing import Optional
 from typing import Union
 from urllib.parse import urlencode
+from uuid import uuid4
 
 import requests
 from app.assess.models.application import Application
@@ -93,6 +94,28 @@ def get_application_overviews(fund_id, round_id, search_params):
     overviews_response = get_data(overviews_endpoint)
 
     return overviews_response
+
+
+dummy_tags = [
+    {"id": uuid4(), "value": "Commercial pass", "colour": "green"},
+    {"id": uuid4(), "value": "Commercial fail", "colour": "red"},
+    {"id": uuid4(), "value": "Recommend yes", "colour": "green"},
+    {"id": uuid4(), "value": "Recommend no", "colour": "red"},
+    {
+        "id": uuid4(),
+        "value": "Recommend further discussion",
+        "colour": "yellow",
+    },
+    {"id": uuid4(), "value": "Dave Lister", "colour": "grey"},
+    {"id": uuid4(), "value": "Arnold Rimmer", "colour": "grey"},
+    {"id": uuid4(), "value": "The Cat", "colour": "grey"},
+    {"id": uuid4(), "value": "Kryten", "colour": "grey"},
+    {"id": uuid4(), "value": "Holly", "colour": "grey"},
+]
+
+
+def get_available_tags_for_fund_round(fund_id, round_id) -> List:
+    return dummy_tags
 
 
 @lru_cache(maxsize=1)

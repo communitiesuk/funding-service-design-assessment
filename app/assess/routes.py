@@ -10,6 +10,7 @@ from app.assess.data import *
 from app.assess.data import get_application_json
 from app.assess.data import get_application_overviews
 from app.assess.data import get_assessments_stats
+from app.assess.data import get_available_tags_for_fund_round
 from app.assess.data import get_available_teams
 from app.assess.data import get_flag
 from app.assess.data import submit_score_and_justification
@@ -725,4 +726,16 @@ def download_file(data, mimetype, file_name):
                 f"attachment;filename={quote_plus(file_name)}"
             )
         },
+    )
+
+
+@assess_bp.route("/application/<application_id>/tags", methods=["GET"])
+@check_access_application_id(roles_required=["ASSESSOR"])
+def load_change_tags(application_id):
+    state = get_state_for_tasklist_banner(application_id)
+    available_tags = get_available_tags_for_fund_round(
+        state.fund_id, state.round_id
+    )
+    return render_template(
+        "change_tags.html", state=state, available_tags=available_tags
     )

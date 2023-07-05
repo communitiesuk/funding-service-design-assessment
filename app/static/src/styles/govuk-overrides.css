@@ -245,3 +245,27 @@
     padding: 3px;
     font-family: "GDS Transport", arial, sans-serif;
 }
+
+
+  .dluhc-tag {
+    font-weight: 600;
+    border: 2px solid #505a5f;
+  }
+  .dluhc-tag.govuk-tag--red {
+    border-color: #942514;
+  }
+  .dluhc-tag.govuk-tag--green {
+    border-color: #00703c;
+  }
+  .dluhc-tag.govuk-tag--yellow {
+    border-color: rgb(89, 77, 0);
+  }
+  .dluhc-tag-v1 {
+    font-weight: 400;
+    color: #505a5f;
+    border: 1px solid #505a5f;
+  }
+
+  .govuk-tag--grey {
+    background-color: white;
+  }

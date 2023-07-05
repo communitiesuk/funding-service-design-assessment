@@ -66,6 +66,30 @@
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
         <div class="govuk-grid-column-two-thirds">
+            {% for t in tags %}
+                <strong class="govuk-tag govuk-tag--{{ t.colour }} dluhc-tag govuk-!-margin-right-4">{{ t.value }}</strong>
+            {% endfor %}
+            <p class="govuk-body-s govuk-!-padding-top-4">
+                <a class="govuk-link" href="{{ url_for('assess_bp.load_change_tags', application_id=application_id) }}">Change tags</a>
+            </p>
+        </div>
+        <div class="govuk-grid-column-one-third govuk-!-margin-top-2 govuk-button-group">
+            <span>
+                {% if g.access_controller.is_lead_assessor and state.workflow_status=="COMPLETED" and (not is_qa_complete) and display_status not in ["Stopped", "Flagged", "Multiple Flags To Resolve"] and "Flagged" not in display_status %}
+                {{ mark_qa_complete_button(application_id) }}
+                {% endif %}
+            </span>
+            <span>
+                {% if is_flaggable and g.access_controller.has_any_assessor_role %}
+                {{ flag_application_button(application_id) }}
+                {% endif %}
+            </span>
+        </div>
+    </div>
+</div>
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+        <div class="govuk-grid-column-two-thirds">
             <h2 class="govuk-heading-l govuk-!-margin-top-8">Unscored</h2>
             {% for section in state.sections %}
                 {{ section_element(section.name, section.sub_criterias, application_id) }}
@@ -79,18 +103,6 @@
                 {% endif %}
                 {{ criteria_element(criteria, name_classes, application_id) }}
             {% endfor %}
-        </div>
-        <div class="govuk-grid-column-one-third govuk-!-margin-top-2 govuk-button-group">
-            <span>
-                {% if g.access_controller.is_lead_assessor and state.workflow_status=="COMPLETED" and (not is_qa_complete) and display_status not in ["Stopped", "Flagged", "Multiple Flags To Resolve"] and "Flagged" not in display_status %}
-                {{ mark_qa_complete_button(application_id) }}
-                {% endif %}
-            </span>
-            <span>
-                {% if is_flaggable and g.access_controller.has_any_assessor_role %}
-                {{ flag_application_button(application_id) }}
-                {% endif %}
-            </span>
         </div>
     </div>
 </div>
