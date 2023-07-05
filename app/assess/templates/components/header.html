@@ -12,10 +12,10 @@
     </nav>
 
     {{ banner_summary(
-        (state.fund_name if state else fund.name),
-        sub_criteria.short_id,
-        sub_criteria.project_name,
-        sub_criteria.funding_amount_requested,
+        state.fund_name,
+        state.short_id,
+        state.project_name,
+        state.funding_amount_requested,
         display_status
     ) }}
 </header>
