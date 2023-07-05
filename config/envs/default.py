@@ -1,5 +1,4 @@
 import base64
-import json
 import os
 from os import environ
 from os import getenv
@@ -8,6 +7,7 @@ from pathlib import Path
 from distutils.util import strtobool
 from fsd_utils import CommonConfig
 from fsd_utils import configclass
+from fsd_utils.toggles.vcap_services import VcapServices
 
 
 @configclass
@@ -194,10 +194,14 @@ class DefaultConfig:
     """
 
     if "VCAP_SERVICES" in os.environ:
-        vcap_services = json.loads(os.environ["VCAP_SERVICES"])
+        VCAP_SERVICES = VcapServices.from_env_json(
+            environ.get("VCAP_SERVICES")
+        )
 
-        if "aws-s3-bucket" in vcap_services:
-            s3_credentials = vcap_services["aws-s3-bucket"][0]["credentials"]
+        if VCAP_SERVICES.does_service_exist(service_key="aws-s3-bucket"):
+            s3_credentials = VCAP_SERVICES.get_service_credentials_value(
+                "aws-s3-bucket"
+            )
             AWS_REGION = s3_credentials["aws_region"]
             AWS_ACCESS_KEY_ID = s3_credentials["aws_access_key_id"]
             AWS_SECRET_ACCESS_KEY = s3_credentials["aws_secret_access_key"]

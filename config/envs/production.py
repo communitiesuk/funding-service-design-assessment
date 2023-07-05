@@ -7,7 +7,7 @@ class ProductionConfig(DefaultConfig):
     # Redis Feature Toggle Configuration
     REDIS_INSTANCE_NAME = "funding-service-magic-links"
     REDIS_INSTANCE_URI = (
-        DefaultConfig.vcap_services.get_service_credentials_value(
+        DefaultConfig.VCAP_SERVICES.get_service_credentials_value(
             "redis", REDIS_INSTANCE_NAME, "uri"
         )
     )
