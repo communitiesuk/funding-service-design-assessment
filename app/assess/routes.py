@@ -638,6 +638,7 @@ def continue_assessment(application_id):
         user_id=g.account_id,
         justification=form.reason.data,
         section=["NA"],
+        state=get_state_for_tasklist_banner(application_id),
         page_to_render="continue_assessment.html",
         reason_to_flag=flag_data.updates[-1]["justification"],
         allocated_team=flag_data.updates[-1]["allocation"],
@@ -651,14 +652,13 @@ def generate_doc_list_for_download(application_id):
     current_app.logger.info(
         f"Generating docs for application id {application_id}"
     )
-    sub_criteria_banner_state = get_sub_criteria_banner_state(application_id)
-    short_id = sub_criteria_banner_state.short_id[-6:]
+    state = get_state_for_tasklist_banner(application_id)
+    short_id = state.short_id[-6:]
     flags_list = get_flags(application_id)
     display_status = determine_display_status(
-        sub_criteria_banner_state.workflow_status, flags_list
+        state.workflow_status, flags_list
     )
 
-    fund = get_fund(sub_criteria_banner_state.fund_id)
     application_json = get_application_json(application_id)
     supporting_evidence = get_files_for_application_upload_fields(
         application_id=application_id,
@@ -677,8 +677,7 @@ def generate_doc_list_for_download(application_id):
     return render_template(
         "contract_downloads.html",
         application_id=application_id,
-        fund=fund,
-        sub_criteria=sub_criteria_banner_state,
+        state=state,
         application_answers=application_answers,
         supporting_evidence=supporting_evidence,
         display_status=display_status,
