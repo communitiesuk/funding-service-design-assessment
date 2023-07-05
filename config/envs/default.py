@@ -167,6 +167,9 @@ class DefaultConfig:
     ASSESSMENT_FLAG_V2_ENDPOINT = (
         ASSESSMENT_STORE_API_HOST + "/flag_data_v2?flag_id={flag_id}"
     )
+    ASSESSMENT_AVAILABLE_TAGS_ENDPOINT = (
+        ASSESSMENT_STORE_API_HOST + "/funds/{fund_id}/rounds/{round_id}/tags"
+    )
 
     # Account store endpoints
     BULK_ACCOUNTS_ENDPOINT = ACCOUNT_STORE_API_HOST + "/bulk-accounts"

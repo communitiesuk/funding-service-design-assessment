@@ -602,21 +602,27 @@ class TestJinjaMacros(object):
         soup = BeautifulSoup(rendered_html, "html.parser")
 
         assert (
-            soup.find("h1", class_="fsd-banner-content").text.strip()
+            soup.find(
+                "p", class_="govuk-heading-xl fsd-banner-content"
+            ).text.strip()
             == "Fund: Test Fund"
         ), "Fund name not found"
         assert (
-            soup.find("h2", class_="fsd-banner-content").text.strip()
+            soup.find(
+                "p", class_="govuk-heading-l fsd-banner-content"
+            ).text.strip()
             == "Project reference: TEST123"
         ), "Project reference not found"
         assert soup.find(
-            "h3",
-            class_="fsd-banner-content",
+            "p",
+            class_=(
+                "govuk-body-l fsd-banner-content fsd-banner-collapse-padding"
+            ),
             text="Project name: Test Project",
         ), "Project name not found"
         assert soup.find(
-            "h3",
-            class_="fsd-banner-content",
+            "p",
+            class_="govuk-body-l fsd-banner-content",
             text="Total funding requested: £123,456.78",
         ), "Funding amount not found"
         assert soup.find(

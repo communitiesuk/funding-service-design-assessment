@@ -12,34 +12,40 @@
     <div class="govuk-grid-column-full">
         <div class="govuk-grid-column-two-thirds">
             <h1 class="govuk-heading-xl govuk-!-margin-bottom-4">Change tags</h1>
-            <div class="govuk-hint govuk-!-margin-bottom-6">
-                Select the tags you want to apply to this assessment
-            </div>
-            <table class="govuk-table dluhc-table-checkboxes">
-                <thead class="govuk-table__head">
-                    <tr class="govuk-table__row">
-                        <th scope="col" class="govuk-table__header">Tag name</th>
-                        <th scope="col" class="govuk-table__header">Colour</th>
-                    </tr>
-                </thead>
-                <tbody class="govuk-table__body">
-                    {% for tag in available_tags %}
-                        <tr class-govuk-table__row>
-                            <th scope="row" class="govuk-table__header">
-                                <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
-                                <div class="govuk-checkboxes__item">
-                                    <input class="govuk-checkboxes__input" id="{{ tag.value }}" name="{{ tag.value }}" type="checkbox" value="{{ tag.value }}">
-                                    <label class="govuk-label govuk-checkboxes__label" for="{{ tag.value }}">
-                                        {{ tag.value }}
-                                    </label>
-                                </div>
-                                </div>
-                            </th>
-                            <td class="govuk-table__cell"><strong class="govuk-tag govuk-tag--{{ tag.colour }} dluhc-tag">{{ tag.value }}</strong></td>
+            {% if (available_tags | length) > 0 %}
+                <div class="govuk-hint govuk-!-margin-bottom-6">
+                    Select the tags you want to apply to this assessment
+                </div>
+                <table class="govuk-table dluhc-table-checkboxes">
+                    <thead class="govuk-table__head">
+                        <tr class="govuk-table__row">
+                            <th scope="col" class="govuk-table__header">Tag name</th>
+                            <th scope="col" class="govuk-table__header">Colour</th>
                         </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody class="govuk-table__body">
+                        {% for tag in available_tags %}
+                            <tr class-govuk-table__row>
+                                <th scope="row" class="govuk-table__header">
+                                    <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
+                                    <div class="govuk-checkboxes__item">
+                                        <input class="govuk-checkboxes__input" id="{{ tag.value }}" name="{{ tag.value }}" type="checkbox" value="{{ tag.value }}">
+                                        <label class="govuk-label govuk-checkboxes__label" for="{{ tag.value }}">
+                                            {{ tag.value }}
+                                        </label>
+                                    </div>
+                                    </div>
+                                </th>
+                                <td class="govuk-table__cell"><strong class="govuk-tag govuk-tag--{{ tag.colour }} dluhc-tag">{{ tag.value }}</strong></td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p class="govuk-body dluhc-body-empty">
+                    There are no tags available
+                </p>
+            {% endif %}
         </div>
     </div>
 </div>
