@@ -18,6 +18,7 @@ from app.assess.models.fund import Fund
 from app.assess.models.round import Round
 from app.assess.models.score import Score
 from app.assess.models.sub_criteria import SubCriteria
+from app.assess.models.tag import Tag
 from boto3 import client
 from botocore.exceptions import ClientError
 from config import Config
@@ -97,25 +98,105 @@ def get_application_overviews(fund_id, round_id, search_params):
 
 
 dummy_tags = [
-    {"id": uuid4(), "value": "Commercial pass", "colour": "green"},
-    {"id": uuid4(), "value": "Commercial fail", "colour": "red"},
-    {"id": uuid4(), "value": "Recommend yes", "colour": "green"},
-    {"id": uuid4(), "value": "Recommend no", "colour": "red"},
+    {
+        "id": uuid4(),
+        "value": "Commercial pass",
+        "colour": "green",
+        "user": "Bob",
+        "active": True,
+    },
+    {
+        "id": uuid4(),
+        "value": "Commercial fail",
+        "colour": "red",
+        "user": "Bob",
+        "active": True,
+    },
+    {
+        "id": uuid4(),
+        "value": "Recommend yes",
+        "colour": "green",
+        "user": "Bob",
+        "active": True,
+    },
+    {
+        "id": uuid4(),
+        "value": "Recommend no",
+        "colour": "red",
+        "user": "Bob",
+        "active": True,
+    },
     {
         "id": uuid4(),
         "value": "Recommend further discussion",
+        "user": "Bob",
         "colour": "yellow",
+        "active": True,
     },
-    {"id": uuid4(), "value": "Dave Lister", "colour": "grey"},
-    {"id": uuid4(), "value": "Arnold Rimmer", "colour": "grey"},
-    {"id": uuid4(), "value": "The Cat", "colour": "grey"},
-    {"id": uuid4(), "value": "Kryten", "colour": "grey"},
-    {"id": uuid4(), "value": "Holly", "colour": "grey"},
+    {
+        "id": uuid4(),
+        "value": "Dave Lister",
+        "colour": "grey",
+        "user": "Bob",
+        "active": True,
+    },
+    {
+        "id": uuid4(),
+        "value": "Arnold Rimmer",
+        "colour": "grey",
+        "user": "Bob",
+        "active": True,
+    },
+    {
+        "id": uuid4(),
+        "value": "The Cat",
+        "colour": "grey",
+        "user": "Bob",
+        "active": True,
+    },
+    {
+        "id": uuid4(),
+        "value": "Kryten",
+        "colour": "grey",
+        "user": "Bob",
+        "active": True,
+    },
+    {
+        "id": uuid4(),
+        "value": "Holly",
+        "colour": "grey",
+        "user": "Bob",
+        "active": True,
+    },
+    {
+        "id": uuid4(),
+        "value": "Inactive",
+        "colour": "red",
+        "user": "Bob",
+        "active": False,
+    },
 ]
 
 
-def get_available_tags_for_fund_round(fund_id, round_id) -> List:
-    return dummy_tags
+# temp convenience method for testing - this can be mocked until read endpoint is available and then we
+# can just mock get_data
+def get_tags(endpoint):
+    # TODO call real endpoint when branch is ready
+    # response = get_data(endpoint)
+    response = dummy_tags
+    return response
+
+
+def get_available_tags_for_fund_round(fund_id, round_id) -> List[Tag]:
+    endpoint = Config.ASSESSMENT_AVAILABLE_TAGS_ENDPOINT.format(
+        fund_id=fund_id, round_id=round_id
+    )
+    response = get_tags(endpoint)
+    current_app.logger.info(f"tags returned: {len(response)}")
+    result = [
+        Tag.from_dict(item) for item in response if item["active"] is True
+    ]
+    return result
 
 
 @lru_cache(maxsize=1)

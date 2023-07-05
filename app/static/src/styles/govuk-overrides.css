@@ -269,3 +269,7 @@
   .govuk-tag--grey {
     background-color: white;
   }
+
+  .dluhc-body-empty {
+    color: #505a5f;
+  }
