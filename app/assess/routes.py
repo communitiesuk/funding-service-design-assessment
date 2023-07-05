@@ -551,7 +551,7 @@ def application(application_id):
         application_id=application_id,
         accounts_list=accounts_list,
         flags_list=flags_list,
-        current_user_role=g.user.highest_role,
+        current_user_role=g.user.highest_role_map[state.fund_short_name],
         is_flaggable=is_flaggable(display_status),
         is_qa_complete=is_qa_complete(flags_list),
         display_status=display_status,
