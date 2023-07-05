@@ -821,6 +821,8 @@ class TestRoutes:
         mock_get_flags,
         mock_get_flag,
         mock_get_sub_criteria_banner_state,
+        mock_get_assessor_tasklist_state,
+        mock_get_round,
         mock_get_fund,
         mock_get_funds,
         mock_get_application_metadata,
@@ -841,6 +843,7 @@ class TestRoutes:
         assert b"Reason for continuing assessment" in response.data
         assert b"Project In prog and Stop" in response.data
 
+    @pytest.mark.application_id("stopped_app")
     @pytest.mark.flag_id("stopped_app")
     def test_post_continue_application(
         self,
@@ -851,6 +854,8 @@ class TestRoutes:
         mock_get_application_metadata,
         mock_get_fund,
         mock_get_flag,
+        mock_get_round,
+        mock_get_assessor_tasklist_state,
     ):
         flag_id = request.node.get_closest_marker("flag_id").args[0]
         token = create_valid_token(test_lead_assessor_claims)
@@ -859,7 +864,7 @@ class TestRoutes:
             "app.assess.helpers.submit_flag",
             return_value=FlagV2.from_dict(
                 {
-                    "application_id": "app_123",
+                    "application_id": "stopped_app",
                     "latest_status": "RESOLVED",
                     "latest_allocation": None,
                     "id": "flagid",
@@ -879,14 +884,14 @@ class TestRoutes:
         )
 
         response = flask_test_client.post(
-            f"assess/continue_assessment/app_123?flag_id={flag_id}",
+            f"assess/continue_assessment/stopped_app?flag_id={flag_id}",
             data={
                 "reason": "We should continue the application.",
             },
         )
         app.assess.helpers.submit_flag.assert_called_once()
         app.assess.helpers.submit_flag.assert_called_once_with(
-            "app_123",
+            "stopped_app",
             "RESOLVED",
             "lead",
             "We should continue the application.",
@@ -896,7 +901,9 @@ class TestRoutes:
         )
 
         assert response.status_code == 302
-        assert response.headers["Location"] == "/assess/application/app_123"
+        assert (
+            response.headers["Location"] == "/assess/application/stopped_app"
+        )
 
     @pytest.mark.application_id("flagged_qa_completed_app")
     def test_qa_complete_flag_displayed(
@@ -1055,11 +1062,12 @@ class TestRoutes:
         self,
         flask_test_client,
         request,
-        mock_get_sub_criteria_banner_state,
+        mock_get_assessor_tasklist_state,
         mock_get_fund,
         mock_get_funds,
         mock_get_application_metadata,
         mock_get_flags,
+        mock_get_round,
         templates_rendered,
         mocker,
     ):
