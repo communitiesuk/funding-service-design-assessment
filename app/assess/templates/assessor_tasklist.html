@@ -38,9 +38,11 @@
 
 {% block content %}
 
+{% if g.access_controller.has_any_assessor_role %}
 <div>
     {{ flag_tabs(state, application_id, flags_list, accounts_list) }}
 </div>
+{% endif %}
 
 {# TODO: Display multiple flag banner #}
 <div>
