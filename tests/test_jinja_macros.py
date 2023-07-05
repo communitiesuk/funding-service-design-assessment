@@ -708,7 +708,12 @@ class TestJinjaMacros(object):
             ),
             flag={
                 "latest_status": {"name": "STOPPED"},
-                "justification": "Test justification",
+                "updates": [
+                    {
+                        "justification": "Test justification",
+                        "status": {"name": "STOPPED"},
+                    }
+                ],
                 "sections_to_flag": ["Test section"],
                 "date_created": "2020-01-01 12:00:00",
             },
@@ -772,8 +777,13 @@ class TestJinjaMacros(object):
                 },
             )(),
             flag={
-                "flag_type": {"name": "Test flag"},
-                "justification": "Test justification",
+                "latest_status": {"name": "RAISED"},
+                "updates": [
+                    {
+                        "justification": "Test justification",
+                        "status": {"name": "RAISED"},
+                    }
+                ],
                 "sections_to_flag": ["Test section"],
                 "date_created": "2020-01-01 12:00:00",
             },
