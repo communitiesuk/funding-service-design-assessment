@@ -34,6 +34,9 @@ class FlagV2:
         self.date_created = (
             self.updates[0]["date_created"] if self.updates else ""
         )
+        self.sections_to_flag = (
+            [] if not self.sections_to_flag else self.sections_to_flag
+        )
 
     def get_enum_status(self, status):
         if isinstance(status, int):
