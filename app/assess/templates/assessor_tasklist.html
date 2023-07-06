@@ -51,7 +51,7 @@
     {% endif %}
 
     {% for flag in flags_list %}
-        {% if g.access_controller.has_any_assessor_role and (display_status == "Multiple Flags To Resolve" or "Flagged" in display_status) and (display_status != "Stopped") and (flag.latest_status.name != "RESOLVED") %}
+        {% if g.access_controller.has_any_assessor_role and (display_status != "Stopped") and (flag.latest_status.name == "RAISED") %}
             {{ assessment_flagged(state, flag, accounts_list[flag.latest_user_id], application_id) }}
         {% elif g.access_controller.has_any_assessor_role and display_status == "Stopped" and (flag.latest_status.name == "STOPPED")%}
             {{ assessment_stopped(flag, accounts_list[flag.latest_user_id], application_id) }}
