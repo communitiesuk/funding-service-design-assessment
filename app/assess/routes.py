@@ -521,8 +521,6 @@ def application(application_id):
         state.workflow_status, flags_list
     )
 
-    # TODO : Need to resolve this for multiple flags
-
     if flags_list:
         user_id_list = []
         for flag_data in flags_list:

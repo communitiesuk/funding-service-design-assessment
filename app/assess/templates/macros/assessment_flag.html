@@ -3,7 +3,7 @@
 {% macro assessment_flagged(state, flag, user_info, application_id) %}
     <div class="assessment-alert assessment-alert--flagged" role="alert">
         <h1 class="assessment-alert__heading govuk-heading-l">
-            {{ ("Flagged for "+ flag.latest_allocation if flag.latest_allocation else "Flagged") | title }}
+            {{ ("Flagged for "+ flag.latest_allocation if flag.latest_allocation else "Flagged") }}
         </h1>
         <h2>Reason</h2>
         {% for update in flag.updates %}
