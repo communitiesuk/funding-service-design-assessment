@@ -26,6 +26,7 @@ from app.assess.forms.rescore_form import RescoreForm
 from app.assess.forms.resolve_flag_form import ResolveFlagForm
 from app.assess.forms.scores_and_justifications import ScoreForm
 from app.assess.helpers import determine_display_status
+from app.assess.helpers import generate_csv_of_application
 from app.assess.helpers import get_ttl_hash
 from app.assess.helpers import is_flaggable
 from app.assess.helpers import resolve_application
@@ -400,35 +401,24 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
     if not _round:
         return redirect("/assess/assessor_tool_dashboard/")
     fund_id, round_id = fund.id, _round.id
-    countries = {"ALL"}
-    if has_devolved_authority_validation(fund_id=fund_id):
-        countries = get_countries_from_roles(fund.short_name)
-
-    search_params = {
-        **search_params,
-        "countries": ",".join(countries),
-    }
 
     show_clear_filters = False
     if "clear_filters" not in request.args:
         search_params.update(
-            {
-                k: v
-                for k, v in request.args.items()
-                if k in search_params and k != "countries"
-            }
+            {k: v for k, v in request.args.items() if k in search_params}
         )
-        show_clear_filters = any(
-            k in request.args for k in search_params if k != "countries"
-        )
+        show_clear_filters = any(k in request.args for k in search_params)
+
+    if has_devolved_authority_validation(fund_id=fund_id):
+        countries = get_countries_from_roles(fund.short_name)
+    else:  # by default, if no devolved authority, show all countries
+        countries = frozenset({"ALL"})
 
     application_overviews = get_application_overviews(
-        fund_id, round_id, search_params
+        fund_id,
+        round_id,
+        {**search_params, "countries": ",".join(countries)},
     )
-
-    # this is only used for querying applications, so remove it from the search params,
-    # so it's not reflected on the user interface
-    del search_params["countries"]
 
     round_details = {
         "assessment_deadline": _round.assessment_deadline,
@@ -688,20 +678,31 @@ def generate_doc_list_for_download(application_id):
     )
 
 
-@assess_bp.route("/application/<application_id>/export/<short_id>/answers.txt")
+@assess_bp.route(
+    "/application/<application_id>/export/<short_id>/answers.<file_type>"
+)
 @check_access_application_id(roles_required=["LEAD_ASSESSOR"])
-def download_application_answers(application_id: str, short_id: str):
+def download_application_answers(
+    application_id: str, short_id: str, file_type: str
+):
     current_app.logger.info(
-        f"Generating application Q+A download for application {application_id}"
+        "Generating application Q+A download for application"
+        f" {application_id} in {file_type} format"
     )
     application_json = get_application_json(application_id)
     application_json_blob = application_json["jsonb_blob"]
 
     qanda_dict = extract_questions_and_answers(application_json_blob["forms"])
     fund = get_fund(application_json["jsonb_blob"]["fund_id"])
-    text = generate_text_of_application(qanda_dict, fund.name)
 
-    return download_file(text, "text/plain", f"{short_id}_answers.txt")
+    if file_type == "txt":
+        text = generate_text_of_application(qanda_dict, fund.name)
+        return download_file(text, "text/plain", f"{short_id}_answers.txt")
+    elif file_type == "csv":
+        csv = generate_csv_of_application(qanda_dict, fund.name)
+        return download_file(csv, "text/csv", f"{short_id}_answers.csv")
+
+    abort(404)
 
 
 @assess_bp.route(
