@@ -26,12 +26,14 @@ class FlagApplicationForm(FlaskForm):
         ],
     )
 
-    # TODO: Rework on the avialable teams after implemented in fundstore
     teams_available = RadioField(
         "teams_available",
         choices=None,
-        # validators=[InputRequired(message="Select a team")],
-        validate_choice=False,
+        validators=[
+            InputRequired(
+                message="Select which team the flag should be allocated to"
+            )
+        ],
     )
 
     def __init__(self, section_choices=None, team_choices=None):
