@@ -28,9 +28,6 @@
                   <option value='{{ item }}' {% if query_params.asset_type == item %} selected=""{% endif %}>{{ asset_types[item] }}</option>
             {% endfor %}
       </select>
-      {% if not g.access_controller.has_any_assessor_role %}
-        <button class="govuk-button search-button" aria-label="Search" type="submit">Search</button>
-      {% endif %}
     </div>
     {% if g.access_controller.has_any_assessor_role %}
     <div class="govuk-form-group govuk-!-display-inline-block govuk-!-padding-right-2">
