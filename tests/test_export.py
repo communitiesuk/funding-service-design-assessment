@@ -1,5 +1,6 @@
 from unittest import mock
 
+import app as flask_app
 from app.assess.data import get_files_for_application_upload_fields
 from fsd_utils import extract_questions_and_answers
 from fsd_utils import generate_text_of_application
@@ -49,9 +50,20 @@ class TestExport:
         assert "Q) Capital funding" in result
         assert "A) 2300" in result
 
-    def test_get_files_for_application_upload_fields(self):
+    def test_get_files_for_application_upload_fields(self, monkeypatch, app):
         application_id = "dummy_id"
         short_id = "d_id"
+
+        def mock_list_objects_v2(Bucket, Prefix):  # noqa
+            return {
+                "Contents": [
+                    {"Key": "app_id/form_name/path/name/filename1.png"},
+                ]
+            }
+
+        monkeypatch.setattr(
+            flask_app.aws._S3_CLIENT, "list_objects_v2", mock_list_objects_v2
+        )
 
         with mock.patch(
             "app.assess.data.url_for",
@@ -66,4 +78,9 @@ class TestExport:
         assert ans == [
             ("sample1.doc", "dummy/path/to/file.dmp"),
             ("awskey123123123123123/sample1.doc", "dummy/path/to/file.dmp"),
+            (
+                "filename1.png",
+                "/assess/application/app_id/export/"
+                "form_name%252Fpath%252Fname%252Ffilename1.png?short_id=d_id&quoted=True",
+            ),
         ]
