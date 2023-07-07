@@ -1,8 +1,8 @@
 import pytest
 from app.assess.helpers import determine_display_status
+from app.assess.helpers import generate_csv_of_application
 from app.assess.helpers import is_flaggable
 from app.assess.models.flag_v2 import FlagV2
-
 
 RAISED_FLAG = [
     FlagV2.from_dict(
@@ -121,3 +121,24 @@ def test_determine_display_status():
 )
 def test_is_flaggable(test_input, expected):
     assert is_flaggable(test_input) == expected
+
+
+def test_generate_csv_of_application():
+    q_and_a = {
+        "section1": {"question1": "- answer1", "question2": "answer2"},
+        "section2": {"question3": "- answer3", "question4": "answer4"},
+    }
+    fund_name = "Test Fund"
+
+    expected_output = (
+        "Fund,Test Fund\r\n"
+        "Section,Question,Answer\r\n"
+        "Section1,question1,'- answer1\r\n"
+        "Section1,question2,answer2\r\n"
+        "Section2,question3,'- answer3\r\n"
+        "Section2,question4,answer4\r\n"
+    )
+
+    result = generate_csv_of_application(q_and_a, fund_name)
+
+    assert result == expected_output
