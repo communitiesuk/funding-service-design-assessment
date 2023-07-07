@@ -610,9 +610,7 @@ def get_files_for_application_upload_fields(
     ]
 
     # files which used the client side file upload component
-    client_side_upload_files = list_files_by_prefix(
-        "feb2bcf2-1e6a-4ba1-8a4e-a9d237c5329a"
-    )
+    client_side_upload_files = list_files_by_prefix(application_id)
     files = [
         (file.filename, generate_url(file, short_id))
         for file in client_side_upload_files
