@@ -697,12 +697,17 @@ class TestRoutes:
         session["csrf_token"] = "test"
 
         mocker.patch("app.assess.routes.submit_flag", return_value=None)
+        mocker.patch(
+            "app.assess.routes.get_available_teams",
+            return_value=[{"key": "TEAM_A", "value": "Team A"}],
+        )
 
         response = flask_test_client.post(
             "assess/flag/resolved_app",
             data={
                 "justification": "Test justification",
                 "section": ["test_sub_criteria_id"],
+                "teams_available": "Team A",
             },
         )
 

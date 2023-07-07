@@ -152,7 +152,6 @@ def get_round(
 
 
 def get_available_teams(fund_id: str, round_id: str) -> list:
-    # TODO: Rework on the avialable teams after implemented in fundstore
     teams_available = get_data(
         Config.GET_AVIALABLE_TEAMS_FOR_FUND.format(
             fund_id=fund_id,
