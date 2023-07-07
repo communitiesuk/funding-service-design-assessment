@@ -31,6 +31,11 @@
                     <a href=#{{ form.section.id }}>{{ form.errors.get("section") | join("\n") }}</a>
                 </li>
                 {% endif %}
+                {% if form.errors.get("teams_available") %}
+                <li>
+                    <a href={{ '#'+ form.teams_available.id }}>{{ form.errors.get("teams_available") | join("\n") }}</a>
+                </li>
+                {% endif %}
             </ul>
         </div>
     </div>
@@ -192,7 +197,6 @@
                                     })
                                 }}
                             {% endfor %}
-                            {% if teams_available %}
                             <div class="govuk-form-group">
                                 <label class="govuk-label govuk-label--m">Flag allocation</label>
                                 {% set items = [] %}
@@ -211,13 +215,13 @@
                                     "id": form.teams_available.id,
                                     "name": form.teams_available.id,
                                     "items": items,
+                                    'attributes': {'data-qa': 'select_teams_to_flag'},
                                     "errorMessage": {
                                     "text": form.errors.get(form.teams_available.id) | join("\n"),
                                     } if form.errors.get(form.teams_available.id) else None
                                     }) }}
 
                             </div>
-                            {% endif %}
                             {% endcall %}
                         </div>
                     </div>

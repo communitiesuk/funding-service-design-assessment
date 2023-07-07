@@ -64,10 +64,11 @@
             {% if flag_item.latest_status.name != "QA_COMPLETED" %}
                 {% set addItem = items.append({
                 'label': ("Flagged for " + flag_item.latest_allocation) if flag_item.latest_allocation else ("Flag " + (loop.index0 +1) | string),
-                'id': "tab-" + (flag_item.latest_allocation if flag_item.latest_allocation else loop.index0 | string),
+                'id': "tab-" + (flag_item.latest_allocation | replace(" ", "-") if flag_item.latest_allocation else loop.index0 | string),
                 'panel': {
                     'html': flag_table(state, application_id, flag_item, accounts_list)}
                 })%}
+                {# <p>items: {{ flag_table(state, application_id, flag_item, accounts_list) }}</p> #}
             {% endif %}
         {% endfor %}
 
