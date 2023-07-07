@@ -5,11 +5,12 @@ from dataclasses import dataclass
 from typing import Iterable
 from typing import List
 from typing import Tuple
+from urllib.parse import quote
 
-from app.assess.data import list_files_in_folder
 from app.assess.views.filters import format_address
 from app.assess.views.filters import format_date
 from app.assess.views.filters import remove_dashes_underscores_capitalize
+from app.aws import list_files_in_folder
 from flask import url_for
 
 ANSWER_NOT_PROVIDED_DEFAULT = "Not provided."
@@ -313,7 +314,8 @@ def _ui_component_from_factory(item: dict, application_id: str):
             key: url_for(
                 "assess_bp.get_file",
                 application_id=application_id,
-                file_name=key,
+                file_name=quote(key, safe=""),
+                quoted=True,
             )
             for key in file_keys
         }

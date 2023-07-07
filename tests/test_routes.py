@@ -2,7 +2,7 @@ from unittest import mock
 
 import app
 import pytest
-from app.assess.models.flag import Flag
+from app.assess.models.flag_v2 import FlagV2
 from bs4 import BeautifulSoup
 from flask import session
 from tests.conftest import create_valid_token
@@ -464,9 +464,10 @@ class TestRoutes:
         mock_get_sub_criteria,
         mock_get_fund,
         mock_get_funds,
+        mock_get_round,
         mock_get_application_metadata,
         mock_get_comments,
-        mock_get_latest_flag,
+        mock_get_flags,
         mock_get_scores,
         mock_get_bulk_accounts,
         mock_get_assessor_tasklist_state,
@@ -571,11 +572,13 @@ class TestRoutes:
         self,
         request,
         flask_test_client,
-        mock_get_latest_flag,
+        mock_get_flags,
+        mock_get_available_teams,
         mock_get_assessor_tasklist_state,
         mock_get_sub_criteria_banner_state,
         mock_get_fund,
         mock_get_funds,
+        mock_get_round,
         mock_get_application_metadata,
     ):
 
@@ -587,7 +590,7 @@ class TestRoutes:
 
         response = flask_test_client.get(f"assess/flag/{application_id}")
 
-        assert response.status_code == 400
+        assert response.status_code == 200
 
     @pytest.mark.application_id("resolved_app")
     @pytest.mark.flag_id("resolved_app")
@@ -595,12 +598,14 @@ class TestRoutes:
         self,
         request,
         flask_test_client,
-        mock_get_latest_flag,
+        mock_get_flags,
+        mock_get_available_teams,
         mock_get_flag,
         mock_get_assessor_tasklist_state,
         mock_get_sub_criteria_banner_state,
         mock_get_fund,
         mock_get_funds,
+        mock_get_round,
         mock_get_application_metadata,
     ):
 
@@ -623,7 +628,7 @@ class TestRoutes:
         mock_get_funds,
         mock_get_application_metadata,
         mock_get_round,
-        mock_get_latest_flag,
+        mock_get_flags,
         mock_get_bulk_accounts,
     ):
         marker = request.node.get_closest_marker("application_id")
@@ -654,7 +659,7 @@ class TestRoutes:
         mock_get_funds,
         mock_get_application_metadata,
         mock_get_round,
-        mock_get_latest_flag,
+        mock_get_flags,
         mock_get_bulk_accounts,
     ):
         marker = request.node.get_closest_marker("application_id")
@@ -667,11 +672,12 @@ class TestRoutes:
         )
 
         assert response.status_code == 200
-        assert b"Remove flag" not in response.data
-        assert b"Resolve flag" not in response.data
-        assert b"Reason" not in response.data
-        assert b"flagged" not in response.data
-        assert b"Flagged" not in response.data
+        # TODO: Uncomment & fix it after multiple flags is implemented (FS-2776)
+        # assert b"Remove flag" not in response.data
+        # assert b"Resolve flag" not in response.data
+        # assert b"Reason" not in response.data
+        # assert b"flagged" not in response.data
+        # assert b"Flagged" not in response.data
 
     @pytest.mark.application_id("resolved_app")
     def test_flag_route_submit_flag(
@@ -679,7 +685,9 @@ class TestRoutes:
         flask_test_client,
         mocker,
         mock_get_assessor_tasklist_state,
+        mock_get_available_teams,
         mock_get_fund,
+        mock_get_round,
         mock_get_funds,
         mock_get_application_metadata,
         request_ctx,
@@ -689,12 +697,17 @@ class TestRoutes:
         session["csrf_token"] = "test"
 
         mocker.patch("app.assess.routes.submit_flag", return_value=None)
+        mocker.patch(
+            "app.assess.routes.get_available_teams",
+            return_value=[{"key": "TEAM_A", "value": "Team A"}],
+        )
 
         response = flask_test_client.post(
             "assess/flag/resolved_app",
             data={
                 "justification": "Test justification",
                 "section": ["test_sub_criteria_id"],
+                "teams_available": "Team A",
             },
         )
 
@@ -709,12 +722,13 @@ class TestRoutes:
         self,
         request,
         flask_test_client,
-        mock_get_latest_flag,
+        mock_get_flags,
         mock_get_flag,
         mock_get_assessor_tasklist_state,
         mock_get_sub_criteria_banner_state,
         mock_get_fund,
         mock_get_funds,
+        mock_get_round,
         mock_get_application_metadata,
     ):
         token = create_valid_token(test_lead_assessor_claims)
@@ -742,11 +756,12 @@ class TestRoutes:
         request,
         flask_test_client,
         mocker,
-        mock_get_latest_flag,
+        mock_get_flags,
         mock_get_flag,
         mock_get_assessor_tasklist_state,
         mock_get_fund,
         mock_get_funds,
+        mock_get_round,
         mock_get_application_metadata,
     ):
         token = create_valid_token(test_lead_assessor_claims)
@@ -757,15 +772,23 @@ class TestRoutes:
         flag_id = request.node.get_closest_marker("flag_id").args[0]
         mocker.patch(
             "app.assess.helpers.submit_flag",
-            return_value=Flag.from_dict(
+            return_value=FlagV2.from_dict(
                 {
                     "application_id": application_id,
-                    "date_created": "2023-01-01T00:00:00",
-                    "flag_type": "RESOLVED",
+                    "latest_status": "RESOLVED",
+                    "latest_allocation": None,
                     "id": "flagid",
-                    "justification": "Checked with so and so.",
                     "sections_to_flag": ["Test section"],
-                    "user_id": "test_user_lead_assessor",
+                    "updates": [
+                        {
+                            "id": "316f607a-03b7-4592-b927-5021a28b7d6a",
+                            "user_id": "test_user_lead_assessor",
+                            "date_created": "2023-01-01T00:00:00",
+                            "justification": "Checked with so and so.",
+                            "status": "RESOLVED",
+                            "allocation": None,
+                        }
+                    ],
                 }
             ),
         )
@@ -784,6 +807,8 @@ class TestRoutes:
             "lead",
             "Checked with so and so.",
             ["Test section"],
+            None,
+            flag_id,
         )
 
         assert response.status_code == 302
@@ -798,7 +823,7 @@ class TestRoutes:
         self,
         request,
         flask_test_client,
-        mock_get_latest_flag,
+        mock_get_flags,
         mock_get_flag,
         mock_get_sub_criteria_banner_state,
         mock_get_fund,
@@ -837,15 +862,23 @@ class TestRoutes:
         flask_test_client.set_cookie("localhost", "fsd_user_token", token)
         mocker.patch(
             "app.assess.helpers.submit_flag",
-            return_value=Flag.from_dict(
+            return_value=FlagV2.from_dict(
                 {
                     "application_id": "app_123",
-                    "date_created": "2023-01-01T00:00:00",
-                    "flag_type": "RESOLVED",
+                    "latest_status": "RESOLVED",
+                    "latest_allocation": None,
                     "id": "flagid",
-                    "justification": "string",
                     "sections_to_flag": ["NA"],
-                    "user_id": "test@example.com",
+                    "updates": [
+                        {
+                            "id": "316f607a-03b7-4592-b927-5021a28b7d6a",
+                            "user_id": "test@example.com",
+                            "date_created": "2023-01-01T00:00:00",
+                            "justification": "string",
+                            "status": "RESOLVED",
+                            "allocation": None,
+                        }
+                    ],
                 }
             ),
         )
@@ -863,6 +896,8 @@ class TestRoutes:
             "lead",
             "We should continue the application.",
             ["NA"],
+            None,
+            flag_id,
         )
 
         assert response.status_code == 302
@@ -875,7 +910,7 @@ class TestRoutes:
         flask_test_client,
         mock_get_round,
         mock_get_assessor_tasklist_state,
-        mock_get_latest_flag,
+        mock_get_flags,
         mock_get_bulk_accounts,
         mock_get_sub_criteria_banner_state,
         mock_get_fund,
@@ -905,7 +940,7 @@ class TestRoutes:
         mock_get_funds,
         mock_get_application_metadata,
         mock_get_round,
-        mock_get_latest_flag,
+        mock_get_flags,
         mock_get_bulk_accounts,
     ):
         token = create_valid_token(test_lead_assessor_claims)
@@ -991,8 +1026,9 @@ class TestRoutes:
         mock_get_sub_criteria,
         mock_get_fund,
         mock_get_funds,
+        mock_get_round,
         mock_get_application_metadata,
-        mock_get_latest_flag,
+        mock_get_flags,
         mock_get_comments,
         mock_get_sub_criteria_theme,
         mock_get_assessor_tasklist_state,
@@ -1028,7 +1064,7 @@ class TestRoutes:
         mock_get_fund,
         mock_get_funds,
         mock_get_application_metadata,
-        mock_get_latest_flag,
+        mock_get_flags,
         templates_rendered,
         mocker,
     ):

@@ -281,6 +281,10 @@ def mock_get_application_metadata():
                 "assessment_store/applications/{application_id}"
             ],
         ),
+        mock.patch(
+            "app.assess.helpers.get_application_metadata",
+            return_value=mock_api_results["/application/stopped_app/metadata"],
+        ),
     ):
         yield
 
@@ -308,6 +312,11 @@ def mock_get_round(request):
         round_id = "test-round"
         use_short_name = False
 
+    if "expect_flagging" in request.fixturenames:
+        expect_flagging = request.getfixturevalue("expect_flagging")
+    else:
+        expect_flagging = True
+
     mock_fund_info = Round.from_dict(
         mock_api_results["fund_store/funds/{fund_id}/rounds/{round_id}"]
     )
@@ -315,12 +324,15 @@ def mock_get_round(request):
     with mock.patch(mock_func, return_value=mock_fund_info) as mocked_round:
         yield mocked_round
 
-    if use_short_name:
-        mocked_round.assert_called_once_with(
-            fund_short_name, round_short_name, use_short_name=use_short_name
-        )
-    else:
-        mocked_round.assert_called_once_with(fund_id, round_id)
+    if expect_flagging:
+        if use_short_name:
+            mocked_round.assert_called_once_with(
+                fund_short_name,
+                round_short_name,
+                use_short_name=use_short_name,
+            )
+        else:
+            mocked_round.assert_called_once_with(fund_id, round_id)
 
 
 @pytest.fixture(scope="function")
@@ -481,19 +493,49 @@ def mock_get_latest_flag(request):
 
 
 @pytest.fixture(scope="function")
+def mock_get_flags(request):
+    from app.assess.models.flag_v2 import FlagV2
+
+    marker = request.node.get_closest_marker("application_id")
+    application_id = marker.args[0]
+
+    mock_flag_info = FlagV2.from_list(
+        mock_api_results[
+            f"assessment_store/flags_v2?application_id={application_id}"
+        ]
+    )
+    with (
+        mock.patch("app.assess.routes.get_flags", return_value=mock_flag_info),
+        mock.patch(
+            "app.assess.helpers.get_flags", return_value=mock_flag_info
+        ),
+    ):
+        yield
+
+
+@pytest.fixture(scope="function")
 def mock_get_flag(request):
-    from app.assess.models.flag import Flag
+    from app.assess.models.flag_v2 import FlagV2
 
     marker = request.node.get_closest_marker("flag_id")
     flag_id = marker.args[0]
 
-    mock_flag_info = Flag.from_dict(
-        mock_api_results[f"assessment_store/flag_data?flag_id={flag_id}"]
+    mock_flag_info = FlagV2.from_dict(
+        mock_api_results[f"assessment_store/flag_data_v2?flag_id={flag_id}"]
     )
     with mock.patch(
         "app.assess.routes.get_flag", return_value=mock_flag_info
     ) as mocked_flag_data:
         yield mocked_flag_data
+
+
+@pytest.fixture(scope="function")
+def mock_get_available_teams(request):
+    with mock.patch(
+        "app.assess.routes.get_available_teams",
+        return_value=[],
+    ):
+        yield
 
 
 @pytest.fixture(scope="function")

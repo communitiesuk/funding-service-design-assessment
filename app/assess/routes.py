@@ -1,5 +1,6 @@
 from datetime import datetime
 from urllib.parse import quote_plus
+from urllib.parse import unquote_plus
 
 from app.assess.auth.validation import check_access_application_id
 from app.assess.auth.validation import check_access_fund_short_name
@@ -10,6 +11,7 @@ from app.assess.data import *
 from app.assess.data import get_application_json
 from app.assess.data import get_application_overviews
 from app.assess.data import get_assessments_stats
+from app.assess.data import get_available_teams
 from app.assess.data import get_flag
 from app.assess.data import submit_score_and_justification
 from app.assess.display_value_mappings import assessment_statuses
@@ -29,6 +31,7 @@ from app.assess.helpers import determine_display_status
 from app.assess.helpers import generate_csv_of_application
 from app.assess.helpers import get_ttl_hash
 from app.assess.helpers import is_flaggable
+from app.assess.helpers import is_qa_complete
 from app.assess.helpers import resolve_application
 from app.assess.helpers import set_application_status_in_overview
 from app.assess.models.flag_v2 import FlagTypeV2
@@ -40,6 +43,7 @@ from app.assess.models.ui.assessor_task_list import AssessorTaskList
 from app.assess.status import all_status_completed
 from app.assess.status import update_ar_status_to_completed
 from app.assess.views.filters import utc_to_bst
+from app.aws import get_file_for_download_from_aws
 from config import Config
 from flask import Blueprint
 from flask import current_app
@@ -130,7 +134,7 @@ def display_sub_criteria(
     # TODO add test for this function in data_operations
     theme_matched_comments = (
         match_comment_to_theme(
-            comment_response, sub_criteria.themes, fund.short_name
+            comment_response, sub_criteria.themes, state.fund_short_name
         )
         if comment_response
         else None
@@ -274,17 +278,10 @@ def flag(application_id):
         for item in state.get_sub_sections_metadata()
     ]
 
-    # TODO: Rework on the avialable teams after implemented in fundstore
-    response = requests.get(
-        Config.GET_AVIALABLE_TEAMS_FOR_FUND.format(
-            fund_id=state.fund_id,
-            round_id=state.round_id,
-        )
+    teams_available = get_available_teams(
+        state.fund_id,
+        state.round_id,
     )
-    if response.status_code == 200:
-        teams_available = response.json()
-    else:
-        teams_available = []
 
     form = FlagApplicationForm(
         section_choices=choices,
@@ -516,8 +513,6 @@ def application(application_id):
         state.workflow_status, flags_list
     )
 
-    # TODO : Need to resolve this for multiple flags
-
     if flags_list:
         user_id_list = []
         for flag_data in flags_list:
@@ -550,6 +545,7 @@ def application(application_id):
         flags_list=flags_list,
         current_user_role=g.user.highest_role,
         is_flaggable=is_flaggable(display_status),
+        is_qa_complete=is_qa_complete(flags_list),
         display_status=display_status,
     )
 
@@ -709,8 +705,9 @@ def download_application_answers(
     "/application/<application_id>/export/<file_name>",
     methods=["GET"],
 )
-@check_access_application_id
 def get_file(application_id: str, file_name: str):
+    if request.args.get("quoted"):
+        file_name = unquote_plus(file_name)
     short_id = request.args.get("short_id")
     data, mimetype = get_file_for_download_from_aws(
         application_id=application_id, file_name=file_name

@@ -917,7 +917,7 @@ def test_create_ui_components_retains_order(monkeypatch):
     assert ui_components[11].key_to_url_dict == {
         "form_name/path/name/filename.png": (
             "http://example.org:5000/assess/application/app_123/export/"
-            "form_name/path/name/filename.png"
+            "form_name%252Fpath%252Fname%252Ffilename.png?quoted=True"
         )
     }
 
