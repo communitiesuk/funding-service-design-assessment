@@ -17,8 +17,8 @@ from app.assess.models.fund import Fund
 from app.assess.models.round import Round
 from app.assess.models.score import Score
 from app.assess.models.sub_criteria import SubCriteria
-from boto3 import client
-from botocore.exceptions import ClientError
+from app.aws import generate_url
+from app.aws import list_files_by_prefix
 from config import Config
 from flask import abort
 from flask import current_app
@@ -568,55 +568,6 @@ def submit_comment(
     return response.ok
 
 
-_S3_CLIENT = client(
-    "s3",
-    aws_access_key_id=Config.AWS_ACCESS_KEY_ID,
-    aws_secret_access_key=Config.AWS_SECRET_ACCESS_KEY,
-    region_name=Config.AWS_REGION,
-)
-
-
-def get_file_for_download_from_aws(file_name: str, application_id: str):
-    """_summary_: Function is set up to retrieve
-    files from aws bucket.
-    Args:
-        filename: Takes an filename
-        application_id: Takes an application_id # noqa
-    Returns:
-        Returns a tuple of (file_content, mime_type)
-    """
-
-    if file_name is None:
-        return None
-
-    prefixed_file_name = application_id + "/" + file_name
-
-    try:
-        obj = _S3_CLIENT.get_object(
-            Bucket=Config.AWS_BUCKET_NAME, Key=prefixed_file_name
-        )
-
-        mimetype = obj["ResponseMetadata"]["HTTPHeaders"]["content-type"]
-        data = obj["Body"].read()
-
-        return data, mimetype
-    except ClientError as e:
-        current_app.logger.error(e)
-        raise Exception(e)
-
-
-def list_files_in_folder(prefix):
-    response = _S3_CLIENT.list_objects_v2(
-        Bucket=Config.AWS_BUCKET_NAME, Prefix=prefix
-    )
-    keys = []
-    for obj in response.get("Contents") or []:
-        # we cut off the application id.
-        _, key = obj["Key"].split("/", 1)
-        keys.append(key)
-    return keys
-
-
 def get_files_for_application_upload_fields(
     application_id: str, short_id: str, application_json: dict
 ) -> List[tuple]:
@@ -643,7 +594,8 @@ def get_files_for_application_upload_fields(
                 if field["type"] == "file" and field.get("answer"):
                     file_names.append(field["answer"])
 
-    files = [
+    # files which used the old file upload component
+    legacy_files = [
         (
             file,
             url_for(
@@ -655,7 +607,15 @@ def get_files_for_application_upload_fields(
         )
         for file in file_names
     ]
-    return files
+
+    # files which used the client side file upload component
+    client_side_upload_files = list_files_by_prefix(application_id)
+    files = [
+        (file.filename, generate_url(file, short_id))
+        for file in client_side_upload_files
+    ]
+
+    return legacy_files + files
 
 
 def get_application_json(application_id):

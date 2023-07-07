@@ -1,5 +1,6 @@
 from datetime import datetime
 from urllib.parse import quote_plus
+from urllib.parse import unquote_plus
 
 from app.assess.auth.validation import check_access_application_id
 from app.assess.auth.validation import check_access_fund_short_name
@@ -41,6 +42,7 @@ from app.assess.models.ui.assessor_task_list import AssessorTaskList
 from app.assess.status import all_status_completed
 from app.assess.status import update_ar_status_to_completed
 from app.assess.views.filters import utc_to_bst
+from app.aws import get_file_for_download_from_aws
 from config import Config
 from flask import Blueprint
 from flask import current_app
@@ -702,8 +704,9 @@ def download_application_answers(application_id: str, short_id: str):
     "/application/<application_id>/export/<file_name>",
     methods=["GET"],
 )
-@check_access_application_id
 def get_file(application_id: str, file_name: str):
+    if request.args.get("quoted"):
+        file_name = unquote_plus(file_name)
     short_id = request.args.get("short_id")
     data, mimetype = get_file_for_download_from_aws(
         application_id=application_id, file_name=file_name
