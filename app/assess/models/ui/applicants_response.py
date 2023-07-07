@@ -11,6 +11,7 @@ from app.assess.views.filters import format_address
 from app.assess.views.filters import format_date
 from app.assess.views.filters import remove_dashes_underscores_capitalize
 from app.aws import list_files_in_folder
+from flask import current_app
 from flask import url_for
 
 ANSWER_NOT_PROVIDED_DEFAULT = "Not provided."
@@ -270,6 +271,11 @@ def _ui_component_from_factory(item: dict, application_id: str):
             )
 
         return NewAddAnotherTable.from_dict(item)
+
+    elif presentation_type == "currency":
+        if item.get("answer"):
+            item["answer"] = "£{:.2f}".format(float(item["answer"]))
+        return BesideQuestionAnswerPair.from_dict(item)
 
     elif presentation_type in ("text", "list", "free_text"):
         if field_type in ("radiosField") and item.get("answer"):
