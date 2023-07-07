@@ -399,23 +399,35 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
         return redirect("/assess/assessor_tool_dashboard/")
     fund_id, round_id = fund.id, _round.id
 
+    countries = {"ALL"}
+    if has_devolved_authority_validation(fund_id=fund_id):
+        countries = get_countries_from_roles(fund.short_name)
+
+    search_params = {
+        **search_params,
+        "countries": ",".join(countries),
+    }
+
     show_clear_filters = False
     if "clear_filters" not in request.args:
         search_params.update(
-            {k: v for k, v in request.args.items() if k in search_params}
+            {
+                k: v
+                for k, v in request.args.items()
+                if k in search_params and k != "countries"
+            }
         )
-        show_clear_filters = any(k in request.args for k in search_params)
-
-    if has_devolved_authority_validation(fund_id=fund_id):
-        countries = get_countries_from_roles(fund.short_name)
-    else:  # by default, if no devolved authority, show all countries
-        countries = frozenset({"ALL"})
+        show_clear_filters = any(
+            k in request.args for k in search_params if k != "countries"
+        )
 
     application_overviews = get_application_overviews(
-        fund_id,
-        round_id,
-        {**search_params, "countries": ",".join(countries)},
+        fund_id, round_id, search_params
     )
+
+    # this is only used for querying applications, so remove it from the search params,
+    # so it's not reflected on the user interface
+    del search_params["countries"]
 
     round_details = {
         "assessment_deadline": _round.assessment_deadline,
@@ -660,6 +672,7 @@ def generate_doc_list_for_download(application_id):
             "assess_bp.download_application_answers",
             application_id=application_id,
             short_id=short_id,
+            file_type="txt",
         ),
     )
 
