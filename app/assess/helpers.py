@@ -195,7 +195,11 @@ def generate_csv_of_application(q_and_a: dict, fund_name: str):
         section_title = simplify_title(section_name, remove_text=["cof", "ns"])
         section_title = " ".join(section_title).capitalize()
         for questions, answers in values.items():
-            if answers and answers.startswith("- "):
+            if (
+                answers
+                and isinstance(answers, str)
+                and answers.startswith("- ")
+            ):
                 answers = f"'{answers}"
             writer.writerow([section_title, questions, answers])
     return output.getvalue()
