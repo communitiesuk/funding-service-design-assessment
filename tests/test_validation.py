@@ -144,7 +144,8 @@ def test_has_devolved_authority_validation_ids(fund_id, expected):
     "short_name, roles, expected",
     [
         ("cof", {"COF_COMMENTER", "COF_SCOTLAND"}, True),
-        ("COF", {"NSTF_COMMENTER", "NSTF_SCOTLAND"}, False),
+        ("COF", {"NSTF_COMMENTER", "COF_SCOTLAND"}, False),
+        ("nstf", {"NSTF_COMMENTER", "COF_SCOTLAND"}, True),
     ],
 )
 def test_has_access_to_fund(monkeypatch, short_name, roles, expected):
