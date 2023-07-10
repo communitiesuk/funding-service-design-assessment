@@ -557,7 +557,6 @@ def application(application_id):
         accounts_list=accounts_list,
         teams_flag_stats=teams_flag_stats,
         flags_list=flags_list,
-        current_user_role=g.user.highest_role_map,
         is_flaggable=is_flaggable(display_status),
         is_qa_complete=is_qa_complete(flags_list),
         display_status=display_status,
