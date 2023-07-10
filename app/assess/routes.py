@@ -33,6 +33,7 @@ from app.assess.helpers import is_flaggable
 from app.assess.helpers import is_qa_complete
 from app.assess.helpers import resolve_application
 from app.assess.helpers import set_application_status_in_overview
+from app.assess.models.flag_teams import TeamsFlagData
 from app.assess.models.flag_v2 import FlagTypeV2
 from app.assess.models.fund_summary import create_fund_summaries
 from app.assess.models.fund_summary import is_after_today
@@ -533,8 +534,8 @@ def application(application_id):
                 accounts_list = get_bulk_accounts_dict(
                     user_id_list, state.fund_short_name
                 )
-    else:
-        flags_list = []
+
+    teams_flag_stats = TeamsFlagData.from_flags(flags_list).teams_stats
 
     sub_criteria_status_completed = all_status_completed(state)
     form = AssessmentCompleteForm()
@@ -552,6 +553,7 @@ def application(application_id):
         state=state,
         application_id=application_id,
         accounts_list=accounts_list,
+        teams_flag_stats=teams_flag_stats,
         flags_list=flags_list,
         current_user_role=g.user.highest_role,
         is_flaggable=is_flaggable(display_status),

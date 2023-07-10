@@ -40,15 +40,17 @@
 
 {% if g.access_controller.has_any_assessor_role %}
 <div>
-    {{ flag_tabs(state, application_id, flags_list, accounts_list) }}
+    {{ flag_tabs(state, application_id, teams_flag_stats, flags_list, accounts_list) }}
 </div>
 {% endif %}
 
-{# TODO: Display multiple flag banner #}
+{# Display multiple flag banner #}
 <div>
-    {% if g.access_controller.has_any_assessor_role and is_qa_complete %}
-        {{ qa_complete_flag(flags_list[-1], accounts_list[flags_list[-1].latest_user_id], form.csrf_token, application_id) }}
-    {% endif %}
+    {% for flag in flags_list %}
+        {% if g.access_controller.has_any_assessor_role and is_qa_complete and flag.latest_status.name == "QA_COMPLETED" %}
+            {{ qa_complete_flag(flag, accounts_list[flag.latest_user_id], form.csrf_token, application_id) }}
+        {% endif %}
+    {% endfor %}
 
     {% for flag in flags_list %}
         {% if g.access_controller.has_any_assessor_role and (display_status != "Stopped") and (flag.latest_status.name == "RAISED") %}
@@ -59,7 +61,7 @@
     {% endfor %}
 
     {% if sub_criteria_status_completed and g.access_controller.has_any_assessor_role and (not is_qa_complete) %}
-        {{ assessment_complete(state, flags_list[-1], form.csrf_token, application_id)}}
+        {{ assessment_complete(state, form.csrf_token, application_id)}}
     {% endif %}
 </div>
 
