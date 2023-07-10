@@ -31,7 +31,7 @@
                 <p><strong>Reason</strong><br>{{ data['justification'] }}</p>
                 <p><strong>Section(s) flagged</strong><br></p>
                 {{ display_flagged_sections(state, application_id, flag_data.sections_to_flag) }}
-                <p><strong>Flag allocation</strong><br> <span class="flagged-tag"> {{ "Flagged for"+ data['allocation'] if data['allocation'] else "N/A" }}</span></p>
+                <p><strong>Flag allocation</strong><br> <span class="flagged-tag"> {{ "Flagged for "+ data['allocation'] if data['allocation'] else "N/A" }}</span></p>
                 <p><strong>Notification sent</strong><br>No</p>
             {% else %}
                 {% if data['status'].name=='STOPPED' %}
