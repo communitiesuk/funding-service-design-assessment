@@ -843,12 +843,11 @@ class TestJinjaMacros(object):
 
     def test_assessment_completion_state_completed(self, request_ctx):
         rendered_html = render_template_string(
-            "{{assessment_complete(state, flag, csrf_token, application_id)}}",
+            "{{assessment_complete(state, csrf_token, application_id)}}",
             assessment_complete=get_template_attribute(
                 "macros/assessment_completion.html", "assessment_complete"
             ),
             state=type("State", (), {"workflow_status": "COMPLETED"})(),
-            flag=None,
             csrf_token=generate_csrf(),
             application_id=1,
             g=default_flask_g(),
@@ -868,20 +867,11 @@ class TestJinjaMacros(object):
 
     def test_assessment_completion_flagged(self, request_ctx):
         rendered_html = render_template_string(
-            "{{assessment_complete(state, flag, csrf_token, application_id)}}",
+            "{{assessment_complete(state, srf_token, application_id)}}",
             assessment_complete=get_template_attribute(
                 "macros/assessment_completion.html", "assessment_complete"
             ),
             state=type("State", (), {"workflow_status": "IN_PROGRESS"})(),
-            flag=type(
-                "Flag",
-                (),
-                {
-                    "latest_status": type(
-                        "FlagTypeV2", (), {"name": "RESOLVED"}
-                    )
-                },
-            )(),
             csrf_token=generate_csrf(),
             application_id=1,
             g=default_flask_g(),
