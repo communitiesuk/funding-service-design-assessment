@@ -250,9 +250,11 @@ def _ui_component_from_factory(item: dict, application_id: str):
         # we specify the multiple field_id's ids in a grouping to pick up each possible form branch
         # we should only get one answer here so extract the first and only answer
         item["answer"] = item["answer"][0][1] if "answer" in item else None
-        item["presentation_type"] = "text"
+        # currently only currencies, so we foramt, but we should add a formatter or some
+        # configuration open to change it
+        item["presentation_type"] = "currency"
         item["question"] = item["question"][0]
-        presentation_type = "text"
+        presentation_type = "currency"
 
     if presentation_type == "grouped_fields":
         return MonetaryKeyValues.from_dict(item)
