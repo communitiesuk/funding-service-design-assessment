@@ -232,7 +232,7 @@ def score(
         else:
             is_rescore = True
 
-    # call to assessment store to get latest score
+    # call to assessment store to get latest score.
     score_list = get_score_and_justification(
         application_id, sub_criteria_id, score_history=True
     )
@@ -245,7 +245,7 @@ def score(
         if (score_list is not None and len(scores_with_account_details) > 0)
         else None
     )
-    # TODO make COF_score_list extendable to other funds
+    # TODO make COF_score_list extendable to other funds.
     scoring_list = [
         (5, "Strong"),
         (4, "Good"),
@@ -572,7 +572,6 @@ def application(application_id):
         accounts_list=accounts_list,
         teams_flag_stats=teams_flag_stats,
         flags_list=flags_list,
-        current_user_role=g.user.highest_role,
         is_flaggable=is_flaggable(flag_status),
         is_qa_complete=is_qa_complete(flags_list),
         flag_status=flag_status,

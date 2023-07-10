@@ -41,7 +41,7 @@ def default_flask_g():
         full_name="Test Lead Assessor",
         email="test@example.com",
         roles=["COF_LEAD_ASSESSOR", "COF_ASSESSOR", "COF_COMMENTER"],
-        highest_role="COF_LEAD_ASSESSOR",
+        highest_role_map="COF_LEAD_ASSESSOR",
     )
     g.access_controller = AssessmentAccessController("COF")
     return g
@@ -119,7 +119,7 @@ class TestJinjaMacros(object):
             full_name="Test Commenter",
             email="test@example.com",
             roles=["COF_COMMENTER"],
-            highest_role="COF_COMMENTER",
+            highest_role_map="COF_COMMENTER",
         )
         g.access_controller = AssessmentAccessController("COF")
         rendered_html = render_template_string(
