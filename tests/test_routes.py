@@ -1175,3 +1175,48 @@ class TestRoutes:
         assert "attachment;filename=file_name.abc" == response.headers.get(
             "Content-Disposition"
         )
+
+
+@pytest.mark.parametrize(
+    "file_extension, content_type",
+    [
+        ("txt", "text/plain; charset=utf-8"),
+        ("csv", "text/csv; charset=utf-8"),
+    ],
+)
+def test_download_application_answers(
+    flask_test_client,
+    mock_get_funds,
+    mock_get_application_metadata,
+    mock_get_fund,
+    mock_get_application,
+    file_extension,
+    content_type,
+):
+    token = create_valid_token(test_lead_assessor_claims)
+    flask_test_client.set_cookie("localhost", "fsd_user_token", token)
+    url = f"/assess/application/123/export/456/answers.{file_extension}"
+    response = flask_test_client.get(url)
+
+    assert response.status_code == 200
+
+    assert response.headers["Content-Type"] == content_type
+    assert (
+        response.headers["Content-Disposition"]
+        == f"attachment;filename=456_answers.{file_extension}"
+    )
+
+
+def test_download_application_answers_invalid_file_type(
+    flask_test_client,
+    mock_get_funds,
+    mock_get_application_metadata,
+    mock_get_fund,
+    mock_get_application,
+):
+    token = create_valid_token(test_lead_assessor_claims)
+    flask_test_client.set_cookie("localhost", "fsd_user_token", token)
+    response = flask_test_client.get(
+        "/assess/application/123/export/456/answers.invalid"
+    )
+    assert response.status_code == 404

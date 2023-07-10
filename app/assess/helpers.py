@@ -1,4 +1,6 @@
+import csv
 import time
+from io import StringIO
 from typing import List
 
 from app.assess.data import get_flags
@@ -12,6 +14,7 @@ from flask import redirect
 from flask import render_template
 from flask import request
 from flask import url_for
+from fsd_utils.mapping.application.application_utils import simplify_title
 
 
 def get_ttl_hash(seconds=3600) -> int:
@@ -196,3 +199,22 @@ def resolve_application(
         reason_to_flag=reason_to_flag,
         allocated_team=allocated_team,
     )
+
+
+def generate_csv_of_application(q_and_a: dict, fund_name: str):
+    output = StringIO()
+    writer = csv.writer(output)
+    writer.writerow(["Fund", fund_name])
+    writer.writerow(["Section", "Question", "Answer"])
+    for section_name, values in q_and_a.items():
+        section_title = simplify_title(section_name, remove_text=["cof", "ns"])
+        section_title = " ".join(section_title).capitalize()
+        for questions, answers in values.items():
+            if (
+                answers
+                and isinstance(answers, str)
+                and answers.startswith("- ")
+            ):
+                answers = f"'{answers}"
+            writer.writerow([section_title, questions, answers])
+    return output.getvalue()
