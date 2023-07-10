@@ -247,7 +247,7 @@ def test_check_access_application_id_can_access_application_when_has_country_rol
     )
     monkeypatch.setattr(
         "app.assess.auth.validation.g",
-        _MockGlobal(roles=["COF_ENGLAND"]),
+        _MockGlobal(roles=["COF_ENGLAND", "COF_COMMENTER"]),
     )
 
     _dummy_function_check_access_application_id()  # no fail means pass
