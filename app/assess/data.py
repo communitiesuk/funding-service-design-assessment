@@ -404,7 +404,7 @@ def get_flags(application_id: str) -> List[FlagV2]:
     else:
         msg = f"flag for application: '{application_id}' not found."
         current_app.logger.warn(msg)
-        return None
+        return []
 
 
 def submit_flag(
