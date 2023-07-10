@@ -27,7 +27,8 @@ from app.assess.forms.mark_qa_complete_form import MarkQaCompleteForm
 from app.assess.forms.rescore_form import RescoreForm
 from app.assess.forms.resolve_flag_form import ResolveFlagForm
 from app.assess.forms.scores_and_justifications import ScoreForm
-from app.assess.helpers import determine_display_status
+from app.assess.helpers import determine_assessment_status
+from app.assess.helpers import determine_flag_status
 from app.assess.helpers import get_ttl_hash
 from app.assess.helpers import is_flaggable
 from app.assess.helpers import is_qa_complete
@@ -140,18 +141,21 @@ def display_sub_criteria(
         else None
     )
 
-    display_status = determine_display_status(
+    assessment_status = determine_assessment_status(
         sub_criteria.workflow_status, flags_list
     )
+    flag_status = determine_flag_status(flags_list)
+
     common_template_config = {
         "sub_criteria": sub_criteria,
         "application_id": application_id,
         "comments": theme_matched_comments,
-        "is_flaggable": is_flaggable(display_status),
+        "is_flaggable": is_flaggable(flag_status),
         "display_comment_box": add_comment_argument,
         "comment_form": comment_form,
         "current_theme": current_theme,
-        "display_status": display_status,
+        "flag_status": flag_status,
+        "assessment_status": assessment_status,
     }
 
     theme_answers_response = get_sub_criteria_theme_answers(
@@ -204,9 +208,10 @@ def score(
         else None
     )
 
-    display_status = determine_display_status(
+    assessment_status = determine_assessment_status(
         sub_criteria.workflow_status, flags_list
     )
+    flag_status = determine_flag_status(flags_list)
     score_form = ScoreForm()
     rescore_form = RescoreForm()
     is_rescore = rescore_form.validate_on_submit()
@@ -259,8 +264,9 @@ def score(
         sub_criteria=sub_criteria,
         state=state,
         comments=theme_matched_comments,
-        display_status=display_status,
-        is_flaggable=is_flaggable(display_status),
+        flag_status=flag_status,
+        assessment_status=assessment_status,
+        is_flaggable=is_flaggable(flag_status),
     )
 
 
@@ -306,13 +312,19 @@ def flag(application_id):
 
     sub_criteria_banner_state = get_sub_criteria_banner_state(application_id)
 
+    flags_list = get_flags(application_id)
+    assessment_status = determine_assessment_status(
+        state.workflow_status, flags_list
+    )
+    flag_status = determine_flag_status(flags_list)
     return render_template(
         "flag_application.html",
         application_id=application_id,
         flag=flag,
         sub_criteria=sub_criteria_banner_state,
         form=form,
-        display_status=sub_criteria_banner_state.workflow_status,
+        assessment_status=assessment_status,
+        flag_status=flag_status,
         referrer=request.referrer,
         state=state,
         teams_available=teams_available,
@@ -354,7 +366,9 @@ def qa_complete(application_id):
         sub_criteria=sub_criteria_banner_state,
         form=form,
         referrer=request.referrer,
-        display_status=sub_criteria_banner_state.workflow_status,
+        assessment_status=assessment_statuses[
+            sub_criteria_banner_state.workflow_status
+        ],
     )
 
 
@@ -520,9 +534,10 @@ def application(application_id):
     flags_list = get_flags(application_id)
     accounts_list = []
 
-    display_status = determine_display_status(
+    assessment_status = determine_assessment_status(
         state.workflow_status, flags_list
     )
+    flag_status = determine_flag_status(flags_list)
 
     if flags_list:
         user_id_list = []
@@ -556,9 +571,10 @@ def application(application_id):
         teams_flag_stats=teams_flag_stats,
         flags_list=flags_list,
         current_user_role=g.user.highest_role,
-        is_flaggable=is_flaggable(display_status),
+        is_flaggable=is_flaggable(flag_status),
         is_qa_complete=is_qa_complete(flags_list),
-        display_status=display_status,
+        flag_status=flag_status,
+        assessment_status=assessment_status,
     )
 
 
@@ -655,9 +671,10 @@ def generate_doc_list_for_download(application_id):
     sub_criteria_banner_state = get_sub_criteria_banner_state(application_id)
     short_id = sub_criteria_banner_state.short_id[-6:]
     flags_list = get_flags(application_id)
-    display_status = determine_display_status(
+    assessment_status = determine_assessment_status(
         sub_criteria_banner_state.workflow_status, flags_list
     )
+    flag_status = determine_flag_status(flags_list)
 
     fund = get_fund(sub_criteria_banner_state.fund_id)
     application_json = get_application_json(application_id)
@@ -682,7 +699,8 @@ def generate_doc_list_for_download(application_id):
         sub_criteria=sub_criteria_banner_state,
         application_answers=application_answers,
         supporting_evidence=supporting_evidence,
-        display_status=display_status,
+        assessment_status=assessment_status,
+        flag_status=flag_status,
     )
 
 
