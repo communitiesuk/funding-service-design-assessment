@@ -31,7 +31,8 @@
         state.short_id,
         state.project_name,
         state.funding_amount_requested,
-        display_status,
+        assessment_status,
+        flag_status
     ) }}
 </header>
 {% endblock header %}
@@ -53,9 +54,9 @@
     {% endfor %}
 
     {% for flag in flags_list %}
-        {% if g.access_controller.has_any_assessor_role and (display_status != "Stopped") and (flag.latest_status.name == "RAISED") %}
+        {% if g.access_controller.has_any_assessor_role and (flag_status != "Stopped") and (flag.latest_status.name == "RAISED") %}
             {{ assessment_flagged(state, flag, accounts_list[flag.latest_user_id], application_id) }}
-        {% elif g.access_controller.has_any_assessor_role and display_status == "Stopped" and (flag.latest_status.name == "STOPPED")%}
+        {% elif g.access_controller.has_any_assessor_role and flag_status == "Stopped" and (flag.latest_status.name == "STOPPED")%}
             {{ assessment_stopped(flag, accounts_list[flag.latest_user_id], application_id) }}
         {% endif %}
     {% endfor %}
@@ -84,7 +85,7 @@
         </div>
         <div class="govuk-grid-column-one-third govuk-!-margin-top-2 govuk-button-group">
             <span>
-                {% if g.access_controller.is_lead_assessor and state.workflow_status=="COMPLETED" and (not is_qa_complete) and display_status not in ["Stopped", "Flagged", "Multiple Flags To Resolve"] and "Flagged" not in display_status %}
+                {% if g.access_controller.is_lead_assessor and state.workflow_status=="COMPLETED" and (not is_qa_complete) and flag_status not in ["Stopped", "Flagged", "Multiple flags to resolve"] and "Flagged" not in flag_status %}
                 {{ mark_qa_complete_button(application_id) }}
                 {% endif %}
             </span>
