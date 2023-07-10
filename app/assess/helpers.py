@@ -3,7 +3,6 @@ import time
 from io import StringIO
 from typing import List
 
-from app.assess.data import get_application_metadata
 from app.assess.data import get_flags
 from app.assess.data import get_fund
 from app.assess.data import get_sub_criteria_banner_state
@@ -42,13 +41,8 @@ def get_fund_short_name_from_request() -> str | None:
     return fund_short_name
 
 
-def determine_display_status(workflow_status: str, Flags: List[FlagV2]) -> str:
-    """
-    Deduce whether to override display_status with a
-    flag.
-    """
-    display_status = ""
-
+def determine_flag_status(Flags: List[FlagV2]) -> str:
+    flag_status = ""
     flags_list = (
         [
             (FlagV2.from_dict(flag) if isinstance(flag, dict) else flag)
@@ -60,18 +54,25 @@ def determine_display_status(workflow_status: str, Flags: List[FlagV2]) -> str:
     all_latest_status = [flag.latest_status for flag in flags_list]
 
     if FlagTypeV2.STOPPED in all_latest_status:
-        display_status = "Stopped"
+        flag_status = "Stopped"
     elif all_latest_status.count(FlagTypeV2.RAISED) > 1:
-        display_status = "Multiple Flags To Resolve"
+        flag_status = "Multiple flags to resolve"
     elif all_latest_status.count(FlagTypeV2.RAISED) == 1:
         for flag in flags_list:
             if flag.latest_status == FlagTypeV2.RAISED:
-                display_status = (
+                flag_status = (
                     ("Flagged for " + flag.latest_allocation)
                     if flag.latest_allocation
                     else "Flagged"
                 )
-    elif FlagTypeV2.QA_COMPLETED in all_latest_status:
+    return flag_status
+
+
+def determine_display_status(workflow_status: str, Flags: List[FlagV2]) -> str:
+    flag_status = determine_flag_status(Flags)
+    if flag_status:
+        display_status = flag_status
+    elif is_qa_complete(Flags):
         display_status = "QA complete"
     else:
         display_status = assessment_statuses[workflow_status]
@@ -79,11 +80,23 @@ def determine_display_status(workflow_status: str, Flags: List[FlagV2]) -> str:
     return display_status
 
 
-def is_flaggable(display_status: str):
-    return display_status != "Stopped"
+def determine_assessment_status(
+    workflow_status: str, Flags: List[FlagV2]
+) -> str:
+    if is_qa_complete(Flags):
+        assessment_status = "QA complete"
+    else:
+        assessment_status = assessment_statuses[workflow_status]
+
+    return assessment_status
+
+
+def is_flaggable(flag_status: str):
+    return flag_status != "Stopped"
 
 
 def is_qa_complete(Flags: List[FlagV2]) -> bool:
+    # TODO: Rework on this when QA_COMPLETED is moved to assessment enum type
     flags_list = (
         [
             (FlagV2.from_dict(flag) if isinstance(flag, dict) else flag)
@@ -163,12 +176,13 @@ def resolve_application(
         )
     sub_criteria_banner_state = get_sub_criteria_banner_state(application_id)
     flags_list = get_flags(application_id)
-    display_status = determine_display_status(
+    assessment_status = determine_assessment_status(
         state.workflow_status
         if state
-        else get_application_metadata(application_id)["workflow_status"],
+        else sub_criteria_banner_state.workflow_status,
         flags_list,
     )
+    flag_status = determine_flag_status(flags_list)
 
     fund = get_fund(sub_criteria_banner_state.fund_id)
     return render_template(
@@ -178,7 +192,8 @@ def resolve_application(
         sub_criteria=sub_criteria_banner_state,
         form=form,
         referrer=request.referrer,
-        display_status=display_status,
+        assessment_status=assessment_status,
+        flag_status=flag_status,
         state=state,
         sections_to_flag=section,
         reason_to_flag=reason_to_flag,
