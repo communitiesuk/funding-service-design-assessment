@@ -12,6 +12,17 @@
     {% endfor %}
 {% endmacro %}
 
+{% macro flag_team_table(state, application_id, teams_flag_stats, accounts_list) %}
+    <h2 class="govuk-heading-l">{{ "Flagged for "+ teams_flag_stats.team_name }}</h2>
+    {% for flag_item in teams_flag_stats.flags_list %}
+        {% if teams_flag_stats.flags_list|length > 1 %}
+            <h3>{{ teams_flag_stats.ordinal_list[loop.index0] }} flag raised</h3>
+        {% endif %}
+        {{ flag_table(state, application_id, flag_item, accounts_list) }}
+    {% endfor %}
+
+{% endmacro %}
+
 {% macro flag_table(state, application_id, flag_data, accounts_list) %}
     {% set items = [] %}
     {% for data in flag_data.updates %}
@@ -20,7 +31,7 @@
                 <p><strong>Reason</strong><br>{{ data['justification'] }}</p>
                 <p><strong>Section(s) flagged</strong><br></p>
                 {{ display_flagged_sections(state, application_id, flag_data.sections_to_flag) }}
-                <p><strong>Flag allocation</strong><br> <span class="flagged-tag"> {{ "Flagged for"+ data['allocation'] if data['allocation'] else "N/A" }}</span></p>
+                <p><strong>Flag allocation</strong><br> <span class="flagged-tag"> {{ "Flagged for "+ data['allocation'] if data['allocation'] else "N/A" }}</span></p>
                 <p><strong>Notification sent</strong><br>No</p>
             {% else %}
                 {% if data['status'].name=='STOPPED' %}
@@ -45,7 +56,6 @@
                                         {'text': data['status'].name | capitalize}]) %}
     {% endfor %}
 
-    <h2 class="govuk-heading-l">{{ "Flagged for "+ flag_data.latest_allocation if flag_data.latest_allocation else "Flagged" }}</h2>
     {{ govukTable({
     'head': [
         {'text': "Created by"},
@@ -57,19 +67,17 @@
     })}}
 {% endmacro %}
 
-{% macro flag_tabs(state, application_id, flags_list, accounts_list) %}
+{% macro flag_tabs(state, application_id, teams_flag_stats, flags_list, accounts_list) %}
     {% set TabsData %}
         {% set items = [] %}
-        {% for flag_item in flags_list %}
-            {% if flag_item.latest_status.name != "QA_COMPLETED" %}
+        {% for team, stats in teams_flag_stats.items() %}
                 {% set addItem = items.append({
-                'label': ("Flagged for " + flag_item.latest_allocation) if flag_item.latest_allocation else ("Flag " + (loop.index0 +1) | string),
-                'id': "tab-" + (flag_item.latest_allocation | replace(" ", "-") if flag_item.latest_allocation else loop.index0 | string),
+                'label': ("Flagged for " + team),
+                'id': "tab-" + (team | replace(" ", "-")),
                 'panel': {
-                    'html': flag_table(state, application_id, flag_item, accounts_list)}
+                    'html': flag_team_table(state, application_id, stats, accounts_list)}
                 })%}
                 {# <p>items: {{ flag_table(state, application_id, flag_item, accounts_list) }}</p> #}
-            {% endif %}
         {% endfor %}
 
         {{ govukTabs({

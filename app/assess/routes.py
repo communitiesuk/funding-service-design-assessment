@@ -28,11 +28,13 @@ from app.assess.forms.rescore_form import RescoreForm
 from app.assess.forms.resolve_flag_form import ResolveFlagForm
 from app.assess.forms.scores_and_justifications import ScoreForm
 from app.assess.helpers import determine_display_status
+from app.assess.helpers import generate_csv_of_application
 from app.assess.helpers import get_ttl_hash
 from app.assess.helpers import is_flaggable
 from app.assess.helpers import is_qa_complete
 from app.assess.helpers import resolve_application
 from app.assess.helpers import set_application_status_in_overview
+from app.assess.models.flag_teams import TeamsFlagData
 from app.assess.models.flag_v2 import FlagTypeV2
 from app.assess.models.fund_summary import create_fund_summaries
 from app.assess.models.fund_summary import is_after_today
@@ -397,6 +399,7 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
     if not _round:
         return redirect("/assess/assessor_tool_dashboard/")
     fund_id, round_id = fund.id, _round.id
+
     countries = {"ALL"}
     if has_devolved_authority_validation(fund_id=fund_id):
         countries = get_countries_from_roles(fund.short_name)
@@ -533,8 +536,8 @@ def application(application_id):
                 accounts_list = get_bulk_accounts_dict(
                     user_id_list, state.fund_short_name
                 )
-    else:
-        flags_list = []
+
+    teams_flag_stats = TeamsFlagData.from_flags(flags_list).teams_stats
 
     sub_criteria_status_completed = all_status_completed(state)
     form = AssessmentCompleteForm()
@@ -552,6 +555,7 @@ def application(application_id):
         state=state,
         application_id=application_id,
         accounts_list=accounts_list,
+        teams_flag_stats=teams_flag_stats,
         flags_list=flags_list,
         current_user_role=g.user.highest_role,
         is_flaggable=is_flaggable(display_status),
@@ -670,6 +674,7 @@ def generate_doc_list_for_download(application_id):
             "assess_bp.download_application_answers",
             application_id=application_id,
             short_id=short_id,
+            file_type="txt",
         ),
     )
 
@@ -684,20 +689,31 @@ def generate_doc_list_for_download(application_id):
     )
 
 
-@assess_bp.route("/application/<application_id>/export/<short_id>/answers.txt")
+@assess_bp.route(
+    "/application/<application_id>/export/<short_id>/answers.<file_type>"
+)
 @check_access_application_id(roles_required=["LEAD_ASSESSOR"])
-def download_application_answers(application_id: str, short_id: str):
+def download_application_answers(
+    application_id: str, short_id: str, file_type: str
+):
     current_app.logger.info(
-        f"Generating application Q+A download for application {application_id}"
+        "Generating application Q+A download for application"
+        f" {application_id} in {file_type} format"
     )
     application_json = get_application_json(application_id)
     application_json_blob = application_json["jsonb_blob"]
 
     qanda_dict = extract_questions_and_answers(application_json_blob["forms"])
     fund = get_fund(application_json["jsonb_blob"]["fund_id"])
-    text = generate_text_of_application(qanda_dict, fund.name)
 
-    return download_file(text, "text/plain", f"{short_id}_answers.txt")
+    if file_type == "txt":
+        text = generate_text_of_application(qanda_dict, fund.name)
+        return download_file(text, "text/plain", f"{short_id}_answers.txt")
+    elif file_type == "csv":
+        csv = generate_csv_of_application(qanda_dict, fund.name)
+        return download_file(csv, "text/csv", f"{short_id}_answers.csv")
+
+    abort(404)
 
 
 @assess_bp.route(
