@@ -572,7 +572,7 @@ def application(application_id):
         accounts_list=accounts_list,
         teams_flag_stats=teams_flag_stats,
         flags_list=flags_list,
-        is_flaggable=is_flaggable(display_status),
+        is_flaggable=is_flaggable(flag_status),
         is_qa_complete=is_qa_complete(flags_list),
         flag_status=flag_status,
         assessment_status=assessment_status,
