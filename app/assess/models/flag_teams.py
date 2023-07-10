@@ -14,8 +14,6 @@ class TeamFlagStats:
     num_of_resolved: int
     num_of_raised: int
     num_of_stopped: int
-    latest_status: FlagTypeV2
-    date_created: str
     ordinal_list: list
     flags_list: List[FlagV2]
 
@@ -48,15 +46,11 @@ class TeamsFlagData:
             num_of_resolved = 0
             num_of_raised = 0
             num_of_stopped = 0
-            latest_status = ""
-            date_created = ""
             team_flags_list = []
             # ordinal_list = []
 
             for flag in flags_list:
                 if flag.latest_allocation == team:
-                    date_created = flag.date_created
-                    latest_status = flag.latest_status
                     num_of_flags = num_of_flags + 1
                     team_flags_list.append(flag)
                     # ordinal_list.append(TeamsFlagData.ordinal(num_of_flags))
@@ -73,8 +67,6 @@ class TeamsFlagData:
                 num_of_resolved=num_of_resolved,
                 num_of_raised=num_of_raised,
                 num_of_stopped=num_of_stopped,
-                latest_status=latest_status,
-                date_created=date_created,
                 ordinal_list=ordinal_list[0:num_of_flags][::-1],
                 flags_list=team_flags_list[::-1],
             )
