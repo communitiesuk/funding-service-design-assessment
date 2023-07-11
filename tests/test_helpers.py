@@ -3,6 +3,7 @@ from app.assess.helpers import determine_display_status
 from app.assess.helpers import generate_csv_of_application
 from app.assess.helpers import is_flaggable
 from app.assess.models.flag_v2 import FlagV2
+from app.assess.models.fund import Fund
 
 RAISED_FLAG = [
     FlagV2.from_dict(
@@ -127,18 +128,32 @@ def test_generate_csv_of_application():
     q_and_a = {
         "section1": {"question1": "- answer1", "question2": "answer2"},
         "section2": {"question3": "- answer3", "question4": "answer4"},
+        "section3": {"question5": "", "question6": None},
     }
-    fund_name = "Test Fund"
+    fund = Fund(
+        name="Test Fund",
+        id="fund-uuid",
+        description="Test Fund Description",
+        short_name="Test Short Name",
+    )
+
+    application = {
+        "application_id": "application-uuid",
+        "short_id": "applcation-short-reference",
+    }
 
     expected_output = (
-        "Fund,Test Fund\r\n"
+        "Fund,Test Fund,fund-uuid\r\n"
+        "Application,applcation-short-reference,application-uuid\r\n"
         "Section,Question,Answer\r\n"
         "Section1,question1,'- answer1\r\n"
         "Section1,question2,answer2\r\n"
         "Section2,question3,'- answer3\r\n"
         "Section2,question4,answer4\r\n"
+        "Section3,question5,Not provided\r\n"
+        "Section3,question6,Not provided\r\n"
     )
 
-    result = generate_csv_of_application(q_and_a, fund_name)
+    result = generate_csv_of_application(q_and_a, fund, application)
 
     assert result == expected_output
