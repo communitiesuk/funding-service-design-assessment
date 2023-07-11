@@ -173,7 +173,6 @@ def get_bulk_accounts_dict(account_ids: List, fund_short_name: str):
             debug_user_config["highest_role_map"] = {
                 fund_short_name: Config.DEBUG_USER_ROLE
             }
-            del debug_user_config["highest_role"]
             users_result[Config.DEBUG_USER_ACCOUNT_ID] = debug_user_config
 
         for user_result in users_result.values():
