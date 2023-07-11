@@ -43,7 +43,7 @@ class DevelopmentConfig(DefaultConfig):
             "NSTF_ASSESSOR",
             "NSTF_COMMENTER",
         ],
-        "highest_role_map": DEBUG_USER_ROLE,
+        "highest_role_map":  {'COF': 'LEAD_ASSESSOR', 'NSTF': 'LEAD_ASSESSOR'},
     }
     DEBUG_USER_ACCOUNT_ID = "00000000-0000-0000-0000-000000000000"
 
