@@ -1,6 +1,10 @@
+import traceback
+
 from app.assess.data import get_default_round_data
+from app.assess.routes import assess_bp
 from config import Config
 from flask import Blueprint
+from flask import current_app
 from flask import render_template
 
 default_bp = Blueprint("default_bp", __name__, template_folder="templates")
@@ -16,13 +20,23 @@ def index():
     )
 
 
+@assess_bp.errorhandler(404)
 @default_bp.errorhandler(404)
 def not_found(error):
+    error_message = f"Encountered 500: {error}"
+    stack_trace = traceback.format_exc()
+    current_app.logger.error(f"{error_message}\n{stack_trace}")
     return render_template("404.html"), 404
 
 
+@assess_bp.errorhandler(500)
 @default_bp.errorhandler(500)
+@assess_bp.errorhandler(Exception)
+@default_bp.errorhandler(Exception)
 def internal_server_error(error):
+    error_message = f"Encountered 500: {error}"
+    stack_trace = traceback.format_exc()
+    current_app.logger.error(f"{error_message}\n{stack_trace}")
     return render_template("500.html"), 500
 
 
