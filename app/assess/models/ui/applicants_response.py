@@ -257,6 +257,7 @@ def _ui_component_from_factory(item: dict, application_id: str):
             item["answer"] = float(item["answer"])
 
     # TODO : Handle "monthYearField" field convertion in a better way if exists in "multiInputField"
+    # Convert input date string from MM-YYYY/YYYY-MM to Month Year format (eg., 2023-06 to June 2023)
     if (
         answer
         and field_type == "monthYearField"

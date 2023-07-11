@@ -290,6 +290,27 @@ class TestApplicatorsResponseComponentFactory:
             ),
             (
                 {
+                    "presentation_type": "text",
+                    "field_type": "monthYearField",
+                    "answer": "06-2023",
+                    "question": "foo",
+                },
+                BesideQuestionAnswerPair,
+            ),
+            (
+                {
+                    "presentation_type": "table",
+                    "field_type": "multiInputField",
+                    "answer": [
+                        ["", "", "html"],
+                        ["", ["06-2023"], "monthYearField"],
+                    ],
+                    "question": "foo",
+                },
+                NewAddAnotherTable,
+            ),
+            (
+                {
                     "presentation_type": "file",
                     "answer": "https://www.example.com/file.pdf",
                     "question": "foo",
