@@ -2,6 +2,7 @@
 from abc import ABC
 from abc import abstractmethod
 from dataclasses import dataclass
+from datetime import datetime
 from typing import Iterable
 from typing import List
 from typing import Tuple
@@ -212,6 +213,17 @@ class NewAddAnotherTable(ApplicantResponseComponent):
         )
 
 
+def _convert_to_month_year(input_date):
+    """Convert input date string from MM-YYYY/YYYY-MM to Month Year
+    Example converts (06-2023, 2023-06..) to June 2023."""
+    try:
+        date_object = datetime.strptime(input_date, "%Y-%m")
+    except ValueError:
+        date_object = datetime.strptime(input_date, "%m-%Y")
+    date_object.strftime("%B %Y")
+    return str(date_object.strftime("%B %Y"))
+
+
 def _ui_component_from_factory(item: dict, application_id: str):
     """
     :param item: dict
@@ -243,6 +255,26 @@ def _ui_component_from_factory(item: dict, application_id: str):
     if answer and field_type in ("numberField",):
         if presentation_type not in ("grouped_fields",):
             item["answer"] = float(item["answer"])
+
+    # TODO : Handle "monthYearField" field convertion in a better way if exists in "multiInputField"
+    if (
+        answer
+        and field_type == "monthYearField"
+        and presentation_type == "text"
+    ) or (
+        answer and field_type == "multiInputField" and isinstance(answer, list)
+    ):
+        if isinstance(answer, list):
+            try:
+                if answer[1][2] == "monthYearField":
+                    input_date = answer[1][1][0]
+                    item["answer"][1][1][0] = _convert_to_month_year(
+                        input_date
+                    )
+            except IndexError:
+                pass
+        else:
+            item["answer"] = _convert_to_month_year(answer)
 
     if item.get("branched_field"):
         # In the case of the same question asked in two places (but with differing fields ids)
@@ -277,6 +309,11 @@ def _ui_component_from_factory(item: dict, application_id: str):
     elif presentation_type == "currency":
         if item.get("answer"):
             item["answer"] = "£{:.2f}".format(float(item["answer"]))
+        return BesideQuestionAnswerPair.from_dict(item)
+
+    elif presentation_type == "integer":
+        if item.get("answer"):
+            item["answer"] = "{}".format(int(item["answer"]))
         return BesideQuestionAnswerPair.from_dict(item)
 
     elif presentation_type in ("text", "list", "free_text"):
