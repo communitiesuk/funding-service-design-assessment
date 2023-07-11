@@ -281,6 +281,15 @@ class TestApplicatorsResponseComponentFactory:
             ),
             (
                 {
+                    "presentation_type": "integer",
+                    "field_type": "numberField",
+                    "answer": "100.0",
+                    "question": "foo",
+                },
+                BesideQuestionAnswerPair,
+            ),
+            (
+                {
                     "presentation_type": "file",
                     "answer": "https://www.example.com/file.pdf",
                     "question": "foo",
