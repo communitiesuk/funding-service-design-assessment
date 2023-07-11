@@ -121,6 +121,11 @@ class DefaultConfig:
         ASSESSMENT_STORE_API_HOST + "/application/{application_id}/metadata"
     )
 
+    ALL_UPLOADED_DOCUMENTS_THEME_ANSWERS_ENDPOINT = (
+        ASSESSMENT_STORE_API_HOST
+        + "/application/{application_id}/all_uploaded_documents"
+    )
+
     SUB_CRITERIA_THEME_ANSWERS_ENDPOINT = (
         "/sub_criteria_themes/{application_id}/{theme_id}"
     )

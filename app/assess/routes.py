@@ -80,6 +80,31 @@ def get_state_for_tasklist_banner(application_id) -> AssessorTaskList:
     return state
 
 
+def _handle_all_uploaded_documents(application_id):
+    flags_list = get_flags(application_id)
+    flag_status = determine_flag_status(flags_list)
+
+    theme_answers_response = get_all_uploaded_documents_theme_answers(
+        application_id
+    )
+    answers_meta = applicants_response.create_ui_components(
+        theme_answers_response, application_id
+    )
+
+    state = get_state_for_tasklist_banner(application_id)
+    assessment_status = determine_assessment_status(
+        state.workflow_status, flags_list
+    )
+    return render_template(
+        "all_uploaded_documents.html",
+        state=state,
+        application_id=application_id,
+        is_flaggable=is_flaggable(flag_status),
+        answers_meta=answers_meta,
+        assessment_status=assessment_status,
+    )
+
+
 @assess_bp.route(
     "/application_id/<application_id>/sub_criteria_id/<sub_criteria_id>",
     methods=["POST", "GET"],
@@ -89,6 +114,9 @@ def display_sub_criteria(
     application_id,
     sub_criteria_id,
 ):
+    if sub_criteria_id == "all_uploaded_documents":
+        return _handle_all_uploaded_documents(application_id)
+
     """
     Page showing sub criteria and themes for an application
     """
@@ -533,6 +561,8 @@ def application(application_id):
         update_ar_status_to_completed(application_id)
 
     state = get_state_for_tasklist_banner(application_id)
+    fund = get_fund(state.fund_short_name, use_short_name=True)
+
     flags_list = get_flags(application_id)
     accounts_list = []
 
@@ -576,6 +606,7 @@ def application(application_id):
         is_qa_complete=is_qa_complete(flags_list),
         flag_status=flag_status,
         assessment_status=assessment_status,
+        all_uploaded_documents_section_available=fund.all_uploaded_documents_section_available,
     )
 
 
