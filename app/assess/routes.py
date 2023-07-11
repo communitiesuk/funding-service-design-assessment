@@ -727,7 +727,7 @@ def download_application_answers(
         text = generate_text_of_application(qanda_dict, fund.name)
         return download_file(text, "text/plain", f"{short_id}_answers.txt")
     elif file_type == "csv":
-        csv = generate_csv_of_application(qanda_dict, fund.name)
+        csv = generate_csv_of_application(qanda_dict, fund, application_json)
         return download_file(csv, "text/csv", f"{short_id}_answers.csv")
 
     abort(404)

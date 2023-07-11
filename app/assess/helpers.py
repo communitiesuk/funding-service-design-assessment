@@ -10,6 +10,7 @@ from app.assess.data import submit_flag
 from app.assess.display_value_mappings import assessment_statuses
 from app.assess.models.flag_v2 import FlagTypeV2
 from app.assess.models.flag_v2 import FlagV2
+from app.assess.models.fund import Fund
 from flask import redirect
 from flask import render_template
 from flask import request
@@ -201,10 +202,17 @@ def resolve_application(
     )
 
 
-def generate_csv_of_application(q_and_a: dict, fund_name: str):
+def generate_csv_of_application(q_and_a: dict, fund: Fund, application_json):
     output = StringIO()
     writer = csv.writer(output)
-    writer.writerow(["Fund", fund_name])
+    writer.writerow(["Fund", fund.name, fund.id])
+    writer.writerow(
+        [
+            "Application",
+            application_json["short_id"],
+            application_json["application_id"],
+        ]
+    )
     writer.writerow(["Section", "Question", "Answer"])
     for section_name, values in q_and_a.items():
         section_title = simplify_title(section_name, remove_text=["cof", "ns"])
@@ -216,5 +224,9 @@ def generate_csv_of_application(q_and_a: dict, fund_name: str):
                 and answers.startswith("- ")
             ):
                 answers = f"'{answers}"
+
+            if not answers:
+                answers = "Not provided"
+
             writer.writerow([section_title, questions, answers])
     return output.getvalue()
