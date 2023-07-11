@@ -144,7 +144,8 @@ def test_has_devolved_authority_validation_ids(fund_id, expected):
     "short_name, roles, expected",
     [
         ("cof", {"COF_COMMENTER", "COF_SCOTLAND"}, True),
-        ("COF", {"NSTF_COMMENTER", "NSTF_SCOTLAND"}, False),
+        ("COF", {"NSTF_COMMENTER", "COF_SCOTLAND"}, False),
+        ("nstf", {"NSTF_COMMENTER", "COF_SCOTLAND"}, True),
     ],
 )
 def test_has_access_to_fund(monkeypatch, short_name, roles, expected):
@@ -246,7 +247,7 @@ def test_check_access_application_id_can_access_application_when_has_country_rol
     )
     monkeypatch.setattr(
         "app.assess.auth.validation.g",
-        _MockGlobal(roles=["COF_ENGLAND"]),
+        _MockGlobal(roles=["COF_ENGLAND", "COF_COMMENTER"]),
     )
 
     _dummy_function_check_access_application_id()  # no fail means pass
