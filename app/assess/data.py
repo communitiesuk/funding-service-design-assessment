@@ -453,6 +453,29 @@ def submit_flag(
         return FlagV2.from_dict(flag_json)
 
 
+def get_all_uploaded_documents_theme_answers(
+    application_id: str,
+) -> Union[list, None]:
+    all_uploaded_documents_theme_answers_endpoint = (
+        Config.ALL_UPLOADED_DOCUMENTS_THEME_ANSWERS_ENDPOINT.format(
+            application_id=application_id
+        )
+    )
+    all_uploaded_documents_theme_answers_response = get_data(
+        all_uploaded_documents_theme_answers_endpoint
+    )
+
+    if all_uploaded_documents_theme_answers_response:
+        return all_uploaded_documents_theme_answers_response
+    else:
+        msg = (
+            f"all_uploaded_documents_theme_answers: '{application_id}' not"
+            " found."
+        )
+        current_app.logger.warn(msg)
+        abort(404, description=msg)
+
+
 def get_sub_criteria_theme_answers(
     application_id: str, theme_id: str
 ) -> Union[list, None]:
