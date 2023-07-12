@@ -280,9 +280,7 @@ def get_assessments_stats(
     return get_data(assessments_stats_endpoint)
 
 
-def get_team_flag_stats(
-    fund_id: str, round_id: str
-) -> Dict | None:
+def get_team_flag_stats(fund_id: str, round_id: str) -> Dict | None:
     team_flag_stats_endpoint = (
         Config.ASSESSMENT_STORE_API_HOST
     ) + Config.ASSESSMENTS_TEAM_FLAGGING_STATS_ENDPOINT.format(
