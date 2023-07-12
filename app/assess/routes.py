@@ -443,7 +443,6 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
     is_active_status = is_after_today(_round.assessment_deadline)
 
     teams_flag_stats = get_team_flag_stats(fund_id, round_id)
-    print("🎉🎉🎉🎉", teams_flag_stats)
 
     # TODO Can we get rid of get_application_overviews for fund and _round
     # and incorporate into the following function?
