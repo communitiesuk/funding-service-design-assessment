@@ -1,4 +1,5 @@
 # flake8: noqa
+import re
 from abc import ABC
 from abc import abstractmethod
 from dataclasses import dataclass
@@ -296,6 +297,7 @@ def _ui_component_from_factory(item: dict, application_id: str):
         return QuestionHeading.from_dict(item)
 
     elif presentation_type == "free_text":
+        item = sanitise_html(item)
         return AboveQuestionAnswerPairHtml.from_dict(item)
 
     elif presentation_type == "table":
@@ -701,3 +703,13 @@ def create_ui_components(
         _ui_component_from_factory(item, application_id)
         for item in post_processed_items
     ]
+
+
+def sanitise_html(data):
+    answer = data.get("answer")
+    if answer:
+        modified_answer = re.sub(
+            r"<([^/][^>]*)>", r'<\1 class="govuk-body">', answer
+        )
+        data["answer"] = modified_answer
+    return data
