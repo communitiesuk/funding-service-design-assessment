@@ -36,6 +36,12 @@
                                     <p id="lead-dashboard-stat-assessments-total">{{ stats.total }}</p>
                                     <p>Assessments</p>
                                 </div>
+                                {% for team in team_flag_stats %}
+                                <div class="lead-dashboard-stat">
+                                    <p id="lead-dashboard-stat-assessments-total">{{ team.flagged_count }}</p>
+                                    <p>Total flagged for {{team.team_name}}</p>
+                                </div>
+                                {% endfor %}
                             </div>
                         {% endif %}
                         <h2 class="govuk-heading-l fsd-banner-content"> {% if is_active_status %}All active assessments{% else %}All closed assessments{% endif %}</h2>

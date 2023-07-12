@@ -12,6 +12,7 @@ from app.assess.data import get_application_json
 from app.assess.data import get_application_overviews
 from app.assess.data import get_assessments_stats
 from app.assess.data import get_available_teams
+from app.assess.data import get_team_flag_stats
 from app.assess.data import get_flag
 from app.assess.data import submit_score_and_justification
 from app.assess.display_value_mappings import assessment_statuses
@@ -441,6 +442,9 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
     stats = get_assessments_stats(fund_id, round_id, search_params)
     is_active_status = is_after_today(_round.assessment_deadline)
 
+    teams_flag_stats = get_team_flag_stats(fund_id, round_id)
+    print("🎉🎉🎉🎉", teams_flag_stats)
+
     # TODO Can we get rid of get_application_overviews for fund and _round
     # and incorporate into the following function?
     #  (its only used to provide params for this function)
@@ -498,6 +502,7 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
         assessment_statuses=assessment_statuses,
         show_clear_filters=show_clear_filters,
         stats=stats,
+        team_flag_stats=teams_flag_stats,
         is_active_status=is_active_status,
         sort_column=sort_column,
         sort_order=sort_order,
