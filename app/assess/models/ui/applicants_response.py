@@ -13,6 +13,7 @@ from app.assess.views.filters import format_address
 from app.assess.views.filters import format_date
 from app.assess.views.filters import remove_dashes_underscores_capitalize
 from app.aws import list_files_in_folder
+from bs4 import BeautifulSoup
 from flask import current_app
 from flask import url_for
 
@@ -708,8 +709,8 @@ def create_ui_components(
 def sanitise_html(data):
     answer = data.get("answer")
     if answer:
-        modified_answer = re.sub(
-            r"<([^/][^>]*)>", r'<\1 class="govuk-body">', answer
-        )
-        data["answer"] = modified_answer
+        soup = BeautifulSoup(answer, "html.parser")
+        for tag in soup.find_all(["p", "ul", "li"]):
+            tag["class"] = "govuk-body"
+        data["answer"] = str(soup)
     return data
