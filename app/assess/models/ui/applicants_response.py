@@ -707,6 +707,16 @@ def create_ui_components(
 
 
 def sanitise_html(data):
+    """
+    If answer then add the `govuk-body` class to
+    all `p`, `ul`, `ol`, and `li` tags.
+
+    Args:
+        data: The data to be sanitised.
+
+    Returns:
+        The sanitised data with govuk-body class."""
+
     answer = data.get("answer")
     if answer:
         soup = BeautifulSoup(answer, "html.parser")
