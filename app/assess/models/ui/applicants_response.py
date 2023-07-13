@@ -17,7 +17,7 @@ from bs4 import BeautifulSoup
 from flask import current_app
 from flask import url_for
 
-ANSWER_NOT_PROVIDED_DEFAULT = "Not provided."
+ANSWER_NOT_PROVIDED_DEFAULT = "<p>Not provided.</p>"
 
 
 @dataclass
@@ -710,7 +710,7 @@ def sanitise_html(data):
     answer = data.get("answer")
     if answer:
         soup = BeautifulSoup(answer, "html.parser")
-        for tag in soup.find_all(["p", "ul", "li"]):
+        for tag in soup.find_all(["p", "ul", "ol", "li"]):
             tag["class"] = "govuk-body"
         data["answer"] = str(soup)
     return data
