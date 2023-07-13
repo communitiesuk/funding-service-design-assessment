@@ -18,6 +18,7 @@ from app.assess.models.fund import Fund
 from app.assess.models.round import Round
 from app.assess.models.score import Score
 from app.assess.models.sub_criteria import SubCriteria
+from app.assess.models.tag import AssociatedTag
 from app.assess.models.tag import Tag
 from boto3 import client
 from botocore.exceptions import ClientError
@@ -30,7 +31,6 @@ from fsd_utils.locale_selector.get_lang import get_lang
 
 
 def get_data(endpoint: str, payload: Dict = None):
-
     if payload:
         current_app.logger.info(
             f"Fetching data from '{endpoint}', with payload: {payload}."
@@ -178,25 +178,59 @@ dummy_tags = [
 ]
 
 
-# temp convenience method for testing - this can be mocked until read endpoint is available and then we
-# can just mock get_data
-def get_tags(endpoint):
-    # TODO call real endpoint when branch is ready
-    # response = get_data(endpoint)
-    response = dummy_tags
-    return response
-
-
 def get_available_tags_for_fund_round(fund_id, round_id) -> List[Tag]:
     endpoint = Config.ASSESSMENT_AVAILABLE_TAGS_ENDPOINT.format(
         fund_id=fund_id, round_id=round_id
     )
-    response = get_tags(endpoint)
+    response = get_data(endpoint)
     current_app.logger.info(f"tags returned: {len(response)}")
     result = [
         Tag.from_dict(item) for item in response if item["active"] is True
     ]
     return result
+
+
+def get_associated_tags_for_application(application_id) -> List[Tag]:
+    endpoint = Config.ASSESSMENT_ASSOCIATE_TAGS_ENDPOINT.format(
+        application_id=application_id
+    )
+    result = get_data(endpoint)
+    if result:
+        current_app.logger.info(f"tags returned: {len(result)}")
+        result = [
+            AssociatedTag.from_dict(item)
+            for item in result
+            if item["associated"] is True
+        ]
+        return result
+    else:
+        current_app.logger.info(
+            f"No associated tags found for application: {application_id}."
+        )
+        return None
+
+
+def update_associated_tags(application_id, tags):
+    endpoint = Config.ASSESSMENT_ASSOCIATE_TAGS_ENDPOINT.format(
+        application_id=application_id
+    )
+    payload = [
+        {"id": tag["tag_id"], "user_id": tag["user_id"]} for tag in tags
+    ]
+
+    current_app.logger.info(
+        f"Requesting the following tags: {payload} associate with"
+        f" application_id '{application_id}'"
+    )
+    response = requests.put(endpoint, json=payload)
+
+    if response.status_code == 200:
+        return True
+    else:
+        current_app.logger.error(
+            f"Update associated tags failed, code: {response.status_code}."
+        )
+        return False
 
 
 @lru_cache(maxsize=1)

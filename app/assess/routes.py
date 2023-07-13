@@ -27,6 +27,7 @@ from app.assess.forms.mark_qa_complete_form import MarkQaCompleteForm
 from app.assess.forms.rescore_form import RescoreForm
 from app.assess.forms.resolve_flag_form import ResolveFlagForm
 from app.assess.forms.scores_and_justifications import ScoreForm
+from app.assess.forms.tags import TagAssociationForm
 from app.assess.helpers import determine_display_status
 from app.assess.helpers import get_ttl_hash
 from app.assess.helpers import is_flaggable
@@ -536,16 +537,11 @@ def application(application_id):
 
     sub_criteria_status_completed = all_status_completed(state)
     form = AssessmentCompleteForm()
-
+    associated_tags = get_associated_tags_for_application(application_id)
     return render_template(
         "assessor_tasklist.html",
         sub_criteria_status_completed=sub_criteria_status_completed,
-        tags=[
-            {"value": "Commercial pass", "colour": "green"},
-            {"value": "Recommend no", "colour": "red"},
-            {"value": "Ed the Duck", "colour": "grey"},
-            {"value": "Further discussion", "colour": "yellow"},
-        ],
+        tags=associated_tags,
         form=form,
         state=state,
         application_id=application_id,
@@ -725,15 +721,35 @@ def download_file(data, mimetype, file_name):
     )
 
 
-@assess_bp.route("/application/<application_id>/tags", methods=["GET"])
+@assess_bp.route("/application/<application_id>/tags", methods=["GET", "POST"])
 @check_access_application_id(roles_required=["ASSESSOR"])
 def load_change_tags(application_id):
+    tag_association_form = TagAssociationForm()
+
+    if request.method == "POST":
+        updated_tags = []
+        for tag_id in tag_association_form.tags.data:
+            updated_tags.append({"tag_id": tag_id, "user_id": g.account_id})
+        update_associated_tags(application_id, updated_tags)
+        return redirect(
+            url_for(
+                "assess_bp.application",
+                application_id=application_id,
+            )
+        )
     state = get_state_for_tasklist_banner(application_id)
     available_tags = get_available_tags_for_fund_round(
         state.fund_id, state.round_id
     )
+    associated_tags = get_associated_tags_for_application(application_id)
+    if associated_tags:
+        associated_tag_ids = [tag.tag_id for tag in associated_tags]
+        for tag in available_tags:
+            if tag.id in associated_tag_ids:
+                tag.associated = True
     return render_template(
         "change_tags.html",
+        form=tag_association_form,
         state=state,
         available_tags=available_tags,
         application_id=application_id,
