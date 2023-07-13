@@ -54,6 +54,7 @@
         {% endif %}
     {% endfor %}
 
+    {# only show stopped banner, if flag_status=="Stopped" and hide all other banners #}
     {% for flag in flags_list %}
         {% if g.access_controller.has_any_assessor_role and (flag_status != "Stopped") and (flag.latest_status.name == "RESOLVED") %}
             {{ assessment_resolved(flag, accounts_list[flag.latest_user_id], application_id) }}
