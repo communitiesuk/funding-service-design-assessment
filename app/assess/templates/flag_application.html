@@ -94,7 +94,8 @@
                             {% if section.name == 'Unscored' %}
                                 {% for sub_section in section.sub_criterias %}
                                     {% set addItem = items.append({'value': sub_section["id"],
-                                                                    'text': sub_section["name"]}) %}
+                                                                    'text': sub_section["name"],
+                                                                    'checked':  sub_section["id"] in form.section.data}) %}
                                 {% endfor %}
                             {% endif %}
                         {% endfor %}
@@ -104,7 +105,8 @@
                                 {% if section.name == 'Your organisation' %}
                                     {% for sub_section in section.sub_criterias %}
                                         {% set addItem = items.append({'value': sub_section["id"],
-                                                                        'text': sub_section["name"]}) %}
+                                                                        'text': sub_section["name"],
+                                                                        'checked':  sub_section["id"] in form.section.data}) %}
                                     {% endfor %}
                                 {% endif %}
                             {% endfor %}
