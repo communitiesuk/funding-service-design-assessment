@@ -183,11 +183,36 @@ def get_available_tags_for_fund_round(fund_id, round_id) -> List[Tag]:
         fund_id=fund_id, round_id=round_id
     )
     response = get_data(endpoint)
-    current_app.logger.info(f"tags returned: {len(response)}")
-    result = [
-        Tag.from_dict(item) for item in response if item["active"] is True
-    ]
-    return result
+    if response is not None:
+        current_app.logger.info(f"tags returned: {len(response)}")
+        result = [
+            Tag.from_dict(item) for item in response if item["active"] is True
+        ]
+        return result
+    else:
+        current_app.logger.info(
+            f"No tags found for fund {fund_id}, round {round_id}."
+        )
+        return None
+
+
+def post_new_tag_for_fund_round(fund_id, round_id, tag) -> List[Tag]:
+    endpoint = Config.ASSESSMENT_AVAILABLE_TAGS_ENDPOINT.format(
+        fund_id=fund_id, round_id=round_id
+    )
+    current_app.logger.info(
+        f"Posting the following tag: {tag}"
+        f"for fund {fund_id} and round {round_id}."
+    )
+    response = requests.post(endpoint, json=tag)
+
+    if response.status_code == 200:
+        return True
+    else:
+        current_app.logger.error(
+            f"Post tag failed, code: {response.status_code}."
+        )
+        return False
 
 
 def get_associated_tags_for_application(application_id) -> List[Tag]:

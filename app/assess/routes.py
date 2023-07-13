@@ -14,6 +14,7 @@ from app.assess.data import get_assessments_stats
 from app.assess.data import get_available_tags_for_fund_round
 from app.assess.data import get_available_teams
 from app.assess.data import get_flag
+from app.assess.data import post_new_tag_for_fund_round
 from app.assess.data import submit_score_and_justification
 from app.assess.display_value_mappings import assessment_statuses
 from app.assess.display_value_mappings import asset_types
@@ -28,6 +29,7 @@ from app.assess.forms.mark_qa_complete_form import MarkQaCompleteForm
 from app.assess.forms.rescore_form import RescoreForm
 from app.assess.forms.resolve_flag_form import ResolveFlagForm
 from app.assess.forms.scores_and_justifications import ScoreForm
+from app.assess.forms.tags import NewTagForm
 from app.assess.forms.tags import TagAssociationForm
 from app.assess.helpers import determine_assessment_status
 from app.assess.helpers import determine_flag_status
@@ -394,9 +396,7 @@ def qa_complete(application_id):
         state=state,
         form=form,
         referrer=request.referrer,
-        assessment_status=assessment_statuses[
-            sub_criteria_banner_state.workflow_status
-        ],
+        assessment_status=assessment_statuses[state.workflow_status],
     )
 
 
@@ -819,4 +819,99 @@ def load_change_tags(application_id):
         state=state,
         available_tags=available_tags,
         application_id=application_id,
+    )
+
+
+@assess_bp.route("/application/<application_id>/manage/tags", methods=["GET"])
+@check_access_application_id(roles_required=["ASSESSOR"])
+def load_fund_round_tags(application_id):
+    state = get_state_for_tasklist_banner(application_id)
+    available_tags = get_available_tags_for_fund_round(
+        state.fund_id, state.round_id
+    )
+    return render_template(
+        "manage_tags.html",
+        state=state,
+        available_tags=available_tags,
+        application_id=application_id,
+    )
+
+
+@assess_bp.route(
+    "/application/<application_id>/create/tags", methods=["GET", "POST"]
+)
+@check_access_application_id(roles_required=["ASSESSOR"])
+def create_tag(application_id):
+    new_tag_form = NewTagForm()
+
+    if new_tag_form.validate_on_submit():
+        assessment_state = get_state_for_tasklist_banner(application_id)
+        tag = {
+            "value": new_tag_form.value.data,
+            "colour": new_tag_form.colour.data,
+            "creator_user_id": g.account_id,
+        }
+        fund_id = assessment_state.fund_id
+        round_id = assessment_state.round_id
+        post_new_tag_for_fund_round(fund_id, round_id, tag)
+
+        return redirect(
+            url_for(
+                "assess_bp.create_tag",
+                application_id=application_id,
+            )
+        )
+
+    state = get_state_for_tasklist_banner(application_id)
+    available_tags = get_available_tags_for_fund_round(
+        state.fund_id, state.round_id
+    )
+    # could get types of tag from store here
+    tag_types = [
+        {
+            "colour": "WHITE",
+            "purpose": "General",
+            "hint": (
+                "Use to categorise projects, such as by organisation or"
+                " location"
+            ),
+        },
+        {
+            "colour": "BLUE",
+            "purpose": "People",
+            "hint": (
+                "Use these tags to assign assessments to team members. Note:"
+                " you cannot send notifications using tags"
+            ),
+        },
+        {
+            "colour": "GREEN",
+            "purpose": "Positive",
+            "hint": (
+                "Use to indicate that a project has passed an assessment stage"
+                " or is recommended"
+            ),
+        },
+        {
+            "colour": "RED",
+            "purpose": "Negative",
+            "hint": (
+                "Use to indicate that a project has failed an assessment stage"
+                " or is not recommended"
+            ),
+        },
+        {
+            "colour": "YELLOW",
+            "purpose": "Action",
+            "hint": "Use to recommend an action, such as further discussion",
+        },
+    ]
+
+    return render_template(
+        "create_tag.html",
+        form=new_tag_form,
+        state=state,
+        available_tags=available_tags,
+        application_id=application_id,
+        tag_types=tag_types,
     )

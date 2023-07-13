@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% from "macros/banner_summary.html" import banner_summary %}
+{% set pageHeading = state.project_name %}
+
+{% block header %}
+{% include "./components/header.html" %}
+{% endblock header %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        <h1 class="govuk-heading-xl govuk-!-margin-bottom-4">Create a new tag
+        </h1>
+        <div id="contact-hint" class="govuk-hint govuk-!-margin-bottom-6">
+            General and lead assessors can use new tags you create to tag any [fund] assessments.
+        </div>
+        <div class="govuk-warning-text">
+            <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+            <strong class="govuk-warning-text__text">
+              <span class="govuk-warning-text__assistive">Warning</span>
+              You cannot edit or delete tags once created
+            </strong>
+          </div>
+
+          <form method="post">
+            {{ form.csrf_token }}
+
+            <div class="govuk-form-group">
+                <h1 class="govuk-label-wrapper">
+                  <label class="govuk-label govuk-label--s" for="{{form.value.id}}">
+                    Tag name
+                  </label>
+                </h1>
+                <input class="govuk-input govuk-!-width-two-thirds" id="{{form.value.id}}" name="{{form.value.id}}" type="text">
+              </div>
+
+              <div class="govuk-form-group">
+                <fieldset class="govuk-fieldset">
+                  <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
+                    <h1 class="govuk-fieldset__heading">
+                      Tag purpose
+                    </h1>
+                  </legend>
+                  {% for tag_type in tag_types %}
+                    <div class="govuk-radios__item">
+                        <input class="govuk-radios__input" id="{{form.colour.id}}-{{tag_type.colour}}" name="{{form.colour.id}}" type="radio" value="{{tag_type['colour']}}" aria-describedby="tag-item-hint">
+                        <label class="govuk-label govuk-radios__label" for="sign-in">
+                            {{tag_type["purpose"]}}
+                            <td class="govuk-table__cell">
+                                <strong class="govuk-tag govuk-!-margin-left-2 govuk-tag--{{ tag_type.colour.lower() }} govuk-tag">{{tag_type['colour']}}</strong>
+                            </td>
+                        </label>
+                        <div id="tag-item-hint" class="govuk-hint govuk-radios__hint">
+                            {{tag_type["hint"]}}
+                        </div>
+                    </div>
+                  {% endfor %}
+                </fieldset>
+              </div>
+
+            <div class="govuk-button-group">
+                <button class="govuk-button" data-module="govuk-button" formaction="{{ url_for('assess_bp.create_tag', application_id=application_id) }}">
+                    Save and add another
+                </button>
+                <button class="govuk-button govuk-button--secondary" data-module="govuk-button">
+                    Save and go back
+                </button>
+                <a class="govuk-link" href=".">Cancel</a>
+            </div>
+        </form>
+
+
+    </div>
+</div>
+
+{% endblock %}
