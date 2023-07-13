@@ -148,7 +148,8 @@
                             {% if section.name == 'Declarations' %}
                                 {% for sub_section in section.sub_criterias %}
                                     {% set addItem = items.append({'value': sub_section["id"],
-                                                                'text': sub_section["name"]}) %}
+                                                                'text': sub_section["name"],
+                                                                'checked':  sub_section["id"] in form.section.data }) %}
                                 {% endfor %}
                             {% endif %}
                         {% endfor %}
@@ -180,7 +181,8 @@
                                 {% set items = [] %}
                                 {% for sub_section in section.sub_criterias %}
                                     {% set addItem = items.append({'value': sub_section["id"],
-                                                                'text': sub_section["name"]}) %}
+                                                                'text': sub_section["name"],
+                                                                'checked':  sub_section["id"] in form.section.data }) %}
                                 {% endfor %}
                                 {{ govukCheckboxes({
                                     'idPrefix': section["name"],
