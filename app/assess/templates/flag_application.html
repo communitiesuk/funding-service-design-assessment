@@ -13,7 +13,7 @@
 {% endblock header %}
 
 {% block content %}
-{% if form.errors.get("justification") or form.errors.get("section") %}
+{% if form.errors.get("justification") or form.errors.get("section") or form.errors.get("teams_available") %}
 <div class="govuk-error-summary" data-module="govuk-error-summary">
     <div role="alert">
         <h2 class="govuk-error-summary__title">
@@ -29,6 +29,11 @@
                 {% if form.errors.get("section") %}
                 <li>
                     <a href=#{{ form.section.id }}>{{ form.errors.get("section") | join("\n") }}</a>
+                </li>
+                {% endif %}
+                {% if form.errors.get("teams_available") %}
+                <li>
+                    <a href={{ '#'+ form.teams_available.id }}>{{ form.errors.get("teams_available") | join("\n") }}</a>
                 </li>
                 {% endif %}
             </ul>
@@ -192,7 +197,7 @@
                                     })
                                 }}
                             {% endfor %}
-                            {% if teams_available %}
+                            {# Flag Allocation #}
                             <div class="govuk-form-group">
                                 <label class="govuk-label govuk-label--m">Flag allocation</label>
                                 {% set items = [] %}
@@ -211,13 +216,13 @@
                                     "id": form.teams_available.id,
                                     "name": form.teams_available.id,
                                     "items": items,
+                                    'attributes': {'data-qa': 'select_teams_to_flag'},
                                     "errorMessage": {
                                     "text": form.errors.get(form.teams_available.id) | join("\n"),
                                     } if form.errors.get(form.teams_available.id) else None
                                     }) }}
 
                             </div>
-                            {% endif %}
                             {% endcall %}
                         </div>
                     </div>

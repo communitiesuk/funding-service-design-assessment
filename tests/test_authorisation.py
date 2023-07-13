@@ -540,6 +540,7 @@ class TestAuthorisation:
         mock_get_round,
         mock_get_flags,
         mock_get_bulk_accounts,
+        mock_get_associated_tags_for_application,
     ):
         token = create_valid_token(user_account)
         flask_test_client.set_cookie("localhost", "fsd_user_token", token)

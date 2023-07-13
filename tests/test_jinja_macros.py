@@ -583,11 +583,12 @@ class TestJinjaMacros(object):
         project_reference = "TEST123"
         project_name = "Test Project"
         funding_amount_requested = 123456.78
-        workflow_status = "SUBMITTED"
+        assessment_status = "Submitted"
+        flag_status = "Flagged"
 
         rendered_html = render_template_string(
             "{{ banner_summary(fund_name, project_reference, project_name,"
-            " funding_amount_requested, workflow_status) }}",
+            " funding_amount_requested, assessment_status, flag_status) }}",
             banner_summary=get_template_attribute(
                 "macros/banner_summary.html", "banner_summary"
             ),
@@ -595,7 +596,8 @@ class TestJinjaMacros(object):
             project_reference=project_reference,
             project_name=project_name,
             funding_amount_requested=funding_amount_requested,
-            workflow_status=workflow_status,
+            assessment_status=assessment_status,
+            flag_status=flag_status,
             g=default_flask_g(),
         )
 
@@ -626,19 +628,25 @@ class TestJinjaMacros(object):
             text="Total funding requested: £123,456.78",
         ), "Funding amount not found"
         assert soup.find(
-            "h3", class_="fsd-banner-content", text="Submitted"
-        ), "Workflow status not found"
+            "h3",
+            class_="fsd-banner-content",
+            text="Assessment status: Submitted",
+        ), "Assessment status not found"
+        assert soup.find(
+            "h3", class_="fsd-banner-content", text="Flagged"
+        ), "Flag status not found"
 
     def test_stopped_flag_macro(self, request_ctx):
         fund_name = "Test Fund"
         project_reference = "TEST123"
         project_name = "Test Project"
         funding_amount_requested = 123456.78
-        display_status = "STOPPED"
+        assessment_status = "In progress"
+        flag_status = "Stopped"
 
         rendered_html = render_template_string(
             "{{ banner_summary(fund_name, project_reference, project_name,"
-            " funding_amount_requested, display_status) }}",
+            " funding_amount_requested, assessment_status, flag_status) }}",
             banner_summary=get_template_attribute(
                 "macros/banner_summary.html", "banner_summary"
             ),
@@ -646,7 +654,8 @@ class TestJinjaMacros(object):
             project_reference=project_reference,
             project_name=project_name,
             funding_amount_requested=funding_amount_requested,
-            display_status=display_status,
+            assessment_status=assessment_status,
+            flag_status=flag_status,
             g=default_flask_g(),
         )
 
@@ -714,7 +723,12 @@ class TestJinjaMacros(object):
             ),
             flag={
                 "latest_status": {"name": "STOPPED"},
-                "justification": "Test justification",
+                "updates": [
+                    {
+                        "justification": "Test justification",
+                        "status": {"name": "STOPPED"},
+                    }
+                ],
                 "sections_to_flag": ["Test section"],
                 "date_created": "2020-01-01 12:00:00",
             },
@@ -778,8 +792,13 @@ class TestJinjaMacros(object):
                 },
             )(),
             flag={
-                "flag_type": {"name": "Test flag"},
-                "justification": "Test justification",
+                "latest_status": {"name": "RAISED"},
+                "updates": [
+                    {
+                        "justification": "Test justification",
+                        "status": {"name": "RAISED"},
+                    }
+                ],
                 "sections_to_flag": ["Test section"],
                 "date_created": "2020-01-01 12:00:00",
             },
@@ -839,12 +858,11 @@ class TestJinjaMacros(object):
 
     def test_assessment_completion_state_completed(self, request_ctx):
         rendered_html = render_template_string(
-            "{{assessment_complete(state, flag, csrf_token, application_id)}}",
+            "{{assessment_complete(state, csrf_token, application_id)}}",
             assessment_complete=get_template_attribute(
                 "macros/assessment_completion.html", "assessment_complete"
             ),
             state=type("State", (), {"workflow_status": "COMPLETED"})(),
-            flag=None,
             csrf_token=generate_csrf(),
             application_id=1,
             g=default_flask_g(),
@@ -864,20 +882,11 @@ class TestJinjaMacros(object):
 
     def test_assessment_completion_flagged(self, request_ctx):
         rendered_html = render_template_string(
-            "{{assessment_complete(state, flag, csrf_token, application_id)}}",
+            "{{assessment_complete(state, srf_token, application_id)}}",
             assessment_complete=get_template_attribute(
                 "macros/assessment_completion.html", "assessment_complete"
             ),
             state=type("State", (), {"workflow_status": "IN_PROGRESS"})(),
-            flag=type(
-                "Flag",
-                (),
-                {
-                    "latest_status": type(
-                        "FlagTypeV2", (), {"name": "RESOLVED"}
-                    )
-                },
-            )(),
             csrf_token=generate_csrf(),
             application_id=1,
             g=default_flask_g(),

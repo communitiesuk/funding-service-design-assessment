@@ -5,6 +5,7 @@ from unittest import mock
 
 import jwt as jwt
 import pytest
+from app.assess.models.tag import AssociatedTag
 from app.assess.models.ui.assessor_task_list import AssessorTaskList
 from app.create_app import create_app
 from flask import template_rendered
@@ -279,10 +280,6 @@ def mock_get_application_metadata():
             return_value=mock_api_results[
                 "assessment_store/applications/{application_id}"
             ],
-        ),
-        mock.patch(
-            "app.assess.helpers.get_application_metadata",
-            return_value=mock_api_results["/application/stopped_app/metadata"],
         ),
     ):
         yield
@@ -654,3 +651,21 @@ def client_with_valid_session(flask_test_client):
     token = create_valid_token(test_lead_assessor_claims)
     flask_test_client.set_cookie("localhost", "fsd_user_token", token)
     yield flask_test_client
+
+
+@pytest.fixture(scope="function")
+def mock_get_associated_tags_for_application(mocker):
+    mocker.patch(
+        "app.assess.routes.get_associated_tags_for_application",
+        return_value=[
+            AssociatedTag(
+                application_id="75dabe60-ae89-4a47-9263-d35e010b6c66",
+                associated=True,
+                colour="RED",
+                tag_id="75f4296f-502b-4293-82a8-b828e678dd9e",
+                user_id="65f4296f-502b-4293-82a8-b828e678dd9e",
+                value="Tag one red",
+            )
+        ],
+    )
+    yield

@@ -35,6 +35,10 @@ _HAS_DEVOLVED_AUTHORITY_VALIDATION: Mapping[str, bool] = defaultdict(
 )
 
 
+def _get_access_roles(fund_short_name: str) -> frozenset[str]:
+    return frozenset(f"{fund_short_name}_{role}".casefold() for role in _ROLES)
+
+
 def _normalise_country(country: str) -> str:
     country = country.casefold()
     if country in {c.casefold() for c in _UK_COUNTRIES}:
@@ -88,7 +92,8 @@ def has_devolved_authority_validation(
 
 def has_access_to_fund(short_name: str) -> bool:
     all_roles = _get_all_users_roles()
-    return any(role.startswith(short_name.casefold()) for role in all_roles)
+    access_roles = _get_access_roles(short_name)
+    return any(role in all_roles for role in access_roles)
 
 
 def check_access_application_id(

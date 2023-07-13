@@ -281,6 +281,36 @@ class TestApplicatorsResponseComponentFactory:
             ),
             (
                 {
+                    "presentation_type": "integer",
+                    "field_type": "numberField",
+                    "answer": "100.0",
+                    "question": "foo",
+                },
+                BesideQuestionAnswerPair,
+            ),
+            (
+                {
+                    "presentation_type": "text",
+                    "field_type": "monthYearField",
+                    "answer": "06-2023",
+                    "question": "foo",
+                },
+                BesideQuestionAnswerPair,
+            ),
+            (
+                {
+                    "presentation_type": "table",
+                    "field_type": "multiInputField",
+                    "answer": [
+                        ["", "", "html"],
+                        ["", ["06-2023"], "monthYearField"],
+                    ],
+                    "question": "foo",
+                },
+                NewAddAnotherTable,
+            ),
+            (
+                {
                     "presentation_type": "file",
                     "answer": "https://www.example.com/file.pdf",
                     "question": "foo",
@@ -917,7 +947,7 @@ def test_create_ui_components_retains_order(monkeypatch):
     assert ui_components[11].key_to_url_dict == {
         "form_name/path/name/filename.png": (
             "http://example.org:5000/assess/application/app_123/export/"
-            "form_name/path/name/filename.png"
+            "form_name%252Fpath%252Fname%252Ffilename.png?quoted=True"
         )
     }
 

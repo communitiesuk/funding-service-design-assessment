@@ -1,5 +1,6 @@
 from datetime import datetime
 from urllib.parse import quote_plus
+from urllib.parse import unquote_plus
 
 from app.assess.auth.validation import check_access_application_id
 from app.assess.auth.validation import check_access_fund_short_name
@@ -28,12 +29,15 @@ from app.assess.forms.rescore_form import RescoreForm
 from app.assess.forms.resolve_flag_form import ResolveFlagForm
 from app.assess.forms.scores_and_justifications import ScoreForm
 from app.assess.forms.tags import TagAssociationForm
-from app.assess.helpers import determine_display_status
+from app.assess.helpers import determine_assessment_status
+from app.assess.helpers import determine_flag_status
+from app.assess.helpers import generate_csv_of_application
 from app.assess.helpers import get_ttl_hash
 from app.assess.helpers import is_flaggable
 from app.assess.helpers import is_qa_complete
 from app.assess.helpers import resolve_application
 from app.assess.helpers import set_application_status_in_overview
+from app.assess.models.flag_teams import TeamsFlagData
 from app.assess.models.flag_v2 import FlagTypeV2
 from app.assess.models.fund_summary import create_fund_summaries
 from app.assess.models.fund_summary import is_after_today
@@ -43,6 +47,7 @@ from app.assess.models.ui.assessor_task_list import AssessorTaskList
 from app.assess.status import all_status_completed
 from app.assess.status import update_ar_status_to_completed
 from app.assess.views.filters import utc_to_bst
+from app.aws import get_file_for_download_from_aws
 from config import Config
 from flask import Blueprint
 from flask import current_app
@@ -77,6 +82,31 @@ def get_state_for_tasklist_banner(application_id) -> AssessorTaskList:
     return state
 
 
+def _handle_all_uploaded_documents(application_id):
+    flags_list = get_flags(application_id)
+    flag_status = determine_flag_status(flags_list)
+
+    theme_answers_response = get_all_uploaded_documents_theme_answers(
+        application_id
+    )
+    answers_meta = applicants_response.create_ui_components(
+        theme_answers_response, application_id
+    )
+
+    state = get_state_for_tasklist_banner(application_id)
+    assessment_status = determine_assessment_status(
+        state.workflow_status, flags_list
+    )
+    return render_template(
+        "all_uploaded_documents.html",
+        state=state,
+        application_id=application_id,
+        is_flaggable=is_flaggable(flag_status),
+        answers_meta=answers_meta,
+        assessment_status=assessment_status,
+    )
+
+
 @assess_bp.route(
     "/application_id/<application_id>/sub_criteria_id/<sub_criteria_id>",
     methods=["POST", "GET"],
@@ -86,6 +116,9 @@ def display_sub_criteria(
     application_id,
     sub_criteria_id,
 ):
+    if sub_criteria_id == "all_uploaded_documents":
+        return _handle_all_uploaded_documents(application_id)
+
     """
     Page showing sub criteria and themes for an application
     """
@@ -139,18 +172,21 @@ def display_sub_criteria(
         else None
     )
 
-    display_status = determine_display_status(
+    assessment_status = determine_assessment_status(
         sub_criteria.workflow_status, flags_list
     )
+    flag_status = determine_flag_status(flags_list)
+
     common_template_config = {
         "sub_criteria": sub_criteria,
         "application_id": application_id,
         "comments": theme_matched_comments,
-        "is_flaggable": is_flaggable(display_status),
+        "is_flaggable": is_flaggable(flag_status),
         "display_comment_box": add_comment_argument,
         "comment_form": comment_form,
         "current_theme": current_theme,
-        "display_status": display_status,
+        "flag_status": flag_status,
+        "assessment_status": assessment_status,
     }
 
     theme_answers_response = get_sub_criteria_theme_answers(
@@ -203,9 +239,10 @@ def score(
         else None
     )
 
-    display_status = determine_display_status(
+    assessment_status = determine_assessment_status(
         sub_criteria.workflow_status, flags_list
     )
+    flag_status = determine_flag_status(flags_list)
     score_form = ScoreForm()
     rescore_form = RescoreForm()
     is_rescore = rescore_form.validate_on_submit()
@@ -225,7 +262,7 @@ def score(
         else:
             is_rescore = True
 
-    # call to assessment store to get latest score
+    # call to assessment store to get latest score.
     score_list = get_score_and_justification(
         application_id, sub_criteria_id, score_history=True
     )
@@ -238,7 +275,7 @@ def score(
         if (score_list is not None and len(scores_with_account_details) > 0)
         else None
     )
-    # TODO make COF_score_list extendable to other funds
+    # TODO make COF_score_list extendable to other funds.
     scoring_list = [
         (5, "Strong"),
         (4, "Good"),
@@ -258,8 +295,9 @@ def score(
         sub_criteria=sub_criteria,
         state=state,
         comments=theme_matched_comments,
-        display_status=display_status,
-        is_flaggable=is_flaggable(display_status),
+        flag_status=flag_status,
+        assessment_status=assessment_status,
+        is_flaggable=is_flaggable(flag_status),
     )
 
 
@@ -305,13 +343,19 @@ def flag(application_id):
 
     sub_criteria_banner_state = get_sub_criteria_banner_state(application_id)
 
+    flags_list = get_flags(application_id)
+    assessment_status = determine_assessment_status(
+        state.workflow_status, flags_list
+    )
+    flag_status = determine_flag_status(flags_list)
     return render_template(
         "flag_application.html",
         application_id=application_id,
         flag=flag,
         sub_criteria=sub_criteria_banner_state,
         form=form,
-        display_status=sub_criteria_banner_state.workflow_status,
+        assessment_status=assessment_status,
+        flag_status=flag_status,
         referrer=request.referrer,
         state=state,
         teams_available=teams_available,
@@ -350,7 +394,9 @@ def qa_complete(application_id):
         state=state,
         form=form,
         referrer=request.referrer,
-        display_status=state.workflow_status,
+        assessment_status=assessment_statuses[
+            sub_criteria_banner_state.workflow_status
+        ],
     )
 
 
@@ -394,6 +440,7 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
     if not _round:
         return redirect("/assess/assessor_tool_dashboard/")
     fund_id, round_id = fund.id, _round.id
+
     countries = {"ALL"}
     if has_devolved_authority_validation(fund_id=fund_id):
         countries = get_countries_from_roles(fund.short_name)
@@ -513,14 +560,15 @@ def application(application_id):
         update_ar_status_to_completed(application_id)
 
     state = get_state_for_tasklist_banner(application_id)
+    fund = get_fund(state.fund_short_name, use_short_name=True)
+
     flags_list = get_flags(application_id)
     accounts_list = []
 
-    display_status = determine_display_status(
+    assessment_status = determine_assessment_status(
         state.workflow_status, flags_list
     )
-
-    # TODO : Need to resolve this for multiple flags
+    flag_status = determine_flag_status(flags_list)
 
     if flags_list:
         user_id_list = []
@@ -532,8 +580,8 @@ def application(application_id):
                 accounts_list = get_bulk_accounts_dict(
                     user_id_list, state.fund_short_name
                 )
-    else:
-        flags_list = []
+
+    teams_flag_stats = TeamsFlagData.from_flags(flags_list).teams_stats
 
     sub_criteria_status_completed = all_status_completed(state)
     form = AssessmentCompleteForm()
@@ -546,11 +594,14 @@ def application(application_id):
         state=state,
         application_id=application_id,
         accounts_list=accounts_list,
+        teams_flag_stats=teams_flag_stats,
         flags_list=flags_list,
         current_user_role=g.user.highest_role_map[state.fund_short_name],
-        is_flaggable=is_flaggable(display_status),
+        is_flaggable=is_flaggable(flag_status),
         is_qa_complete=is_qa_complete(flags_list),
-        display_status=display_status,
+        flag_status=flag_status,
+        assessment_status=assessment_status,
+        all_uploaded_documents_section_available=fund.all_uploaded_documents_section_available,
     )
 
 
@@ -648,9 +699,10 @@ def generate_doc_list_for_download(application_id):
     state = get_state_for_tasklist_banner(application_id)
     short_id = state.short_id[-6:]
     flags_list = get_flags(application_id)
-    display_status = determine_display_status(
+    assessment_status = determine_assessment_status(
         state.workflow_status, flags_list
     )
+    flag_status = determine_flag_status(flags_list)
 
     application_json = get_application_json(application_id)
     supporting_evidence = get_files_for_application_upload_fields(
@@ -664,6 +716,7 @@ def generate_doc_list_for_download(application_id):
             "assess_bp.download_application_answers",
             application_id=application_id,
             short_id=short_id,
+            file_type="txt",
         ),
     )
 
@@ -673,32 +726,45 @@ def generate_doc_list_for_download(application_id):
         state=state,
         application_answers=application_answers,
         supporting_evidence=supporting_evidence,
-        display_status=display_status,
+        assessment_status=assessment_status,
+        flag_status=flag_status,
     )
 
 
-@assess_bp.route("/application/<application_id>/export/<short_id>/answers.txt")
+@assess_bp.route(
+    "/application/<application_id>/export/<short_id>/answers.<file_type>"
+)
 @check_access_application_id(roles_required=["LEAD_ASSESSOR"])
-def download_application_answers(application_id: str, short_id: str):
+def download_application_answers(
+    application_id: str, short_id: str, file_type: str
+):
     current_app.logger.info(
-        f"Generating application Q+A download for application {application_id}"
+        "Generating application Q+A download for application"
+        f" {application_id} in {file_type} format"
     )
     application_json = get_application_json(application_id)
     application_json_blob = application_json["jsonb_blob"]
 
     qanda_dict = extract_questions_and_answers(application_json_blob["forms"])
     fund = get_fund(application_json["jsonb_blob"]["fund_id"])
-    text = generate_text_of_application(qanda_dict, fund.name)
 
-    return download_file(text, "text/plain", f"{short_id}_answers.txt")
+    if file_type == "txt":
+        text = generate_text_of_application(qanda_dict, fund.name)
+        return download_file(text, "text/plain", f"{short_id}_answers.txt")
+    elif file_type == "csv":
+        csv = generate_csv_of_application(qanda_dict, fund, application_json)
+        return download_file(csv, "text/csv", f"{short_id}_answers.csv")
+
+    abort(404)
 
 
 @assess_bp.route(
     "/application/<application_id>/export/<file_name>",
     methods=["GET"],
 )
-@check_access_application_id
 def get_file(application_id: str, file_name: str):
+    if request.args.get("quoted"):
+        file_name = unquote_plus(file_name)
     short_id = request.args.get("short_id")
     data, mimetype = get_file_for_download_from_aws(
         application_id=application_id, file_name=file_name

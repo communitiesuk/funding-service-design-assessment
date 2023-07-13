@@ -1,8 +1,8 @@
 {% from "macros/link_to_download_contract_docs.html" import link_to_download_contract_docs %}
 
-{% macro assessment_complete(state, flag, csrf_token, application_id) %}
+{% macro assessment_complete(state, csrf_token, application_id) %}
 
-{% if (not flag or flag and flag.latest_status.name=="RESOLVED") and state.workflow_status=="IN_PROGRESS" %}
+{% if state.workflow_status=="IN_PROGRESS" %}
 
 <form method="post" action="{{ url_for('assess_bp.application', application_id=application_id) }}">
     {{ csrf_token }}

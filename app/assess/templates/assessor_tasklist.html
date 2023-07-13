@@ -31,7 +31,8 @@
         state.short_id,
         state.project_name,
         state.funding_amount_requested,
-        display_status,
+        assessment_status,
+        flag_status
     ) }}
 </header>
 {% endblock header %}
@@ -40,26 +41,28 @@
 
 {% if g.access_controller.has_any_assessor_role %}
 <div>
-    {{ flag_tabs(state, application_id, flags_list, accounts_list) }}
+    {{ flag_tabs(state, application_id, teams_flag_stats, flags_list, accounts_list) }}
 </div>
 {% endif %}
 
-{# TODO: Display multiple flag banner #}
+{# Display multiple flag banner #}
 <div>
-    {% if g.access_controller.has_any_assessor_role and is_qa_complete %}
-        {{ qa_complete_flag(flags_list[-1], accounts_list[flags_list[-1].latest_user_id], form.csrf_token, application_id) }}
-    {% endif %}
+    {% for flag in flags_list %}
+        {% if g.access_controller.has_any_assessor_role and is_qa_complete and flag.latest_status.name == "QA_COMPLETED" %}
+            {{ qa_complete_flag(flag, accounts_list[flag.latest_user_id], form.csrf_token, application_id) }}
+        {% endif %}
+    {% endfor %}
 
     {% for flag in flags_list %}
-        {% if g.access_controller.has_any_assessor_role and (display_status == "Multiple Flags To Resolve" or "Flagged" in display_status) and (display_status != "Stopped") and (flag.latest_status.name != "RESOLVED") %}
+        {% if g.access_controller.has_any_assessor_role and (flag_status != "Stopped") and (flag.latest_status.name == "RAISED") %}
             {{ assessment_flagged(state, flag, accounts_list[flag.latest_user_id], application_id) }}
-        {% elif g.access_controller.has_any_assessor_role and display_status == "Stopped" and (flag.latest_status.name == "STOPPED")%}
+        {% elif g.access_controller.has_any_assessor_role and flag_status == "Stopped" and (flag.latest_status.name == "STOPPED")%}
             {{ assessment_stopped(flag, accounts_list[flag.latest_user_id], application_id) }}
         {% endif %}
     {% endfor %}
 
     {% if sub_criteria_status_completed and g.access_controller.has_any_assessor_role and (not is_qa_complete) %}
-        {{ assessment_complete(state, flags_list[-1], form.csrf_token, application_id)}}
+        {{ assessment_complete(state, form.csrf_token, application_id)}}
     {% endif %}
 </div>
 
@@ -79,10 +82,30 @@
                     {% endif %}
                 {% endif %}
             {% endif %}
+            {% if all_uploaded_documents_section_available %}
+            <h2 class="govuk-heading-l govuk-!-margin-top-8">All uploaded documents</h2>
+            {{ section_element(
+                "",
+                [{'id': 'all_uploaded_documents', 'name': 'All uploaded documents'}],
+                application_id
+            ) }}
+            {% endif %}
+            <h2 class="govuk-heading-l govuk-!-margin-top-8">Unscored</h2>
+            {% for section in state.sections %}
+                {{ section_element(section.name, section.sub_criterias, application_id) }}
+            {% endfor %}
+            <h2 class="govuk-heading-l govuk-!-margin-top-8">Scored</h2>
+            <p class="govuk-body">Assess all responses under each sub criteria.</p>
+            {% for criteria in state.criterias %}
+                {% set name_classes = "govuk-heading-m govuk-!-margin-bottom-2" %}
+                {% if loop.index > 0 %}
+                    {% set name_classes = "govuk-heading-m govuk-!-margin-bottom-2 govuk-!-margin-top-8" %}
+                {% endif %}
+            {% endfor %}
         </div>
         <div class="govuk-grid-column-one-third govuk-!-margin-top-2 govuk-button-group">
             <span>
-                {% if g.access_controller.is_lead_assessor and state.workflow_status=="COMPLETED" and (not is_qa_complete) and display_status not in ["Stopped", "Flagged", "Multiple Flags To Resolve"] and "Flagged" not in display_status %}
+                {% if g.access_controller.is_lead_assessor and state.workflow_status=="COMPLETED" and (not is_qa_complete) and flag_status not in ["Stopped", "Flagged", "Multiple flags to resolve"] and "Flagged" not in flag_status %}
                 {{ mark_qa_complete_button(application_id) }}
                 {% endif %}
             </span>

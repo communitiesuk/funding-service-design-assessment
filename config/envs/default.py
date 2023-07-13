@@ -121,6 +121,11 @@ class DefaultConfig:
         ASSESSMENT_STORE_API_HOST + "/application/{application_id}/metadata"
     )
 
+    ALL_UPLOADED_DOCUMENTS_THEME_ANSWERS_ENDPOINT = (
+        ASSESSMENT_STORE_API_HOST
+        + "/application/{application_id}/all_uploaded_documents"
+    )
+
     SUB_CRITERIA_THEME_ANSWERS_ENDPOINT = (
         "/sub_criteria_themes/{application_id}/{theme_id}"
     )
@@ -170,7 +175,9 @@ class DefaultConfig:
     ASSESSMENT_AVAILABLE_TAGS_ENDPOINT = (
         ASSESSMENT_STORE_API_HOST + "/funds/{fund_id}/rounds/{round_id}/tags"
     )
-
+    ASSESSMENT_ASSOCIATE_TAGS_ENDPOINT = (
+        ASSESSMENT_STORE_API_HOST + "/application/{application_id}/tag"
+    )
     # Account store endpoints
     BULK_ACCOUNTS_ENDPOINT = ACCOUNT_STORE_API_HOST + "/bulk-accounts"
 

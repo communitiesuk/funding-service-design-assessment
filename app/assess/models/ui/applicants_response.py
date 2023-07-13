@@ -2,14 +2,17 @@
 from abc import ABC
 from abc import abstractmethod
 from dataclasses import dataclass
+from datetime import datetime
 from typing import Iterable
 from typing import List
 from typing import Tuple
+from urllib.parse import quote
 
-from app.assess.data import list_files_in_folder
 from app.assess.views.filters import format_address
 from app.assess.views.filters import format_date
 from app.assess.views.filters import remove_dashes_underscores_capitalize
+from app.aws import list_files_in_folder
+from flask import current_app
 from flask import url_for
 
 ANSWER_NOT_PROVIDED_DEFAULT = "Not provided."
@@ -210,6 +213,17 @@ class NewAddAnotherTable(ApplicantResponseComponent):
         )
 
 
+def _convert_to_month_year(input_date):
+    """Convert input date string from MM-YYYY/YYYY-MM to Month Year
+    Example converts (06-2023, 2023-06..) to June 2023."""
+    try:
+        date_object = datetime.strptime(input_date, "%Y-%m")
+    except ValueError:
+        date_object = datetime.strptime(input_date, "%m-%Y")
+    date_object.strftime("%B %Y")
+    return str(date_object.strftime("%B %Y"))
+
+
 def _ui_component_from_factory(item: dict, application_id: str):
     """
     :param item: dict
@@ -242,15 +256,38 @@ def _ui_component_from_factory(item: dict, application_id: str):
         if presentation_type not in ("grouped_fields",):
             item["answer"] = float(item["answer"])
 
+    # TODO : Handle "monthYearField" field convertion in a better way if exists in "multiInputField"
+    # Convert input date string from MM-YYYY/YYYY-MM to Month Year format (eg., 2023-06 to June 2023)
+    if (
+        answer
+        and field_type == "monthYearField"
+        and presentation_type == "text"
+    ) or (
+        answer and field_type == "multiInputField" and isinstance(answer, list)
+    ):
+        if isinstance(answer, list):
+            try:
+                if answer[1][2] == "monthYearField":
+                    input_date = answer[1][1][0]
+                    item["answer"][1][1][0] = _convert_to_month_year(
+                        input_date
+                    )
+            except IndexError:
+                pass
+        else:
+            item["answer"] = _convert_to_month_year(answer)
+
     if item.get("branched_field"):
         # In the case of the same question asked in two places (but with differing fields ids)
         # for example when asked in multiple paths within a form (branched_fields),
         # we specify the multiple field_id's ids in a grouping to pick up each possible form branch
         # we should only get one answer here so extract the first and only answer
         item["answer"] = item["answer"][0][1] if "answer" in item else None
-        item["presentation_type"] = "text"
+        # currently only currencies, so we foramt, but we should add a formatter or some
+        # configuration open to change it
+        item["presentation_type"] = "currency"
         item["question"] = item["question"][0]
-        presentation_type = "text"
+        presentation_type = "currency"
 
     if presentation_type == "grouped_fields":
         return MonetaryKeyValues.from_dict(item)
@@ -269,6 +306,16 @@ def _ui_component_from_factory(item: dict, application_id: str):
             )
 
         return NewAddAnotherTable.from_dict(item)
+
+    elif presentation_type == "currency":
+        if item.get("answer"):
+            item["answer"] = "£{:.2f}".format(float(item["answer"]))
+        return BesideQuestionAnswerPair.from_dict(item)
+
+    elif presentation_type == "integer":
+        if item.get("answer"):
+            item["answer"] = "{}".format(int(item["answer"]))
+        return BesideQuestionAnswerPair.from_dict(item)
 
     elif presentation_type in ("text", "list", "free_text"):
         if field_type in ("radiosField") and item.get("answer"):
@@ -313,7 +360,8 @@ def _ui_component_from_factory(item: dict, application_id: str):
             key: url_for(
                 "assess_bp.get_file",
                 application_id=application_id,
-                file_name=key,
+                file_name=quote(key, safe=""),
+                quoted=True,
             )
             for key in file_keys
         }
