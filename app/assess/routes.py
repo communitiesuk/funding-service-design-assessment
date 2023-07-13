@@ -12,8 +12,8 @@ from app.assess.data import get_application_json
 from app.assess.data import get_application_overviews
 from app.assess.data import get_assessments_stats
 from app.assess.data import get_available_teams
-from app.assess.data import get_team_flag_stats
 from app.assess.data import get_flag
+from app.assess.data import get_team_flag_stats
 from app.assess.data import submit_score_and_justification
 from app.assess.display_value_mappings import assessment_statuses
 from app.assess.display_value_mappings import asset_types
