@@ -986,6 +986,21 @@ def test_create_ui_components_retains_order(monkeypatch):
             },
         ),
         (
+            {
+                "answer": (
+                    "<ul>This text contains HTML tag"
+                    " <li>One</li>\n<li>Two</li> </ul>"
+                )
+            },
+            {
+                "answer": (
+                    '<ul class="govuk-body">This text contains HTML tag <li'
+                    ' class="govuk-body">One</li>\n<li'
+                    ' class="govuk-body">Two</li> </ul>'
+                )
+            },
+        ),
+        (
             {"answer": "This text does not contain HTML tag"},
             {"answer": "This text does not contain HTML tag"},
         ),
