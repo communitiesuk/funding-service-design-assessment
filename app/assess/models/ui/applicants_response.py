@@ -1,4 +1,5 @@
 # flake8: noqa
+import re
 from abc import ABC
 from abc import abstractmethod
 from dataclasses import dataclass
@@ -12,10 +13,11 @@ from app.assess.views.filters import format_address
 from app.assess.views.filters import format_date
 from app.assess.views.filters import remove_dashes_underscores_capitalize
 from app.aws import list_files_in_folder
+from bs4 import BeautifulSoup
 from flask import current_app
 from flask import url_for
 
-ANSWER_NOT_PROVIDED_DEFAULT = "Not provided."
+ANSWER_NOT_PROVIDED_DEFAULT = "<p>Not provided.</p>"
 
 
 @dataclass
@@ -296,6 +298,7 @@ def _ui_component_from_factory(item: dict, application_id: str):
         return QuestionHeading.from_dict(item)
 
     elif presentation_type == "free_text":
+        item = sanitise_html(item)
         return AboveQuestionAnswerPairHtml.from_dict(item)
 
     elif presentation_type == "table":
@@ -701,3 +704,23 @@ def create_ui_components(
         _ui_component_from_factory(item, application_id)
         for item in post_processed_items
     ]
+
+
+def sanitise_html(data):
+    """
+    If answer then add the `govuk-body` class to
+    all `p`, `ul`, `ol`, and `li` tags.
+
+    Args:
+        data: The data to be sanitised.
+
+    Returns:
+        The sanitised data with govuk-body class."""
+
+    answer = data.get("answer")
+    if answer:
+        soup = BeautifulSoup(answer, "html.parser")
+        for tag in soup.find_all(["p", "ul", "ol", "li"]):
+            tag["class"] = "govuk-body"
+        data["answer"] = str(soup)
+    return data
