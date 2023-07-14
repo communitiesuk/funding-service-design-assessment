@@ -9,6 +9,7 @@
 {% from "macros/mark_qa_complete_button.html" import mark_qa_complete_button %}
 {% from "macros/assessment_flag.html" import assessment_flagged %}
 {% from "macros/assessment_flag.html" import assessment_stopped %}
+{% from "macros/assessment_flag.html" import assessment_resolved %}
 {% from "macros/logout_partial.html" import logout_partial %}
 {% from "macros/qa_complete_flag.html" import qa_complete_flag %}
 {% from "macros/assessment_completion.html" import assessment_complete %}
@@ -53,15 +54,18 @@
         {% endif %}
     {% endfor %}
 
+    {# only show stopped banner, if flag_status=="Stopped" and hide all other banners #}
     {% for flag in flags_list %}
-        {% if g.access_controller.has_any_assessor_role and (flag_status != "Stopped") and (flag.latest_status.name == "RAISED") %}
+        {% if g.access_controller.has_any_assessor_role and (flag_status != "Stopped") and (flag.latest_status.name == "RESOLVED") %}
+            {{ assessment_resolved(flag, accounts_list[flag.latest_user_id], application_id) }}
+        {% elif g.access_controller.has_any_assessor_role and (flag_status != "Stopped") and (flag.latest_status.name == "RAISED") %}
             {{ assessment_flagged(state, flag, accounts_list[flag.latest_user_id], application_id) }}
         {% elif g.access_controller.has_any_assessor_role and flag_status == "Stopped" and (flag.latest_status.name == "STOPPED")%}
             {{ assessment_stopped(flag, accounts_list[flag.latest_user_id], application_id) }}
         {% endif %}
     {% endfor %}
 
-    {% if sub_criteria_status_completed and g.access_controller.has_any_assessor_role and (not is_qa_complete) %}
+    {% if sub_criteria_status_completed and g.access_controller.has_any_assessor_role and (not is_qa_complete) and (not flag_status) %}
         {{ assessment_complete(state, form.csrf_token, application_id)}}
     {% endif %}
 </div>
@@ -74,7 +78,8 @@
             {{ section_element(
                 "",
                 [{'id': 'all_uploaded_documents', 'name': 'All uploaded documents'}],
-                application_id
+                application_id,
+                show_caption=False,
             ) }}
             {% endif %}
             <h2 class="govuk-heading-l govuk-!-margin-top-8">Unscored</h2>

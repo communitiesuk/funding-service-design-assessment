@@ -717,6 +717,7 @@ class TestJinjaMacros(object):
             ),
             flag={
                 "latest_status": {"name": "STOPPED"},
+                "latest_allocation": "Team A",
                 "updates": [
                     {
                         "justification": "Test justification",
@@ -741,8 +742,8 @@ class TestJinjaMacros(object):
         assert (
             alert_div.find(
                 "h1", class_="assessment-alert__heading govuk-heading-l"
-            ).text
-            == "Assessment Stopped"
+            ).text.strip()
+            == "Flagged for Team A - Assessment stopped"
         ), "Flag type not found"
 
         assert (

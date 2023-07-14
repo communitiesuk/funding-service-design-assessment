@@ -1,5 +1,5 @@
 {%- from "govuk_frontend_jinja/components/table/macro.html" import govukTable -%}
-{% macro section_element(name, sub_criterias, application_id) %}
+{% macro section_element(name, sub_criterias, application_id, show_caption=True) %}
     {% if name != "Unscored" %}
         <h2 class="govuk-heading-l govuk-!-margin-top-4">{{ name }}</h2>
     {% endif %}
@@ -28,7 +28,7 @@
         }) }}
     {% else %}
         {{ govukTable({
-            "caption": "Use for due diligence checks.",
+            "caption": "Use for due diligence checks." if show_caption else "",
             "firstCellIsHeader":false,
             "head": [[{ "text": "" }]],
             "captionClasses": "govuk-body govuk-!-text-align-left govuk-!-font-weight-regular govuk-!-margin-bottom-4",
