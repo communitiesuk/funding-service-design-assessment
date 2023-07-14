@@ -26,17 +26,45 @@
 
 {% macro assessment_stopped(flag, user_info, application_id) %}
     <div class="assessment-alert assessment-alert--stopped" role="alert">
-        <h1 class="assessment-alert__heading govuk-heading-l">Assessment {{ flag.latest_status.name | title }}</h1>
+        <h1 class="assessment-alert__heading govuk-heading-l">
+            {{ ("Flagged for "+ flag.latest_allocation if flag.latest_allocation else "Flagged") +  " - Assessment stopped" }}
+        </h1>
         <h2 class="govuk-heading-m">Reason</h2>
         {% for update in flag.updates %}
             {% if update["status"].name == "STOPPED" %}
                 <p class="govuk-body">{{ update["justification"] }}</p>
             {% endif %}
         {% endfor %}
+        <br>
         <p class="govuk-body-s">{{ user_info["full_name"] }} ({{ user_info["highest_role"] | all_caps_to_human }}) {{ user_info["email_address"] }}</p>
         <p class="govuk-body-s">{{ flag.date_created | utc_to_bst }}</p>
         {% if g.access_controller.is_lead_assessor %}
             <p class="govuk-body"><a class="govuk-link govuk-link--no-visited-state" href="{{ url_for('assess_bp.continue_assessment',application_id=application_id)}}?flag_id={{ flag.id }}">Remove flag and continue assessment</a></p>
         {% endif %}
+    </div>
+{% endmacro %}
+
+{% macro assessment_resolved(flag, user_info, application_id) %}
+    <div class="assessment-complete  govuk-margin-bottom-8" role="alert">
+        {% if flag.updates[-1]["status"].name == "RESOLVED" %}
+            {% if flag.updates[-2]["status"].name == "STOPPED" %}
+                <h1 class="assessment-alert__heading govuk-heading-l">
+                    {{ ("Flagged for "+ flag.latest_allocation if flag.latest_allocation else "Flagged") + " - Continue assessment" }}
+                </h1>
+                <h2>Reason for continuing assessment</h2>
+                <p>{{ flag.updates[-1]["justification"] }}</p>
+            {% else %}
+                <h1 class="assessment-alert__heading govuk-heading-l">
+                    {{ ("Flagged for "+ flag.latest_allocation if flag.latest_allocation else "Flagged") + " resolved" }}
+                </h1>
+                <h2>Resolve flag action</h2>
+                <p>Query resolved</p>
+                <h2>Reason</h2>
+                <p>{{ flag.updates[-1]["justification"] }}</p>
+            {% endif %}
+        {% endif %}
+        <br>
+        <p class="govuk-body-s">{{ user_info["full_name"] }} ({{ user_info["highest_role"] | all_caps_to_human }}) {{ user_info["email_address"] }}</p>
+        <p class="govuk-body-s">{{ flag.updates[-1]["date_created"] | utc_to_bst }}</p>
     </div>
 {% endmacro %}
