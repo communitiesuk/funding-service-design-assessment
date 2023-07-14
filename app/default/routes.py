@@ -25,7 +25,7 @@ def index():
 def not_found(error):
     error_message = f"Encountered 500: {error}"
     stack_trace = traceback.format_exc()
-    current_app.logger.error(f"{error_message}\n{stack_trace}")
+    current_app.logger.info(f"{error_message}\n{stack_trace}")
     return render_template("404.html"), 404
 
 
