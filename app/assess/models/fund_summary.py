@@ -52,7 +52,7 @@ def create_fund_summaries(fund: Fund) -> list[FundSummary]:
                 ),
             )
             summaries.append(summary)
-    return summaries
+    return sorted(summaries, key=lambda s: s.application_stats.date)
 
 
 def is_after_today(date_str: str):
