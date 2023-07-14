@@ -978,10 +978,17 @@ def test_create_ui_components_retains_order(monkeypatch):
     "input_data, expected_response",
     [
         (
-            {"answer": "<p>This text contains HTML tag</p>"},
             {
                 "answer": (
-                    '<p class="govuk-body">This text contains HTML tag</p>'
+                    "<p>This text contains HTML tag.</p> <strong>This is a"
+                    " bold text tag.</strong> <h1>This is h1 tag.</h1>"
+                )
+            },
+            {
+                "answer": (
+                    '<p class="govuk-body">This text contains HTML tag.</p>'
+                    " <strong>This is a bold text tag.</strong> <h1>This is h1"
+                    " tag.</h1>"
                 )
             },
         ),
