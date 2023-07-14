@@ -93,9 +93,13 @@
                         {% for section in state.sections %}
                             {% if section.name == 'Unscored' %}
                                 {% for sub_section in section.sub_criterias %}
+                                    {% set checked = False %}
+                                    {% if form.section.data and (sub_section["id"] in form.section.data) %}
+                                        {% set checked = True %}
+                                    {% endif %}
                                     {% set addItem = items.append({'value': sub_section["id"],
                                                                     'text': sub_section["name"],
-                                                                    'checked':  sub_section["id"] in form.section.data}) %}
+                                                                    'checked': checked}) %}
                                 {% endfor %}
                             {% endif %}
                         {% endfor %}
@@ -104,9 +108,13 @@
                             {% for section in state.sections %}
                                 {% if section.name == 'Your organisation' %}
                                     {% for sub_section in section.sub_criterias %}
+                                        {% set checked = False %}
+                                        {% if form.section.data and (sub_section["id"] in form.section.data) %}
+                                            {% set checked = True %}
+                                        {% endif %}
                                         {% set addItem = items.append({'value': sub_section["id"],
                                                                         'text': sub_section["name"],
-                                                                        'checked':  sub_section["id"] in form.section.data}) %}
+                                                                        'checked': checked}) %}
                                     {% endfor %}
                                 {% endif %}
                             {% endfor %}
@@ -149,9 +157,13 @@
                         {% for section in state.sections %}
                             {% if section.name == 'Declarations' %}
                                 {% for sub_section in section.sub_criterias %}
+                                    {% set checked = False %}
+                                    {% if form.section.data and (sub_section["id"] in form.section.data) %}
+                                        {% set checked = True %}
+                                    {% endif %}
                                     {% set addItem = items.append({'value': sub_section["id"],
                                                                 'text': sub_section["name"],
-                                                                'checked':  sub_section["id"] in form.section.data }) %}
+                                                                'checked': checked}) %}
                                 {% endfor %}
                             {% endif %}
                         {% endfor %}
@@ -182,9 +194,13 @@
                             {% for section in state.criterias %}
                                 {% set items = [] %}
                                 {% for sub_section in section.sub_criterias %}
+                                    {% set checked = False %}
+                                    {% if form.section.data and (sub_section["id"] in form.section.data) %}
+                                        {% set checked = True %}
+                                    {% endif %}
                                     {% set addItem = items.append({'value': sub_section["id"],
                                                                 'text': sub_section["name"],
-                                                                'checked':  sub_section["id"] in form.section.data }) %}
+                                                                'checked': checked }) %}
                                 {% endfor %}
                                 {{ govukCheckboxes({
                                     'idPrefix': section["name"],
