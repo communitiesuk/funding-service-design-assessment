@@ -67,9 +67,17 @@ resolved_app = {
                     "user_id": test_user_id_lead_assessor,
                     "date_created": "2023-02-20 12:00:00",
                     "justification": "Test",
+                    "status": "RAISED",
+                    "allocation": None,
+                },
+                {
+                    "id": "316f607a-03b7-4592-b927-5021a28b7d6a",
+                    "user_id": test_user_id_lead_assessor,
+                    "date_created": "2023-02-20 12:00:00",
+                    "justification": "Test",
                     "status": "RESOLVED",
                     "allocation": None,
-                }
+                },
             ],
         },
     ],
