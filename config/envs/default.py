@@ -144,8 +144,11 @@ class DefaultConfig:
         + "/application/{application_id}/status/complete"
     )
     ASSESSMENT_UPDATE_QA_STATUS = (
-        ASSESSMENT_STORE_API_HOST
-        + "/application/{application_id}/status/qa_complete"
+        ASSESSMENT_STORE_API_HOST + "qa_complete/{application_id}/{user_id}"
+    )
+
+    ASSESSMENT_GET_QA_STATUS_ENDPOINT = (
+        ASSESSMENT_STORE_API_HOST + "/qa_complete/{application_id}"
     )
 
     ASSESSMENT_COMMENT_ENDPOINT = ASSESSMENT_STORE_API_HOST + "/comment"
