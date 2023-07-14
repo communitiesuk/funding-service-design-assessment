@@ -643,14 +643,14 @@ class TestRoutes:
         assert 200 == response.status_code, "Wrong status code on response"
         soup = BeautifulSoup(response.data, "html.parser")
         assert (
-            soup.find("h1", class_="assessment-alert__heading").string
-            == "Assessment Stopped"
+            soup.find("h1", class_="assessment-alert__heading").string.strip()
+            == "Flagged - Assessment stopped"
         )
         assert b"Lead User (Lead assessor) lead@test.com" in response.data
         assert b"20/02/2023 at 12:00" in response.data
 
     @pytest.mark.application_id("resolved_app")
-    def test_application_route_should_not_show_resolved_flag(
+    def test_application_route_should_show_resolved_flag(
         self,
         request,
         flask_test_client,
@@ -672,12 +672,10 @@ class TestRoutes:
         )
 
         assert response.status_code == 200
-        # TODO: Uncomment & fix it after multiple flags is implemented (FS-2776)
-        # assert b"Remove flag" not in response.data
-        # assert b"Resolve flag" not in response.data
-        # assert b"Reason" not in response.data
-        # assert b"flagged" not in response.data
-        # assert b"Flagged" not in response.data
+        assert b"Remove flag" not in response.data
+        assert b"Flagged resolved" in response.data
+        assert b"Resolve flag action" in response.data
+        assert b"Reason" in response.data
 
     @pytest.mark.application_id("resolved_app")
     def test_flag_route_submit_flag(

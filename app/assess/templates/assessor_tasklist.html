@@ -9,6 +9,7 @@
 {% from "macros/mark_qa_complete_button.html" import mark_qa_complete_button %}
 {% from "macros/assessment_flag.html" import assessment_flagged %}
 {% from "macros/assessment_flag.html" import assessment_stopped %}
+{% from "macros/assessment_flag.html" import assessment_resolved %}
 {% from "macros/logout_partial.html" import logout_partial %}
 {% from "macros/qa_complete_flag.html" import qa_complete_flag %}
 {% from "macros/assessment_completion.html" import assessment_complete %}
@@ -31,7 +32,8 @@
         state.short_id,
         state.project_name,
         state.funding_amount_requested,
-        display_status,
+        assessment_status,
+        flag_status
     ) }}
 </header>
 {% endblock header %}
@@ -52,15 +54,18 @@
         {% endif %}
     {% endfor %}
 
+    {# only show stopped banner, if flag_status=="Stopped" and hide all other banners #}
     {% for flag in flags_list %}
-        {% if g.access_controller.has_any_assessor_role and (display_status != "Stopped") and (flag.latest_status.name == "RAISED") %}
+        {% if g.access_controller.has_any_assessor_role and (flag_status != "Stopped") and (flag.latest_status.name == "RESOLVED") %}
+            {{ assessment_resolved(flag, accounts_list[flag.latest_user_id], application_id) }}
+        {% elif g.access_controller.has_any_assessor_role and (flag_status != "Stopped") and (flag.latest_status.name == "RAISED") %}
             {{ assessment_flagged(state, flag, accounts_list[flag.latest_user_id], application_id) }}
-        {% elif g.access_controller.has_any_assessor_role and display_status == "Stopped" and (flag.latest_status.name == "STOPPED")%}
+        {% elif g.access_controller.has_any_assessor_role and flag_status == "Stopped" and (flag.latest_status.name == "STOPPED")%}
             {{ assessment_stopped(flag, accounts_list[flag.latest_user_id], application_id) }}
         {% endif %}
     {% endfor %}
 
-    {% if sub_criteria_status_completed and g.access_controller.has_any_assessor_role and (not is_qa_complete) %}
+    {% if sub_criteria_status_completed and g.access_controller.has_any_assessor_role and (not is_qa_complete) and (not flag_status) %}
         {{ assessment_complete(state, form.csrf_token, application_id)}}
     {% endif %}
 </div>
@@ -68,6 +73,15 @@
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
         <div class="govuk-grid-column-two-thirds">
+            {% if all_uploaded_documents_section_available %}
+            <h2 class="govuk-heading-l govuk-!-margin-top-8">All uploaded documents</h2>
+            {{ section_element(
+                "",
+                [{'id': 'all_uploaded_documents', 'name': 'All uploaded documents'}],
+                application_id,
+                show_caption=False,
+            ) }}
+            {% endif %}
             <h2 class="govuk-heading-l govuk-!-margin-top-8">Unscored</h2>
             {% for section in state.sections %}
                 {{ section_element(section.name, section.sub_criterias, application_id) }}
@@ -84,7 +98,7 @@
         </div>
         <div class="govuk-grid-column-one-third govuk-!-margin-top-2 govuk-button-group">
             <span>
-                {% if g.access_controller.is_lead_assessor and state.workflow_status=="COMPLETED" and (not is_qa_complete) and display_status not in ["Stopped", "Flagged", "Multiple Flags To Resolve"] and "Flagged" not in display_status %}
+                {% if g.access_controller.is_lead_assessor and state.workflow_status=="COMPLETED" and (not is_qa_complete) and flag_status not in ["Stopped", "Flagged", "Multiple flags to resolve"] and "Flagged" not in flag_status %}
                 {{ mark_qa_complete_button(application_id) }}
                 {% endif %}
             </span>

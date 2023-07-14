@@ -173,7 +173,6 @@ def get_bulk_accounts_dict(account_ids: List, fund_short_name: str):
             debug_user_config["highest_role_map"] = {
                 fund_short_name: Config.DEBUG_USER_ROLE
             }
-            del debug_user_config["highest_role"]
             users_result[Config.DEBUG_USER_ACCOUNT_ID] = debug_user_config
 
         for user_result in users_result.values():
@@ -463,6 +462,29 @@ def submit_flag(
     if flag:
         flag_json = flag.json()
         return FlagV2.from_dict(flag_json)
+
+
+def get_all_uploaded_documents_theme_answers(
+    application_id: str,
+) -> Union[list, None]:
+    all_uploaded_documents_theme_answers_endpoint = (
+        Config.ALL_UPLOADED_DOCUMENTS_THEME_ANSWERS_ENDPOINT.format(
+            application_id=application_id
+        )
+    )
+    all_uploaded_documents_theme_answers_response = get_data(
+        all_uploaded_documents_theme_answers_endpoint
+    )
+
+    if all_uploaded_documents_theme_answers_response:
+        return all_uploaded_documents_theme_answers_response
+    else:
+        msg = (
+            f"all_uploaded_documents_theme_answers: '{application_id}' not"
+            " found."
+        )
+        current_app.logger.warn(msg)
+        abort(404, description=msg)
 
 
 def get_sub_criteria_theme_answers(

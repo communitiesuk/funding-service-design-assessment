@@ -281,10 +281,6 @@ def mock_get_application_metadata():
                 "assessment_store/applications/{application_id}"
             ],
         ),
-        mock.patch(
-            "app.assess.helpers.get_application_metadata",
-            return_value=mock_api_results["/application/stopped_app/metadata"],
-        ),
     ):
         yield
 
