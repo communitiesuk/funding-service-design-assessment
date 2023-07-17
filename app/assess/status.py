@@ -58,3 +58,23 @@ def update_ar_status_to_completed(application_id):
         return response
     else:
         current_app.logger.error("Not Found: application_id not found")
+
+
+def update_ar_status_to_qa_completed(application_id, user_id):
+    """Function makes a call to assessment store to update the
+    status of given application_id to COMPLETED"""
+    response = requests.post(
+        Config.ASSESSMENT_UPDATE_QA_STATUS.format(
+            application_id=application_id, user_id=user_id
+        )
+    )
+    if response.status_code == 200:
+        current_app.logger.info(
+            "The application status has been updated to QA_COMPLETE"
+        )
+        return response
+    else:
+        current_app.logger.error(
+            "Could not create qa_complete record for application"
+            f" {application_id}"
+        )
