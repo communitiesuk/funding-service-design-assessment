@@ -9,7 +9,7 @@ RAISED_FLAG = [
     FlagV2.from_dict(
         {
             "application_id": "app_123",
-            "latest_status": 0,
+            "latest_status": "RAISED",
             "latest_allocation": "TEAM_1",
             "id": "flagid",
             "sections_to_flag": ["community"],
@@ -19,7 +19,7 @@ RAISED_FLAG = [
                     "user_id": "test@example.com",
                     "date_created": "2023-01-01T00:00:00",
                     "justification": "Test flag",
-                    "status": 0,
+                    "status": "RAISED",
                     "allocation": "TEAM_1",
                 }
             ],
@@ -30,7 +30,7 @@ RESOLVED_FLAG = [
     FlagV2.from_dict(
         {
             "application_id": "app_123",
-            "latest_status": 3,
+            "latest_status": "RESOLVED",
             "latest_allocation": "TEAM_1",
             "id": "flagid",
             "sections_to_flag": ["community"],
@@ -40,7 +40,7 @@ RESOLVED_FLAG = [
                     "user_id": "test@example.com",
                     "date_created": "2023-01-01T00:00:00",
                     "justification": "Test flag",
-                    "status": 3,
+                    "status": "RESOLVED",
                     "allocation": "TEAM_1",
                 }
             ],
@@ -51,7 +51,7 @@ STOPPED_FLAG = [
     FlagV2.from_dict(
         {
             "application_id": "app_123",
-            "latest_status": 1,
+            "latest_status": "STOPPED",
             "latest_allocation": "TEAM_1",
             "id": "flagid",
             "sections_to_flag": ["community"],
@@ -61,7 +61,7 @@ STOPPED_FLAG = [
                     "user_id": "test@example.com",
                     "date_created": "2023-01-01T00:00:00",
                     "justification": "Test flag",
-                    "status": 1,
+                    "status": "STOPPED",
                     "allocation": "TEAM_1",
                 }
             ],
