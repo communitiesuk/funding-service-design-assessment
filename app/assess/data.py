@@ -279,6 +279,17 @@ def get_assessments_stats(
     return get_data(assessments_stats_endpoint)
 
 
+def get_team_flag_stats(fund_id: str, round_id: str) -> Dict | None:
+    team_flag_stats_endpoint = (
+        Config.ASSESSMENT_STORE_API_HOST
+    ) + Config.ASSESSMENTS_TEAM_FLAGGING_STATS_ENDPOINT.format(
+        fund_id=fund_id, round_id=round_id
+    )
+
+    current_app.logger.info(f"Endpoint '{team_flag_stats_endpoint}'.")
+    return get_data(team_flag_stats_endpoint)
+
+
 def get_assessor_task_list_state(application_id: str) -> Union[dict, None]:
     overviews_endpoint = (
         Config.ASSESSMENT_STORE_API_HOST
