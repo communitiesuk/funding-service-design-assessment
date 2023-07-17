@@ -285,8 +285,9 @@ def score(
 
     link = guidance_links.get(
         state.fund_short_name,
-        "https://mhclg.sharepoint.com.mcas.ms/:w:/s/CommunityOwnershipFund@   "
-        "      /Ecv3iM7U0AtKtyHnzRrQ9dsB0HdMPvHWqAoGn1WrWM7EMA?e=6QpdUT",
+        "https://mhclg.sharepoint.com.mcas.ms/:w:/s/"
+        + "CommunityOwnershipFund/"
+        + "Ecv3iM7U0AtKtyHnzRrQ9dsB0HdMPvHWqAoGn1WrWM7EMA?e=6QpdUT",
     )
     return render_template(
         "score.html",

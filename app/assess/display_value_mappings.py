@@ -49,13 +49,10 @@ search_params_nstf = {
 }
 
 guidance_links = {
-    "COF": (
-        "https://mhclg.sharepoint.com.mcas.ms/:w:/s/CommunityOwnershipFund    "
-        " /Ecv3iM7U0AtKtyHnzRrQ9dsB0HdMPvHWqAoGn1WrWM7EMA?e=6QpdUT"
-    ),
-    "NSTF": (
-        "https://mhclg.sharepoint.com.mcas.ms/:w:/s    "
-        " HomelessnessandRoughSleeping    "
-        " /EZn-Dq3eBvFDtdBqhyEZxUUBj_BP53F9TVyI0imX3NdcPw?e=PtmLwH"
-    ),
+    "COF": "https://mhclg.sharepoint.com.mcas.ms/:w:/s/"
+    + "CommunityOwnershipFund/"
+    + "Ecv3iM7U0AtKtyHnzRrQ9dsB0HdMPvHWqAoGn1WrWM7EMA?e=6QpdUT",
+    "NSTF": "https://mhclg.sharepoint.com.mcas.ms/:w:/s/"
+    + "HomelessnessandRoughSleeping/"
+    + "EZn-Dq3eBvFDtdBqhyEZxUUBj_BP53F9TVyI0imX3NdcPw?e=PtmLwH",
 }
