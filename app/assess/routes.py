@@ -559,9 +559,12 @@ def application(application_id):
     state = get_state_for_tasklist_banner(application_id)
     fund = get_fund(state.fund_short_name, use_short_name=True)
 
+    accounts_list = []
+    user_id_list = []
     flags_list = get_flags(application_id)
     qa_complete = get_qa_complete(application_id)
-    accounts_list = []
+    if qa_complete:
+        user_id_list.append(qa_complete["user_id"])
 
     assessment_status = determine_assessment_status(
         state.workflow_status, state.is_qa_complete
@@ -569,15 +572,12 @@ def application(application_id):
     flag_status = determine_flag_status(flags_list)
 
     if flags_list:
-        user_id_list = []
         for flag_data in flags_list:
             for flag_item in flag_data.updates:
                 if flag_item["user_id"] not in user_id_list:
                     user_id_list.append(flag_item["user_id"])
 
-                accounts_list = get_bulk_accounts_dict(
-                    user_id_list, state.fund_short_name
-                )
+    accounts_list = get_bulk_accounts_dict(user_id_list, state.fund_short_name)
 
     teams_flag_stats = TeamsFlagData.from_flags(flags_list).teams_stats
 

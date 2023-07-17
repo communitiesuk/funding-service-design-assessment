@@ -74,4 +74,7 @@ def update_ar_status_to_qa_completed(application_id, user_id):
         )
         return response
     else:
-        current_app.logger.error("Not Found: application_id not found")
+        current_app.logger.error(
+            "Could not create qa_complete record for application"
+            f" {application_id}"
+        )
