@@ -48,11 +48,9 @@
 
 {# Display multiple flag banner #}
 <div>
-    {% for flag in flags_list %}
-        {% if g.access_controller.has_any_assessor_role and is_qa_complete and flag.latest_status.name == "QA_COMPLETED" %}
-            {{ qa_complete_flag(flag, accounts_list[flag.latest_user_id], form.csrf_token, application_id) }}
-        {% endif %}
-    {% endfor %}
+    {% if g.access_controller.has_any_assessor_role and is_qa_complete %}
+        {{ qa_complete_flag(qa_complete["date_created"], accounts_list[qa_complete["user_id"]], form.csrf_token, application_id) }}
+    {% endif %}
 
     {# only show stopped banner, if flag_status=="Stopped" and hide all other banners #}
     {% for flag in flags_list %}

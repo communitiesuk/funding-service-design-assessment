@@ -636,6 +636,7 @@ class TestRoutes:
         mock_get_application_metadata,
         mock_get_round,
         mock_get_flags,
+        mock_get_qa_complete,
         mock_get_bulk_accounts,
     ):
         marker = request.node.get_closest_marker("application_id")
@@ -667,6 +668,7 @@ class TestRoutes:
         mock_get_application_metadata,
         mock_get_round,
         mock_get_flags,
+        mock_get_qa_complete,
         mock_get_bulk_accounts,
     ):
         marker = request.node.get_closest_marker("application_id")
@@ -916,6 +918,7 @@ class TestRoutes:
         mock_get_round,
         mock_get_assessor_tasklist_state,
         mock_get_flags,
+        mock_get_qa_complete,
         mock_get_bulk_accounts,
         mock_get_sub_criteria_banner_state,
         mock_get_fund,
@@ -946,6 +949,7 @@ class TestRoutes:
         mock_get_application_metadata,
         mock_get_round,
         mock_get_flags,
+        mock_get_qa_complete,
         mock_get_bulk_accounts,
     ):
         token = create_valid_token(test_lead_assessor_claims)
