@@ -401,25 +401,16 @@ def get_flags(application_id: str) -> List[FlagV2]:
     if flag:
         return FlagV2.from_list(flag)
     else:
-        msg = f"flag for application: '{application_id}' not found."
-        current_app.logger.warn(msg)
         return []
 
 
-def get_qa_complete(application_id: str) -> List[FlagV2]:
+def get_qa_complete(application_id: str) -> dict:
     qa_complete = get_data(
         Config.ASSESSMENT_GET_QA_STATUS_ENDPOINT.format(
             application_id=application_id
         )
     )
-    if qa_complete:
-        return qa_complete
-    else:
-        msg = (
-            f"qa_complete info for application: '{application_id}' not found."
-        )
-        current_app.logger.warn(msg)
-        return {}
+    return qa_complete
 
 
 def submit_flag(
