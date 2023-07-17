@@ -68,7 +68,7 @@ def update_ar_status_to_qa_completed(application_id, user_id):
             application_id=application_id, user_id=user_id
         )
     )
-    if response.status_code == 201:
+    if response.status_code in [201, 200]:
         current_app.logger.info(
             "The application status has been updated to QA_COMPLETE"
         )

@@ -512,6 +512,7 @@ class TestAuthorisation:
         mock_get_application_metadata,
         mock_get_round,
         mock_get_flags,
+        mock_get_qa_complete,
         mock_get_bulk_accounts,
     ):
         token = create_valid_token(user_account)
