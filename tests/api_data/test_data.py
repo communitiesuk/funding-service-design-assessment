@@ -157,6 +157,7 @@ flagged_qa_completed_app = {
     ],
     "qa_complete": [
         {
+            "id": "416f607a-03b7-4592-b927-5021a28b7d6b",
             "application_id": flagged_qa_completed_app_id,
             "user_id": test_user_id_lead_assessor,
             "date_created": "2023-02-19 12:00:00",
@@ -453,9 +454,9 @@ mock_api_results = {
     "assessment_store/flags_v2?application_id=flagged_qa_completed_app": flagged_qa_completed_app[
         "flags_v2"
     ],
-    "assessment_store/qa_complete/flagged_app": flagged_app["qa_complete"],
-    "assessment_store/qa_complete/resolved_app": resolved_app["qa_complete"],
-    "assessment_store/qa_complete/stopped_app": stopped_app["qa_complete"],
+    "assessment_store/qa_complete/flagged_app": {},
+    "assessment_store/qa_complete/resolved_app": {},
+    "assessment_store/qa_complete/stopped_app": {},
     "assessment_store/qa_complete/flagged_qa_completed_app": flagged_qa_completed_app[
         "qa_complete"
     ][
