@@ -514,12 +514,12 @@ def mock_get_qa_complete(request):
     marker = request.node.get_closest_marker("application_id")
     application_id = marker.args[0]
 
-    mock_flag_info = mock_api_results[
+    mock_qa_info = mock_api_results[
         f"assessment_store/qa_complete/{application_id}"
     ]
     with (
         mock.patch(
-            "app.assess.routes.get_qa_complete", return_value=mock_flag_info
+            "app.assess.routes.get_qa_complete", return_value=mock_qa_info
         ),
     ):
         yield
