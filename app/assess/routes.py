@@ -17,6 +17,7 @@ from app.assess.data import submit_score_and_justification
 from app.assess.display_value_mappings import assessment_statuses
 from app.assess.display_value_mappings import asset_types
 from app.assess.display_value_mappings import funding_types
+from app.assess.display_value_mappings import guidance_links
 from app.assess.display_value_mappings import search_params_cof
 from app.assess.display_value_mappings import search_params_nstf
 from app.assess.forms.assessment_form import AssessmentCompleteForm
@@ -282,12 +283,11 @@ def score(
         (1, "Poor"),
     ]
 
-    guidance_links = {
-        "COF": "https://mhclg.sharepoint.com.mcas.ms/:w:/s/CommunityOwnershipFund/Ecv3iM7U0AtKtyHnzRrQ9dsB0HdMPvHWqAoGn1WrWM7EMA?e=6QpdUT",
-        "NSTF": "https://mhclg.sharepoint.com.mcas.ms/:w:/s/HomelessnessandRoughSleeping/EZn-Dq3eBvFDtdBqhyEZxUUBj_BP53F9TVyI0imX3NdcPw?e=PtmLwH"
-    }
-
-    link = guidance_links.get(state.fund_short_name, "https://mhclg.sharepoint.com.mcas.ms/:w:/s/CommunityOwnershipFund/Ecv3iM7U0AtKtyHnzRrQ9dsB0HdMPvHWqAoGn1WrWM7EMA?e=6QpdUT")
+    link = guidance_links.get(
+        state.fund_short_name,
+        "https://mhclg.sharepoint.com.mcas.ms/:w:/s/CommunityOwnershipFund@   "
+        "      /Ecv3iM7U0AtKtyHnzRrQ9dsB0HdMPvHWqAoGn1WrWM7EMA?e=6QpdUT",
+    )
     return render_template(
         "score.html",
         application_id=application_id,
@@ -303,7 +303,7 @@ def score(
         flag_status=flag_status,
         assessment_status=assessment_status,
         is_flaggable=is_flaggable(flag_status),
-        guidance_link=link
+        guidance_link=link,
     )
 
 
