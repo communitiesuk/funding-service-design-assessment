@@ -34,6 +34,8 @@ flagged_app = {
             ],
         },
     ],
+    "qa_complete": [],
+    "is_qa_complete": False,
     "criteria_sub_criteria_name": "test_sub_criteria",
     "criteria_sub_criteria_id": "test_sub_criteria_id",
     "theme_id": "test_theme_id",
@@ -81,6 +83,8 @@ resolved_app = {
             ],
         },
     ],
+    "qa_complete": [],
+    "is_qa_complete": False,
     "criteria_sub_criteria_name": "test_sub_criteria",
     "criteria_sub_criteria_id": "test_sub_criteria_id",
     "theme_id": "test_theme_id",
@@ -121,6 +125,8 @@ stopped_app = {
             ],
         },
     ],
+    "qa_complete": [],
+    "is_qa_complete": False,
 }
 
 flagged_qa_completed_app_id = "flagged_qa_completed_app"
@@ -130,24 +136,6 @@ flagged_qa_completed_app = {
     "project_name": "Project Completed Flag and QA",
     "short_id": "FQAC",
     "flags_v2": [
-        {
-            "id": "1c5e8bea-f5ed-4b74-8823-e64fec27a7aa",
-            "latest_status": "QA_COMPLETED",
-            "latest_allocation": None,
-            "application_id": flagged_qa_completed_app_id,
-            "justification": "Test",
-            "sections_to_flag": ["Test section"],
-            "updates": [
-                {
-                    "id": "316f607a-03b7-4592-b927-5021a28b7d6a",
-                    "user_id": test_user_id_lead_assessor,
-                    "date_created": "2023-02-19 12:00:00",
-                    "justification": "Test",
-                    "status": "QA_COMPLETED",
-                    "allocation": None,
-                }
-            ],
-        },
         {
             "id": "1c5e8bea-f5ed-4b74-8823-e64fec27a7bd",
             "latest_status": "RAISED",
@@ -167,6 +155,14 @@ flagged_qa_completed_app = {
             ],
         },
     ],
+    "qa_complete": [
+        {
+            "application_id": flagged_qa_completed_app_id,
+            "user_id": test_user_id_lead_assessor,
+            "date_created": "2023-02-19 12:00:00",
+        }
+    ],
+    "is_qa_complete": True,
 }
 
 # mock api call results
@@ -208,6 +204,7 @@ mock_api_results = {
             "application_id": flagged_qa_completed_app_id,
             "asset_type": "gallery",
             "flags_v2": flagged_qa_completed_app["flags_v2"],
+            "qa_complete": flagged_qa_completed_app["qa_complete"],
             "funding_amount_requested": test_funding_requested + 2000,
             "is_qa_complete": True,
             "language": "en",
@@ -230,6 +227,7 @@ mock_api_results = {
             "application_id": stopped_app_id,
             "asset_type": stopped_app["asset_type"],
             "flags_v2": stopped_app["flags_v2"],
+            "qa_complete": stopped_app["qa_complete"],
             "funding_amount_requested": test_funding_requested + 1000,
             "is_qa_complete": False,
             "language": "en",
@@ -252,6 +250,7 @@ mock_api_results = {
             "application_id": resolved_app_id,
             "asset_type": "gallery",
             "flags_v2": resolved_app["flags_v2"],
+            "qa_complete": resolved_app["qa_complete"],
             "funding_amount_requested": test_funding_requested,
             "is_qa_complete": False,
             "language": "en",
@@ -276,6 +275,7 @@ mock_api_results = {
             "application_id": stopped_app_id,
             "asset_type": stopped_app["asset_type"],
             "flags_v2": stopped_app["flags_v2"],
+            "qa_complete": stopped_app["qa_complete"],
             "funding_amount_requested": test_funding_requested,
             "is_qa_complete": False,
             "language": "en",
@@ -332,6 +332,7 @@ mock_api_results = {
         "workflow_status": stopped_app["workflow_status"],
         "fund_id": test_fund_id,
         "round_id": test_round_id,
+        "qa_complete": stopped_app["qa_complete"],
     },
     "assessment_store/application_overviews/resolved_app": {
         "criterias": [
@@ -362,6 +363,7 @@ mock_api_results = {
         "workflow_status": resolved_app["workflow_status"],
         "fund_id": test_fund_id,
         "round_id": test_round_id,
+        "qa_complete": resolved_app["qa_complete"],
     },
     "assessment_store/application_overviews/flagged_app": {
         "criterias": [
@@ -392,6 +394,7 @@ mock_api_results = {
         "workflow_status": flagged_app["workflow_status"],
         "fund_id": test_fund_id,
         "round_id": test_round_id,
+        "qa_complete": flagged_app["qa_complete"],
     },
     "assessment_store/application_overviews/flagged_qa_completed_app": {
         "criterias": [],
@@ -401,6 +404,7 @@ mock_api_results = {
         "project_name": flagged_qa_completed_app["project_name"],
         "short_id": flagged_qa_completed_app["short_id"],
         "workflow_status": flagged_qa_completed_app["workflow_status"],
+        "qa_complete": flagged_qa_completed_app["qa_complete"],
     },
     "assessment_store/sub_criteria_overview/banner_state/resolved_app": {
         "short_id": resolved_app["short_id"],
@@ -448,6 +452,14 @@ mock_api_results = {
     ],
     "assessment_store/flags_v2?application_id=flagged_qa_completed_app": flagged_qa_completed_app[
         "flags_v2"
+    ],
+    "assessment_store/qa_complete/flagged_app": flagged_app["qa_complete"],
+    "assessment_store/qa_complete/resolved_app": resolved_app["qa_complete"],
+    "assessment_store/qa_complete/stopped_app": stopped_app["qa_complete"],
+    "assessment_store/qa_complete/flagged_qa_completed_app": flagged_qa_completed_app[
+        "qa_complete"
+    ][
+        0
     ],
     "account_store/bulk-accounts": {
         test_user_id_lead_assessor: {
@@ -550,6 +562,7 @@ mock_api_results = {
         "application_id": stopped_app_id,
         "asset_type": stopped_app["asset_type"],
         "flags_v2": stopped_app["flags_v2"],
+        "qa_complete": stopped_app["qa_complete"],
         "funding_amount_requested": test_funding_requested + 1000,
         "is_qa_complete": False,
         "language": "en",

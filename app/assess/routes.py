@@ -32,7 +32,6 @@ from app.assess.helpers import determine_flag_status
 from app.assess.helpers import generate_csv_of_application
 from app.assess.helpers import get_ttl_hash
 from app.assess.helpers import is_flaggable
-from app.assess.helpers import is_qa_complete
 from app.assess.helpers import resolve_application
 from app.assess.helpers import set_application_status_in_overview
 from app.assess.models.flag_teams import TeamsFlagData
@@ -44,6 +43,7 @@ from app.assess.models.ui import applicants_response
 from app.assess.models.ui.assessor_task_list import AssessorTaskList
 from app.assess.status import all_status_completed
 from app.assess.status import update_ar_status_to_completed
+from app.assess.status import update_ar_status_to_qa_completed
 from app.assess.views.filters import utc_to_bst
 from app.aws import get_file_for_download_from_aws
 from config import Config
@@ -93,7 +93,7 @@ def _handle_all_uploaded_documents(application_id):
 
     state = get_state_for_tasklist_banner(application_id)
     assessment_status = determine_assessment_status(
-        state.workflow_status, flags_list
+        state.workflow_status, state.is_qa_complete
     )
     return render_template(
         "all_uploaded_documents.html",
@@ -171,7 +171,7 @@ def display_sub_criteria(
     )
 
     assessment_status = determine_assessment_status(
-        sub_criteria.workflow_status, flags_list
+        sub_criteria.workflow_status, state.is_qa_complete
     )
     flag_status = determine_flag_status(flags_list)
 
@@ -238,7 +238,7 @@ def score(
     )
 
     assessment_status = determine_assessment_status(
-        sub_criteria.workflow_status, flags_list
+        sub_criteria.workflow_status, state.is_qa_complete
     )
     flag_status = determine_flag_status(flags_list)
     score_form = ScoreForm()
@@ -351,7 +351,7 @@ def flag(application_id):
 
     flags_list = get_flags(application_id)
     assessment_status = determine_assessment_status(
-        state.workflow_status, flags_list
+        state.workflow_status, state.is_qa_complete
     )
     flag_status = determine_flag_status(flags_list)
     return render_template(
@@ -381,11 +381,7 @@ def qa_complete(application_id):
     form = MarkQaCompleteForm()
 
     if form.validate_on_submit():
-        submit_flag(
-            application_id=application_id,
-            flag_type=FlagTypeV2.QA_COMPLETED.name,
-            user_id=g.account_id,
-        )
+        update_ar_status_to_qa_completed(application_id, g.account_id)
         return redirect(
             url_for(
                 "assess_bp.application",
@@ -571,24 +567,25 @@ def application(application_id):
     state = get_state_for_tasklist_banner(application_id)
     fund = get_fund(state.fund_short_name, use_short_name=True)
 
-    flags_list = get_flags(application_id)
     accounts_list = []
+    user_id_list = []
+    flags_list = get_flags(application_id)
+    qa_complete = get_qa_complete(application_id)
+    if qa_complete:
+        user_id_list.append(qa_complete["user_id"])
 
     assessment_status = determine_assessment_status(
-        state.workflow_status, flags_list
+        state.workflow_status, state.is_qa_complete
     )
     flag_status = determine_flag_status(flags_list)
 
     if flags_list:
-        user_id_list = []
         for flag_data in flags_list:
             for flag_item in flag_data.updates:
                 if flag_item["user_id"] not in user_id_list:
                     user_id_list.append(flag_item["user_id"])
 
-                accounts_list = get_bulk_accounts_dict(
-                    user_id_list, state.fund_short_name
-                )
+    accounts_list = get_bulk_accounts_dict(user_id_list, state.fund_short_name)
 
     teams_flag_stats = TeamsFlagData.from_flags(flags_list).teams_stats
 
@@ -611,7 +608,8 @@ def application(application_id):
         teams_flag_stats=teams_flag_stats,
         flags_list=flags_list,
         is_flaggable=is_flaggable(flag_status),
-        is_qa_complete=is_qa_complete(flags_list),
+        is_qa_complete=state.is_qa_complete,
+        qa_complete=qa_complete,
         flag_status=flag_status,
         assessment_status=assessment_status,
         all_uploaded_documents_section_available=fund.all_uploaded_documents_section_available,

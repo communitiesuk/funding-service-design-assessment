@@ -47,6 +47,7 @@ class AssessorTaskList:
     criterias: List[_Criteria]
     fund_short_name: str
     round_short_name: str
+    is_qa_complete: bool
     fund_id: str
     round_id: str
 
@@ -64,6 +65,7 @@ class AssessorTaskList:
             workflow_status=json.get("workflow_status"),
             funding_amount_requested=json.get("funding_amount_requested"),
             project_reference=json.get("project_reference"),
+            is_qa_complete=True if json.get("qa_complete") else False,
             sections=[
                 _Section(
                     name=section["name"],

@@ -9,7 +9,7 @@ RAISED_FLAG = [
     FlagV2.from_dict(
         {
             "application_id": "app_123",
-            "latest_status": 0,
+            "latest_status": "RAISED",
             "latest_allocation": "TEAM_1",
             "id": "flagid",
             "sections_to_flag": ["community"],
@@ -19,7 +19,7 @@ RAISED_FLAG = [
                     "user_id": "test@example.com",
                     "date_created": "2023-01-01T00:00:00",
                     "justification": "Test flag",
-                    "status": 0,
+                    "status": "RAISED",
                     "allocation": "TEAM_1",
                 }
             ],
@@ -30,7 +30,7 @@ RESOLVED_FLAG = [
     FlagV2.from_dict(
         {
             "application_id": "app_123",
-            "latest_status": 3,
+            "latest_status": "RESOLVED",
             "latest_allocation": "TEAM_1",
             "id": "flagid",
             "sections_to_flag": ["community"],
@@ -40,28 +40,7 @@ RESOLVED_FLAG = [
                     "user_id": "test@example.com",
                     "date_created": "2023-01-01T00:00:00",
                     "justification": "Test flag",
-                    "status": 3,
-                    "allocation": "TEAM_1",
-                }
-            ],
-        }
-    )
-]
-QA_COMPLETE_FLAG = [
-    FlagV2.from_dict(
-        {
-            "application_id": "app_123",
-            "latest_status": 2,
-            "latest_allocation": "TEAM_1",
-            "id": "flagid",
-            "sections_to_flag": ["community"],
-            "updates": [
-                {
-                    "id": "316f607a-03b7-4592-b927-5021a28b7d6a",
-                    "user_id": "test@example.com",
-                    "date_created": "2023-01-01T00:00:00",
-                    "justification": "Test flag",
-                    "status": 2,
+                    "status": "RESOLVED",
                     "allocation": "TEAM_1",
                 }
             ],
@@ -72,7 +51,7 @@ STOPPED_FLAG = [
     FlagV2.from_dict(
         {
             "application_id": "app_123",
-            "latest_status": 1,
+            "latest_status": "STOPPED",
             "latest_allocation": "TEAM_1",
             "id": "flagid",
             "sections_to_flag": ["community"],
@@ -82,7 +61,7 @@ STOPPED_FLAG = [
                     "user_id": "test@example.com",
                     "date_created": "2023-01-01T00:00:00",
                     "justification": "Test flag",
-                    "status": 1,
+                    "status": "STOPPED",
                     "allocation": "TEAM_1",
                 }
             ],
@@ -93,18 +72,24 @@ STOPPED_FLAG = [
 
 def test_determine_display_status():
     assert (
-        determine_display_status(workflow_status="IN_PROGRESS", Flags=None)
+        determine_display_status(
+            workflow_status="IN_PROGRESS", Flags=None, is_qa_complete=False
+        )
         == "In progress"
     )
     assert (
         determine_display_status(
-            workflow_status="IN_PROGRESS", Flags=RAISED_FLAG
+            workflow_status="IN_PROGRESS",
+            Flags=RAISED_FLAG,
+            is_qa_complete=False,
         )
         == "Flagged for TEAM_1"
     )
     assert (
         determine_display_status(
-            workflow_status="IN_PROGRESS", Flags=RESOLVED_FLAG
+            workflow_status="IN_PROGRESS",
+            Flags=RESOLVED_FLAG,
+            is_qa_complete=False,
         )
         == "In progress"
     )
@@ -113,11 +98,11 @@ def test_determine_display_status():
 @pytest.mark.parametrize(
     "test_input,expected",
     [
-        (determine_display_status("NOT_STARTED", RESOLVED_FLAG), True),
-        (determine_display_status("COMPLETED", QA_COMPLETE_FLAG), True),
-        (determine_display_status("NOT_STARTED", RAISED_FLAG), True),
-        (determine_display_status("IN_PROGRESS", RAISED_FLAG), True),
-        (determine_display_status("NOT_STARTED", STOPPED_FLAG), False),
+        (determine_display_status("NOT_STARTED", RESOLVED_FLAG, False), True),
+        (determine_display_status("COMPLETED", RESOLVED_FLAG, True), True),
+        (determine_display_status("NOT_STARTED", RAISED_FLAG, False), True),
+        (determine_display_status("IN_PROGRESS", RAISED_FLAG, False), True),
+        (determine_display_status("NOT_STARTED", STOPPED_FLAG, False), False),
     ],
 )
 def test_is_flaggable(test_input, expected):

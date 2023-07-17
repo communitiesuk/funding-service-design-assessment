@@ -98,6 +98,11 @@ class DefaultConfig:
     ASSESSMENTS_STATS_ENDPOINT = (
         "/assessments/get-stats/{fund_id}/{round_id}?{params}"
     )
+
+    ASSESSMENTS_STATS_FLAGS_V2_ENDPOINT = (
+        "/assessments/get-stats_flags_v2/{fund_id}/{round_id}?{params}"
+    )
+
     APPLICATION_OVERVIEW_ENDPOINT_FUND_ROUND_PARAMS = (
         "/application_overviews/{fund_id}/{round_id}?{params}"
     )
@@ -144,8 +149,11 @@ class DefaultConfig:
         + "/application/{application_id}/status/complete"
     )
     ASSESSMENT_UPDATE_QA_STATUS = (
-        ASSESSMENT_STORE_API_HOST
-        + "/application/{application_id}/status/qa_complete"
+        ASSESSMENT_STORE_API_HOST + "/qa_complete/{application_id}/{user_id}"
+    )
+
+    ASSESSMENT_GET_QA_STATUS_ENDPOINT = (
+        ASSESSMENT_STORE_API_HOST + "/qa_complete/{application_id}"
     )
 
     ASSESSMENT_COMMENT_ENDPOINT = ASSESSMENT_STORE_API_HOST + "/comment"

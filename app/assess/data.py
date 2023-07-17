@@ -272,7 +272,7 @@ def get_assessments_stats(
 ) -> Dict | None:
     assessments_stats_endpoint = (
         Config.ASSESSMENT_STORE_API_HOST
-    ) + Config.ASSESSMENTS_STATS_ENDPOINT.format(
+    ) + Config.ASSESSMENTS_STATS_FLAGS_V2_ENDPOINT.format(
         fund_id=fund_id, round_id=round_id, params=urlencode(search_params)
     )
     current_app.logger.info(f"Endpoint '{assessments_stats_endpoint}'.")
@@ -404,6 +404,22 @@ def get_flags(application_id: str) -> List[FlagV2]:
         msg = f"flag for application: '{application_id}' not found."
         current_app.logger.warn(msg)
         return []
+
+
+def get_qa_complete(application_id: str) -> List[FlagV2]:
+    qa_complete = get_data(
+        Config.ASSESSMENT_GET_QA_STATUS_ENDPOINT.format(
+            application_id=application_id
+        )
+    )
+    if qa_complete:
+        return qa_complete
+    else:
+        msg = (
+            f"qa_complete info for application: '{application_id}' not found."
+        )
+        current_app.logger.warn(msg)
+        return {}
 
 
 def submit_flag(
