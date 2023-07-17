@@ -69,11 +69,13 @@ def determine_flag_status(Flags: List[FlagV2]) -> str:
     return flag_status
 
 
-def determine_display_status(workflow_status: str, Flags: List[FlagV2]) -> str:
+def determine_display_status(
+    workflow_status: str, Flags: List[FlagV2], is_qa_complete: bool
+) -> str:
     flag_status = determine_flag_status(Flags)
     if flag_status:
         display_status = flag_status
-    elif is_qa_complete(Flags):
+    elif is_qa_complete:
         display_status = "QA complete"
     else:
         display_status = assessment_statuses[workflow_status]
@@ -82,9 +84,9 @@ def determine_display_status(workflow_status: str, Flags: List[FlagV2]) -> str:
 
 
 def determine_assessment_status(
-    workflow_status: str, Flags: List[FlagV2]
+    workflow_status: str, is_qa_complete: bool
 ) -> str:
-    if is_qa_complete(Flags):
+    if is_qa_complete:
         assessment_status = "QA complete"
     else:
         assessment_status = assessment_statuses[workflow_status]
@@ -114,7 +116,9 @@ def set_application_status_in_overview(application_overviews):
     """Add the 'application_status' key and return the modified list of application overviews."""
     for overview in application_overviews:
         display_status = determine_display_status(
-            overview["workflow_status"], overview["flags_v2"]
+            overview["workflow_status"],
+            overview["flags_v2"],
+            overview["is_qa_complete"],
         )
         status = ""
         for key, val in assessment_statuses.items():
