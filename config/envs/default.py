@@ -98,6 +98,11 @@ class DefaultConfig:
     ASSESSMENTS_STATS_ENDPOINT = (
         "/assessments/get-stats/{fund_id}/{round_id}?{params}"
     )
+
+    ASSESSMENTS_STATS_FLAGS_V2_ENDPOINT = (
+        "/assessments/get-stats_flags_v2/{fund_id}/{round_id}?{params}"
+    )
+
     APPLICATION_OVERVIEW_ENDPOINT_FUND_ROUND_PARAMS = (
         "/application_overviews/{fund_id}/{round_id}?{params}"
     )
