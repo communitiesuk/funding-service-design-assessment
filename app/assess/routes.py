@@ -283,12 +283,8 @@ def score(
         (1, "Poor"),
     ]
 
-    link = guidance_links.get(
-        state.fund_short_name,
-        "https://mhclg.sharepoint.com.mcas.ms/:w:/s/"
-        + "CommunityOwnershipFund/"
-        + "Ecv3iM7U0AtKtyHnzRrQ9dsB0HdMPvHWqAoGn1WrWM7EMA?e=6QpdUT",
-    )
+    link = guidance_links[state.fund_short_name]
+
     return render_template(
         "score.html",
         application_id=application_id,

@@ -2,6 +2,7 @@ from unittest import mock
 
 import app
 import pytest
+from app.assess.display_value_mappings import guidance_links
 from app.assess.models.flag_v2 import FlagV2
 from bs4 import BeautifulSoup
 from flask import session
@@ -471,8 +472,9 @@ class TestRoutes:
         mock_get_scores,
         mock_get_bulk_accounts,
         mock_get_assessor_tasklist_state,
+        monkeypatch,
     ):
-
+        monkeypatch.setitem(guidance_links, "TF", "https://www.example.com")
         application_id = request.node.get_closest_marker(
             "application_id"
         ).args[0]
