@@ -37,7 +37,7 @@
                                     <p>Assessments</p>
                                 </div>
                                 {% for team in team_flag_stats %}
-                                {% if team.raised > 0 %}
+                                {% if team.raised > 0 and team.team_name %}
                                 <div class="lead-dashboard-stat">
                                     <p id="lead-dashboard-stat-assessments-total">{{ team.raised }}</p>
                                     <p>Total flagged for {{ team.team_name }}</p>
