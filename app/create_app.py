@@ -11,6 +11,7 @@ from app.assess.views.filters import slash_separated_day_month_year
 from app.assess.views.filters import utc_to_bst
 from app.assets import compile_static_assets
 from app.auth import auth_protect
+from app.default.routes import forbidden
 from config import Config
 from flask import Flask
 from flask import g
@@ -93,6 +94,7 @@ def create_app() -> Flask:
         from app.assess.routes import assess_bp
 
         flask_app.register_error_handler(404, not_found)
+        flask_app.register_error_handler(403, forbidden)
         flask_app.register_error_handler(500, internal_server_error)
         flask_app.register_blueprint(default_bp)
         flask_app.register_blueprint(assess_bp)
