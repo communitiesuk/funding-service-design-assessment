@@ -464,6 +464,7 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
     application_overviews = get_application_overviews(
         fund_id, round_id, search_params
     )
+    stats = get_assessments_stats(fund_id, round_id, search_params)
 
     # this is only used for querying applications, so remove it from the search params,
     # so it's not reflected on the user interface
@@ -477,7 +478,6 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
         "round_short_name": round_short_name,
     }
 
-    stats = get_assessments_stats(fund_id, round_id, search_params)
     is_active_status = is_after_today(_round.assessment_deadline)
 
     teams_flag_stats = get_team_flag_stats(fund_id, round_id)
