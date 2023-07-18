@@ -13,6 +13,7 @@ from app.assess.data import get_application_overviews
 from app.assess.data import get_assessments_stats
 from app.assess.data import get_available_teams
 from app.assess.data import get_flag
+from app.assess.data import get_team_flag_stats
 from app.assess.data import submit_score_and_justification
 from app.assess.display_value_mappings import assessment_statuses
 from app.assess.display_value_mappings import asset_types
@@ -466,6 +467,7 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
     application_overviews = get_application_overviews(
         fund_id, round_id, search_params
     )
+    stats = get_assessments_stats(fund_id, round_id, search_params)
 
     # this is only used for querying applications, so remove it from the search params,
     # so it's not reflected on the user interface
@@ -479,8 +481,9 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
         "round_short_name": round_short_name,
     }
 
-    stats = get_assessments_stats(fund_id, round_id, search_params)
     is_active_status = is_after_today(_round.assessment_deadline)
+
+    teams_flag_stats = get_team_flag_stats(fund_id, round_id)
 
     # TODO Can we get rid of get_application_overviews for fund and _round
     # and incorporate into the following function?
@@ -539,6 +542,7 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
         assessment_statuses=assessment_statuses,
         show_clear_filters=show_clear_filters,
         stats=stats,
+        team_flag_stats=teams_flag_stats,
         is_active_status=is_active_status,
         sort_column=sort_column,
         sort_order=sort_order,

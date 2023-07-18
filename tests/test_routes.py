@@ -71,6 +71,7 @@ class TestRoutes:
         mock_get_round,
         mock_get_application_overviews,
         mock_get_assessment_stats,
+        mock_get_teams_flag_stats,
         mock_get_assessment_progress,
         mock_get_application_metadata,
     ):
@@ -126,6 +127,7 @@ class TestRoutes:
         mock_get_round,
         mock_get_application_overviews,
         mock_get_assessment_stats,
+        mock_get_teams_flag_stats,
         mock_get_assessment_progress,
     ):
         flask_test_client.set_cookie(
@@ -195,6 +197,7 @@ class TestRoutes:
         mock_get_round,
         mock_get_application_overviews,
         mock_get_assessment_stats,
+        mock_get_teams_flag_stats,
         mock_get_assessment_progress,
     ):
 
@@ -235,6 +238,7 @@ class TestRoutes:
         mock_get_round,
         mock_get_application_overviews,
         mock_get_assessment_stats,
+        mock_get_teams_flag_stats,
         mock_get_assessment_progress,
     ):
 
@@ -275,6 +279,7 @@ class TestRoutes:
         mock_get_round,
         mock_get_application_overviews,
         mock_get_assessment_stats,
+        mock_get_teams_flag_stats,
         mock_get_assessment_progress,
     ):
 
@@ -316,6 +321,7 @@ class TestRoutes:
         mock_get_round,
         mock_get_application_overviews,
         mock_get_assessment_stats,
+        mock_get_teams_flag_stats,
         mock_get_assessment_progress,
     ):
 
@@ -371,6 +377,7 @@ class TestRoutes:
         mock_get_round,
         mock_get_application_overviews,
         mock_get_assessment_stats,
+        mock_get_teams_flag_stats,
         mock_get_assessment_progress,
         mock_get_application_metadata,
         sort_column,
@@ -982,6 +989,7 @@ class TestRoutes:
         mock_get_round,
         mock_get_application_overviews,
         mock_get_assessment_stats,
+        mock_get_teams_flag_stats,
         mock_get_assessment_progress,
     ):
         flask_test_client.set_cookie(

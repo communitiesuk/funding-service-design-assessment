@@ -43,24 +43,26 @@
 
 .lead-dashboard-stats {
     display: flex;
-    gap: 50px;
+    gap: 30px;
     margin-bottom: 30px;
 }
 
 .lead-dashboard-stat {
-    width: 15em;
-    padding: 30px;
+    min-width: 100px;
+    max-width: 100px;
+    padding: 20px;
     background-color: #ffffff;
 }
 
 .lead-dashboard-stat p {
     font-weight: 600;
+    font-size:0.7em;
     color: #1d70b8;
     margin-top: 0;
     margin-bottom: 3px
 }
 
 .lead-dashboard-stat p:first-of-type {
-    font-size: 4em;
+    font-size: 3em;
     line-height: 1.31579;
 }
