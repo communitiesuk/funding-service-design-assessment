@@ -479,7 +479,6 @@ class TestRoutes:
         mock_get_bulk_accounts,
         mock_get_assessor_tasklist_state,
     ):
-
         application_id = request.node.get_closest_marker(
             "application_id"
         ).args[0]
