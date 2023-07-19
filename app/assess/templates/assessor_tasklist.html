@@ -73,13 +73,13 @@
             {% if toggle_dict.get("TAGGING") %}
                 {% if tags %}
                     {% for t in tags %}
-                        <strong class="govuk-tag govuk-tag--{{ t.colour.lower() }} dluhc-tag govuk-!-margin-right-4">{{ t.value }}</strong>
+                        <strong class="govuk-tag govuk-tag--{{ tag_config[t.purpose]['colour'].lower() }} dluhc-tag govuk-!-margin-right-4">{{ t.value }}</strong>
                     {% endfor %}
-                    {% if g.access_controller.is_lead_assessor %}
-                        <p class="govuk-body-s govuk-!-padding-top-4">
-                            <a class="govuk-link" href="{{ url_for('assess_bp.load_change_tags', application_id=application_id) }}">Change tags</a>
-                        </p>
-                    {% endif %}
+                {% endif %}
+                {% if g.access_controller.is_lead_assessor %}
+                    <p class="govuk-body-s govuk-!-padding-top-4">
+                        <a class="govuk-link" href="{{ url_for('assess_bp.load_change_tags', application_id=application_id) }}">Change tags</a>
+                    </p>
                 {% endif %}
             {% endif %}
             {% if all_uploaded_documents_section_available %}

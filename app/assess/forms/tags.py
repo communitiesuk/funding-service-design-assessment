@@ -25,8 +25,7 @@ class NewTagForm(FlaskForm):
         ],
     )
 
-    colour = RadioField(
-        "colour",
-        choices=["WHITE", "BLUE", "GREEN", "RED", "YELLOW"],
+    type = RadioField(
+        "type",
         validators=[InputRequired()],
     )

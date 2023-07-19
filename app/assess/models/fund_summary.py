@@ -23,6 +23,8 @@ class Stats:
 class FundSummary:
     name: str
     is_active_status: bool
+    fund_id: str
+    round_id: str
     application_stats: Stats
     assessments_href: str
 
@@ -37,6 +39,8 @@ def create_fund_summaries(fund: Fund) -> list[FundSummary]:
             summary = FundSummary(
                 name=round.title,
                 is_active_status=is_after_today(round.assessment_deadline),
+                fund_id=fund.id,
+                round_id=round.id,
                 application_stats=Stats(
                     date=round.assessment_deadline,
                     total_received=round_stats["total"],

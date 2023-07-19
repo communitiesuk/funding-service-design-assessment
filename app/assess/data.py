@@ -20,6 +20,7 @@ from app.assess.models.score import Score
 from app.assess.models.sub_criteria import SubCriteria
 from app.assess.models.tag import AssociatedTag
 from app.assess.models.tag import Tag
+from app.assess.models.tag import TagType
 from app.aws import generate_url
 from app.aws import list_files_by_prefix
 from config import Config
@@ -193,6 +194,18 @@ def get_available_tags_for_fund_round(fund_id, round_id) -> List[Tag]:
         current_app.logger.info(
             f"No tags found for fund {fund_id}, round {round_id}."
         )
+        return None
+
+
+def get_tag_types():
+    endpoint = Config.ASSESSMENT_TAG_TYPES_ENDPOINT.format()
+    response = get_data(endpoint)
+    if response is not None:
+        current_app.logger.info(f"tags returned: {len(response)}")
+        result = [TagType.from_dict(item) for item in response]
+        return result
+    else:
+        current_app.logger.info("No tag types found.")
         return None
 
 

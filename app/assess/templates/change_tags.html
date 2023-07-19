@@ -23,7 +23,7 @@
                             <thead class="govuk-table__head">
                                 <tr class="govuk-table__row">
                                     <th scope="col" class="govuk-table__header">Tag name</th>
-                                    <th scope="col" class="govuk-table__header">Colour</th>
+                                    <th scope="col" class="govuk-table__header">Purpose</th>
                                 </tr>
                             </thead>
                             <tbody class="govuk-table__body">
@@ -39,7 +39,7 @@
                                                 </div>
                                             </div>
                                         </th>
-                                        <td class="govuk-table__cell"><strong class="govuk-tag govuk-tag--{{ tag.colour.lower() }} dluhc-tag">{{ tag.value }}</strong></td>
+                                        <td class="govuk-table__cell"><strong class="govuk-tag govuk-tag--{{ tag_config[tag.purpose]['colour'] }} dluhc-tag">{{ tag.purpose }}</strong></td>
                                     </tr>
                                 {% endfor %}
                             </tbody>
