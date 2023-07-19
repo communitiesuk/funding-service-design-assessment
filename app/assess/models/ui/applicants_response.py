@@ -538,7 +538,11 @@ def _convert_checkbox_items(
         text_items.append(text_item)
         text_items.extend(
             {
-                "question": remove_dashes_underscores_capitalize(answer),
+                # The if in this statement has been added because the answer value for ChXWIQ is different than the display value.
+                # We should change the form in future versions
+                "question": remove_dashes_underscores_capitalize(answer)
+                if (item["field_id"] != "ChXWIQ" and answer != "none")
+                else "None of these",
                 "field_type": item.get("field_type"),
                 "field_id": item["field_id"],
                 "answer": "Yes",
