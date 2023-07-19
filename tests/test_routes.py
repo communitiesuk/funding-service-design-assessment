@@ -1120,8 +1120,8 @@ class TestRoutes:
             "/assess/application/test_app_id/export/test_short_id/answers.txt"
         )
         sample_expected_q_a = (
-            "Project information\n\n  Q) Have you been given funding through"
-            " the Community Ownership Fund before?\n  A) Yes\n\n"
+            "** Project information **\n\n  Q) Have you been given funding"
+            " through the Community Ownership Fund before?\n  A) Yes\n\n"
         )
         assert response.status_code == 200
         assert sample_expected_q_a in response.text
