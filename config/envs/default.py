@@ -12,7 +12,6 @@ from fsd_utils.toggles.vcap_services import VcapServices
 
 @configclass
 class DefaultConfig:
-
     # ---------------
     #  General App Config
     # ---------------
@@ -178,6 +177,7 @@ class DefaultConfig:
     ASSESSMENT_ASSOCIATE_TAGS_ENDPOINT = (
         ASSESSMENT_STORE_API_HOST + "/application/{application_id}/tag"
     )
+    ASSESSMENT_TAG_TYPES_ENDPOINT = ASSESSMENT_STORE_API_HOST + "/tag_types"
     # Account store endpoints
     BULK_ACCOUNTS_ENDPOINT = ACCOUNT_STORE_API_HOST + "/bulk-accounts"
 
@@ -218,3 +218,21 @@ class DefaultConfig:
     REDIS_INSTANCE_URI = getenv("REDIS_INSTANCE_URI", "redis://localhost:6379")
     TOGGLES_URL = REDIS_INSTANCE_URI + "/0"
     FEATURE_CONFIG = {"TAGGING": False}
+
+    TAGGING_PURPOSE_CONFIG = {
+        "GENERAL": {
+            "colour": "blue",
+        },
+        "PEOPLE": {
+            "colour": "white",
+        },
+        "POSITIVE": {
+            "colour": "green",
+        },
+        "NEGATIVE": {
+            "colour": "red",
+        },
+        "ACTION": {
+            "colour": "yellow",
+        },
+    }

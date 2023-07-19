@@ -13,6 +13,7 @@ test_tags = [
         "colour": "grey",
         "creator_user_id": "Bob",
         "active": True,
+        "purpose": "POSITIVE",
     },
     {
         "id": "432",
@@ -20,6 +21,7 @@ test_tags = [
         "colour": "red",
         "creator_user_id": "Bob",
         "active": False,
+        "purpose": "POSITIVE",
     },
 ]
 
@@ -56,7 +58,7 @@ def test_change_tags_route(
                 value="Tag 1",
                 creator_user_id="Bob",
                 active=True,
-                colour="green",
+                purpose="POSITIVE",
             )
         ],
     ), mock.patch(
@@ -65,10 +67,10 @@ def test_change_tags_route(
             AssociatedTag(
                 application_id="75dabe60-ae89-4a47-9263-d35e010b6c66",
                 associated=True,
-                colour="RED",
                 tag_id="75f4296f-502b-4293-82a8-b828e678dd9e",
                 user_id="65f4296f-502b-4293-82a8-b828e678dd9e",
                 value="Tag one red",
+                purpose="POSITIVE",
             )
         ],
     ):
@@ -88,11 +90,14 @@ def test_change_tags_route(
         )
         assert table.findAll("tr")[1].findAll("th")[0].text.strip() == "Tag 1"
         assert (
+            table.findAll("tr")[1].findAll("td")[0].text.strip() == "POSITIVE"
+        )
+        assert (
             table.findAll("tr")[1]
             .findAll("td")[0]
             .find("strong", class_="govuk-tag--green")
             .text.strip()
-            == "Tag 1"
+            == "POSITIVE"
         )
 
 
@@ -112,14 +117,14 @@ def test_change_tags_route_associated_tag_checked(
                 value="This should be checked",
                 creator_user_id="Bob",
                 active=True,
-                colour="This associated tag SHOULD be checked",
+                purpose="POSITIVE",
             ),
             Tag(
                 id="456",
                 value="Tag 1",
                 creator_user_id="Bob",
                 active=True,
-                colour="This not associated tag should NOT be checked",
+                purpose="NEGATIVE",
             ),
         ],
     ), mock.patch(
@@ -128,7 +133,7 @@ def test_change_tags_route_associated_tag_checked(
             AssociatedTag(
                 application_id="75dabe60-ae89-4a47-9263-d35e010b6c66",
                 associated=True,
-                colour="RED",
+                purpose="POSITIVE",
                 tag_id="123",
                 user_id="65f4296f-502b-4293-82a8-b828e678dd9e",
                 value="This associated tag SHOULD be checked",
