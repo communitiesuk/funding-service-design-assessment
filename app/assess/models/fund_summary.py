@@ -35,6 +35,7 @@ def create_fund_summaries(fund: Fund) -> list[FundSummary]:
     for round in get_rounds(fund.id):
         # only show closed rounds in assessment unless `SHOW_ALL_ROUNDS`==True
         if Config.SHOW_ALL_ROUNDS or (not is_after_today(round.deadline)):
+            # check for devolved_authority_validation
             if has_devolved_authority_validation(fund_id=fund.id):
                 countries = get_countries_from_roles(fund.short_name)
                 search_params = {"countries": ",".join(countries)}
