@@ -35,6 +35,7 @@ from app.assess.forms.tags import TagAssociationForm
 from app.assess.helpers import determine_assessment_status
 from app.assess.helpers import determine_flag_status
 from app.assess.helpers import generate_csv_of_application
+from app.assess.helpers import get_tag_map_and_tag_options
 from app.assess.helpers import get_ttl_hash
 from app.assess.helpers import is_flaggable
 from app.assess.helpers import is_qa_complete
@@ -54,6 +55,7 @@ from app.aws import get_file_for_download_from_aws
 from config import Config
 from flask import Blueprint
 from flask import current_app
+from flask import flash
 from flask import g
 from flask import redirect
 from flask import render_template
@@ -529,6 +531,10 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
             reverse=sort_order != "asc",
         )
 
+    fund_round_tags = get_available_tags_for_fund_round(fund_id, round_id)
+    tag_map, tag_option_groups = get_tag_map_and_tag_options(
+        fund_round_tags, post_processed_overviews
+    )
     return render_template(
         "assessor_dashboard.html",
         user=g.user,
@@ -543,6 +549,9 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
         is_active_status=is_active_status,
         sort_column=sort_column,
         sort_order=sort_order,
+        tag_option_groups=tag_option_groups,
+        tags=tag_map,
+        tagging_purpose_config=Config.TAGGING_PURPOSE_CONFIG,
     )
 
 
@@ -783,8 +792,15 @@ def load_fund_round_tags(fund_id, round_id):
     )
 
 
+_FLAG_ERROR_MESSAGE = (
+    "Tags must be unique, only contain apostrophes, hyphens, letters, digits,"
+    " and spaces."
+)
+
+
 @assess_bp.route("/tags/create/<fund_id>/<round_id>", methods=["GET", "POST"])
 def create_tag(fund_id, round_id):
+    go_back = request.args.get("go_back") or False
     new_tag_form = NewTagForm()
     tag_types = get_tag_types()
     fund = get_fund(fund_id, use_short_name=False)
@@ -797,19 +813,36 @@ def create_tag(fund_id, round_id):
         "round_id": round_id,
     }
     if new_tag_form.validate_on_submit():
+        current_app.logger.info("Tag creation form validated")
         tag = {
             "value": new_tag_form.value.data,
             "tag_type_id": new_tag_form.type.data,
             "creator_user_id": g.account_id,
         }
-        post_new_tag_for_fund_round(fund_id, round_id, tag)
+
+        tag_created = post_new_tag_for_fund_round(fund_id, round_id, tag)
+        if not tag_created:
+            flash(_FLAG_ERROR_MESSAGE)
+
+        if go_back:
+            return redirect(
+                url_for(
+                    "assess_bp.load_fund_round_tags",
+                    fund_id=fund_id,
+                    round_id=round_id,
+                )
+            )
 
         return redirect(
             url_for("assess_bp.create_tag", fund_id=fund_id, round_id=round_id)
         )
+    elif request.method == "POST":
+        current_app.logger.info(
+            f"Tag creation form failed validation: {new_tag_form.errors}"
+        )
+        flash(_FLAG_ERROR_MESSAGE)
 
     available_tags = get_available_tags_for_fund_round(fund_id, round_id)
-
     return render_template(
         "create_tag.html",
         form=new_tag_form,

@@ -39,6 +39,36 @@
 
 {% block content %}
 
+{% if toggle_dict.get("TAGGING") %}
+    {% if g.access_controller.is_lead_assessor %}
+        <div class="govuk-grid-column-full govuk-!-padding-0">
+            {% if tags %}
+                {% for t in tags %}
+                    <strong class="govuk-tag govuk-tag--{{ tag_config[t.purpose]['colour'].lower() }} govuk-!-margin-right-4 govuk-!-margin-top-2 dluhc-tag"
+                            style="display: inline-block;">
+                        {{ t.value }}
+                    </strong>
+                {% endfor %}
+            {% else %}
+                <span class="govuk-body govuk-!-margin-top-2 govuk-!-margin-right-4"
+                   style="display: inline-block;">
+                    There are no tags on this assessment
+                </span>
+            {% endif %}
+                <span class="govuk-body-s govuk-!-margin-top-2">
+                    <a class="govuk-link"
+                       href="{{ url_for('assess_bp.load_change_tags', application_id=application_id) }}">
+                        {{ "Change" if tags else "Add" }} tags
+                    </a>
+                </span>
+        </div>
+        <div class="govuk-grid-column-full govuk-!-padding-0 govuk-!-margin-top-4">
+            <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible govuk-!-margin-top-0">
+        </div>
+    {% endif %}
+{% endif %}
+
+
 {% if g.access_controller.has_any_assessor_role %}
 <div>
     {{ flag_tabs(state, application_id, teams_flag_stats, flags_list, accounts_list) }}
@@ -70,18 +100,6 @@
     <div class="govuk-grid-column-full">
         <div class="govuk-grid-column-two-thirds">
 
-            {% if toggle_dict.get("TAGGING") %}
-                {% if tags %}
-                    {% for t in tags %}
-                        <strong class="govuk-tag govuk-tag--{{ tag_config[t.purpose]['colour'].lower() }} dluhc-tag govuk-!-margin-right-4">{{ t.value }}</strong>
-                    {% endfor %}
-                {% endif %}
-                {% if g.access_controller.is_lead_assessor %}
-                    <p class="govuk-body-s govuk-!-padding-top-4">
-                        <a class="govuk-link" href="{{ url_for('assess_bp.load_change_tags', application_id=application_id) }}">Change tags</a>
-                    </p>
-                {% endif %}
-            {% endif %}
             {% if all_uploaded_documents_section_available %}
             <h2 class="govuk-heading-l govuk-!-margin-top-8">All uploaded documents</h2>
             {{ section_element(
@@ -90,6 +108,7 @@
                 application_id
             ) }}
             {% endif %}
+
             <h2 class="govuk-heading-l govuk-!-margin-top-8">Unscored</h2>
             {% for section in state.sections %}
                 {{ section_element(section.name, section.sub_criterias, application_id) }}

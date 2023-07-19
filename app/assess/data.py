@@ -194,11 +194,11 @@ def get_available_tags_for_fund_round(fund_id, round_id) -> List[Tag]:
         current_app.logger.info(
             f"No tags found for fund {fund_id}, round {round_id}."
         )
-        return None
+        return []
 
 
 def get_tag_types():
-    endpoint = Config.ASSESSMENT_TAG_TYPES_ENDPOINT.format()
+    endpoint = Config.ASSESSMENT_TAG_TYPES_ENDPOINT
     response = get_data(endpoint)
     if response is not None:
         current_app.logger.info(f"tags returned: {len(response)}")
@@ -209,7 +209,7 @@ def get_tag_types():
         return None
 
 
-def post_new_tag_for_fund_round(fund_id, round_id, tag) -> List[Tag]:
+def post_new_tag_for_fund_round(fund_id, round_id, tag) -> bool:
     endpoint = Config.ASSESSMENT_AVAILABLE_TAGS_ENDPOINT.format(
         fund_id=fund_id, round_id=round_id
     )
@@ -218,14 +218,13 @@ def post_new_tag_for_fund_round(fund_id, round_id, tag) -> List[Tag]:
         f"for fund {fund_id} and round {round_id}."
     )
     response = requests.post(endpoint, json=tag)
-
-    if response.status_code == 200:
-        return True
-    else:
+    tag_created = response.ok
+    if not tag_created:
         current_app.logger.error(
             f"Post tag failed, code: {response.status_code}."
         )
-        return False
+
+    return tag_created
 
 
 def get_associated_tags_for_application(application_id) -> List[Tag]:

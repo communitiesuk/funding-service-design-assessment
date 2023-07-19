@@ -178,6 +178,33 @@ class DefaultConfig:
     ASSESSMENT_ASSOCIATE_TAGS_ENDPOINT = (
         ASSESSMENT_STORE_API_HOST + "/application/{application_id}/tag"
     )
+    ASSESSMENT_TAG_TYPES_ENDPOINT = ASSESSMENT_STORE_API_HOST + "/tag_types"
+    TAGGING_PURPOSE_CONFIG = {
+        "GENERAL": {
+            "colour": "blue",
+        },
+        "PEOPLE": {
+            "colour": "white",
+        },
+        "POSITIVE": {
+            "colour": "green",
+        },
+        "NEGATIVE": {
+            "colour": "red",
+        },
+        "ACTION": {
+            "colour": "yellow",
+        },
+    }
+    TAGGING_FILTER_CONFIG = (
+        (
+            "POSITIVE",
+            "NEGATIVE",
+            "ACTION",
+        ),
+        ("GENERAL",),
+        ("PEOPLE",),
+    )
     # Account store endpoints
     BULK_ACCOUNTS_ENDPOINT = ACCOUNT_STORE_API_HOST + "/bulk-accounts"
 

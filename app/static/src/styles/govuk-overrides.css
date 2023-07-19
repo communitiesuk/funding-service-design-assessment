@@ -273,3 +273,55 @@
   .dluhc-body-empty {
     color: #505a5f;
   }
+
+.govuk-summary-card__title-wrapper {
+    text-size-adjust: 100%;
+    border-bottom: 1px solid transparent;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+    padding: 15px 20px;
+    background-color: #505a5f;
+}
+
+.govuk_summary-card__title {
+    text-size-adjust: 100%;
+    font-weight: 700;
+    margin: 5px 20px 10px 0;
+    margin-bottom: 5px;
+    font-size: 1.5rem !important;
+    line-height: 1.25 !important;
+    color: white;
+}
+
+.govuk-summary-card__actions {
+    text-size-adjust: 100%;
+    font-weight: 700;
+    display: flex;
+    flex-wrap: wrap;
+    row-gap: 10px;
+    margin: 5px 0;
+    padding: 0;
+    list-style: none;
+    font-size: 1.1875rem;
+    line-height: 1.3157894737;
+    justify-content: right;
+    text-align: right;
+}
+
+.govuk-summary-card__action {
+    text-size-adjust: 100%;
+    font-weight: 700;
+    list-style: none;
+    font-size: 1.1875rem;
+    line-height: 1.3157894737;
+    display: inline;
+    margin: 0;
+    padding-right: 0;
+    border-right: none;
+    padding-left: 10px;
+}
+
+.govuk-link__white_font {
+    color: white !important;
+}

@@ -43,15 +43,15 @@
                             {{tag.value}}
                         </td>
                         <td class="govuk-table__cell">
-                            <strong class="govuk-table__cell govuk-tag--{{ tag_config[tag.purpose]['colour'] }} govuk-tag">{{tag.purpose}}</strong>
+                            <strong class="govuk-tag--{{ tag_config[tag.purpose]['colour'] }} govuk-tag dluhc-tag">{{tag.purpose}}</strong>
                         </td>
                         {% if tag.active %}
                             <td class="govuk-table__cell">
-                                <strong class="govuk-tag--green govuk-tag">ACTIVE</strong>
+                                <strong class="govuk-tag--green govuk-tag dluhc-tag">ACTIVE</strong>
                             </td>
                         {% else %}
                             <td class="govuk-table__cell">
-                                <strong class="govuk-tag--red govuk-tag">NOT ACTIVE</strong>
+                                <strong class="govuk-tag--red govuk-tag dluhc-tag">NOT ACTIVE</strong>
                             </td>
                         {% endif %}
                     </tr>
