@@ -2,6 +2,8 @@ import datetime
 from dataclasses import dataclass
 
 import pytz
+from app.assess.auth.validation import get_countries_from_roles
+from app.assess.auth.validation import has_devolved_authority_validation
 from app.assess.data import get_assessments_stats
 from app.assess.data import get_rounds
 from app.assess.models.fund import Fund
@@ -33,7 +35,15 @@ def create_fund_summaries(fund: Fund) -> list[FundSummary]:
     for round in get_rounds(fund.id):
         # only show closed rounds in assessment unless `SHOW_ALL_ROUNDS`==True
         if Config.SHOW_ALL_ROUNDS or (not is_after_today(round.deadline)):
-            round_stats = get_assessments_stats(fund.id, round.id)
+            # check for devolved_authority_validation
+            if has_devolved_authority_validation(fund_id=fund.id):
+                countries = get_countries_from_roles(fund.short_name)
+                search_params = {"countries": ",".join(countries)}
+                round_stats = get_assessments_stats(
+                    fund.id, round.id, search_params
+                )
+            else:
+                round_stats = get_assessments_stats(fund.id, round.id)
             summary = FundSummary(
                 name=round.title,
                 is_active_status=is_after_today(round.assessment_deadline),
