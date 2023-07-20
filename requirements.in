@@ -1,8 +1,7 @@
 #-----------------------------------
 #   FSD Utils
 #-----------------------------------
-# funding-service-design-utils>=2.0.11,<2.1.0
-git+https://github.com/communitiesuk/funding-service-design-utils.git@bau-vcap-services-utils
+funding-service-design-utils>=2.0.12,<2.1.0
 
 
 requests

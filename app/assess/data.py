@@ -5,7 +5,6 @@ from typing import List
 from typing import Optional
 from typing import Union
 from urllib.parse import urlencode
-from uuid import uuid4
 
 import requests
 from app.assess.models.application import Application
@@ -96,87 +95,6 @@ def get_application_overviews(fund_id, round_id, search_params):
     overviews_response = get_data(overviews_endpoint)
 
     return overviews_response
-
-
-dummy_tags = [
-    {
-        "id": uuid4(),
-        "value": "Commercial pass",
-        "colour": "green",
-        "user": "Bob",
-        "active": True,
-    },
-    {
-        "id": uuid4(),
-        "value": "Commercial fail",
-        "colour": "red",
-        "user": "Bob",
-        "active": True,
-    },
-    {
-        "id": uuid4(),
-        "value": "Recommend yes",
-        "colour": "green",
-        "user": "Bob",
-        "active": True,
-    },
-    {
-        "id": uuid4(),
-        "value": "Recommend no",
-        "colour": "red",
-        "user": "Bob",
-        "active": True,
-    },
-    {
-        "id": uuid4(),
-        "value": "Recommend further discussion",
-        "user": "Bob",
-        "colour": "yellow",
-        "active": True,
-    },
-    {
-        "id": uuid4(),
-        "value": "Dave Lister",
-        "colour": "grey",
-        "user": "Bob",
-        "active": True,
-    },
-    {
-        "id": uuid4(),
-        "value": "Arnold Rimmer",
-        "colour": "grey",
-        "user": "Bob",
-        "active": True,
-    },
-    {
-        "id": uuid4(),
-        "value": "The Cat",
-        "colour": "grey",
-        "user": "Bob",
-        "active": True,
-    },
-    {
-        "id": uuid4(),
-        "value": "Kryten",
-        "colour": "grey",
-        "user": "Bob",
-        "active": True,
-    },
-    {
-        "id": uuid4(),
-        "value": "Holly",
-        "colour": "grey",
-        "user": "Bob",
-        "active": True,
-    },
-    {
-        "id": uuid4(),
-        "value": "Inactive",
-        "colour": "red",
-        "user": "Bob",
-        "active": False,
-    },
-]
 
 
 def get_available_tags_for_fund_round(fund_id, round_id) -> List[Tag]:

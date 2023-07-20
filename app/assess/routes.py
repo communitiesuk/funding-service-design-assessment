@@ -778,7 +778,7 @@ def load_change_tags(application_id):
 
 
 @assess_bp.route("/tags/manage/<fund_id>/<round_id>", methods=["GET"])
-@check_access_fund_id
+@check_access_fund_id(roles_required=["ASSESSOR"])
 def load_fund_round_tags(fund_id, round_id):
     fund = get_fund(fund_id, use_short_name=False)
     round = get_round(fund_id, round_id, use_short_name=False)
@@ -804,7 +804,7 @@ FLAG_ERROR_MESSAGE = (
 
 
 @assess_bp.route("/tags/create/<fund_id>/<round_id>", methods=["GET", "POST"])
-@check_access_fund_id
+@check_access_fund_id(roles_required=["ASSESSOR"])
 def create_tag(fund_id, round_id):
     go_back = request.args.get("go_back") or False
     new_tag_form = NewTagForm()
