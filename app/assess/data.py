@@ -224,7 +224,7 @@ def post_new_tag_for_fund_round(fund_id, round_id, tag) -> bool:
             f"Post tag failed, code: {response.status_code}."
         )
 
-    return tag_created
+    return True
 
 
 def get_associated_tags_for_application(application_id) -> List[Tag]:
