@@ -401,3 +401,29 @@ def test_create_tag_valid_form_go_back_post(
 
     assert response.status_code == 302
     assert response.location == "/assess/tags/manage/test-fund/test-round"
+
+
+@pytest.mark.parametrize(
+    "expect_flagging",
+    [
+        False,
+    ],
+)
+def test_manage_tag_page_renders_with_tags(
+    expect_flagging,
+    client_with_valid_session,
+    mock_get_funds,
+    mock_get_fund,
+    mock_get_tag_types,
+    mock_get_round,
+    mock_get_available_tags_for_fund_round,
+):
+    response = client_with_valid_session.get(
+        f"/assess/tags/manage/{test_fund_id}/{test_round_id}",
+    )
+
+    assert response.status_code == 200
+    assert "Val 1" in response.text
+    assert "Val 2" in response.text
+    assert "ACTIVE" in response.text
+    assert "NOT ACTIVE" in response.text
