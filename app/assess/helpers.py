@@ -28,24 +28,13 @@ def get_ttl_hash(seconds=3600) -> int:
     return round(time.time() / seconds)
 
 
-def get_application_id_from_request() -> str | None:
-    application_id = (
-        request.view_args.get("application_id")
-        or request.view_args.get("application")
-        or request.args.get("application_id")
-        or request.args.get("application")
-    )
-    return application_id
-
-
-def get_fund_short_name_from_request() -> str | None:
-    fund_short_name = (
-        request.view_args.get("fund_short_name")
-        or request.view_args.get("fund_short_name")
-        or request.args.get("fund_short_name")
-        or request.args.get("fund_short_name")
-    )
-    return fund_short_name
+def get_value_from_request(parameter_names) -> str | None:
+    for parameter_name in parameter_names:
+        value = request.view_args.get(parameter_name) or request.args.get(
+            parameter_name
+        )
+        if value:
+            return value
 
 
 def determine_flag_status(Flags: List[FlagV2]) -> str:

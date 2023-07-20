@@ -45,6 +45,7 @@ def forbidden(error):
 def internal_server_error(error):
     error_message = f"Encountered 500: {error}"
     stack_trace = traceback.format_exc()
+    breakpoint()
     current_app.logger.error(f"{error_message}\n{stack_trace}")
     return render_template("500.html"), 500
 

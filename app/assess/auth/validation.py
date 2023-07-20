@@ -1,3 +1,4 @@
+import functools
 from collections import defaultdict
 from functools import wraps
 from typing import Callable
@@ -7,8 +8,7 @@ from typing import Sequence
 
 from app.assess.data import get_application_metadata
 from app.assess.data import get_fund
-from app.assess.helpers import get_application_id_from_request
-from app.assess.helpers import get_fund_short_name_from_request
+from app.assess.helpers import get_value_from_request
 from flask import abort
 from flask import g
 from fsd_utils.authentication.decorators import login_required
@@ -107,7 +107,12 @@ def check_access_application_id(
 
     @wraps(func)
     def decorated_function(*args, **kwargs):
-        application_id = get_application_id_from_request()
+        application_id = get_value_from_request(
+            (
+                "application_id",
+                "application",
+            )
+        )
         if not application_id:
             abort(404)
 
@@ -140,27 +145,35 @@ def check_access_application_id(
     return decorated_function
 
 
-def check_access_fund_short_name(
-    func: Callable = None, roles_required: List[str] = []
+def _check_access_fund_common(
+    func: Callable = None,
+    roles_required: List[str] = [],
+    fund_key: str = "fund_short_name",
 ) -> Callable:
 
     if func is None:
-        return lambda f: check_access_fund_short_name(
-            func=f, roles_required=roles_required
+        return lambda f: _check_access_fund_common(
+            func=f, roles_required=roles_required, fund_key=fund_key
         )
 
     @wraps(func)
     def decorated_function(*args, **kwargs):
-        short_name = get_fund_short_name_from_request()
-        if not short_name:
+        fund_value = get_value_from_request((fund_key,))
+        if not fund_value:
             abort(404)
 
+        short_name = (
+            fund_value
+            if fund_key == "fund_short_name"
+            else get_fund(fund_value).short_name
+        )
         fund_roles_required = _get_roles_by_fund_short_name(
             short_name, roles_required
         )
         login_required_function = login_required(
             func, roles_required=fund_roles_required
         )
+
         if not has_access_to_fund(short_name):
             abort(403)
 
@@ -168,6 +181,14 @@ def check_access_fund_short_name(
         return login_required_function(*args, **kwargs)
 
     return decorated_function
+
+
+check_access_fund_short_name = functools.partial(
+    _check_access_fund_common, fund_key="fund_short_name"
+)
+check_access_fund_id = functools.partial(
+    _check_access_fund_common, fund_key="fund_id"
+)
 
 
 class AssessmentAccessController(object):

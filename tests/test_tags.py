@@ -4,7 +4,10 @@ import pytest
 from app.assess.data import get_available_tags_for_fund_round
 from app.assess.models.tag import AssociatedTag
 from app.assess.models.tag import Tag
+from app.assess.routes import FLAG_ERROR_MESSAGE
 from bs4 import BeautifulSoup
+from tests.api_data.test_data import test_fund_id
+from tests.api_data.test_data import test_round_id
 
 test_tags = [
     {
@@ -188,3 +191,139 @@ def test_change_tags_route_no_tags(
             ).text.strip()
             == "There are no tags available"
         )
+
+
+@pytest.mark.parametrize(
+    "expect_flagging",
+    [
+        False,
+    ],
+)
+def test_create_tag_initial_render_get(
+    expect_flagging,
+    client_with_valid_session,
+    mock_get_funds,
+    mock_get_fund,
+    mock_get_tag_types,
+    mock_get_round,
+    mock_get_available_tags_for_fund_round,
+):
+    response = client_with_valid_session.get(
+        f"/assess/tags/create/{test_fund_id}/{test_round_id}"
+    )
+
+    assert response.status_code == 200
+    assert "Type 1 description" in response.text
+
+
+@pytest.mark.parametrize(
+    "expect_flagging",
+    [
+        False,
+    ],
+)
+def test_create_tag_invalid_form_post(
+    expect_flagging,
+    client_with_valid_session,
+    mock_get_funds,
+    mock_get_fund,
+    mock_get_tag_types,
+    mock_get_round,
+    mock_get_available_tags_for_fund_round,
+):
+    response = client_with_valid_session.post(
+        f"/assess/tags/create/{test_fund_id}/{test_round_id}",
+        data={},  # empty form, so invalid
+    )
+
+    assert response.status_code == 200
+    assert FLAG_ERROR_MESSAGE in response.text
+
+
+@pytest.mark.parametrize(
+    "expect_flagging",
+    [
+        False,
+    ],
+)
+def test_create_tag_shows_error_if_valid_form_post_but_request_fails(
+    expect_flagging,
+    client_with_valid_session,
+    mock_get_funds,
+    mock_get_fund,
+    mock_get_tag_types,
+    mock_get_round,
+    mocker,
+):
+    mocker.patch(
+        "app.assess.routes.post_new_tag_for_fund_round",
+        return_value=lambda *_: False,
+    )
+
+    response = client_with_valid_session.post(
+        f"/assess/tags/create/{test_fund_id}/{test_round_id}",
+        data={"value": "Tag value", "type": "type_1"},
+    )
+
+    # this redirects and will flash the error message
+    assert response.status_code == 302
+    assert response.location == "/assess/tags/create/test-fund/test-round"
+
+
+@pytest.mark.parametrize(
+    "expect_flagging",
+    [
+        False,
+    ],
+)
+def test_create_tag_valid_form_post(
+    expect_flagging,
+    client_with_valid_session,
+    mock_get_funds,
+    mock_get_fund,
+    mock_get_tag_types,
+    mock_get_round,
+    mocker,
+):
+    mocker.patch(
+        "app.assess.routes.post_new_tag_for_fund_round",
+        return_value=lambda *_: True,
+    )
+
+    response = client_with_valid_session.post(
+        f"/assess/tags/create/{test_fund_id}/{test_round_id}",
+        data={"value": "Tag value", "type": "type_1"},
+    )
+
+    assert response.status_code == 302
+    assert response.location == "/assess/tags/create/test-fund/test-round"
+    assert FLAG_ERROR_MESSAGE not in response.text
+
+
+@pytest.mark.parametrize(
+    "expect_flagging",
+    [
+        False,
+    ],
+)
+def test_create_tag_valid_form_go_back_post(
+    expect_flagging,
+    client_with_valid_session,
+    mock_get_funds,
+    mock_get_fund,
+    mock_get_tag_types,
+    mock_get_round,
+    mocker,
+):
+    mocker.patch(
+        "app.assess.routes.post_new_tag_for_fund_round",
+        return_value=lambda *_: True,
+    )
+
+    response = client_with_valid_session.post(
+        f"/assess/tags/create/{test_fund_id}/{test_round_id}?go_back=True",
+        data={"value": "Tag value", "type": "type_1"},
+    )
+
+    assert response.status_code == 302
+    assert response.location == "/assess/tags/manage/test-fund/test-round"

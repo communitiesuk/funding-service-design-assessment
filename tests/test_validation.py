@@ -178,8 +178,8 @@ def test_check_access_application_id_cant_access_application_when_no_country_rol
     # WHEN the user has no COF_ENGLAND role
     # THEN the user cannot access the application
     monkeypatch.setattr(
-        "app.assess.auth.validation.get_application_id_from_request",
-        lambda: "00000000-0000-0000-0000-000000000000",
+        "app.assess.auth.validation.get_value_from_request",
+        lambda _: "00000000-0000-0000-0000-000000000000",
     )
     monkeypatch.setattr(
         "app.assess.auth.validation.get_application_metadata",
@@ -224,8 +224,8 @@ def test_check_access_application_id_can_access_application_when_has_country_rol
     )
 
     monkeypatch.setattr(
-        "app.assess.auth.validation.get_application_id_from_request",
-        lambda: "00000000-0000-0000-0000-000000000000",
+        "app.assess.auth.validation.get_value_from_request",
+        lambda _: "00000000-0000-0000-0000-000000000000",
     )
     monkeypatch.setattr(
         "app.assess.auth.validation.get_application_metadata",
@@ -268,8 +268,8 @@ def test_check_access_application_id_can_access_application_when_fund_has_no_dev
     )
 
     monkeypatch.setattr(
-        "app.assess.auth.validation.get_application_id_from_request",
-        lambda: "00000000-0000-0000-0000-000000000000",
+        "app.assess.auth.validation.get_value_from_request",
+        lambda _: "00000000-0000-0000-0000-000000000000",
     )
     monkeypatch.setattr(
         "app.assess.auth.validation.get_application_metadata",
@@ -304,8 +304,8 @@ def test_check_access_application_id_cant_access_application_when_no_relevant_fu
     # WHEN the user has no COF role
     # THEN the user cannot access the application
     monkeypatch.setattr(
-        "app.assess.auth.validation.get_application_id_from_request",
-        lambda: "00000000-0000-0000-0000-000000000000",
+        "app.assess.auth.validation.get_value_from_request",
+        lambda _: "00000000-0000-0000-0000-000000000000",
     )
     monkeypatch.setattr(
         "app.assess.auth.validation.get_application_metadata",
@@ -354,8 +354,8 @@ def test_check_access_fund_short_name_cant_access(request_ctx, monkeypatch):
     # WHEN the user has no COF role
     # THEN the user cannot the page
     monkeypatch.setattr(
-        "app.assess.auth.validation.get_fund_short_name_from_request",
-        lambda: "cof",
+        "app.assess.auth.validation.get_value_from_request",
+        lambda _: "cof",
     )
     monkeypatch.setattr(
         "app.assess.auth.validation.g",
@@ -378,8 +378,8 @@ def test_check_access_fund_short_name_can_access(request_ctx, monkeypatch):
     )
 
     monkeypatch.setattr(
-        "app.assess.auth.validation.get_fund_short_name_from_request",
-        lambda: "cof",
+        "app.assess.auth.validation.get_value_from_request",
+        lambda _: "cof",
     )
     monkeypatch.setattr(
         "app.assess.auth.validation.g",

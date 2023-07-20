@@ -3,6 +3,7 @@ from urllib.parse import quote_plus
 from urllib.parse import unquote_plus
 
 from app.assess.auth.validation import check_access_application_id
+from app.assess.auth.validation import check_access_fund_id
 from app.assess.auth.validation import check_access_fund_short_name
 from app.assess.auth.validation import get_countries_from_roles
 from app.assess.auth.validation import has_access_to_fund
@@ -777,6 +778,7 @@ def load_change_tags(application_id):
 
 
 @assess_bp.route("/tags/manage/<fund_id>/<round_id>", methods=["GET"])
+@check_access_fund_id
 def load_fund_round_tags(fund_id, round_id):
     fund = get_fund(fund_id, use_short_name=False)
     round = get_round(fund_id, round_id, use_short_name=False)
@@ -795,13 +797,14 @@ def load_fund_round_tags(fund_id, round_id):
     )
 
 
-_FLAG_ERROR_MESSAGE = (
+FLAG_ERROR_MESSAGE = (
     "Tags must be unique, only contain apostrophes, hyphens, letters, digits,"
     " and spaces."
 )
 
 
 @assess_bp.route("/tags/create/<fund_id>/<round_id>", methods=["GET", "POST"])
+@check_access_fund_id
 def create_tag(fund_id, round_id):
     go_back = request.args.get("go_back") or False
     new_tag_form = NewTagForm()
@@ -825,7 +828,7 @@ def create_tag(fund_id, round_id):
 
         tag_created = post_new_tag_for_fund_round(fund_id, round_id, tag)
         if not tag_created:
-            flash(_FLAG_ERROR_MESSAGE)
+            flash(FLAG_ERROR_MESSAGE)
 
         if go_back:
             return redirect(
@@ -843,7 +846,7 @@ def create_tag(fund_id, round_id):
         current_app.logger.info(
             f"Tag creation form failed validation: {new_tag_form.errors}"
         )
-        flash(_FLAG_ERROR_MESSAGE)
+        flash(FLAG_ERROR_MESSAGE)
 
     available_tags = get_available_tags_for_fund_round(fund_id, round_id)
     return render_template(

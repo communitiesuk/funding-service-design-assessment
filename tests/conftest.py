@@ -662,6 +662,8 @@ def mock_get_tasklist_state_for_banner(mocker):
     mocker.patch(
         "app.assess.routes.get_state_for_tasklist_banner",
         return_value=AssessorTaskList(
+            is_qa_complete="",
+            fund_guidance_url="",
             fund_name="",
             fund_short_name="",
             fund_id="",
