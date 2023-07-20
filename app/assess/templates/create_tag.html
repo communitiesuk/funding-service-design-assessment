@@ -26,6 +26,15 @@
             {{ form.csrf_token }}
 
             <div class="govuk-form-group">
+
+                {% for message in get_flashed_messages() %}
+                    <div class="govuk-grid-row govuk-error-summary" data-module="govuk-error-summary" role="alert">
+                        <h2 class="govuk-error-summary__title" autofocus>
+                            {{ message }}
+                        </h2>
+                    </div>
+                {% endfor %}
+
                 <h1 class="govuk-label-wrapper">
                   <label class="govuk-label govuk-label--s" for="{{form.value.id}}">
                     Tag name
@@ -60,10 +69,14 @@
                 <button class="govuk-button" data-module="govuk-button" formaction="{{ url_for('assess_bp.create_tag', fund_id = fund_round['fund_id'], round_id = fund_round['round_id']) }}">
                     Save and add another
                 </button>
-                <button class="govuk-button govuk-button--secondary" data-module="govuk-button" formaction="{{ url_for('assess_bp.create_tag', fund_id = fund_round['fund_id'], round_id = fund_round['round_id']) }}">
+                <button class="govuk-button govuk-button--secondary"
+                        data-module="govuk-button"
+                        formaction="{{ url_for('assess_bp.create_tag', fund_id=fund_round['fund_id'], round_id=fund_round['round_id'], go_back=True) }}">
                     Save and go back
                 </button>
-                <a class="govuk-link" href="{{url_for('assess_bp.landing')}}">Cancel</a>
+                <a class="govuk-link" href="{{ url_for("assess_bp.load_fund_round_tags", fund_id=fund_round['fund_id'], round_id=fund_round['round_id']) }}">
+                    Cancel
+                </a>
             </div>
         </form>
 

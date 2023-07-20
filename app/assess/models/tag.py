@@ -9,6 +9,7 @@ class Tag:
     creator_user_id: str
     active: bool
     purpose: str
+    type_id: str
 
     @classmethod
     def from_dict(cls, d: dict):

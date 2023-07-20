@@ -39,6 +39,11 @@ $govuk-colour-white: #ffffff;
     background-color: $govuk-colour-white;
   }
 
+.template-answer--dashboard-container {
+  border: 4px solid #505a5f;
+  padding: 25px 25px 4px;
+  background-color: $govuk-colour-white;
+}
 
 .scoring-heading {
     margin-bottom: 10px;

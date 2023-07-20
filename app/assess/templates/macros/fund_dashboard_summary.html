@@ -2,16 +2,22 @@
 
 {% macro fund_summary(name, is_active_status, fund_id, round_id, application_stats, assessments_href) %}
 <div class="govuk-!-padding-0 govuk-!-padding-right-2 govuk-!-padding-bottom-2 govuk-grid-column-one-third content-container">
-    <div class="govuk-summary-card__title-wrapper">
-    <h3 class="govuk-heading-s response-title">
-        {{ name }}
-    </h3>
-    <a class="govuk-link" href="{{ url_for('assess_bp.load_fund_round_tags', fund_id=fund_id, round_id=round_id) }}">
-        Manage
-    </a>
-    <div class="template-answer bg-white govuk-!-padding-bottom-5">
 
-        <div class="govuk-summary-card__title-wrapper">
+    <div class="govuk-summary-card__title-wrapper">
+        <h3 class="govuk-body govuk_summary-card__title govuk-!-font-size-24">Round 2, Window 2</h3>
+        <ul class="govuk-summary-card__actions">
+            <li class="govuk-summary-card__action">
+                <a class="govuk-link govuk-link__white_font govuk-!-margin-right-4"
+                   href="{{ url_for('assess_bp.load_fund_round_tags', fund_id=fund_id, round_id=round_id) }}">
+                    Manage tags
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="template-answer--dashboard-container bg-white govuk-!-padding-bottom-5">
+
+        <div>
             <strong
                 class="govuk-tag {% if not is_active_status %}govuk-tag--grey{% endif %} govuk-!-margin-bottom-2 govuk-summary-card__title ">
                 {% if is_active_status %}
@@ -21,7 +27,6 @@
                 {% endif %}
             </strong>
         </div>
-
 
         {{ govukTable({
         "caption": "",
