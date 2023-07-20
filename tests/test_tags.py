@@ -10,18 +10,18 @@ test_tags = [
     {
         "id": "123",
         "value": "Val 1",
-        "colour": "grey",
         "creator_user_id": "Bob",
         "active": True,
         "purpose": "POSITIVE",
+        "type_id": "type_1",
     },
     {
         "id": "432",
         "value": "Val 2",
-        "colour": "red",
         "creator_user_id": "Bob",
         "active": False,
         "purpose": "POSITIVE",
+        "type_id": "type_1",
     },
 ]
 
@@ -59,6 +59,7 @@ def test_change_tags_route(
                 creator_user_id="Bob",
                 active=True,
                 purpose="POSITIVE",
+                type_id="type_1",
             )
         ],
     ), mock.patch(
@@ -118,6 +119,7 @@ def test_change_tags_route_associated_tag_checked(
                 creator_user_id="Bob",
                 active=True,
                 purpose="POSITIVE",
+                type_id="type_1",
             ),
             Tag(
                 id="456",
@@ -125,6 +127,7 @@ def test_change_tags_route_associated_tag_checked(
                 creator_user_id="Bob",
                 active=True,
                 purpose="NEGATIVE",
+                type_id="type_2",
             ),
         ],
     ), mock.patch(

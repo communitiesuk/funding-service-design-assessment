@@ -6,6 +6,8 @@ from unittest import mock
 import jwt as jwt
 import pytest
 from app.assess.models.tag import AssociatedTag
+from app.assess.models.tag import Tag
+from app.assess.models.tag import TagType
 from app.assess.models.ui.assessor_task_list import AssessorTaskList
 from app.create_app import create_app
 from flask import template_rendered
@@ -16,6 +18,7 @@ from tests.api_data.example_get_full_application import (
     mock_full_application_json,
 )
 from tests.api_data.test_data import mock_api_results
+from tests.test_tags import test_tags
 from webdriver_manager.chrome import ChromeDriverManager
 
 if platform.system() == "Darwin":
@@ -372,6 +375,8 @@ def mock_get_application_overviews(request):
             "search_in": "project_name,short_id",
             "asset_type": "ALL",
             "status": "ALL",
+            "show_tags": "OFF",
+            "filter_by_tag": "ALL",
         }
         fund_id = "test-fund"
         round_id = "test-round"
@@ -655,17 +660,50 @@ def client_with_valid_session(flask_test_client):
 
 @pytest.fixture(scope="function")
 def mock_get_associated_tags_for_application(mocker):
-    mocker.patch(
+    for function_module_path in [
         "app.assess.routes.get_associated_tags_for_application",
-        return_value=[
-            AssociatedTag(
-                application_id="75dabe60-ae89-4a47-9263-d35e010b6c66",
-                associated=True,
-                colour="RED",
-                tag_id="75f4296f-502b-4293-82a8-b828e678dd9e",
-                user_id="65f4296f-502b-4293-82a8-b828e678dd9e",
-                value="Tag one red",
-            )
-        ],
+        "app.assess.helpers.get_associated_tags_for_application",
+        "app.assess.data.get_associated_tags_for_application",
+    ]:
+        mocker.patch(
+            function_module_path,
+            return_value=[
+                AssociatedTag(
+                    application_id="75dabe60-ae89-4a47-9263-d35e010b6c66",
+                    associated=True,
+                    purpose="NEGATIVE",
+                    tag_id="75f4296f-502b-4293-82a8-b828e678dd9e",
+                    user_id="65f4296f-502b-4293-82a8-b828e678dd9e",
+                    value="Tag one red",
+                )
+            ],
+        )
+    yield
+
+
+@pytest.fixture(scope="function")
+def mock_get_available_tags_for_fund_round(mocker):
+    mocker.patch(
+        "app.assess.routes.get_available_tags_for_fund_round",
+        return_value=[Tag.from_dict(t) for t in test_tags],
     )
+    yield
+
+
+@pytest.fixture(scope="function")
+def mock_get_tag_types(mocker):
+    for function_module_path in [
+        "app.assess.helpers.get_tag_types",
+        "app.assess.routes.get_tag_types",
+    ]:
+        mocker.patch(
+            function_module_path,
+            return_value=[
+                TagType(
+                    id="type_1",
+                    purpose="POSITIVE",
+                    description="Type 1 description",
+                ),
+            ],
+        )
     yield

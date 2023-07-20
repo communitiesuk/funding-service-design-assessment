@@ -58,6 +58,8 @@ class TestRoutes:
                 "search_in": "organisation_name,short_id",
                 "funding_type": "ALL",
                 "status": "ALL",
+                "show_tags": "OFF",
+                "filter_by_tag": "ALL",
             },
         }
     )
@@ -73,6 +75,9 @@ class TestRoutes:
         mock_get_assessment_stats,
         mock_get_assessment_progress,
         mock_get_application_metadata,
+        mock_get_associated_tags_for_application,
+        mock_get_available_tags_for_fund_round,
+        mock_get_tag_types,
     ):
         flask_test_client.set_cookie(
             "localhost",
@@ -113,6 +118,8 @@ class TestRoutes:
                 "search_in": "project_name,short_id",
                 "asset_type": "ALL",
                 "status": "ALL",
+                "show_tags": "OFF",
+                "filter_by_tag": "ALL",
             },
         }
     )
@@ -127,6 +134,9 @@ class TestRoutes:
         mock_get_application_overviews,
         mock_get_assessment_stats,
         mock_get_assessment_progress,
+        mock_get_associated_tags_for_application,
+        mock_get_available_tags_for_fund_round,
+        mock_get_tag_types,
     ):
         flask_test_client.set_cookie(
             "localhost",
@@ -183,6 +193,8 @@ class TestRoutes:
                 "search_in": "project_name,short_id",
                 "asset_type": "ALL",
                 "status": "QA_COMPLETE",
+                "show_tags": "OFF",
+                "filter_by_tag": "ALL",
             },
         }
     )
@@ -196,6 +208,9 @@ class TestRoutes:
         mock_get_application_overviews,
         mock_get_assessment_stats,
         mock_get_assessment_progress,
+        mock_get_associated_tags_for_application,
+        mock_get_available_tags_for_fund_round,
+        mock_get_tag_types,
     ):
 
         params = request.node.get_closest_marker("mock_parameters").args[0]
@@ -223,6 +238,8 @@ class TestRoutes:
                 "search_in": "project_name,short_id",
                 "asset_type": "pub",
                 "status": "ALL",
+                "show_tags": "OFF",
+                "filter_by_tag": "ALL",
             },
         }
     )
@@ -236,6 +253,9 @@ class TestRoutes:
         mock_get_application_overviews,
         mock_get_assessment_stats,
         mock_get_assessment_progress,
+        mock_get_associated_tags_for_application,
+        mock_get_available_tags_for_fund_round,
+        mock_get_tag_types,
     ):
 
         params = request.node.get_closest_marker("mock_parameters").args[0]
@@ -263,6 +283,8 @@ class TestRoutes:
                 "search_in": "project_name,short_id",
                 "asset_type": "ALL",
                 "status": "ALL",
+                "show_tags": "OFF",
+                "filter_by_tag": "ALL",
             },
         }
     )
@@ -276,6 +298,9 @@ class TestRoutes:
         mock_get_application_overviews,
         mock_get_assessment_stats,
         mock_get_assessment_progress,
+        mock_get_associated_tags_for_application,
+        mock_get_available_tags_for_fund_round,
+        mock_get_tag_types,
     ):
 
         params = request.node.get_closest_marker("mock_parameters").args[0]
@@ -304,6 +329,8 @@ class TestRoutes:
                 "search_in": "project_name,short_id",
                 "asset_type": "ALL",
                 "status": "ALL",
+                "show_tags": "OFF",
+                "filter_by_tag": "ALL",
             },
         }
     )
@@ -317,6 +344,9 @@ class TestRoutes:
         mock_get_application_overviews,
         mock_get_assessment_stats,
         mock_get_assessment_progress,
+        mock_get_associated_tags_for_application,
+        mock_get_available_tags_for_fund_round,
+        mock_get_tag_types,
     ):
 
         params = request.node.get_closest_marker("mock_parameters").args[0]
@@ -349,6 +379,8 @@ class TestRoutes:
                 "search_in": "project_name,short_id",
                 "asset_type": "ALL",
                 "status": "ALL",
+                "show_tags": "OFF",
+                "filter_by_tag": "ALL",
             },
         }
     )
@@ -376,6 +408,9 @@ class TestRoutes:
         sort_column,
         sort_order,
         column_id,
+        mock_get_associated_tags_for_application,
+        mock_get_available_tags_for_fund_round,
+        mock_get_tag_types,
     ):
 
         flask_test_client.set_cookie(
@@ -980,6 +1015,8 @@ class TestRoutes:
                 "search_in": "project_name,short_id",
                 "asset_type": "ALL",
                 "status": "ALL",
+                "show_tags": "OFF",
+                "filter_by_tag": "ALL",
             },
         }
     )
@@ -993,6 +1030,9 @@ class TestRoutes:
         mock_get_application_overviews,
         mock_get_assessment_stats,
         mock_get_assessment_progress,
+        mock_get_associated_tags_for_application,
+        mock_get_available_tags_for_fund_round,
+        mock_get_tag_types,
     ):
         flask_test_client.set_cookie(
             "localhost",

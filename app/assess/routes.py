@@ -499,6 +499,11 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
         post_processed_overviews
     )
 
+    fund_round_tags = get_available_tags_for_fund_round(fund_id, round_id)
+    tag_map, tag_option_groups = get_tag_map_and_tag_options(
+        fund_round_tags, post_processed_overviews
+    )
+
     def get_sorted_application_overviews(
         application_overviews, column, reverse=False
     ):
@@ -513,6 +518,7 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
             "organisation_name": lambda x: x["organisation_name"],
             "funding_type": lambda x: x["funding_type"],
             "status": lambda x: x["application_status"],
+            "tags": lambda x: len(tag_map.get(x["application_id"]) or []),
         }
 
         # Define the sorting function based on the specified column
@@ -531,10 +537,6 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
             reverse=sort_order != "asc",
         )
 
-    fund_round_tags = get_available_tags_for_fund_round(fund_id, round_id)
-    tag_map, tag_option_groups = get_tag_map_and_tag_options(
-        fund_round_tags, post_processed_overviews
-    )
     return render_template(
         "assessor_dashboard.html",
         user=g.user,
