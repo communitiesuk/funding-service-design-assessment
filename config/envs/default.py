@@ -194,7 +194,7 @@ class DefaultConfig:
             "colour": "blue",
         },
         "PEOPLE": {
-            "colour": "white",
+            "colour": "grey",
         },
         "POSITIVE": {
             "colour": "green",
