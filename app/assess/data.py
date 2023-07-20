@@ -447,11 +447,24 @@ def get_assessments_stats(
 ) -> Dict | None:
     assessments_stats_endpoint = (
         Config.ASSESSMENT_STORE_API_HOST
-    ) + Config.ASSESSMENTS_STATS_ENDPOINT.format(
+    ) + Config.ASSESSMENTS_STATS_FLAGS_V2_ENDPOINT.format(
         fund_id=fund_id, round_id=round_id, params=urlencode(search_params)
     )
     current_app.logger.info(f"Endpoint '{assessments_stats_endpoint}'.")
     return get_data(assessments_stats_endpoint)
+
+
+def get_team_flag_stats(
+    fund_id: str, round_id: str, search_params: dict = {}
+) -> Dict | None:
+    team_flag_stats_endpoint = (
+        Config.ASSESSMENT_STORE_API_HOST
+    ) + Config.ASSESSMENTS_TEAM_FLAGGING_STATS_ENDPOINT.format(
+        fund_id=fund_id, round_id=round_id, params=urlencode(search_params)
+    )
+
+    current_app.logger.info(f"Endpoint '{team_flag_stats_endpoint}'.")
+    return get_data(team_flag_stats_endpoint)
 
 
 def get_assessor_task_list_state(application_id: str) -> Union[dict, None]:
@@ -576,9 +589,16 @@ def get_flags(application_id: str) -> List[FlagV2]:
     if flag:
         return FlagV2.from_list(flag)
     else:
-        msg = f"flag for application: '{application_id}' not found."
-        current_app.logger.warn(msg)
         return []
+
+
+def get_qa_complete(application_id: str) -> dict:
+    qa_complete = get_data(
+        Config.ASSESSMENT_GET_QA_STATUS_ENDPOINT.format(
+            application_id=application_id
+        )
+    )
+    return qa_complete
 
 
 def submit_flag(
