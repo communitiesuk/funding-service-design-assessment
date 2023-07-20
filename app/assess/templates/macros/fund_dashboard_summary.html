@@ -1,10 +1,10 @@
 {%- from "govuk_frontend_jinja/components/table/macro.html" import govukTable -%}
 
-{% macro fund_summary(name, is_active_status, fund_id, round_id, application_stats, assessments_href, access_controller) %}
+{% macro fund_summary(name, is_active_status, fund_id, round_id, fund_name, round_name, application_stats, assessments_href, access_controller) %}
 <div class="govuk-!-padding-0 govuk-!-padding-right-2 govuk-!-padding-bottom-2 govuk-grid-column-one-third content-container">
 
     <div class="govuk-summary-card__title-wrapper">
-        <h3 class="govuk-body govuk_summary-card__title govuk-!-font-size-24">Round 2, Window 2</h3>
+        <h3 class="govuk-body govuk_summary-card__title govuk-!-font-size-24">{{round_name}}</h3>
         {% if access_controller.has_any_assessor_role %}
         <ul class="govuk-summary-card__actions">
             <li class="govuk-summary-card__action">

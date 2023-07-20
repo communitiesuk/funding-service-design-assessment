@@ -6,7 +6,16 @@
 {% macro render(application_overviews, round_details, query_params, funding_types, assessment_statuses, show_clear_filters, sort_column, sort_order, tag_option_groups, tags, tagging_purpose_config) -%}
 <nav class="search-bar-flex-container">
   <form method="get" class="govuk-!-width-full">
-    {{ filter_options(query_params, funding_types, assessment_statuses, round_details, show_clear_filters, tag_option_groups) }}
+  {{ filter_options(
+    query_params,
+    funding_types,
+    'funding_type',
+    'Search reference or organisation name',
+    assessment_statuses,
+    round_details,
+    show_clear_filters,
+    tag_option_groups
+  ) }}
   </form>
 </nav>
 
