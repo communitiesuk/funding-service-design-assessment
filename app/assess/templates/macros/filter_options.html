@@ -1,13 +1,13 @@
-{% macro filter_options(query_params, funding_types, assessment_statuses, round_details, show_clear_filters, tag_option_groups) %}
+{% macro filter_options(query_params, item_types, item_type, search_label, assessment_statuses, round_details, show_clear_filters, tag_option_groups) %}
 
     <fieldset class="govuk-fieldset">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-one-half">
                 <div class="govuk-form-group">
                     <div class="govuk-width-full govuk-!-display-none-print gem-c-search--on-white govuk-!-margin-bottom-0">
-                        <label for="application_search" class="govuk-label">Search reference or project name</label>
+                        <label for="application_search" class="govuk-label">{{ search_label }}</label>
                         <input class="govuk-input" type="text" spellcheck="false"
-                               aria-label="Search reference or project name" id="application_search"
+                                aria-label="{{ search_label }}" id="application_search"
                                name="search_term" , value="{{ query_params['search_term'] }}">
                     </div>
                 </div>
@@ -18,13 +18,13 @@
             <div class="govuk-grid-row">
                 <div class="govuk-grid-column-two-thirds dluhc-column-auto">
                     <div class="govuk-form-group govuk-!-display-inline-block govuk-!-margin-bottom-0 govuk-!-margin-right-2">
-                        <label class="govuk-label" for="filter_funding_type">
+                        <label class="govuk-label" for="filter_{{ item_type }}">
                             Filter by asset type
                         </label>
-                        <select class="govuk-select" id="filter_funding_type" name="funding_type">
-                            {% for item in funding_types %}
-                                <option value='{{ item }}' {% if query_params.funding_type == item %}
-                                        selected=""{% endif %}>{{ funding_types[item] }}</option>
+                        <select class="govuk-select" id="filter_{{ item_type }}" name="{{ item_type }}">
+                            {% for item in item_types %}
++                                <option value='{{ item }}' {% if query_params[item_type] == item %}
++                                        selected=""{% endif %}>{{ item_types[item] }}</option>
                             {% endfor %}
                         </select>
                     </div>

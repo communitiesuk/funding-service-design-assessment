@@ -24,10 +24,11 @@ class Stats:
 
 @dataclass
 class FundSummary:
-    name: str
     is_active_status: bool
     fund_id: str
     round_id: str
+    fund_name: str
+    round_name: str
     application_stats: Stats
     assessments_href: str
     access_controller: AssessmentAccessController
@@ -49,10 +50,11 @@ def create_fund_summaries(fund: Fund) -> list[FundSummary]:
             else:
                 round_stats = get_assessments_stats(fund.id, round.id)
             summary = FundSummary(
-                name=round.title,
                 is_active_status=is_after_today(round.assessment_deadline),
                 fund_id=fund.id,
                 round_id=round.id,
+                fund_name=fund.name,
+                round_name=round.title,
                 application_stats=Stats(
                     date=round.assessment_deadline,
                     total_received=round_stats["total"],
@@ -69,7 +71,9 @@ def create_fund_summaries(fund: Fund) -> list[FundSummary]:
                 access_controller=AssessmentAccessController(fund.short_name),
             )
             summaries.append(summary)
-    return sorted(summaries, key=lambda s: s.application_stats.date)
+    return sorted(
+        summaries, key=lambda s: s.application_stats.date, reverse=True
+    )
 
 
 def is_after_today(date_str: str):
