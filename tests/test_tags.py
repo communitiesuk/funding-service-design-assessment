@@ -320,6 +320,30 @@ def test_create_tag_invalid_form_post(
         False,
     ],
 )
+def test_create_tag_invalid_character_post(
+    expect_flagging,
+    client_with_valid_session,
+    mock_get_funds,
+    mock_get_fund,
+    mock_get_tag_types,
+    mock_get_round,
+    mock_get_available_tags_for_fund_round,
+):
+    response = client_with_valid_session.post(
+        f"/assess/tags/create/{test_fund_id}/{test_round_id}",
+        data={"value": "!!", "type": "type_1"},  # SPECIAL CHARACTER
+    )
+
+    assert response.status_code == 200
+    assert FLAG_ERROR_MESSAGE in response.text
+
+
+@pytest.mark.parametrize(
+    "expect_flagging",
+    [
+        False,
+    ],
+)
 def test_create_tag_shows_error_if_valid_form_post_but_request_fails(
     expect_flagging,
     client_with_valid_session,
