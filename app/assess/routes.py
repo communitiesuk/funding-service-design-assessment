@@ -15,6 +15,7 @@ from app.assess.data import get_available_tags_for_fund_round
 from app.assess.data import get_available_teams
 from app.assess.data import get_flag
 from app.assess.data import get_tag_types
+from app.assess.data import get_team_flag_stats
 from app.assess.data import post_new_tag_for_fund_round
 from app.assess.data import submit_score_and_justification
 from app.assess.display_value_mappings import assessment_statuses
@@ -38,7 +39,6 @@ from app.assess.helpers import generate_csv_of_application
 from app.assess.helpers import get_tag_map_and_tag_options
 from app.assess.helpers import get_ttl_hash
 from app.assess.helpers import is_flaggable
-from app.assess.helpers import is_qa_complete
 from app.assess.helpers import resolve_application
 from app.assess.helpers import set_application_status_in_overview
 from app.assess.models.flag_teams import TeamsFlagData
@@ -50,6 +50,7 @@ from app.assess.models.ui import applicants_response
 from app.assess.models.ui.assessor_task_list import AssessorTaskList
 from app.assess.status import all_status_completed
 from app.assess.status import update_ar_status_to_completed
+from app.assess.status import update_ar_status_to_qa_completed
 from app.assess.views.filters import utc_to_bst
 from app.aws import get_file_for_download_from_aws
 from config import Config
@@ -83,6 +84,7 @@ def get_state_for_tasklist_banner(application_id) -> AssessorTaskList:
     assessor_task_list_metadata["fund_name"] = fund.name
     assessor_task_list_metadata["fund_short_name"] = fund.short_name
     assessor_task_list_metadata["round_short_name"] = round.short_name
+    assessor_task_list_metadata["fund_guidance_url"] = fund.guidance_url
     state = AssessorTaskList.from_json(assessor_task_list_metadata)
     return state
 
@@ -100,7 +102,7 @@ def _handle_all_uploaded_documents(application_id):
 
     state = get_state_for_tasklist_banner(application_id)
     assessment_status = determine_assessment_status(
-        state.workflow_status, flags_list
+        state.workflow_status, state.is_qa_complete
     )
     return render_template(
         "all_uploaded_documents.html",
@@ -178,7 +180,7 @@ def display_sub_criteria(
     )
 
     assessment_status = determine_assessment_status(
-        sub_criteria.workflow_status, flags_list
+        sub_criteria.workflow_status, state.is_qa_complete
     )
     flag_status = determine_flag_status(flags_list)
 
@@ -245,7 +247,7 @@ def score(
     )
 
     assessment_status = determine_assessment_status(
-        sub_criteria.workflow_status, flags_list
+        sub_criteria.workflow_status, state.is_qa_complete
     )
     flag_status = determine_flag_status(flags_list)
     score_form = ScoreForm()
@@ -288,6 +290,7 @@ def score(
         (2, "Partial"),
         (1, "Poor"),
     ]
+
     return render_template(
         "score.html",
         application_id=application_id,
@@ -350,7 +353,7 @@ def flag(application_id):
 
     flags_list = get_flags(application_id)
     assessment_status = determine_assessment_status(
-        state.workflow_status, flags_list
+        state.workflow_status, state.is_qa_complete
     )
     flag_status = determine_flag_status(flags_list)
     return render_template(
@@ -380,11 +383,7 @@ def qa_complete(application_id):
     form = MarkQaCompleteForm()
 
     if form.validate_on_submit():
-        submit_flag(
-            application_id=application_id,
-            flag_type=FlagTypeV2.QA_COMPLETED.name,
-            user_id=g.account_id,
-        )
+        update_ar_status_to_qa_completed(application_id, g.account_id)
         return redirect(
             url_for(
                 "assess_bp.application",
@@ -469,6 +468,8 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
     application_overviews = get_application_overviews(
         fund_id, round_id, search_params
     )
+    stats = get_assessments_stats(fund_id, round_id, search_params)
+    teams_flag_stats = get_team_flag_stats(fund_id, round_id, search_params)
 
     # this is only used for querying applications, so remove it from the search params,
     # so it's not reflected on the user interface
@@ -482,7 +483,6 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
         "round_short_name": round_short_name,
     }
 
-    stats = get_assessments_stats(fund_id, round_id, search_params)
     is_active_status = is_after_today(_round.assessment_deadline)
 
     # TODO Can we get rid of get_application_overviews for fund and _round
@@ -548,6 +548,7 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
         assessment_statuses=assessment_statuses,
         show_clear_filters=show_clear_filters,
         stats=stats,
+        team_flag_stats=teams_flag_stats,
         is_active_status=is_active_status,
         sort_column=sort_column,
         sort_order=sort_order,
@@ -872,30 +873,32 @@ def application(application_id):
     state = get_state_for_tasklist_banner(application_id)
     fund = get_fund(state.fund_short_name, use_short_name=True)
 
-    flags_list = get_flags(application_id)
     accounts_list = []
+    user_id_list = []
+    flags_list = get_flags(application_id)
+    qa_complete = get_qa_complete(application_id)
+    if qa_complete:
+        user_id_list.append(qa_complete["user_id"])
 
     assessment_status = determine_assessment_status(
-        state.workflow_status, flags_list
+        state.workflow_status, state.is_qa_complete
     )
     flag_status = determine_flag_status(flags_list)
 
     if flags_list:
-        user_id_list = []
         for flag_data in flags_list:
             for flag_item in flag_data.updates:
                 if flag_item["user_id"] not in user_id_list:
                     user_id_list.append(flag_item["user_id"])
 
-                accounts_list = get_bulk_accounts_dict(
-                    user_id_list, state.fund_short_name
-                )
+    accounts_list = get_bulk_accounts_dict(user_id_list, state.fund_short_name)
 
     teams_flag_stats = TeamsFlagData.from_flags(flags_list).teams_stats
 
     sub_criteria_status_completed = all_status_completed(state)
     form = AssessmentCompleteForm()
     associated_tags = get_associated_tags_for_application(application_id)
+
     return render_template(
         "assessor_tasklist.html",
         sub_criteria_status_completed=sub_criteria_status_completed,
@@ -907,9 +910,9 @@ def application(application_id):
         accounts_list=accounts_list,
         teams_flag_stats=teams_flag_stats,
         flags_list=flags_list,
-        current_user_role=g.user.highest_role_map[state.fund_short_name],
         is_flaggable=is_flaggable(flag_status),
-        is_qa_complete=is_qa_complete(flags_list),
+        is_qa_complete=state.is_qa_complete,
+        qa_complete=qa_complete,
         flag_status=flag_status,
         assessment_status=assessment_status,
         all_uploaded_documents_section_available=fund.all_uploaded_documents_section_available,

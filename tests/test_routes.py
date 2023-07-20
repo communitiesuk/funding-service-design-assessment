@@ -73,6 +73,7 @@ class TestRoutes:
         mock_get_round,
         mock_get_application_overviews,
         mock_get_assessment_stats,
+        mock_get_teams_flag_stats,
         mock_get_assessment_progress,
         mock_get_application_metadata,
         mock_get_associated_tags_for_application,
@@ -133,6 +134,7 @@ class TestRoutes:
         mock_get_round,
         mock_get_application_overviews,
         mock_get_assessment_stats,
+        mock_get_teams_flag_stats,
         mock_get_assessment_progress,
         mock_get_associated_tags_for_application,
         mock_get_available_tags_for_fund_round,
@@ -207,6 +209,7 @@ class TestRoutes:
         mock_get_round,
         mock_get_application_overviews,
         mock_get_assessment_stats,
+        mock_get_teams_flag_stats,
         mock_get_assessment_progress,
         mock_get_associated_tags_for_application,
         mock_get_available_tags_for_fund_round,
@@ -252,6 +255,7 @@ class TestRoutes:
         mock_get_round,
         mock_get_application_overviews,
         mock_get_assessment_stats,
+        mock_get_teams_flag_stats,
         mock_get_assessment_progress,
         mock_get_associated_tags_for_application,
         mock_get_available_tags_for_fund_round,
@@ -297,6 +301,7 @@ class TestRoutes:
         mock_get_round,
         mock_get_application_overviews,
         mock_get_assessment_stats,
+        mock_get_teams_flag_stats,
         mock_get_assessment_progress,
         mock_get_associated_tags_for_application,
         mock_get_available_tags_for_fund_round,
@@ -343,6 +348,7 @@ class TestRoutes:
         mock_get_round,
         mock_get_application_overviews,
         mock_get_assessment_stats,
+        mock_get_teams_flag_stats,
         mock_get_assessment_progress,
         mock_get_associated_tags_for_application,
         mock_get_available_tags_for_fund_round,
@@ -403,6 +409,7 @@ class TestRoutes:
         mock_get_round,
         mock_get_application_overviews,
         mock_get_assessment_stats,
+        mock_get_teams_flag_stats,
         mock_get_assessment_progress,
         mock_get_application_metadata,
         sort_column,
@@ -507,7 +514,6 @@ class TestRoutes:
         mock_get_bulk_accounts,
         mock_get_assessor_tasklist_state,
     ):
-
         application_id = request.node.get_closest_marker(
             "application_id"
         ).args[0]
@@ -664,6 +670,7 @@ class TestRoutes:
         mock_get_application_metadata,
         mock_get_round,
         mock_get_flags,
+        mock_get_qa_complete,
         mock_get_bulk_accounts,
         mock_get_associated_tags_for_application,
     ):
@@ -679,14 +686,14 @@ class TestRoutes:
         assert 200 == response.status_code, "Wrong status code on response"
         soup = BeautifulSoup(response.data, "html.parser")
         assert (
-            soup.find("h1", class_="assessment-alert__heading").string
-            == "Assessment Stopped"
+            soup.find("h1", class_="assessment-alert__heading").string.strip()
+            == "Flagged - Assessment stopped"
         )
         assert b"Lead User (Lead assessor) lead@test.com" in response.data
         assert b"20/02/2023 at 12:00" in response.data
 
     @pytest.mark.application_id("resolved_app")
-    def test_application_route_should_not_show_resolved_flag(
+    def test_application_route_should_show_resolved_flag(
         self,
         request,
         flask_test_client,
@@ -696,6 +703,7 @@ class TestRoutes:
         mock_get_application_metadata,
         mock_get_round,
         mock_get_flags,
+        mock_get_qa_complete,
         mock_get_bulk_accounts,
         mock_get_associated_tags_for_application,
     ):
@@ -709,12 +717,10 @@ class TestRoutes:
         )
 
         assert response.status_code == 200
-        # TODO: Uncomment & fix it after multiple flags is implemented (FS-2776)
-        # assert b"Remove flag" not in response.data
-        # assert b"Resolve flag" not in response.data
-        # assert b"Reason" not in response.data
-        # assert b"flagged" not in response.data
-        # assert b"Flagged" not in response.data
+        assert b"Remove flag" not in response.data
+        assert b"Flagged resolved" in response.data
+        assert b"Resolve flag action" in response.data
+        assert b"Reason" in response.data
 
     @pytest.mark.application_id("resolved_app")
     def test_flag_route_submit_flag(
@@ -955,6 +961,7 @@ class TestRoutes:
         mock_get_round,
         mock_get_assessor_tasklist_state,
         mock_get_flags,
+        mock_get_qa_complete,
         mock_get_bulk_accounts,
         mock_get_sub_criteria_banner_state,
         mock_get_fund,
@@ -986,6 +993,7 @@ class TestRoutes:
         mock_get_application_metadata,
         mock_get_round,
         mock_get_flags,
+        mock_get_qa_complete,
         mock_get_bulk_accounts,
         mock_get_associated_tags_for_application,
     ):
@@ -1029,6 +1037,7 @@ class TestRoutes:
         mock_get_round,
         mock_get_application_overviews,
         mock_get_assessment_stats,
+        mock_get_teams_flag_stats,
         mock_get_assessment_progress,
         mock_get_associated_tags_for_application,
         mock_get_available_tags_for_fund_round,
@@ -1164,8 +1173,8 @@ class TestRoutes:
             "/assess/application/test_app_id/export/test_short_id/answers.txt"
         )
         sample_expected_q_a = (
-            "Project information\n\n  Q) Have you been given funding through"
-            " the Community Ownership Fund before?\n  A) Yes\n\n"
+            "** Project information **\n\n  Q) Have you been given funding"
+            " through the Community Ownership Fund before?\n  A) Yes\n\n"
         )
         assert response.status_code == 200
         assert sample_expected_q_a in response.text

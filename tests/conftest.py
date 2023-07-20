@@ -467,6 +467,20 @@ def mock_get_assessment_progress():
 
 
 @pytest.fixture(scope="function")
+def mock_get_teams_flag_stats():
+
+    with mock.patch(
+        "app.assess.routes.get_team_flag_stats",
+        return_value=mock_api_results[
+            "assessment_store/assessments/get-team-flag-stats/{fund_id}/{round_id}"
+        ],
+    ) as mocked_progress_func:
+        yield mocked_progress_func
+
+    mocked_progress_func.assert_called_once()
+
+
+@pytest.fixture(scope="function")
 def mock_get_latest_flag(request):
     from app.assess.models.flag import Flag
 
@@ -505,6 +519,22 @@ def mock_get_flags(request):
         mock.patch("app.assess.routes.get_flags", return_value=mock_flag_info),
         mock.patch(
             "app.assess.helpers.get_flags", return_value=mock_flag_info
+        ),
+    ):
+        yield
+
+
+@pytest.fixture(scope="function")
+def mock_get_qa_complete(request):
+    marker = request.node.get_closest_marker("application_id")
+    application_id = marker.args[0]
+
+    mock_qa_info = mock_api_results[
+        f"assessment_store/qa_complete/{application_id}"
+    ]
+    with (
+        mock.patch(
+            "app.assess.routes.get_qa_complete", return_value=mock_qa_info
         ),
     ):
         yield
