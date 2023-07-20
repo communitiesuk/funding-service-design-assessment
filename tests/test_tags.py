@@ -252,7 +252,7 @@ def test_update_associated_tag_returns_True(flask_test_client):
 def test_post_new_tag_for_fund_round_returns_True(flask_test_client):
     with mock.patch("requests.post") as mock_post:
         mock_response = mock.Mock()
-        mock_response.status_code = 200
+        mock_response.ok = True
         mock_post.return_value = mock_response
 
         fund_id = "c62abab1-41b5-4956-b496-4a8862d748a9"
