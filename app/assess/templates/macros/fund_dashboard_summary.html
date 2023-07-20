@@ -1,6 +1,6 @@
 {%- from "govuk_frontend_jinja/components/table/macro.html" import govukTable -%}
 
-{% macro fund_summary(name, is_active_status, fund_id, round_id, application_stats, assessments_href) %}
+{% macro fund_summary(name, is_active_status, fund_id, round_id, application_stats, assessments_href, access_controller) %}
 <div class="govuk-!-padding-0 govuk-!-padding-right-2 govuk-!-padding-bottom-2 govuk-grid-column-one-third content-container">
 
     <div class="govuk-summary-card__title-wrapper">
