@@ -742,7 +742,7 @@ def download_file(data, mimetype, file_name):
 
 
 @assess_bp.route("/application/<application_id>/tags", methods=["GET", "POST"])
-@check_access_application_id
+@check_access_application_id(roles_required=["ASSESSOR"])
 def load_change_tags(application_id):
     tag_association_form = TagAssociationForm()
 
