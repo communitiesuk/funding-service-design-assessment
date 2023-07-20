@@ -58,6 +58,8 @@ class TestRoutes:
                 "search_in": "organisation_name,short_id",
                 "funding_type": "ALL",
                 "status": "ALL",
+                "show_tags": "OFF",
+                "filter_by_tag": "ALL",
             },
         }
     )
@@ -74,6 +76,9 @@ class TestRoutes:
         mock_get_teams_flag_stats,
         mock_get_assessment_progress,
         mock_get_application_metadata,
+        mock_get_associated_tags_for_application,
+        mock_get_available_tags_for_fund_round,
+        mock_get_tag_types,
     ):
         flask_test_client.set_cookie(
             "localhost",
@@ -114,6 +119,8 @@ class TestRoutes:
                 "search_in": "project_name,short_id",
                 "asset_type": "ALL",
                 "status": "ALL",
+                "show_tags": "OFF",
+                "filter_by_tag": "ALL",
             },
         }
     )
@@ -129,6 +136,9 @@ class TestRoutes:
         mock_get_assessment_stats,
         mock_get_teams_flag_stats,
         mock_get_assessment_progress,
+        mock_get_associated_tags_for_application,
+        mock_get_available_tags_for_fund_round,
+        mock_get_tag_types,
     ):
         flask_test_client.set_cookie(
             "localhost",
@@ -185,6 +195,8 @@ class TestRoutes:
                 "search_in": "project_name,short_id",
                 "asset_type": "ALL",
                 "status": "QA_COMPLETE",
+                "show_tags": "OFF",
+                "filter_by_tag": "ALL",
             },
         }
     )
@@ -199,6 +211,9 @@ class TestRoutes:
         mock_get_assessment_stats,
         mock_get_teams_flag_stats,
         mock_get_assessment_progress,
+        mock_get_associated_tags_for_application,
+        mock_get_available_tags_for_fund_round,
+        mock_get_tag_types,
     ):
 
         params = request.node.get_closest_marker("mock_parameters").args[0]
@@ -226,6 +241,8 @@ class TestRoutes:
                 "search_in": "project_name,short_id",
                 "asset_type": "pub",
                 "status": "ALL",
+                "show_tags": "OFF",
+                "filter_by_tag": "ALL",
             },
         }
     )
@@ -240,6 +257,9 @@ class TestRoutes:
         mock_get_assessment_stats,
         mock_get_teams_flag_stats,
         mock_get_assessment_progress,
+        mock_get_associated_tags_for_application,
+        mock_get_available_tags_for_fund_round,
+        mock_get_tag_types,
     ):
 
         params = request.node.get_closest_marker("mock_parameters").args[0]
@@ -267,6 +287,8 @@ class TestRoutes:
                 "search_in": "project_name,short_id",
                 "asset_type": "ALL",
                 "status": "ALL",
+                "show_tags": "OFF",
+                "filter_by_tag": "ALL",
             },
         }
     )
@@ -281,6 +303,9 @@ class TestRoutes:
         mock_get_assessment_stats,
         mock_get_teams_flag_stats,
         mock_get_assessment_progress,
+        mock_get_associated_tags_for_application,
+        mock_get_available_tags_for_fund_round,
+        mock_get_tag_types,
     ):
 
         params = request.node.get_closest_marker("mock_parameters").args[0]
@@ -309,6 +334,8 @@ class TestRoutes:
                 "search_in": "project_name,short_id",
                 "asset_type": "ALL",
                 "status": "ALL",
+                "show_tags": "OFF",
+                "filter_by_tag": "ALL",
             },
         }
     )
@@ -323,6 +350,9 @@ class TestRoutes:
         mock_get_assessment_stats,
         mock_get_teams_flag_stats,
         mock_get_assessment_progress,
+        mock_get_associated_tags_for_application,
+        mock_get_available_tags_for_fund_round,
+        mock_get_tag_types,
     ):
 
         params = request.node.get_closest_marker("mock_parameters").args[0]
@@ -355,6 +385,8 @@ class TestRoutes:
                 "search_in": "project_name,short_id",
                 "asset_type": "ALL",
                 "status": "ALL",
+                "show_tags": "OFF",
+                "filter_by_tag": "ALL",
             },
         }
     )
@@ -383,6 +415,9 @@ class TestRoutes:
         sort_column,
         sort_order,
         column_id,
+        mock_get_associated_tags_for_application,
+        mock_get_available_tags_for_fund_round,
+        mock_get_tag_types,
     ):
 
         flask_test_client.set_cookie(
@@ -637,6 +672,7 @@ class TestRoutes:
         mock_get_flags,
         mock_get_qa_complete,
         mock_get_bulk_accounts,
+        mock_get_associated_tags_for_application,
     ):
         marker = request.node.get_closest_marker("application_id")
         application_id = marker.args[0]
@@ -669,6 +705,7 @@ class TestRoutes:
         mock_get_flags,
         mock_get_qa_complete,
         mock_get_bulk_accounts,
+        mock_get_associated_tags_for_application,
     ):
         marker = request.node.get_closest_marker("application_id")
         application_id = marker.args[0]
@@ -832,6 +869,8 @@ class TestRoutes:
         mock_get_flags,
         mock_get_flag,
         mock_get_sub_criteria_banner_state,
+        mock_get_assessor_tasklist_state,
+        mock_get_round,
         mock_get_fund,
         mock_get_funds,
         mock_get_application_metadata,
@@ -852,6 +891,7 @@ class TestRoutes:
         assert b"Reason for continuing assessment" in response.data
         assert b"Project In prog and Stop" in response.data
 
+    @pytest.mark.application_id("stopped_app")
     @pytest.mark.flag_id("stopped_app")
     def test_post_continue_application(
         self,
@@ -862,6 +902,8 @@ class TestRoutes:
         mock_get_application_metadata,
         mock_get_fund,
         mock_get_flag,
+        mock_get_round,
+        mock_get_assessor_tasklist_state,
     ):
         flag_id = request.node.get_closest_marker("flag_id").args[0]
         token = create_valid_token(test_lead_assessor_claims)
@@ -870,7 +912,7 @@ class TestRoutes:
             "app.assess.helpers.submit_flag",
             return_value=FlagV2.from_dict(
                 {
-                    "application_id": "app_123",
+                    "application_id": "stopped_app",
                     "latest_status": "RESOLVED",
                     "latest_allocation": None,
                     "id": "flagid",
@@ -890,14 +932,14 @@ class TestRoutes:
         )
 
         response = flask_test_client.post(
-            f"assess/continue_assessment/app_123?flag_id={flag_id}",
+            f"assess/continue_assessment/stopped_app?flag_id={flag_id}",
             data={
                 "reason": "We should continue the application.",
             },
         )
         app.assess.helpers.submit_flag.assert_called_once()
         app.assess.helpers.submit_flag.assert_called_once_with(
-            "app_123",
+            "stopped_app",
             "RESOLVED",
             "lead",
             "We should continue the application.",
@@ -907,7 +949,9 @@ class TestRoutes:
         )
 
         assert response.status_code == 302
-        assert response.headers["Location"] == "/assess/application/app_123"
+        assert (
+            response.headers["Location"] == "/assess/application/stopped_app"
+        )
 
     @pytest.mark.application_id("flagged_qa_completed_app")
     def test_qa_complete_flag_displayed(
@@ -923,6 +967,7 @@ class TestRoutes:
         mock_get_fund,
         mock_get_funds,
         mock_get_application_metadata,
+        mock_get_associated_tags_for_application,
     ):
         token = create_valid_token(test_lead_assessor_claims)
         flask_test_client.set_cookie("localhost", "fsd_user_token", token)
@@ -950,6 +995,7 @@ class TestRoutes:
         mock_get_flags,
         mock_get_qa_complete,
         mock_get_bulk_accounts,
+        mock_get_associated_tags_for_application,
     ):
         token = create_valid_token(test_lead_assessor_claims)
         flask_test_client.set_cookie("localhost", "fsd_user_token", token)
@@ -977,6 +1023,8 @@ class TestRoutes:
                 "search_in": "project_name,short_id",
                 "asset_type": "ALL",
                 "status": "ALL",
+                "show_tags": "OFF",
+                "filter_by_tag": "ALL",
             },
         }
     )
@@ -991,6 +1039,9 @@ class TestRoutes:
         mock_get_assessment_stats,
         mock_get_teams_flag_stats,
         mock_get_assessment_progress,
+        mock_get_associated_tags_for_application,
+        mock_get_available_tags_for_fund_round,
+        mock_get_tag_types,
     ):
         flask_test_client.set_cookie(
             "localhost",
@@ -1069,12 +1120,14 @@ class TestRoutes:
         self,
         flask_test_client,
         request,
-        mock_get_sub_criteria_banner_state,
+        mock_get_assessor_tasklist_state,
         mock_get_fund,
         mock_get_funds,
         mock_get_application_metadata,
         mock_get_flags,
+        mock_get_round,
         templates_rendered,
+        mock_get_associated_tags_for_application,
         mocker,
     ):
 

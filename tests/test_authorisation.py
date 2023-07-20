@@ -304,21 +304,19 @@ class TestAuthorisation:
             assert is_commenter_comment_visible
 
     @pytest.mark.parametrize(
-        "claim,expect_continue_available",
+        "claim",
         [
-            (test_commenter_claims, False),
-            (test_assessor_claims, False),
-            (test_lead_assessor_claims, True),
+            (test_commenter_claims),
+            (test_assessor_claims),
         ],
     )
     @pytest.mark.application_id("stopped_app")
     @pytest.mark.flag_id("stopped_app")
-    def test_user_levels_have_correct_permissions_to_restart_an_assessment(
+    def test_user_levels_have_correct_permissions_to_restart_an_assessment_commenter_assessor(
         self,
         flask_test_client,
         request,
         claim,
-        expect_continue_available,
         mock_get_flags,
         mock_get_flag,
         mock_get_sub_criteria_banner_state,
@@ -332,8 +330,49 @@ class TestAuthorisation:
         THEN the user sees the appropriate page:
             - commenter role cannot continue assessment
             - assessor role cannot continue assessment
+        """
+        application_id = request.node.get_closest_marker(
+            "application_id"
+        ).args[0]
+        flask_test_client.set_cookie(
+            "localhost",
+            "fsd_user_token",
+            create_valid_token(claim),
+        )
+
+        with pytest.raises(RuntimeError) as exec_info:
+            flask_test_client.get(
+                f"assess/continue_assessment/{application_id}",
+                follow_redirects=True,
+            )
+        # Tries to redirect to authenticator
+        assert (
+            str(exec_info.value)
+            == "Following external redirects is not supported."
+        )
+
+    @pytest.mark.application_id("stopped_app")
+    @pytest.mark.flag_id("stopped_app")
+    def test_user_levels_have_correct_permissions_to_restart_an_assessment_lead(
+        self,
+        flask_test_client,
+        request,
+        mock_get_flags,
+        mock_get_flag,
+        mock_get_sub_criteria_banner_state,
+        mock_get_assessor_tasklist_state,
+        mock_get_fund,
+        mock_get_round,
+        mock_get_funds,
+        mock_get_application_metadata,
+    ):
+        """
+        GIVEN authorised users
+        WHEN the user accesses the continue assessment route
+        THEN the user sees the appropriate page:
             - lead assessor role can continue assessment
         """
+        claim = test_lead_assessor_claims
         application_id = request.node.get_closest_marker(
             "application_id"
         ).args[0]
@@ -344,25 +383,13 @@ class TestAuthorisation:
             create_valid_token(claim),
         )
 
-        if not expect_continue_available:
-            with pytest.raises(RuntimeError) as exec_info:
-                flask_test_client.get(
-                    f"assess/continue_assessment/{application_id}",
-                    follow_redirects=True,
-                )
-            # Tries to redirect to authenticator
-            assert (
-                str(exec_info.value)
-                == "Following external redirects is not supported."
-            )
-        else:
-            response = flask_test_client.get(
-                f"assess/continue_assessment/{application_id}?flag_id={flag_id}",
-                follow_redirects=True,
-            )
-            assert response.status_code == 200
-            assert b"Continue assessment" in response.data
-            assert b"Reason for continuing assessment" in response.data
+        response = flask_test_client.get(
+            f"assess/continue_assessment/{application_id}?flag_id={flag_id}",
+            follow_redirects=True,
+        )
+        assert response.status_code == 200
+        assert b"Continue assessment" in response.data
+        assert b"Reason for continuing assessment" in response.data
 
     @pytest.mark.parametrize(
         "claim,expect_flagging",
@@ -514,6 +541,7 @@ class TestAuthorisation:
         mock_get_flags,
         mock_get_qa_complete,
         mock_get_bulk_accounts,
+        mock_get_associated_tags_for_application,
     ):
         token = create_valid_token(user_account)
         flask_test_client.set_cookie("localhost", "fsd_user_token", token)

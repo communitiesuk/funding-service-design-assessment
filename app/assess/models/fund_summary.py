@@ -2,6 +2,7 @@ import datetime
 from dataclasses import dataclass
 
 import pytz
+from app.assess.auth.validation import AssessmentAccessController
 from app.assess.auth.validation import get_countries_from_roles
 from app.assess.auth.validation import has_devolved_authority_validation
 from app.assess.data import get_assessments_stats
@@ -25,8 +26,11 @@ class Stats:
 class FundSummary:
     name: str
     is_active_status: bool
+    fund_id: str
+    round_id: str
     application_stats: Stats
     assessments_href: str
+    access_controller: AssessmentAccessController
 
 
 def create_fund_summaries(fund: Fund) -> list[FundSummary]:
@@ -47,6 +51,8 @@ def create_fund_summaries(fund: Fund) -> list[FundSummary]:
             summary = FundSummary(
                 name=round.title,
                 is_active_status=is_after_today(round.assessment_deadline),
+                fund_id=fund.id,
+                round_id=round.id,
                 application_stats=Stats(
                     date=round.assessment_deadline,
                     total_received=round_stats["total"],
@@ -60,6 +66,7 @@ def create_fund_summaries(fund: Fund) -> list[FundSummary]:
                     fund_short_name=fund.short_name,
                     round_short_name=round.short_name.lower(),
                 ),
+                access_controller=AssessmentAccessController(fund.short_name),
             )
             summaries.append(summary)
     return sorted(summaries, key=lambda s: s.application_stats.date)

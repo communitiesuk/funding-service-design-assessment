@@ -1,16 +1,22 @@
+import concurrent
 import csv
 import time
 from io import StringIO
 from typing import List
 
+from app.assess.data import get_associated_tags_for_application
 from app.assess.data import get_flags
 from app.assess.data import get_fund
 from app.assess.data import get_sub_criteria_banner_state
+from app.assess.data import get_tag_types
 from app.assess.data import submit_flag
 from app.assess.display_value_mappings import assessment_statuses
 from app.assess.models.flag_v2 import FlagTypeV2
 from app.assess.models.flag_v2 import FlagV2
 from app.assess.models.fund import Fund
+from app.assess.models.ui.common import Option
+from app.assess.models.ui.common import OptionGroup
+from config import Config
 from flask import redirect
 from flask import render_template
 from flask import request
@@ -22,24 +28,13 @@ def get_ttl_hash(seconds=3600) -> int:
     return round(time.time() / seconds)
 
 
-def get_application_id_from_request() -> str | None:
-    application_id = (
-        request.view_args.get("application_id")
-        or request.view_args.get("application")
-        or request.args.get("application_id")
-        or request.args.get("application")
-    )
-    return application_id
-
-
-def get_fund_short_name_from_request() -> str | None:
-    fund_short_name = (
-        request.view_args.get("fund_short_name")
-        or request.view_args.get("fund_short_name")
-        or request.args.get("fund_short_name")
-        or request.args.get("fund_short_name")
-    )
-    return fund_short_name
+def get_value_from_request(parameter_names) -> str | None:
+    for parameter_name in parameter_names:
+        value = request.view_args.get(parameter_name) or request.args.get(
+            parameter_name
+        )
+        if value:
+            return value
 
 
 def determine_flag_status(Flags: List[FlagV2]) -> str:
@@ -234,3 +229,47 @@ def generate_csv_of_application(q_and_a: dict, fund: Fund, application_json):
 
             writer.writerow([section_title, questions, answers])
     return output.getvalue()
+
+
+def get_tag_map_and_tag_options(fund_round_tags, post_processed_overviews):
+    tag_types = get_tag_types()
+    tag_option_groups = []
+    for purposes in Config.TAGGING_FILTER_CONFIG:
+        tag_type_ids = [
+            tag_type.id
+            for tag_type in tag_types
+            if tag_type.purpose in purposes
+        ]
+        tag_option_groups.append(
+            OptionGroup(
+                label=", ".join(p.capitalize() for p in purposes),
+                options=sorted(
+                    [
+                        Option(value=tag.id, text_content=tag.value)
+                        for tag in fund_round_tags
+                        if tag.type_id in tag_type_ids
+                    ],
+                    key=lambda option: option.text_content,
+                ),
+            )
+        )
+
+    def _get_tags_with_app_context(application_id):
+        from app import app
+
+        with app.app_context():
+            return get_associated_tags_for_application(application_id)
+
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        tag_map_futures = {
+            overview["application_id"]: executor.submit(
+                _get_tags_with_app_context, overview["application_id"]
+            )
+            for overview in post_processed_overviews
+        }
+        tag_map = {
+            application_id: future.result()
+            for application_id, future in tag_map_futures.items()
+        }
+
+    return tag_map, tag_option_groups

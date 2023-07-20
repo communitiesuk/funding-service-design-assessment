@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block header %}
+{% include "./components/tag_header.html" %}
+{% endblock header %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        <h1 class="govuk-heading-xl govuk-!-margin-bottom-4">Create a new tag
+        </h1>
+        <div id="contact-hint" class="govuk-hint govuk-!-margin-bottom-6">
+            General and lead assessors can use new tags you create to tag any [fund] assessments.
+        </div>
+        <div class="govuk-warning-text">
+            <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+            <strong class="govuk-warning-text__text">
+              <span class="govuk-warning-text__assistive">Warning</span>
+              You cannot edit or delete tags once created
+            </strong>
+          </div>
+
+          <form method="post">
+            {{ form.csrf_token }}
+
+            <div class="govuk-form-group">
+
+                {% for message in get_flashed_messages() %}
+                    <div class="govuk-grid-row govuk-error-summary" data-module="govuk-error-summary" role="alert">
+                        <h2 class="govuk-error-summary__title" autofocus>
+                            {{ message }}
+                        </h2>
+                    </div>
+                {% endfor %}
+
+                <h1 class="govuk-label-wrapper">
+                  <label class="govuk-label govuk-label--s" for="{{form.value.id}}">
+                    Tag name
+                  </label>
+                </h1>
+                <input class="govuk-input govuk-!-width-two-thirds" id="{{form.value.id}}" name="{{form.value.id}}" type="text">
+              </div>
+
+              <div class="govuk-form-group">
+                <fieldset class="govuk-fieldset">
+                  <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
+                    <h1 class="govuk-fieldset__heading">
+                      Tag purpose
+                    </h1>
+                  </legend>
+                  {% for tag_type in tag_types %}
+                  <div class="govuk-radios__item">
+                        <input class="govuk-radios__input" id="{{form.type.id}}-{{tag_type['purpose']}}" name="{{form.type.id}}" type="radio" value="{{tag_type['id']}}" aria-describedby="tag-item-hint">
+                        <label class="govuk-label govuk-radios__label" for="{{form.type.id}}-{{tag_type['purpose']}}">
+                            {{tag_type['purpose'].title()}}
+                                <strong class="govuk-tag govuk-!-margin-left-2 govuk-tag--{{ tag_config[tag_type['purpose']]['colour'] }} govuk-tag">{{ tag_config[tag_type['purpose']]['colour'] }}</strong>
+                        </label>
+                        <div id="tag-item-hint" class="govuk-hint govuk-radios__hint">
+                            {{tag_type['description']}}
+                        </div>
+                    </div>
+                  {% endfor %}
+                </fieldset>
+              </div>
+
+            <div class="govuk-button-group">
+                <button class="govuk-button" data-module="govuk-button" formaction="{{ url_for('assess_bp.create_tag', fund_id = fund_round['fund_id'], round_id = fund_round['round_id']) }}">
+                    Save and add another
+                </button>
+                <button class="govuk-button govuk-button--secondary"
+                        data-module="govuk-button"
+                        formaction="{{ url_for('assess_bp.create_tag', fund_id=fund_round['fund_id'], round_id=fund_round['round_id'], go_back=True) }}">
+                    Save and go back
+                </button>
+                <a class="govuk-link" href="{{ url_for("assess_bp.load_fund_round_tags", fund_id=fund_round['fund_id'], round_id=fund_round['round_id']) }}">
+                    Cancel
+                </a>
+            </div>
+        </form>
+
+
+    </div>
+</div>
+
+{% endblock %}

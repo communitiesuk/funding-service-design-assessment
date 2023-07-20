@@ -3,6 +3,7 @@ from urllib.parse import quote_plus
 from urllib.parse import unquote_plus
 
 from app.assess.auth.validation import check_access_application_id
+from app.assess.auth.validation import check_access_fund_id
 from app.assess.auth.validation import check_access_fund_short_name
 from app.assess.auth.validation import get_countries_from_roles
 from app.assess.auth.validation import has_access_to_fund
@@ -11,9 +12,12 @@ from app.assess.data import *
 from app.assess.data import get_application_json
 from app.assess.data import get_application_overviews
 from app.assess.data import get_assessments_stats
+from app.assess.data import get_available_tags_for_fund_round
 from app.assess.data import get_available_teams
 from app.assess.data import get_flag
+from app.assess.data import get_tag_types
 from app.assess.data import get_team_flag_stats
+from app.assess.data import post_new_tag_for_fund_round
 from app.assess.data import submit_score_and_justification
 from app.assess.display_value_mappings import assessment_statuses
 from app.assess.display_value_mappings import asset_types
@@ -28,9 +32,12 @@ from app.assess.forms.mark_qa_complete_form import MarkQaCompleteForm
 from app.assess.forms.rescore_form import RescoreForm
 from app.assess.forms.resolve_flag_form import ResolveFlagForm
 from app.assess.forms.scores_and_justifications import ScoreForm
+from app.assess.forms.tags import NewTagForm
+from app.assess.forms.tags import TagAssociationForm
 from app.assess.helpers import determine_assessment_status
 from app.assess.helpers import determine_flag_status
 from app.assess.helpers import generate_csv_of_application
+from app.assess.helpers import get_tag_map_and_tag_options
 from app.assess.helpers import get_ttl_hash
 from app.assess.helpers import is_flaggable
 from app.assess.helpers import resolve_application
@@ -50,6 +57,7 @@ from app.aws import get_file_for_download_from_aws
 from config import Config
 from flask import Blueprint
 from flask import current_app
+from flask import flash
 from flask import g
 from flask import redirect
 from flask import render_template
@@ -383,20 +391,15 @@ def qa_complete(application_id):
                 application_id=application_id,
             )
         )
-
-    sub_criteria_banner_state = get_sub_criteria_banner_state(application_id)
-    fund = get_fund(sub_criteria_banner_state.fund_id)
+    state = get_state_for_tasklist_banner(application_id)
 
     return render_template(
         "mark_qa_complete.html",
         application_id=application_id,
-        fund=fund,
-        sub_criteria=sub_criteria_banner_state,
+        state=state,
         form=form,
         referrer=request.referrer,
-        assessment_status=assessment_statuses[
-            sub_criteria_banner_state.workflow_status
-        ],
+        assessment_status=assessment_statuses[state.workflow_status],
     )
 
 
@@ -497,6 +500,11 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
         post_processed_overviews
     )
 
+    fund_round_tags = get_available_tags_for_fund_round(fund_id, round_id)
+    tag_map, tag_option_groups = get_tag_map_and_tag_options(
+        fund_round_tags, post_processed_overviews
+    )
+
     def get_sorted_application_overviews(
         application_overviews, column, reverse=False
     ):
@@ -511,6 +519,7 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
             "organisation_name": lambda x: x["organisation_name"],
             "funding_type": lambda x: x["funding_type"],
             "status": lambda x: x["application_status"],
+            "tags": lambda x: len(tag_map.get(x["application_id"]) or []),
         }
 
         # Define the sorting function based on the specified column
@@ -544,72 +553,9 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
         is_active_status=is_active_status,
         sort_column=sort_column,
         sort_order=sort_order,
-    )
-
-
-@assess_bp.route("/application/<application_id>", methods=["GET", "POST"])
-@check_access_application_id
-def application(application_id):
-    """
-    Application summary page
-    Shows information about the fund, application ID
-    and all the application questions and their assessment status
-    :param application_id:
-    :return:
-    """
-
-    if request.method == "POST":
-        update_ar_status_to_completed(application_id)
-
-    state = get_state_for_tasklist_banner(application_id)
-    fund = get_fund(state.fund_short_name, use_short_name=True)
-
-    accounts_list = []
-    user_id_list = []
-    flags_list = get_flags(application_id)
-    qa_complete = get_qa_complete(application_id)
-    if qa_complete:
-        user_id_list.append(qa_complete["user_id"])
-
-    assessment_status = determine_assessment_status(
-        state.workflow_status, state.is_qa_complete
-    )
-    flag_status = determine_flag_status(flags_list)
-
-    if flags_list:
-        for flag_data in flags_list:
-            for flag_item in flag_data.updates:
-                if flag_item["user_id"] not in user_id_list:
-                    user_id_list.append(flag_item["user_id"])
-
-    accounts_list = get_bulk_accounts_dict(user_id_list, state.fund_short_name)
-
-    teams_flag_stats = TeamsFlagData.from_flags(flags_list).teams_stats
-
-    sub_criteria_status_completed = all_status_completed(state)
-    form = AssessmentCompleteForm()
-
-    return render_template(
-        "assessor_tasklist.html",
-        sub_criteria_status_completed=sub_criteria_status_completed,
-        tags=[
-            {"value": "Commercial pass", "colour": "green"},
-            {"value": "Recommend no", "colour": "red"},
-            {"value": "Ed the Duck", "colour": "grey"},
-            {"value": "Further discussion", "colour": "yellow"},
-        ],
-        form=form,
-        state=state,
-        application_id=application_id,
-        accounts_list=accounts_list,
-        teams_flag_stats=teams_flag_stats,
-        flags_list=flags_list,
-        is_flaggable=is_flaggable(flag_status),
-        is_qa_complete=state.is_qa_complete,
-        qa_complete=qa_complete,
-        flag_status=flag_status,
-        assessment_status=assessment_status,
-        all_uploaded_documents_section_available=fund.all_uploaded_documents_section_available,
+        tag_option_groups=tag_option_groups,
+        tags=tag_map,
+        tagging_purpose_config=Config.TAGGING_PURPOSE_CONFIG,
     )
 
 
@@ -690,6 +636,7 @@ def continue_assessment(application_id):
         user_id=g.account_id,
         justification=form.reason.data,
         section=["NA"],
+        state=get_state_for_tasklist_banner(application_id),
         page_to_render="continue_assessment.html",
         reason_to_flag=flag_data.updates[-1]["justification"],
         allocated_team=flag_data.updates[-1]["allocation"],
@@ -703,15 +650,14 @@ def generate_doc_list_for_download(application_id):
     current_app.logger.info(
         f"Generating docs for application id {application_id}"
     )
-    sub_criteria_banner_state = get_sub_criteria_banner_state(application_id)
-    short_id = sub_criteria_banner_state.short_id[-6:]
+    state = get_state_for_tasklist_banner(application_id)
+    short_id = state.short_id[-6:]
     flags_list = get_flags(application_id)
     assessment_status = determine_assessment_status(
-        sub_criteria_banner_state.workflow_status, flags_list
+        state.workflow_status, flags_list
     )
     flag_status = determine_flag_status(flags_list)
 
-    fund = get_fund(sub_criteria_banner_state.fund_id)
     application_json = get_application_json(application_id)
     supporting_evidence = get_files_for_application_upload_fields(
         application_id=application_id,
@@ -731,8 +677,7 @@ def generate_doc_list_for_download(application_id):
     return render_template(
         "contract_downloads.html",
         application_id=application_id,
-        fund=fund,
-        sub_criteria=sub_criteria_banner_state,
+        state=state,
         application_answers=application_answers,
         supporting_evidence=supporting_evidence,
         assessment_status=assessment_status,
@@ -793,4 +738,185 @@ def download_file(data, mimetype, file_name):
                 f"attachment;filename={quote_plus(file_name)}"
             )
         },
+    )
+
+
+@assess_bp.route("/application/<application_id>/tags", methods=["GET", "POST"])
+@check_access_application_id(roles_required=["ASSESSOR"])
+def load_change_tags(application_id):
+    tag_association_form = TagAssociationForm()
+
+    if request.method == "POST":
+        updated_tags = []
+        for tag_id in tag_association_form.tags.data:
+            updated_tags.append({"tag_id": tag_id, "user_id": g.account_id})
+        update_associated_tags(application_id, updated_tags)
+        return redirect(
+            url_for(
+                "assess_bp.application",
+                application_id=application_id,
+            )
+        )
+    state = get_state_for_tasklist_banner(application_id)
+    available_tags = get_available_tags_for_fund_round(
+        state.fund_id, state.round_id
+    )
+    associated_tags = get_associated_tags_for_application(application_id)
+    if associated_tags:
+        associated_tag_ids = [tag.tag_id for tag in associated_tags]
+        for tag in available_tags:
+            if tag.id in associated_tag_ids:
+                tag.associated = True
+    return render_template(
+        "change_tags.html",
+        form=tag_association_form,
+        state=state,
+        available_tags=available_tags,
+        tag_config=Config.TAGGING_PURPOSE_CONFIG,
+        application_id=application_id,
+    )
+
+
+@assess_bp.route("/tags/manage/<fund_id>/<round_id>", methods=["GET"])
+@check_access_fund_id(roles_required=["ASSESSOR"])
+def load_fund_round_tags(fund_id, round_id):
+    fund = get_fund(fund_id, use_short_name=False)
+    round = get_round(fund_id, round_id, use_short_name=False)
+    fund_round = {
+        "fund_name": fund.name,
+        "round_name": round.title,
+        "fund_id": fund_id,
+        "round_id": round_id,
+    }
+    available_tags = get_available_tags_for_fund_round(fund_id, round_id)
+    return render_template(
+        "manage_tags.html",
+        fund_round=fund_round,
+        available_tags=available_tags,
+        tag_config=Config.TAGGING_PURPOSE_CONFIG,
+    )
+
+
+FLAG_ERROR_MESSAGE = (
+    "Tags must be unique, only contain apostrophes, hyphens, letters, digits,"
+    " and spaces."
+)
+
+
+@assess_bp.route("/tags/create/<fund_id>/<round_id>", methods=["GET", "POST"])
+@check_access_fund_id(roles_required=["ASSESSOR"])
+def create_tag(fund_id, round_id):
+    go_back = request.args.get("go_back") or False
+    new_tag_form = NewTagForm()
+    tag_types = get_tag_types()
+    fund = get_fund(fund_id, use_short_name=False)
+    round = get_round(fund_id, round_id, use_short_name=False)
+    new_tag_form.type.choices = [tag_type.id for tag_type in tag_types]
+    fund_round = {
+        "fund_name": fund.name,
+        "round_name": round.title,
+        "fund_id": fund_id,
+        "round_id": round_id,
+    }
+    if new_tag_form.validate_on_submit():
+        current_app.logger.info("Tag creation form validated")
+        tag = {
+            "value": new_tag_form.value.data,
+            "tag_type_id": new_tag_form.type.data,
+            "creator_user_id": g.account_id,
+        }
+
+        tag_created = post_new_tag_for_fund_round(fund_id, round_id, tag)
+        if not tag_created:
+            flash(FLAG_ERROR_MESSAGE)
+
+        if go_back:
+            return redirect(
+                url_for(
+                    "assess_bp.load_fund_round_tags",
+                    fund_id=fund_id,
+                    round_id=round_id,
+                )
+            )
+
+        return redirect(
+            url_for("assess_bp.create_tag", fund_id=fund_id, round_id=round_id)
+        )
+    elif request.method == "POST":
+        current_app.logger.info(
+            f"Tag creation form failed validation: {new_tag_form.errors}"
+        )
+        flash(FLAG_ERROR_MESSAGE)
+
+    available_tags = get_available_tags_for_fund_round(fund_id, round_id)
+    return render_template(
+        "create_tag.html",
+        form=new_tag_form,
+        tag_types=tag_types,
+        tag_config=Config.TAGGING_PURPOSE_CONFIG,
+        available_tags=available_tags,
+        fund_round=fund_round,
+    )
+
+
+@assess_bp.route("/application/<application_id>", methods=["GET", "POST"])
+@check_access_application_id
+def application(application_id):
+    """
+    Application summary page
+    Shows information about the fund, application ID
+    and all the application questions and their assessment status
+    :param application_id:
+    :return:
+    """
+
+    if request.method == "POST":
+        update_ar_status_to_completed(application_id)
+
+    state = get_state_for_tasklist_banner(application_id)
+    fund = get_fund(state.fund_short_name, use_short_name=True)
+
+    accounts_list = []
+    user_id_list = []
+    flags_list = get_flags(application_id)
+    qa_complete = get_qa_complete(application_id)
+    if qa_complete:
+        user_id_list.append(qa_complete["user_id"])
+
+    assessment_status = determine_assessment_status(
+        state.workflow_status, state.is_qa_complete
+    )
+    flag_status = determine_flag_status(flags_list)
+
+    if flags_list:
+        for flag_data in flags_list:
+            for flag_item in flag_data.updates:
+                if flag_item["user_id"] not in user_id_list:
+                    user_id_list.append(flag_item["user_id"])
+
+    accounts_list = get_bulk_accounts_dict(user_id_list, state.fund_short_name)
+
+    teams_flag_stats = TeamsFlagData.from_flags(flags_list).teams_stats
+
+    sub_criteria_status_completed = all_status_completed(state)
+    form = AssessmentCompleteForm()
+    associated_tags = get_associated_tags_for_application(application_id)
+
+    return render_template(
+        "assessor_tasklist.html",
+        sub_criteria_status_completed=sub_criteria_status_completed,
+        tags=associated_tags,
+        tag_config=Config.TAGGING_PURPOSE_CONFIG,
+        form=form,
+        state=state,
+        application_id=application_id,
+        accounts_list=accounts_list,
+        teams_flag_stats=teams_flag_stats,
+        flags_list=flags_list,
+        is_flaggable=is_flaggable(flag_status),
+        is_qa_complete=state.is_qa_complete,
+        qa_complete=qa_complete,
+        flag_status=flag_status,
+        assessment_status=assessment_status,
+        all_uploaded_documents_section_available=fund.all_uploaded_documents_section_available,
     )

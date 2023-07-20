@@ -40,6 +40,36 @@
 
 {% block content %}
 
+{% if toggle_dict.get("TAGGING") %}
+    {% if g.access_controller.is_lead_assessor %}
+        <div class="govuk-grid-column-full govuk-!-padding-0">
+            {% if tags %}
+                {% for t in tags %}
+                    <strong class="govuk-tag govuk-tag--{{ tag_config[t.purpose]['colour'].lower() }} govuk-!-margin-right-4 govuk-!-margin-top-2 dluhc-tag"
+                            style="display: inline-block;">
+                        {{ t.value }}
+                    </strong>
+                {% endfor %}
+            {% else %}
+                <span class="govuk-body govuk-!-margin-top-2 govuk-!-margin-right-4"
+                   style="display: inline-block;">
+                    There are no tags on this assessment
+                </span>
+            {% endif %}
+                <span class="govuk-body-s govuk-!-margin-top-2">
+                    <a class="govuk-link"
+                       href="{{ url_for('assess_bp.load_change_tags', application_id=application_id) }}">
+                        {{ "Change" if tags else "Add" }} tags
+                    </a>
+                </span>
+        </div>
+        <div class="govuk-grid-column-full govuk-!-padding-0 govuk-!-margin-top-4">
+            <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible govuk-!-margin-top-0">
+        </div>
+    {% endif %}
+{% endif %}
+
+
 {% if g.access_controller.has_any_assessor_role %}
 <div>
     {{ flag_tabs(state, application_id, teams_flag_stats, flags_list, accounts_list) }}
@@ -71,6 +101,7 @@
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
         <div class="govuk-grid-column-two-thirds">
+
             {% if all_uploaded_documents_section_available %}
             <h2 class="govuk-heading-l govuk-!-margin-top-8">All uploaded documents</h2>
             {{ section_element(
@@ -80,6 +111,7 @@
                 show_caption=False,
             ) }}
             {% endif %}
+
             <h2 class="govuk-heading-l govuk-!-margin-top-8">Unscored</h2>
             {% for section in state.sections %}
                 {{ section_element(section.name, section.sub_criterias, application_id) }}
@@ -91,7 +123,6 @@
                 {% if loop.index > 0 %}
                     {% set name_classes = "govuk-heading-m govuk-!-margin-bottom-2 govuk-!-margin-top-8" %}
                 {% endif %}
-                {{ criteria_element(criteria, name_classes, application_id) }}
             {% endfor %}
         </div>
         <div class="govuk-grid-column-one-third govuk-!-margin-top-2 govuk-button-group">
@@ -105,6 +136,26 @@
                 {{ flag_application_button(application_id) }}
                 {% endif %}
             </span>
+        </div>
+    </div>
+</div>
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+        <div class="govuk-grid-column-two-thirds">
+            <h2 class="govuk-heading-l govuk-!-margin-top-8">Unscored</h2>
+            {% for section in state.sections %}
+                {{ section_element(section.name, section.sub_criterias, application_id) }}
+            {% endfor %}
+            <h2 class="govuk-heading-l govuk-!-margin-top-8">Scored</h2>
+            <p class="govuk-body">Assess all responses under each sub criteria.</p>
+            {% for criteria in state.criterias %}
+                {% set name_classes = "govuk-heading-m govuk-!-margin-bottom-2" %}
+                {% if loop.index > 0 %}
+                    {% set name_classes = "govuk-heading-m govuk-!-margin-bottom-2 govuk-!-margin-top-8" %}
+                {% endif %}
+                {{ criteria_element(criteria, name_classes, application_id) }}
+            {% endfor %}
         </div>
     </div>
 </div>

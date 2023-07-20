@@ -17,6 +17,9 @@ from app.assess.models.fund import Fund
 from app.assess.models.round import Round
 from app.assess.models.score import Score
 from app.assess.models.sub_criteria import SubCriteria
+from app.assess.models.tag import AssociatedTag
+from app.assess.models.tag import Tag
+from app.assess.models.tag import TagType
 from app.aws import generate_url
 from app.aws import list_files_by_prefix
 from config import Config
@@ -28,7 +31,6 @@ from fsd_utils.locale_selector.get_lang import get_lang
 
 
 def get_data(endpoint: str, payload: Dict = None):
-
     if payload:
         current_app.logger.info(
             f"Fetching data from '{endpoint}', with payload: {payload}."
@@ -93,6 +95,97 @@ def get_application_overviews(fund_id, round_id, search_params):
     overviews_response = get_data(overviews_endpoint)
 
     return overviews_response
+
+
+def get_available_tags_for_fund_round(fund_id, round_id) -> List[Tag]:
+    endpoint = Config.ASSESSMENT_AVAILABLE_TAGS_ENDPOINT.format(
+        fund_id=fund_id, round_id=round_id
+    )
+    response = get_data(endpoint)
+    if response is not None:
+        current_app.logger.info(f"tags returned: {len(response)}")
+        result = [
+            Tag.from_dict(item) for item in response if item["active"] is True
+        ]
+        return result
+    else:
+        current_app.logger.info(
+            f"No tags found for fund {fund_id}, round {round_id}."
+        )
+        return []
+
+
+def get_tag_types():
+    endpoint = Config.ASSESSMENT_TAG_TYPES_ENDPOINT
+    response = get_data(endpoint)
+    if response is not None:
+        current_app.logger.info(f"tags returned: {len(response)}")
+        result = [TagType.from_dict(item) for item in response]
+        return result
+    else:
+        current_app.logger.info("No tag types found.")
+        return None
+
+
+def post_new_tag_for_fund_round(fund_id, round_id, tag) -> bool:
+    endpoint = Config.ASSESSMENT_AVAILABLE_TAGS_ENDPOINT.format(
+        fund_id=fund_id, round_id=round_id
+    )
+    current_app.logger.info(
+        f"Posting the following tag: {tag}"
+        f"for fund {fund_id} and round {round_id}."
+    )
+    response = requests.post(endpoint, json=tag)
+    tag_created = response.ok
+    if not tag_created:
+        current_app.logger.error(
+            f"Post tag failed, code: {response.status_code}."
+        )
+
+    return tag_created
+
+
+def get_associated_tags_for_application(application_id) -> List[Tag]:
+    endpoint = Config.ASSESSMENT_ASSOCIATE_TAGS_ENDPOINT.format(
+        application_id=application_id
+    )
+    result = get_data(endpoint)
+    if result:
+        current_app.logger.info(f"tags returned: {len(result)}")
+        result = [
+            AssociatedTag.from_dict(item)
+            for item in result
+            if item["associated"] is True
+        ]
+        return result
+    else:
+        current_app.logger.info(
+            f"No associated tags found for application: {application_id}."
+        )
+        return None
+
+
+def update_associated_tags(application_id, tags):
+    endpoint = Config.ASSESSMENT_ASSOCIATE_TAGS_ENDPOINT.format(
+        application_id=application_id
+    )
+    payload = [
+        {"id": tag["tag_id"], "user_id": tag["user_id"]} for tag in tags
+    ]
+
+    current_app.logger.info(
+        f"Requesting the following tags: {payload} associate with"
+        f" application_id '{application_id}'"
+    )
+    response = requests.put(endpoint, json=payload)
+
+    if response.status_code == 200:
+        return True
+    else:
+        current_app.logger.error(
+            f"Update associated tags failed, code: {response.status_code}."
+        )
+        return False
 
 
 @lru_cache(maxsize=1)

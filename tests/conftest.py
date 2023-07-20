@@ -5,6 +5,10 @@ from unittest import mock
 
 import jwt as jwt
 import pytest
+from app.assess.models.tag import AssociatedTag
+from app.assess.models.tag import Tag
+from app.assess.models.tag import TagType
+from app.assess.models.ui.assessor_task_list import AssessorTaskList
 from app.create_app import create_app
 from flask import template_rendered
 from selenium import webdriver
@@ -14,6 +18,7 @@ from tests.api_data.example_get_full_application import (
     mock_full_application_json,
 )
 from tests.api_data.test_data import mock_api_results
+from tests.test_tags import test_tags
 from webdriver_manager.chrome import ChromeDriverManager
 
 if platform.system() == "Darwin":
@@ -92,7 +97,6 @@ test_roleless_user_claims = {
 
 
 def create_valid_token(payload=test_assessor_claims):
-
     _test_private_key_path = (
         str(Path(__file__).parent) + "/keys/rsa256/private.pem"
     )
@@ -103,7 +107,6 @@ def create_valid_token(payload=test_assessor_claims):
 
 
 def create_invalid_token():
-
     _test_private_key_path = (
         str(Path(__file__).parent) + "/keys/rsa256/private_invalid.pem"
     )
@@ -352,7 +355,7 @@ def mock_get_rounds(request):
         )
     ]
 
-    with (mock.patch(mock_func, return_value=mock_fund_info) as mocked_round):
+    with mock.patch(mock_func, return_value=mock_fund_info) as mocked_round:
         yield
 
     mocked_round.assert_called_once_with(fund_id)
@@ -372,6 +375,8 @@ def mock_get_application_overviews(request):
             "search_in": "project_name,short_id",
             "asset_type": "ALL",
             "status": "ALL",
+            "show_tags": "OFF",
+            "filter_by_tag": "ALL",
         }
         fund_id = "test-fund"
         round_id = "test-round"
@@ -411,7 +416,6 @@ def mock_get_assessor_tasklist_state(request):
 
 @pytest.fixture(scope="function")
 def mock_get_assessment_stats(request):
-
     marker = request.node.get_closest_marker("mock_parameters")
     if marker:
         params = marker.args[0]
@@ -433,14 +437,12 @@ def mock_get_assessment_stats(request):
             "status": "ALL",
         }
 
-    with (
-        mock.patch(
-            mock_func,
-            return_value=mock_api_results[
-                "assessment_store/assessments/get-stats/{fund_id}/{round_id}"
-            ],
-        ) as mocked_assessment_stats
-    ):
+    with mock.patch(
+        mock_func,
+        return_value=mock_api_results[
+            "assessment_store/assessments/get-stats/{fund_id}/{round_id}"
+        ],
+    ) as mocked_assessment_stats:
         yield mocked_assessment_stats
 
     if search_params:
@@ -453,7 +455,6 @@ def mock_get_assessment_stats(request):
 
 @pytest.fixture(scope="function")
 def mock_get_assessment_progress():
-
     with mock.patch(
         "app.assess.routes.get_assessment_progress",
         return_value=mock_api_results[
@@ -638,23 +639,103 @@ def mock_get_comments(request):
 @pytest.fixture(scope="function")
 def mock_get_scores():
     mock_scores = mock_api_results["assessment_store/score?"]
-    with (
-        mock.patch(
-            "app.assess.routes.get_score_and_justification",
-            return_value=mock_scores,
-        )
+    with mock.patch(
+        "app.assess.routes.get_score_and_justification",
+        return_value=mock_scores,
     ):
         yield
 
 
 @pytest.fixture(scope="function")
 def mock_get_application():
-    with (
-        mock.patch(
-            "app.assess.routes.get_application_json",
-            return_value=mock_full_application_json,
-        )
+    with mock.patch(
+        "app.assess.routes.get_application_json",
+        return_value=mock_full_application_json,
     ) as mocked_get_application_func:
         yield mocked_get_application_func
 
     mocked_get_application_func.assert_called_once()
+
+
+@pytest.fixture(scope="function")
+def mock_get_tasklist_state_for_banner(mocker):
+    mocker.patch(
+        "app.assess.routes.get_state_for_tasklist_banner",
+        return_value=AssessorTaskList(
+            is_qa_complete="",
+            fund_guidance_url="",
+            fund_name="",
+            fund_short_name="",
+            fund_id="",
+            round_id="",
+            round_short_name="",
+            project_name="",
+            short_id="",
+            workflow_status="IN_PROGRESS",
+            date_submitted="2023-01-01 12:00:00",
+            funding_amount_requested="123",
+            project_reference="ABGCDF",
+            sections=[],
+            criterias=[],
+        ),
+    )
+    yield
+
+
+@pytest.fixture(scope="function")
+def client_with_valid_session(flask_test_client):
+
+    token = create_valid_token(test_lead_assessor_claims)
+    flask_test_client.set_cookie("localhost", "fsd_user_token", token)
+    yield flask_test_client
+
+
+@pytest.fixture(scope="function")
+def mock_get_associated_tags_for_application(mocker):
+    for function_module_path in [
+        "app.assess.routes.get_associated_tags_for_application",
+        "app.assess.helpers.get_associated_tags_for_application",
+        "app.assess.data.get_associated_tags_for_application",
+    ]:
+        mocker.patch(
+            function_module_path,
+            return_value=[
+                AssociatedTag(
+                    application_id="75dabe60-ae89-4a47-9263-d35e010b6c66",
+                    associated=True,
+                    purpose="NEGATIVE",
+                    tag_id="75f4296f-502b-4293-82a8-b828e678dd9e",
+                    user_id="65f4296f-502b-4293-82a8-b828e678dd9e",
+                    value="Tag one red",
+                )
+            ],
+        )
+    yield
+
+
+@pytest.fixture(scope="function")
+def mock_get_available_tags_for_fund_round(mocker):
+    mocker.patch(
+        "app.assess.routes.get_available_tags_for_fund_round",
+        return_value=[Tag.from_dict(t) for t in test_tags],
+    )
+    yield
+
+
+@pytest.fixture(scope="function")
+def mock_get_tag_types(mocker):
+    for function_module_path in [
+        "app.assess.helpers.get_tag_types",
+        "app.assess.routes.get_tag_types",
+    ]:
+        mocker.patch(
+            function_module_path,
+            return_value=[
+                TagType(
+                    id="type_1",
+                    purpose="POSITIVE",
+                    description="Type 1 description",
+                ),
+            ],
+        )
+    yield

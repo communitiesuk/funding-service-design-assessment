@@ -1,5 +1,4 @@
 import base64
-import json
 import os
 from os import environ
 from os import getenv
@@ -8,11 +7,11 @@ from pathlib import Path
 from distutils.util import strtobool
 from fsd_utils import CommonConfig
 from fsd_utils import configclass
+from fsd_utils.toggles.vcap_services import VcapServices
 
 
 @configclass
 class DefaultConfig:
-
     # ---------------
     #  General App Config
     # ---------------
@@ -183,7 +182,39 @@ class DefaultConfig:
     ASSESSMENT_FLAG_V2_ENDPOINT = (
         ASSESSMENT_STORE_API_HOST + "/flag_data_v2?flag_id={flag_id}"
     )
-
+    ASSESSMENT_AVAILABLE_TAGS_ENDPOINT = (
+        ASSESSMENT_STORE_API_HOST + "/funds/{fund_id}/rounds/{round_id}/tags"
+    )
+    ASSESSMENT_ASSOCIATE_TAGS_ENDPOINT = (
+        ASSESSMENT_STORE_API_HOST + "/application/{application_id}/tag"
+    )
+    ASSESSMENT_TAG_TYPES_ENDPOINT = ASSESSMENT_STORE_API_HOST + "/tag_types"
+    TAGGING_PURPOSE_CONFIG = {
+        "GENERAL": {
+            "colour": "blue",
+        },
+        "PEOPLE": {
+            "colour": "white",
+        },
+        "POSITIVE": {
+            "colour": "green",
+        },
+        "NEGATIVE": {
+            "colour": "red",
+        },
+        "ACTION": {
+            "colour": "yellow",
+        },
+    }
+    TAGGING_FILTER_CONFIG = (
+        (
+            "POSITIVE",
+            "NEGATIVE",
+            "ACTION",
+        ),
+        ("GENERAL",),
+        ("PEOPLE",),
+    )
     # Account store endpoints
     BULK_ACCOUNTS_ENDPOINT = ACCOUNT_STORE_API_HOST + "/bulk-accounts"
 
@@ -207,11 +238,20 @@ class DefaultConfig:
     """
 
     if "VCAP_SERVICES" in os.environ:
-        vcap_services = json.loads(os.environ["VCAP_SERVICES"])
+        VCAP_SERVICES = VcapServices.from_env_json(
+            environ.get("VCAP_SERVICES")
+        )
 
-        if "aws-s3-bucket" in vcap_services:
-            s3_credentials = vcap_services["aws-s3-bucket"][0]["credentials"]
+        if VCAP_SERVICES.does_service_exist(service_key="aws-s3-bucket"):
+            s3_credentials = VCAP_SERVICES.services.get("aws-s3-bucket")[
+                0
+            ].get("credentials")
             AWS_REGION = s3_credentials["aws_region"]
             AWS_ACCESS_KEY_ID = s3_credentials["aws_access_key_id"]
             AWS_SECRET_ACCESS_KEY = s3_credentials["aws_secret_access_key"]
             AWS_BUCKET_NAME = s3_credentials["bucket_name"]
+
+    # Redis Feature Toggle Configuration
+    REDIS_INSTANCE_URI = getenv("REDIS_INSTANCE_URI", "redis://localhost:6379")
+    TOGGLES_URL = REDIS_INSTANCE_URI + "/0"
+    FEATURE_CONFIG = {"TAGGING": False}

@@ -24,6 +24,9 @@ from fsd_utils.authentication.decorators import login_requested
 from fsd_utils.healthchecks.checkers import FlaskRunningChecker
 from fsd_utils.healthchecks.healthcheck import Healthcheck
 from fsd_utils.logging import logging
+from fsd_utils.toggles.toggles import create_toggles_client
+from fsd_utils.toggles.toggles import initialise_toggles_redis_store
+from fsd_utils.toggles.toggles import load_toggles
 from jinja2 import ChoiceLoader
 from jinja2 import PackageLoader
 from jinja2 import PrefixLoader
@@ -34,6 +37,13 @@ def create_app() -> Flask:
     flask_app = Flask("Assessment Frontend")
 
     flask_app.config.from_object("config.Config")
+
+    toggle_client = None
+    if os.getenv("FLASK_ENV") != "unit_test":
+        initialise_toggles_redis_store(flask_app)
+        toggle_client = create_toggles_client()
+        load_toggles(Config.FEATURE_CONFIG, toggle_client)
+
     flask_app.static_url_path = flask_app.config.get("STATIC_URL_PATH")
     flask_app.static_folder = flask_app.config.get("STATIC_FOLDER")
 
@@ -83,6 +93,12 @@ def create_app() -> Flask:
             service_meta_author="DLUHC",
             sso_logout_url=flask_app.config.get("SSO_LOGOUT_URL"),
             g=g,
+            toggle_dict={
+                feature.name: feature.is_enabled()
+                for feature in toggle_client.list()
+            }
+            if toggle_client
+            else {},
         )
 
     with flask_app.app_context():
