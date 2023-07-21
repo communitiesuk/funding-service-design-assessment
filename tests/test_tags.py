@@ -225,7 +225,7 @@ def test_update_associated_tag_returns_True(flask_test_client):
 
     with mock.patch("requests.put") as mock_put:
         mock_response = mock.Mock()
-        mock_response.status_code = 200
+        mock_response.ok = True
         mock_put.return_value = mock_response
 
         new_tags = [
