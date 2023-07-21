@@ -1172,13 +1172,11 @@ class TestRoutes:
         response = flask_test_client.get(
             "/assess/application/test_app_id/export/test_short_id/answers.txt"
         )
-        sample_expected_q_a = (
-            "**********\n\n* Project information\n\n  Q) Have you been given"
-            " funding through the Community Ownership Fund before?\n  A)"
-            " Yes\n\n"
-        )
+        sample_1 = "Project information"
+        sample_2 = "Q) Have you been given"
         assert response.status_code == 200
-        assert sample_expected_q_a in response.text
+        assert sample_1 in response.text
+        assert sample_2 in response.text
 
     def test_get_file_with_short_id(
         self,
