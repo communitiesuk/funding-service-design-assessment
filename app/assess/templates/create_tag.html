@@ -54,7 +54,7 @@
                         <input class="govuk-radios__input" id="{{form.type.id}}-{{tag_type['purpose']}}" name="{{form.type.id}}" type="radio" value="{{tag_type['id']}}" aria-describedby="tag-item-hint">
                         <label class="govuk-label govuk-radios__label" for="{{form.type.id}}-{{tag_type['purpose']}}">
                             {{tag_type['purpose'].title()}}
-                                <strong class="govuk-tag govuk-!-margin-left-2 govuk-tag--{{ tag_config[tag_type['purpose']]['colour'] }} govuk-tag">{{ tag_config[tag_type['purpose']]['colour'] }}</strong>
+                                <strong class="govuk-tag govuk-!-margin-left-2 govuk-tag--{{ tag_config[tag_type['purpose']]['colour'] }} govuk-tag">{{ tag_config[tag_type['purpose']]['colour'] if tag_config[tag_type['purpose']]['colour'].lower() != "grey" else "white" }}</strong>
                         </label>
                         <div id="tag-item-hint" class="govuk-hint govuk-radios__hint">
                             {{tag_type['description']}}
