@@ -19,12 +19,12 @@
                 <div class="govuk-grid-column-two-thirds dluhc-column-auto">
                     <div class="govuk-form-group govuk-!-display-inline-block govuk-!-margin-bottom-0 govuk-!-margin-right-2">
                         <label class="govuk-label" for="filter_{{ item_type }}">
-                            Filter by asset type
+                            Filter by {{ "asset type" if item_type == "asset_type" else "funding type" }}
                         </label>
                         <select class="govuk-select" id="filter_{{ item_type }}" name="{{ item_type }}">
                             {% for item in item_types %}
-+                                <option value='{{ item }}' {% if query_params[item_type] == item %}
-+                                        selected=""{% endif %}>{{ item_types[item] }}</option>
+                                <option value='{{ item }}' {% if query_params[item_type] == item %}
+                                        selected=""{% endif %}>{{ item_types[item] }}</option>
                             {% endfor %}
                         </select>
                     </div>
