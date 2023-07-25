@@ -189,7 +189,7 @@ def display_sub_criteria(
         "sub_criteria": sub_criteria,
         "application_id": application_id,
         "comments": theme_matched_comments,
-        "is_flaggable": is_flaggable(flag_status),
+        "is_flaggable": False,  # Flag button is disabled in sub-criteria page,
         "display_comment_box": add_comment_argument,
         "comment_form": comment_form,
         "current_theme": current_theme,
