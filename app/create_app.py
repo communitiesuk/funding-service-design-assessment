@@ -108,12 +108,14 @@ def create_app() -> Flask:
             internal_server_error,
         )
         from app.assess.routes import assess_bp
+        from app.assess.tag_routes import tag_bp
 
         flask_app.register_error_handler(404, not_found)
         flask_app.register_error_handler(403, forbidden)
         flask_app.register_error_handler(500, internal_server_error)
         flask_app.register_blueprint(default_bp)
         flask_app.register_blueprint(assess_bp)
+        flask_app.register_blueprint(tag_bp)
 
         # Bundle and compile assets
         assets = Environment()

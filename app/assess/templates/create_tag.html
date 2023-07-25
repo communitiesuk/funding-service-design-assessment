@@ -65,15 +65,15 @@
               </div>
 
             <div class="govuk-button-group">
-                <button class="govuk-button" data-module="govuk-button" formaction="{{ url_for('assess_bp.create_tag', fund_id = fund_round['fund_id'], round_id = fund_round['round_id']) }}">
+                <button class="govuk-button" data-module="govuk-button" formaction="{{ url_for('tag_bp.create_tag', fund_id = fund_round['fund_id'], round_id = fund_round['round_id']) }}">
                     Save and add another
                 </button>
                 <button class="govuk-button govuk-button--secondary"
                         data-module="govuk-button"
-                        formaction="{{ url_for('assess_bp.create_tag', fund_id=fund_round['fund_id'], round_id=fund_round['round_id'], go_back=True) }}">
+                        formaction="{{ url_for('tag_bp.create_tag', fund_id=fund_round['fund_id'], round_id=fund_round['round_id'], go_back=True) }}">
                     Save and go back
                 </button>
-                <a class="govuk-link" href="{{ url_for("assess_bp.load_fund_round_tags", fund_id=fund_round['fund_id'], round_id=fund_round['round_id']) }}">
+                <a class="govuk-link" href="{{ url_for("tag_bp.load_fund_round_tags", fund_id=fund_round['fund_id'], round_id=fund_round['round_id']) }}">
                     Cancel
                 </a>
             </div>
