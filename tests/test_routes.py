@@ -58,7 +58,6 @@ class TestRoutes:
                 "search_in": "organisation_name,short_id",
                 "funding_type": "ALL",
                 "status": "ALL",
-                "show_tags": "OFF",
                 "filter_by_tag": "ALL",
             },
         }
@@ -68,9 +67,9 @@ class TestRoutes:
         self,
         request,
         flask_test_client,
-        mock_get_fund,
         mock_get_funds,
         mock_get_round,
+        mock_get_fund,
         mock_get_application_overviews,
         mock_get_assessment_stats,
         mock_get_teams_flag_stats,
@@ -119,7 +118,6 @@ class TestRoutes:
                 "search_in": "project_name,short_id",
                 "asset_type": "ALL",
                 "status": "ALL",
-                "show_tags": "OFF",
                 "filter_by_tag": "ALL",
             },
         }
@@ -195,7 +193,6 @@ class TestRoutes:
                 "search_in": "project_name,short_id",
                 "asset_type": "ALL",
                 "status": "QA_COMPLETE",
-                "show_tags": "OFF",
                 "filter_by_tag": "ALL",
             },
         }
@@ -241,7 +238,6 @@ class TestRoutes:
                 "search_in": "project_name,short_id",
                 "asset_type": "pub",
                 "status": "ALL",
-                "show_tags": "OFF",
                 "filter_by_tag": "ALL",
             },
         }
@@ -287,7 +283,6 @@ class TestRoutes:
                 "search_in": "project_name,short_id",
                 "asset_type": "ALL",
                 "status": "ALL",
-                "show_tags": "OFF",
                 "filter_by_tag": "ALL",
             },
         }
@@ -334,7 +329,6 @@ class TestRoutes:
                 "search_in": "project_name,short_id",
                 "asset_type": "ALL",
                 "status": "ALL",
-                "show_tags": "OFF",
                 "filter_by_tag": "ALL",
             },
         }
@@ -385,7 +379,6 @@ class TestRoutes:
                 "search_in": "project_name,short_id",
                 "asset_type": "ALL",
                 "status": "ALL",
-                "show_tags": "OFF",
                 "filter_by_tag": "ALL",
             },
         }
@@ -1023,7 +1016,6 @@ class TestRoutes:
                 "search_in": "project_name,short_id",
                 "asset_type": "ALL",
                 "status": "ALL",
-                "show_tags": "OFF",
                 "filter_by_tag": "ALL",
             },
         }
@@ -1032,8 +1024,8 @@ class TestRoutes:
         self,
         request,
         flask_test_client,
-        mock_get_fund,
         mock_get_funds,
+        mock_get_fund,
         mock_get_round,
         mock_get_application_overviews,
         mock_get_assessment_stats,

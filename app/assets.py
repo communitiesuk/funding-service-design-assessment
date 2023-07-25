@@ -40,7 +40,7 @@ def compile_static_assets(assets, flask_app):
         "../src/js/all.js",
         "../src/js/components/*/*.js",
         filters="jsmin",
-        output="js/main.min.js",
+        output="js/main3.min.js",
     )
 
     assets.register("default_styles", default_style_bundle)

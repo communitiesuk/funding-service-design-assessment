@@ -197,6 +197,7 @@ mock_api_results = {
         "assessment_deadline": "2023-03-01T12:00:00",
         "deadline": "2022-12-01T12:00:00",
         "opens": "2022-10-01T12:00:00",
+        "all_uploaded_documents_section_available": True,
     },
     "assessment_store/application_overviews/{fund_id}/{round_id}?": [
         {

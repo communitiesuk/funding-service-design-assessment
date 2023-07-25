@@ -120,7 +120,6 @@ def test_generate_csv_of_application():
         id="fund-uuid",
         description="Test Fund Description",
         short_name="Test Short Name",
-        all_uploaded_documents_section_available=True,
     )
 
     application = {
