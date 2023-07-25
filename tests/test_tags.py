@@ -7,7 +7,7 @@ from app.assess.data import post_new_tag_for_fund_round
 from app.assess.data import update_associated_tags
 from app.assess.models.tag import AssociatedTag
 from app.assess.models.tag import Tag
-from app.assess.routes import FLAG_ERROR_MESSAGE
+from app.assess.tag_routes import FLAG_ERROR_MESSAGE
 from bs4 import BeautifulSoup
 from tests.api_data.test_data import test_fund_id
 from tests.api_data.test_data import test_round_id
@@ -41,7 +41,7 @@ def test_change_tags_route(
     mock_get_fund,
 ):
     with mock.patch(
-        "app.assess.routes.get_available_tags_for_fund_round",
+        "app.assess.tag_routes.get_available_tags_for_fund_round",
         return_value=[
             Tag(
                 id="123",
@@ -53,7 +53,7 @@ def test_change_tags_route(
             )
         ],
     ), mock.patch(
-        "app.assess.routes.get_associated_tags_for_application",
+        "app.assess.tag_routes.get_associated_tags_for_application",
         return_value=[
             AssociatedTag(
                 application_id="75dabe60-ae89-4a47-9263-d35e010b6c66",
@@ -101,7 +101,7 @@ def test_change_tags_route_associated_tag_checked(
     mock_get_fund,
 ):
     with mock.patch(
-        "app.assess.routes.get_available_tags_for_fund_round",
+        "app.assess.tag_routes.get_available_tags_for_fund_round",
         return_value=[
             Tag(
                 id="123",
@@ -121,7 +121,7 @@ def test_change_tags_route_associated_tag_checked(
             ),
         ],
     ), mock.patch(
-        "app.assess.routes.get_associated_tags_for_application",
+        "app.assess.tag_routes.get_associated_tags_for_application",
         return_value=[
             AssociatedTag(
                 application_id="75dabe60-ae89-4a47-9263-d35e010b6c66",
@@ -160,10 +160,10 @@ def test_change_tags_route_no_tags(
 ):
 
     with mock.patch(
-        "app.assess.routes.get_available_tags_for_fund_round",
+        "app.assess.tag_routes.get_available_tags_for_fund_round",
         return_value=[],
     ), mock.patch(
-        "app.assess.routes.get_associated_tags_for_application",
+        "app.assess.tag_routes.get_associated_tags_for_application",
         return_value=[],
     ):
         response = client_with_valid_session.get(
@@ -267,6 +267,11 @@ def test_post_new_tag_for_fund_round_returns_True(flask_test_client):
         assert result is True
 
 
+@pytest.mark.mock_parameters(
+    {
+        "get_rounds_path": "app.assess.tag_routes.get_round",
+    }
+)
 @pytest.mark.parametrize(
     "expect_flagging",
     [
@@ -290,6 +295,11 @@ def test_create_tag_initial_render_get(
     assert "Type 1 description" in response.text
 
 
+@pytest.mark.mock_parameters(
+    {
+        "get_rounds_path": "app.assess.tag_routes.get_round",
+    }
+)
 @pytest.mark.parametrize(
     "expect_flagging",
     [
@@ -320,6 +330,11 @@ def test_create_tag_invalid_form_post(
         False,
     ],
 )
+@pytest.mark.mock_parameters(
+    {
+        "get_rounds_path": "app.assess.tag_routes.get_round",
+    }
+)
 def test_create_tag_invalid_character_post(
     expect_flagging,
     client_with_valid_session,
@@ -338,6 +353,11 @@ def test_create_tag_invalid_character_post(
     assert FLAG_ERROR_MESSAGE in response.text
 
 
+@pytest.mark.mock_parameters(
+    {
+        "get_rounds_path": "app.assess.tag_routes.get_round",
+    }
+)
 @pytest.mark.parametrize(
     "expect_flagging",
     [
@@ -354,7 +374,7 @@ def test_create_tag_shows_error_if_valid_form_post_but_request_fails(
     mocker,
 ):
     mocker.patch(
-        "app.assess.routes.post_new_tag_for_fund_round",
+        "app.assess.tag_routes.post_new_tag_for_fund_round",
         return_value=lambda *_: False,
     )
 
@@ -374,6 +394,11 @@ def test_create_tag_shows_error_if_valid_form_post_but_request_fails(
         False,
     ],
 )
+@pytest.mark.mock_parameters(
+    {
+        "get_rounds_path": "app.assess.tag_routes.get_round",
+    }
+)
 def test_create_tag_valid_form_post(
     expect_flagging,
     client_with_valid_session,
@@ -384,7 +409,7 @@ def test_create_tag_valid_form_post(
     mocker,
 ):
     mocker.patch(
-        "app.assess.routes.post_new_tag_for_fund_round",
+        "app.assess.tag_routes.post_new_tag_for_fund_round",
         return_value=lambda *_: True,
     )
 
@@ -404,6 +429,11 @@ def test_create_tag_valid_form_post(
         False,
     ],
 )
+@pytest.mark.mock_parameters(
+    {
+        "get_rounds_path": "app.assess.tag_routes.get_round",
+    }
+)
 def test_create_tag_valid_form_go_back_post(
     expect_flagging,
     client_with_valid_session,
@@ -414,7 +444,7 @@ def test_create_tag_valid_form_go_back_post(
     mocker,
 ):
     mocker.patch(
-        "app.assess.routes.post_new_tag_for_fund_round",
+        "app.assess.tag_routes.post_new_tag_for_fund_round",
         return_value=lambda *_: True,
     )
 
@@ -432,6 +462,11 @@ def test_create_tag_valid_form_go_back_post(
     [
         False,
     ],
+)
+@pytest.mark.mock_parameters(
+    {
+        "get_rounds_path": "app.assess.tag_routes.get_round",
+    }
 )
 def test_manage_tag_page_renders_with_tags(
     expect_flagging,
