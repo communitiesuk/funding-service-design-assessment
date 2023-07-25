@@ -58,7 +58,7 @@
             {% endif %}
                 <span class="govuk-body-s govuk-!-margin-top-2">
                     <a class="govuk-link"
-                       href="{{ url_for('assess_bp.load_change_tags', application_id=application_id) }}">
+                       href="{{ url_for('tag_bp.load_change_tags', application_id=application_id) }}">
                         {{ "Change" if tags else "Add" }} tags
                     </a>
                 </span>

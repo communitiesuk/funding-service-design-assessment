@@ -250,6 +250,9 @@ def mock_get_fund():
 
     with (
         mock.patch("app.assess.routes.get_fund", return_value=mock_fund_info),
+        mock.patch(
+            "app.assess.tag_routes.get_fund", return_value=mock_fund_info
+        ),
         mock.patch("app.assess.helpers.get_fund", return_value=mock_fund_info),
         mock.patch(
             "app.assess.auth.validation.get_fund", return_value=mock_fund_info
@@ -304,7 +307,7 @@ def mock_get_round(request):
         round_id = params.get("round_id", "test-round")
         use_short_name = True if params.get("fund_short_name") else False
     else:
-        mock_func = "app.assess.routes.get_round"
+        mock_func = "app.assess.helpers.get_round"
         fund_short_name = "TF"
         round_short_name = "TR"
         fund_id = "test-fund"
@@ -316,11 +319,13 @@ def mock_get_round(request):
     else:
         expect_flagging = True
 
-    mock_fund_info = Round.from_dict(
+    mock_round_info = Round.from_dict(
         mock_api_results["fund_store/funds/{fund_id}/rounds/{round_id}"]
     )
 
-    with mock.patch(mock_func, return_value=mock_fund_info) as mocked_round:
+    with (
+        mock.patch(mock_func, return_value=mock_round_info) as mocked_round,
+    ):
         yield mocked_round
 
     if expect_flagging:
@@ -349,13 +354,12 @@ def mock_get_rounds(request):
         mock_func = "app.assess.routes.get_rounds"
         fund_id = "test-fund"
 
-    mock_fund_info = [
+    mock_round_info = [
         Round.from_dict(
             mock_api_results["fund_store/funds/{fund_id}/rounds/{round_id}"]
         )
     ]
-
-    with mock.patch(mock_func, return_value=mock_fund_info) as mocked_round:
+    with mock.patch(mock_func, return_value=mock_round_info) as mocked_round:
         yield
 
     mocked_round.assert_called_once_with(fund_id)
@@ -369,6 +373,10 @@ def mock_get_application_overviews(request):
         search_params = params.get("expected_search_params")
         fund_id = params.get("fund_id", "test-fund")
         round_id = params.get("round_id", "test-round")
+        path = params.get(
+            "application_overviews_path",
+            "app.assess.routes.get_application_overviews",
+        )
     else:
         search_params = {
             "search_term": "",
@@ -378,11 +386,12 @@ def mock_get_application_overviews(request):
             "show_tags": "OFF",
             "filter_by_tag": "ALL",
         }
+        path = "app.assess.routes.get_application_overviews"
         fund_id = "test-fund"
         round_id = "test-round"
 
     with mock.patch(
-        "app.assess.routes.get_application_overviews",
+        path,
         return_value=mock_api_results[
             "assessment_store/application_overviews/{fund_id}/{round_id}?"
         ],
@@ -405,7 +414,7 @@ def mock_get_assessor_tasklist_state(request):
         f"assessment_store/application_overviews/{application_id}"
     ]
     with mock.patch(
-        "app.assess.routes.get_assessor_task_list_state",
+        "app.assess.helpers.get_assessor_task_list_state",
         return_value=mock_tasklist_state,
     ) as mocked_tasklist_state:
         yield mocked_tasklist_state
@@ -659,25 +668,30 @@ def mock_get_application():
 
 @pytest.fixture(scope="function")
 def mock_get_tasklist_state_for_banner(mocker):
+    mock_task_list = AssessorTaskList(
+        is_qa_complete="",
+        fund_guidance_url="",
+        fund_name="",
+        fund_short_name="",
+        fund_id="",
+        round_id="",
+        round_short_name="",
+        project_name="",
+        short_id="",
+        workflow_status="IN_PROGRESS",
+        date_submitted="2023-01-01 12:00:00",
+        funding_amount_requested="123",
+        project_reference="ABGCDF",
+        sections=[],
+        criterias=[],
+    )
     mocker.patch(
         "app.assess.routes.get_state_for_tasklist_banner",
-        return_value=AssessorTaskList(
-            is_qa_complete="",
-            fund_guidance_url="",
-            fund_name="",
-            fund_short_name="",
-            fund_id="",
-            round_id="",
-            round_short_name="",
-            project_name="",
-            short_id="",
-            workflow_status="IN_PROGRESS",
-            date_submitted="2023-01-01 12:00:00",
-            funding_amount_requested="123",
-            project_reference="ABGCDF",
-            sections=[],
-            criterias=[],
-        ),
+        return_value=mock_task_list,
+    )
+    mocker.patch(
+        "app.assess.tag_routes.get_state_for_tasklist_banner",
+        return_value=mock_task_list,
     )
     yield
 
@@ -694,6 +708,7 @@ def client_with_valid_session(flask_test_client):
 def mock_get_associated_tags_for_application(mocker):
     for function_module_path in [
         "app.assess.routes.get_associated_tags_for_application",
+        "app.assess.tag_routes.get_associated_tags_for_application",
         "app.assess.helpers.get_associated_tags_for_application",
         "app.assess.data.get_associated_tags_for_application",
     ]:
@@ -716,7 +731,15 @@ def mock_get_associated_tags_for_application(mocker):
 @pytest.fixture(scope="function")
 def mock_get_available_tags_for_fund_round(mocker):
     mocker.patch(
+        "app.assess.tag_routes.get_available_tags_for_fund_round",
+        return_value=[Tag.from_dict(t) for t in test_tags],
+    )
+    mocker.patch(
         "app.assess.routes.get_available_tags_for_fund_round",
+        return_value=[Tag.from_dict(t) for t in test_tags],
+    )
+    mocker.patch(
+        "app.assess.tag_routes.get_available_tags_for_fund_round",
         return_value=[Tag.from_dict(t) for t in test_tags],
     )
     yield
@@ -726,7 +749,7 @@ def mock_get_available_tags_for_fund_round(mocker):
 def mock_get_tag_types(mocker):
     for function_module_path in [
         "app.assess.helpers.get_tag_types",
-        "app.assess.routes.get_tag_types",
+        "app.assess.tag_routes.get_tag_types",
     ]:
         mocker.patch(
             function_module_path,

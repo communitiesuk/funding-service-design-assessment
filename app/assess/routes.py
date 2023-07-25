@@ -3,21 +3,24 @@ from urllib.parse import quote_plus
 from urllib.parse import unquote_plus
 
 from app.assess.auth.validation import check_access_application_id
-from app.assess.auth.validation import check_access_fund_id
 from app.assess.auth.validation import check_access_fund_short_name
 from app.assess.auth.validation import get_countries_from_roles
 from app.assess.auth.validation import has_access_to_fund
 from app.assess.auth.validation import has_devolved_authority_validation
 from app.assess.data import *
+from app.assess.data import get_all_uploaded_documents_theme_answers
 from app.assess.data import get_application_json
 from app.assess.data import get_application_overviews
 from app.assess.data import get_assessments_stats
 from app.assess.data import get_available_tags_for_fund_round
 from app.assess.data import get_available_teams
 from app.assess.data import get_flag
-from app.assess.data import get_tag_types
+from app.assess.data import get_flags
+from app.assess.data import get_fund
+from app.assess.data import get_round
+from app.assess.data import get_sub_criteria
+from app.assess.data import get_sub_criteria_theme_answers
 from app.assess.data import get_team_flag_stats
-from app.assess.data import post_new_tag_for_fund_round
 from app.assess.data import submit_score_and_justification
 from app.assess.display_value_mappings import assessment_statuses
 from app.assess.display_value_mappings import asset_types
@@ -32,11 +35,10 @@ from app.assess.forms.mark_qa_complete_form import MarkQaCompleteForm
 from app.assess.forms.rescore_form import RescoreForm
 from app.assess.forms.resolve_flag_form import ResolveFlagForm
 from app.assess.forms.scores_and_justifications import ScoreForm
-from app.assess.forms.tags import NewTagForm
-from app.assess.forms.tags import TagAssociationForm
 from app.assess.helpers import determine_assessment_status
 from app.assess.helpers import determine_flag_status
 from app.assess.helpers import generate_csv_of_application
+from app.assess.helpers import get_state_for_tasklist_banner
 from app.assess.helpers import get_tag_map_and_tag_options
 from app.assess.helpers import get_ttl_hash
 from app.assess.helpers import is_flaggable
@@ -48,7 +50,6 @@ from app.assess.models.fund_summary import create_fund_summaries
 from app.assess.models.fund_summary import is_after_today
 from app.assess.models.theme import Theme
 from app.assess.models.ui import applicants_response
-from app.assess.models.ui.assessor_task_list import AssessorTaskList
 from app.assess.status import all_status_completed
 from app.assess.status import update_ar_status_to_completed
 from app.assess.status import update_ar_status_to_qa_completed
@@ -57,7 +58,6 @@ from app.aws import get_file_for_download_from_aws
 from config import Config
 from flask import Blueprint
 from flask import current_app
-from flask import flash
 from flask import g
 from flask import redirect
 from flask import render_template
@@ -73,21 +73,6 @@ assess_bp = Blueprint(
     url_prefix=Config.ASSESSMENT_HUB_ROUTE,
     template_folder="templates",
 )
-
-
-def get_state_for_tasklist_banner(application_id) -> AssessorTaskList:
-    assessor_task_list_metadata = get_assessor_task_list_state(application_id)
-    fund = get_fund(assessor_task_list_metadata["fund_id"])
-    round = get_round(
-        assessor_task_list_metadata["fund_id"],
-        assessor_task_list_metadata["round_id"],
-    )
-    assessor_task_list_metadata["fund_name"] = fund.name
-    assessor_task_list_metadata["fund_short_name"] = fund.short_name
-    assessor_task_list_metadata["round_short_name"] = round.short_name
-    assessor_task_list_metadata["fund_guidance_url"] = fund.guidance_url
-    state = AssessorTaskList.from_json(assessor_task_list_metadata)
-    return state
 
 
 def _handle_all_uploaded_documents(application_id):
@@ -738,124 +723,6 @@ def download_file(data, mimetype, file_name):
                 f"attachment;filename={quote_plus(file_name)}"
             )
         },
-    )
-
-
-@assess_bp.route("/application/<application_id>/tags", methods=["GET", "POST"])
-@check_access_application_id(roles_required=["ASSESSOR"])
-def load_change_tags(application_id):
-    tag_association_form = TagAssociationForm()
-
-    if request.method == "POST":
-        updated_tags = []
-        for tag_id in tag_association_form.tags.data:
-            updated_tags.append({"tag_id": tag_id, "user_id": g.account_id})
-        update_associated_tags(application_id, updated_tags)
-        return redirect(
-            url_for(
-                "assess_bp.application",
-                application_id=application_id,
-            )
-        )
-    state = get_state_for_tasklist_banner(application_id)
-    available_tags = get_available_tags_for_fund_round(
-        state.fund_id, state.round_id
-    )
-    associated_tags = get_associated_tags_for_application(application_id)
-    if associated_tags:
-        associated_tag_ids = [tag.tag_id for tag in associated_tags]
-        for tag in available_tags:
-            if tag.id in associated_tag_ids:
-                tag.associated = True
-    return render_template(
-        "change_tags.html",
-        form=tag_association_form,
-        state=state,
-        available_tags=available_tags,
-        tag_config=Config.TAGGING_PURPOSE_CONFIG,
-        application_id=application_id,
-    )
-
-
-@assess_bp.route("/tags/manage/<fund_id>/<round_id>", methods=["GET"])
-@check_access_fund_id(roles_required=["ASSESSOR"])
-def load_fund_round_tags(fund_id, round_id):
-    fund = get_fund(fund_id, use_short_name=False)
-    round = get_round(fund_id, round_id, use_short_name=False)
-    fund_round = {
-        "fund_name": fund.name,
-        "round_name": round.title,
-        "fund_id": fund_id,
-        "round_id": round_id,
-    }
-    available_tags = get_available_tags_for_fund_round(fund_id, round_id)
-    return render_template(
-        "manage_tags.html",
-        fund_round=fund_round,
-        available_tags=available_tags,
-        tag_config=Config.TAGGING_PURPOSE_CONFIG,
-    )
-
-
-FLAG_ERROR_MESSAGE = (
-    "Tags must be unique, only contain apostrophes, hyphens, letters, digits,"
-    " and spaces."
-)
-
-
-@assess_bp.route("/tags/create/<fund_id>/<round_id>", methods=["GET", "POST"])
-@check_access_fund_id(roles_required=["ASSESSOR"])
-def create_tag(fund_id, round_id):
-    go_back = request.args.get("go_back") or False
-    new_tag_form = NewTagForm()
-    tag_types = get_tag_types()
-    fund = get_fund(fund_id, use_short_name=False)
-    round = get_round(fund_id, round_id, use_short_name=False)
-    new_tag_form.type.choices = [tag_type.id for tag_type in tag_types]
-    fund_round = {
-        "fund_name": fund.name,
-        "round_name": round.title,
-        "fund_id": fund_id,
-        "round_id": round_id,
-    }
-    if new_tag_form.validate_on_submit():
-        current_app.logger.info("Tag creation form validated")
-        tag = {
-            "value": new_tag_form.value.data,
-            "tag_type_id": new_tag_form.type.data,
-            "creator_user_id": g.account_id,
-        }
-
-        tag_created = post_new_tag_for_fund_round(fund_id, round_id, tag)
-        if not tag_created:
-            flash(FLAG_ERROR_MESSAGE)
-
-        if go_back:
-            return redirect(
-                url_for(
-                    "assess_bp.load_fund_round_tags",
-                    fund_id=fund_id,
-                    round_id=round_id,
-                )
-            )
-
-        return redirect(
-            url_for("assess_bp.create_tag", fund_id=fund_id, round_id=round_id)
-        )
-    elif request.method == "POST":
-        current_app.logger.info(
-            f"Tag creation form failed validation: {new_tag_form.errors}"
-        )
-        flash(FLAG_ERROR_MESSAGE)
-
-    available_tags = get_available_tags_for_fund_round(fund_id, round_id)
-    return render_template(
-        "create_tag.html",
-        form=new_tag_form,
-        tag_types=tag_types,
-        tag_config=Config.TAGGING_PURPOSE_CONFIG,
-        available_tags=available_tags,
-        fund_round=fund_round,
     )
 
 
