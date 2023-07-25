@@ -3,6 +3,7 @@ from typing import List
 
 from app.assess.models.flag_v2 import FlagTypeV2
 from app.assess.models.flag_v2 import FlagV2
+from num2words import num2words
 
 # TODO : Check if there is better way to do it?
 
@@ -25,13 +26,13 @@ class TeamsFlagData:
     @classmethod
     def from_flags(cls, flags_list: List[FlagV2], teams_list: list = None):
         teams_stats = {}
-        ordinal_list = [
-            "First",
-            "Second",
-            "Third",
-            "Fourth",
-            "Fifth",
-        ]  # assume max 5 flags/team
+        # ordinal_list = [
+        #     "First",
+        #     "Second",
+        #     "Third",
+        #     "Fourth",
+        #     "Fifth",
+        # ]  # assume max 5 flags/team
         if isinstance(flags_list, FlagV2):
             flags_list = [flags_list]
 
@@ -47,7 +48,7 @@ class TeamsFlagData:
             num_of_raised = 0
             num_of_stopped = 0
             team_flags_list = []
-            # ordinal_list = []
+            ordinal_list = []
 
             for flag in flags_list:
                 if flag.latest_allocation == team:
@@ -60,6 +61,13 @@ class TeamsFlagData:
                         num_of_resolved = num_of_resolved + 1
                     elif flag.latest_status == FlagTypeV2.STOPPED:
                         num_of_stopped = num_of_stopped + 1
+
+            if num_of_flags > 0:
+                for flag_count in range(num_of_flags):
+                    ordinal = num2words(
+                        flag_count + 1, to="ordinal"
+                    ).capitalize()
+                    ordinal_list.append(ordinal)
 
             teams_stats[team] = TeamFlagStats(
                 team_name=team,
