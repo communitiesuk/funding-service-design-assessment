@@ -1,7 +1,9 @@
 import pytest
+from app.assess.models.round import Round
 from bs4 import BeautifulSoup
 from config import Config
 from flask import g
+from tests.api_data.test_data import mock_api_results
 from tests.conftest import create_invalid_token
 from tests.conftest import create_valid_token
 from tests.conftest import test_assessor_claims
@@ -542,7 +544,17 @@ class TestAuthorisation:
         mock_get_qa_complete,
         mock_get_bulk_accounts,
         mock_get_associated_tags_for_application,
+        mocker,
     ):
+        mocker.patch(
+            "app.assess.routes.get_round",
+            return_value=Round.from_dict(
+                mock_api_results[
+                    "fund_store/funds/{fund_id}/rounds/{round_id}"
+                ]
+            ),
+        )
+
         token = create_valid_token(user_account)
         flask_test_client.set_cookie("localhost", "fsd_user_token", token)
         application_id = request.node.get_closest_marker(
