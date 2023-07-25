@@ -306,7 +306,7 @@ def score(
         comments=theme_matched_comments,
         flag_status=flag_status,
         assessment_status=assessment_status,
-        is_flaggable=is_flaggable(flag_status),
+        is_flaggable=False,  # Flag button is disabled in sub-criteria page
     )
 
 
