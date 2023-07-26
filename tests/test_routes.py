@@ -77,7 +77,7 @@ class TestRoutes:
         mock_get_assessment_progress,
         mock_get_application_metadata,
         mock_get_associated_tags_for_application,
-        mock_get_available_tags_for_fund_round,
+        mock_get_tags_for_fund_round,
         mock_get_tag_types,
     ):
         flask_test_client.set_cookie(
@@ -137,7 +137,7 @@ class TestRoutes:
         mock_get_teams_flag_stats,
         mock_get_assessment_progress,
         mock_get_associated_tags_for_application,
-        mock_get_available_tags_for_fund_round,
+        mock_get_tags_for_fund_round,
         mock_get_tag_types,
     ):
         flask_test_client.set_cookie(
@@ -212,7 +212,7 @@ class TestRoutes:
         mock_get_teams_flag_stats,
         mock_get_assessment_progress,
         mock_get_associated_tags_for_application,
-        mock_get_available_tags_for_fund_round,
+        mock_get_tags_for_fund_round,
         mock_get_tag_types,
     ):
 
@@ -258,7 +258,7 @@ class TestRoutes:
         mock_get_teams_flag_stats,
         mock_get_assessment_progress,
         mock_get_associated_tags_for_application,
-        mock_get_available_tags_for_fund_round,
+        mock_get_tags_for_fund_round,
         mock_get_tag_types,
     ):
 
@@ -304,7 +304,7 @@ class TestRoutes:
         mock_get_teams_flag_stats,
         mock_get_assessment_progress,
         mock_get_associated_tags_for_application,
-        mock_get_available_tags_for_fund_round,
+        mock_get_tags_for_fund_round,
         mock_get_tag_types,
     ):
 
@@ -351,7 +351,7 @@ class TestRoutes:
         mock_get_teams_flag_stats,
         mock_get_assessment_progress,
         mock_get_associated_tags_for_application,
-        mock_get_available_tags_for_fund_round,
+        mock_get_tags_for_fund_round,
         mock_get_tag_types,
     ):
 
@@ -416,7 +416,7 @@ class TestRoutes:
         sort_order,
         column_id,
         mock_get_associated_tags_for_application,
-        mock_get_available_tags_for_fund_round,
+        mock_get_tags_for_fund_round,
         mock_get_tag_types,
     ):
 
@@ -1040,7 +1040,7 @@ class TestRoutes:
         mock_get_teams_flag_stats,
         mock_get_assessment_progress,
         mock_get_associated_tags_for_application,
-        mock_get_available_tags_for_fund_round,
+        mock_get_tags_for_fund_round,
         mock_get_tag_types,
     ):
         flask_test_client.set_cookie(

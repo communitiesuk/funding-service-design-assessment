@@ -729,17 +729,17 @@ def mock_get_associated_tags_for_application(mocker):
 
 
 @pytest.fixture(scope="function")
-def mock_get_available_tags_for_fund_round(mocker):
+def mock_get_tags_for_fund_round(mocker):
     mocker.patch(
-        "app.assess.tag_routes.get_available_tags_for_fund_round",
+        "app.assess.tag_routes.get_tags_for_fund_round",
         return_value=[Tag.from_dict(t) for t in test_tags],
     )
     mocker.patch(
-        "app.assess.routes.get_available_tags_for_fund_round",
+        "app.assess.routes.get_tags_for_fund_round",
         return_value=[Tag.from_dict(t) for t in test_tags],
     )
     mocker.patch(
-        "app.assess.tag_routes.get_available_tags_for_fund_round",
+        "app.assess.tag_routes.get_tags_for_fund_round",
         return_value=[Tag.from_dict(t) for t in test_tags],
     )
     yield

@@ -1,15 +1,22 @@
 from app.assess.auth.validation import check_access_application_id
 from app.assess.auth.validation import check_access_fund_id
 from app.assess.data import get_associated_tags_for_application
-from app.assess.data import get_available_tags_for_fund_round
 from app.assess.data import get_fund
 from app.assess.data import get_round
+from app.assess.data import get_tag_for_fund_round
 from app.assess.data import get_tag_types
+from app.assess.data import get_tags_for_fund_round
 from app.assess.data import post_new_tag_for_fund_round
 from app.assess.data import update_associated_tags
+from app.assess.data import update_tags
+from app.assess.display_value_mappings import search_params_tag
+from app.assess.forms.tags import DeactivateTagForm
 from app.assess.forms.tags import NewTagForm
+from app.assess.forms.tags import ReactivateTagForm
 from app.assess.forms.tags import TagAssociationForm
 from app.assess.helpers import get_state_for_tasklist_banner
+from app.assess.helpers import match_search_params
+from app.assess.models.tag import TagType
 from config import Config
 from flask import Blueprint
 from flask import current_app
@@ -45,9 +52,7 @@ def load_change_tags(application_id):
             )
         )
     state = get_state_for_tasklist_banner(application_id)
-    available_tags = get_available_tags_for_fund_round(
-        state.fund_id, state.round_id
-    )
+    available_tags = get_tags_for_fund_round(state.fund_id, state.round_id, "")
     associated_tags = get_associated_tags_for_application(application_id)
     if associated_tags:
         associated_tag_ids = [tag.tag_id for tag in associated_tags]
@@ -67,6 +72,10 @@ def load_change_tags(application_id):
 @tag_bp.route("/tags/manage/<fund_id>/<round_id>", methods=["GET"])
 @check_access_fund_id(roles_required=["ASSESSOR"])
 def load_fund_round_tags(fund_id, round_id):
+
+    search_params, show_clear_filters = match_search_params(
+        search_params_tag, request.args
+    )
     fund = get_fund(fund_id, use_short_name=False)
     round = get_round(fund_id, round_id, use_short_name=False)
     fund_round = {
@@ -75,11 +84,20 @@ def load_fund_round_tags(fund_id, round_id):
         "fund_id": fund_id,
         "round_id": round_id,
     }
-    available_tags = get_available_tags_for_fund_round(fund_id, round_id)
+    tags = get_tags_for_fund_round(fund_id, round_id, search_params)
+    tag_types = get_tag_types()
+    tag_types.insert(0, TagType(id="all", purpose="All", description="all"))
+    tag_status_configs = [
+        {"text": "Only active tags", "value": True},
+        {"text": "Only inactive tags", "value": False},
+    ]
     return render_template(
         "manage_tags.html",
         fund_round=fund_round,
-        available_tags=available_tags,
+        tags=tags,
+        show_clear_filters=show_clear_filters,
+        tag_types=tag_types,
+        tag_status_configs=tag_status_configs,
         tag_config=Config.TAGGING_PURPOSE_CONFIG,
     )
 
@@ -135,12 +153,102 @@ def create_tag(fund_id, round_id):
         )
         flash(FLAG_ERROR_MESSAGE)
 
-    available_tags = get_available_tags_for_fund_round(fund_id, round_id)
     return render_template(
         "create_tag.html",
         form=new_tag_form,
         tag_types=tag_types,
         tag_config=Config.TAGGING_PURPOSE_CONFIG,
-        available_tags=available_tags,
+        fund_round=fund_round,
+    )
+
+
+@tag_bp.route(
+    "/tags/deactivate/<fund_id>/<round_id>/<tag_id>", methods=["GET", "POST"]
+)
+@check_access_fund_id(roles_required=["ASSESSOR"])
+def deactivate_tag(fund_id, round_id, tag_id):
+    deactivate_tag_form = DeactivateTagForm()
+    TAG_DEACTIVATE_ERROR_MESSAGE = "Tag not deactivated."
+    tag_to_deactivate = get_tag_for_fund_round(fund_id, round_id, tag_id)
+    fund = get_fund(fund_id, use_short_name=False)
+    round = get_round(fund_id, round_id, use_short_name=False)
+    fund_round = {
+        "fund_name": fund.name,
+        "round_name": round.title,
+        "fund_id": fund_id,
+        "round_id": round_id,
+    }
+    if deactivate_tag_form.validate_on_submit():
+        current_app.logger.info(
+            f"Tag deactivation form validated, deactivating tag_id: {tag_id}."
+        )
+        tag_to_deactivate = [{"id": tag_id, "active": False}]
+        tag_deactivated = update_tags(fund_id, round_id, tag_to_deactivate)
+        if not tag_deactivated:
+            flash(TAG_DEACTIVATE_ERROR_MESSAGE)
+        return redirect(
+            url_for(
+                "tag_bp.load_fund_round_tags",
+                fund_id=fund_id,
+                round_id=round_id,
+            )
+        )
+    elif request.method == "POST":
+        current_app.logger.info(
+            "Tag deactivation form failed validation:"
+            f" {deactivate_tag_form.errors}"
+        )
+        flash(TAG_DEACTIVATE_ERROR_MESSAGE)
+    return render_template(
+        "deactivate_tag.html",
+        form=deactivate_tag_form,
+        tag=tag_to_deactivate,
+        tag_config=Config.TAGGING_PURPOSE_CONFIG,
+        fund_round=fund_round,
+    )
+
+
+@tag_bp.route(
+    "/tags/reactivate/<fund_id>/<round_id>/<tag_id>", methods=["GET", "POST"]
+)
+@check_access_fund_id(roles_required=["ASSESSOR"])
+def reactivate_tag(fund_id, round_id, tag_id):
+    reactivate_tag_form = ReactivateTagForm()
+    TAG_REACTIVATE_ERROR_MESSAGE = "Tag not reactivated."
+    tag_to_deactivate = get_tag_for_fund_round(fund_id, round_id, tag_id)
+    fund = get_fund(fund_id, use_short_name=False)
+    round = get_round(fund_id, round_id, use_short_name=False)
+    fund_round = {
+        "fund_name": fund.name,
+        "round_name": round.title,
+        "fund_id": fund_id,
+        "round_id": round_id,
+    }
+    if reactivate_tag_form.validate_on_submit():
+        current_app.logger.info(
+            f"Tag deactivation form validated, deactivating tag_id: {tag_id}."
+        )
+        tag_to_deactivate = [{"id": tag_id, "active": True}]
+        tag_deactivated = update_tags(fund_id, round_id, tag_to_deactivate)
+        if not tag_deactivated:
+            flash(TAG_REACTIVATE_ERROR_MESSAGE)
+        return redirect(
+            url_for(
+                "tag_bp.load_fund_round_tags",
+                fund_id=fund_id,
+                round_id=round_id,
+            )
+        )
+    elif request.method == "POST":
+        current_app.logger.info(
+            "Tag deactivation form failed validation:"
+            f" {reactivate_tag_form.errors}"
+        )
+        flash(TAG_REACTIVATE_ERROR_MESSAGE)
+    return render_template(
+        "reactivate_tag.html",
+        form=reactivate_tag_form,
+        tag=tag_to_deactivate,
+        tag_config=Config.TAGGING_PURPOSE_CONFIG,
         fund_round=fund_round,
     )

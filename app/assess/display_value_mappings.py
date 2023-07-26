@@ -53,3 +53,10 @@ search_params_nstf = {
     "show_tags": OFF_VALUE,
     "filter_by_tag": ALL_VALUE,
 }
+
+search_params_tag = {
+    "search_term": "",
+    "search_in": "value",
+    "tag_purpose": ALL_VALUE,
+    "tag_status": True,
+}

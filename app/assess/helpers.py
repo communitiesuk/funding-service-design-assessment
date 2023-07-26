@@ -27,6 +27,23 @@ from flask import url_for
 from fsd_utils.mapping.application.application_utils import simplify_title
 
 
+def match_search_params(search_params, request_args):
+
+    show_clear_filters = False
+    if "clear_filters" not in request_args:
+        search_params.update(
+            {
+                k: v
+                for k, v in request_args.items()
+                if k in search_params and k != "countries"
+            }
+        )
+        show_clear_filters = any(
+            k in request_args for k in search_params if k != "countries"
+        )
+    return search_params, show_clear_filters
+
+
 def get_state_for_tasklist_banner(application_id) -> AssessorTaskList:
     assessor_task_list_metadata = get_assessor_task_list_state(application_id)
     fund = get_fund(assessor_task_list_metadata["fund_id"])
