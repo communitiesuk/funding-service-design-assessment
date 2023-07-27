@@ -13,14 +13,15 @@
         <div class="govuk-grid-column-two-thirds">
             <form method="post">
                 {{ form.csrf_token }}
-                <h1 class="govuk-heading-xl govuk-!-margin-bottom-4">Change tags</h1>
+                <h1 class="govuk-heading-xl govuk-!-margin-bottom-4" data-qa="add-change-tags">Change tags</h1>
                 {% if available_tags and (available_tags | length) > 0 %}
                     <div class="govuk-hint govuk-!-margin-bottom-6">
                         Select the tags you want to apply to this assessment
                     </div>
                     <a href="{{ url_for('tag_bp.create_tag', fund_id=state.fund_id, round_id=state.round_id) }}"
                        role="button"
-                       class="govuk-button govuk-button--secondary">
+                       class="govuk-button govuk-button--secondary"
+                       data-qa="create-new_tag">
                         Create new tag
                     </a>
                     <div class="govuk-form-group">
@@ -57,7 +58,7 @@
                 {% endif %}
 
                 <div class="govuk-button-group">
-                    <button class="govuk-button primary-button" data-module="govuk-button">
+                    <button class="govuk-button primary-button" data-module="govuk-button" data-qa="save-and-go-back">
                         Save and go back
                     </button>
                     <a class="govuk-link" href="{{ url_for('assess_bp.application', application_id=application_id) }}">
