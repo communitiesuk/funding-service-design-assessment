@@ -188,6 +188,10 @@ class DefaultConfig:
     ASSESSMENT_ASSOCIATE_TAGS_ENDPOINT = (
         ASSESSMENT_STORE_API_HOST + "/application/{application_id}/tag"
     )
+    ASSESSMENT_GET_TAG_ENDPOINT = (
+        ASSESSMENT_STORE_API_HOST
+        + "/funds/{fund_id}/rounds/{round_id}/tags/{tag_id}"
+    )
     ASSESSMENT_TAG_TYPES_ENDPOINT = ASSESSMENT_STORE_API_HOST + "/tag_types"
     TAGGING_PURPOSE_CONFIG = {
         "GENERAL": {
