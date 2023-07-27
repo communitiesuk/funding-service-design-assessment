@@ -992,8 +992,5 @@ def test_create_ui_components_retains_order(monkeypatch):
 )
 def test_sanitise_html(tag, style):
     test_data = TestSanitiseData(tag=tag, style=style)
-    input_data = test_data.input()
-    response = sanitise_html(input_data.copy())
-    assert response["answer"] == test_data.response()["answer"].replace(
-        "'", '"'
-    )
+    response = sanitise_html(test_data.input.copy())
+    assert response["answer"] == test_data.response["answer"].replace("'", '"')

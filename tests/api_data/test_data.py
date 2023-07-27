@@ -593,6 +593,7 @@ class TestSanitiseData:
     tag: str = None
     style: str = None
 
+    @property
     def input(self):
         if self.style:
             return {
@@ -609,6 +610,7 @@ class TestSanitiseData:
                 )
             }
 
+    @property
     def response(self):
         if self.style:
             return {
