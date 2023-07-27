@@ -158,7 +158,7 @@ def edit_tag(fund_id, round_id, tag_id):
     edit_tag_form = EditTagForm()
     fund_round = get_fund_round(fund_id, round_id)
     tag = get_tag(fund_id, round_id, tag_id)
-    affected_apps_count = get_apps_with_tag_count(tag_id)
+    affected_apps_count = get_apps_with_tag_count(fund_id, round_id, tag_id)
     if request.method == "GET":
         current_app.logger.info(f"Loading edit tag page for id {tag_id}")
 
