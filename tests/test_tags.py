@@ -158,7 +158,6 @@ def test_change_tags_route_no_tags(
     mock_get_application_metadata,
     mock_get_fund,
 ):
-
     with mock.patch(
         "app.assess.tag_routes.get_available_tags_for_fund_round",
         return_value=[],
@@ -200,7 +199,6 @@ def test_get_available_tags_no_tags(flask_test_client):
 
 
 def test_get_associated_tags_for_applications(flask_test_client):
-
     with mock.patch(
         "app.assess.data.get_data",
         return_value=[
@@ -222,7 +220,6 @@ def test_get_associated_tags_for_applications(flask_test_client):
 
 
 def test_update_associated_tag_returns_True(flask_test_client):
-
     with mock.patch("requests.put") as mock_put:
         mock_response = mock.Mock()
         mock_response.ok = True
@@ -486,3 +483,78 @@ def test_manage_tag_page_renders_with_tags(
     assert "Val 2" in response.text
     assert "ACTIVE" in response.text
     assert "NOT ACTIVE" in response.text
+
+
+@pytest.fixture
+def mock_get_fund_round(
+    mocker,
+    mock_get_funds,
+    mock_get_fund,
+):
+    mocker.patch(
+        "app.assess.tag_routes.get_fund_round",
+        return_value={
+            "fund_name": "test-fund",
+            "round_name": "round 1",
+            "fund_id": "TF",
+            "round_id": "TR",
+        },
+    )
+
+
+def test_edit_tag_get(client_with_valid_session, mocker, mock_get_fund_round):
+    tag_id = "123-123"
+    count = 6
+    mock_tag = Tag(
+        id=tag_id,
+        value="tag value 1",
+        creator_user_id="test-user",
+        active=True,
+        purpose="general",
+        type_id="abcabc",
+    )
+    mocker.patch("app.assess.tag_routes.get_tag", return_value=mock_tag)
+    mocker.patch(
+        "app.assess.tag_routes.get_apps_with_tag_count", return_value=count
+    )
+    response = client_with_valid_session.get(
+        f"/assess/tags/edit/{test_fund_id}/{test_round_id}/{tag_id}"
+    )
+    soup = BeautifulSoup(response.data, "html.parser")
+    assert soup.find("h1").text.strip() == 'Edit tag "tag value 1"'
+    assert (
+        f"impact {count} previous"
+        in soup.find("strong", class_="govuk-warning-text__text").text
+    )
+
+
+@pytest.mark.parametrize(
+    "new_value,return_from_data,expected_response_code,expect_error",
+    [
+        ("new value", "tag", 302, False),
+        ("new value", None, 200, True),
+        ("!&asdf£$", "tag", 200, True),
+    ],
+)
+def test_edit_tag_post(
+    new_value,
+    return_from_data,
+    expected_response_code,
+    expect_error,
+    client_with_valid_session,
+    mock_get_fund_round,
+    mocker,
+):
+    tag_id = "abc"
+    mocker.patch(
+        "app.assess.tag_routes.update_tag", return_value=return_from_data
+    )
+    response = client_with_valid_session.post(
+        f"/assess/tags/edit/{test_fund_id}/{test_round_id}/{tag_id}",
+        data={"value": new_value},
+        follow_redirects=False,
+    )
+    assert response.status_code == expected_response_code
+    if expect_error:
+        soup = BeautifulSoup(response.data, "html.parser")
+        assert soup.find("div", class_="govuk-grid-row govuk-error-summary")
