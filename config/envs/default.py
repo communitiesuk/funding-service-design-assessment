@@ -200,6 +200,10 @@ class DefaultConfig:
         ASSESSMENT_STORE_API_HOST
         + "/funds/{fund_id}/rounds/{round_id}/tags/{tag_id}"
     )
+    ASSESSMENT_GET_TAG_USAGE_ENDPOINT = (
+        ASSESSMENT_STORE_API_HOST
+        + "/funds/{fund_id}/rounds/{round_id}/tags/{tag_id}/count"
+    )
     ASSESSMENT_TAG_TYPES_ENDPOINT = ASSESSMENT_STORE_API_HOST + "/tag_types"
 
     APPLICANT_EXPORT_ENDPOINT = (
