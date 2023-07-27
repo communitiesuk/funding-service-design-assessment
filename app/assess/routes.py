@@ -38,8 +38,8 @@ from app.assess.forms.resolve_flag_form import ResolveFlagForm
 from app.assess.forms.scores_and_justifications import ScoreForm
 from app.assess.helpers import determine_assessment_status
 from app.assess.helpers import determine_flag_status
-from app.assess.helpers import generate_applicant_info_csv
 from app.assess.helpers import generate_csv_of_application
+from app.assess.helpers import generate_field_info_csv
 from app.assess.helpers import get_state_for_tasklist_banner
 from app.assess.helpers import get_tag_map_and_tag_options
 from app.assess.helpers import get_ttl_hash
@@ -802,6 +802,6 @@ def assessor_export(fund_short_name: str, round_short_name: str):
     round = get_round(fund_short_name, round_short_name, use_short_name=True)
     export = get_applicant_export(fund.id, round.id)
 
-    csv_file = generate_applicant_info_csv(export)
+    csv_file = generate_field_info_csv(export)
 
     return download_file(csv_file, "text/csv", "applicant_info.csv")

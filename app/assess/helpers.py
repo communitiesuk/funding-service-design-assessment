@@ -249,7 +249,7 @@ def generate_csv_of_application(q_and_a: dict, fund: Fund, application_json):
     return output.getvalue()
 
 
-def generate_applicant_info_csv(applicant_info: dict):
+def generate_field_info_csv(applicant_info: dict):
     output = StringIO()
     headers = applicant_info[0].keys()
     csv_writer = csv.writer(output)
