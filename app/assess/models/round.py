@@ -14,6 +14,7 @@ class Round:
     opens: str
     title: str
     short_name: str
+    application_fields_download_available: bool
     applications: List[Application] = None
 
     @classmethod
@@ -35,6 +36,9 @@ class Round:
             fund_id=data.get("fund_id"),
             opens=data.get("opens"),
             deadline=data.get("deadline"),
+            application_fields_download_available=data.get(
+                "application_fields_download_available"
+            ),
         )
 
     def add_application(self, application: Application):

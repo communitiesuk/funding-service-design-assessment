@@ -232,17 +232,15 @@ def generate_csv_of_application(q_and_a: dict, fund: Fund, application_json):
 
 
 def generate_applicant_info_csv(applicant_info: dict):
-    for index, person_data in enumerate(applicant_info):
-        output = StringIO()
+    output = StringIO()
+    headers = applicant_info[0].keys()
+    csv_writer = csv.writer(output)
+    csv_writer.writerow(headers)
 
-        headers = list(person_data.keys())
-
-        rows = list(person_data.values())
-
-        csv_writer = csv.writer(output)
-
-        csv_writer.writerow(headers)
+    for person_data in applicant_info:
+        rows = person_data.values()
         csv_writer.writerow(rows)
+
     return output.getvalue()
 
 

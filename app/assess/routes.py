@@ -932,11 +932,9 @@ def application(application_id):
 def assessor_export(fund_short_name: str, round_short_name: str):
 
     fund = get_fund(fund_short_name, use_short_name=True)
-
     round = get_round(fund_short_name, round_short_name, use_short_name=True)
-
     export = get_applicant_export(fund.id, round.id)
 
-    test = generate_applicant_info_csv(export)
+    csv_file = generate_applicant_info_csv(export)
 
-    return download_file(test, "text/csv", "applicant_info.csv")
+    return download_file(csv_file, "text/csv", "applicant_info.csv")
