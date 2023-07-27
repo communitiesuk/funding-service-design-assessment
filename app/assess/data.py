@@ -165,7 +165,7 @@ def get_associated_tags_for_application(application_id) -> List[Tag]:
         return None
 
 
-def update_associated_tags(application_id, tags):
+def update_associated_tags(application_id, tags) -> bool:
     endpoint = Config.ASSESSMENT_ASSOCIATE_TAGS_ENDPOINT.format(
         application_id=application_id
     )
@@ -179,13 +179,12 @@ def update_associated_tags(application_id, tags):
     )
     response = requests.put(endpoint, json=payload)
 
-    if response.status_code == 200:
-        return True
-    else:
+    was_successful = response.ok
+    if not was_successful:
         current_app.logger.error(
             f"Update associated tags failed, code: {response.status_code}."
         )
-        return False
+    return was_successful
 
 
 @lru_cache(maxsize=1)

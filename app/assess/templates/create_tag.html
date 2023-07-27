@@ -54,7 +54,7 @@
                         <input class="govuk-radios__input" id="{{form.type.id}}-{{tag_type['purpose']}}" name="{{form.type.id}}" type="radio" value="{{tag_type['id']}}" aria-describedby="tag-item-hint">
                         <label class="govuk-label govuk-radios__label" for="{{form.type.id}}-{{tag_type['purpose']}}">
                             {{tag_type['purpose'].title()}}
-                                <strong class="govuk-tag govuk-!-margin-left-2 govuk-tag--{{ tag_config[tag_type['purpose']]['colour'] }} govuk-tag">{{ tag_config[tag_type['purpose']]['colour'] }}</strong>
+                                <strong class="govuk-tag govuk-!-margin-left-2 govuk-tag--{{ tag_config[tag_type['purpose']]['colour'] }} govuk-tag">{{ tag_config[tag_type['purpose']]['colour'] if tag_config[tag_type['purpose']]['colour'].lower() != "grey" else "white" }}</strong>
                         </label>
                         <div id="tag-item-hint" class="govuk-hint govuk-radios__hint">
                             {{tag_type['description']}}
@@ -65,15 +65,15 @@
               </div>
 
             <div class="govuk-button-group">
-                <button class="govuk-button" data-module="govuk-button" formaction="{{ url_for('assess_bp.create_tag', fund_id = fund_round['fund_id'], round_id = fund_round['round_id']) }}">
+                <button class="govuk-button" data-module="govuk-button" formaction="{{ url_for('tag_bp.create_tag', fund_id = fund_round['fund_id'], round_id = fund_round['round_id']) }}">
                     Save and add another
                 </button>
                 <button class="govuk-button govuk-button--secondary"
                         data-module="govuk-button"
-                        formaction="{{ url_for('assess_bp.create_tag', fund_id=fund_round['fund_id'], round_id=fund_round['round_id'], go_back=True) }}">
+                        formaction="{{ url_for('tag_bp.create_tag', fund_id=fund_round['fund_id'], round_id=fund_round['round_id'], go_back=True) }}">
                     Save and go back
                 </button>
-                <a class="govuk-link" href="{{ url_for("assess_bp.load_fund_round_tags", fund_id=fund_round['fund_id'], round_id=fund_round['round_id']) }}">
+                <a class="govuk-link" href="{{ url_for("tag_bp.load_fund_round_tags", fund_id=fund_round['fund_id'], round_id=fund_round['round_id']) }}">
                     Cancel
                 </a>
             </div>

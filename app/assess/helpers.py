@@ -4,9 +4,11 @@ import time
 from io import StringIO
 from typing import List
 
+from app.assess.data import get_assessor_task_list_state
 from app.assess.data import get_associated_tags_for_application
 from app.assess.data import get_flags
 from app.assess.data import get_fund
+from app.assess.data import get_round
 from app.assess.data import get_sub_criteria_banner_state
 from app.assess.data import get_tag_types
 from app.assess.data import submit_flag
@@ -14,6 +16,7 @@ from app.assess.display_value_mappings import assessment_statuses
 from app.assess.models.flag_v2 import FlagTypeV2
 from app.assess.models.flag_v2 import FlagV2
 from app.assess.models.fund import Fund
+from app.assess.models.ui.assessor_task_list import AssessorTaskList
 from app.assess.models.ui.common import Option
 from app.assess.models.ui.common import OptionGroup
 from config import Config
@@ -22,6 +25,21 @@ from flask import render_template
 from flask import request
 from flask import url_for
 from fsd_utils.mapping.application.application_utils import simplify_title
+
+
+def get_state_for_tasklist_banner(application_id) -> AssessorTaskList:
+    assessor_task_list_metadata = get_assessor_task_list_state(application_id)
+    fund = get_fund(assessor_task_list_metadata["fund_id"])
+    round = get_round(
+        assessor_task_list_metadata["fund_id"],
+        assessor_task_list_metadata["round_id"],
+    )
+    assessor_task_list_metadata["fund_name"] = fund.name
+    assessor_task_list_metadata["fund_short_name"] = fund.short_name
+    assessor_task_list_metadata["round_short_name"] = round.short_name
+    assessor_task_list_metadata["fund_guidance_url"] = fund.guidance_url
+    state = AssessorTaskList.from_json(assessor_task_list_metadata)
+    return state
 
 
 def get_ttl_hash(seconds=3600) -> int:
