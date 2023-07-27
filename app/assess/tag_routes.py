@@ -100,6 +100,13 @@ def get_fund_round(fund_id, round_id) -> Dict:
 @check_access_fund_id(roles_required=["ASSESSOR"])
 def load_fund_round_tags(fund_id, round_id):
     fund_round = get_fund_round(fund_id, round_id)
+    return fund_round
+
+
+@tag_bp.route("/tags/manage/<fund_id>/<round_id>", methods=["GET"])
+@check_access_fund_id(roles_required=["ASSESSOR"])
+def load_fund_round_tags(fund_id, round_id):
+    fund_round = get_fund_round(fund_id, round_id)
     search_params, show_clear_filters = match_search_params(
         search_params_tag, request.args
     )
