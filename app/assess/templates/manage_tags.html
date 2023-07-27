@@ -126,6 +126,7 @@
                             fund_id=fund_round['fund_id'],
                             round_id=fund_round['round_id'],
                             tag_id=tag.id) }}">Deactivate</a>
+                            <a class="govuk-link" href="{{ url_for ('tag_bp.edit_tag', fund_id = fund_round['fund_id'], round_id = fund_round['round_id'], tag_id=tag.id)}}">Edit</a>
                                 </td>
                                 {% else %}
                                 <td class="govuk-table__cell">
