@@ -843,7 +843,8 @@ def mock_get_fund_round(
     )
 
 
-def test_edit_tag_get(client_with_valid_session, mocker, mock_get_fund_round):
+@pytest.fixture
+def mock_get_tag_and_count(mocker):
     tag_id = "123-123"
     count = 6
     mock_tag = Tag(
@@ -858,13 +859,22 @@ def test_edit_tag_get(client_with_valid_session, mocker, mock_get_fund_round):
     mocker.patch(
         "app.assess.tag_routes.get_apps_with_tag_count", return_value=count
     )
+    yield (tag_id, count)
+
+
+def test_edit_tag_get(
+    client_with_valid_session,
+    mocker,
+    mock_get_fund_round,
+    mock_get_tag_and_count,
+):
     response = client_with_valid_session.get(
-        f"/assess/tags/edit/{test_fund_id}/{test_round_id}/{tag_id}"
+        f"/assess/tags/edit/{test_fund_id}/{test_round_id}/{mock_get_tag_and_count[0]}"
     )
     soup = BeautifulSoup(response.data, "html.parser")
     assert soup.find("h1").text.strip() == 'Edit tag "tag value 1"'
     assert (
-        f"impact {count} previous"
+        f"impact {mock_get_tag_and_count[1]} previous"
         in soup.find("strong", class_="govuk-warning-text__text").text
     )
 
@@ -885,13 +895,13 @@ def test_edit_tag_post(
     client_with_valid_session,
     mock_get_fund_round,
     mocker,
+    mock_get_tag_and_count,
 ):
-    tag_id = "abc"
     mocker.patch(
         "app.assess.tag_routes.update_tag", return_value=return_from_data
     )
     response = client_with_valid_session.post(
-        f"/assess/tags/edit/{test_fund_id}/{test_round_id}/{tag_id}",
+        f"/assess/tags/edit/{test_fund_id}/{test_round_id}/{mock_get_tag_and_count[0]}",
         data={"value": new_value},
         follow_redirects=False,
     )
