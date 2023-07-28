@@ -29,9 +29,9 @@ def auth_protect(minimum_roles_required: list, unprotected_routes: list):
         redirect (302) or None if authorised
 
     """
-        # expand roles to include all fund short names as a prefix, e.g. "COMMENTER" becomes "COF_COMMENTER"
+    # expand roles to include all fund short names as a prefix, e.g. "COMMENTER" becomes "COF_COMMENTER"
     funds = get_funds(get_ttl_hash(seconds=300))
-    if funds is not None:    
+    if funds is not None:
         minimum_roles_required = [
             f"{fund.short_name}_{role}".upper()
             for fund in funds  # expensive call, so cache it & refresh every 5 minutes
@@ -75,4 +75,3 @@ def auth_protect(minimum_roles_required: list, unprotected_routes: list):
             # Redirect unauthenticated users to
             # login on the home page
             return redirect("/")
-
