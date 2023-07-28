@@ -92,12 +92,13 @@ def load_fund_round_tags(fund_id, round_id):
     tag_types = get_tag_types()
     tag_types.insert(0, TagType(id="all", purpose="All", description="all"))
     tag_status_configs = [
-        {"text": "Only active tags", "value": True},
-        {"text": "Only inactive tags", "value": False},
+        {"text": "Only active tags", "value": "True"},
+        {"text": "Only inactive tags", "value": "False"},
     ]
     return render_template(
         "manage_tags.html",
         fund_round=fund_round,
+        search_params=search_params,
         tags=tags,
         show_clear_filters=show_clear_filters,
         tag_types=tag_types,
@@ -185,9 +186,7 @@ def deactivate_tag(fund_id, round_id, tag_id):
         current_app.logger.info(
             f"Tag deactivation form validated, deactivating tag_id: {tag_id}."
         )
-        tag_to_deactivate = [
-            {"id": "0597d78a-923a-4765-aba4-5bbac0951d32", "active": False}
-        ]
+        tag_to_deactivate = [{"id": tag_id, "active": False}]
         tag_deactivated = update_tags(fund_id, round_id, tag_to_deactivate)
         if tag_deactivated:
             return redirect(

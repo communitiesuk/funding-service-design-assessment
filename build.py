@@ -11,7 +11,7 @@ def build_govuk_assets():
     GOVUK_DIR = "/govuk-frontend"
     GOVUK_URL = (
         "https://github.com/alphagov/govuk-frontend/"
-        "releases/download/v4.0.0/release-v4.0.0.zip"
+        "releases/download/v4.7.0/release-v4.7.0.zip"
     )
     ZIP_FILE = "./govuk_frontend.zip"
     DIST_PATH = DIST_ROOT + GOVUK_DIR
