@@ -27,6 +27,10 @@ from flask import render_template
 from flask import request
 from flask import url_for
 
+TAG_DEACTIVATE_ERROR_MESSAGE = "Tag not deactivated."
+TAG_REACTIVATE_ERROR_MESSAGE = "Tag not reactivated."
+
+
 tag_bp = Blueprint(
     "tag_bp",
     __name__,
@@ -168,7 +172,6 @@ def create_tag(fund_id, round_id):
 @check_access_fund_id(roles_required=["ASSESSOR"])
 def deactivate_tag(fund_id, round_id, tag_id):
     deactivate_tag_form = DeactivateTagForm()
-    TAG_DEACTIVATE_ERROR_MESSAGE = "Tag not deactivated."
     tag_to_deactivate = get_tag_for_fund_round(fund_id, round_id, tag_id)
     fund = get_fund(fund_id, use_short_name=False)
     round = get_round(fund_id, round_id, use_short_name=False)
@@ -182,17 +185,20 @@ def deactivate_tag(fund_id, round_id, tag_id):
         current_app.logger.info(
             f"Tag deactivation form validated, deactivating tag_id: {tag_id}."
         )
-        tag_to_deactivate = [{"id": tag_id, "active": False}]
+        tag_to_deactivate = [
+            {"id": "0597d78a-923a-4765-aba4-5bbac0951d32", "active": False}
+        ]
         tag_deactivated = update_tags(fund_id, round_id, tag_to_deactivate)
-        if not tag_deactivated:
-            flash(TAG_DEACTIVATE_ERROR_MESSAGE)
-        return redirect(
-            url_for(
-                "tag_bp.load_fund_round_tags",
-                fund_id=fund_id,
-                round_id=round_id,
+        if tag_deactivated:
+            return redirect(
+                url_for(
+                    "tag_bp.load_fund_round_tags",
+                    fund_id=fund_id,
+                    round_id=round_id,
+                )
             )
-        )
+        flash(TAG_DEACTIVATE_ERROR_MESSAGE)
+
     elif request.method == "POST":
         current_app.logger.info(
             "Tag deactivation form failed validation:"
@@ -214,8 +220,7 @@ def deactivate_tag(fund_id, round_id, tag_id):
 @check_access_fund_id(roles_required=["ASSESSOR"])
 def reactivate_tag(fund_id, round_id, tag_id):
     reactivate_tag_form = ReactivateTagForm()
-    TAG_REACTIVATE_ERROR_MESSAGE = "Tag not reactivated."
-    tag_to_deactivate = get_tag_for_fund_round(fund_id, round_id, tag_id)
+    tag_to_reactivate = get_tag_for_fund_round(fund_id, round_id, tag_id)
     fund = get_fund(fund_id, use_short_name=False)
     round = get_round(fund_id, round_id, use_short_name=False)
     fund_round = {
@@ -226,29 +231,29 @@ def reactivate_tag(fund_id, round_id, tag_id):
     }
     if reactivate_tag_form.validate_on_submit():
         current_app.logger.info(
-            f"Tag deactivation form validated, deactivating tag_id: {tag_id}."
+            f"Tag reactivation form validated, reactivating tag_id: {tag_id}."
         )
-        tag_to_deactivate = [{"id": tag_id, "active": True}]
-        tag_deactivated = update_tags(fund_id, round_id, tag_to_deactivate)
-        if not tag_deactivated:
-            flash(TAG_REACTIVATE_ERROR_MESSAGE)
-        return redirect(
-            url_for(
-                "tag_bp.load_fund_round_tags",
-                fund_id=fund_id,
-                round_id=round_id,
+        tag_to_reactivate = [{"id": tag_id, "active": True}]
+        tag_reactivated = update_tags(fund_id, round_id, tag_to_reactivate)
+        if tag_reactivated:
+            return redirect(
+                url_for(
+                    "tag_bp.load_fund_round_tags",
+                    fund_id=fund_id,
+                    round_id=round_id,
+                )
             )
-        )
+        flash(TAG_REACTIVATE_ERROR_MESSAGE)
     elif request.method == "POST":
         current_app.logger.info(
-            "Tag deactivation form failed validation:"
+            "Tag reactivation form failed validation:"
             f" {reactivate_tag_form.errors}"
         )
         flash(TAG_REACTIVATE_ERROR_MESSAGE)
     return render_template(
         "reactivate_tag.html",
         form=reactivate_tag_form,
-        tag=tag_to_deactivate,
+        tag=tag_to_reactivate,
         tag_config=Config.TAGGING_PURPOSE_CONFIG,
         fund_round=fund_round,
     )

@@ -9,8 +9,7 @@ flag_status) %}
                         fund_name }}</span></p>
                 <p class="govuk-heading-l fsd-banner-content">Project reference: <span
                         class="govuk-!-font-weight-regular">{{ project_reference | format_project_ref }}</span></p>
-                <p class="govuk-body-l fsd-banner-content fsd-banner-collapse-padding">Project name: {{ project_name }}
-                </p>
+                <p class="govuk-body-l fsd-banner-content fsd-banner-collapse-padding">Project name: {{ project_name }}</p>
                 <p class="govuk-body-l fsd-banner-content ">Total funding requested: £{{
                     "{:,.2f}".format(funding_amount_requested | float) }}</p>
 

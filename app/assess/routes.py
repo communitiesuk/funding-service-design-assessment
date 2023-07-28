@@ -476,9 +476,11 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
         post_processed_overviews
     )
 
-    fund_round_tags = get_active_tags_for_fund_round(fund_id, round_id, "")
+    active_fund_round_tags = get_tags_for_fund_round(
+        fund_id, round_id, {"tag_status": "True"}
+    )
     tag_map, tag_option_groups = get_tag_map_and_tag_options(
-        fund_round_tags, post_processed_overviews
+        active_fund_round_tags, post_processed_overviews
     )
 
     def get_sorted_application_overviews(

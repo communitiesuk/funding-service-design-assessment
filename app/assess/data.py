@@ -118,33 +118,13 @@ def get_tags_for_fund_round(fund_id, round_id, search_params) -> List[Tag]:
         return []
 
 
-def get_active_tags_for_fund_round(
-    fund_id, round_id, search_params
-) -> List[Tag]:
-    endpoint = Config.ASSESSMENT_TAGS_ENDPOINT.format(
-        fund_id=fund_id, round_id=round_id, params=urlencode(search_params)
-    )
-    response = get_data(endpoint)
-    if response is not None:
-        current_app.logger.info(f"tags returned: {len(response)}")
-        result = [
-            Tag.from_dict(item) for item in response if item["active"] is True
-        ]
-        return result
-    else:
-        current_app.logger.info(
-            f"No tags found for fund {fund_id}, round {round_id}."
-        )
-        return []
-
-
 def get_tag_for_fund_round(fund_id, round_id, tag_id) -> List[Tag]:
     endpoint = Config.ASSESSMENT_TAG_ENDPOINT.format(
         fund_id=fund_id, round_id=round_id, tag_id=tag_id
     )
     response = get_data(endpoint)
     if response is not None:
-        current_app.logger.info(f"tags returned: {len(response)}")
+        current_app.logger.info(f"tag returned: {len(response)}")
         result = Tag.from_dict(response)
         return result
     else:
