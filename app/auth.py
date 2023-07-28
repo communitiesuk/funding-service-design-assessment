@@ -31,13 +31,13 @@ def auth_protect(minimum_roles_required, unprotected_routes):
     """
 
     # expand roles to include all fund short names as a prefix, e.g. "COMMENTER" becomes "COF_COMMENTER"
-    funds = get_funds(get_ttl_hash(seconds=300))
-    if funds is not None:
-        minimum_roles_required = [
-            f"{fund.short_name}_{role}".upper()
-            for fund in funds  # expensive call, so cache it & refresh every 5 minutes
-            for role in minimum_roles_required
-        ]
+    minimum_roles_required = [
+        f"{fund.short_name}_{role}".upper()
+        for fund in get_funds(
+            get_ttl_hash(seconds=300)
+        )  # expensive call, so cache it & refresh every 5 minutes
+        for role in minimum_roles_required
+    ]
 
     if (
         not g.is_authenticated
