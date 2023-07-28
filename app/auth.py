@@ -31,48 +31,48 @@ def auth_protect(minimum_roles_required: list, unprotected_routes: list):
     """
         # expand roles to include all fund short names as a prefix, e.g. "COMMENTER" becomes "COF_COMMENTER"
     funds = get_funds(get_ttl_hash(seconds=300))
-    if funds is not None:    
-        minimum_roles_required = [
-            f"{fund.short_name}_{role}".upper()
-            for fund in funds  # expensive call, so cache it & refresh every 5 minutes
-            for role in minimum_roles_required
-        ]
+    minimum_roles_required = [
+        f"{fund.short_name}_{role}".upper()
+        for fund in funds  # expensive call, so cache it & refresh every 5 minutes
+        for role in minimum_roles_required
+        if fund is not None
+    ]
 
+    if (
+        not g.is_authenticated
+        and Config.FLASK_ENV == "development"
+        and Config.DEBUG_USER_ON
+    ):
+        g.is_authenticated = True
+        g.account_id = Config.DEBUG_USER_ACCOUNT_ID
+        g.user = User(**Config.DEBUG_USER)
+        g.is_debug_user = True
+        if request.path in ["/"]:
+            return redirect(Config.DASHBOARD_ROUTE)
+
+    elif g.is_authenticated:
+        # Ensure that authenticated users have
+        # all minimum required roles
         if (
-            not g.is_authenticated
-            and Config.FLASK_ENV == "development"
-            and Config.DEBUG_USER_ON
+            not g.user.roles
+            or not any(  # any of the minimum roles are present
+                role_required in g.user.roles
+                for role_required in minimum_roles_required
+            )
         ):
-            g.is_authenticated = True
-            g.account_id = Config.DEBUG_USER_ACCOUNT_ID
-            g.user = User(**Config.DEBUG_USER)
-            g.is_debug_user = True
-            if request.path in ["/"]:
-                return redirect(Config.DASHBOARD_ROUTE)
-
-        elif g.is_authenticated:
-            # Ensure that authenticated users have
-            # all minimum required roles
-            if (
-                not g.user.roles
-                or not any(  # any of the minimum roles are present
-                    role_required in g.user.roles
-                    for role_required in minimum_roles_required
-                )
-            ):
-                return redirect(
-                    Config.AUTHENTICATOR_HOST
-                    + "/service/user"
-                    + "?roles_required="
-                    + "|".join(minimum_roles_required)
-                )
-            elif request.path in ["", "/"]:
-                return redirect(Config.DASHBOARD_ROUTE)
-        elif (
-            request.path not in unprotected_routes
-            and not request.path.startswith("/static/")
-        ):  # noqa
-            # Redirect unauthenticated users to
-            # login on the home page
-            return redirect("/")
+            return redirect(
+                Config.AUTHENTICATOR_HOST
+                + "/service/user"
+                + "?roles_required="
+                + "|".join(minimum_roles_required)
+            )
+        elif request.path in ["", "/"]:
+            return redirect(Config.DASHBOARD_ROUTE)
+    elif (
+        request.path not in unprotected_routes
+        and not request.path.startswith("/static/")
+    ):  # noqa
+        # Redirect unauthenticated users to
+        # login on the home page
+        return redirect("/")
 
