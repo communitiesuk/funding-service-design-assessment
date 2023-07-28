@@ -555,7 +555,7 @@ def test_create_tag_shows_error_if_valid_form_post_but_request_fails(
 
     response = client_with_valid_session.post(
         f"/assess/tags/create/{test_fund_id}/{test_round_id}",
-        data={"value": "Tag value", "type": "type_1"},
+        data={"value": "Tag value", "type": "tag_type_1"},
     )
 
     # this redirects and will flash the error message
@@ -590,7 +590,7 @@ def test_create_tag_valid_form_post(
 
     response = client_with_valid_session.post(
         f"/assess/tags/create/{test_fund_id}/{test_round_id}",
-        data={"value": "Tag value", "type": "type_1"},
+        data={"value": "Tag value", "type": "tag_type_1"},
     )
 
     assert response.status_code == 302
@@ -625,7 +625,7 @@ def test_create_tag_valid_form_go_back_post(
 
     response = client_with_valid_session.post(
         f"/assess/tags/create/{test_fund_id}/{test_round_id}?go_back=True",
-        data={"value": "Tag value", "type": "type_1"},
+        data={"value": "Tag value", "type": "tag_type_1"},
     )
 
     assert response.status_code == 302
