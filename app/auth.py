@@ -29,11 +29,7 @@ def auth_protect(minimum_roles_required, unprotected_routes):
         redirect (302) or None if authorised
 
     """
-    if minimum_roles_required is None or not minimum_roles_required:
-        return (
-            "Minimum roles required not provided. Please contact the"
-            " administrator for assistance."
-        )
+    minimum_roles_required = minimum_roles_required if minimum_roles_required is not None else []
 
     # expand roles to include all fund short names as a prefix, e.g. "COMMENTER" becomes "COF_COMMENTER"
     minimum_roles_required = [
