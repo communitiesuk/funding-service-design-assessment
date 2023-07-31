@@ -732,8 +732,7 @@ def sanitise_html(data):
             if tag.name == "p":
                 tag["class"] = "govuk-body"
             if tag.name == "ul" or tag.name == "ol":
-                style_type = tag.get("style")
-                if style_type:
+                if style_type := tag.get("style"):
                     style_type = (
                         style_type.replace("list-style-type:", "")
                         .strip(";")
