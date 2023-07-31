@@ -3,8 +3,10 @@ from unittest import mock
 import app
 import pytest
 from app.assess.models.flag_v2 import FlagV2
+from app.assess.models.round import Round
 from bs4 import BeautifulSoup
 from flask import session
+from tests.api_data.test_data import mock_api_results
 from tests.conftest import create_valid_token
 from tests.conftest import fund_specific_claim_map
 from tests.conftest import test_commenter_claims
@@ -84,7 +86,6 @@ class TestRoutes:
                 "search_in": "organisation_name,short_id",
                 "funding_type": "ALL",
                 "status": "ALL",
-                "show_tags": "OFF",
                 "filter_by_tag": "ALL",
             },
         }
@@ -94,9 +95,9 @@ class TestRoutes:
         self,
         request,
         flask_test_client,
-        mock_get_fund,
         mock_get_funds,
         mock_get_round,
+        mock_get_fund,
         mock_get_application_overviews,
         mock_get_assessment_stats,
         mock_get_teams_flag_stats,
@@ -145,7 +146,6 @@ class TestRoutes:
                 "search_in": "project_name,short_id",
                 "asset_type": "ALL",
                 "status": "ALL",
-                "show_tags": "OFF",
                 "filter_by_tag": "ALL",
             },
         }
@@ -221,7 +221,6 @@ class TestRoutes:
                 "search_in": "project_name,short_id",
                 "asset_type": "ALL",
                 "status": "QA_COMPLETE",
-                "show_tags": "OFF",
                 "filter_by_tag": "ALL",
             },
         }
@@ -267,7 +266,6 @@ class TestRoutes:
                 "search_in": "project_name,short_id",
                 "asset_type": "pub",
                 "status": "ALL",
-                "show_tags": "OFF",
                 "filter_by_tag": "ALL",
             },
         }
@@ -313,7 +311,6 @@ class TestRoutes:
                 "search_in": "project_name,short_id",
                 "asset_type": "ALL",
                 "status": "ALL",
-                "show_tags": "OFF",
                 "filter_by_tag": "ALL",
             },
         }
@@ -360,7 +357,6 @@ class TestRoutes:
                 "search_in": "project_name,short_id",
                 "asset_type": "ALL",
                 "status": "ALL",
-                "show_tags": "OFF",
                 "filter_by_tag": "ALL",
             },
         }
@@ -411,7 +407,6 @@ class TestRoutes:
                 "search_in": "project_name,short_id",
                 "asset_type": "ALL",
                 "status": "ALL",
-                "show_tags": "OFF",
                 "filter_by_tag": "ALL",
             },
         }
@@ -699,7 +694,17 @@ class TestRoutes:
         mock_get_qa_complete,
         mock_get_bulk_accounts,
         mock_get_associated_tags_for_application,
+        mocker,
     ):
+        mocker.patch(
+            "app.assess.routes.get_round",
+            return_value=Round.from_dict(
+                mock_api_results[
+                    "fund_store/funds/{fund_id}/rounds/{round_id}"
+                ]
+            ),
+        )
+
         marker = request.node.get_closest_marker("application_id")
         application_id = marker.args[0]
         token = create_valid_token(test_lead_assessor_claims)
@@ -732,7 +737,17 @@ class TestRoutes:
         mock_get_qa_complete,
         mock_get_bulk_accounts,
         mock_get_associated_tags_for_application,
+        mocker,
     ):
+        mocker.patch(
+            "app.assess.routes.get_round",
+            return_value=Round.from_dict(
+                mock_api_results[
+                    "fund_store/funds/{fund_id}/rounds/{round_id}"
+                ]
+            ),
+        )
+
         marker = request.node.get_closest_marker("application_id")
         application_id = marker.args[0]
         token = create_valid_token(test_lead_assessor_claims)
@@ -994,7 +1009,17 @@ class TestRoutes:
         mock_get_funds,
         mock_get_application_metadata,
         mock_get_associated_tags_for_application,
+        mocker,
     ):
+        mocker.patch(
+            "app.assess.routes.get_round",
+            return_value=Round.from_dict(
+                mock_api_results[
+                    "fund_store/funds/{fund_id}/rounds/{round_id}"
+                ]
+            ),
+        )
+
         token = create_valid_token(test_lead_assessor_claims)
         flask_test_client.set_cookie("localhost", "fsd_user_token", token)
         application_id = request.node.get_closest_marker(
@@ -1022,7 +1047,17 @@ class TestRoutes:
         mock_get_qa_complete,
         mock_get_bulk_accounts,
         mock_get_associated_tags_for_application,
+        mocker,
     ):
+        mocker.patch(
+            "app.assess.routes.get_round",
+            return_value=Round.from_dict(
+                mock_api_results[
+                    "fund_store/funds/{fund_id}/rounds/{round_id}"
+                ]
+            ),
+        )
+
         token = create_valid_token(test_lead_assessor_claims)
         flask_test_client.set_cookie("localhost", "fsd_user_token", token)
 
@@ -1049,7 +1084,6 @@ class TestRoutes:
                 "search_in": "project_name,short_id",
                 "asset_type": "ALL",
                 "status": "ALL",
-                "show_tags": "OFF",
                 "filter_by_tag": "ALL",
             },
         }
@@ -1058,8 +1092,8 @@ class TestRoutes:
         self,
         request,
         flask_test_client,
-        mock_get_fund,
         mock_get_funds,
+        mock_get_fund,
         mock_get_round,
         mock_get_application_overviews,
         mock_get_assessment_stats,

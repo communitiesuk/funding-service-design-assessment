@@ -330,13 +330,13 @@ def mock_get_round(request):
 
     if expect_flagging:
         if use_short_name:
-            mocked_round.assert_called_once_with(
+            mocked_round.assert_called_with(
                 fund_short_name,
                 round_short_name,
                 use_short_name=use_short_name,
             )
         else:
-            mocked_round.assert_called_once_with(fund_id, round_id)
+            mocked_round.assert_called_with(fund_id, round_id)
 
 
 @pytest.fixture(scope="function")
@@ -383,7 +383,6 @@ def mock_get_application_overviews(request):
             "search_in": "project_name,short_id",
             "asset_type": "ALL",
             "status": "ALL",
-            "show_tags": "OFF",
             "filter_by_tag": "ALL",
         }
         path = "app.assess.routes.get_application_overviews"
@@ -434,17 +433,10 @@ def mock_get_assessment_stats(request):
         )
         fund_id = params.get("fund_id", "test-fund")
         round_id = params.get("round_id", "test-round")
-        search_params = params.get("expected_search_params", None)
     else:
         mock_func = "app.assess.routes.get_assessments_stats"
         fund_id = "test-fund"
         round_id = "test-round"
-        search_params = {
-            "search_term": "",
-            "search_in": "project_name,short_id",
-            "asset_type": "ALL",
-            "status": "ALL",
-        }
 
     with mock.patch(
         mock_func,
@@ -454,12 +446,7 @@ def mock_get_assessment_stats(request):
     ) as mocked_assessment_stats:
         yield mocked_assessment_stats
 
-    if search_params:
-        mocked_assessment_stats.assert_called_once_with(
-            fund_id, round_id, search_params
-        )
-    else:
-        mocked_assessment_stats.assert_called_once_with(fund_id, round_id)
+    mocked_assessment_stats.assert_called_once_with(fund_id, round_id)
 
 
 @pytest.fixture(scope="function")
