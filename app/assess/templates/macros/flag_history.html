@@ -81,18 +81,25 @@
                 {# <p>items: {{ flag_table(state, application_id, flag_item, accounts_list) }}</p> #}
         {% endfor %}
 
-        {{ govukTabs({
-        'items': items
-        }) }}
+        {%  if items|length > 0 %}
+            {{ govukTabs({
+            'items': items
+            }) }}
+        {% else %}
+            <div class="govuk-warning-text">
+                <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+              <strong class="govuk-warning-text__text">
+                <span class="govuk-warning-text__assistive">Warning</span>
+                No flags raised yet, so no history to display.
+              </strong>
+            </div>
+        {% endif %}
     {% endset %}
 
-    <details class="govuk-details" data-module="govuk-details">
+    <details class="govuk-details">
         <summary class="govuk-details__summary">
-        <span class="govuk-details__summary-text">
-            Flag history
-        </span>
-        </summary><br><br>
-        {{ TabsData }}
+            <span class="govuk-details__summary-text">Flag history</span>
+        </summary>
+        <div class="govuk-!-padding-top-4">{{ TabsData }}</div>
     </details>
-
 {% endmacro %}
