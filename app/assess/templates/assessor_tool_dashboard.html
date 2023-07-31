@@ -23,6 +23,10 @@
             </div>
         {% endfor %}
 
+        {% if not funds %}
+            <h3 class="govuk-body">You do not have access to any funds.</h3>
+        {% endif %}
+
         <p class="govuk-!-padding-top-6 govuk-body govuk-!-display-inline-block">
             Information last updated: [{{ todays_date }}]<br/>
             Refresh page for most up-to-date information.

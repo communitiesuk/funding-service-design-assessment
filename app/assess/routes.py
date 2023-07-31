@@ -9,6 +9,7 @@ from app.assess.auth.validation import has_access_to_fund
 from app.assess.auth.validation import has_devolved_authority_validation
 from app.assess.data import *
 from app.assess.data import get_all_uploaded_documents_theme_answers
+from app.assess.data import get_applicant_export
 from app.assess.data import get_application_json
 from app.assess.data import get_application_overviews
 from app.assess.data import get_assessments_stats
@@ -37,6 +38,7 @@ from app.assess.forms.scores_and_justifications import ScoreForm
 from app.assess.helpers import determine_assessment_status
 from app.assess.helpers import determine_flag_status
 from app.assess.helpers import generate_csv_of_application
+from app.assess.helpers import generate_field_info_csv
 from app.assess.helpers import get_state_for_tasklist_banner
 from app.assess.helpers import get_tag_map_and_tag_options
 from app.assess.helpers import get_ttl_hash
@@ -445,8 +447,11 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
     application_overviews = get_application_overviews(
         fund_id, round_id, search_params
     )
-    stats = get_assessments_stats(fund_id, round_id, search_params)
-    teams_flag_stats = get_team_flag_stats(fund_id, round_id, search_params)
+
+    # note, we are not sending search parameters here as we don't want to filter
+    # the stats at all.  see https://dluhcdigital.atlassian.net/browse/FS-3249
+    stats = get_assessments_stats(fund_id, round_id)
+    teams_flag_stats = get_team_flag_stats(fund_id, round_id)
 
     # this is only used for querying applications, so remove it from the search params,
     # so it's not reflected on the user interface
@@ -734,9 +739,8 @@ def application(application_id):
         update_ar_status_to_completed(application_id)
 
     state = get_state_for_tasklist_banner(application_id)
-    fund = get_fund(state.fund_short_name, use_short_name=True)
+    fund_round = get_round(state.fund_id, state.round_id)
 
-    accounts_list = []
     user_id_list = []
     flags_list = get_flags(application_id)
     qa_complete = get_qa_complete(application_id)
@@ -778,5 +782,20 @@ def application(application_id):
         qa_complete=qa_complete,
         flag_status=flag_status,
         assessment_status=assessment_status,
-        all_uploaded_documents_section_available=fund.all_uploaded_documents_section_available,
+        all_uploaded_documents_section_available=fund_round.all_uploaded_documents_section_available,
     )
+
+
+@assess_bp.route(
+    "/assessor_export/<fund_short_name>/<round_short_name>/",
+    methods=["GET"],
+)
+@check_access_fund_short_name
+def assessor_export(fund_short_name: str, round_short_name: str):
+
+    _round = get_round(fund_short_name, round_short_name, use_short_name=True)
+    export = get_applicant_export(_round.fund_id, _round.id)
+
+    csv_file = generate_field_info_csv(export)
+
+    return download_file(csv_file, "text/csv", "applicant_info.csv")
