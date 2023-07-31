@@ -1,6 +1,7 @@
 import pytest
 from app.assess.helpers import determine_display_status
 from app.assess.helpers import generate_csv_of_application
+from app.assess.helpers import generate_field_info_csv
 from app.assess.helpers import is_flaggable
 from app.assess.models.flag_v2 import FlagV2
 from app.assess.models.fund import Fund
@@ -142,3 +143,35 @@ def test_generate_csv_of_application():
     result = generate_csv_of_application(q_and_a, fund, application)
 
     assert result == expected_output
+
+
+def test_generate_csv_for_fields():
+    test_data = [
+        {
+            "AppId": "9a8b6c00-e461-466c-acb3-2519621b3a38",
+            "Charity number ": "Test",
+            "Do you need to do any further feasibility work?": False,
+            "Project name": "Save the humble pub in Bangor",
+            "Doc Name": "sample1.doc",
+        },
+        {
+            "AppId": "de36ae35-9ef6-4dc5-a2bf-de9ee481c8af",
+            "Charity number ": "Test",
+            "Do you need to do any further feasibility work?": False,
+            "Project name": "Save the humble pub in Bangor",
+            "Doc Name": "sample1.doc",
+        },
+    ]
+
+    expected_result = (
+        "AppId,Charity number ,Do you need to do any further feasibility"
+        " work?,Project name,Doc"
+        " Name\r\n9a8b6c00-e461-466c-acb3-2519621b3a38,Test,False,Save the"
+        " humble pub in"
+        " Bangor,sample1.doc\r\nde36ae35-9ef6-4dc5-a2bf-de9ee481c8af,Test,False,Save"
+        " the humble pub in Bangor,sample1.doc\r\n"
+    )
+
+    result = generate_field_info_csv(test_data)
+
+    assert result == expected_result
