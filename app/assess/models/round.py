@@ -15,7 +15,7 @@ class Round:
     title: str
     short_name: str
     all_uploaded_documents_section_available: bool = False
-    application_fields_download_available: bool
+    application_fields_download_available: bool = False
     applications: List[Application] = None
 
     @classmethod
