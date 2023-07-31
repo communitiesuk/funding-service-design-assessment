@@ -14,6 +14,7 @@ from app.assess.forms.tags import DeactivateTagForm
 from app.assess.forms.tags import NewTagForm
 from app.assess.forms.tags import ReactivateTagForm
 from app.assess.forms.tags import TagAssociationForm
+from app.assess.helpers import determine_assessment_status
 from app.assess.helpers import get_state_for_tasklist_banner
 from app.assess.helpers import match_search_params
 from app.assess.models.tag import TagType
@@ -63,6 +64,9 @@ def load_change_tags(application_id):
         for tag in available_tags:
             if tag.id in associated_tag_ids:
                 tag.associated = True
+    assessment_status = determine_assessment_status(
+        state.workflow_status, state.is_qa_complete
+    )
     return render_template(
         "change_tags.html",
         form=tag_association_form,
@@ -70,6 +74,7 @@ def load_change_tags(application_id):
         available_tags=available_tags,
         tag_config=Config.TAGGING_PURPOSE_CONFIG,
         application_id=application_id,
+        assessment_status=assessment_status,
     )
 
 

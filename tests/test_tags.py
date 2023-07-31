@@ -104,6 +104,7 @@ def test_change_tags_route(
         )
         soup = BeautifulSoup(response.data, "html.parser")
         assert soup.find("h1").text == "Change tags"
+        assert soup.find("strong").text == "In progress"
         assert (
             table := soup.find(
                 "table", class_="govuk-table dluhc-table-checkboxes"
