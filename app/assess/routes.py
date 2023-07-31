@@ -800,9 +800,8 @@ def application(application_id):
 @check_access_fund_short_name
 def assessor_export(fund_short_name: str, round_short_name: str):
 
-    fund = get_fund(fund_short_name, use_short_name=True)
-    round = get_round(fund_short_name, round_short_name, use_short_name=True)
-    export = get_applicant_export(fund.id, round.id)
+    _round = get_round(fund_short_name, round_short_name, use_short_name=True)
+    export = get_applicant_export(_round.fund_id, _round.id)
 
     csv_file = generate_field_info_csv(export)
 
