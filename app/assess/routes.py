@@ -9,6 +9,7 @@ from app.assess.auth.validation import has_access_to_fund
 from app.assess.auth.validation import has_devolved_authority_validation
 from app.assess.data import *
 from app.assess.data import get_all_uploaded_documents_theme_answers
+from app.assess.data import get_applicant_export
 from app.assess.data import get_application_json
 from app.assess.data import get_application_overviews
 from app.assess.data import get_assessments_stats
@@ -38,6 +39,7 @@ from app.assess.forms.scores_and_justifications import ScoreForm
 from app.assess.helpers import determine_assessment_status
 from app.assess.helpers import determine_flag_status
 from app.assess.helpers import generate_csv_of_application
+from app.assess.helpers import generate_field_info_csv
 from app.assess.helpers import get_state_for_tasklist_banner
 from app.assess.helpers import get_tag_map_and_tag_options
 from app.assess.helpers import get_ttl_hash
@@ -789,3 +791,18 @@ def application(application_id):
         assessment_status=assessment_status,
         all_uploaded_documents_section_available=fund_round.all_uploaded_documents_section_available,
     )
+
+
+@assess_bp.route(
+    "/assessor_export/<fund_short_name>/<round_short_name>/",
+    methods=["GET"],
+)
+@check_access_fund_short_name
+def assessor_export(fund_short_name: str, round_short_name: str):
+
+    _round = get_round(fund_short_name, round_short_name, use_short_name=True)
+    export = get_applicant_export(_round.fund_id, _round.id)
+
+    csv_file = generate_field_info_csv(export)
+
+    return download_file(csv_file, "text/csv", "applicant_info.csv")

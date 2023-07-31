@@ -189,6 +189,11 @@ class DefaultConfig:
         ASSESSMENT_STORE_API_HOST + "/application/{application_id}/tag"
     )
     ASSESSMENT_TAG_TYPES_ENDPOINT = ASSESSMENT_STORE_API_HOST + "/tag_types"
+
+    APPLICANT_EXPORT_ENDPOINT = (
+        ASSESSMENT_STORE_API_HOST
+        + "/application_fields_export/{fund_id}/{round_id}"
+    )
     TAGGING_PURPOSE_CONFIG = {
         "GENERAL": {
             "colour": "blue",
