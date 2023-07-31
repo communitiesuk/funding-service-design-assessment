@@ -198,7 +198,10 @@ def get_funds(ttl_hash=None) -> Union[List[Fund], None]:
         for fund in response:
             funds.append(Fund.from_json(fund))
         return funds
-    return None
+    current_app.logger.error(
+        "Error retrieving funds from fund store, please check this."
+    )
+    return []
 
 
 def get_fund(fid: str, use_short_name: bool = False) -> Union[Fund, None]:
