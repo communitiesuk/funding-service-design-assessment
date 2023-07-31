@@ -2,7 +2,7 @@
 
     {% if tags %}
         <td class="govuk-table__cell govuk-table__cell">
-            <details class="govuk-details" data-module="govuk-details" {% if expand_tags %}open{% endif %}>
+            <details class="govuk-details dlhuc-tag-expand" data-module="govuk-details">
                 <summary class="govuk-details__summary">
                             <span class="govuk-details__summary-text">
                                 {{ "1 tag" if tags|length == 1 else tags|length|string + " tags" }}

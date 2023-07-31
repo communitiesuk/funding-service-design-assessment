@@ -1,6 +1,7 @@
 import concurrent
 import csv
 import time
+from collections import OrderedDict
 from io import StringIO
 from typing import List
 
@@ -246,6 +247,21 @@ def generate_csv_of_application(q_and_a: dict, fund: Fund, application_json):
                 answers = "Not provided"
 
             writer.writerow([section_title, questions, answers])
+    return output.getvalue()
+
+
+def generate_field_info_csv(applicant_info: dict):
+    output = StringIO()
+    headers = list(
+        OrderedDict.fromkeys(key for d in applicant_info for key in d.keys())
+    )
+    csv_writer = csv.writer(output)
+    csv_writer.writerow(headers)
+
+    for person_data in applicant_info:
+        rows = person_data.values()
+        csv_writer.writerow(rows)
+
     return output.getvalue()
 
 
