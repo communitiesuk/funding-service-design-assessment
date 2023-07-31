@@ -454,8 +454,11 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
     application_overviews = get_application_overviews(
         fund_id, round_id, search_params
     )
-    stats = get_assessments_stats(fund_id, round_id, search_params)
-    teams_flag_stats = get_team_flag_stats(fund_id, round_id, search_params)
+
+    # note, we are not sending search parameters here as we don't want to filter
+    # the stats at all.  see https://dluhcdigital.atlassian.net/browse/FS-3249
+    stats = get_assessments_stats(fund_id, round_id)
+    teams_flag_stats = get_team_flag_stats(fund_id, round_id)
 
     # this is only used for querying applications, so remove it from the search params,
     # so it's not reflected on the user interface
@@ -741,9 +744,8 @@ def application(application_id):
         update_ar_status_to_completed(application_id)
 
     state = get_state_for_tasklist_banner(application_id)
-    fund = get_fund(state.fund_short_name, use_short_name=True)
+    fund_round = get_round(state.fund_id, state.round_id)
 
-    accounts_list = []
     user_id_list = []
     flags_list = get_flags(application_id)
     qa_complete = get_qa_complete(application_id)
@@ -785,5 +787,5 @@ def application(application_id):
         qa_complete=qa_complete,
         flag_status=flag_status,
         assessment_status=assessment_status,
-        all_uploaded_documents_section_available=fund.all_uploaded_documents_section_available,
+        all_uploaded_documents_section_available=fund_round.all_uploaded_documents_section_available,
     )
