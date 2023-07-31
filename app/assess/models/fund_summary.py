@@ -74,7 +74,7 @@ def create_fund_summaries(fund: Fund) -> list[FundSummary]:
                 export_href=url_for(
                     "assess_bp.assessor_export",
                     fund_short_name=fund.short_name,
-                    round_short_name=round.short_name.lower(),
+                    round_short_name=round.short_name,
                 ),
                 round_application_fields_download_available=round.application_fields_download_available,
             )
