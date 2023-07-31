@@ -53,7 +53,7 @@
             View all {% if is_active_status %}active{% else %}
             closed{% endif %} assessments
         </a>
-        {% if round_application_fields_download_available and access_controller.is_lead_assessor%}
+        {% if round_application_fields_download_available and access_controller.is_lead_assessor %}
         </br>
         </br>
         <a class="govuk-link" data-qa="dashboard_export" href="{{ export_href }}">
