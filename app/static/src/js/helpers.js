@@ -26,11 +26,19 @@ AssessFrontend.addAttributeValue = function(el, attr, value) {
   }
 };
 
-AssessFrontend.nodeListForEach = function(nodes, callback) {
-  if (window.NodeList.prototype.forEach) {
-    return nodes.forEach(callback)
-  }
-  for (let i = 0; i < nodes.length; i++) {
-    callback.call(window, nodes[i], i, nodes)
-  }
+AssessFrontend.nodeListForEach = function (nodes, callback) {
+    if (window.NodeList.prototype.forEach) {
+        return nodes.forEach(callback)
+    }
+    for (let i = 0; i < nodes.length; i++) {
+        callback.call(window, nodes[i], i, nodes)
+    }
 };
+
+document.getElementById("show-tags").addEventListener("change", (event) => {
+    const allTagDetails = Array.from(document.getElementsByClassName("dlhuc-tag-expand"));
+    const checkboxState = event.target.checked;
+    allTagDetails.forEach(tagDetail => {
+        tagDetail.open = checkboxState;
+    });
+});

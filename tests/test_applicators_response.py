@@ -42,6 +42,7 @@ from app.assess.models.ui.applicants_response import sanitise_html
 from app.assess.routes import assess_bp
 from app.assess.views.filters import format_address
 from flask import Flask
+from tests.api_data.test_data import TestSanitiseData
 
 
 class TestApplicantResponseComponentConcreteSubclasses:
@@ -975,49 +976,21 @@ def test_create_ui_components_retains_order(monkeypatch):
 
 
 @pytest.mark.parametrize(
-    "input_data, expected_response",
+    "tag, style",
     [
-        (
-            {
-                "answer": (
-                    "<p>This text contains HTML tag.</p> <strong>This is a"
-                    " bold text tag.</strong> <h1>This is h1 tag.</h1>"
-                )
-            },
-            {
-                "answer": (
-                    '<p class="govuk-body">This text contains HTML tag.</p>'
-                    " <strong>This is a bold text tag.</strong> <h1>This is h1"
-                    " tag.</h1>"
-                )
-            },
-        ),
-        (
-            {
-                "answer": (
-                    "<ul>This text contains HTML tag"
-                    " <li>One</li>\n<li>Two</li> </ul>"
-                )
-            },
-            {
-                "answer": (
-                    '<ul class="govuk-body">This text contains HTML tag <li'
-                    ' class="govuk-body">One</li>\n<li'
-                    ' class="govuk-body">Two</li> </ul>'
-                )
-            },
-        ),
-        (
-            {"answer": "This text does not contain HTML tag"},
-            {"answer": "This text does not contain HTML tag"},
-        ),
-        (
-            {"fields": "This text does not contain an answer"},
-            {"fields": "This text does not contain an answer"},
-        ),
+        ("ul", "circle"),
+        ("ul", "square"),
+        ("ul", ""),
+        ("ol", "lower-alpha"),
+        ("ol", "upper-alpha"),
+        ("ol", "lower-roman"),
+        ("ol", "upper-roman"),
+        ("ol", "lower-greek"),
+        ("ol", ""),
+        ("p", ""),
     ],
 )
-def test_sanitise_html(input_data, expected_response):
-
-    response = sanitise_html(input_data)
-    assert response == expected_response
+def test_sanitise_html(tag, style):
+    test_data = TestSanitiseData(tag=tag, style=style)
+    response = sanitise_html(test_data.input.copy())
+    assert response["answer"] == test_data.response["answer"].replace("'", '"')

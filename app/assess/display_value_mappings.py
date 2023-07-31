@@ -42,7 +42,6 @@ search_params_cof = {
     "search_in": "project_name,short_id",
     "asset_type": ALL_VALUE,
     "status": ALL_VALUE,
-    "show_tags": OFF_VALUE,
     "filter_by_tag": ALL_VALUE,
 }
 search_params_nstf = {
@@ -50,6 +49,5 @@ search_params_nstf = {
     "search_in": "organisation_name,short_id",
     "funding_type": ALL_VALUE,
     "status": ALL_VALUE,
-    "show_tags": OFF_VALUE,
     "filter_by_tag": ALL_VALUE,
 }

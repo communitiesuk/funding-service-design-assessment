@@ -1,6 +1,8 @@
 # flake8: noqa
 # There is config for any linked information shared across the mock api queries
 # General config
+from dataclasses import dataclass
+
 test_fund_id = "test-fund"
 test_round_id = "test-round"
 test_user_id_lead_assessor = "test_user_lead_assessor"
@@ -197,6 +199,8 @@ mock_api_results = {
         "assessment_deadline": "2023-03-01T12:00:00",
         "deadline": "2022-12-01T12:00:00",
         "opens": "2022-10-01T12:00:00",
+        "all_uploaded_documents_section_available": True,
+        "application_fields_download_available": True,
     },
     "assessment_store/application_overviews/{fund_id}/{round_id}?": [
         {
@@ -584,3 +588,62 @@ mock_api_results = {
         "workflow_status": stopped_app["workflow_status"],
     },
 }
+
+
+@dataclass
+class TestSanitiseData:
+    tag: str = None
+    style: str = None
+
+    @property
+    def input(self):
+        if self.style:
+            return {
+                "answer": (
+                    f"<{self.tag} style='list-style-type:{self.style};'>Example"
+                    f" text <li>One</li>\n<li>Two</li></{self.tag}>"
+                )
+            }
+        else:
+            return {
+                "answer": (
+                    f"<{self.tag}>Example text"
+                    f" <li>One</li>\n<li>Two</li></{self.tag}>"
+                )
+            }
+
+    @property
+    def response(self):
+        if self.style:
+            return {
+                "answer": (
+                    f"<{self.tag} class='list-type-{self.style}'"
+                    f" style='list-style-type:{self.style};'>Example text"
+                    f" <li>One</li>\n<li>Two</li></{self.tag}>"
+                )
+            }
+
+        else:
+            if self.tag == "p":
+                return {
+                    "answer": (
+                        f"<{self.tag} class='govuk-body'>Example text"
+                        f" <li>One</li>\n<li>Two</li></{self.tag}>"
+                    )
+                }
+            if self.tag == "ul":
+                return {
+                    "answer": (
+                        f"<{self.tag} class='govuk-list"
+                        " govuk-list--bullet'>Example text"
+                        f" <li>One</li>\n<li>Two</li></{self.tag}>"
+                    )
+                }
+            if self.tag == "ol":
+                return {
+                    "answer": (
+                        f"<{self.tag} class='govuk-list"
+                        " govuk-list--number'>Example text"
+                        f" <li>One</li>\n<li>Two</li></{self.tag}>"
+                    )
+                }

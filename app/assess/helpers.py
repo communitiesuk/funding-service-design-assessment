@@ -249,6 +249,19 @@ def generate_csv_of_application(q_and_a: dict, fund: Fund, application_json):
     return output.getvalue()
 
 
+def generate_field_info_csv(applicant_info: dict):
+    output = StringIO()
+    headers = applicant_info[0].keys()
+    csv_writer = csv.writer(output)
+    csv_writer.writerow(headers)
+
+    for person_data in applicant_info:
+        rows = person_data.values()
+        csv_writer.writerow(rows)
+
+    return output.getvalue()
+
+
 def get_tag_map_and_tag_options(fund_round_tags, post_processed_overviews):
     tag_types = get_tag_types()
     tag_option_groups = []
