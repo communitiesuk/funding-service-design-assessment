@@ -251,7 +251,7 @@ def generate_csv_of_application(q_and_a: dict, fund: Fund, application_json):
 
 def generate_field_info_csv(applicant_info: dict):
     output = StringIO()
-    headers = applicant_info[0].keys()
+    headers = {k for d in applicant_info for k in d.keys()}
     csv_writer = csv.writer(output)
     csv_writer.writerow(headers)
 
