@@ -11,7 +11,7 @@ class Fund:
     id: str
     description: str
     short_name: str
-    all_uploaded_documents_section_available: bool
+    guidance_url: str = ""
     rounds: List[Round] = field(default_factory=list)
 
     @staticmethod
@@ -21,10 +21,7 @@ class Fund:
             id=data.get("id"),
             description=data.get("description"),
             short_name=data.get("short_name"),
-            all_uploaded_documents_section_available=data.get(
-                "all_uploaded_documents_section_available"
-            )
-            or False,
+            guidance_url=data.get("guidance_url"),
         )
 
     def add_round(self, fund_round: Round):

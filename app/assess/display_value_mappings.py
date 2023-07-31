@@ -1,4 +1,6 @@
 ALL_VALUE = "ALL"
+ON_VALUE = "ON"
+OFF_VALUE = "OFF"
 
 asset_types = {
     ALL_VALUE: "All",
@@ -40,10 +42,12 @@ search_params_cof = {
     "search_in": "project_name,short_id",
     "asset_type": ALL_VALUE,
     "status": ALL_VALUE,
+    "filter_by_tag": ALL_VALUE,
 }
 search_params_nstf = {
     "search_term": "",
     "search_in": "organisation_name,short_id",
     "funding_type": ALL_VALUE,
     "status": ALL_VALUE,
+    "filter_by_tag": ALL_VALUE,
 }

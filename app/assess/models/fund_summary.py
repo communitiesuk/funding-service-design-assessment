@@ -2,6 +2,9 @@ import datetime
 from dataclasses import dataclass
 
 import pytz
+from app.assess.auth.validation import AssessmentAccessController
+from app.assess.auth.validation import get_countries_from_roles
+from app.assess.auth.validation import has_devolved_authority_validation
 from app.assess.data import get_assessments_stats
 from app.assess.data import get_rounds
 from app.assess.models.fund import Fund
@@ -21,10 +24,14 @@ class Stats:
 
 @dataclass
 class FundSummary:
-    name: str
     is_active_status: bool
+    fund_id: str
+    round_id: str
+    fund_name: str
+    round_name: str
     application_stats: Stats
     assessments_href: str
+    access_controller: AssessmentAccessController
 
 
 def create_fund_summaries(fund: Fund) -> list[FundSummary]:
@@ -33,10 +40,21 @@ def create_fund_summaries(fund: Fund) -> list[FundSummary]:
     for round in get_rounds(fund.id):
         # only show closed rounds in assessment unless `SHOW_ALL_ROUNDS`==True
         if Config.SHOW_ALL_ROUNDS or (not is_after_today(round.deadline)):
-            round_stats = get_assessments_stats(fund.id, round.id)
+            # check for devolved_authority_validation
+            if has_devolved_authority_validation(fund_id=fund.id):
+                countries = get_countries_from_roles(fund.short_name)
+                search_params = {"countries": ",".join(countries)}
+                round_stats = get_assessments_stats(
+                    fund.id, round.id, search_params
+                )
+            else:
+                round_stats = get_assessments_stats(fund.id, round.id)
             summary = FundSummary(
-                name=round.title,
                 is_active_status=is_after_today(round.assessment_deadline),
+                fund_id=fund.id,
+                round_id=round.id,
+                fund_name=fund.name,
+                round_name=round.title,
                 application_stats=Stats(
                     date=round.assessment_deadline,
                     total_received=round_stats["total"],
@@ -50,9 +68,12 @@ def create_fund_summaries(fund: Fund) -> list[FundSummary]:
                     fund_short_name=fund.short_name,
                     round_short_name=round.short_name.lower(),
                 ),
+                access_controller=AssessmentAccessController(fund.short_name),
             )
             summaries.append(summary)
-    return sorted(summaries, key=lambda s: s.application_stats.date)
+    return sorted(
+        summaries, key=lambda s: s.application_stats.date, reverse=True
+    )
 
 
 def is_after_today(date_str: str):

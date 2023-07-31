@@ -16,7 +16,7 @@
         {# TODO: Notification is hardcoded. Change it once notification is implemented #}
         <h2>Notification sent</h2>
         <p>No</p><br>
-        <p class="govuk-body-s">{{ user_info["full_name"] }} ({{ user_info["highest_role"] | all_caps_to_human }}) {{ user_info["email_address"] }}</p>
+        <p class="govuk-body-s">{{ user_info["full_name"] or "N/A" }} ({{ user_info["highest_role"] | all_caps_to_human }}) {{ user_info["email_address"] }}</p>
         <p class="govuk-body-s">{{ flag.date_created | utc_to_bst }}</p>
         {% if g.access_controller.is_lead_assessor %}
             <p class="govuk-body"><a class="govuk-link govuk-link--no-visited-state" href="{{ url_for('assess_bp.resolve_flag',application_id=application_id)}}?flag_id={{ flag.id }}">Resolve flag</a></p>
@@ -36,7 +36,7 @@
             {% endif %}
         {% endfor %}
         <br>
-        <p class="govuk-body-s">{{ user_info["full_name"] }} ({{ user_info["highest_role"] | all_caps_to_human }}) {{ user_info["email_address"] }}</p>
+        <p class="govuk-body-s">{{ user_info["full_name"] or "N/A" }} ({{ user_info["highest_role"] | all_caps_to_human }}) {{ user_info["email_address"] }}</p>
         <p class="govuk-body-s">{{ flag.date_created | utc_to_bst }}</p>
         {% if g.access_controller.is_lead_assessor %}
             <p class="govuk-body"><a class="govuk-link govuk-link--no-visited-state" href="{{ url_for('assess_bp.continue_assessment',application_id=application_id)}}?flag_id={{ flag.id }}">Remove flag and continue assessment</a></p>
@@ -64,7 +64,7 @@
             {% endif %}
         {% endif %}
         <br>
-        <p class="govuk-body-s">{{ user_info["full_name"] }} ({{ user_info["highest_role"] | all_caps_to_human }}) {{ user_info["email_address"] }}</p>
+        <p class="govuk-body-s">{{ user_info["full_name"] or "N/A" }} ({{ user_info["highest_role"] | all_caps_to_human }}) {{ user_info["email_address"] }}</p>
         <p class="govuk-body-s">{{ flag.updates[-1]["date_created"] | utc_to_bst }}</p>
     </div>
 {% endmacro %}

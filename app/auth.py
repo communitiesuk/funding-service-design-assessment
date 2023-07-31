@@ -7,7 +7,7 @@ from flask import request
 from fsd_utils.authentication.models import User
 
 
-def auth_protect(minimum_roles_required, unprotected_routes):
+def auth_protect(minimum_roles_required: list, unprotected_routes: list):
     """
     Checks the authentication and authorisation attributes of the
     user accessing the service and allows them to access the requested
@@ -29,7 +29,6 @@ def auth_protect(minimum_roles_required, unprotected_routes):
         redirect (302) or None if authorised
 
     """
-
     # expand roles to include all fund short names as a prefix, e.g. "COMMENTER" becomes "COF_COMMENTER"
     minimum_roles_required = [
         f"{fund.short_name}_{role}".upper()

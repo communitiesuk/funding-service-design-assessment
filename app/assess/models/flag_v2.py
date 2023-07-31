@@ -7,8 +7,7 @@ from enum import Enum
 class FlagTypeV2(Enum):
     RAISED = 0
     STOPPED = 1
-    QA_COMPLETED = 2
-    RESOLVED = 3
+    RESOLVED = 2
 
 
 @dataclass()

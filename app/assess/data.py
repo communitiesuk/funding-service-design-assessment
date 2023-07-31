@@ -17,6 +17,9 @@ from app.assess.models.fund import Fund
 from app.assess.models.round import Round
 from app.assess.models.score import Score
 from app.assess.models.sub_criteria import SubCriteria
+from app.assess.models.tag import AssociatedTag
+from app.assess.models.tag import Tag
+from app.assess.models.tag import TagType
 from app.aws import generate_url
 from app.aws import list_files_by_prefix
 from config import Config
@@ -28,7 +31,6 @@ from fsd_utils.locale_selector.get_lang import get_lang
 
 
 def get_data(endpoint: str, payload: Dict = None):
-
     if payload:
         current_app.logger.info(
             f"Fetching data from '{endpoint}', with payload: {payload}."
@@ -95,6 +97,96 @@ def get_application_overviews(fund_id, round_id, search_params):
     return overviews_response
 
 
+def get_available_tags_for_fund_round(fund_id, round_id) -> List[Tag]:
+    endpoint = Config.ASSESSMENT_AVAILABLE_TAGS_ENDPOINT.format(
+        fund_id=fund_id, round_id=round_id
+    )
+    response = get_data(endpoint)
+    if response is not None:
+        current_app.logger.info(f"tags returned: {len(response)}")
+        result = [
+            Tag.from_dict(item) for item in response if item["active"] is True
+        ]
+        return result
+    else:
+        current_app.logger.info(
+            f"No tags found for fund {fund_id}, round {round_id}."
+        )
+        return []
+
+
+def get_tag_types():
+    endpoint = Config.ASSESSMENT_TAG_TYPES_ENDPOINT
+    response = get_data(endpoint)
+    if response is not None:
+        current_app.logger.info(f"tags returned: {len(response)}")
+        result = [TagType.from_dict(item) for item in response]
+        return result
+    else:
+        current_app.logger.info("No tag types found.")
+        return None
+
+
+def post_new_tag_for_fund_round(fund_id, round_id, tag) -> bool:
+    endpoint = Config.ASSESSMENT_AVAILABLE_TAGS_ENDPOINT.format(
+        fund_id=fund_id, round_id=round_id
+    )
+    current_app.logger.info(
+        f"Posting the following tag: {tag}"
+        f"for fund {fund_id} and round {round_id}."
+    )
+    response = requests.post(endpoint, json=tag)
+    tag_created = response.ok
+    if not tag_created:
+        current_app.logger.error(
+            f"Post tag failed, code: {response.status_code}."
+        )
+
+    return tag_created
+
+
+def get_associated_tags_for_application(application_id) -> List[Tag]:
+    endpoint = Config.ASSESSMENT_ASSOCIATE_TAGS_ENDPOINT.format(
+        application_id=application_id
+    )
+    result = get_data(endpoint)
+    if result:
+        current_app.logger.info(f"tags returned: {len(result)}")
+        result = [
+            AssociatedTag.from_dict(item)
+            for item in result
+            if item["associated"] is True
+        ]
+        return result
+    else:
+        current_app.logger.info(
+            f"No associated tags found for application: {application_id}."
+        )
+        return None
+
+
+def update_associated_tags(application_id, tags) -> bool:
+    endpoint = Config.ASSESSMENT_ASSOCIATE_TAGS_ENDPOINT.format(
+        application_id=application_id
+    )
+    payload = [
+        {"id": tag["tag_id"], "user_id": tag["user_id"]} for tag in tags
+    ]
+
+    current_app.logger.info(
+        f"Requesting the following tags: {payload} associate with"
+        f" application_id '{application_id}'"
+    )
+    response = requests.put(endpoint, json=payload)
+
+    was_successful = response.ok
+    if not was_successful:
+        current_app.logger.error(
+            f"Update associated tags failed, code: {response.status_code}."
+        )
+    return was_successful
+
+
 @lru_cache(maxsize=1)
 def get_funds(ttl_hash=None) -> Union[List[Fund], None]:
     del ttl_hash  # unused, but required for lru_cache
@@ -106,7 +198,10 @@ def get_funds(ttl_hash=None) -> Union[List[Fund], None]:
         for fund in response:
             funds.append(Fund.from_json(fund))
         return funds
-    return None
+    current_app.logger.error(
+        "Error retrieving funds from fund store, please check this."
+    )
+    return []
 
 
 def get_fund(fid: str, use_short_name: bool = False) -> Union[Fund, None]:
@@ -272,11 +367,24 @@ def get_assessments_stats(
 ) -> Dict | None:
     assessments_stats_endpoint = (
         Config.ASSESSMENT_STORE_API_HOST
-    ) + Config.ASSESSMENTS_STATS_ENDPOINT.format(
+    ) + Config.ASSESSMENTS_STATS_FLAGS_V2_ENDPOINT.format(
         fund_id=fund_id, round_id=round_id, params=urlencode(search_params)
     )
     current_app.logger.info(f"Endpoint '{assessments_stats_endpoint}'.")
     return get_data(assessments_stats_endpoint)
+
+
+def get_team_flag_stats(
+    fund_id: str, round_id: str, search_params: dict = {}
+) -> Dict | None:
+    team_flag_stats_endpoint = (
+        Config.ASSESSMENT_STORE_API_HOST
+    ) + Config.ASSESSMENTS_TEAM_FLAGGING_STATS_ENDPOINT.format(
+        fund_id=fund_id, round_id=round_id, params=urlencode(search_params)
+    )
+
+    current_app.logger.info(f"Endpoint '{team_flag_stats_endpoint}'.")
+    return get_data(team_flag_stats_endpoint)
 
 
 def get_assessor_task_list_state(application_id: str) -> Union[dict, None]:
@@ -401,9 +509,16 @@ def get_flags(application_id: str) -> List[FlagV2]:
     if flag:
         return FlagV2.from_list(flag)
     else:
-        msg = f"flag for application: '{application_id}' not found."
-        current_app.logger.warn(msg)
         return []
+
+
+def get_qa_complete(application_id: str) -> dict:
+    qa_complete = get_data(
+        Config.ASSESSMENT_GET_QA_STATUS_ENDPOINT.format(
+            application_id=application_id
+        )
+    )
+    return qa_complete
 
 
 def submit_flag(

@@ -29,6 +29,15 @@ def not_found(error):
     return render_template("404.html"), 404
 
 
+@assess_bp.errorhandler(403)
+@default_bp.errorhandler(403)
+def forbidden(error):
+    error_message = f"Encountered 403: {error}"
+    stack_trace = traceback.format_exc()
+    current_app.logger.info(f"{error_message}\n{stack_trace}")
+    return render_template("403.html"), 403
+
+
 @assess_bp.errorhandler(500)
 @default_bp.errorhandler(500)
 @assess_bp.errorhandler(Exception)

@@ -538,7 +538,11 @@ def _convert_checkbox_items(
         text_items.append(text_item)
         text_items.extend(
             {
-                "question": remove_dashes_underscores_capitalize(answer),
+                # The if in this statement has been added because the answer value for ChXWIQ is different than the display value.
+                # We should change the form in future versions
+                "question": remove_dashes_underscores_capitalize(answer)
+                if (item["field_id"] != "ChXWIQ" and answer != "none")
+                else "None of these",
                 "field_type": item.get("field_type"),
                 "field_id": item["field_id"],
                 "answer": "Yes",
@@ -708,19 +712,39 @@ def create_ui_components(
 
 def sanitise_html(data):
     """
-    If answer then add the `govuk-body` class to
-    all `p`, `ul`, `ol`, and `li` tags.
+    Sanitizes the HTML content in the 'answer' key of the input 'data' dictionary.
 
-    Args:
-        data: The data to be sanitised.
+    This function takes an input dictionary containing an 'answer' key with HTML content.
+    It uses BeautifulSoup to parse the HTML and modifies specific elements.
+
+    Parameters:
+        data (dict): A dictionary containing an 'answer' key with HTML content.
 
     Returns:
-        The sanitised data with govuk-body class."""
+        dict: A modified dictionary with the 'answer' key containing the govuk class and custom class.
+    """
 
     answer = data.get("answer")
     if answer:
         soup = BeautifulSoup(answer, "html.parser")
-        for tag in soup.find_all(["p", "ul", "ol", "li"]):
-            tag["class"] = "govuk-body"
+
+        for tag in soup.find_all(["p", "ul", "ol"]):
+            if tag.name == "p":
+                tag["class"] = "govuk-body"
+            if tag.name == "ul" or tag.name == "ol":
+                if style_type := tag.get("style"):
+                    style_type = (
+                        style_type.replace("list-style-type:", "")
+                        .strip(";")
+                        .strip()
+                    )
+                    tag["class"] = f"list-type-{style_type}"
+                else:
+                    if tag.name == "ul":
+                        tag["class"] = "govuk-list govuk-list--bullet"
+
+                    if tag.name == "ol":
+                        tag["class"] = "govuk-list govuk-list--number"
+
         data["answer"] = str(soup)
     return data

@@ -3,8 +3,10 @@ from unittest import mock
 import app
 import pytest
 from app.assess.models.flag_v2 import FlagV2
+from app.assess.models.round import Round
 from bs4 import BeautifulSoup
 from flask import session
+from tests.api_data.test_data import mock_api_results
 from tests.conftest import create_valid_token
 from tests.conftest import fund_specific_claim_map
 from tests.conftest import test_commenter_claims
@@ -58,6 +60,7 @@ class TestRoutes:
                 "search_in": "organisation_name,short_id",
                 "funding_type": "ALL",
                 "status": "ALL",
+                "filter_by_tag": "ALL",
             },
         }
     )
@@ -66,13 +69,17 @@ class TestRoutes:
         self,
         request,
         flask_test_client,
-        mock_get_fund,
         mock_get_funds,
         mock_get_round,
+        mock_get_fund,
         mock_get_application_overviews,
         mock_get_assessment_stats,
+        mock_get_teams_flag_stats,
         mock_get_assessment_progress,
         mock_get_application_metadata,
+        mock_get_associated_tags_for_application,
+        mock_get_available_tags_for_fund_round,
+        mock_get_tag_types,
     ):
         flask_test_client.set_cookie(
             "localhost",
@@ -113,6 +120,7 @@ class TestRoutes:
                 "search_in": "project_name,short_id",
                 "asset_type": "ALL",
                 "status": "ALL",
+                "filter_by_tag": "ALL",
             },
         }
     )
@@ -126,7 +134,11 @@ class TestRoutes:
         mock_get_round,
         mock_get_application_overviews,
         mock_get_assessment_stats,
+        mock_get_teams_flag_stats,
         mock_get_assessment_progress,
+        mock_get_associated_tags_for_application,
+        mock_get_available_tags_for_fund_round,
+        mock_get_tag_types,
     ):
         flask_test_client.set_cookie(
             "localhost",
@@ -183,6 +195,7 @@ class TestRoutes:
                 "search_in": "project_name,short_id",
                 "asset_type": "ALL",
                 "status": "QA_COMPLETE",
+                "filter_by_tag": "ALL",
             },
         }
     )
@@ -195,7 +208,11 @@ class TestRoutes:
         mock_get_round,
         mock_get_application_overviews,
         mock_get_assessment_stats,
+        mock_get_teams_flag_stats,
         mock_get_assessment_progress,
+        mock_get_associated_tags_for_application,
+        mock_get_available_tags_for_fund_round,
+        mock_get_tag_types,
     ):
 
         params = request.node.get_closest_marker("mock_parameters").args[0]
@@ -223,6 +240,7 @@ class TestRoutes:
                 "search_in": "project_name,short_id",
                 "asset_type": "pub",
                 "status": "ALL",
+                "filter_by_tag": "ALL",
             },
         }
     )
@@ -235,7 +253,11 @@ class TestRoutes:
         mock_get_round,
         mock_get_application_overviews,
         mock_get_assessment_stats,
+        mock_get_teams_flag_stats,
         mock_get_assessment_progress,
+        mock_get_associated_tags_for_application,
+        mock_get_available_tags_for_fund_round,
+        mock_get_tag_types,
     ):
 
         params = request.node.get_closest_marker("mock_parameters").args[0]
@@ -263,6 +285,7 @@ class TestRoutes:
                 "search_in": "project_name,short_id",
                 "asset_type": "ALL",
                 "status": "ALL",
+                "filter_by_tag": "ALL",
             },
         }
     )
@@ -275,7 +298,11 @@ class TestRoutes:
         mock_get_round,
         mock_get_application_overviews,
         mock_get_assessment_stats,
+        mock_get_teams_flag_stats,
         mock_get_assessment_progress,
+        mock_get_associated_tags_for_application,
+        mock_get_available_tags_for_fund_round,
+        mock_get_tag_types,
     ):
 
         params = request.node.get_closest_marker("mock_parameters").args[0]
@@ -304,6 +331,7 @@ class TestRoutes:
                 "search_in": "project_name,short_id",
                 "asset_type": "ALL",
                 "status": "ALL",
+                "filter_by_tag": "ALL",
             },
         }
     )
@@ -316,7 +344,11 @@ class TestRoutes:
         mock_get_round,
         mock_get_application_overviews,
         mock_get_assessment_stats,
+        mock_get_teams_flag_stats,
         mock_get_assessment_progress,
+        mock_get_associated_tags_for_application,
+        mock_get_available_tags_for_fund_round,
+        mock_get_tag_types,
     ):
 
         params = request.node.get_closest_marker("mock_parameters").args[0]
@@ -349,6 +381,7 @@ class TestRoutes:
                 "search_in": "project_name,short_id",
                 "asset_type": "ALL",
                 "status": "ALL",
+                "filter_by_tag": "ALL",
             },
         }
     )
@@ -371,11 +404,15 @@ class TestRoutes:
         mock_get_round,
         mock_get_application_overviews,
         mock_get_assessment_stats,
+        mock_get_teams_flag_stats,
         mock_get_assessment_progress,
         mock_get_application_metadata,
         sort_column,
         sort_order,
         column_id,
+        mock_get_associated_tags_for_application,
+        mock_get_available_tags_for_fund_round,
+        mock_get_tag_types,
     ):
 
         flask_test_client.set_cookie(
@@ -472,7 +509,6 @@ class TestRoutes:
         mock_get_bulk_accounts,
         mock_get_assessor_tasklist_state,
     ):
-
         application_id = request.node.get_closest_marker(
             "application_id"
         ).args[0]
@@ -629,8 +665,20 @@ class TestRoutes:
         mock_get_application_metadata,
         mock_get_round,
         mock_get_flags,
+        mock_get_qa_complete,
         mock_get_bulk_accounts,
+        mock_get_associated_tags_for_application,
+        mocker,
     ):
+        mocker.patch(
+            "app.assess.routes.get_round",
+            return_value=Round.from_dict(
+                mock_api_results[
+                    "fund_store/funds/{fund_id}/rounds/{round_id}"
+                ]
+            ),
+        )
+
         marker = request.node.get_closest_marker("application_id")
         application_id = marker.args[0]
         token = create_valid_token(test_lead_assessor_claims)
@@ -660,8 +708,20 @@ class TestRoutes:
         mock_get_application_metadata,
         mock_get_round,
         mock_get_flags,
+        mock_get_qa_complete,
         mock_get_bulk_accounts,
+        mock_get_associated_tags_for_application,
+        mocker,
     ):
+        mocker.patch(
+            "app.assess.routes.get_round",
+            return_value=Round.from_dict(
+                mock_api_results[
+                    "fund_store/funds/{fund_id}/rounds/{round_id}"
+                ]
+            ),
+        )
+
         marker = request.node.get_closest_marker("application_id")
         application_id = marker.args[0]
         token = create_valid_token(test_lead_assessor_claims)
@@ -824,6 +884,8 @@ class TestRoutes:
         mock_get_flags,
         mock_get_flag,
         mock_get_sub_criteria_banner_state,
+        mock_get_assessor_tasklist_state,
+        mock_get_round,
         mock_get_fund,
         mock_get_funds,
         mock_get_application_metadata,
@@ -844,6 +906,7 @@ class TestRoutes:
         assert b"Reason for continuing assessment" in response.data
         assert b"Project In prog and Stop" in response.data
 
+    @pytest.mark.application_id("stopped_app")
     @pytest.mark.flag_id("stopped_app")
     def test_post_continue_application(
         self,
@@ -854,6 +917,8 @@ class TestRoutes:
         mock_get_application_metadata,
         mock_get_fund,
         mock_get_flag,
+        mock_get_round,
+        mock_get_assessor_tasklist_state,
     ):
         flag_id = request.node.get_closest_marker("flag_id").args[0]
         token = create_valid_token(test_lead_assessor_claims)
@@ -862,7 +927,7 @@ class TestRoutes:
             "app.assess.helpers.submit_flag",
             return_value=FlagV2.from_dict(
                 {
-                    "application_id": "app_123",
+                    "application_id": "stopped_app",
                     "latest_status": "RESOLVED",
                     "latest_allocation": None,
                     "id": "flagid",
@@ -882,14 +947,14 @@ class TestRoutes:
         )
 
         response = flask_test_client.post(
-            f"assess/continue_assessment/app_123?flag_id={flag_id}",
+            f"assess/continue_assessment/stopped_app?flag_id={flag_id}",
             data={
                 "reason": "We should continue the application.",
             },
         )
         app.assess.helpers.submit_flag.assert_called_once()
         app.assess.helpers.submit_flag.assert_called_once_with(
-            "app_123",
+            "stopped_app",
             "RESOLVED",
             "lead",
             "We should continue the application.",
@@ -899,7 +964,9 @@ class TestRoutes:
         )
 
         assert response.status_code == 302
-        assert response.headers["Location"] == "/assess/application/app_123"
+        assert (
+            response.headers["Location"] == "/assess/application/stopped_app"
+        )
 
     @pytest.mark.application_id("flagged_qa_completed_app")
     def test_qa_complete_flag_displayed(
@@ -909,12 +976,24 @@ class TestRoutes:
         mock_get_round,
         mock_get_assessor_tasklist_state,
         mock_get_flags,
+        mock_get_qa_complete,
         mock_get_bulk_accounts,
         mock_get_sub_criteria_banner_state,
         mock_get_fund,
         mock_get_funds,
         mock_get_application_metadata,
+        mock_get_associated_tags_for_application,
+        mocker,
     ):
+        mocker.patch(
+            "app.assess.routes.get_round",
+            return_value=Round.from_dict(
+                mock_api_results[
+                    "fund_store/funds/{fund_id}/rounds/{round_id}"
+                ]
+            ),
+        )
+
         token = create_valid_token(test_lead_assessor_claims)
         flask_test_client.set_cookie("localhost", "fsd_user_token", token)
         application_id = request.node.get_closest_marker(
@@ -939,8 +1018,20 @@ class TestRoutes:
         mock_get_application_metadata,
         mock_get_round,
         mock_get_flags,
+        mock_get_qa_complete,
         mock_get_bulk_accounts,
+        mock_get_associated_tags_for_application,
+        mocker,
     ):
+        mocker.patch(
+            "app.assess.routes.get_round",
+            return_value=Round.from_dict(
+                mock_api_results[
+                    "fund_store/funds/{fund_id}/rounds/{round_id}"
+                ]
+            ),
+        )
+
         token = create_valid_token(test_lead_assessor_claims)
         flask_test_client.set_cookie("localhost", "fsd_user_token", token)
 
@@ -967,6 +1058,7 @@ class TestRoutes:
                 "search_in": "project_name,short_id",
                 "asset_type": "ALL",
                 "status": "ALL",
+                "filter_by_tag": "ALL",
             },
         }
     )
@@ -974,12 +1066,16 @@ class TestRoutes:
         self,
         request,
         flask_test_client,
-        mock_get_fund,
         mock_get_funds,
+        mock_get_fund,
         mock_get_round,
         mock_get_application_overviews,
         mock_get_assessment_stats,
+        mock_get_teams_flag_stats,
         mock_get_assessment_progress,
+        mock_get_associated_tags_for_application,
+        mock_get_available_tags_for_fund_round,
+        mock_get_tag_types,
     ):
         flask_test_client.set_cookie(
             "localhost",
@@ -1058,12 +1154,14 @@ class TestRoutes:
         self,
         flask_test_client,
         request,
-        mock_get_sub_criteria_banner_state,
+        mock_get_assessor_tasklist_state,
         mock_get_fund,
         mock_get_funds,
         mock_get_application_metadata,
         mock_get_flags,
+        mock_get_round,
         templates_rendered,
+        mock_get_associated_tags_for_application,
         mocker,
     ):
 
@@ -1108,12 +1206,11 @@ class TestRoutes:
         response = flask_test_client.get(
             "/assess/application/test_app_id/export/test_short_id/answers.txt"
         )
-        sample_expected_q_a = (
-            "Project information\n\n  Q) Have you been given funding through"
-            " the Community Ownership Fund before?\n  A) Yes\n\n"
-        )
+        sample_1 = "Project information"
+        sample_2 = "Q) Have you been given"
         assert response.status_code == 200
-        assert sample_expected_q_a in response.text
+        assert sample_1 in response.text
+        assert sample_2 in response.text
 
     def test_get_file_with_short_id(
         self,

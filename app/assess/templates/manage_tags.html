@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block header %}
+{% include "./components/tag_header.html" %}
+{% endblock header %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        <h1 class="govuk-heading-xl govuk-!-margin-bottom-4">Manage tags</h1>
+
+        <div id="contact-hint" class="govuk-hint govuk-!-margin-bottom-6">
+            View and create tags here
+        </div>
+
+        <div class="govuk-grid-row govuk-!-text-align-left">
+            <div class="govuk-grid-column-full">
+                <a href="{{ url_for('tag_bp.create_tag', fund_id = fund_round['fund_id'], round_id = fund_round['round_id']) }}"
+                    class="govuk-button govuk-button--secondary" data-module="govuk-button">
+                    Create new tag
+                </a>
+            </div>
+        </div>
+
+
+        {% if available_tags %}
+        <div class="govuk-form-group">
+            <table class="govuk-table">
+                <caption class="govuk-table__caption govuk-table__caption--m">Active tags</caption>
+                <thead class="govuk-table__head">
+                    <tr class="govuk-table__row">
+                        <th scope="col" class="govuk-table__header">Tag name</th>
+                        <th scope="col" class="govuk-table__header">Purpose</th>
+                        <th scope="col" class="govuk-table__header"></th>
+                    </tr>
+                </thead>
+                <tbody class="govuk-table__body">
+                    {% for tag in available_tags %}
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__cell">
+                            {{tag.value}}
+                        </td>
+                        <td class="govuk-table__cell">
+                            <strong class="govuk-tag--{{ tag_config[tag.purpose]['colour'] }} govuk-tag dluhc-tag">{{tag.purpose}}</strong>
+                        </td>
+                        {% if tag.active %}
+                            <td class="govuk-table__cell">
+                                <strong class="govuk-tag--green govuk-tag dluhc-tag">ACTIVE</strong>
+                            </td>
+                        {% else %}
+                            <td class="govuk-table__cell">
+                                <strong class="govuk-tag--red govuk-tag dluhc-tag">NOT ACTIVE</strong>
+                            </td>
+                        {% endif %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+
+            </table>
+        </div>
+        {% else %}
+        <p class="govuk-body dluhc-body-empty">
+            There are no tags available
+        </p>
+        {% endif %}
+
+    </div>
+</div>
+
+{% endblock content %}

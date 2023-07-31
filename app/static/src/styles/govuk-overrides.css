@@ -245,3 +245,112 @@
     padding: 3px;
     font-family: "GDS Transport", arial, sans-serif;
 }
+
+
+  .dluhc-tag {
+    font-weight: 600;
+    border: 2px solid #505a5f;
+  }
+  .dluhc-tag.govuk-tag--red {
+    border-color: #942514;
+  }
+  .dluhc-tag.govuk-tag--green {
+    border-color: #00703c;
+  }
+  .dluhc-tag.govuk-tag--yellow {
+    border-color: rgb(89, 77, 0);
+  }
+  .dluhc-tag-v1 {
+    font-weight: 400;
+    color: #505a5f;
+    border: 1px solid #505a5f;
+  }
+
+  .govuk-tag--grey {
+    background-color: white;
+  }
+
+  .dluhc-body-empty {
+    color: #505a5f;
+  }
+
+.govuk-summary-card__title-wrapper {
+    text-size-adjust: 100%;
+    border-bottom: 1px solid transparent;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+    padding: 15px 20px;
+    background-color: #505a5f;
+}
+
+.govuk_summary-card__title {
+    text-size-adjust: 100%;
+    font-weight: 700;
+    margin: 5px 20px 10px 0;
+    margin-bottom: 5px;
+    font-size: 1.5rem !important;
+    line-height: 1.25 !important;
+    color: white;
+}
+
+.govuk-summary-card__actions {
+    text-size-adjust: 100%;
+    font-weight: 700;
+    display: flex;
+    flex-wrap: wrap;
+    row-gap: 10px;
+    margin: 5px 0;
+    padding: 0;
+    list-style: none;
+    font-size: 1.1875rem;
+    line-height: 1.3157894737;
+    justify-content: right;
+    text-align: right;
+}
+
+.govuk-summary-card__action {
+    text-size-adjust: 100%;
+    font-weight: 700;
+    list-style: none;
+    font-size: 1.1875rem;
+    line-height: 1.3157894737;
+    display: inline;
+    margin: 0;
+    padding-right: 0;
+    border-right: none;
+    padding-left: 10px;
+}
+
+.govuk-link__white_font {
+    color: white !important;
+}
+
+
+ul.list-type-square {
+    list-style-type: square;
+  }
+
+ul.list-type-circle {
+    list-style-type: circle;
+  }
+
+ol.list-type-lower-alpha {
+list-style-type: lower-alpha;
+}
+
+ol.list-type-lower-roman {
+list-style-type: lower-roman;
+}
+
+ol.list-type-lower-greek {
+list-style-type: lower-greek;
+}
+
+ol.list-type-upper-alpha {
+list-style-type: upper-alpha;
+}
+
+ol.list-type-upper-roman {
+list-style-type: upper-roman;
+}

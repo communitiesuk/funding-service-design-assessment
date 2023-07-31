@@ -46,7 +46,8 @@
 
         {% endset %}
 
-        {% set username_date = '('+ accounts_list[data['user_id']]['full_name'] + ')<br>'+ data['date_created'] | utc_to_bst %}
+        {% set user_full_name = accounts_list[data['user_id']]['full_name'] or 'N/A' %}
+        {% set username_date = '('+ user_full_name + ')<br>'+ data['date_created'] | utc_to_bst %}
         {% set CreatedBy = username_date if data['status'].name=='RAISED' else 'N/A' %}
         {% set ResolvedBy = username_date if data['status'].name!='RAISED' else 'N/A' %}
 

@@ -14,6 +14,7 @@ class Round:
     opens: str
     title: str
     short_name: str
+    all_uploaded_documents_section_available: bool = False
     applications: List[Application] = None
 
     @classmethod
@@ -35,6 +36,10 @@ class Round:
             fund_id=data.get("fund_id"),
             opens=data.get("opens"),
             deadline=data.get("deadline"),
+            all_uploaded_documents_section_available=data.get(
+                "all_uploaded_documents_section_available"
+            )
+            or False,
         )
 
     def add_application(self, application: Application):
