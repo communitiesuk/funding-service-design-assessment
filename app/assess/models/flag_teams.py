@@ -26,13 +26,7 @@ class TeamsFlagData:
     @classmethod
     def from_flags(cls, flags_list: List[FlagV2], teams_list: list = None):
         teams_stats = {}
-        # ordinal_list = [
-        #     "First",
-        #     "Second",
-        #     "Third",
-        #     "Fourth",
-        #     "Fifth",
-        # ]  # assume max 5 flags/team
+
         if isinstance(flags_list, FlagV2):
             flags_list = [flags_list]
 
@@ -43,31 +37,30 @@ class TeamsFlagData:
             )  # filter for unique teams
 
         for team in teams_list:
-            num_of_flags = 0
-            num_of_resolved = 0
-            num_of_raised = 0
-            num_of_stopped = 0
-            team_flags_list = []
-            ordinal_list = []
+            team_flags = [f for f in flags_list if f.latest_allocation == team]
+            num_of_flags = len(team_flags)
+            num_of_raised = len(
+                [f for f in team_flags if f.latest_status == FlagTypeV2.RAISED]
+            )
+            num_of_resolved = len(
+                [
+                    f
+                    for f in team_flags
+                    if f.latest_status == FlagTypeV2.RESOLVED
+                ]
+            )
+            num_of_stopped = len(
+                [
+                    f
+                    for f in team_flags
+                    if f.latest_status == FlagTypeV2.STOPPED
+                ]
+            )
 
-            for flag in flags_list:
-                if flag.latest_allocation == team:
-                    num_of_flags = num_of_flags + 1
-                    team_flags_list.append(flag)
-                    # ordinal_list.append(TeamsFlagData.ordinal(num_of_flags))
-                    if flag.latest_status == FlagTypeV2.RAISED:
-                        num_of_raised = num_of_raised + 1
-                    elif flag.latest_status == FlagTypeV2.RESOLVED:
-                        num_of_resolved = num_of_resolved + 1
-                    elif flag.latest_status == FlagTypeV2.STOPPED:
-                        num_of_stopped = num_of_stopped + 1
-
-            if num_of_flags > 0:
-                for flag_count in range(num_of_flags):
-                    ordinal = num2words(
-                        flag_count + 1, to="ordinal"
-                    ).capitalize()
-                    ordinal_list.append(ordinal)
+            ordinal_list = [
+                num2words(index, to="ordinal").capitalize()
+                for index, _ in enumerate(team_flags, start=1)
+            ]
 
             teams_stats[team] = TeamFlagStats(
                 team_name=team,
@@ -75,16 +68,8 @@ class TeamsFlagData:
                 num_of_resolved=num_of_resolved,
                 num_of_raised=num_of_raised,
                 num_of_stopped=num_of_stopped,
-                ordinal_list=ordinal_list[0:num_of_flags][::-1],
-                flags_list=team_flags_list[::-1],
+                ordinal_list=list(reversed(ordinal_list)),
+                flags_list=list(reversed(team_flags)),
             )
 
         return cls(teams_stats=teams_stats)
-
-    @staticmethod
-    def ordinal(n: int):
-        if 11 <= (n % 100) <= 13:
-            suffix = "th"
-        else:
-            suffix = ["th", "st", "nd", "rd", "th"][min(n % 10, 4)]
-        return str(n) + suffix
