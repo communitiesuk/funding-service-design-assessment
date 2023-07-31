@@ -66,3 +66,223 @@
     font-size: 3em;
     line-height: 1.31579;
 }
+
+.fsd-callout-todo {
+    text-align: center;
+    border: 4px solid #e9eaea;
+    text-align: center
+}
+
+.fsd-callout-number {
+    font-size: 2.25rem;
+    line-height: 1.11111;
+    margin-top: 10px;
+    margin-bottom: 10px
+}
+
+.fsd-callout-tag {
+    text-align: center;
+    background-color: #1d70b8
+}
+
+.fsd-callout-tag--blue {
+    background-color: #d2e2f1
+}
+
+.fsd-callout-tag--grey {
+    background-color: #eeefef
+}
+
+.upload-file {
+    text-align: center;
+    background-color: #f3f2f1;
+    padding-bottom: 20px
+}
+
+.assessment-navigation {
+    margin-top: 8px;
+    border-top: 3px #1d70b8 solid
+}
+
+.assessment-navigation ul:first-of-type {
+    border-top: none;
+    margin-top: 20px
+}
+
+.assessment-navigation ul:last-of-type {
+    border-top: 2px #b1b4b6 solid;
+    padding-top: 20px
+}
+
+.assessment-navigation ul:first-of-type:last-of-type {
+    border-top: none;
+    padding-top: 0
+}
+
+.theme {
+    margin-top: 8px;
+    padding-top: 20px;
+    border-top: 3px #b1b4b6 solid
+}
+
+.response-title {
+    margin-bottom: 0;
+    padding: 5px 5px 5px 20px;
+    background-color: #b1b4b6;
+    color: #0b0c0c
+}
+
+.template-answer {
+    border: 3px #b1b4b6 solid;
+    padding: 25px 25px 4px;
+    background-color: #fff
+}
+
+.template-answer--dashboard-container {
+    border: 4px solid #505a5f;
+    padding: 25px 25px 4px;
+    background-color: #fff
+}
+
+.scoring-heading {
+    margin-bottom: 10px
+}
+
+.headline-info,.content-container {
+    max-width: 1400px;
+    padding: 0 2em;
+    margin: auto
+}
+
+.headline-info .sign-out,.content-container .sign-out {
+    margin-bottom: 10px
+}
+
+.headline-info .task-list,.content-container .task-list {
+    padding: 0
+}
+
+.assessment-overview .headline-info .headline-container {
+    margin-bottom: 0
+}
+
+.assessment-overview .headline-info h1:first-child {
+    margin-bottom: 10px
+}
+
+.assessment-overview .headline-info h1:last-child {
+    margin-bottom: 15px
+}
+
+.headline-container {
+    background-color: #1d70b8;
+    margin: 0 0 30px;
+    padding: 40px 0
+}
+
+.headline-container * {
+    color: #fff
+}
+
+.headline-container .lead-dashboard-heading {
+    margin-bottom: 20px
+}
+
+[aria-sort] button,[aria-sort] button:hover {
+    background-color: transparent;
+    border-width: 0;
+    -webkit-box-shadow: 0;
+    -moz-box-shadow: 0;
+    box-shadow: 0;
+    color: #005ea5;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+    padding: 0 10px 0 0;
+    position: relative;
+    text-align: inherit;
+    font-size: 1em;
+    margin: 0
+}
+
+[aria-sort] button:focus {
+    background-color: #fd0;
+    color: #0b0c0c;
+    box-shadow: 0 -2px #fd0,0 4px #0b0c0c;
+    outline: none
+}
+
+[aria-sort]:first-child button {
+    right: auto
+}
+
+[aria-sort] button:before {
+    content: " ▼";
+    position: absolute;
+    right: -1px;
+    top: 9px;
+    font-size: .5em
+}
+
+[aria-sort] button:after {
+    content: " ▲";
+    position: absolute;
+    right: -1px;
+    top: 1px;
+    font-size: .5em
+}
+
+[aria-sort="ascending"] button:before,[aria-sort="descending"] button:before {
+    content: none
+}
+
+[aria-sort="ascending"] button:after {
+    content: " ▲";
+    font-size: .8em;
+    position: absolute;
+    right: -5px;
+    top: 2px
+}
+
+[aria-sort="descending"] button:after {
+    content: " ▼";
+    font-size: .8em;
+    position: absolute;
+    right: -5px;
+    top: 2px
+}
+
+.fsd-table-filter-link[aria-selected="true"] {
+    font-weight: bold;
+    color: #0b0c0c;
+    text-decoration: none
+}
+
+.fsd-assess-search-input button {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    cursor: pointer;
+    padding: 4px;
+    height: 36px;
+    width: 38px
+}
+
+.fsd-assess-search-input button:hover,.fsd-assess-search-input button:active {
+    background: #dedede
+}
+
+.fsd-assess-search-input .govuk-input__suffix {
+    padding: 0
+}
+
+.right {
+  margin: 0px; /* remove all margins to fit two divs in the container */
+  display: inline-block; /* display block elements in one line */
+}
+
+.left {
+  margin: 0px;
+  display: inline-block;
+}
