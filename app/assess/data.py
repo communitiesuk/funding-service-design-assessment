@@ -345,10 +345,7 @@ def submit_score_and_justification(
     current_app.logger.info(
         f"Response from Assessment Store: '{response.json()}'."
     )
-    if response.status_code == 200:
-        return True
-    else:
-        return False
+    return response.ok
 
 
 def get_applications(params: dict) -> Union[List[Application], None]:
