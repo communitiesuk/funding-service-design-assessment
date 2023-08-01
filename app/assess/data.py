@@ -794,16 +794,6 @@ def update_tag(fund_id: str, round_id: str, updated_tag: Dict) -> Tag:
     return None
 
 
-def get_apps_with_tag_count(fund_id, round_id, tag_id) -> int:
-    endpoint = Config.ASSESSMENT_GET_TAG_USAGE_ENDPOINT.format(
-        fund_id=fund_id, round_id=round_id, tag_id=tag_id
-    )
-    response = get_data(endpoint)
-    if response:
-        return response["count"]
-    return None
-
-
 def get_applicant_export(fund_id, round_id):
     applicant_export_endpoint = Config.APPLICANT_EXPORT_ENDPOINT.format(
         fund_id=fund_id, round_id=round_id

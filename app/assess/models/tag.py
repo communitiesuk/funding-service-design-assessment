@@ -10,6 +10,7 @@ class Tag:
     active: bool
     purpose: str
     type_id: str
+    tag_association_count: int
 
     @classmethod
     def from_dict(cls, d: dict):
