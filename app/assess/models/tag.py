@@ -10,7 +10,7 @@ class Tag:
     active: bool
     purpose: str
     type_id: str
-    tag_association_count: int
+    tag_association_count: int = -1
 
     @classmethod
     def from_dict(cls, d: dict):
