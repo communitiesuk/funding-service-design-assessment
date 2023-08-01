@@ -1,6 +1,6 @@
 {%- from "govuk_frontend_jinja/components/table/macro.html" import govukTable -%}
 
-{% macro fund_summary(name, is_active_status, fund_id, round_id, fund_name, round_name, application_stats, assessments_href, access_controller, export_href, round_application_fields_download_available) %}
+{% macro fund_summary(name, is_active_status, fund_id, round_id, fund_name, round_name, application_stats, assessments_href, access_controller, export_href, assessment_tracker_href, round_application_fields_download_available) %}
 <div class="govuk-!-padding-0 govuk-!-padding-right-2 govuk-!-padding-bottom-2 govuk-grid-column-one-third content-container">
 
     <div class="govuk-summary-card__title-wrapper">
@@ -60,6 +60,11 @@
             Export applicant information
         </a>
         {% endif %}
+        </br>
+        </br>
+        <a class="govuk-link" href="{{ assessment_tracker_href }}">
+            Assessment Tracker Export
+        </a>
     </div>
 </div>
 {% endmacro %}

@@ -794,15 +794,17 @@ def application(application_id):
 
 
 @assess_bp.route(
-    "/assessor_export/<fund_short_name>/<round_short_name>/",
+    "/assessor_export/<fund_short_name>/<round_short_name>/<report_type>",
     methods=["GET"],
 )
 @check_access_fund_short_name
-def assessor_export(fund_short_name: str, round_short_name: str):
+def assessor_export(
+    fund_short_name: str, round_short_name: str, report_type: str
+):
 
     _round = get_round(fund_short_name, round_short_name, use_short_name=True)
-    export = get_applicant_export(_round.fund_id, _round.id)
+    export = get_applicant_export(_round.fund_id, _round.id, report_type)
 
-    csv_file = generate_field_info_csv(export)
-
-    return download_file(csv_file, "text/csv", "applicant_info.csv")
+    if export:
+        csv_file = generate_field_info_csv(export)
+        return download_file(csv_file, "text/csv", "applicant_info.csv")
