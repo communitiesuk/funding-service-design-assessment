@@ -1,17 +1,16 @@
 {% macro banner_summary(fund_name, project_reference, project_name, funding_amount_requested, assessment_status, flag_status) %}
-
 <div class="fsd-banner-background">
-    <div class="govuk-width-container">
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-full">
-                <div class="govuk-grid-column-two-thirds">
+<div class="govuk-width-container">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+                <div class="govuk-grid-column-two-thirds govuk-!-padding-0">
                     <p class="govuk-heading-xl fsd-banner-content">Fund: <span class="govuk-!-font-weight-regular">{{ fund_name }}</span></p>
                     <p class="govuk-heading-l fsd-banner-content">Project reference: <span class="govuk-!-font-weight-regular">{{ project_reference | format_project_ref }}</span></p>
                     <p class="govuk-body-l fsd-banner-content fsd-banner-collapse-padding">Project name: {{ project_name }}</p>
                     <p class="govuk-body-l fsd-banner-content ">Total funding requested: £{{ "{:,.2f}".format(funding_amount_requested | float) }}</p>
 
                     {% if g.access_controller.has_any_assessor_role %}
-                    <h3 class="govuk-body-l fsd-banner-content">Assessment status: {{ assessment_status }}</h3>
+                    <h3 class="govuk-body-l fsd-banner-content fsd-banner-collapse-padding">Assessment status: {{ assessment_status }}</h3>
                     {% endif %}
                     {% if g.access_controller.has_any_assessor_role and (("Flagged" in  flag_status) or (flag_status in ["Multiple flags to resolve", "Stopped", "Flagged"])) %}
                         <h3 class="govuk-body-l fsd-banner-content fsd-banner-collapse-padding">{{ flag_status or "" }}</h3>
@@ -19,7 +18,6 @@
                 </div>
             </div>
         </div>
-    </div>
 </div>
-
+</div>
 {% endmacro %}
