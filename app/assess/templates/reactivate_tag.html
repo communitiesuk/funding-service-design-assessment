@@ -1,7 +1,8 @@
 {% extends "base.html" %}
+{% from "macros/tag_header.html" import tag_header %}
 
 {% block header %}
-{% include "./components/tag_header.html" %}
+{{ tag_header("manage tags", url_for("tag_bp.load_fund_round_tags", fund_id=fund_round["fund_id"], round_id=fund_round["round_id"]), fund_round, sso_logout_url) }}
 {% endblock header %}
 
 {% block content %}

@@ -28,6 +28,16 @@ tag_value_field = TextAreaField(
 )
 
 
+tag_value_field = TextAreaField(
+    "value",
+    validators=[
+        InputRequired(message="Provide a value for the tag."),
+        length(max=Config.TEXT_AREA_INPUT_MAX_CHARACTERS),
+        Regexp(r"^[A-Za-z0-9_' -]+$", message="Invalid characters in value."),
+    ],
+)
+
+
 class NewTagForm(FlaskForm):
     value = tag_value_field
 

@@ -12,10 +12,10 @@ from app.assess.data import get_tags_for_fund_round
 from app.assess.data import post_new_tag_for_fund_round
 from app.assess.data import update_associated_tags
 from app.assess.data import update_tag
-from app.assess.forms.tags import EditTagForm
 from app.assess.data import update_tags
 from app.assess.display_value_mappings import search_params_tag
 from app.assess.forms.tags import DeactivateTagForm
+from app.assess.forms.tags import EditTagForm
 from app.assess.forms.tags import NewTagForm
 from app.assess.forms.tags import ReactivateTagForm
 from app.assess.forms.tags import TagAssociationForm
@@ -99,16 +99,10 @@ def get_fund_round(fund_id, round_id) -> Dict:
 @check_access_fund_id(roles_required=["ASSESSOR"])
 def load_fund_round_tags(fund_id, round_id):
     fund_round = get_fund_round(fund_id, round_id)
-    return fund_round
-
-
-@tag_bp.route("/tags/manage/<fund_id>/<round_id>", methods=["GET"])
-@check_access_fund_id(roles_required=["ASSESSOR"])
-def load_fund_round_tags(fund_id, round_id):
-    fund_round = get_fund_round(fund_id, round_id)
     search_params, show_clear_filters = match_search_params(
         search_params_tag, request.args
     )
+    tags = get_tags_for_fund_round(fund_id, round_id, search_params)
     tag_types = get_tag_types()
     tag_types.insert(0, TagType(id="all", purpose="All", description="all"))
     tag_status_configs = [
@@ -170,7 +164,6 @@ def create_tag(fund_id, round_id):
             f"Tag creation form failed validation: {new_tag_form.errors}"
         )
         flash(FLAG_ERROR_MESSAGE)
-    available_tags = get_available_tags_for_fund_round(fund_id, round_id)
     return render_template(
         "create_tag.html",
         form=new_tag_form,
