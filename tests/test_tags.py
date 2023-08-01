@@ -354,7 +354,8 @@ def test_manage_tag_page_renders_with_active_tags(
     assert response.status_code == 200
     assert "Val 1" in response.text
     assert "Val 2" in response.text
-    assert "Deactivate" in response.text
+    assert "Edit" in response.text
+    assert "Deactivate" not in response.text
     assert "Reactivate" not in response.text
 
 
