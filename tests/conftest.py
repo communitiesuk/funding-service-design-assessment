@@ -466,7 +466,6 @@ def mock_get_assessment_progress():
 
 @pytest.fixture(scope="function")
 def mock_get_teams_flag_stats():
-
     with mock.patch(
         "app.assess.routes.get_team_flag_stats",
         return_value=mock_api_results[
@@ -687,7 +686,6 @@ def mock_get_tasklist_state_for_banner(mocker):
 
 @pytest.fixture(scope="function")
 def client_with_valid_session(flask_test_client):
-
     token = create_valid_token(test_lead_assessor_claims)
     flask_test_client.set_cookie("localhost", "fsd_user_token", token)
     yield flask_test_client
@@ -760,12 +758,10 @@ def mock_get_tag_types(mocker):
     ]:
         mocker.patch(
             function_module_path,
-            return_value=[
-                TagType(
-                    id="tag_type_1",
-                    purpose="POSITIVE",
-                    description="Tag type 1 description",
-                ),
-            ],
+            return_value=TagType(
+                id="tag_type_1",
+                purpose="POSITIVE",
+                description="Tag type 1 description",
+            ),
         )
     yield

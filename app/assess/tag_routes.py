@@ -191,8 +191,10 @@ def deactivate_tag(fund_id, round_id, tag_id):
         current_app.logger.info(
             f"Tag deactivation form validated, deactivating tag_id: {tag_id}."
         )
-        tag_to_deactivate = [{"id": tag_id, "active": False}]
-        tag_deactivated = update_tags(fund_id, round_id, tag_to_deactivate)
+        tag_update_to_deactivate = [{"id": tag_id, "active": False}]
+        tag_deactivated = update_tags(
+            fund_id, round_id, tag_update_to_deactivate
+        )
         if tag_deactivated:
             return redirect(
                 url_for(
