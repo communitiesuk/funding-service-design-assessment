@@ -536,7 +536,7 @@ def test_edit_tag_get(
     soup = BeautifulSoup(response.data, "html.parser")
     assert soup.find("h1").text.strip() == 'Edit tag "tag value 1"'
     assert (
-        f"impact {mock_get_tag_and_count[1]} previous"
+        f"{mock_get_tag_and_count[1]} tagged assessments."
         in soup.find("strong", class_="govuk-warning-text__text").text
     )
 
