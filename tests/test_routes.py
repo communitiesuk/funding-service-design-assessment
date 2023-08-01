@@ -53,6 +53,32 @@ class TestRoutes:
 
     @pytest.mark.mock_parameters(
         {
+            "get_assessment_stats_path": (
+                "app.assess.models.fund_summary.get_assessments_stats"
+            ),
+            "get_rounds_path": "app.assess.models.fund_summary.get_rounds",
+            "fund_id": "test-fund",
+            "round_id": "test-round",
+        }
+    )
+    def test_route_landing_export_link(
+        self,
+        flask_test_client,
+        mock_get_funds,
+        mock_get_rounds,
+        mock_get_assessment_stats,
+    ):
+        token = create_valid_token(test_lead_assessor_claims)
+        flask_test_client.set_cookie("localhost", "fsd_user_token", token)
+        response = flask_test_client.get("/assess/assessor_tool_dashboard/")
+        assert 200 == response.status_code, "Wrong status code on response"
+        soup = BeautifulSoup(response.data, "html.parser")
+
+        export_link = soup.find("a", href="/assess/assessor_export/TF/tr/")
+        assert len(export_link) != 0
+
+    @pytest.mark.mock_parameters(
+        {
             "fund_short_name": "NSTF",
             "round_short_name": "TR",
             "expected_search_params": {
