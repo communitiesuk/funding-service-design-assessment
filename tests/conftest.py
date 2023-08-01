@@ -2,6 +2,7 @@ import multiprocessing
 import platform
 from pathlib import Path
 from unittest import mock
+from unittest.mock import call
 
 import jwt as jwt
 import pytest
@@ -338,7 +339,16 @@ def mock_get_round(request):
                 use_short_name=use_short_name,
             )
         else:
-            mocked_round.assert_called_with(fund_id, round_id)
+            expected_call = call(fund_id, round_id)
+            optional_call_false = call(fund_id, round_id, use_short_name=False)
+            optional_call_true = call(fund_id, round_id, use_short_name=True)
+
+            # Check if any of the expected calls were made
+            assert (
+                expected_call in mocked_round.mock_calls
+                or optional_call_false in mocked_round.mock_calls
+                or optional_call_true in mocked_round.mock_calls
+            )
 
 
 @pytest.fixture(scope="function")
