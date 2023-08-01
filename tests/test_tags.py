@@ -38,6 +38,7 @@ test_tags_active = [
         "active": True,
         "purpose": "POSITIVE",
         "type_id": "type_1",
+        "tag_association_count": 2,
     },
     {
         "id": "432",
@@ -46,6 +47,7 @@ test_tags_active = [
         "active": True,
         "purpose": "POSITIVE",
         "type_id": "type_1",
+        "tag_association_count": 2,
     },
 ]
 test_get_tag = {
@@ -84,6 +86,7 @@ def test_change_tags_route(
                 active=True,
                 purpose="POSITIVE",
                 type_id="type_1",
+                tag_association_count=2,
             )
         ],
     ), mock.patch(
@@ -145,6 +148,7 @@ def test_change_tags_route_associated_tag_checked(
                 active=True,
                 purpose="POSITIVE",
                 type_id="type_1",
+                tag_association_count=2,
             ),
             Tag(
                 id="456",
@@ -153,6 +157,7 @@ def test_change_tags_route_associated_tag_checked(
                 active=True,
                 purpose="NEGATIVE",
                 type_id="type_2",
+                tag_association_count=2,
             ),
         ],
     ), mock.patch(
@@ -939,11 +944,9 @@ def mock_get_tag_and_count(mocker):
         active=True,
         purpose="general",
         type_id="abcabc",
+        tag_association_count=count,
     )
     mocker.patch("app.assess.tag_routes.get_tag", return_value=mock_tag)
-    mocker.patch(
-        "app.assess.tag_routes.get_apps_with_tag_count", return_value=count
-    )
     yield (tag_id, count)
 
 

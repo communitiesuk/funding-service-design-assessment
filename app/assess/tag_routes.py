@@ -2,7 +2,6 @@ from typing import Dict
 
 from app.assess.auth.validation import check_access_application_id
 from app.assess.auth.validation import check_access_fund_id
-from app.assess.data import get_apps_with_tag_count
 from app.assess.data import get_associated_tags_for_application
 from app.assess.data import get_fund
 from app.assess.data import get_round
@@ -282,7 +281,6 @@ def edit_tag(fund_id, round_id, tag_id):
     edit_tag_form = EditTagForm()
     fund_round = get_fund_round(fund_id, round_id)
     tag = get_tag(fund_id, round_id, tag_id)
-    affected_apps_count = get_apps_with_tag_count(fund_id, round_id, tag_id)
     if request.method == "GET":
         current_app.logger.info(f"Loading edit tag page for id {tag_id}")
 
@@ -316,5 +314,4 @@ def edit_tag(fund_id, round_id, tag_id):
         form=edit_tag_form,
         fund_round=fund_round,
         tag=tag,
-        affected_apps_count=affected_apps_count,
     )
