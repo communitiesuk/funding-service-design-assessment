@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block header %}
+{% include "./components/tag_header.html" %}
+{% endblock header %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-full">
+
+    <h1 class="govuk-heading-xl">Deactivate {{tag.value}} tag</h1>
+    {% for message in get_flashed_messages() %}
+      <div class="govuk-grid-row govuk-error-summary" data-module="govuk-error-summary" role="alert">
+          <h2 class="govuk-error-summary__title" autofocus>
+              {{ message }}
+          </h2>
+      </div>
+  {% endfor %}
+    <p class="govuk-body-l govuk-!-font-weight-bold">Are you sure you want to deactivate this tag?</p>
+    <p class="govuk-body govuk-!-margin-bottom-8">This action will remove the tag from all {{tag.tag_association_count}}
+      applications this tag is being used by and cannot be undone.</p>
+    <form method="post">
+      {{ form.csrf_token }}
+      <div class="govuk-form-group">
+        <fieldset class="govuk-fieldset" aria-describedby="deactivate-hint">
+          <div class="govuk-checkboxes" data-module="govuk-checkboxes">
+            <div class="govuk-checkboxes__item">
+              <input class="govuk-checkboxes__input" id="deactivate" name="deactivate" type="checkbox"
+                value="{{tag.id}}">
+              <label class="govuk-label govuk-checkboxes__label" for="deactivate">
+                {% if tag.tag_association_count == 1 %}
+                    I understand this tag will be removed from 1 application, and this
+                {% elif tag.tag_association_count > 1 %}
+                    I understand this tag will be removed from all {{tag.tag_association_count}} applications, and this
+                {% endif %}
+                <b>cannot</b> be undone.
+              </label>
+            </div>
+          </div>
+        </fieldset>
+      </div>
+
+
+      <div class="govuk-button-group">
+        <button class="govuk-button govuk-button--warning" data-module="govuk-button">
+          Yes, deactivate tag
+        </button>
+        <a class="govuk-link" href="{{ url_for('tag_bp.load_fund_round_tags', fund_id=fund_round['fund_id'],
+          round_id=fund_round['round_id']) }}">
+          Cancel
+        </a>
+      </div>
+    </form>
+
+  </div>
+</div>
+{% endblock %}

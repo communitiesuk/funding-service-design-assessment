@@ -2,7 +2,7 @@ from unittest import mock
 
 import pytest
 from app.assess.data import get_associated_tags_for_application
-from app.assess.data import get_available_tags_for_fund_round
+from app.assess.data import get_tags_for_fund_round
 from app.assess.data import post_new_tag_for_fund_round
 from app.assess.data import update_associated_tags
 from app.assess.models.tag import AssociatedTag
@@ -12,7 +12,25 @@ from bs4 import BeautifulSoup
 from tests.api_data.test_data import test_fund_id
 from tests.api_data.test_data import test_round_id
 
-test_tags = [
+test_tags_inactive = [
+    {
+        "id": "123",
+        "value": "Val 1 INACTIVE",
+        "creator_user_id": "Bob",
+        "active": False,
+        "purpose": "POSITIVE",
+        "type_id": "type_1",
+    },
+    {
+        "id": "432",
+        "value": "Val 2 INACTIVE",
+        "creator_user_id": "Bob",
+        "active": False,
+        "purpose": "POSITIVE",
+        "type_id": "type_1",
+    },
+]
+test_tags_active = [
     {
         "id": "123",
         "value": "Val 1",
@@ -25,11 +43,27 @@ test_tags = [
         "id": "432",
         "value": "Val 2",
         "creator_user_id": "Bob",
-        "active": False,
+        "active": True,
         "purpose": "POSITIVE",
         "type_id": "type_1",
     },
 ]
+test_get_tag = {
+    "active": True,
+    "created_at": "2023-07-25T09:10:39.073315+00:00",
+    "creator_user_id": "00000000-0000-0000-0000-000000000000",
+    "description": (
+        "Use these tags to assign assessments to team members. Note: you"
+        " cannot send notifications using tags"
+    ),
+    "fund_id": "47aef2f5-3fcb-4d45-acb5-f0152b5f03c4",
+    "id": "a48f4951-b26b-4820-9301-9ca2c835b163",
+    "purpose": "PEOPLE",
+    "round_id": "5cf439bf-ef6f-431e-92c5-a1d90a4dd32f",
+    "tag_association_count": 3,
+    "type_id": "89e5c39d-cdc0-40e8-9986-ba26289e6bc4",
+    "value": "Test tag",
+}
 
 
 @pytest.mark.application_id("resolved_app")
@@ -41,7 +75,7 @@ def test_change_tags_route(
     mock_get_fund,
 ):
     with mock.patch(
-        "app.assess.tag_routes.get_available_tags_for_fund_round",
+        "app.assess.tag_routes.get_tags_for_fund_round",
         return_value=[
             Tag(
                 id="123",
@@ -70,6 +104,7 @@ def test_change_tags_route(
         )
         soup = BeautifulSoup(response.data, "html.parser")
         assert soup.find("h1").text == "Change tags"
+        assert soup.find("strong").text == "In progress"
         assert (
             table := soup.find(
                 "table", class_="govuk-table dluhc-table-checkboxes"
@@ -101,7 +136,7 @@ def test_change_tags_route_associated_tag_checked(
     mock_get_fund,
 ):
     with mock.patch(
-        "app.assess.tag_routes.get_available_tags_for_fund_round",
+        "app.assess.tag_routes.get_tags_for_fund_round",
         return_value=[
             Tag(
                 id="123",
@@ -160,7 +195,7 @@ def test_change_tags_route_no_tags(
 ):
 
     with mock.patch(
-        "app.assess.tag_routes.get_available_tags_for_fund_round",
+        "app.assess.tag_routes.get_tags_for_fund_round",
         return_value=[],
     ), mock.patch(
         "app.assess.tag_routes.get_associated_tags_for_application",
@@ -180,22 +215,462 @@ def test_change_tags_route_no_tags(
         )
 
 
-# Functions
+@pytest.mark.mock_parameters(
+    {
+        "get_rounds_path": "app.assess.tag_routes.get_round",
+    }
+)
+@pytest.mark.parametrize(
+    "expect_flagging",
+    [
+        False,
+    ],
+)
+def test_create_tag_initial_render_get(
+    expect_flagging,
+    client_with_valid_session,
+    mock_get_funds,
+    mock_get_fund,
+    mock_get_tag_types,
+    mock_get_round,
+    mock_get_active_tags_for_fund_round,
+):
+    response = client_with_valid_session.get(
+        f"/assess/tags/create/{test_fund_id}/{test_round_id}"
+    )
+    soup = BeautifulSoup(response.data, "html.parser")
+
+    assert response.status_code == 200
+
+    assert "Tag type 1 description" in response.text
+    assert "POSITIVE" in response.text
+    assert soup.find("h1").text == "Create a new tag"
 
 
-def test_get_available_tags(flask_test_client):
+@pytest.mark.mock_parameters(
+    {
+        "get_rounds_path": "app.assess.tag_routes.get_round",
+    }
+)
+@pytest.mark.parametrize(
+    "expect_flagging",
+    [
+        False,
+    ],
+)
+def test_create_tag_invalid_form_post(
+    expect_flagging,
+    client_with_valid_session,
+    mock_get_funds,
+    mock_get_fund,
+    mock_get_tag_types,
+    mock_get_round,
+    mock_get_active_tags_for_fund_round,
+):
+    response = client_with_valid_session.post(
+        f"/assess/tags/create/{test_fund_id}/{test_round_id}",
+        data={},  # empty form, so invalid
+    )
+
+    assert response.status_code == 200
+    assert FLAG_ERROR_MESSAGE in response.text
+
+
+@pytest.mark.parametrize(
+    "expect_flagging",
+    [
+        False,
+    ],
+)
+@pytest.mark.mock_parameters(
+    {
+        "get_rounds_path": "app.assess.tag_routes.get_round",
+    }
+)
+def test_create_tag_invalid_character_post(
+    expect_flagging,
+    client_with_valid_session,
+    mock_get_funds,
+    mock_get_fund,
+    mock_get_tag_types,
+    mock_get_round,
+    mock_get_active_tags_for_fund_round,
+):
+    response = client_with_valid_session.post(
+        f"/assess/tags/create/{test_fund_id}/{test_round_id}",
+        data={"value": "!!", "type": "type_1"},  # SPECIAL CHARACTER
+    )
+
+    assert response.status_code == 200
+    assert FLAG_ERROR_MESSAGE in response.text
+
+
+@pytest.mark.parametrize(
+    "expect_flagging",
+    [
+        False,
+    ],
+)
+@pytest.mark.mock_parameters(
+    {
+        "get_rounds_path": "app.assess.tag_routes.get_round",
+    }
+)
+def test_manage_tag_page_renders_with_active_tags(
+    expect_flagging,
+    client_with_valid_session,
+    mock_get_funds,
+    mock_get_fund,
+    mock_get_tag_types,
+    mock_get_round,
+    mock_get_active_tags_for_fund_round,
+):
+    response = client_with_valid_session.get(
+        f"/assess/tags/manage/{test_fund_id}/{test_round_id}",
+    )
+
+    assert response.status_code == 200
+    assert "Val 1" in response.text
+    assert "Val 2" in response.text
+    assert "Deactivate" in response.text
+    assert "Reactivate" not in response.text
+
+
+@pytest.mark.parametrize(
+    "expect_flagging",
+    [
+        False,
+    ],
+)
+@pytest.mark.mock_parameters(
+    {
+        "get_rounds_path": "app.assess.tag_routes.get_round",
+    }
+)
+def test_manage_tag_page_renders_with_inactive_tags(
+    expect_flagging,
+    client_with_valid_session,
+    mock_get_funds,
+    mock_get_fund,
+    mock_get_tag_types,
+    mock_get_round,
+    mock_get_inactive_tags_for_fund_round,
+):
+    response = client_with_valid_session.get(
+        f"/assess/tags/manage/{test_fund_id}/{test_round_id}",
+    )
+
+    assert response.status_code == 200
+    assert "Val 1 INACTIVE" in response.text
+    assert "Val 2 INACTIVE" in response.text
+    assert "Reactivate" in response.text
+    assert "Deactivate" not in response.text
+
+
+@pytest.mark.mock_parameters(
+    {
+        "get_rounds_path": "app.assess.tag_routes.get_round",
+    }
+)
+def test_get_deactivate_route(
+    client_with_valid_session,
+    mock_get_funds,
+    mock_get_fund,
+    mock_get_tag_types,
+    mock_get_round,
+    mock_get_tag_for_fund_round,
+):
+    response = client_with_valid_session.get(
+        f"/assess/tags/deactivate/{test_fund_id}/{test_round_id}/{mock_get_tag_for_fund_round.id}"
+    )
+    assert response.status_code == 200
+    assert "Yes, deactivate tag" in response.text
+    assert mock_get_tag_for_fund_round.value in response.text
+
+
+@pytest.mark.mock_parameters(
+    {
+        "get_rounds_path": "app.assess.tag_routes.get_round",
+    }
+)
+def test_post_deactivate_existing_tag_without_checkbox_returns_error(
+    client_with_valid_session,
+    mock_get_funds,
+    mock_get_fund,
+    mock_get_tag_types,
+    mock_get_round,
+    mock_get_tag_for_fund_round,
+):
+
+    data = {}
+    with mock.patch(
+        "app.assess.tag_routes.update_tags",
+        return_value=True,
+    ):
+        response = client_with_valid_session.post(
+            f"/assess/tags/deactivate/{test_fund_id}/{test_round_id}/{mock_get_tag_for_fund_round.id}",
+            data=data,
+        )
+
+    assert response.status_code == 200
+    assert "Tag not deactivated." in response.text
+    assert "Yes, deactivate tag" in response.text
+
+
+@pytest.mark.mock_parameters(
+    {
+        "get_rounds_path": "app.assess.tag_routes.get_round",
+    }
+)
+def test_post_deactivate_existing_tag_with_checkbox_redirects(
+    client_with_valid_session,
+    mock_get_funds,
+    mock_get_fund,
+    mock_get_tag_types,
+    mock_get_round,
+    mock_get_tag_for_fund_round,
+):
+
+    data = {
+        "deactivate": "a48f4951-b26b-4820-9301-9ca2c835b163",
+    }
+    with mock.patch(
+        "app.assess.tag_routes.update_tags",
+        return_value=True,
+    ):
+        response = client_with_valid_session.post(
+            f"/assess/tags/deactivate/{test_fund_id}/{test_round_id}/{mock_get_tag_for_fund_round.id}",
+            data=data,
+        )
+
+    assert response.status_code == 302
+    assert response.location == "/assess/tags/manage/test-fund/test-round"
+
+
+@pytest.mark.mock_parameters(
+    {
+        "get_rounds_path": "app.assess.tag_routes.get_round",
+    }
+)
+def test_post_deactivate_non_existing_tag_returns_error(
+    client_with_valid_session,
+    mock_get_funds,
+    mock_get_fund,
+    mock_get_tag_types,
+    mock_get_round,
+    mock_get_tag_for_fund_round,
+):
+
+    data = {
+        "deactivate": "a48f4951-b26b-4820-9301-9ca2c835b163",
+    }
+    with mock.patch(
+        "app.assess.tag_routes.update_tags",
+        return_value=False,
+    ):
+        response = client_with_valid_session.post(
+            f"/assess/tags/deactivate/{test_fund_id}/{test_round_id}/{mock_get_tag_for_fund_round.id}",
+            data=data,
+        )
+
+    assert response.status_code == 200
+    assert "Tag not deactivated." in response.text
+    assert "Yes, deactivate tag" in response.text
+
+
+@pytest.mark.mock_parameters(
+    {
+        "get_rounds_path": "app.assess.tag_routes.get_round",
+    }
+)
+def test_get_reactivate_existing_tag_returns_200(
+    client_with_valid_session,
+    mock_get_funds,
+    mock_get_fund,
+    mock_get_tag_types,
+    mock_get_round,
+    mock_get_tag_for_fund_round,
+):
+
+    response = client_with_valid_session.get(
+        f"/assess/tags/reactivate/{test_fund_id}/{test_round_id}/{mock_get_tag_for_fund_round.id}"
+    )
+    assert response.status_code == 200
+    assert "Yes, reactivate tag" in response.text
+    assert mock_get_tag_for_fund_round.value in response.text
+
+
+@pytest.mark.mock_parameters(
+    {
+        "get_rounds_path": "app.assess.tag_routes.get_round",
+    }
+)
+def test_post_reactivate_non_existing_tag_returns_error(
+    client_with_valid_session,
+    mock_get_funds,
+    mock_get_fund,
+    mock_get_tag_types,
+    mock_get_round,
+    mock_get_tag_for_fund_round,
+):
+
+    data = {}
+    with mock.patch(
+        "app.assess.tag_routes.update_tags",
+        return_value=False,
+    ):
+        response = client_with_valid_session.post(
+            f"/assess/tags/reactivate/{test_fund_id}/{test_round_id}/{mock_get_tag_for_fund_round.id}",
+            data=data,
+        )
+
+    assert response.status_code == 200
+    assert "Tag not reactivated." in response.text
+    assert "Yes, reactivate tag" in response.text
+
+
+@pytest.mark.mock_parameters(
+    {
+        "get_rounds_path": "app.assess.tag_routes.get_round",
+    }
+)
+@pytest.mark.parametrize(
+    "expect_flagging",
+    [
+        False,
+    ],
+)
+def test_create_tag_shows_error_if_valid_form_post_but_request_fails(
+    expect_flagging,
+    client_with_valid_session,
+    mock_get_funds,
+    mock_get_fund,
+    mock_get_tag_types,
+    mock_get_round,
+    mocker,
+):
+    mocker.patch(
+        "app.assess.tag_routes.post_new_tag_for_fund_round",
+        return_value=lambda *_: False,
+    )
+
+    response = client_with_valid_session.post(
+        f"/assess/tags/create/{test_fund_id}/{test_round_id}",
+        data={"value": "Tag value", "type": "tag_type_1"},
+    )
+
+    # this redirects and will flash the error message
+    assert response.status_code == 302
+    assert response.location == "/assess/tags/create/test-fund/test-round"
+
+
+@pytest.mark.parametrize(
+    "expect_flagging",
+    [
+        False,
+    ],
+)
+@pytest.mark.mock_parameters(
+    {
+        "get_rounds_path": "app.assess.tag_routes.get_round",
+    }
+)
+def test_create_tag_valid_form_post(
+    expect_flagging,
+    client_with_valid_session,
+    mock_get_funds,
+    mock_get_fund,
+    mock_get_tag_types,
+    mock_get_round,
+    mocker,
+):
+    mocker.patch(
+        "app.assess.tag_routes.post_new_tag_for_fund_round",
+        return_value=lambda *_: True,
+    )
+
+    response = client_with_valid_session.post(
+        f"/assess/tags/create/{test_fund_id}/{test_round_id}",
+        data={"value": "Tag value", "type": "tag_type_1"},
+    )
+
+    assert response.status_code == 302
+    assert response.location == "/assess/tags/create/test-fund/test-round"
+    assert FLAG_ERROR_MESSAGE not in response.text
+
+
+@pytest.mark.parametrize(
+    "expect_flagging",
+    [
+        False,
+    ],
+)
+@pytest.mark.mock_parameters(
+    {
+        "get_rounds_path": "app.assess.tag_routes.get_round",
+    }
+)
+def test_create_tag_valid_form_go_back_post(
+    expect_flagging,
+    client_with_valid_session,
+    mock_get_funds,
+    mock_get_fund,
+    mock_get_tag_types,
+    mock_get_round,
+    mocker,
+):
+    mocker.patch(
+        "app.assess.tag_routes.post_new_tag_for_fund_round",
+        return_value=lambda *_: True,
+    )
+
+    response = client_with_valid_session.post(
+        f"/assess/tags/create/{test_fund_id}/{test_round_id}?go_back=True",
+        data={"value": "Tag value", "type": "tag_type_1"},
+    )
+
+    assert response.status_code == 302
+    assert response.location == "/assess/tags/manage/test-fund/test-round"
+
+
+# Test Functions
+
+
+def test_get_available_active_tags(flask_test_client):
     with mock.patch(
         "app.assess.data.get_data",
-        return_value=test_tags,
-    ):
-        result = get_available_tags_for_fund_round("test_fund", "test_round")
-        assert len(result) == 1
+        return_value=test_tags_active,
+    ) as mock_get_data:
+        result = get_tags_for_fund_round(
+            "test_fund", "test_round", {"tag_status": "True"}
+        )
+        mock_get_data.assert_called_once()
+        mock_get_data.assert_called_with(
+            "assessment_store/funds/test_fund/rounds/test_round/tags?tag_status=True"
+        )
+        assert len(result) == 2
         assert result[0].value == "Val 1"
+
+
+def test_get_available_inactive_tags(flask_test_client):
+    with mock.patch(
+        "app.assess.data.get_data",
+        return_value=test_tags_inactive,
+    ) as mock_get_data:
+        result = get_tags_for_fund_round(
+            "test_fund", "test_round", {"tag_status": "False"}
+        )
+        mock_get_data.assert_called_once()
+        mock_get_data.assert_called_with(
+            "assessment_store/funds/test_fund/rounds/test_round/tags?tag_status=False"
+        )
+        assert len(result) == 2
+        assert result[0].value == "Val 1 INACTIVE"
 
 
 def test_get_available_tags_no_tags(flask_test_client):
     with mock.patch("app.assess.data.get_data", return_value=[]):
-        result = get_available_tags_for_fund_round("test_fund", "test_round")
+        result = get_tags_for_fund_round("test_fund", "test_round", "")
         assert len(result) == 0
 
 
@@ -221,7 +696,7 @@ def test_get_associated_tags_for_applications(flask_test_client):
         assert result[0].value == "test tag"
 
 
-def test_update_associated_tag_returns_True(flask_test_client):
+def test_update_associated_tag_returns_true(flask_test_client):
 
     with mock.patch("requests.put") as mock_put:
         mock_response = mock.Mock()
@@ -265,224 +740,3 @@ def test_post_new_tag_for_fund_round_returns_True(flask_test_client):
 
         result = post_new_tag_for_fund_round(fund_id, round_id, tag)
         assert result is True
-
-
-@pytest.mark.mock_parameters(
-    {
-        "get_rounds_path": "app.assess.tag_routes.get_round",
-    }
-)
-@pytest.mark.parametrize(
-    "expect_flagging",
-    [
-        False,
-    ],
-)
-def test_create_tag_initial_render_get(
-    expect_flagging,
-    client_with_valid_session,
-    mock_get_funds,
-    mock_get_fund,
-    mock_get_tag_types,
-    mock_get_round,
-    mock_get_available_tags_for_fund_round,
-):
-    response = client_with_valid_session.get(
-        f"/assess/tags/create/{test_fund_id}/{test_round_id}"
-    )
-
-    assert response.status_code == 200
-    assert "Type 1 description" in response.text
-
-
-@pytest.mark.mock_parameters(
-    {
-        "get_rounds_path": "app.assess.tag_routes.get_round",
-    }
-)
-@pytest.mark.parametrize(
-    "expect_flagging",
-    [
-        False,
-    ],
-)
-def test_create_tag_invalid_form_post(
-    expect_flagging,
-    client_with_valid_session,
-    mock_get_funds,
-    mock_get_fund,
-    mock_get_tag_types,
-    mock_get_round,
-    mock_get_available_tags_for_fund_round,
-):
-    response = client_with_valid_session.post(
-        f"/assess/tags/create/{test_fund_id}/{test_round_id}",
-        data={},  # empty form, so invalid
-    )
-
-    assert response.status_code == 200
-    assert FLAG_ERROR_MESSAGE in response.text
-
-
-@pytest.mark.parametrize(
-    "expect_flagging",
-    [
-        False,
-    ],
-)
-@pytest.mark.mock_parameters(
-    {
-        "get_rounds_path": "app.assess.tag_routes.get_round",
-    }
-)
-def test_create_tag_invalid_character_post(
-    expect_flagging,
-    client_with_valid_session,
-    mock_get_funds,
-    mock_get_fund,
-    mock_get_tag_types,
-    mock_get_round,
-    mock_get_available_tags_for_fund_round,
-):
-    response = client_with_valid_session.post(
-        f"/assess/tags/create/{test_fund_id}/{test_round_id}",
-        data={"value": "!!", "type": "type_1"},  # SPECIAL CHARACTER
-    )
-
-    assert response.status_code == 200
-    assert FLAG_ERROR_MESSAGE in response.text
-
-
-@pytest.mark.mock_parameters(
-    {
-        "get_rounds_path": "app.assess.tag_routes.get_round",
-    }
-)
-@pytest.mark.parametrize(
-    "expect_flagging",
-    [
-        False,
-    ],
-)
-def test_create_tag_shows_error_if_valid_form_post_but_request_fails(
-    expect_flagging,
-    client_with_valid_session,
-    mock_get_funds,
-    mock_get_fund,
-    mock_get_tag_types,
-    mock_get_round,
-    mocker,
-):
-    mocker.patch(
-        "app.assess.tag_routes.post_new_tag_for_fund_round",
-        return_value=lambda *_: False,
-    )
-
-    response = client_with_valid_session.post(
-        f"/assess/tags/create/{test_fund_id}/{test_round_id}",
-        data={"value": "Tag value", "type": "type_1"},
-    )
-
-    # this redirects and will flash the error message
-    assert response.status_code == 302
-    assert response.location == "/assess/tags/create/test-fund/test-round"
-
-
-@pytest.mark.parametrize(
-    "expect_flagging",
-    [
-        False,
-    ],
-)
-@pytest.mark.mock_parameters(
-    {
-        "get_rounds_path": "app.assess.tag_routes.get_round",
-    }
-)
-def test_create_tag_valid_form_post(
-    expect_flagging,
-    client_with_valid_session,
-    mock_get_funds,
-    mock_get_fund,
-    mock_get_tag_types,
-    mock_get_round,
-    mocker,
-):
-    mocker.patch(
-        "app.assess.tag_routes.post_new_tag_for_fund_round",
-        return_value=lambda *_: True,
-    )
-
-    response = client_with_valid_session.post(
-        f"/assess/tags/create/{test_fund_id}/{test_round_id}",
-        data={"value": "Tag value", "type": "type_1"},
-    )
-
-    assert response.status_code == 302
-    assert response.location == "/assess/tags/create/test-fund/test-round"
-    assert FLAG_ERROR_MESSAGE not in response.text
-
-
-@pytest.mark.parametrize(
-    "expect_flagging",
-    [
-        False,
-    ],
-)
-@pytest.mark.mock_parameters(
-    {
-        "get_rounds_path": "app.assess.tag_routes.get_round",
-    }
-)
-def test_create_tag_valid_form_go_back_post(
-    expect_flagging,
-    client_with_valid_session,
-    mock_get_funds,
-    mock_get_fund,
-    mock_get_tag_types,
-    mock_get_round,
-    mocker,
-):
-    mocker.patch(
-        "app.assess.tag_routes.post_new_tag_for_fund_round",
-        return_value=lambda *_: True,
-    )
-
-    response = client_with_valid_session.post(
-        f"/assess/tags/create/{test_fund_id}/{test_round_id}?go_back=True",
-        data={"value": "Tag value", "type": "type_1"},
-    )
-
-    assert response.status_code == 302
-    assert response.location == "/assess/tags/manage/test-fund/test-round"
-
-
-@pytest.mark.parametrize(
-    "expect_flagging",
-    [
-        False,
-    ],
-)
-@pytest.mark.mock_parameters(
-    {
-        "get_rounds_path": "app.assess.tag_routes.get_round",
-    }
-)
-def test_manage_tag_page_renders_with_tags(
-    expect_flagging,
-    client_with_valid_session,
-    mock_get_funds,
-    mock_get_fund,
-    mock_get_tag_types,
-    mock_get_round,
-    mock_get_available_tags_for_fund_round,
-):
-    response = client_with_valid_session.get(
-        f"/assess/tags/manage/{test_fund_id}/{test_round_id}",
-    )
-
-    assert response.status_code == 200
-    assert "Val 1" in response.text
-    assert "Val 2" in response.text
-    assert "ACTIVE" in response.text
-    assert "NOT ACTIVE" in response.text

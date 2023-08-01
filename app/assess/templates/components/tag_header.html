@@ -4,21 +4,22 @@
 <nav class="govuk-width-container govuk-header__navigation">
     <div class="govuk-phase-banner flex-parent-element">
         <p class="govuk-!-text-align-left flex-parent-element flexed-element-margins-collapse">
-            {{ govukBackLink({'href': url_for("assess_bp.landing"), 'html': 'Back to <b>assessment dashboard</b>', 'attributes': {'data-qa': 'back-to-assessment-dashboard'} }) }}
+            {{ govukBackLink({'href': url_for("assess_bp.landing"), 'html': 'Back to <b>assessment dashboard</b>',
+            'attributes': {'data-qa': 'back-to-assessment-dashboard'} }) }}
         </p>
         {{ logout_partial(sso_logout_url) }}
     </div>
 </nav>
 <div class="fsd-banner-background">
-  <div class="govuk-width-container">
-      <div class="govuk-grid-row">
-          <div class="govuk-grid-column-full">
-              <div class="govuk-grid-column-two-thirds">
-                  <p class="govuk-heading-xl fsd-banner-content">Fund: <span class="govuk-!-font-weight-regular">{{ fund_round["fund_name"] }}</span></p>
-                  <p class="govuk-heading-xl fsd-banner-content">Round: <span class="govuk-!-font-weight-regular">{{ fund_round["round_name"] }}</span></p>
-              </div>
-          </div>
-      </div>
-  </div>
+    <div class="govuk-width-container">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <p class="govuk-heading-xl fsd-banner-content">Fund: <span class="govuk-!-font-weight-regular">{{
+                        fund_round["fund_name"] }}</span></p>
+                <p class="govuk-heading-xl fsd-banner-content">Round: <span class="govuk-!-font-weight-regular">{{
+                        fund_round["round_name"] }}</span></p>
+            </div>
+        </div>
+    </div>
 </div>
 </header>

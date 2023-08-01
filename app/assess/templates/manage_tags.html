@@ -5,18 +5,23 @@
 {% endblock header %}
 
 {% block content %}
-
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
 
-        <h1 class="govuk-heading-xl govuk-!-margin-bottom-4">Manage tags</h1>
+        <div class="govuk-grid-row govuk-!-text-align-left">
+            <div class="govuk-grid-column-two-thirds">
+                <h1 class="govuk-heading-xl govuk-!-margin-bottom-4">Manage tags</h1>
 
-        <div id="contact-hint" class="govuk-hint govuk-!-margin-bottom-6">
-            View and create tags here
+                <div id="contact-hint" class="govuk-hint govuk-!-margin-bottom-6">
+                    View and edit the existing tags for this assessment round, create new ones, or deactivate and
+                    reactivate
+                    tags.
+                </div>
+            </div>
         </div>
 
         <div class="govuk-grid-row govuk-!-text-align-left">
-            <div class="govuk-grid-column-full">
+            <div class="govuk-grid-column-two-thirds">
                 <a href="{{ url_for('tag_bp.create_tag', fund_id = fund_round['fund_id'], round_id = fund_round['round_id']) }}"
                     class="govuk-button govuk-button secondary-button" data-module="govuk-button">
                     Create new tag
@@ -24,49 +29,125 @@
             </div>
         </div>
 
+        <nav class="search-bar-flex-container">
+            <form method="get" class="govuk-!-width-full">
+                <fieldset class="govuk-fieldset">
+                    <div class="govuk-grid-row">
+                        <div class="govuk-grid-column-one-half">
+                            <div class="govuk-form-group">
+                                <label for="application_search" class="govuk-label">Search by tag name</label>
+                                <input class="govuk-input" type="text" spellcheck="false"
+                                    aria-label="Search by tag name" id="tag_search" name="search_term" ,="" value={{search_params['search_term']}}>
+                            </div>
+                        </div>
+                    </div>
 
-        {% if available_tags %}
-        <div class="govuk-form-group">
-            <table class="govuk-table">
-                <caption class="govuk-table__caption govuk-table__caption--m">Active tags</caption>
-                <thead class="govuk-table__head">
-                    <tr class="govuk-table__row">
-                        <th scope="col" class="govuk-table__header">Tag name</th>
-                        <th scope="col" class="govuk-table__header">Purpose</th>
-                        <th scope="col" class="govuk-table__header"></th>
-                    </tr>
-                </thead>
-                <tbody class="govuk-table__body">
-                    {% for tag in available_tags %}
-                    <tr class="govuk-table__row">
-                        <td class="govuk-table__cell">
-                            {{tag.value}}
-                        </td>
-                        <td class="govuk-table__cell">
-                            <strong class="govuk-tag--{{ tag_config[tag.purpose]['colour'] }} govuk-tag dluhc-tag">{{tag.purpose}}</strong>
-                        </td>
-                        {% if tag.active %}
-                            <td class="govuk-table__cell">
-                                <strong class="govuk-tag--green govuk-tag dluhc-tag">ACTIVE</strong>
-                            </td>
-                        {% else %}
-                            <td class="govuk-table__cell">
-                                <strong class="govuk-tag--red govuk-tag dluhc-tag">NOT ACTIVE</strong>
-                            </td>
-                        {% endif %}
-                    </tr>
-                    {% endfor %}
-                </tbody>
+                    <div class="govuk-grid-row govuk-!-text-align-left">
+                        <div class="govuk-grid-column-one-quarter">
+                            <div class="govuk-form-group govuk-!-display-inline-block">
+                                <label class="govuk-label" for="tag_purpose">
+                                    Filter by tag purpose
+                                </label>
+                                {{query_params}}
+                                <select class="govuk-select" name="tag_purpose" id="tag_purpose">
+                                    {% for tag_type in tag_types %}
+                                    <option value={{ tag_type.purpose }} {% if search_params['tag_purpose'] == tag_type.purpose %}
+                                    selected{% endif %}>
+                                        {{tag_type.purpose.title()}}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="govuk-grid-column-one-quarter">
+                            <div class="govuk-form-group govuk-!-display-inline-block">
+                                <label class="govuk-label" for="tag_status">
+                                    Display
+                                </label>
+                                <select class="govuk-select" name="tag_status" id="tag_status">
+                                    {% for tag_status_config in tag_status_configs %}
+                                    <option value={{ tag_status_config['value'] }} {% if search_params['tag_status'] == tag_status_config['value'] %}
+                                    selected{% endif %}>
+                                        {{tag_status_config["text"] }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="govuk-grid-column-one-quarter">
+                            <div class="govuk-button-group govuk-!-margin-top-3">
+                                <button class="govuk-button primary-button search-button"
+                                    type="submit">
+                                    Search
+                                </button>
+                                {% if show_clear_filters %}
+                                <a class="govuk-link" href="{{ url_for('tag_bp.load_fund_round_tags',
+                                fund_id=fund_round[fund_id],
+                                round_id=fund_round[round_id],
+                                clear_filters=true) }}" aria-label="Clear Filters">Clear search</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
 
-            </table>
+                </fieldset>
+            </form>
+        </nav>
+
+        {% if tags %}
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                <div class="govuk-form-group">
+                    <table class="govuk-table">
+                        <caption class="govuk-table__caption govuk-table__caption--m">Active tags</caption>
+                        <thead class="govuk-table__head">
+                            <tr class="govuk-table__row">
+                                <th scope="col" class="govuk-table__header">Tag name</th>
+                                <th scope="col" class="govuk-table__header">Colour</th>
+                                <th scope="col" class="govuk-table__header">Purpose</th>
+                                <th scope="col" class="govuk-table__header"></th>
+                            </tr>
+                        </thead>
+                        <tbody class="govuk-table__body">
+                            {% for tag in tags %}
+                            <tr class="govuk-table__row">
+                                <td class="govuk-table__cell">
+                                    {{tag.value}}
+                                </td>
+                                <td class="govuk-table__cell">
+                                    <strong
+                                        class="govuk-tag--{{ tag_config[tag.purpose]['colour'] }} govuk-tag dluhc-tag">{{tag.value}}</strong>
+                                </td>
+                                <td class="govuk-table__cell">
+                                    {{tag.purpose.capitalize()}}
+                                </td>
+                                {% if tag.active %}
+                                <td class="govuk-table__cell">
+                                    <a class="govuk-link" href="{{ url_for('tag_bp.deactivate_tag',
+                            fund_id=fund_round['fund_id'],
+                            round_id=fund_round['round_id'],
+                            tag_id=tag.id) }}">Deactivate</a>
+                                </td>
+                                {% else %}
+                                <td class="govuk-table__cell">
+                                    <a class="govuk-link" href="{{ url_for('tag_bp.reactivate_tag',
+                            fund_id=fund_round['fund_id'],
+                            round_id=fund_round['round_id'],
+                            tag_id=tag.id) }}">Reactivate</a>
+                                </td>
+                                {% endif %}
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+
+                    </table>
+                </div>
+                {% else %}
+                <p class="govuk-body dluhc-body-empty">
+                    There are no tags available
+                </p>
+                {% endif %}
+            </div>
         </div>
-        {% else %}
-        <p class="govuk-body dluhc-body-empty">
-            There are no tags available
-        </p>
-        {% endif %}
-
     </div>
 </div>
-
 {% endblock content %}

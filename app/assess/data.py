@@ -41,11 +41,16 @@ def get_data(endpoint: str, payload: Dict = None):
         response = requests.get(endpoint)
     if response.status_code == 200:
         return response.json()
+    elif response.status_code == 204:
+        current_app.logger.warn(
+            "Request successful but no resources returned for endpoint"
+            f" '{endpoint}'."
+        )
     else:
         current_app.logger.error(
             f"Could not get data for endpoint '{endpoint}' "
         )
-        return None
+    return None
 
 
 def get_assessment_progress(application_metadata):
@@ -97,16 +102,14 @@ def get_application_overviews(fund_id, round_id, search_params):
     return overviews_response
 
 
-def get_available_tags_for_fund_round(fund_id, round_id) -> List[Tag]:
-    endpoint = Config.ASSESSMENT_AVAILABLE_TAGS_ENDPOINT.format(
-        fund_id=fund_id, round_id=round_id
+def get_tags_for_fund_round(fund_id, round_id, search_params) -> List[Tag]:
+    endpoint = Config.ASSESSMENT_TAGS_ENDPOINT.format(
+        fund_id=fund_id, round_id=round_id, params=urlencode(search_params)
     )
     response = get_data(endpoint)
     if response is not None:
         current_app.logger.info(f"tags returned: {len(response)}")
-        result = [
-            Tag.from_dict(item) for item in response if item["active"] is True
-        ]
+        result = [Tag.from_dict(item) for item in response]
         return result
     else:
         current_app.logger.info(
@@ -115,7 +118,50 @@ def get_available_tags_for_fund_round(fund_id, round_id) -> List[Tag]:
         return []
 
 
-def get_tag_types():
+def get_tag_for_fund_round(fund_id, round_id, tag_id) -> Tag:
+    endpoint = Config.ASSESSMENT_TAG_ENDPOINT.format(
+        fund_id=fund_id, round_id=round_id, tag_id=tag_id
+    )
+    response = get_data(endpoint)
+    if response is not None:
+        current_app.logger.info(f"tag returned: {len(response)}")
+        result = Tag.from_dict(response)
+        return result
+    else:
+        current_app.logger.info(
+            f"No tag found for fund {fund_id}, round {round_id}, tag_id"
+            f" {tag_id}."
+        )
+        return None
+
+
+def update_tags(fund_id, round_id, tags) -> bool:
+    endpoint = Config.ASSESSMENT_UPDATE_TAGS_ENDPOINT.format(
+        fund_id=fund_id, round_id=round_id
+    )
+    payload = [
+        {
+            "id": tag.get("id", None),
+            "tag_type_id": tag.get("tag_type_id", None),
+            "active": tag.get("active", None),
+        }
+        for tag in tags
+    ]
+
+    current_app.logger.info(
+        f"Requesting update for of the following tags: {payload}"
+    )
+    response = requests.put(endpoint, json=payload)
+
+    was_successful = response.ok
+    if not was_successful:
+        current_app.logger.error(
+            f"Update associated tags failed, code: {response.status_code}."
+        )
+    return was_successful
+
+
+def get_tag_types() -> List[TagType]:
     endpoint = Config.ASSESSMENT_TAG_TYPES_ENDPOINT
     response = get_data(endpoint)
     if response is not None:
@@ -124,12 +170,12 @@ def get_tag_types():
         return result
     else:
         current_app.logger.info("No tag types found.")
-        return None
+        return []
 
 
 def post_new_tag_for_fund_round(fund_id, round_id, tag) -> bool:
-    endpoint = Config.ASSESSMENT_AVAILABLE_TAGS_ENDPOINT.format(
-        fund_id=fund_id, round_id=round_id
+    endpoint = Config.ASSESSMENT_TAGS_ENDPOINT.format(
+        fund_id=fund_id, round_id=round_id, params=None
     )
     current_app.logger.info(
         f"Posting the following tag: {tag}"

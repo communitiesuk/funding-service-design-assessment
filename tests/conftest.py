@@ -2,6 +2,7 @@ import multiprocessing
 import platform
 from pathlib import Path
 from unittest import mock
+from unittest.mock import call
 
 import jwt as jwt
 import pytest
@@ -18,7 +19,9 @@ from tests.api_data.example_get_full_application import (
     mock_full_application_json,
 )
 from tests.api_data.test_data import mock_api_results
-from tests.test_tags import test_tags
+from tests.test_tags import test_get_tag
+from tests.test_tags import test_tags_active
+from tests.test_tags import test_tags_inactive
 from webdriver_manager.chrome import ChromeDriverManager
 
 if platform.system() == "Darwin":
@@ -336,7 +339,16 @@ def mock_get_round(request):
                 use_short_name=use_short_name,
             )
         else:
-            mocked_round.assert_called_with(fund_id, round_id)
+            expected_call = call(fund_id, round_id)
+            optional_call_false = call(fund_id, round_id, use_short_name=False)
+            optional_call_true = call(fund_id, round_id, use_short_name=True)
+
+            # Check if any of the expected calls were made
+            assert (
+                expected_call in mocked_round.mock_calls
+                or optional_call_false in mocked_round.mock_calls
+                or optional_call_true in mocked_round.mock_calls
+            )
 
 
 @pytest.fixture(scope="function")
@@ -464,7 +476,6 @@ def mock_get_assessment_progress():
 
 @pytest.fixture(scope="function")
 def mock_get_teams_flag_stats():
-
     with mock.patch(
         "app.assess.routes.get_team_flag_stats",
         return_value=mock_api_results[
@@ -685,7 +696,6 @@ def mock_get_tasklist_state_for_banner(mocker):
 
 @pytest.fixture(scope="function")
 def client_with_valid_session(flask_test_client):
-
     token = create_valid_token(test_lead_assessor_claims)
     flask_test_client.set_cookie("localhost", "fsd_user_token", token)
     yield flask_test_client
@@ -716,20 +726,38 @@ def mock_get_associated_tags_for_application(mocker):
 
 
 @pytest.fixture(scope="function")
-def mock_get_available_tags_for_fund_round(mocker):
+def mock_get_inactive_tags_for_fund_round(mocker):
     mocker.patch(
-        "app.assess.tag_routes.get_available_tags_for_fund_round",
-        return_value=[Tag.from_dict(t) for t in test_tags],
+        "app.assess.tag_routes.get_tags_for_fund_round",
+        return_value=[Tag.from_dict(t) for t in test_tags_inactive],
     )
     mocker.patch(
-        "app.assess.routes.get_available_tags_for_fund_round",
-        return_value=[Tag.from_dict(t) for t in test_tags],
-    )
-    mocker.patch(
-        "app.assess.tag_routes.get_available_tags_for_fund_round",
-        return_value=[Tag.from_dict(t) for t in test_tags],
+        "app.assess.routes.get_tags_for_fund_round",
+        return_value=[Tag.from_dict(t) for t in test_tags_inactive],
     )
     yield
+
+
+@pytest.fixture(scope="function")
+def mock_get_active_tags_for_fund_round(mocker):
+    mocker.patch(
+        "app.assess.tag_routes.get_tags_for_fund_round",
+        return_value=[Tag.from_dict(t) for t in test_tags_active],
+    )
+    mocker.patch(
+        "app.assess.routes.get_tags_for_fund_round",
+        return_value=[Tag.from_dict(t) for t in test_tags_active],
+    )
+    yield
+
+
+@pytest.fixture(scope="function")
+def mock_get_tag_for_fund_round(mocker):
+    tag = Tag.from_dict(test_get_tag)
+    mocker.patch(
+        "app.assess.tag_routes.get_tag_for_fund_round", return_value=tag
+    )
+    yield tag
 
 
 @pytest.fixture(scope="function")
@@ -742,10 +770,10 @@ def mock_get_tag_types(mocker):
             function_module_path,
             return_value=[
                 TagType(
-                    id="type_1",
+                    id="tag_type_1",
                     purpose="POSITIVE",
-                    description="Type 1 description",
-                ),
+                    description="Tag type 1 description",
+                )
             ],
         )
     yield

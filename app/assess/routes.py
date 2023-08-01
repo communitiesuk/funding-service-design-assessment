@@ -13,7 +13,6 @@ from app.assess.data import get_applicant_export
 from app.assess.data import get_application_json
 from app.assess.data import get_application_overviews
 from app.assess.data import get_assessments_stats
-from app.assess.data import get_available_tags_for_fund_round
 from app.assess.data import get_available_teams
 from app.assess.data import get_flag
 from app.assess.data import get_flags
@@ -44,6 +43,7 @@ from app.assess.helpers import get_state_for_tasklist_banner
 from app.assess.helpers import get_tag_map_and_tag_options
 from app.assess.helpers import get_ttl_hash
 from app.assess.helpers import is_flaggable
+from app.assess.helpers import match_search_params
 from app.assess.helpers import resolve_application
 from app.assess.helpers import set_application_status_in_overview
 from app.assess.models.flag_teams import TeamsFlagData
@@ -444,18 +444,9 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
         "countries": ",".join(countries),
     }
 
-    show_clear_filters = False
-    if "clear_filters" not in request.args:
-        search_params.update(
-            {
-                k: v
-                for k, v in request.args.items()
-                if k in search_params and k != "countries"
-            }
-        )
-        show_clear_filters = any(
-            k in request.args for k in search_params if k != "countries"
-        )
+    search_params, show_clear_filters = match_search_params(
+        search_params, request.args
+    )
 
     application_overviews = get_application_overviews(
         fund_id, round_id, search_params
@@ -494,9 +485,11 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
         post_processed_overviews
     )
 
-    fund_round_tags = get_available_tags_for_fund_round(fund_id, round_id)
+    active_fund_round_tags = get_tags_for_fund_round(
+        fund_id, round_id, {"tag_status": "True"}
+    )
     tag_map, tag_option_groups = get_tag_map_and_tag_options(
-        fund_round_tags, post_processed_overviews
+        active_fund_round_tags, post_processed_overviews
     )
 
     def get_sorted_application_overviews(
