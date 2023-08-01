@@ -1,7 +1,6 @@
 import concurrent
 import csv
 import time
-from collections import OrderedDict
 from io import StringIO
 from typing import List
 
@@ -252,9 +251,7 @@ def generate_csv_of_application(q_and_a: dict, fund: Fund, application_json):
 
 def generate_field_info_csv(applicant_info: dict):
     output = StringIO()
-    headers = list(
-        OrderedDict.fromkeys(key for d in applicant_info for key in d.keys())
-    )
+    headers = applicant_info[0].keys()
     csv_writer = csv.writer(output)
     csv_writer.writerow(headers)
 
