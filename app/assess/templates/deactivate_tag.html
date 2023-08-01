@@ -29,8 +29,12 @@
               <input class="govuk-checkboxes__input" id="deactivate" name="deactivate" type="checkbox"
                 value="{{tag.id}}">
               <label class="govuk-label govuk-checkboxes__label" for="deactivate">
-                I understand this tag will be removed from all {{tag.tag_association_count}} applications and this
-                <b>cannot</b> be undone
+                {% if tag.tag_association_count == 1 %}
+                    I understand this tag will be removed from 1 application, and this
+                {% elif tag.tag_association_count > 1 %}
+                    I understand this tag will be removed from all {{tag.tag_association_count}} applications, and this
+                {% endif %}
+                <b>cannot</b> be undone.
               </label>
             </div>
           </div>

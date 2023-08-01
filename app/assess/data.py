@@ -118,7 +118,7 @@ def get_tags_for_fund_round(fund_id, round_id, search_params) -> List[Tag]:
         return []
 
 
-def get_tag_for_fund_round(fund_id, round_id, tag_id) -> List[Tag]:
+def get_tag_for_fund_round(fund_id, round_id, tag_id) -> Tag:
     endpoint = Config.ASSESSMENT_TAG_ENDPOINT.format(
         fund_id=fund_id, round_id=round_id, tag_id=tag_id
     )
@@ -132,7 +132,7 @@ def get_tag_for_fund_round(fund_id, round_id, tag_id) -> List[Tag]:
             f"No tag found for fund {fund_id}, round {round_id}, tag_id"
             f" {tag_id}."
         )
-        return []
+        return None
 
 
 def update_tags(fund_id, round_id, tags) -> bool:
