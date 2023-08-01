@@ -216,8 +216,30 @@ def score(
     if not sub_criteria.is_scored:
         abort(404)
 
-    state = get_state_for_tasklist_banner(application_id)
+    score_form = ScoreForm()
+    rescore_form = RescoreForm()
+    is_rescore = rescore_form.validate_on_submit()
+    if not is_rescore and request.method == "POST":
+        if score_form.validate_on_submit():
+            current_app.logger.info(f"Processing POST to {request.path}.")
+            score = int(score_form.score.data)
+            user_id = g.account_id
+            justification = score_form.justification.data
+            submit_score_and_justification(
+                score=score,
+                justification=justification,
+                application_id=application_id,
+                user_id=user_id,
+                sub_criteria_id=sub_criteria_id,
+            )
+            # re-get sub_criteria to have updated status.
+            sub_criteria: SubCriteria = get_sub_criteria(
+                application_id, sub_criteria_id
+            )
+        else:
+            is_rescore = True
 
+    state = get_state_for_tasklist_banner(application_id)
     flags_list = get_flags(application_id)
 
     comment_response = get_comments(
@@ -238,24 +260,6 @@ def score(
         sub_criteria.workflow_status, state.is_qa_complete
     )
     flag_status = determine_flag_status(flags_list)
-    score_form = ScoreForm()
-    rescore_form = RescoreForm()
-    is_rescore = rescore_form.validate_on_submit()
-    if not is_rescore and request.method == "POST":
-        if score_form.validate_on_submit():
-            current_app.logger.info(f"Processing POST to {request.path}.")
-            score = int(score_form.score.data)
-            user_id = g.account_id
-            justification = score_form.justification.data
-            submit_score_and_justification(
-                score=score,
-                justification=justification,
-                application_id=application_id,
-                user_id=user_id,
-                sub_criteria_id=sub_criteria_id,
-            )
-        else:
-            is_rescore = True
 
     # call to assessment store to get latest score.
     score_list = get_score_and_justification(
