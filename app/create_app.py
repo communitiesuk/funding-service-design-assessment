@@ -1,5 +1,6 @@
 import os
 import re
+from gettext import ngettext
 
 from app.assess.views.filters import all_caps_to_human
 from app.assess.views.filters import datetime_format
@@ -70,6 +71,8 @@ def create_app() -> Flask:
         "remove_dashes_underscores_capitalize"
     ] = remove_dashes_underscores_capitalize
     flask_app.jinja_env.filters["format_address"] = format_address
+    flask_app.jinja_env.add_extension("jinja2.ext.i18n")
+    flask_app.jinja_env.globals["ngettext"] = ngettext
 
     Compress(flask_app)
 

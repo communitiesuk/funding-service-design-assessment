@@ -10,6 +10,8 @@ requests
 #   Flask Version
 #-----------------------------------
 Flask
+Babel
+flask-babel
 
 #-----------------------------------
 #   Security
