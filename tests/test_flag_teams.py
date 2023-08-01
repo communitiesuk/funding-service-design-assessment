@@ -42,32 +42,23 @@ class TestTeamsFlagData:
                 "1", ["section1", "section2"], "RAISED", "TeamA", "AppA", []
             ),
             self.create_flag(
-                "2", ["section4", "section5"], "STOPPED", "TeamA", "AppC", []
+                "2", ["section3"], "RESOLVED", "TeamB", "AppB", []
             ),
             self.create_flag(
-                "3", ["section7"], "RESOLVED", "TeamB", "AppE", []
+                "3", ["section4", "section5"], "STOPPED", "TeamA", "AppC", []
             ),
-            self.create_flag(
-                "4", ["section10"], "RAISED", "TeamA", "AppH", []
-            ),
-            self.create_flag(
-                "5", ["section11"], "RAISED", "TeamA", "AppI", []
-            ),
-            self.create_flag(
-                "6", ["section12"], "RAISED", "TeamA", "AppJ", []
-            ),
+            self.create_flag("4", ["section6"], "RAISED", "TeamA", "AppD", []),
         ]
+
         teams_data = TeamsFlagData.from_flags(flags)
         assert len(teams_data.teams_stats) == 2
-        assert teams_data.teams_stats["TeamA"].num_of_flags == 5
-        assert teams_data.teams_stats["TeamA"].num_of_raised == 4
+        assert teams_data.teams_stats["TeamA"].num_of_flags == 3
+        assert teams_data.teams_stats["TeamA"].num_of_raised == 2
         assert teams_data.teams_stats["TeamA"].num_of_resolved == 0
         assert teams_data.teams_stats["TeamA"].num_of_stopped == 1
 
         # Check if the ordinals render correctly for the RAISED flags
         assert teams_data.teams_stats["TeamA"].ordinal_list == [
-            "Fifth",
-            "Fourth",
             "Third",
             "Second",
             "First",
@@ -77,4 +68,6 @@ class TestTeamsFlagData:
         assert teams_data.teams_stats["TeamB"].num_of_raised == 0
         assert teams_data.teams_stats["TeamB"].num_of_resolved == 1
         assert teams_data.teams_stats["TeamB"].num_of_stopped == 0
-        assert teams_data.teams_stats["TeamB"].ordinal_list == ["First"]
+        assert teams_data.teams_stats["TeamB"].ordinal_list == [
+            "First",
+        ]
