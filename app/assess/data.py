@@ -161,7 +161,7 @@ def update_tags(fund_id, round_id, tags) -> bool:
     return was_successful
 
 
-def get_tag_types():
+def get_tag_types() -> List[TagType]:
     endpoint = Config.ASSESSMENT_TAG_TYPES_ENDPOINT
     response = get_data(endpoint)
     if response is not None:
@@ -170,7 +170,7 @@ def get_tag_types():
         return result
     else:
         current_app.logger.info("No tag types found.")
-        return None
+        return []
 
 
 def post_new_tag_for_fund_round(fund_id, round_id, tag) -> bool:

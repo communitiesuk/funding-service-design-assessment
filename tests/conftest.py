@@ -758,10 +758,12 @@ def mock_get_tag_types(mocker):
     ]:
         mocker.patch(
             function_module_path,
-            return_value=TagType(
-                id="tag_type_1",
-                purpose="POSITIVE",
-                description="Tag type 1 description",
-            ),
+            return_value=[
+                TagType(
+                    id="tag_type_1",
+                    purpose="POSITIVE",
+                    description="Tag type 1 description",
+                )
+            ],
         )
     yield
