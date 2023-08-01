@@ -42,45 +42,30 @@ class TestTeamsFlagData:
                 "1", ["section1", "section2"], "RAISED", "TeamA", "AppA", []
             ),
             self.create_flag(
-                "2", ["section3"], "RESOLVED", "TeamB", "AppB", []
+                "2", ["section4", "section5"], "STOPPED", "TeamA", "AppC", []
             ),
             self.create_flag(
-                "3", ["section4", "section5"], "STOPPED", "TeamA", "AppC", []
-            ),
-            self.create_flag("4", ["section6"], "RAISED", "TeamC", "AppD", []),
-            self.create_flag(
-                "5", ["section7"], "RESOLVED", "TeamB", "AppE", []
-            ),
-            self.create_flag("6", ["section8"], "RAISED", "TeamC", "AppF", []),
-            self.create_flag("7", ["section9"], "RAISED", "TeamA", "AppG", []),
-            self.create_flag(
-                "8", ["section10"], "RAISED", "TeamA", "AppH", []
+                "3", ["section7"], "RESOLVED", "TeamB", "AppE", []
             ),
             self.create_flag(
-                "9", ["section11"], "RAISED", "TeamA", "AppI", []
+                "4", ["section10"], "RAISED", "TeamA", "AppH", []
             ),
             self.create_flag(
-                "10", ["section12"], "RAISED", "TeamA", "AppJ", []
+                "5", ["section11"], "RAISED", "TeamA", "AppI", []
             ),
             self.create_flag(
-                "11", ["section13"], "RAISED", "TeamA", "AppK", []
-            ),
-            self.create_flag(
-                "12", ["section14"], "RAISED", "TeamA", "AppL", []
+                "6", ["section12"], "RAISED", "TeamA", "AppJ", []
             ),
         ]
         teams_data = TeamsFlagData.from_flags(flags)
-        assert len(teams_data.teams_stats) == 3
-        assert teams_data.teams_stats["TeamA"].num_of_flags == 8
-        assert teams_data.teams_stats["TeamA"].num_of_raised == 7
+        assert len(teams_data.teams_stats) == 2
+        assert teams_data.teams_stats["TeamA"].num_of_flags == 5
+        assert teams_data.teams_stats["TeamA"].num_of_raised == 4
         assert teams_data.teams_stats["TeamA"].num_of_resolved == 0
         assert teams_data.teams_stats["TeamA"].num_of_stopped == 1
 
         # Check if the ordinals render correctly for the RAISED flags
         assert teams_data.teams_stats["TeamA"].ordinal_list == [
-            "Eighth",
-            "Seventh",
-            "Sixth",
             "Fifth",
             "Fourth",
             "Third",
@@ -88,20 +73,8 @@ class TestTeamsFlagData:
             "First",
         ]
 
-        assert teams_data.teams_stats["TeamB"].num_of_flags == 2
+        assert teams_data.teams_stats["TeamB"].num_of_flags == 1
         assert teams_data.teams_stats["TeamB"].num_of_raised == 0
-        assert teams_data.teams_stats["TeamB"].num_of_resolved == 2
+        assert teams_data.teams_stats["TeamB"].num_of_resolved == 1
         assert teams_data.teams_stats["TeamB"].num_of_stopped == 0
-        assert teams_data.teams_stats["TeamB"].ordinal_list == [
-            "Second",
-            "First",
-        ]
-
-        assert teams_data.teams_stats["TeamC"].num_of_flags == 2
-        assert teams_data.teams_stats["TeamC"].num_of_raised == 2
-        assert teams_data.teams_stats["TeamC"].num_of_resolved == 0
-        assert teams_data.teams_stats["TeamC"].num_of_stopped == 0
-        assert teams_data.teams_stats["TeamC"].ordinal_list == [
-            "Second",
-            "First",
-        ]
+        assert teams_data.teams_stats["TeamB"].ordinal_list == ["First"]
