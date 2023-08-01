@@ -32,6 +32,8 @@ class FundSummary:
     application_stats: Stats
     assessments_href: str
     access_controller: AssessmentAccessController
+    export_href: str
+    round_application_fields_download_available: bool
 
 
 def create_fund_summaries(fund: Fund) -> list[FundSummary]:
@@ -69,6 +71,12 @@ def create_fund_summaries(fund: Fund) -> list[FundSummary]:
                     round_short_name=round.short_name.lower(),
                 ),
                 access_controller=AssessmentAccessController(fund.short_name),
+                export_href=url_for(
+                    "assess_bp.assessor_export",
+                    fund_short_name=fund.short_name,
+                    round_short_name=round.short_name.lower(),
+                ),
+                round_application_fields_download_available=round.application_fields_download_available,
             )
             summaries.append(summary)
     return sorted(
