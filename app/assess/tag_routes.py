@@ -137,7 +137,6 @@ def create_tag(fund_id, round_id):
             f"Tag creation form failed validation: {new_tag_form.errors}"
         )
         flash(FLAG_ERROR_MESSAGE)
-
     available_tags = get_available_tags_for_fund_round(fund_id, round_id)
     return render_template(
         "create_tag.html",

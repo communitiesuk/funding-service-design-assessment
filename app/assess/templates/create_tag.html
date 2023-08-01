@@ -14,13 +14,6 @@
         <div id="contact-hint" class="govuk-hint govuk-!-margin-bottom-6">
             General and lead assessors can use new tags you create to tag any {{fund_round["fund_name"]}} assessments.
         </div>
-        <div class="govuk-warning-text">
-            <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-            <strong class="govuk-warning-text__text">
-              <span class="govuk-warning-text__assistive">Warning</span>
-              You cannot edit or delete tags once created
-            </strong>
-          </div>
 
           <form method="post">
             {{ form.csrf_token }}

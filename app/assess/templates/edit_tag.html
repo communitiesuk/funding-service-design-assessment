@@ -18,7 +18,12 @@
             <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
             <strong class="govuk-warning-text__text">
               <span class="govuk-warning-text__assistive">Warning</span>
-              Editing or removing this tag will impact {{ tag.tag_association_count }} previous tagged applications
+              Editing or deactivating this tag will change it on
+              {% trans count=tag.tag_association_count%}
+                {{ count }} tagged assessment.
+              {% pluralize %}
+                {{ count }} tagged assessments.
+              {% endtrans %}
             </strong>
           </div>
 
