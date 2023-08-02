@@ -1,4 +1,3 @@
-import copy
 from typing import Dict
 
 from app.assess.auth.validation import check_access_application_id
@@ -101,7 +100,7 @@ def get_fund_round(fund_id, round_id) -> Dict:
 def load_fund_round_tags(fund_id, round_id):
     fund_round = get_fund_round(fund_id, round_id)
     search_params, show_clear_filters = match_search_params(
-        copy.deepcopy(search_params_tag), request.args
+        search_params_tag, request.args
     )
     tags = get_tags_for_fund_round(fund_id, round_id, search_params)
     tag_types = get_tag_types()
@@ -282,7 +281,7 @@ def edit_tag(fund_id, round_id, tag_id):
         current_app.logger.info("In edit tag put")
         if edit_tag_form.validate_on_submit():
             # Save changes
-            payload = [{"id": tag_id, "value": edit_tag_form.value.data}]
+            payload = {"id": tag_id, "value": edit_tag_form.value.data}
             result = update_tag(fund_id, round_id, payload)
             if result:
                 return redirect(

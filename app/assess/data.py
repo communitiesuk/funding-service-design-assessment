@@ -829,7 +829,7 @@ def update_tag(fund_id: str, round_id: str, updated_tag: Dict) -> Tag:
     endpoint = Config.ASSESSMENT_UPDATE_TAGS_ENDPOINT.format(
         fund_id=fund_id, round_id=round_id
     )
-    response = requests.put(url=endpoint, json=updated_tag)
+    response = requests.put(url=endpoint, json=[updated_tag])
     if response.status_code == 200:
         return response.json()[0]
 
