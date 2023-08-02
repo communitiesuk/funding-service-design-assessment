@@ -6,6 +6,7 @@ from config import Config
 from flask import Blueprint
 from flask import current_app
 from flask import render_template
+from flask import request
 
 default_bp = Blueprint("default_bp", __name__, template_folder="templates")
 
@@ -23,9 +24,7 @@ def index():
 @assess_bp.errorhandler(404)
 @default_bp.errorhandler(404)
 def not_found(error):
-    error_message = f"Encountered 404: {error}"
-    stack_trace = traceback.format_exc()
-    current_app.logger.info(f"{error_message}\n{stack_trace}")
+    current_app.logger.info(f"Encountered 404 against url {request.path}")
     return render_template("404.html"), 404
 
 

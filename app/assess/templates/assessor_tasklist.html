@@ -39,10 +39,10 @@
 {% endblock header %}
 
 {% block content %}
-
+<div class="govuk-grid-row">
 {% if toggle_dict.get("TAGGING") %}
     {% if g.access_controller.is_lead_assessor %}
-        <div class="govuk-grid-column-full govuk-!-padding-0">
+        <div class="govuk-grid-column-full">
             {% if tags %}
                 {% for t in tags %}
                     <strong class="govuk-tag govuk-tag--{{ tag_config[t.purpose]['colour'].lower() }} govuk-!-margin-right-4 govuk-!-margin-top-2 dluhc-tag"
@@ -63,21 +63,38 @@
                     </a>
                 </span>
         </div>
-        <div class="govuk-grid-column-full govuk-!-padding-0 govuk-!-margin-top-4">
+        <div class="govuk-grid-column-full govuk-!-margin-top-4">
             <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible govuk-!-margin-top-0">
         </div>
     {% endif %}
 {% endif %}
-
+</div>
 
 {% if g.access_controller.has_any_assessor_role %}
-<div>
-    {{ flag_tabs(state, application_id, teams_flag_stats, flags_list, accounts_list) }}
+<div class="govuk-grid-row">
+<div class="govuk-grid-column-three-quarters">
+       {{ flag_tabs(state, application_id, teams_flag_stats, flags_list, accounts_list) }}
+</div>
+<div class="govuk-grid-column-one-quarter">
+    <div class="gov-uk-table__cell--align-right">
+    <span class="left govuk-!-padding-right-1">
+        {% if is_flaggable and g.access_controller.has_any_assessor_role %}
+        {{ flag_application_button(application_id) }}
+        {% endif %}
+    </span>
+    <span class="right">
+        {% if g.access_controller.is_lead_assessor and state.workflow_status=="COMPLETED" and (not is_qa_complete) and flag_status not in ["Stopped", "Flagged", "Multiple flags to resolve"] and "Flagged" not in flag_status %}
+        {{ mark_qa_complete_button(application_id) }}
+        {% endif %}
+    </span>
+    </div>
+</div>
 </div>
 {% endif %}
 
 {# Display multiple flag banner #}
-<div>
+<div class="govuk-grid-row">
+<div class="govuk-grid-column-full">
     {% if g.access_controller.has_any_assessor_role and is_qa_complete %}
         {{ qa_complete_flag(qa_complete["date_created"], accounts_list[qa_complete["user_id"]], form.csrf_token, application_id) }}
     {% endif %}
@@ -97,11 +114,10 @@
         {{ assessment_complete(state, form.csrf_token, application_id)}}
     {% endif %}
 </div>
-
+</div>
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
         <div class="govuk-grid-column-two-thirds">
-
             {% if all_uploaded_documents_section_available %}
             <h2 class="govuk-heading-l govuk-!-margin-top-8">All uploaded documents</h2>
             {{ section_element(
@@ -126,18 +142,7 @@
                 {{ criteria_element(criteria, name_classes, application_id) }}
             {% endfor %}
         </div>
-        <div class="govuk-grid-column-one-third govuk-!-margin-top-2 govuk-button-group">
-            <span>
-                {% if g.access_controller.is_lead_assessor and state.workflow_status=="COMPLETED" and (not is_qa_complete) and flag_status not in ["Stopped", "Flagged", "Multiple flags to resolve"] and "Flagged" not in flag_status %}
-                {{ mark_qa_complete_button(application_id) }}
-                {% endif %}
-            </span>
-            <span>
-                {% if is_flaggable and g.access_controller.has_any_assessor_role %}
-                {{ flag_application_button(application_id) }}
-                {% endif %}
-            </span>
-        </div>
+
     </div>
 </div>
 {% endblock content %}

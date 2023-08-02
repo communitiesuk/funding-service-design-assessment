@@ -628,9 +628,9 @@ class TestJinjaMacros(object):
             text="Total funding requested: £123,456.78",
         ), "Funding amount not found"
         assert soup.find(
-            "h3",
-            class_="fsd-banner-content",
-            text="Assessment status: Submitted",
+            "strong",
+            class_="govuk-tag",
+            text="Submitted",
         ), "Assessment status not found"
         assert soup.find(
             "h3", class_="fsd-banner-content", text="Flagged"
