@@ -267,7 +267,7 @@ def generate_csv_of_application(q_and_a: dict, fund: Fund, application_json):
     return output.getvalue()
 
 
-def generate_aseessment_info_csv(data: dict):
+def generate_assessment_info_csv(data: dict):
     output = StringIO()
     headers = list(OrderedDict.fromkeys(key for d in data for key in d.keys()))
     csv_writer = csv.writer(output)
