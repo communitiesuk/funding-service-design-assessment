@@ -80,8 +80,8 @@
                                         </button>
                                         {% if show_clear_filters %}
                                         <a class="govuk-link" href="{{ url_for('tag_bp.load_fund_round_tags',
-                                fund_id=fund_round[fund_id],
-                                round_id=fund_round[round_id],
+                                fund_id=fund_round['fund_id'],
+                                round_id=fund_round['round_id'],
                                 clear_filters=true) }}" aria-label="Clear Filters">Clear search</a>
                                         {% endif %}
                                     </div>
