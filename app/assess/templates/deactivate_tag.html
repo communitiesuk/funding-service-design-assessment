@@ -2,7 +2,7 @@
 {% from "macros/tag_header.html" import tag_header %}
 
 {% block header %}
-{{ tag_header("manage tags", url_for("tag_bp.load_fund_round_tags", fund_id=fund_round["fund_id"], round_id=fund_round["round_id"]), fund_round, sso_logout_url) }}
+{{ tag_header("edit_tag", url_for("tag_bp.edit_tag", fund_id=fund_round["fund_id"], round_id=fund_round["round_id"], tag_id=tag.id), fund_round, sso_logout_url) }}
 {% endblock header %}
 
 {% block content %}
@@ -19,34 +19,16 @@
       </div>
   {% endfor %}
     <p class="govuk-body-l govuk-!-font-weight-bold">Are you sure you want to deactivate this tag?</p>
-    <p class="govuk-body govuk-!-margin-bottom-8">This action will remove the tag from all
+    <p class="govuk-body">This will remove the tag from {{tag.tag_association_count}}
       {% trans count=tag.tag_association_count%}
-        {{ count }} application
+        assessment
       {% pluralize %}
-        {{ count }} applications
-      {% endtrans %}{{tag.tag_association_count}}
-      this tag is being used by and cannot be undone.</p>
+        assessments
+      {% endtrans %}
+      where this tag is applied.</p>
+      <p class="govuk-body govuk-!-margin-bottom-8">You can undo this by reactivating the tag.</p>
     <form method="post">
       {{ form.csrf_token }}
-      <div class="govuk-form-group">
-        <fieldset class="govuk-fieldset" aria-describedby="deactivate-hint">
-          <div class="govuk-checkboxes" data-module="govuk-checkboxes">
-            <div class="govuk-checkboxes__item">
-              <input class="govuk-checkboxes__input" id="deactivate" name="deactivate" type="checkbox"
-                value="{{tag.id}}">
-              <label class="govuk-label govuk-checkboxes__label" for="deactivate">
-                I understand this tag will be removed from
-                {% trans count=tag.tag_association_count%}
-                  {{ count }} application,
-                {% pluralize %}
-                  all {{ count }} applications,
-                {% endtrans %}
-                 and this <b>cannot</b> be undone.
-              </label>
-            </div>
-          </div>
-        </fieldset>
-      </div>
 
 
       <div class="govuk-button-group">

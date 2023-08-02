@@ -416,34 +416,6 @@ def test_get_deactivate_route(
         "get_rounds_path": "app.assess.tag_routes.get_round",
     }
 )
-def test_post_deactivate_existing_tag_without_checkbox_returns_error(
-    client_with_valid_session,
-    mock_get_funds,
-    mock_get_fund,
-    mock_get_tag_types,
-    mock_get_round,
-    mock_get_tag_for_fund_round,
-):
-    data = {}
-    with mock.patch(
-        "app.assess.tag_routes.update_tags",
-        return_value=True,
-    ):
-        response = client_with_valid_session.post(
-            f"/assess/tags/deactivate/{test_fund_id}/{test_round_id}/{mock_get_tag_for_fund_round.id}",
-            data=data,
-        )
-
-    assert response.status_code == 200
-    assert "Tag not deactivated." in response.text
-    assert "Yes, deactivate tag" in response.text
-
-
-@pytest.mark.mock_parameters(
-    {
-        "get_rounds_path": "app.assess.tag_routes.get_round",
-    }
-)
 def test_post_deactivate_existing_tag_with_checkbox_redirects(
     client_with_valid_session,
     mock_get_funds,
