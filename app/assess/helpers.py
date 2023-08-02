@@ -250,16 +250,18 @@ def generate_csv_of_application(q_and_a: dict, fund: Fund, application_json):
     return output.getvalue()
 
 
-def generate_field_info_csv(applicant_info: dict):
+def generate_aseessment_info_csv(data: dict):
     output = StringIO()
-    headers = list(
-        OrderedDict.fromkeys(key for d in applicant_info for key in d.keys())
-    )
+    headers = list(OrderedDict.fromkeys(key for d in data for key in d.keys()))
     csv_writer = csv.writer(output)
+
+    if len(data) == 0:
+        return output.getvalue()
+
     csv_writer.writerow(headers)
 
-    for person_data in applicant_info:
-        rows = person_data.values()
+    for data_entry in data:
+        rows = data_entry.values()
         csv_writer.writerow(rows)
 
     return output.getvalue()
