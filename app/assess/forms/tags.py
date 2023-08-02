@@ -1,6 +1,5 @@
 from config import Config
 from flask_wtf import FlaskForm
-from wtforms import BooleanField
 from wtforms import RadioField
 from wtforms import SelectMultipleField
 from wtforms import TextAreaField
@@ -42,10 +41,7 @@ class EditTagForm(FlaskForm):
 
 
 class DeactivateTagForm(FlaskForm):
-    deactivate = BooleanField(
-        "boolean",
-        validators=[InputRequired()],
-    )
+    pass
 
 
 class ReactivateTagForm(FlaskForm):
