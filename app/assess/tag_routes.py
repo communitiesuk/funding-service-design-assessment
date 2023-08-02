@@ -278,7 +278,7 @@ def edit_tag(fund_id, round_id, tag_id):
         current_app.logger.info(f"Loading edit tag page for id {tag_id}")
 
     elif request.method == "POST":
-        current_app.logger.info("In edit tag put")
+        current_app.logger.info("In edit tag post")
         if edit_tag_form.validate_on_submit():
             # Save changes
             payload = {"id": tag_id, "value": edit_tag_form.value.data}
