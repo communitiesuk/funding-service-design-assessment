@@ -49,7 +49,7 @@
                             {{tag_type['purpose'].title()}}
                                 <strong class="govuk-tag govuk-!-margin-left-2 govuk-tag--{{ tag_config[tag_type['purpose']]['colour'] }} dluhc-tag">{{ tag_config[tag_type['purpose']]['colour'].title() if tag_config[tag_type['purpose']]['colour'].lower() != "grey" else "White" }}</strong>
                         </label>
-                        <div id="tag-item-hint" class="govuk-hint govuk-radios__hint">
+                        <div id="tag-item-hint-{{tag_type['purpose']}}" class="govuk-hint govuk-radios__hint">
                             {{tag_type['description']}}
                         </div>
                     </div>
