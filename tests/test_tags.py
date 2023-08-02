@@ -38,6 +38,7 @@ test_tags_active = [
         "active": True,
         "purpose": "POSITIVE",
         "type_id": "type_1",
+        "tag_association_count": 2,
     },
     {
         "id": "432",
@@ -46,6 +47,7 @@ test_tags_active = [
         "active": True,
         "purpose": "POSITIVE",
         "type_id": "type_1",
+        "tag_association_count": 2,
     },
 ]
 test_get_tag = {
@@ -84,6 +86,7 @@ def test_change_tags_route(
                 active=True,
                 purpose="POSITIVE",
                 type_id="type_1",
+                tag_association_count=2,
             )
         ],
     ), mock.patch(
@@ -145,6 +148,7 @@ def test_change_tags_route_associated_tag_checked(
                 active=True,
                 purpose="POSITIVE",
                 type_id="type_1",
+                tag_association_count=2,
             ),
             Tag(
                 id="456",
@@ -153,6 +157,7 @@ def test_change_tags_route_associated_tag_checked(
                 active=True,
                 purpose="NEGATIVE",
                 type_id="type_2",
+                tag_association_count=2,
             ),
         ],
     ), mock.patch(
@@ -193,7 +198,6 @@ def test_change_tags_route_no_tags(
     mock_get_application_metadata,
     mock_get_fund,
 ):
-
     with mock.patch(
         "app.assess.tag_routes.get_tags_for_fund_round",
         return_value=[],
@@ -213,6 +217,24 @@ def test_change_tags_route_no_tags(
             ).text.strip()
             == "There are no tags available"
         )
+
+
+def test_post_new_tag_for_fund_round_returns_True(flask_test_client):
+    with mock.patch("requests.post") as mock_post:
+        mock_response = mock.Mock()
+        mock_response.ok = True
+        mock_post.return_value = mock_response
+
+        fund_id = "c62abab1-41b5-4956-b496-4a8862d748a9"
+        round_id = "13c7ba20-1d12-4a08-9a95-76d2fa447db1"
+        tag = {
+            "value": "v",
+            "tag_type_id": "f07b4d46-e078-4e2c-9066-be2b96c3140d",
+            "creator_user_id": "00000000-0000-0000-0000-000000000000",
+        }
+
+        result = post_new_tag_for_fund_round(fund_id, round_id, tag)
+        assert result is True
 
 
 @pytest.mark.mock_parameters(
@@ -332,7 +354,8 @@ def test_manage_tag_page_renders_with_active_tags(
     assert response.status_code == 200
     assert "Val 1" in response.text
     assert "Val 2" in response.text
-    assert "Deactivate" in response.text
+    assert "Edit" in response.text
+    assert "Deactivate" not in response.text
     assert "Reactivate" not in response.text
 
 
@@ -401,7 +424,6 @@ def test_post_deactivate_existing_tag_without_checkbox_returns_error(
     mock_get_round,
     mock_get_tag_for_fund_round,
 ):
-
     data = {}
     with mock.patch(
         "app.assess.tag_routes.update_tags",
@@ -430,7 +452,6 @@ def test_post_deactivate_existing_tag_with_checkbox_redirects(
     mock_get_round,
     mock_get_tag_for_fund_round,
 ):
-
     data = {
         "deactivate": "a48f4951-b26b-4820-9301-9ca2c835b163",
     }
@@ -460,7 +481,6 @@ def test_post_deactivate_non_existing_tag_returns_error(
     mock_get_round,
     mock_get_tag_for_fund_round,
 ):
-
     data = {
         "deactivate": "a48f4951-b26b-4820-9301-9ca2c835b163",
     }
@@ -491,7 +511,6 @@ def test_get_reactivate_existing_tag_returns_200(
     mock_get_round,
     mock_get_tag_for_fund_round,
 ):
-
     response = client_with_valid_session.get(
         f"/assess/tags/reactivate/{test_fund_id}/{test_round_id}/{mock_get_tag_for_fund_round.id}"
     )
@@ -513,7 +532,6 @@ def test_post_reactivate_non_existing_tag_returns_error(
     mock_get_round,
     mock_get_tag_for_fund_round,
 ):
-
     data = {}
     with mock.patch(
         "app.assess.tag_routes.update_tags",
@@ -675,7 +693,6 @@ def test_get_available_tags_no_tags(flask_test_client):
 
 
 def test_get_associated_tags_for_applications(flask_test_client):
-
     with mock.patch(
         "app.assess.data.get_data",
         return_value=[
@@ -697,7 +714,6 @@ def test_get_associated_tags_for_applications(flask_test_client):
 
 
 def test_update_associated_tag_returns_true(flask_test_client):
-
     with mock.patch("requests.put") as mock_put:
         mock_response = mock.Mock()
         mock_response.ok = True
@@ -724,19 +740,84 @@ def test_update_associated_tag_returns_true(flask_test_client):
         assert result is True
 
 
-def test_post_new_tag_for_fund_round_returns_True(flask_test_client):
-    with mock.patch("requests.post") as mock_post:
-        mock_response = mock.Mock()
-        mock_response.ok = True
-        mock_post.return_value = mock_response
+@pytest.fixture
+def mock_get_fund_round(
+    mocker,
+    mock_get_funds,
+    mock_get_fund,
+):
+    mocker.patch(
+        "app.assess.tag_routes.get_fund_round",
+        return_value={
+            "fund_name": "test-fund",
+            "round_name": "round 1",
+            "fund_id": "TF",
+            "round_id": "TR",
+        },
+    )
 
-        fund_id = "c62abab1-41b5-4956-b496-4a8862d748a9"
-        round_id = "13c7ba20-1d12-4a08-9a95-76d2fa447db1"
-        tag = {
-            "value": "v",
-            "tag_type_id": "f07b4d46-e078-4e2c-9066-be2b96c3140d",
-            "creator_user_id": "00000000-0000-0000-0000-000000000000",
-        }
 
-        result = post_new_tag_for_fund_round(fund_id, round_id, tag)
-        assert result is True
+@pytest.fixture
+def mock_get_tag_and_count(mocker):
+    tag_id = "123-123"
+    count = 6
+    mock_tag = Tag(
+        id=tag_id,
+        value="tag value 1",
+        creator_user_id="test-user",
+        active=True,
+        purpose="general",
+        type_id="abcabc",
+        tag_association_count=count,
+    )
+    mocker.patch("app.assess.tag_routes.get_tag", return_value=mock_tag)
+    yield (tag_id, count)
+
+
+def test_edit_tag_get(
+    client_with_valid_session,
+    mocker,
+    mock_get_fund_round,
+    mock_get_tag_and_count,
+):
+    response = client_with_valid_session.get(
+        f"/assess/tags/edit/{test_fund_id}/{test_round_id}/{mock_get_tag_and_count[0]}"
+    )
+    soup = BeautifulSoup(response.data, "html.parser")
+    assert soup.find("h1").text.strip() == 'Edit tag "tag value 1"'
+    assert (
+        f"{mock_get_tag_and_count[1]} tagged assessments"
+        in soup.find("strong", class_="govuk-warning-text__text").text
+    )
+
+
+@pytest.mark.parametrize(
+    "new_value,return_from_data,expected_response_code,expect_error",
+    [
+        ("new value", "tag", 302, False),
+        ("new value", None, 200, True),
+        ("!&asdf£$", "tag", 200, True),
+    ],
+)
+def test_edit_tag_post(
+    new_value,
+    return_from_data,
+    expected_response_code,
+    expect_error,
+    client_with_valid_session,
+    mock_get_fund_round,
+    mocker,
+    mock_get_tag_and_count,
+):
+    mocker.patch(
+        "app.assess.tag_routes.update_tag", return_value=return_from_data
+    )
+    response = client_with_valid_session.post(
+        f"/assess/tags/edit/{test_fund_id}/{test_round_id}/{mock_get_tag_and_count[0]}",
+        data={"value": new_value},
+        follow_redirects=False,
+    )
+    assert response.status_code == expected_response_code
+    if expect_error:
+        soup = BeautifulSoup(response.data, "html.parser")
+        assert soup.find("div", class_="govuk-grid-row govuk-error-summary")

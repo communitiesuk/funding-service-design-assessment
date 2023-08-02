@@ -1,7 +1,8 @@
 {% extends "base.html" %}
+{% from "macros/tag_header.html" import tag_header %}
 
 {% block header %}
-{% include "./components/tag_header.html" %}
+{{ tag_header("manage tags", url_for("tag_bp.load_fund_round_tags", fund_id=fund_round["fund_id"], round_id=fund_round["round_id"]), fund_round, sso_logout_url) }}
 {% endblock header %}
 
 {% block content %}
@@ -18,8 +19,13 @@
       </div>
   {% endfor %}
     <p class="govuk-body-l govuk-!-font-weight-bold">Are you sure you want to deactivate this tag?</p>
-    <p class="govuk-body govuk-!-margin-bottom-8">This action will remove the tag from all {{tag.tag_association_count}}
-      applications this tag is being used by and cannot be undone.</p>
+    <p class="govuk-body govuk-!-margin-bottom-8">This action will remove the tag from all
+      {% trans count=tag.tag_association_count%}
+        {{ count }} application
+      {% pluralize %}
+        {{ count }} applications
+      {% endtrans %}{{tag.tag_association_count}}
+      this tag is being used by and cannot be undone.</p>
     <form method="post">
       {{ form.csrf_token }}
       <div class="govuk-form-group">
@@ -29,12 +35,13 @@
               <input class="govuk-checkboxes__input" id="deactivate" name="deactivate" type="checkbox"
                 value="{{tag.id}}">
               <label class="govuk-label govuk-checkboxes__label" for="deactivate">
-                {% if tag.tag_association_count == 1 %}
-                    I understand this tag will be removed from 1 application, and this
-                {% elif tag.tag_association_count > 1 %}
-                    I understand this tag will be removed from all {{tag.tag_association_count}} applications, and this
-                {% endif %}
-                <b>cannot</b> be undone.
+                I understand this tag will be removed from
+                {% trans count=tag.tag_association_count%}
+                  {{ count }} application,
+                {% pluralize %}
+                  all {{ count }} applications,
+                {% endtrans %}
+                 and this <b>cannot</b> be undone.
               </label>
             </div>
           </div>

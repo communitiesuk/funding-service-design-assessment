@@ -1,7 +1,8 @@
 {% extends "base.html" %}
+{% from "macros/tag_header.html" import tag_header %}
 
 {% block header %}
-{% include "./components/tag_header.html" %}
+{{ tag_header("manage tags", url_for("tag_bp.load_fund_round_tags", fund_id=fund_round["fund_id"], round_id=fund_round["round_id"]), fund_round, sso_logout_url) }}
 {% endblock header %}
 
 {% block content %}
@@ -12,13 +13,6 @@
         <div id="contact-hint" class="govuk-hint govuk-!-margin-bottom-6">
             General and lead assessors can use new tags you create to tag any {{fund_round["fund_name"]}} assessments.
         </div>
-        <div class="govuk-warning-text">
-            <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-            <strong class="govuk-warning-text__text">
-              <span class="govuk-warning-text__assistive">Warning</span>
-              You cannot edit or delete tags once created
-            </strong>
-          </div>
 
           <form method="post">
             {{ form.csrf_token }}
@@ -55,7 +49,7 @@
                             {{tag_type['purpose'].title()}}
                                 <strong class="govuk-tag govuk-!-margin-left-2 govuk-tag--{{ tag_config[tag_type['purpose']]['colour'] }} dluhc-tag">{{ tag_config[tag_type['purpose']]['colour'].title() if tag_config[tag_type['purpose']]['colour'].lower() != "grey" else "White" }}</strong>
                         </label>
-                        <div id="tag-item-hint" class="govuk-hint govuk-radios__hint">
+                        <div id="tag-item-hint-{{tag_type['purpose']}}" class="govuk-hint govuk-radios__hint">
                             {{tag_type['description']}}
                         </div>
                     </div>

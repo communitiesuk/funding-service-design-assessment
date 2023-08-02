@@ -1,16 +1,21 @@
+from typing import Dict
+
 from app.assess.auth.validation import check_access_application_id
 from app.assess.auth.validation import check_access_fund_id
 from app.assess.data import get_associated_tags_for_application
 from app.assess.data import get_fund
 from app.assess.data import get_round
+from app.assess.data import get_tag
 from app.assess.data import get_tag_for_fund_round
 from app.assess.data import get_tag_types
 from app.assess.data import get_tags_for_fund_round
 from app.assess.data import post_new_tag_for_fund_round
 from app.assess.data import update_associated_tags
+from app.assess.data import update_tag
 from app.assess.data import update_tags
 from app.assess.display_value_mappings import search_params_tag
 from app.assess.forms.tags import DeactivateTagForm
+from app.assess.forms.tags import EditTagForm
 from app.assess.forms.tags import NewTagForm
 from app.assess.forms.tags import ReactivateTagForm
 from app.assess.forms.tags import TagAssociationForm
@@ -78,13 +83,7 @@ def load_change_tags(application_id):
     )
 
 
-@tag_bp.route("/tags/manage/<fund_id>/<round_id>", methods=["GET"])
-@check_access_fund_id(roles_required=["ASSESSOR"])
-def load_fund_round_tags(fund_id, round_id):
-
-    search_params, show_clear_filters = match_search_params(
-        search_params_tag, request.args
-    )
+def get_fund_round(fund_id, round_id) -> Dict:
     fund = get_fund(fund_id, use_short_name=False)
     round = get_round(fund_id, round_id, use_short_name=False)
     fund_round = {
@@ -93,6 +92,16 @@ def load_fund_round_tags(fund_id, round_id):
         "fund_id": fund_id,
         "round_id": round_id,
     }
+    return fund_round
+
+
+@tag_bp.route("/tags/manage/<fund_id>/<round_id>", methods=["GET"])
+@check_access_fund_id(roles_required=["ASSESSOR"])
+def load_fund_round_tags(fund_id, round_id):
+    fund_round = get_fund_round(fund_id, round_id)
+    search_params, show_clear_filters = match_search_params(
+        search_params_tag, request.args
+    )
     tags = get_tags_for_fund_round(fund_id, round_id, search_params)
     tag_types = get_tag_types()
     tag_types.insert(0, TagType(id="all", purpose="All", description="all"))
@@ -124,15 +133,8 @@ def create_tag(fund_id, round_id):
     go_back = request.args.get("go_back") or False
     new_tag_form = NewTagForm()
     tag_types = get_tag_types()
-    fund = get_fund(fund_id, use_short_name=False)
-    round = get_round(fund_id, round_id, use_short_name=False)
     new_tag_form.type.choices = [tag_type.id for tag_type in tag_types]
-    fund_round = {
-        "fund_name": fund.name,
-        "round_name": round.title,
-        "fund_id": fund_id,
-        "round_id": round_id,
-    }
+    fund_round = get_fund_round(fund_id, round_id)
     if new_tag_form.validate_on_submit():
         current_app.logger.info("Tag creation form validated")
         tag = {
@@ -162,7 +164,6 @@ def create_tag(fund_id, round_id):
             f"Tag creation form failed validation: {new_tag_form.errors}"
         )
         flash(FLAG_ERROR_MESSAGE)
-
     return render_template(
         "create_tag.html",
         form=new_tag_form,
@@ -262,4 +263,47 @@ def reactivate_tag(fund_id, round_id, tag_id):
         tag=tag_to_reactivate,
         tag_config=Config.TAGGING_PURPOSE_CONFIG,
         fund_round=fund_round,
+    )
+
+
+@tag_bp.route(
+    "/tags/edit/<fund_id>/<round_id>/<tag_id>", methods=["GET", "POST"]
+)
+@check_access_fund_id(roles_required=["ASSESSOR"])
+def edit_tag(fund_id, round_id, tag_id):
+    edit_tag_form = EditTagForm()
+    fund_round = get_fund_round(fund_id, round_id)
+    tag = get_tag(fund_id, round_id, tag_id)
+    if request.method == "GET":
+        current_app.logger.info(f"Loading edit tag page for id {tag_id}")
+
+    elif request.method == "POST":
+        current_app.logger.info("In edit tag post")
+        if edit_tag_form.validate_on_submit():
+            # Save changes
+            payload = {"id": tag_id, "value": edit_tag_form.value.data}
+            if update_tag(fund_id, round_id, payload):
+                return redirect(
+                    url_for(
+                        "tag_bp.load_fund_round_tags",
+                        fund_id=fund_id,
+                        round_id=round_id,
+                    )
+                )
+            else:
+                flash(
+                    "An error occurred and your changes were not saved. Please"
+                    " try again later."
+                )
+        else:
+            current_app.logger.info(
+                f"Edit tag form failed validation: {edit_tag_form.errors}"
+            )
+            flash(FLAG_ERROR_MESSAGE)
+
+    return render_template(
+        "edit_tag.html",
+        form=edit_tag_form,
+        fund_round=fund_round,
+        tag=tag,
     )

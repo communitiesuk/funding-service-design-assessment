@@ -815,6 +815,28 @@ def get_default_round_data():
     return round_response
 
 
+def get_tag(fund_id, round_id, tag_id) -> Tag:
+    endpoint = Config.ASSESSMENT_GET_TAG_ENDPOINT.format(
+        fund_id=fund_id, round_id=round_id, tag_id=tag_id
+    )
+    response = get_data(endpoint)
+    if response:
+        return Tag.from_dict(response)
+    return None
+
+
+def update_tag(fund_id: str, round_id: str, updated_tag: Dict) -> Tag:
+    endpoint = Config.ASSESSMENT_UPDATE_TAGS_ENDPOINT.format(
+        fund_id=fund_id, round_id=round_id
+    )
+    response = requests.put(url=endpoint, json=[updated_tag])
+    if response.status_code == 200:
+        return response.json()[0]
+
+    current_app.logger.error(f"Unable to update tag: {updated_tag}")
+    return None
+
+
 def get_applicant_export(fund_id, round_id):
     applicant_export_endpoint = Config.APPLICANT_EXPORT_ENDPOINT.format(
         fund_id=fund_id, round_id=round_id
