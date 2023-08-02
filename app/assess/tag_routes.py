@@ -282,8 +282,7 @@ def edit_tag(fund_id, round_id, tag_id):
         if edit_tag_form.validate_on_submit():
             # Save changes
             payload = {"id": tag_id, "value": edit_tag_form.value.data}
-            result = update_tag(fund_id, round_id, payload)
-            if result:
+            if result := update_tag(fund_id, round_id, payload):
                 return redirect(
                     url_for(
                         "tag_bp.load_fund_round_tags",
