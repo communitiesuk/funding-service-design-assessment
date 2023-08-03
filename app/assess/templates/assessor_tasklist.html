@@ -41,7 +41,7 @@
 {% block content %}
 <div class="govuk-grid-row">
 {% if toggle_dict.get("TAGGING") %}
-    {% if g.access_controller.is_lead_assessor %}
+    {% if g.access_controller.is_assessor %}
         <div class="govuk-grid-column-full">
             {% if tags %}
                 {% for t in tags %}
