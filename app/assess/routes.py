@@ -728,6 +728,22 @@ def download_file(data, mimetype, file_name):
     )
 
 
+def download_multiple_files(files):
+    responses = []
+    for file_name, file_data, mimetype in files:
+        response = Response(
+            file_data,
+            mimetype=mimetype,
+            headers={
+                "Content-Disposition": (
+                    f"attachment;filename={quote_plus(file_name)}"
+                )
+            },
+        )
+        responses.append(response)
+    return responses
+
+
 @assess_bp.route("/application/<application_id>", methods=["GET", "POST"])
 @check_access_application_id
 def application(application_id):
@@ -802,4 +818,12 @@ def assessor_export(
     export = get_applicant_export(_round.fund_id, _round.id, report_type)
 
     csv_file = generate_assessment_info_csv(export)
-    return download_file(csv_file, "text/csv", "exported_data.csv")
+    csv_file2 = generate_assessment_info_csv({})
+
+    files_to_download = [
+        ("file1.csv", csv_file, "text/csv"),
+        ("file2.csv", csv_file2, "text/csv"),
+        # Add more files as needed
+    ]
+
+    return download_multiple_files(files_to_download)
