@@ -74,7 +74,9 @@ class TestRoutes:
         assert 200 == response.status_code, "Wrong status code on response"
         soup = BeautifulSoup(response.data, "html.parser")
 
-        export_link = soup.find("a", href="/assess/assessor_export/TF/tr/")
+        export_link = soup.find(
+            "a", href="/assess/assessor_export/TF/tr/ASSESSOR_EXPORT"
+        )
         assert len(export_link) != 0
 
     @pytest.mark.mock_parameters(

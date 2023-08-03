@@ -208,7 +208,7 @@ class DefaultConfig:
 
     APPLICANT_EXPORT_ENDPOINT = (
         ASSESSMENT_STORE_API_HOST
-        + "/application_fields_export/{fund_id}/{round_id}"
+        + "/application_fields_export/{fund_id}/{round_id}/{report_type}"
     )
     TAGGING_PURPOSE_CONFIG = {
         "GENERAL": {

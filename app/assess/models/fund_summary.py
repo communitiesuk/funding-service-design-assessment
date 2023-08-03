@@ -33,6 +33,7 @@ class FundSummary:
     assessments_href: str
     access_controller: AssessmentAccessController
     export_href: str
+    assessment_tracker_href: str
     round_application_fields_download_available: bool
 
 
@@ -75,6 +76,13 @@ def create_fund_summaries(fund: Fund) -> list[FundSummary]:
                     "assess_bp.assessor_export",
                     fund_short_name=fund.short_name,
                     round_short_name=round.short_name.lower(),
+                    report_type="ASSESSOR_EXPORT",
+                ),
+                assessment_tracker_href=url_for(
+                    "assess_bp.assessor_export",
+                    fund_short_name=fund.short_name,
+                    round_short_name=round.short_name.lower(),
+                    report_type="OUTPUT_TRACKER",
                 ),
                 round_application_fields_download_available=round.application_fields_download_available,
             )

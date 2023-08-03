@@ -837,9 +837,9 @@ def update_tag(fund_id: str, round_id: str, updated_tag: Dict) -> Tag:
     return None
 
 
-def get_applicant_export(fund_id, round_id):
+def get_applicant_export(fund_id, round_id, report_type):
     applicant_export_endpoint = Config.APPLICANT_EXPORT_ENDPOINT.format(
-        fund_id=fund_id, round_id=round_id
+        fund_id=fund_id, round_id=round_id, report_type=report_type
     )
 
     current_app.logger.info(f"Endpoint '{applicant_export_endpoint}'.")
