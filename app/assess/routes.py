@@ -1,3 +1,4 @@
+from collections import OrderedDict
 from datetime import datetime
 from urllib.parse import quote_plus
 from urllib.parse import unquote_plus
@@ -57,6 +58,7 @@ from app.assess.status import update_ar_status_to_completed
 from app.assess.status import update_ar_status_to_qa_completed
 from app.assess.views.filters import utc_to_bst
 from app.aws import get_file_for_download_from_aws
+from app.pdf.pdf_generator import PDFGenerator
 from config import Config
 from flask import Blueprint
 from flask import current_app
@@ -65,6 +67,7 @@ from flask import redirect
 from flask import render_template
 from flask import request
 from flask import Response
+from flask import send_file
 from flask import url_for
 from fsd_utils import extract_questions_and_answers
 from fsd_utils import generate_text_of_application
@@ -307,7 +310,6 @@ def score(
 )
 @check_access_application_id(roles_required=["ASSESSOR"])
 def flag(application_id):
-
     # Get assessor tasks list
     state = get_state_for_tasklist_banner(application_id)
     choices = [
@@ -672,6 +674,32 @@ def generate_doc_list_for_download(application_id):
     )
 
 
+_FULL_APPLICATION_PDF_GENERATOR = PDFGenerator(
+    "app/pdf/templates/full_application.html"
+)
+
+
+def flatten(
+    data,
+):  # this should probably live elsewhere, just put here for now as doing development.
+    form_name_to_title = OrderedDict()
+    form_name_to_path = OrderedDict()
+
+    for item in data:
+        if item["form_name"]:
+            form_name_to_title[item["form_name"]] = item["title"]
+            form_name_to_path[item["form_name"]] = item["path"]
+
+        if item["children"]:
+            child_form_name_to_title, child_form_name_to_path = flatten(
+                item["children"]
+            )
+            form_name_to_title.update(child_form_name_to_title)
+            form_name_to_path.update(child_form_name_to_path)
+
+    return form_name_to_title, form_name_to_path
+
+
 @assess_bp.route(
     "/application/<application_id>/export/<short_id>/answers.<file_type>"
 )
@@ -686,8 +714,23 @@ def download_application_answers(
     application_json = get_application_json(application_id)
     application_json_blob = application_json["jsonb_blob"]
 
-    qanda_dict = extract_questions_and_answers(application_json_blob["forms"])
     fund = get_fund(application_json["jsonb_blob"]["fund_id"])
+    fund_round = get_round(
+        fund.id, application_json["round_id"], use_short_name=False
+    )
+
+    qanda_dict = extract_questions_and_answers(application_json_blob["forms"])
+    application_sections_display_config = (
+        get_application_sections_display_config(
+            fund.id, fund_round.id, application_json["language"]
+        )
+    )
+    form_name_to_title_map, form_name_to_path_map = flatten(
+        application_sections_display_config
+    )
+
+    # form_name_to_title_map has keys ordered properly, as it's from the display config.
+    qanda_dict = {key: qanda_dict[key] for key in form_name_to_title_map}
 
     if file_type == "txt":
         text = generate_text_of_application(qanda_dict, fund.name)
@@ -695,6 +738,32 @@ def download_application_answers(
     elif file_type == "csv":
         csv = generate_csv_of_application(qanda_dict, fund, application_json)
         return download_file(csv, "text/csv", f"{short_id}_answers.csv")
+    elif file_type == "pdf":
+        context = {
+            "title": fund.name,
+            "response_id": application_json["short_id"],
+            "submission_to": f"{fund.name} {fund_round.title}",
+            "submitted_on": application_json["date_submitted"],
+            "sections": [
+                {
+                    # some have the number than part of the title. so we may need to handle that per round.
+                    "number": "",  # form_name_to_path_map.get(section),
+                    "title": form_name_to_title_map.get(section),
+                    "questions_and_answers": [
+                        {"question": q, "answer": a}
+                        for q, a in q_and_a.items()
+                    ],
+                }
+                for section, q_and_a in qanda_dict.items()
+            ],
+        }
+        if pdf_file := _FULL_APPLICATION_PDF_GENERATOR.generate_pdf(context):
+            pdf_file.seek(0)
+            return send_file(
+                pdf_file,
+                download_name=f"{short_id}_answers.pdf",
+                as_attachment=True,
+            )
 
     abort(404)
 
@@ -796,7 +865,6 @@ def application(application_id):
 )
 @check_access_fund_short_name
 def assessor_export(fund_short_name: str, round_short_name: str):
-
     _round = get_round(fund_short_name, round_short_name, use_short_name=True)
     export = get_applicant_export(_round.fund_id, _round.id)
 
