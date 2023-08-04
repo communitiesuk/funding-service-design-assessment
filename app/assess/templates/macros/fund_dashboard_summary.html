@@ -60,11 +60,13 @@
             Export applicant information
         </a>
         {% endif %}
+        {% if access_controller.is_lead_assessor %}
         </br>
         </br>
         <a class="govuk-link" href="{{ assessment_tracker_href }}">
             Assessment Tracker Export
         </a>
+        {% endif %}
     </div>
 </div>
 {% endmacro %}
