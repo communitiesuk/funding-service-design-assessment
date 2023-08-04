@@ -159,7 +159,9 @@ class DefaultConfig:
     )
 
     ASSESSMENT_COMMENT_ENDPOINT = ASSESSMENT_STORE_API_HOST + "/comment"
-    ASSESSMENT_PROGRESS_ENDPOINT = ASSESSMENT_STORE_API_HOST + "/progress"
+    ASSESSMENT_PROGRESS_ENDPOINT = (
+        ASSESSMENT_STORE_API_HOST + "/progress/{fund_id}/{round_id}"
+    )
 
     ASSESSMENT_LATEST_FLAG_ENDPOINT = (
         ASSESSMENT_STORE_API_HOST + "/flag?application_id={application_id}"
