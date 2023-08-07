@@ -1,4 +1,3 @@
-import concurrent
 import csv
 import time
 from collections import OrderedDict
@@ -6,7 +5,6 @@ from io import StringIO
 from typing import List
 
 from app.assess.data import get_assessor_task_list_state
-from app.assess.data import get_associated_tags_for_application
 from app.assess.data import get_flags
 from app.assess.data import get_fund
 from app.assess.data import get_round
@@ -17,6 +15,7 @@ from app.assess.display_value_mappings import assessment_statuses
 from app.assess.models.flag_v2 import FlagTypeV2
 from app.assess.models.flag_v2 import FlagV2
 from app.assess.models.fund import Fund
+from app.assess.models.tag import AssociatedTag
 from app.assess.models.ui.assessor_task_list import AssessorTaskList
 from app.assess.models.ui.common import Option
 from app.assess.models.ui.common import OptionGroup
@@ -286,43 +285,42 @@ def generate_assessment_info_csv(data: dict):
 
 def get_tag_map_and_tag_options(fund_round_tags, post_processed_overviews):
     tag_types = get_tag_types()
-    tag_option_groups = []
-    for purposes in Config.TAGGING_FILTER_CONFIG:
-        tag_type_ids = [
-            tag_type.id
-            for tag_type in tag_types
-            if tag_type.purpose in purposes
-        ]
-        tag_option_groups.append(
-            OptionGroup(
-                label=", ".join(p.capitalize() for p in purposes),
-                options=sorted(
-                    [
-                        Option(value=tag.id, text_content=tag.value)
-                        for tag in fund_round_tags
-                        if tag.type_id in tag_type_ids
-                    ],
-                    key=lambda option: option.text_content,
-                ),
-            )
+    tag_option_groups = [
+        OptionGroup(
+            label=", ".join(p.capitalize() for p in purposes),
+            options=sorted(
+                [
+                    Option(value=tag.id, text_content=tag.value)
+                    for tag in fund_round_tags
+                    if tag.type_id
+                    in {
+                        tag_type.id
+                        for tag_type in tag_types
+                        if tag_type.purpose in purposes
+                    }
+                ],
+                key=lambda option: option.text_content,
+            ),
         )
-
-    def _get_tags_with_app_context(application_id):
-        from app import app
-
-        with app.app_context():
-            return get_associated_tags_for_application(application_id)
-
-    with concurrent.futures.ThreadPoolExecutor() as executor:
-        tag_map_futures = {
-            overview["application_id"]: executor.submit(
-                _get_tags_with_app_context, overview["application_id"]
-            )
-            for overview in post_processed_overviews
-        }
-        tag_map = {
-            application_id: future.result()
-            for application_id, future in tag_map_futures.items()
-        }
+        for purposes in Config.TAGGING_FILTER_CONFIG
+    ]
+    tag_map = {}
+    for overview in post_processed_overviews:
+        tag_map[overview["application_id"]] = (
+            [
+                AssociatedTag(
+                    application_id=overview["application_id"],
+                    tag_id=item["tag"]["id"],
+                    value=item["tag"]["value"],
+                    user_id=item["user_id"],
+                    associated=item["associated"],
+                    purpose=item["tag"]["tag_type"]["purpose"],
+                )
+                for item in overview["tag_associations"]
+                if item["associated"] is True
+            ]
+            if overview["tag_associations"]
+            else None
+        )
 
     return tag_map, tag_option_groups
