@@ -706,7 +706,6 @@ def mock_get_associated_tags_for_application(mocker):
     for function_module_path in [
         "app.assess.routes.get_associated_tags_for_application",
         "app.assess.tag_routes.get_associated_tags_for_application",
-        "app.assess.helpers.get_associated_tags_for_application",
         "app.assess.data.get_associated_tags_for_application",
     ]:
         mocker.patch(
@@ -775,5 +774,35 @@ def mock_get_tag_types(mocker):
                     description="Tag type 1 description",
                 )
             ],
+        )
+    yield
+
+
+@pytest.fixture(scope="function")
+def mock_get_tag_map_and_tag_options(mocker):
+    for function_module_path in [
+        "app.assess.routes.get_tag_map_and_tag_options",
+    ]:
+        mocker.patch(
+            function_module_path,
+            return_value=(
+                [
+                    AssociatedTag(
+                        application_id="75dabe60-ae89-4a47-9263-d35e010b6c66",
+                        associated=True,
+                        purpose="NEGATIVE",
+                        tag_id="75f4296f-502b-4293-82a8-b828e678dd9e",
+                        user_id="65f4296f-502b-4293-82a8-b828e678dd9e",
+                        value="Tag one red",
+                    )
+                ],
+                [
+                    TagType(
+                        id="tag_type_1",
+                        purpose="POSITIVE",
+                        description="Tag type 1 description",
+                    )
+                ],
+            ),
         )
     yield
