@@ -36,6 +36,23 @@ flagged_app = {
             ],
         },
     ],
+    "tag_associations": [
+        {
+            "associated": True,
+            "id": "e908512a-25ef-4ec8-9850-b5a9c867992f",
+            "user_id": test_user_id_lead_assessor,
+            "tag": {
+                "active": True,
+                "creator_user_id": test_user_id_lead_assessor,
+                "id": "52ea161d-8593-4943-8676-baae283cd979",
+                "value": "Tag one red",
+                "tag_type": {
+                    "id": "5e7ecf78-9239-498a-9086-008043230a69",
+                    "purpose": "NEGATIVE",
+                },
+            },
+        }
+    ],
     "qa_complete": [],
     "is_qa_complete": False,
     "criteria_sub_criteria_name": "test_sub_criteria",
@@ -85,6 +102,23 @@ resolved_app = {
             ],
         },
     ],
+    "tag_associations": [
+        {
+            "associated": True,
+            "id": "f908512a-25ef-4ec8-9850-b5a9c867992f",
+            "user_id": test_user_id_lead_assessor,
+            "tag": {
+                "active": True,
+                "creator_user_id": test_user_id_lead_assessor,
+                "id": "62ea161d-8593-4943-8676-baae283cd979",
+                "value": "Tag one red",
+                "tag_type": {
+                    "id": "7e7ecf78-9239-498a-9086-008043230a69",
+                    "purpose": "NEGATIVE",
+                },
+            },
+        }
+    ],
     "qa_complete": [],
     "is_qa_complete": False,
     "criteria_sub_criteria_name": "test_sub_criteria",
@@ -127,6 +161,23 @@ stopped_app = {
             ],
         },
     ],
+    "tag_associations": [
+        {
+            "associated": True,
+            "id": "g908512a-25ef-4ec8-9850-b5a9c867992f",
+            "user_id": test_user_id_lead_assessor,
+            "tag": {
+                "active": True,
+                "creator_user_id": test_user_id_lead_assessor,
+                "id": "72ea161d-8593-4943-8676-baae283cd979",
+                "value": "Tag one red",
+                "tag_type": {
+                    "id": "7e7ecf78-9239-498a-9086-008043230a69",
+                    "purpose": "NEGATIVE",
+                },
+            },
+        }
+    ],
     "qa_complete": [],
     "is_qa_complete": False,
 }
@@ -156,6 +207,23 @@ flagged_qa_completed_app = {
                 }
             ],
         },
+    ],
+    "tag_associations": [
+        {
+            "associated": True,
+            "id": "h908512a-25ef-4ec8-9850-b5a9c867992f",
+            "user_id": test_user_id_lead_assessor,
+            "tag": {
+                "active": True,
+                "creator_user_id": test_user_id_lead_assessor,
+                "id": "82ea161d-8593-4943-8676-baae283cd979",
+                "value": "Tag one red",
+                "tag_type": {
+                    "id": "8e7ecf78-9239-498a-9086-008043230a69",
+                    "purpose": "NEGATIVE",
+                },
+            },
+        }
     ],
     "qa_complete": [
         {
@@ -209,6 +277,7 @@ mock_api_results = {
             "application_id": flagged_qa_completed_app_id,
             "asset_type": "gallery",
             "flags_v2": flagged_qa_completed_app["flags_v2"],
+            "tag_associations": flagged_qa_completed_app["tag_associations"],
             "qa_complete": flagged_qa_completed_app["qa_complete"],
             "funding_amount_requested": test_funding_requested + 2000,
             "is_qa_complete": True,
@@ -232,6 +301,7 @@ mock_api_results = {
             "application_id": stopped_app_id,
             "asset_type": stopped_app["asset_type"],
             "flags_v2": stopped_app["flags_v2"],
+            "tag_associations": stopped_app["tag_associations"],
             "qa_complete": stopped_app["qa_complete"],
             "funding_amount_requested": test_funding_requested + 1000,
             "is_qa_complete": False,
@@ -255,6 +325,7 @@ mock_api_results = {
             "application_id": resolved_app_id,
             "asset_type": "gallery",
             "flags_v2": resolved_app["flags_v2"],
+            "tag_associations": resolved_app["tag_associations"],
             "qa_complete": resolved_app["qa_complete"],
             "funding_amount_requested": test_funding_requested,
             "is_qa_complete": False,
@@ -280,6 +351,7 @@ mock_api_results = {
             "application_id": stopped_app_id,
             "asset_type": stopped_app["asset_type"],
             "flags_v2": stopped_app["flags_v2"],
+            "tag_associations": stopped_app["tag_associations"],
             "qa_complete": stopped_app["qa_complete"],
             "funding_amount_requested": test_funding_requested,
             "is_qa_complete": False,
@@ -570,6 +642,7 @@ mock_api_results = {
         "application_id": stopped_app_id,
         "asset_type": stopped_app["asset_type"],
         "flags_v2": stopped_app["flags_v2"],
+        "tag_associations": stopped_app["tag_associations"],
         "qa_complete": stopped_app["qa_complete"],
         "funding_amount_requested": test_funding_requested + 1000,
         "is_qa_complete": False,
