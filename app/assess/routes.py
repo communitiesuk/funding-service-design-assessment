@@ -472,12 +472,8 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
     }
 
     is_active_status = is_after_today(_round.assessment_deadline)
-
-    # TODO Can we get rid of get_application_overviews for fund and _round
-    # and incorporate into the following function?
-    #  (its only used to provide params for this function)
     post_processed_overviews = (
-        get_assessment_progress(application_overviews)
+        get_assessment_progress(application_overviews, fund_id, round_id)
         if application_overviews
         else []
     )
@@ -816,7 +812,7 @@ def application(application_id):
     "/assessor_export/<fund_short_name>/<round_short_name>/<report_type>",
     methods=["GET"],
 )
-@check_access_fund_short_name
+@check_access_fund_short_name(roles_required=["LEAD_ASSESSOR"])
 def assessor_export(
     fund_short_name: str, round_short_name: str, report_type: str
 ):

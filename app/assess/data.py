@@ -53,13 +53,15 @@ def get_data(endpoint: str, payload: Dict = None):
     return None
 
 
-def get_assessment_progress(application_metadata):
+def get_assessment_progress(application_metadata, fund_id, round_id):
     application_ids_list = {
         "application_ids": [
             x.get("application_id") for x in application_metadata
         ]
     }
-    endpoint_url = Config.ASSESSMENT_PROGRESS_ENDPOINT
+    endpoint_url = Config.ASSESSMENT_PROGRESS_ENDPOINT.format(
+        fund_id=fund_id, round_id=round_id
+    )
     current_app.logger.info(
         f"Fetching assessment progress from '{endpoint_url}', with json"
         f" payload: {application_ids_list}."
