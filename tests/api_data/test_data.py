@@ -379,9 +379,6 @@ mock_api_results = {
         "flagged": 1,
         "total": 3,
     },
-    "assessment_store/assessments/get-team-flag-stats/{fund_id}/{round_id}": [
-        {"raised": 1, "resolved": 5, "stopped": 0, "team_name": "Team 1"}
-    ],
     "assessment_store/progress": [],
     "assessment_store/application_overviews/stopped_app": {
         "criterias": [
