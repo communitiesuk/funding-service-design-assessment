@@ -12,7 +12,6 @@ from app.assess.data import get_all_uploaded_documents_theme_answers
 from app.assess.data import get_applicant_export
 from app.assess.data import get_application_json
 from app.assess.data import get_application_overviews
-from app.assess.data import get_assessments_stats
 from app.assess.data import get_available_teams
 from app.assess.data import get_flag
 from app.assess.data import get_flags
@@ -20,7 +19,6 @@ from app.assess.data import get_fund
 from app.assess.data import get_round
 from app.assess.data import get_sub_criteria
 from app.assess.data import get_sub_criteria_theme_answers
-from app.assess.data import get_team_flag_stats
 from app.assess.data import submit_score_and_justification
 from app.assess.display_value_mappings import assessment_statuses
 from app.assess.display_value_mappings import asset_types
@@ -39,8 +37,10 @@ from app.assess.helpers import determine_assessment_status
 from app.assess.helpers import determine_flag_status
 from app.assess.helpers import generate_assessment_info_csv
 from app.assess.helpers import generate_csv_of_application
+from app.assess.helpers import get_assessments_stats
 from app.assess.helpers import get_state_for_tasklist_banner
 from app.assess.helpers import get_tag_map_and_tag_options
+from app.assess.helpers import get_team_flag_stats
 from app.assess.helpers import get_ttl_hash
 from app.assess.helpers import is_flaggable
 from app.assess.helpers import match_search_params
@@ -454,8 +454,8 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
 
     # note, we are not sending search parameters here as we don't want to filter
     # the stats at all.  see https://dluhcdigital.atlassian.net/browse/FS-3249
-    stats = get_assessments_stats(fund_id, round_id)
-    teams_flag_stats = get_team_flag_stats(fund_id, round_id)
+    stats = get_assessments_stats(application_overviews)
+    teams_flag_stats = get_team_flag_stats(application_overviews)
 
     # this is only used for querying applications, so remove it from the search params,
     # so it's not reflected on the user interface

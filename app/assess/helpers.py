@@ -2,6 +2,7 @@ import csv
 import time
 from collections import OrderedDict
 from io import StringIO
+from typing import Dict
 from typing import List
 
 from app.assess.data import get_assessor_task_list_state
@@ -324,3 +325,80 @@ def get_tag_map_and_tag_options(fund_round_tags, post_processed_overviews):
         )
 
     return tag_map, tag_option_groups
+
+
+def get_team_flag_stats(application_overviews) -> List[Dict]:
+    def create_team_dict(team_name):
+        return {
+            "team_name": team_name,
+            "raised": 0,
+            "resolved": 0,
+            "stopped": 0,
+        }
+
+    team_flag_stats = []
+
+    for assessment in application_overviews:
+        for flag in assessment.get("flags_v2", []):
+            latest_status = flag.get("latest_status")
+            allocated_team = flag.get("latest_allocation")
+
+            if allocated_team not in [
+                team["team_name"] for team in team_flag_stats
+            ]:
+                team_flag_stats.append(create_team_dict(allocated_team))
+
+            for team in team_flag_stats:
+                if team["team_name"] == allocated_team:
+                    if latest_status == FlagTypeV2.RAISED:
+                        team["raised"] += 1
+                    elif latest_status == FlagTypeV2.STOPPED:
+                        team["stopped"] += 1
+                    elif latest_status == FlagTypeV2.RESOLVED:
+                        team["resolved"] += 1
+
+    return team_flag_stats
+
+
+def get_assessments_stats(application_overviews) -> Dict:
+    num_completed = 0
+    num_assessing = 0
+    num_not_started = 0
+    num_qa_completed = 0
+    num_stopped = 0
+    num_flagged = 0
+    num_multiple_flagged = 0
+
+    for assessment in application_overviews:
+        status = determine_display_status(
+            assessment["workflow_status"],
+            assessment["flags_v2"],
+            assessment["is_qa_complete"],
+        )
+        if status == "Assessment complete":
+            num_completed += 1
+        elif status == "In progress":
+            num_assessing += 1
+        elif status == "Not started":
+            num_not_started += 1
+        elif status == "QA complete":
+            num_qa_completed += 1
+        elif status == "Stopped":
+            num_stopped += 1
+        elif status == "Flagged":
+            num_flagged += 1
+        elif status == "Multiple flags to resolve":
+            num_multiple_flagged += 1
+
+    stats = {
+        "completed": num_completed,
+        "assessing": num_assessing,
+        "not_started": num_not_started,
+        "qa_completed": num_qa_completed,
+        "stopped": num_stopped,
+        "flagged": num_flagged,
+        "multiple_flagged": num_multiple_flagged,
+        "total": len(application_overviews),
+    }
+
+    return stats
