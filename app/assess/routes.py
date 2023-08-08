@@ -1,3 +1,5 @@
+import io
+import zipfile
 from datetime import datetime
 from urllib.parse import quote_plus
 from urllib.parse import unquote_plus
@@ -724,6 +726,26 @@ def download_file(data, mimetype, file_name):
     )
 
 
+def download_multiple_files(files):
+    zip_buffer = io.BytesIO()
+
+    with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zip_archive:
+        for file_name, file_data in files:
+            zip_archive.writestr(file_name, file_data)
+
+    zip_buffer.seek(0)
+
+    return Response(
+        zip_buffer.read(),
+        mimetype="application/zip",
+        headers={
+            "Content-Disposition": (
+                f"attachment;filename={quote_plus('export_data.zip')}"
+            )
+        },
+    )
+
+
 @assess_bp.route("/application/<application_id>", methods=["GET", "POST"])
 @check_access_application_id
 def application(application_id):
@@ -797,5 +819,12 @@ def assessor_export(
     _round = get_round(fund_short_name, round_short_name, use_short_name=True)
     export = get_applicant_export(_round.fund_id, _round.id, report_type)
 
-    csv_file = generate_assessment_info_csv(export)
-    return download_file(csv_file, "text/csv", "exported_data.csv")
+    en_export_data = generate_assessment_info_csv(export["en_list"])
+    cy_export_data = generate_assessment_info_csv(export["cy_list"])
+
+    files_to_download = [
+        ("en_export_data.csv", en_export_data),
+        ("cy_export_data.csv", cy_export_data),
+    ]
+
+    return download_multiple_files(files_to_download)
