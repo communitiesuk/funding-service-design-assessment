@@ -437,18 +437,13 @@ def mock_get_assessor_tasklist_state(request):
 @pytest.fixture(scope="function")
 def mock_get_assessment_stats(request):
     marker = request.node.get_closest_marker("mock_parameters")
-    if marker:
-        params = marker.args[0]
-        mock_func = params.get(
-            "get_assessment_stats_path",
-            "app.assess.routes.get_assessments_stats",
-        )
-        fund_id = params.get("fund_id", "test-fund")
-        round_id = params.get("round_id", "test-round")
-    else:
-        mock_func = "app.assess.routes.get_assessments_stats"
-        fund_id = "test-fund"
-        round_id = "test-round"
+    params = marker.args[0]
+    mock_func = params.get(
+        "get_assessment_stats_path",
+        "app.assess.models.fund_summary.get_assessments_stats",
+    )
+    fund_id = params.get("fund_id", "test-fund")
+    round_id = params.get("round_id", "test-round")
 
     with mock.patch(
         mock_func,
