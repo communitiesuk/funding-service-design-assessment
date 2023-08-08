@@ -19,7 +19,7 @@
         <p class="govuk-body-s">{{ user_info["full_name"] or "N/A" }} ({{ user_info["highest_role"] | all_caps_to_human }}) {{ user_info["email_address"] }}</p>
         <p class="govuk-body-s">{{ flag.date_created | utc_to_bst }}</p>
         {% if g.access_controller.is_lead_assessor %}
-            <p class="govuk-body"><a class="govuk-link govuk-link--no-visited-state" href="{{ url_for('assess_bp.resolve_flag',application_id=application_id)}}?flag_id={{ flag.id }}">Resolve flag</a></p>
+            <p class="govuk-body"><a class="govuk-link govuk-link--no-visited-state" href="{{ url_for('assess_bp.resolve_flag',application_id=application_id)}}?flag_id={{ flag.id }}" data-qa="resolve-flag-link">Resolve flag</a></p>
         {% endif %}
     </div>
 {% endmacro %}
