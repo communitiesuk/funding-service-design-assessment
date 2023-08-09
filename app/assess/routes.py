@@ -726,7 +726,7 @@ def download_file(data, mimetype, file_name):
     )
 
 
-def download_multiple_files(files):
+def download_multiple_files(files, folder_name):
     zip_buffer = io.BytesIO()
 
     with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zip_archive:
@@ -740,7 +740,7 @@ def download_multiple_files(files):
         mimetype="application/zip",
         headers={
             "Content-Disposition": (
-                f"attachment;filename={quote_plus('export_data.zip')}"
+                f"attachment;filename={quote_plus(f'{folder_name}.zip')}"
             )
         },
     )
@@ -827,4 +827,4 @@ def assessor_export(
         ("cy_export_data.csv", cy_export_data),
     ]
 
-    return download_multiple_files(files_to_download)
+    return download_multiple_files(files_to_download, report_type)
