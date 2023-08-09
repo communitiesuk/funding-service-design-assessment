@@ -16,6 +16,7 @@ class Round:
     short_name: str
     all_uploaded_documents_section_available: bool = False
     application_fields_download_available: bool = False
+    display_logo_on_pdf_exports: bool = False
     applications: List[Application] = None
 
     @classmethod
@@ -44,6 +45,8 @@ class Round:
             application_fields_download_available=data.get(
                 "application_fields_download_available"
             )
+            or False,
+            display_logo_on_pdf_exports=data.get("display_logo_on_pdf_exports")
             or False,
         )
 

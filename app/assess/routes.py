@@ -1,4 +1,3 @@
-from collections import OrderedDict
 from datetime import datetime
 from urllib.parse import quote_plus
 from urllib.parse import unquote_plus
@@ -38,8 +37,8 @@ from app.assess.forms.resolve_flag_form import ResolveFlagForm
 from app.assess.forms.scores_and_justifications import ScoreForm
 from app.assess.helpers import determine_assessment_status
 from app.assess.helpers import determine_flag_status
-from app.assess.helpers import generate_csv_of_application
 from app.assess.helpers import generate_field_info_csv
+from app.assess.helpers import generate_maps_from_form_names
 from app.assess.helpers import get_state_for_tasklist_banner
 from app.assess.helpers import get_tag_map_and_tag_options
 from app.assess.helpers import get_ttl_hash
@@ -47,6 +46,8 @@ from app.assess.helpers import is_flaggable
 from app.assess.helpers import match_search_params
 from app.assess.helpers import resolve_application
 from app.assess.helpers import set_application_status_in_overview
+from app.assess.models.file_factory import ApplicationFileRepresentationArgs
+from app.assess.models.file_factory import generate_file_content
 from app.assess.models.flag_teams import TeamsFlagData
 from app.assess.models.flag_v2 import FlagTypeV2
 from app.assess.models.fund_summary import create_fund_summaries
@@ -58,7 +59,6 @@ from app.assess.status import update_ar_status_to_completed
 from app.assess.status import update_ar_status_to_qa_completed
 from app.assess.views.filters import utc_to_bst
 from app.aws import get_file_for_download_from_aws
-from app.pdf.pdf_generator import PDFGenerator
 from config import Config
 from flask import Blueprint
 from flask import current_app
@@ -67,10 +67,8 @@ from flask import redirect
 from flask import render_template
 from flask import request
 from flask import Response
-from flask import send_file
 from flask import url_for
 from fsd_utils import extract_questions_and_answers
-from fsd_utils import generate_text_of_application
 
 assess_bp = Blueprint(
     "assess_bp",
@@ -674,32 +672,6 @@ def generate_doc_list_for_download(application_id):
     )
 
 
-_FULL_APPLICATION_PDF_GENERATOR = PDFGenerator(
-    "app/pdf/templates/full_application.html"
-)
-
-
-def flatten(
-    data,
-):  # this should probably live elsewhere, just put here for now as doing development.
-    form_name_to_title = OrderedDict()
-    form_name_to_path = OrderedDict()
-
-    for item in data:
-        if item["form_name"]:
-            form_name_to_title[item["form_name"]] = item["title"]
-            form_name_to_path[item["form_name"]] = item["path"]
-
-        if item["children"]:
-            child_form_name_to_title, child_form_name_to_path = flatten(
-                item["children"]
-            )
-            form_name_to_title.update(child_form_name_to_title)
-            form_name_to_path.update(child_form_name_to_path)
-
-    return form_name_to_title, form_name_to_path
-
-
 @assess_bp.route(
     "/application/<application_id>/export/<short_id>/answers.<file_type>"
 )
@@ -715,57 +687,41 @@ def download_application_answers(
     application_json_blob = application_json["jsonb_blob"]
 
     fund = get_fund(application_json["jsonb_blob"]["fund_id"])
-    fund_round = get_round(
+    round_ = get_round(
         fund.id, application_json["round_id"], use_short_name=False
     )
 
     qanda_dict = extract_questions_and_answers(application_json_blob["forms"])
     application_sections_display_config = (
         get_application_sections_display_config(
-            fund.id, fund_round.id, application_json["language"]
+            fund.id, round_.id, application_json["language"]
         )
     )
-    form_name_to_title_map, form_name_to_path_map = flatten(
-        application_sections_display_config
+
+    (
+        form_name_to_title_map,
+        form_name_to_path_map,
+    ) = generate_maps_from_form_names(application_sections_display_config)
+    qanda_dict = {
+        key: qanda_dict[key]
+        for key in form_name_to_title_map
+        if key in qanda_dict
+    }
+    all_uploaded_documents = get_all_uploaded_documents_theme_answers(
+        application_id
     )
 
-    # form_name_to_title_map has keys ordered properly, as it's from the display config.
-    qanda_dict = {key: qanda_dict[key] for key in form_name_to_title_map}
+    args = ApplicationFileRepresentationArgs(
+        fund=fund,
+        round=round_,
+        question_to_answer=qanda_dict,
+        application_json=application_json,
+        form_name_to_title_map=form_name_to_title_map,
+        short_id=short_id,
+        all_uploaded_documents=all_uploaded_documents,
+    )
 
-    if file_type == "txt":
-        text = generate_text_of_application(qanda_dict, fund.name)
-        return download_file(text, "text/plain", f"{short_id}_answers.txt")
-    elif file_type == "csv":
-        csv = generate_csv_of_application(qanda_dict, fund, application_json)
-        return download_file(csv, "text/csv", f"{short_id}_answers.csv")
-    elif file_type == "pdf":
-        context = {
-            "title": fund.name,
-            "response_id": application_json["short_id"],
-            "submission_to": f"{fund.name} {fund_round.title}",
-            "submitted_on": application_json["date_submitted"],
-            "sections": [
-                {
-                    # some have the number than part of the title. so we may need to handle that per round.
-                    "number": "",  # form_name_to_path_map.get(section),
-                    "title": form_name_to_title_map.get(section),
-                    "questions_and_answers": [
-                        {"question": q, "answer": a}
-                        for q, a in q_and_a.items()
-                    ],
-                }
-                for section, q_and_a in qanda_dict.items()
-            ],
-        }
-        if pdf_file := _FULL_APPLICATION_PDF_GENERATOR.generate_pdf(context):
-            pdf_file.seek(0)
-            return send_file(
-                pdf_file,
-                download_name=f"{short_id}_answers.pdf",
-                as_attachment=True,
-            )
-
-    abort(404)
+    return generate_file_content(args, file_type)
 
 
 @assess_bp.route(

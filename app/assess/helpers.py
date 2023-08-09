@@ -1,6 +1,7 @@
 import concurrent
 import csv
 import time
+from collections import OrderedDict
 from io import StringIO
 from typing import List
 
@@ -321,3 +322,25 @@ def get_tag_map_and_tag_options(fund_round_tags, post_processed_overviews):
         }
 
     return tag_map, tag_option_groups
+
+
+def generate_maps_from_form_names(
+    data,
+):
+    form_name_to_title = OrderedDict()
+    form_name_to_path = OrderedDict()
+
+    for item in data:
+        if item["form_name"]:
+            form_name_to_title[item["form_name"]] = item["title"]
+            form_name_to_path[item["form_name"]] = item["path"]
+
+        if item["children"]:
+            (
+                child_form_name_to_title,
+                child_form_name_to_path,
+            ) = generate_maps_from_form_names(item["children"])
+            form_name_to_title.update(child_form_name_to_title)
+            form_name_to_path.update(child_form_name_to_path)
+
+    return form_name_to_title, form_name_to_path
