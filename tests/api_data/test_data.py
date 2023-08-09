@@ -17,7 +17,7 @@ flagged_app = {
     "workflow_status": "IN_PROGRESS",
     "project_name": "Project In prog and Res",
     "short_id": "INP",
-    "flags_v2": [
+    "flags": [
         {
             "id": "1c5e8bea-f5ed-4b74-8823-e64fec27a7db",
             "latest_status": "RAISED",
@@ -75,7 +75,7 @@ resolved_app = {
     "workflow_status": "IN_PROGRESS",
     "project_name": "Project In prog and Res",
     "short_id": "INP",
-    "flags_v2": [
+    "flags": [
         {
             "id": "1c5e8bea-f5ed-4b74-8823-e64fec27a7dc",
             "latest_status": "RESOLVED",
@@ -142,7 +142,7 @@ stopped_app = {
     "project_name": "Project In prog and Stop",
     "short_id": "FS",
     "asset_type": "gallery",
-    "flags_v2": [
+    "flags": [
         {
             "id": "1c5e8bea-f5ed-4b74-8823-e64fec27a7bd",
             "latest_status": "STOPPED",
@@ -188,7 +188,7 @@ flagged_qa_completed_app = {
     "workflow_status": "COMPLETED",
     "project_name": "Project Completed Flag and QA",
     "short_id": "FQAC",
-    "flags_v2": [
+    "flags": [
         {
             "id": "1c5e8bea-f5ed-4b74-8823-e64fec27a7bd",
             "latest_status": "RAISED",
@@ -276,8 +276,8 @@ mock_api_results = {
             "round_id": test_round_id,
             "application_id": flagged_qa_completed_app_id,
             "asset_type": "gallery",
-            "flags_v2": flagged_qa_completed_app["flags_v2"],
             "tag_associations": flagged_qa_completed_app["tag_associations"],
+            "flags": flagged_qa_completed_app["flags"],
             "qa_complete": flagged_qa_completed_app["qa_complete"],
             "funding_amount_requested": test_funding_requested + 2000,
             "is_qa_complete": True,
@@ -300,8 +300,8 @@ mock_api_results = {
             "round_id": test_round_id,
             "application_id": stopped_app_id,
             "asset_type": stopped_app["asset_type"],
-            "flags_v2": stopped_app["flags_v2"],
             "tag_associations": stopped_app["tag_associations"],
+            "flags": stopped_app["flags"],
             "qa_complete": stopped_app["qa_complete"],
             "funding_amount_requested": test_funding_requested + 1000,
             "is_qa_complete": False,
@@ -324,8 +324,8 @@ mock_api_results = {
             "round_id": test_round_id,
             "application_id": resolved_app_id,
             "asset_type": "gallery",
-            "flags_v2": resolved_app["flags_v2"],
             "tag_associations": resolved_app["tag_associations"],
+            "flags": resolved_app["flags"],
             "qa_complete": resolved_app["qa_complete"],
             "funding_amount_requested": test_funding_requested,
             "is_qa_complete": False,
@@ -350,8 +350,8 @@ mock_api_results = {
             "round_id": test_round_id,
             "application_id": stopped_app_id,
             "asset_type": stopped_app["asset_type"],
-            "flags_v2": stopped_app["flags_v2"],
             "tag_associations": stopped_app["tag_associations"],
+            "flags": stopped_app["flags"],
             "qa_complete": stopped_app["qa_complete"],
             "funding_amount_requested": test_funding_requested,
             "is_qa_complete": False,
@@ -504,31 +504,23 @@ mock_api_results = {
         "workflow_status": flagged_qa_completed_app["workflow_status"],
         "fund_id": test_fund_id,
     },
-    "assessment_store/flag_data_v2?flag_id=flagged_app": flagged_app[
-        "flags_v2"
-    ][-1],
-    "assessment_store/flag_data_v2?flag_id=resolved_app": resolved_app[
-        "flags_v2"
-    ][-1],
-    "assessment_store/flag_data_v2?flag_id=stopped_app": stopped_app[
-        "flags_v2"
-    ][-1],
-    "assessment_store/flag_data_v2?flag_id=flagged_qa_completed_app": flagged_qa_completed_app[
-        "flags_v2"
+    "assessment_store/flag_data?flag_id=flagged_app": flagged_app["flags"][-1],
+    "assessment_store/flag_data?flag_id=resolved_app": resolved_app["flags"][
+        -1
+    ],
+    "assessment_store/flag_data?flag_id=stopped_app": stopped_app["flags"][-1],
+    "assessment_store/flag_data?flag_id=flagged_qa_completed_app": flagged_qa_completed_app[
+        "flags"
     ][
         -1
     ],
-    "assessment_store/flags_v2?application_id=flagged_app": flagged_app[
-        "flags_v2"
+    "assessment_store/flags?application_id=flagged_app": flagged_app["flags"],
+    "assessment_store/flags?application_id=resolved_app": resolved_app[
+        "flags"
     ],
-    "assessment_store/flags_v2?application_id=resolved_app": resolved_app[
-        "flags_v2"
-    ],
-    "assessment_store/flags_v2?application_id=stopped_app": stopped_app[
-        "flags_v2"
-    ],
-    "assessment_store/flags_v2?application_id=flagged_qa_completed_app": flagged_qa_completed_app[
-        "flags_v2"
+    "assessment_store/flags?application_id=stopped_app": stopped_app["flags"],
+    "assessment_store/flags?application_id=flagged_qa_completed_app": flagged_qa_completed_app[
+        "flags"
     ],
     "assessment_store/qa_complete/flagged_app": {},
     "assessment_store/qa_complete/resolved_app": {},
@@ -638,8 +630,8 @@ mock_api_results = {
         "round_id": test_round_id,
         "application_id": stopped_app_id,
         "asset_type": stopped_app["asset_type"],
-        "flags_v2": stopped_app["flags_v2"],
         "tag_associations": stopped_app["tag_associations"],
+        "flags": stopped_app["flags"],
         "qa_complete": stopped_app["qa_complete"],
         "funding_amount_requested": test_funding_requested + 1000,
         "is_qa_complete": False,

@@ -2,7 +2,7 @@ from unittest import mock
 
 import app
 import pytest
-from app.assess.models.flag_v2 import FlagV2
+from app.assess.models.flag import Flag
 from app.assess.models.round import Round
 from bs4 import BeautifulSoup
 from flask import session
@@ -894,7 +894,7 @@ class TestRoutes:
         flag_id = request.node.get_closest_marker("flag_id").args[0]
         mocker.patch(
             "app.assess.helpers.submit_flag",
-            return_value=FlagV2.from_dict(
+            return_value=Flag.from_dict(
                 {
                     "application_id": application_id,
                     "latest_status": "RESOLVED",
@@ -989,7 +989,7 @@ class TestRoutes:
         flask_test_client.set_cookie("localhost", "fsd_user_token", token)
         mocker.patch(
             "app.assess.helpers.submit_flag",
-            return_value=FlagV2.from_dict(
+            return_value=Flag.from_dict(
                 {
                     "application_id": "stopped_app",
                     "latest_status": "RESOLVED",

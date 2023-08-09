@@ -48,8 +48,8 @@ from app.assess.helpers import is_flaggable
 from app.assess.helpers import match_search_params
 from app.assess.helpers import resolve_application
 from app.assess.helpers import set_application_status_in_overview
+from app.assess.models.flag import FlagType
 from app.assess.models.flag_teams import TeamsFlagData
-from app.assess.models.flag_v2 import FlagTypeV2
 from app.assess.models.fund_summary import create_fund_summaries
 from app.assess.models.fund_summary import is_after_today
 from app.assess.models.theme import Theme
@@ -330,7 +330,7 @@ def flag(application_id):
     if request.method == "POST" and form.validate_on_submit():
         submit_flag(
             application_id,
-            FlagTypeV2.RAISED.name,
+            FlagType.RAISED.name,
             g.account_id,
             form.justification.data,
             form.section.data,
@@ -617,7 +617,7 @@ def continue_assessment(application_id):
     return resolve_application(
         form=form,
         application_id=application_id,
-        flag=FlagTypeV2.RESOLVED.name,
+        flag=FlagType.RESOLVED.name,
         user_id=g.account_id,
         justification=form.reason.data,
         section=["NA"],
