@@ -339,7 +339,7 @@ def get_team_flag_stats(application_overviews) -> List[Dict]:
     team_flag_stats = []
 
     for assessment in application_overviews:
-        for flag in assessment.get("flags_v2", []):
+        for flag in assessment.get("flags", []):
             latest_status = flag.get("latest_status")
             allocated_team = flag.get("latest_allocation")
 
@@ -372,7 +372,7 @@ def get_assessments_stats(application_overviews) -> Dict:
     for assessment in application_overviews:
         status = determine_display_status(
             assessment["workflow_status"],
-            assessment["flags_v2"],
+            assessment["flags"],
             assessment["is_qa_complete"],
         )
         if status == "Assessment complete":
