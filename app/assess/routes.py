@@ -37,6 +37,7 @@ from app.assess.forms.resolve_flag_form import ResolveFlagForm
 from app.assess.forms.scores_and_justifications import ScoreForm
 from app.assess.helpers import determine_assessment_status
 from app.assess.helpers import determine_flag_status
+from app.assess.helpers import download_file
 from app.assess.helpers import generate_assessment_info_csv
 from app.assess.helpers import generate_maps_from_form_names
 from app.assess.helpers import get_assessments_stats
@@ -741,18 +742,6 @@ def get_file(application_id: str, file_name: str):
         return download_file(data, mimetype, f"{short_id}_{file_name}")
 
     return download_file(data, mimetype, file_name)
-
-
-def download_file(data, mimetype, file_name):
-    return Response(
-        data,
-        mimetype=mimetype,
-        headers={
-            "Content-Disposition": (
-                f"attachment;filename={quote_plus(file_name)}"
-            )
-        },
-    )
 
 
 def download_multiple_files(files, folder_name):

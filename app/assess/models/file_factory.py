@@ -1,6 +1,7 @@
 from dataclasses import asdict
 from typing import NamedTuple
 
+from app.assess.helpers import download_file
 from app.assess.helpers import generate_csv_of_application
 from app.assess.models.fund import Fund
 from app.assess.models.round import Round
@@ -22,8 +23,6 @@ class ApplicationFileRepresentationArgs(NamedTuple):
 
 
 def _generate_text_of_application(args: ApplicationFileRepresentationArgs):
-    from app.assess.routes import download_file
-
     text = generate_text_of_application(
         args.question_to_answer, args.fund.name
     )
@@ -31,8 +30,6 @@ def _generate_text_of_application(args: ApplicationFileRepresentationArgs):
 
 
 def _generate_csv_of_application(args: ApplicationFileRepresentationArgs):
-    from app.assess.routes import download_file
-
     csv = generate_csv_of_application(
         args.question_to_answer, args.fund, args.application_json
     )
