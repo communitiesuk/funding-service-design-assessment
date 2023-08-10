@@ -2,8 +2,8 @@ from collections import OrderedDict
 
 import pytest
 from app.assess.helpers import determine_display_status
+from app.assess.helpers import generate_assessment_info_csv
 from app.assess.helpers import generate_csv_of_application
-from app.assess.helpers import generate_field_info_csv
 from app.assess.helpers import generate_maps_from_form_names
 from app.assess.helpers import is_flaggable
 from app.assess.models.flag_v2 import FlagV2
@@ -175,7 +175,7 @@ def test_generate_csv_for_fields():
         " the humble pub in Bangor,sample1.doc\r\n"
     )
 
-    result = generate_field_info_csv(test_data)
+    result = generate_assessment_info_csv(test_data)
 
     assert result == expected_result
 

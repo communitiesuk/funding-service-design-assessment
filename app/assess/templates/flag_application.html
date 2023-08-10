@@ -43,7 +43,6 @@
 {% endif %}
 
 <div class="govuk-grid-row">
-    <div class="govuk-grid-column-full">
         <div>
             <div class="govuk-grid-column-two-thirds">
                 <form method="post">
@@ -249,7 +248,8 @@
 
                     <div class="govuk-button-group">
                         <button class="govuk-button primary-button"
-                                data-module="govuk-button">
+                                data-module="govuk-button"
+                                data-qa="submit-flag-button">
                             Submit
                         </button>
                         <a href="{{ url_for('assess_bp.application', application_id=application_id)}}"
@@ -260,7 +260,6 @@
                 </form>
             </div>
         </div>
-    </div>
 </div>
 
 {% endblock content %}

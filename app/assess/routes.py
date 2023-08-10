@@ -1,3 +1,5 @@
+import io
+import zipfile
 from datetime import datetime
 from urllib.parse import quote_plus
 from urllib.parse import unquote_plus
@@ -12,7 +14,6 @@ from app.assess.data import get_all_uploaded_documents_theme_answers
 from app.assess.data import get_applicant_export
 from app.assess.data import get_application_json
 from app.assess.data import get_application_overviews
-from app.assess.data import get_assessments_stats
 from app.assess.data import get_available_teams
 from app.assess.data import get_flag
 from app.assess.data import get_flags
@@ -20,7 +21,6 @@ from app.assess.data import get_fund
 from app.assess.data import get_round
 from app.assess.data import get_sub_criteria
 from app.assess.data import get_sub_criteria_theme_answers
-from app.assess.data import get_team_flag_stats
 from app.assess.data import submit_score_and_justification
 from app.assess.display_value_mappings import assessment_statuses
 from app.assess.display_value_mappings import asset_types
@@ -37,10 +37,12 @@ from app.assess.forms.resolve_flag_form import ResolveFlagForm
 from app.assess.forms.scores_and_justifications import ScoreForm
 from app.assess.helpers import determine_assessment_status
 from app.assess.helpers import determine_flag_status
-from app.assess.helpers import generate_field_info_csv
+from app.assess.helpers import generate_assessment_info_csv
 from app.assess.helpers import generate_maps_from_form_names
+from app.assess.helpers import get_assessments_stats
 from app.assess.helpers import get_state_for_tasklist_banner
 from app.assess.helpers import get_tag_map_and_tag_options
+from app.assess.helpers import get_team_flag_stats
 from app.assess.helpers import get_ttl_hash
 from app.assess.helpers import is_flaggable
 from app.assess.helpers import match_search_params
@@ -454,8 +456,8 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
 
     # note, we are not sending search parameters here as we don't want to filter
     # the stats at all.  see https://dluhcdigital.atlassian.net/browse/FS-3249
-    stats = get_assessments_stats(fund_id, round_id)
-    teams_flag_stats = get_team_flag_stats(fund_id, round_id)
+    stats = get_assessments_stats(application_overviews)
+    teams_flag_stats = get_team_flag_stats(application_overviews)
 
     # this is only used for querying applications, so remove it from the search params,
     # so it's not reflected on the user interface
@@ -470,12 +472,8 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
     }
 
     is_active_status = is_after_today(_round.assessment_deadline)
-
-    # TODO Can we get rid of get_application_overviews for fund and _round
-    # and incorporate into the following function?
-    #  (its only used to provide params for this function)
     post_processed_overviews = (
-        get_assessment_progress(application_overviews)
+        get_assessment_progress(application_overviews, fund_id, round_id)
         if application_overviews
         else []
     )
@@ -757,6 +755,26 @@ def download_file(data, mimetype, file_name):
     )
 
 
+def download_multiple_files(files, folder_name):
+    zip_buffer = io.BytesIO()
+
+    with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zip_archive:
+        for file_name, file_data in files:
+            zip_archive.writestr(file_name, file_data)
+
+    zip_buffer.seek(0)
+
+    return Response(
+        zip_buffer.read(),
+        mimetype="application/zip",
+        headers={
+            "Content-Disposition": (
+                f"attachment;filename={quote_plus(f'{folder_name}.zip')}"
+            )
+        },
+    )
+
+
 @assess_bp.route("/application/<application_id>", methods=["GET", "POST"])
 @check_access_application_id
 def application(application_id):
@@ -820,14 +838,22 @@ def application(application_id):
 
 
 @assess_bp.route(
-    "/assessor_export/<fund_short_name>/<round_short_name>/",
+    "/assessor_export/<fund_short_name>/<round_short_name>/<report_type>",
     methods=["GET"],
 )
-@check_access_fund_short_name
-def assessor_export(fund_short_name: str, round_short_name: str):
+@check_access_fund_short_name(roles_required=["LEAD_ASSESSOR"])
+def assessor_export(
+    fund_short_name: str, round_short_name: str, report_type: str
+):
     _round = get_round(fund_short_name, round_short_name, use_short_name=True)
-    export = get_applicant_export(_round.fund_id, _round.id)
+    export = get_applicant_export(_round.fund_id, _round.id, report_type)
 
-    csv_file = generate_field_info_csv(export)
+    en_export_data = generate_assessment_info_csv(export["en_list"])
+    cy_export_data = generate_assessment_info_csv(export["cy_list"])
 
-    return download_file(csv_file, "text/csv", "applicant_info.csv")
+    files_to_download = [
+        ("en_export_data.csv", en_export_data),
+        ("cy_export_data.csv", cy_export_data),
+    ]
+
+    return download_multiple_files(files_to_download, report_type)

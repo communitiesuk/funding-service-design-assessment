@@ -1,12 +1,11 @@
-import concurrent
 import csv
 import time
 from collections import OrderedDict
 from io import StringIO
+from typing import Dict
 from typing import List
 
 from app.assess.data import get_assessor_task_list_state
-from app.assess.data import get_associated_tags_for_application
 from app.assess.data import get_flags
 from app.assess.data import get_fund
 from app.assess.data import get_round
@@ -17,6 +16,7 @@ from app.assess.display_value_mappings import assessment_statuses
 from app.assess.models.flag_v2 import FlagTypeV2
 from app.assess.models.flag_v2 import FlagV2
 from app.assess.models.fund import Fund
+from app.assess.models.tag import AssociatedTag
 from app.assess.models.ui.assessor_task_list import AssessorTaskList
 from app.assess.models.ui.common import Option
 from app.assess.models.ui.common import OptionGroup
@@ -267,14 +267,18 @@ def generate_csv_of_application(q_and_a: dict, fund: Fund, application_json):
     return output.getvalue()
 
 
-def generate_field_info_csv(applicant_info: dict):
+def generate_assessment_info_csv(data: dict):
     output = StringIO()
-    headers = applicant_info[0].keys()
+    headers = list(OrderedDict.fromkeys(key for d in data for key in d.keys()))
     csv_writer = csv.writer(output)
+
+    if len(data) == 0:
+        return output.getvalue()
+
     csv_writer.writerow(headers)
 
-    for person_data in applicant_info:
-        rows = person_data.values()
+    for data_entry in data:
+        rows = data_entry.values()
         csv_writer.writerow(rows)
 
     return output.getvalue()
@@ -282,46 +286,122 @@ def generate_field_info_csv(applicant_info: dict):
 
 def get_tag_map_and_tag_options(fund_round_tags, post_processed_overviews):
     tag_types = get_tag_types()
-    tag_option_groups = []
-    for purposes in Config.TAGGING_FILTER_CONFIG:
-        tag_type_ids = [
-            tag_type.id
-            for tag_type in tag_types
-            if tag_type.purpose in purposes
-        ]
-        tag_option_groups.append(
-            OptionGroup(
-                label=", ".join(p.capitalize() for p in purposes),
-                options=sorted(
-                    [
-                        Option(value=tag.id, text_content=tag.value)
-                        for tag in fund_round_tags
-                        if tag.type_id in tag_type_ids
-                    ],
-                    key=lambda option: option.text_content,
-                ),
-            )
+    tag_option_groups = [
+        OptionGroup(
+            label=", ".join(p.capitalize() for p in purposes),
+            options=sorted(
+                [
+                    Option(value=tag.id, text_content=tag.value)
+                    for tag in fund_round_tags
+                    if tag.type_id
+                    in {
+                        tag_type.id
+                        for tag_type in tag_types
+                        if tag_type.purpose in purposes
+                    }
+                ],
+                key=lambda option: option.text_content,
+            ),
+        )
+        for purposes in Config.TAGGING_FILTER_CONFIG
+    ]
+    tag_map = {}
+    for overview in post_processed_overviews:
+        tag_map[overview["application_id"]] = (
+            [
+                AssociatedTag(
+                    application_id=overview["application_id"],
+                    tag_id=item["tag"]["id"],
+                    value=item["tag"]["value"],
+                    user_id=item["user_id"],
+                    associated=item["associated"],
+                    purpose=item["tag"]["tag_type"]["purpose"],
+                )
+                for item in overview["tag_associations"]
+                if item["associated"] is True
+            ]
+            if overview["tag_associations"]
+            else None
         )
 
-    def _get_tags_with_app_context(application_id):
-        from app import app
-
-        with app.app_context():
-            return get_associated_tags_for_application(application_id)
-
-    with concurrent.futures.ThreadPoolExecutor() as executor:
-        tag_map_futures = {
-            overview["application_id"]: executor.submit(
-                _get_tags_with_app_context, overview["application_id"]
-            )
-            for overview in post_processed_overviews
-        }
-        tag_map = {
-            application_id: future.result()
-            for application_id, future in tag_map_futures.items()
-        }
-
     return tag_map, tag_option_groups
+
+
+def get_team_flag_stats(application_overviews) -> List[Dict]:
+    def create_team_dict(team_name):
+        return {
+            "team_name": team_name,
+            "raised": 0,
+            "resolved": 0,
+            "stopped": 0,
+        }
+
+    team_flag_stats = []
+
+    for assessment in application_overviews:
+        for flag in assessment.get("flags_v2", []):
+            latest_status = flag.get("latest_status")
+            allocated_team = flag.get("latest_allocation")
+
+            if allocated_team not in [
+                team["team_name"] for team in team_flag_stats
+            ]:
+                team_flag_stats.append(create_team_dict(allocated_team))
+
+            for team in team_flag_stats:
+                if team["team_name"] == allocated_team:
+                    if latest_status == FlagTypeV2.RAISED:
+                        team["raised"] += 1
+                    elif latest_status == FlagTypeV2.STOPPED:
+                        team["stopped"] += 1
+                    elif latest_status == FlagTypeV2.RESOLVED:
+                        team["resolved"] += 1
+
+    return team_flag_stats
+
+
+def get_assessments_stats(application_overviews) -> Dict:
+    num_completed = 0
+    num_assessing = 0
+    num_not_started = 0
+    num_qa_completed = 0
+    num_stopped = 0
+    num_flagged = 0
+    num_multiple_flagged = 0
+
+    for assessment in application_overviews:
+        status = determine_display_status(
+            assessment["workflow_status"],
+            assessment["flags_v2"],
+            assessment["is_qa_complete"],
+        )
+        if status == "Assessment complete":
+            num_completed += 1
+        elif status == "In progress":
+            num_assessing += 1
+        elif status == "Not started":
+            num_not_started += 1
+        elif status == "QA complete":
+            num_qa_completed += 1
+        elif status == "Stopped":
+            num_stopped += 1
+        elif status == "Flagged":
+            num_flagged += 1
+        elif status == "Multiple flags to resolve":
+            num_multiple_flagged += 1
+
+    stats = {
+        "completed": num_completed,
+        "assessing": num_assessing,
+        "not_started": num_not_started,
+        "qa_completed": num_qa_completed,
+        "stopped": num_stopped,
+        "flagged": num_flagged,
+        "multiple_flagged": num_multiple_flagged,
+        "total": len(application_overviews),
+    }
+
+    return stats
 
 
 def generate_maps_from_form_names(

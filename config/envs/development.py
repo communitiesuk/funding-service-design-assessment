@@ -39,7 +39,7 @@ class DevelopmentConfig(DefaultConfig):
             "COF_SCOTLAND",
             "COF_WALES",
             "COF_NORTHERNIRELAND",
-            "NSTF_LEAD_ASSESSOR",
+            # "NSTF_LEAD_ASSESSOR",
             "NSTF_ASSESSOR",
             "NSTF_COMMENTER",
         ],

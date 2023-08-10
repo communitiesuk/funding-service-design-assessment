@@ -102,9 +102,6 @@ class DefaultConfig:
     ASSESSMENTS_STATS_ENDPOINT = (
         "/assessments/get-stats/{fund_id}/{round_id}?{params}"
     )
-    ASSESSMENTS_TEAM_FLAGGING_STATS_ENDPOINT = (
-        "/assessments/get-team-flag-stats/{fund_id}/{round_id}?{params}"
-    )
 
     ASSESSMENTS_STATS_FLAGS_V2_ENDPOINT = (
         "/assessments/get-stats_flags_v2/{fund_id}/{round_id}?{params}"
@@ -164,7 +161,9 @@ class DefaultConfig:
     )
 
     ASSESSMENT_COMMENT_ENDPOINT = ASSESSMENT_STORE_API_HOST + "/comment"
-    ASSESSMENT_PROGRESS_ENDPOINT = ASSESSMENT_STORE_API_HOST + "/progress"
+    ASSESSMENT_PROGRESS_ENDPOINT = (
+        ASSESSMENT_STORE_API_HOST + "/progress/{fund_id}/{round_id}"
+    )
 
     ASSESSMENT_LATEST_FLAG_ENDPOINT = (
         ASSESSMENT_STORE_API_HOST + "/flag?application_id={application_id}"
@@ -213,7 +212,7 @@ class DefaultConfig:
 
     APPLICANT_EXPORT_ENDPOINT = (
         ASSESSMENT_STORE_API_HOST
-        + "/application_fields_export/{fund_id}/{round_id}"
+        + "/application_fields_export/{fund_id}/{round_id}/{report_type}"
     )
     TAGGING_PURPOSE_CONFIG = {
         "GENERAL": {

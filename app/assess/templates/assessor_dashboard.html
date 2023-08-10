@@ -13,7 +13,7 @@
 <header role="banner" data-module="govuk-header">
     <nav class="govuk-width-container govuk-header__navigation">
         <div class="govuk-phase-banner flex-parent-element">
-            <p class="govuk-!-text-align-left flex-parent-element flexed-element-margins-collapse">
+            <p class="govuk-!-text-align-left govuk-!-margin-left-3 flex-parent-element flexed-element-margins-collapse">
                 {{ govukBackLink({'href': url_for("assess_bp.landing"), 'html': 'Back to <b>assessment landing</b>', 'attributes': {'data-qa': 'back-to-assessment-overview-link'} }) }}
             </p>
         {{ logout_partial(sso_logout_url) }}

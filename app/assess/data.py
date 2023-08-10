@@ -53,13 +53,15 @@ def get_data(endpoint: str, payload: Dict = None):
     return None
 
 
-def get_assessment_progress(application_metadata):
+def get_assessment_progress(application_metadata, fund_id, round_id):
     application_ids_list = {
         "application_ids": [
             x.get("application_id") for x in application_metadata
         ]
     }
-    endpoint_url = Config.ASSESSMENT_PROGRESS_ENDPOINT
+    endpoint_url = Config.ASSESSMENT_PROGRESS_ENDPOINT.format(
+        fund_id=fund_id, round_id=round_id
+    )
     current_app.logger.info(
         f"Fetching assessment progress from '{endpoint_url}', with json"
         f" payload: {application_ids_list}."
@@ -415,19 +417,6 @@ def get_assessments_stats(
     )
     current_app.logger.info(f"Endpoint '{assessments_stats_endpoint}'.")
     return get_data(assessments_stats_endpoint)
-
-
-def get_team_flag_stats(
-    fund_id: str, round_id: str, search_params: dict = {}
-) -> Dict | None:
-    team_flag_stats_endpoint = (
-        Config.ASSESSMENT_STORE_API_HOST
-    ) + Config.ASSESSMENTS_TEAM_FLAGGING_STATS_ENDPOINT.format(
-        fund_id=fund_id, round_id=round_id, params=urlencode(search_params)
-    )
-
-    current_app.logger.info(f"Endpoint '{team_flag_stats_endpoint}'.")
-    return get_data(team_flag_stats_endpoint)
 
 
 def get_assessor_task_list_state(application_id: str) -> Union[dict, None]:
@@ -849,9 +838,9 @@ def update_tag(fund_id: str, round_id: str, updated_tag: Dict) -> Tag:
     return None
 
 
-def get_applicant_export(fund_id, round_id):
+def get_applicant_export(fund_id, round_id, report_type):
     applicant_export_endpoint = Config.APPLICANT_EXPORT_ENDPOINT.format(
-        fund_id=fund_id, round_id=round_id
+        fund_id=fund_id, round_id=round_id, report_type=report_type
     )
 
     current_app.logger.info(f"Endpoint '{applicant_export_endpoint}'.")
