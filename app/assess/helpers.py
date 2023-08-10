@@ -129,20 +129,6 @@ def is_flaggable(flag_status: str):
     return flag_status != "Stopped"
 
 
-def is_qa_complete(Flags: List[Flag]) -> bool:
-    # TODO: Rework on this when QA_COMPLETED is moved to assessment enum type
-    flags_list = (
-        [
-            (Flag.from_dict(flag) if isinstance(flag, dict) else flag)
-            for flag in Flags
-        ]
-        if Flags
-        else []
-    )
-    all_latest_status = [flag.latest_status for flag in flags_list]
-    return FlagType.QA_COMPLETED in all_latest_status or False
-
-
 def set_application_status_in_overview(application_overviews):
     """Add the 'application_status' key and return the modified list of application overviews."""
     for overview in application_overviews:

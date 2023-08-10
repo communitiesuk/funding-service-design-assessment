@@ -94,27 +94,16 @@ class DefaultConfig:
     APPLICATION_SEARCH_ENDPOINT = CommonConfig.APPLICATION_SEARCH_ENDPOINT
 
     # Assessment store endpoints
-    ASSESSMENTS_STATS_ENDPOINT = (
-        "/assessments/get-stats/{fund_id}/{round_id}?{params}"
-    )
-
     ASSESSMENTS_STATS_FLAGS_ENDPOINT = (
         "/assessments/get-stats/{fund_id}/{round_id}?{params}"
     )
 
-    APPLICATION_OVERVIEW_ENDPOINT_FUND_ROUND_PARAMS = (
-        "/application_overviews/{fund_id}/{round_id}?{params}"
-    )
     APPLICATION_OVERVIEW_FLAGS_ENDPOINT_FUND_ROUND_PARAMS = (
         "/application_overviews/{fund_id}/{round_id}?{params}"
     )
 
     APPLICATION_OVERVIEW_ENDPOINT_APPLICATION_ID = (
         "/application_overviews/{application_id}"
-    )
-
-    APPLICATION_JSON_ENDPOINT = (
-        ASSESSMENT_STORE_API_HOST + "/application/{application_id}/json"
     )
 
     APPLICATION_JSON_ENDPOINT = (
