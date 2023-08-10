@@ -4,6 +4,7 @@ from collections import OrderedDict
 from io import StringIO
 from typing import Dict
 from typing import List
+from urllib.parse import quote_plus
 
 from app.assess.data import get_assessor_task_list_state
 from app.assess.data import get_flags
@@ -24,6 +25,7 @@ from config import Config
 from flask import redirect
 from flask import render_template
 from flask import request
+from flask import Response
 from flask import url_for
 from fsd_utils.mapping.application.application_utils import simplify_title
 
@@ -402,3 +404,37 @@ def get_assessments_stats(application_overviews) -> Dict:
     }
 
     return stats
+
+
+def generate_maps_from_form_names(
+    data,
+):
+    form_name_to_title = OrderedDict()
+    form_name_to_path = OrderedDict()
+
+    for item in data:
+        if item["form_name"]:
+            form_name_to_title[item["form_name"]] = item["title"]
+            form_name_to_path[item["form_name"]] = item["path"]
+
+        if item["children"]:
+            (
+                child_form_name_to_title,
+                child_form_name_to_path,
+            ) = generate_maps_from_form_names(item["children"])
+            form_name_to_title.update(child_form_name_to_title)
+            form_name_to_path.update(child_form_name_to_path)
+
+    return form_name_to_title, form_name_to_path
+
+
+def download_file(data, mimetype, file_name):
+    return Response(
+        data,
+        mimetype=mimetype,
+        headers={
+            "Content-Disposition": (
+                f"attachment;filename={quote_plus(file_name)}"
+            )
+        },
+    )

@@ -1,7 +1,10 @@
+from collections import OrderedDict
+
 import pytest
 from app.assess.helpers import determine_display_status
 from app.assess.helpers import generate_assessment_info_csv
 from app.assess.helpers import generate_csv_of_application
+from app.assess.helpers import generate_maps_from_form_names
 from app.assess.helpers import is_flaggable
 from app.assess.models.flag_v2 import FlagV2
 from app.assess.models.fund import Fund
@@ -175,3 +178,56 @@ def test_generate_csv_for_fields():
     result = generate_assessment_info_csv(test_data)
 
     assert result == expected_result
+
+
+def test_generate_maps_from_form_names_simple_case():
+    data = [
+        {
+            "form_name": "form1",
+            "title": "Title1",
+            "path": "Path1",
+            "children": None,
+        },
+        {
+            "form_name": "form2",
+            "title": "Title2",
+            "path": "Path2",
+            "children": None,
+        },
+    ]
+    title_map, path_map = generate_maps_from_form_names(data)
+    assert title_map == OrderedDict([("form1", "Title1"), ("form2", "Title2")])
+    assert path_map == OrderedDict([("form1", "Path1"), ("form2", "Path2")])
+
+
+def test_generate_maps_from_form_names_nested_case():
+    data = [
+        {
+            "form_name": "form1",
+            "title": "Title1",
+            "path": "Path1",
+            "children": [
+                {
+                    "form_name": "form1_1",
+                    "title": "Title1_1",
+                    "path": "Path1_1",
+                    "children": None,
+                },
+                {
+                    "form_name": "form1_2",
+                    "title": "Title1_2",
+                    "path": "Path1_2",
+                    "children": None,
+                },
+            ],
+        }
+    ]
+    title_map, path_map = generate_maps_from_form_names(data)
+    expected_title = OrderedDict(
+        [("form1", "Title1"), ("form1_1", "Title1_1"), ("form1_2", "Title1_2")]
+    )
+    expected_path = OrderedDict(
+        [("form1", "Path1"), ("form1_1", "Path1_1"), ("form1_2", "Path1_2")]
+    )
+    assert title_map == expected_title
+    assert path_map == expected_path

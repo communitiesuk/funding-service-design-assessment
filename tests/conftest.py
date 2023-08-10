@@ -1,11 +1,13 @@
 import multiprocessing
 import platform
+from collections import OrderedDict
 from pathlib import Path
 from unittest import mock
 from unittest.mock import call
 
 import jwt as jwt
 import pytest
+from app.assess.models.round import Round
 from app.assess.models.tag import AssociatedTag
 from app.assess.models.tag import Tag
 from app.assess.models.tag import TagType
@@ -292,6 +294,25 @@ def mock_get_application_metadata():
         ),
     ):
         yield
+
+
+@pytest.fixture
+def mocks_for_file_export_download(mocker):
+    mocker.patch(
+        "app.assess.routes.get_round",
+        return_value=Round.from_dict(
+            mock_api_results["fund_store/funds/{fund_id}/rounds/{round_id}"]
+        ),
+    )
+    mocker.patch(
+        "app.assess.routes.get_application_sections_display_config",
+        return_value=[],
+    )
+    mocker.patch(
+        "app.assess.routes.generate_maps_from_form_names",
+        return_value=COF_R2_W2_GENERATE_MAPS_FROM_FORM_NAMES,
+    )
+    yield
 
 
 @pytest.fixture(scope="function")
@@ -801,3 +822,57 @@ def mock_get_tag_map_and_tag_options(mocker):
             ),
         )
     yield
+
+
+COF_R2_W2_FORM_NAME_TO_TITLE_MAP = OrderedDict(
+    [
+        ("organisation-information", "Organisation Information"),
+        ("applicant-information", "Applicant Information"),
+        ("project-information", "Project Information"),
+        ("asset-information", "Asset Information"),
+        ("community-use", "Community Use"),
+        ("community-engagement", "Community Engagement"),
+        ("local-support", "Local Support"),
+        ("environmental-sustainability", "Environmental Sustainability"),
+        ("funding-required", "Funding Required"),
+        ("feasibility", "Feasibility"),
+        ("risk", "Risk"),
+        ("project-costs", "Project Costs"),
+        ("skills-and-resources", "Skills And Resources"),
+        ("community-representation", "Community Representation"),
+        ("inclusiveness-and-integration", "Inclusiveness And Integration"),
+        ("upload-business-plan", "Upload Business Plan"),
+        ("community-benefits", "Community Benefits"),
+        ("value-to-the-community", "Value To The Community"),
+        ("project-qualification", "Project Qualification"),
+        ("declarations", "Declarations"),
+    ]
+)
+COF_R2_W2_FORM_NAME_TO_PATH_MAP = OrderedDict(
+    [
+        ("organisation-information", "1.1.1.1"),
+        ("applicant-information", "1.1.1.2"),
+        ("project-information", "1.1.2.1"),
+        ("asset-information", "1.1.2.2"),
+        ("community-use", "1.1.3.1"),
+        ("community-engagement", "1.1.3.2"),
+        ("local-support", "1.1.3.3"),
+        ("environmental-sustainability", "1.1.3.4"),
+        ("funding-required", "1.1.4.1"),
+        ("feasibility", "1.1.4.2"),
+        ("risk", "1.1.4.3"),
+        ("project-costs", "1.1.4.4"),
+        ("skills-and-resources", "1.1.4.5"),
+        ("community-representation", "1.1.4.6"),
+        ("inclusiveness-and-integration", "1.1.4.7"),
+        ("upload-business-plan", "1.1.4.8"),
+        ("community-benefits", "1.1.5.1"),
+        ("value-to-the-community", "1.1.6.1"),
+        ("project-qualification", "1.1.7.1"),
+        ("declarations", "1.1.8.1"),
+    ]
+)
+COF_R2_W2_GENERATE_MAPS_FROM_FORM_NAMES = (
+    COF_R2_W2_FORM_NAME_TO_TITLE_MAP,
+    COF_R2_W2_FORM_NAME_TO_PATH_MAP,
+)

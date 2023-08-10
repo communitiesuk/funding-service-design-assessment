@@ -37,8 +37,9 @@ from app.assess.forms.resolve_flag_form import ResolveFlagForm
 from app.assess.forms.scores_and_justifications import ScoreForm
 from app.assess.helpers import determine_assessment_status
 from app.assess.helpers import determine_flag_status
+from app.assess.helpers import download_file
 from app.assess.helpers import generate_assessment_info_csv
-from app.assess.helpers import generate_csv_of_application
+from app.assess.helpers import generate_maps_from_form_names
 from app.assess.helpers import get_assessments_stats
 from app.assess.helpers import get_state_for_tasklist_banner
 from app.assess.helpers import get_tag_map_and_tag_options
@@ -48,6 +49,8 @@ from app.assess.helpers import is_flaggable
 from app.assess.helpers import match_search_params
 from app.assess.helpers import resolve_application
 from app.assess.helpers import set_application_status_in_overview
+from app.assess.models.file_factory import ApplicationFileRepresentationArgs
+from app.assess.models.file_factory import generate_file_content
 from app.assess.models.flag_teams import TeamsFlagData
 from app.assess.models.flag_v2 import FlagTypeV2
 from app.assess.models.fund_summary import create_fund_summaries
@@ -69,7 +72,6 @@ from flask import request
 from flask import Response
 from flask import url_for
 from fsd_utils import extract_questions_and_answers
-from fsd_utils import generate_text_of_application
 
 assess_bp = Blueprint(
     "assess_bp",
@@ -309,7 +311,6 @@ def score(
 )
 @check_access_application_id(roles_required=["ASSESSOR"])
 def flag(application_id):
-
     # Get assessor tasks list
     state = get_state_for_tasklist_banner(application_id)
     choices = [
@@ -684,17 +685,46 @@ def download_application_answers(
     application_json = get_application_json(application_id)
     application_json_blob = application_json["jsonb_blob"]
 
-    qanda_dict = extract_questions_and_answers(application_json_blob["forms"])
     fund = get_fund(application_json["jsonb_blob"]["fund_id"])
+    round_ = get_round(
+        fund.id, application_json["round_id"], use_short_name=False
+    )
 
-    if file_type == "txt":
-        text = generate_text_of_application(qanda_dict, fund.name)
-        return download_file(text, "text/plain", f"{short_id}_answers.txt")
-    elif file_type == "csv":
-        csv = generate_csv_of_application(qanda_dict, fund, application_json)
-        return download_file(csv, "text/csv", f"{short_id}_answers.csv")
+    qanda_dict = extract_questions_and_answers(application_json_blob["forms"])
+    application_sections_display_config = (
+        get_application_sections_display_config(
+            fund.id, round_.id, application_json["language"]
+        )
+    )
 
-    abort(404)
+    (
+        form_name_to_title_map,
+        form_name_to_path_map,
+    ) = generate_maps_from_form_names(application_sections_display_config)
+
+    qanda_dict = {
+        key: qanda_dict[key]
+        for key in form_name_to_title_map
+        if key in qanda_dict
+    }
+
+    all_uploaded_documents = []
+    if file_type == "pdf":
+        all_uploaded_documents = get_all_uploaded_documents_theme_answers(
+            application_id
+        )
+
+    args = ApplicationFileRepresentationArgs(
+        fund=fund,
+        round=round_,
+        question_to_answer=qanda_dict,
+        application_json=application_json,
+        form_name_to_title_map=form_name_to_title_map,
+        short_id=short_id,
+        all_uploaded_documents=all_uploaded_documents,
+    )
+
+    return generate_file_content(args, file_type)
 
 
 @assess_bp.route(
@@ -712,18 +742,6 @@ def get_file(application_id: str, file_name: str):
         return download_file(data, mimetype, f"{short_id}_{file_name}")
 
     return download_file(data, mimetype, file_name)
-
-
-def download_file(data, mimetype, file_name):
-    return Response(
-        data,
-        mimetype=mimetype,
-        headers={
-            "Content-Disposition": (
-                f"attachment;filename={quote_plus(file_name)}"
-            )
-        },
-    )
 
 
 def download_multiple_files(files, folder_name):

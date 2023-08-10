@@ -81,6 +81,11 @@ class DefaultConfig:
         + "/funds/{fund_id}/rounds/{round_id}/available_flag_allocations"
     )
 
+    GET_APPLICATION_DISPLAY_FOR_FUND_ENDPOINT = (
+        FUND_STORE_API_HOST
+        + "/funds/{fund_id}/rounds/{round_id}/sections/application?language={language}"
+    )
+
     # Round Store Endpoints
 
     ROUNDS_ENDPOINT = CommonConfig.ROUNDS_ENDPOINT

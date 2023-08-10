@@ -12,6 +12,9 @@ class Fund:
     description: str
     short_name: str
     guidance_url: str = ""
+    owner_organisation_name: str = ""
+    owner_organisation_shortname: str = ""
+    owner_organisation_logo_uri: str = ""
     rounds: List[Round] = field(default_factory=list)
 
     @staticmethod
@@ -22,6 +25,13 @@ class Fund:
             description=data.get("description"),
             short_name=data.get("short_name"),
             guidance_url=data.get("guidance_url"),
+            owner_organisation_name=data.get("owner_organisation_name"),
+            owner_organisation_shortname=data.get(
+                "owner_organisation_shortname"
+            ),
+            owner_organisation_logo_uri=data.get(
+                "owner_organisation_logo_uri"
+            ),
         )
 
     def add_round(self, fund_round: Round):

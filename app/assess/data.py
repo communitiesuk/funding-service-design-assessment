@@ -804,6 +804,18 @@ def get_default_round_data():
     return round_response
 
 
+def get_application_sections_display_config(
+    fund_id: str, round_id: str, language: str
+):
+    application_display_request_url = (
+        Config.GET_APPLICATION_DISPLAY_FOR_FUND_ENDPOINT.format(
+            fund_id=fund_id, round_id=round_id, language=language
+        )
+    )
+    application_display_response = get_data(application_display_request_url)
+    return application_display_response
+
+
 def get_tag(fund_id, round_id, tag_id) -> Tag:
     endpoint = Config.ASSESSMENT_GET_TAG_ENDPOINT.format(
         fund_id=fund_id, round_id=round_id, tag_id=tag_id
