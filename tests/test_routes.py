@@ -1225,8 +1225,8 @@ class TestRoutes:
         mock_get_application,
         mock_get_funds,
         mock_get_application_metadata,
+        mocks_for_file_export_download,
     ):
-
         token = create_valid_token(test_lead_assessor_claims)
         flask_test_client.set_cookie("localhost", "fsd_user_token", token)
         response = flask_test_client.get(
@@ -1313,6 +1313,7 @@ def test_download_application_answers(
     mock_get_application,
     file_extension,
     content_type,
+    mocks_for_file_export_download,
 ):
     token = create_valid_token(test_lead_assessor_claims)
     flask_test_client.set_cookie("localhost", "fsd_user_token", token)
@@ -1334,6 +1335,7 @@ def test_download_application_answers_invalid_file_type(
     mock_get_application_metadata,
     mock_get_fund,
     mock_get_application,
+    mocks_for_file_export_download,
 ):
     token = create_valid_token(test_lead_assessor_claims)
     flask_test_client.set_cookie("localhost", "fsd_user_token", token)

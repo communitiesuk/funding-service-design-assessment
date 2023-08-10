@@ -1,7 +1,8 @@
 from dataclasses import dataclass
 from functools import partial
 
-from app.pdf.pdf_generator import _generate_pdf
+from app.assess.views.filters import format_date
+from app.pdf.pdf_generator import generate_pdf
 
 
 @dataclass
@@ -62,9 +63,13 @@ class FullApplicationPdfContext:
 
         return cls(
             title=args.fund.name,
-            response_id=args.application_json["short_id"],
+            response_id=args.short_id,
             submission_to=f"{args.fund.name} {args.round.title}",
-            submitted_on=args.application_json["date_submitted"],
+            submitted_on=format_date(
+                args.application_json["date_submitted"],
+                "%Y-%m-%dT%H:%M:%S.%f",
+                "%d/%m/%Y at %H:%M",
+            ),
             organisation_name=args.fund.owner_organisation_name,
             organisation_shortname=args.fund.owner_organisation_shortname,
             organisation_logo_uri=args.fund.owner_organisation_logo_uri
@@ -75,5 +80,5 @@ class FullApplicationPdfContext:
 
 
 generate_full_application_pdf = partial(
-    _generate_pdf, "app/pdf/templates/full_application.html"
+    generate_pdf, "app/pdf/templates/full_application.html"
 )

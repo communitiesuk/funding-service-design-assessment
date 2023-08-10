@@ -702,14 +702,18 @@ def download_application_answers(
         form_name_to_title_map,
         form_name_to_path_map,
     ) = generate_maps_from_form_names(application_sections_display_config)
+
     qanda_dict = {
         key: qanda_dict[key]
         for key in form_name_to_title_map
         if key in qanda_dict
     }
-    all_uploaded_documents = get_all_uploaded_documents_theme_answers(
-        application_id
-    )
+
+    all_uploaded_documents = []
+    if file_type == "pdf":
+        all_uploaded_documents = get_all_uploaded_documents_theme_answers(
+            application_id
+        )
 
     args = ApplicationFileRepresentationArgs(
         fund=fund,

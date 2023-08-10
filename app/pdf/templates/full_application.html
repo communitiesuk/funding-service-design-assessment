@@ -45,8 +45,8 @@
 </head>
 <body>
     <div class="header">
-        {% if organisation_logo_uri %}
-        <img src="data:image/png;base64, {{ organisation_logo_uri }}" alt="Organisation Logo" class="header-logo">
+        {% if False %}
+        <img src="{{ organisation_logo_uri }}" alt="Organisation Logo" class="header-logo">
         {% endif %}
         <div>
             <p><strong>{{ organisation_name }}</strong> ({{ organisation_shortname }})</p>
