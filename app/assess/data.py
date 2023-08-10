@@ -94,7 +94,7 @@ def call_search_applications(params: dict | str):
 def get_application_overviews(fund_id, round_id, search_params):
     overviews_endpoint = (
         Config.ASSESSMENT_STORE_API_HOST
-    ) + Config.APPLICATION_OVERVIEW_FLAGS_ENDPOINT_FUND_ROUND_PARAMS.format(
+    ) + Config.APPLICATION_OVERVIEW_ENDPOINT_FUND_ROUND_PARAMS.format(
         fund_id=fund_id, round_id=round_id, params=urlencode(search_params)
     )
     current_app.logger.info(f"Endpoint '{overviews_endpoint}'.")
@@ -411,7 +411,7 @@ def get_assessments_stats(
 ) -> Dict | None:
     assessments_stats_endpoint = (
         Config.ASSESSMENT_STORE_API_HOST
-    ) + Config.ASSESSMENTS_STATS_FLAGS_ENDPOINT.format(
+    ) + Config.ASSESSMENTS_STATS_ENDPOINT.format(
         fund_id=fund_id, round_id=round_id, params=urlencode(search_params)
     )
     current_app.logger.info(f"Endpoint '{assessments_stats_endpoint}'.")
