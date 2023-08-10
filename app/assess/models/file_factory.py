@@ -60,6 +60,30 @@ _FILE_GENERATORS = {
 def generate_file_content(
     args: ApplicationFileRepresentationArgs, file_type: str
 ):
+    """
+    Generate the content of an application file based on the provided file type.
+
+    This function will create either a file representation of an application,
+    depending on the `file_type` provided.
+
+    Args:
+        args (ApplicationFileRepresentationArgs): Arguments containing application details like
+                                                  fund details, round, short id, form name to title map,
+                                                  question to answer mappings, application JSON data,
+                                                  and all uploaded documents.
+        file_type (str): The type of file to generate. Valid values are 'txt', 'csv', and 'pdf'.
+
+    Returns:
+        A file content in the specified format, response for a flask request.
+
+    Raises:
+        404: If the provided `file_type` is not supported.
+
+    Example:
+        >>> args = ApplicationFileRepresentationArgs(...)
+        >>> generate_file_content(args, 'txt')
+        [Generates and returns the text representation of the application]
+    """
     if file_generator := _FILE_GENERATORS.get(file_type):
         return file_generator(args)
 
