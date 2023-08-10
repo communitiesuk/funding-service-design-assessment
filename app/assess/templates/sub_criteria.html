@@ -39,13 +39,12 @@
     {{ flag_application_button(application_id) }}
 {% endif %}
 <div class="govuk-grid-row">
-    <div class="govuk-grid-column-one-third content-container">
+    <div class="govuk-grid-column-one-third">
         <h2 class="govuk-heading-l scoring-heading">{{ sub_criteria.name }}</h2>
     </div>
 </div>
 
 <div class="govuk-grid-row">
-    <div class="govuk-grid-column-full">
         <div class="govuk-grid-column-one-third">
             {{ navbar(application_id, sub_criteria, current_theme.id) }}
         </div>
@@ -77,6 +76,5 @@
                     {{ comment_box(comment_form) }}
                 {% endif %}
         </div>
-    </div>
 </div>
 {% endblock content %}

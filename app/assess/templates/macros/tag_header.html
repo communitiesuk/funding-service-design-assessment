@@ -4,7 +4,7 @@
     <header role="banner" data-module="govuk-header"></header>
         <nav class="govuk-width-container govuk-header__navigation">
             <div class="govuk-phase-banner flex-parent-element">
-                <p class="govuk-!-text-align-left flex-parent-element flexed-element-margins-collapse">
+                <p class="govuk-!-text-align-left govuk-!-margin-left-3 flex-parent-element flexed-element-margins-collapse">
                     {{ govukBackLink({'href': backLinkHref, 'html': 'Back to <b>'+backLinkTitle+'</b>', 'attributes': {'data-qa': 'back-to-assessment-dashboard'} }) }}
                 </p>
                 {{ logout_partial(sso_logout_url) }}
