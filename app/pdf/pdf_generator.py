@@ -6,7 +6,7 @@ from xhtml2pdf import pisa
 
 
 def _render_template(template_path: str, context) -> str:
-    env = Environment(loader=FileSystemLoader("."))
+    env = Environment(loader=FileSystemLoader("."), autoescape=True)
     template = env.get_template(template_path)
     return template.render(context)
 
