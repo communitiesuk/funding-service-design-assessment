@@ -2,14 +2,14 @@
 {% from "macros/tag_header.html" import tag_header %}
 
 {% block header %}
-{{ tag_header("assessment dashboard", url_for("assess_bp.landing"), fund_round, sso_logout_url) }}
+{{ tag_header("assessment landing", url_for("assess_bp.landing"), fund_round, sso_logout_url) }}
 {% endblock header %}
 
 {% block content %}
-<div class="govuk-grid-row">
+
     <div class="govuk-grid-column-two-thirds">
 
-        <div class="govuk-grid-row govuk-!-text-align-left">
+
                 <h1 class="govuk-heading-xl govuk-!-margin-bottom-4">Manage tags</h1>
 
                 <div id="contact-hint" class="govuk-hint govuk-!-margin-bottom-6">
@@ -151,5 +151,4 @@
                         {% endif %}
                     </div>
                 </div>
-        </div>
         {% endblock content %}

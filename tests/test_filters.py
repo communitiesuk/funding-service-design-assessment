@@ -3,6 +3,7 @@ from app.assess.views.filters import all_caps_to_human
 from app.assess.views.filters import datetime_format
 from app.assess.views.filters import datetime_format_24hr
 from app.assess.views.filters import format_address
+from app.assess.views.filters import format_date
 from app.assess.views.filters import format_project_ref
 from app.assess.views.filters import remove_dashes_underscores_capitalize
 from app.assess.views.filters import slash_separated_day_month_year
@@ -82,3 +83,20 @@ class TestFilters(object):
     )
     def test_fremove_dashes_underscores_capitalize(self, address, expected):
         assert remove_dashes_underscores_capitalize(address) == expected
+
+
+@pytest.mark.parametrize(
+    "input_date, from_format, to_format, expected_output",
+    [
+        (
+            "2023-06-06T13:38:51.467199",
+            "%Y-%m-%dT%H:%M:%S.%f",
+            "%d/%m/%Y at %H:%M",
+            "06/06/2023 at 13:38",
+        ),
+        ("2023-06-06 13:38:51", "%Y-%m-%d %H:%M:%S", "%d/%m/%Y", "06/06/2023"),
+        ("06-06-2023", "%d-%m-%Y", "%Y/%m/%d", "2023/06/06"),
+    ],
+)
+def test_format_date(input_date, from_format, to_format, expected_output):
+    assert format_date(input_date, from_format, to_format) == expected_output

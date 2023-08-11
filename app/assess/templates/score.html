@@ -47,13 +47,13 @@ Score - {{ sub_criteria.name }} - {{ sub_criteria.project_name }}
 {% endif %}
 
 <div class="govuk-grid-row">
-    <div class="govuk-grid-column-one-third content-container">
+    <div class="govuk-grid-column-one-third">
         <h2 class="govuk-heading-l scoring-heading">{{ sub_criteria.name }}</h2>
     </div>
 </div>
 
 <div class="govuk-grid-row">
-    <div class="govuk-grid-column-full">
+
         <div class="govuk-grid-column-one-third">
             {{ navbar(application_id, sub_criteria, current_theme_id, is_score_page=True) }}
         </div>
@@ -62,6 +62,6 @@ Score - {{ sub_criteria.name }} - {{ sub_criteria.project_name }}
             sub_criteria.id, scoring_list, state) }}
             {{ comment_summary(comments,sub_criteria.themes) }}
         </div>
-    </div>
+
 </div>
 {% endblock content %}

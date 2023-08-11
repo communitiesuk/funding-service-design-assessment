@@ -35,10 +35,13 @@ AssessFrontend.nodeListForEach = function (nodes, callback) {
     }
 };
 
-document.getElementById("show-tags").addEventListener("change", (event) => {
-    const allTagDetails = Array.from(document.getElementsByClassName("dlhuc-tag-expand"));
-    const checkboxState = event.target.checked;
-    allTagDetails.forEach(tagDetail => {
-        tagDetail.open = checkboxState;
+const showTagsElement = document.getElementById("show-tags");
+if (showTagsElement) {
+    showTagsElement.addEventListener("change", (event) => {
+        const allTagDetails = Array.from(document.getElementsByClassName("dlhuc-tag-expand"));
+        const checkboxState = event.target.checked;
+        allTagDetails.forEach(tagDetail => {
+            tagDetail.open = checkboxState;
+        });
     });
-});
+}
