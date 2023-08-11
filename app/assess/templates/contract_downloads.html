@@ -13,7 +13,9 @@
 
             <h2 class="govuk-heading-l govuk-!-margin-top-4">Export application data</h2>
             <ul class="govuk-list">
-                <li><a class="govuk-link" href="{{ application_answers[1] }}">{{ application_answers[0] }}</a></li>
+                {% for text, href in file_links %}
+                <li><a class="govuk-link" href="{{ href }}">{{ text }}</a></li>
+                {% endfor %}
             </ul>
             <h3 class="govuk-heading-l govuk-!-margin-top-4">Supporting evidence</h3>
             <ul class="govuk-list">

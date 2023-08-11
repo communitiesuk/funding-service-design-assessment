@@ -50,6 +50,7 @@ from app.assess.helpers import match_search_params
 from app.assess.helpers import resolve_application
 from app.assess.helpers import set_application_status_in_overview
 from app.assess.models.file_factory import ApplicationFileRepresentationArgs
+from app.assess.models.file_factory import FILE_GENERATORS
 from app.assess.models.file_factory import generate_file_content
 from app.assess.models.flag_teams import TeamsFlagData
 from app.assess.models.flag_v2 import FlagTypeV2
@@ -650,21 +651,25 @@ def generate_doc_list_for_download(application_id):
         short_id=short_id,
         application_json=application_json,
     )
-    application_answers = (
-        "Application answers",
-        url_for(
-            "assess_bp.download_application_answers",
-            application_id=application_id,
-            short_id=short_id,
-            file_type="txt",
-        ),
-    )
+
+    file_links = [
+        (
+            f"Application answers, {file_type} file",
+            url_for(
+                "assess_bp.download_application_answers",
+                application_id=application_id,
+                short_id=short_id,
+                file_type=file_type,
+            ),
+        )
+        for file_type in FILE_GENERATORS.keys()
+    ]
 
     return render_template(
         "contract_downloads.html",
         application_id=application_id,
         state=state,
-        application_answers=application_answers,
+        file_links=file_links,
         supporting_evidence=supporting_evidence,
         assessment_status=assessment_status,
         flag_status=flag_status,
