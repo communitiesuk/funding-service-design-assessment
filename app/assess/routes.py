@@ -654,7 +654,7 @@ def generate_doc_list_for_download(application_id):
 
     file_links = [
         (
-            f"Application answers, {file_type} file",
+            f"Download applicant answers as {file_type.upper()} file",
             url_for(
                 "assess_bp.download_application_answers",
                 application_id=application_id,
