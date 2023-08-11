@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 from typing import List
 
-from app.assess.models.flag_v2 import FlagTypeV2
-from app.assess.models.flag_v2 import FlagV2
+from app.assess.models.flag import Flag
+from app.assess.models.flag import FlagType
 from num2words import num2words
 
 # TODO : Check if there is better way to do it?
@@ -16,7 +16,7 @@ class TeamFlagStats:
     num_of_raised: int
     num_of_stopped: int
     ordinal_list: list
-    flags_list: List[FlagV2]
+    flags_list: List[Flag]
 
 
 @dataclass
@@ -24,10 +24,10 @@ class TeamsFlagData:
     teams_stats: dict
 
     @classmethod
-    def from_flags(cls, flags_list: List[FlagV2], teams_list: list = None):
+    def from_flags(cls, flags_list: List[Flag], teams_list: list = None):
         teams_stats = {}
 
-        if isinstance(flags_list, FlagV2):
+        if isinstance(flags_list, Flag):
             flags_list = [flags_list]
 
         if not teams_list:
@@ -40,21 +40,13 @@ class TeamsFlagData:
             team_flags = [f for f in flags_list if f.latest_allocation == team]
             num_of_flags = len(team_flags)
             num_of_raised = len(
-                [f for f in team_flags if f.latest_status == FlagTypeV2.RAISED]
+                [f for f in team_flags if f.latest_status == FlagType.RAISED]
             )
             num_of_resolved = len(
-                [
-                    f
-                    for f in team_flags
-                    if f.latest_status == FlagTypeV2.RESOLVED
-                ]
+                [f for f in team_flags if f.latest_status == FlagType.RESOLVED]
             )
             num_of_stopped = len(
-                [
-                    f
-                    for f in team_flags
-                    if f.latest_status == FlagTypeV2.STOPPED
-                ]
+                [f for f in team_flags if f.latest_status == FlagType.STOPPED]
             )
 
             ordinal_list = [

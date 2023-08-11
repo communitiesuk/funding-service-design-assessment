@@ -6,11 +6,11 @@ from app.assess.helpers import generate_assessment_info_csv
 from app.assess.helpers import generate_csv_of_application
 from app.assess.helpers import generate_maps_from_form_names
 from app.assess.helpers import is_flaggable
-from app.assess.models.flag_v2 import FlagV2
+from app.assess.models.flag import Flag
 from app.assess.models.fund import Fund
 
 RAISED_FLAG = [
-    FlagV2.from_dict(
+    Flag.from_dict(
         {
             "application_id": "app_123",
             "latest_status": "RAISED",
@@ -31,7 +31,7 @@ RAISED_FLAG = [
     )
 ]
 RESOLVED_FLAG = [
-    FlagV2.from_dict(
+    Flag.from_dict(
         {
             "application_id": "app_123",
             "latest_status": "RESOLVED",
@@ -52,7 +52,7 @@ RESOLVED_FLAG = [
     )
 ]
 STOPPED_FLAG = [
-    FlagV2.from_dict(
+    Flag.from_dict(
         {
             "application_id": "app_123",
             "latest_status": "STOPPED",
