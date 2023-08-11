@@ -47,7 +47,7 @@ def _generate_pdf_of_application(args: ApplicationFileRepresentationArgs):
         )
 
 
-_FILE_GENERATORS = {
+FILE_GENERATORS = {
     "txt": _generate_text_of_application,
     "csv": _generate_csv_of_application,
     "pdf": _generate_pdf_of_application,
@@ -81,7 +81,7 @@ def generate_file_content(
         >>> generate_file_content(args, 'txt')
         [Generates and returns the text representation of the application]
     """
-    if file_generator := _FILE_GENERATORS.get(file_type):
+    if file_generator := FILE_GENERATORS.get(file_type):
         return file_generator(args)
 
     abort(404)
