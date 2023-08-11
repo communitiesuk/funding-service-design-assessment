@@ -205,7 +205,7 @@ def resolve_application(
         state.workflow_status
         if state
         else sub_criteria_banner_state.workflow_status,
-        flags_list,
+        state.is_qa_complete,
     )
     flag_status = determine_flag_status(flags_list)
 
