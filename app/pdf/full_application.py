@@ -3,6 +3,7 @@ from functools import partial
 
 from app.assess.views.filters import format_date
 from app.pdf.pdf_generator import generate_pdf
+from fsd_utils.mapping.application.application_utils import format_answer
 
 
 @dataclass
@@ -53,7 +54,7 @@ class FullApplicationPdfContext:
                     questions_and_answers=[
                         QuestionAndAnswer(
                             question=i["question"],
-                            answer=i.get("answer"),
+                            answer=format_answer(i.get("answer")),
                             number="",
                         )
                         for i in args.all_uploaded_documents

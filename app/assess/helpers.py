@@ -27,6 +27,7 @@ from flask import render_template
 from flask import request
 from flask import Response
 from flask import url_for
+from fsd_utils.mapping.application.application_utils import format_answer
 from fsd_utils.mapping.application.application_utils import simplify_title
 
 
@@ -265,7 +266,7 @@ def generate_csv_of_application(q_and_a: dict, fund: Fund, application_json):
             if not answers:
                 answers = "Not provided"
 
-            writer.writerow([section_title, questions, answers])
+            writer.writerow([section_title, questions, format_answer(answers)])
     return output.getvalue()
 
 
