@@ -45,3 +45,23 @@ if (showTagsElement) {
         });
     });
 }
+
+const tabs = document.querySelectorAll('[id^="tab"]');
+const tabAnchors = document.querySelectorAll('.govuk-tabs__tab');
+Array.from(tabAnchors).forEach(tabAnchor => {
+    tabAnchor.addEventListener('click', (tabAnchorElement) => {
+        const hash = tabAnchorElement.target.hash;
+        if (hash) {
+            Array.from(tabs).forEach((tab) => {
+                tab.classList.add('govuk-tabs__panel--hidden');
+            });
+            Array.from(tabAnchors).forEach((tabA) => {
+               tabA.parentElement.classList.remove('govuk-tabs__list-item--selected')
+            });
+
+            const activeTab = document.getElementById(hash.replace('#', ''));
+            activeTab.classList.remove('govuk-tabs__panel--hidden');
+            tabAnchorElement.target.parentElement.classList.add('govuk-tabs__list-item--selected');
+        }
+    });
+})
