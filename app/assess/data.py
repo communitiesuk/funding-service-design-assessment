@@ -11,8 +11,7 @@ from app.assess.models.application import Application
 from app.assess.models.banner import Banner
 from app.assess.models.comment import Comment
 from app.assess.models.flag import Flag
-from app.assess.models.flag_v2 import FlagTypeV2
-from app.assess.models.flag_v2 import FlagV2
+from app.assess.models.flag import FlagType
 from app.assess.models.fund import Fund
 from app.assess.models.round import Round
 from app.assess.models.score import Score
@@ -95,7 +94,7 @@ def call_search_applications(params: dict | str):
 def get_application_overviews(fund_id, round_id, search_params):
     overviews_endpoint = (
         Config.ASSESSMENT_STORE_API_HOST
-    ) + Config.APPLICATION_OVERVIEW_FLAGS_V2_ENDPOINT_FUND_ROUND_PARAMS.format(
+    ) + Config.APPLICATION_OVERVIEW_ENDPOINT_FUND_ROUND_PARAMS.format(
         fund_id=fund_id, round_id=round_id, params=urlencode(search_params)
     )
     current_app.logger.info(f"Endpoint '{overviews_endpoint}'.")
@@ -412,7 +411,7 @@ def get_assessments_stats(
 ) -> Dict | None:
     assessments_stats_endpoint = (
         Config.ASSESSMENT_STORE_API_HOST
-    ) + Config.ASSESSMENTS_STATS_FLAGS_V2_ENDPOINT.format(
+    ) + Config.ASSESSMENTS_STATS_ENDPOINT.format(
         fund_id=fund_id, round_id=round_id, params=urlencode(search_params)
     )
     current_app.logger.info(f"Endpoint '{assessments_stats_endpoint}'.")
@@ -508,38 +507,22 @@ def get_sub_criteria_banner_state(application_id: str):
         abort(404, description=msg)
 
 
-def get_latest_flag(application_id: str) -> Optional[Flag]:
-    flag = get_data(
-        Config.ASSESSMENT_LATEST_FLAG_ENDPOINT.format(
-            application_id=application_id
-        )
-    )
+def get_flag(flag_id: str) -> Optional[Flag]:
+    flag = get_data(Config.ASSESSMENT_FLAG_ENDPOINT.format(flag_id=flag_id))
     if flag:
         return Flag.from_dict(flag)
-    else:
-        msg = f"flag for application: '{application_id}' not found."
-        current_app.logger.warn(msg)
-        return None
-
-
-def get_flag(flag_id: str) -> Optional[FlagV2]:
-    flag = get_data(Config.ASSESSMENT_FLAG_V2_ENDPOINT.format(flag_id=flag_id))
-    if flag:
-        return FlagV2.from_dict(flag)
     else:
         msg = f"flag for id: '{flag_id}' not found."
         current_app.logger.warn(msg)
         return None
 
 
-def get_flags(application_id: str) -> List[FlagV2]:
+def get_flags(application_id: str) -> List[Flag]:
     flag = get_data(
-        Config.ASSESSMENT_FLAGS_V2_ENDPOINT.format(
-            application_id=application_id
-        )
+        Config.ASSESSMENT_FLAGS_ENDPOINT.format(application_id=application_id)
     )
     if flag:
-        return FlagV2.from_list(flag)
+        return Flag.from_list(flag)
     else:
         return []
 
@@ -561,7 +544,7 @@ def submit_flag(
     section: str = None,
     allocation: str = None,
     flag_id: str = None,
-) -> FlagV2 | None:
+) -> Flag | None:
     """Submits a new flag to the assessment store for an application.
     Returns Flag if a flag is created
 
@@ -571,10 +554,10 @@ def submit_flag(
     :param justification: The justification for raising the flag
     :param section: The assessment section the flag has been raised for.
     """
-    flag_type = FlagTypeV2[flag_type]
+    flag_type = FlagType[flag_type]
     if flag_id:
         flag = requests.put(
-            Config.ASSESSMENT_FLAGS_V2_POST_ENDPOINT,
+            Config.ASSESSMENT_FLAGS_POST_ENDPOINT,
             json={
                 "assessment_flag_id": flag_id,
                 "justification": justification,
@@ -585,7 +568,7 @@ def submit_flag(
         )
     else:
         flag = requests.post(
-            Config.ASSESSMENT_FLAGS_V2_POST_ENDPOINT,
+            Config.ASSESSMENT_FLAGS_POST_ENDPOINT,
             json={
                 "application_id": application_id,
                 "justification": justification,
@@ -597,7 +580,7 @@ def submit_flag(
         )
     if flag:
         flag_json = flag.json()
-        return FlagV2.from_dict(flag_json)
+        return Flag.from_dict(flag_json)
 
 
 def get_all_uploaded_documents_theme_answers(

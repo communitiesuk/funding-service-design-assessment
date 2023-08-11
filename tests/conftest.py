@@ -528,14 +528,14 @@ def mock_get_latest_flag(request):
 
 @pytest.fixture(scope="function")
 def mock_get_flags(request):
-    from app.assess.models.flag_v2 import FlagV2
+    from app.assess.models.flag import Flag
 
     marker = request.node.get_closest_marker("application_id")
     application_id = marker.args[0]
 
-    mock_flag_info = FlagV2.from_list(
+    mock_flag_info = Flag.from_list(
         mock_api_results[
-            f"assessment_store/flags_v2?application_id={application_id}"
+            f"assessment_store/flags?application_id={application_id}"
         ]
     )
     with (
@@ -565,13 +565,13 @@ def mock_get_qa_complete(request):
 
 @pytest.fixture(scope="function")
 def mock_get_flag(request):
-    from app.assess.models.flag_v2 import FlagV2
+    from app.assess.models.flag import Flag
 
     marker = request.node.get_closest_marker("flag_id")
     flag_id = marker.args[0]
 
-    mock_flag_info = FlagV2.from_dict(
-        mock_api_results[f"assessment_store/flag_data_v2?flag_id={flag_id}"]
+    mock_flag_info = Flag.from_dict(
+        mock_api_results[f"assessment_store/flag_data?flag_id={flag_id}"]
     )
     with mock.patch(
         "app.assess.routes.get_flag", return_value=mock_flag_info

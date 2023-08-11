@@ -5,29 +5,44 @@ from enum import Enum
 
 
 class FlagType(Enum):
-    FLAGGED = 0
+    RAISED = 0
     STOPPED = 1
-    QA_COMPLETED = 2
-    RESOLVED = 3
+    RESOLVED = 2
 
 
 @dataclass()
 class Flag:
     id: str
-    justification: str
-    sections_to_flag: str
-    flag_type: FlagType | str
+    sections_to_flag: list
+    latest_status: FlagType | str
+    latest_allocation: str
     application_id: str
-    date_created: str
-    user_id: str
-    is_qa_complete: bool = False
+    updates: list
 
     def __post_init__(self):
-        if self.flag_type:
-            self.flag_type = FlagType[self.flag_type]
-        self.date_created = datetime.fromisoformat(self.date_created).strftime(
-            "%Y-%m-%d %X"
+        self.latest_status = self.get_enum_status(self.latest_status)
+        for item in self.updates:
+            item["status"] = self.get_enum_status(item["status"])
+            item["date_created"] = datetime.fromisoformat(
+                item["date_created"]
+            ).strftime("%Y-%m-%d %X")
+
+        self.latest_user_id = (
+            self.updates[-1]["user_id"] if self.updates else ""
         )
+        self.date_created = (
+            self.updates[0]["date_created"] if self.updates else ""
+        )
+        self.sections_to_flag = (
+            [] if not self.sections_to_flag else self.sections_to_flag
+        )
+
+    def get_enum_status(self, status):
+        if isinstance(status, int):
+            return FlagType(status)
+        elif isinstance(status, str):
+            return FlagType[status]
+        return status
 
     @classmethod
     def from_dict(cls, d: dict):
@@ -40,34 +55,8 @@ class Flag:
             }
         )
 
-
-# TODO: Refactor below class after assessment-store schema changes for multiple flags
-@dataclass()
-class Flags:
-    id: str
-    # justification: str
-    sections_to_flag: str
-    status: FlagType | str
-    application_id: str
-    # user_id: str
-    updates: list
-    # is_qa_complete: bool = False
-    allocation: str
-
-    def __post_init__(self):
-        # TODO: Uncomment below code after Enum types are upodated with ESCALATED & RAISED
-        # in assessment-store and in above class `FlagType`
-
-        if self.flag_type:
-            self.flag_type = FlagType[self.flag_type]
-
-        for item in self.updates:
-            item["date_created"] = datetime.fromisoformat(
-                item["date_created"]
-            ).strftime("%Y-%m-%d %X")
-
     @classmethod
-    def from_dict(cls, lst: list):
+    def from_list(cls, lst: list):
         all_flags = [
             cls(
                 **{

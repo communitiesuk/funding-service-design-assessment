@@ -14,8 +14,8 @@ from app.assess.data import get_sub_criteria_banner_state
 from app.assess.data import get_tag_types
 from app.assess.data import submit_flag
 from app.assess.display_value_mappings import assessment_statuses
-from app.assess.models.flag_v2 import FlagTypeV2
-from app.assess.models.flag_v2 import FlagV2
+from app.assess.models.flag import Flag
+from app.assess.models.flag import FlagType
 from app.assess.models.fund import Fund
 from app.assess.models.tag import AssociatedTag
 from app.assess.models.ui.assessor_task_list import AssessorTaskList
@@ -76,11 +76,11 @@ def get_value_from_request(parameter_names) -> str | None:
             return value
 
 
-def determine_flag_status(Flags: List[FlagV2]) -> str:
+def determine_flag_status(Flags: List[Flag]) -> str:
     flag_status = ""
     flags_list = (
         [
-            (FlagV2.from_dict(flag) if isinstance(flag, dict) else flag)
+            (Flag.from_dict(flag) if isinstance(flag, dict) else flag)
             for flag in Flags
         ]
         if Flags
@@ -88,13 +88,13 @@ def determine_flag_status(Flags: List[FlagV2]) -> str:
     )
     all_latest_status = [flag.latest_status for flag in flags_list]
 
-    if FlagTypeV2.STOPPED in all_latest_status:
+    if FlagType.STOPPED in all_latest_status:
         flag_status = "Stopped"
-    elif all_latest_status.count(FlagTypeV2.RAISED) > 1:
+    elif all_latest_status.count(FlagType.RAISED) > 1:
         flag_status = "Multiple flags to resolve"
-    elif all_latest_status.count(FlagTypeV2.RAISED) == 1:
+    elif all_latest_status.count(FlagType.RAISED) == 1:
         for flag in flags_list:
-            if flag.latest_status == FlagTypeV2.RAISED:
+            if flag.latest_status == FlagType.RAISED:
                 flag_status = (
                     ("Flagged for " + flag.latest_allocation)
                     if flag.latest_allocation
@@ -104,7 +104,7 @@ def determine_flag_status(Flags: List[FlagV2]) -> str:
 
 
 def determine_display_status(
-    workflow_status: str, Flags: List[FlagV2], is_qa_complete: bool
+    workflow_status: str, Flags: List[Flag], is_qa_complete: bool
 ) -> str:
     flag_status = determine_flag_status(Flags)
     if flag_status:
@@ -132,26 +132,12 @@ def is_flaggable(flag_status: str):
     return flag_status != "Stopped"
 
 
-def is_qa_complete(Flags: List[FlagV2]) -> bool:
-    # TODO: Rework on this when QA_COMPLETED is moved to assessment enum type
-    flags_list = (
-        [
-            (FlagV2.from_dict(flag) if isinstance(flag, dict) else flag)
-            for flag in Flags
-        ]
-        if Flags
-        else []
-    )
-    all_latest_status = [flag.latest_status for flag in flags_list]
-    return FlagTypeV2.QA_COMPLETED in all_latest_status or False
-
-
 def set_application_status_in_overview(application_overviews):
     """Add the 'application_status' key and return the modified list of application overviews."""
     for overview in application_overviews:
         display_status = determine_display_status(
             overview["workflow_status"],
-            overview["flags_v2"],
+            overview["flags"],
             overview["is_qa_complete"],
         )
         status = ""
@@ -342,7 +328,7 @@ def get_team_flag_stats(application_overviews) -> List[Dict]:
     team_flag_stats = []
 
     for assessment in application_overviews:
-        for flag in assessment.get("flags_v2", []):
+        for flag in assessment.get("flags", []):
             latest_status = flag.get("latest_status")
             allocated_team = flag.get("latest_allocation")
 
@@ -353,11 +339,11 @@ def get_team_flag_stats(application_overviews) -> List[Dict]:
 
             for team in team_flag_stats:
                 if team["team_name"] == allocated_team:
-                    if latest_status == FlagTypeV2.RAISED:
+                    if latest_status == FlagType.RAISED:
                         team["raised"] += 1
-                    elif latest_status == FlagTypeV2.STOPPED:
+                    elif latest_status == FlagType.STOPPED:
                         team["stopped"] += 1
-                    elif latest_status == FlagTypeV2.RESOLVED:
+                    elif latest_status == FlagType.RESOLVED:
                         team["resolved"] += 1
 
     return team_flag_stats
@@ -375,7 +361,7 @@ def get_assessments_stats(application_overviews) -> Dict:
     for assessment in application_overviews:
         status = determine_display_status(
             assessment["workflow_status"],
-            assessment["flags_v2"],
+            assessment["flags"],
             assessment["is_qa_complete"],
         )
         if status == "Assessment complete":

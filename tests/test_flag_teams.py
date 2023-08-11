@@ -1,5 +1,5 @@
+from app.assess.models.flag import Flag
 from app.assess.models.flag_teams import TeamsFlagData
-from app.assess.models.flag_v2 import FlagV2
 
 
 class TestTeamsFlagData:
@@ -12,7 +12,7 @@ class TestTeamsFlagData:
         application_id,
         updates,
     ):
-        return FlagV2(
+        return Flag(
             id=id,
             sections_to_flag=sections_to_flag,
             latest_status=latest_status,
