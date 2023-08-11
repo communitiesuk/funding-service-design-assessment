@@ -650,8 +650,8 @@ def generate_doc_list_for_download(application_id):
         short_id=short_id,
         application_json=application_json,
     )
-    application_answers = (
-        "Application answers",
+    application_answers_txt = (
+        "Application answers, text file",
         url_for(
             "assess_bp.download_application_answers",
             application_id=application_id,
@@ -659,12 +659,22 @@ def generate_doc_list_for_download(application_id):
             file_type="txt",
         ),
     )
+    application_answers_pdf = (
+        "Application answers, pdf file",
+        url_for(
+            "assess_bp.download_application_answers",
+            application_id=application_id,
+            short_id=short_id,
+            file_type="pdf",
+        ),
+    )
 
     return render_template(
         "contract_downloads.html",
         application_id=application_id,
         state=state,
-        application_answers=application_answers,
+        application_answers_txt=application_answers_txt,
+        application_answers_pdf=application_answers_pdf,
         supporting_evidence=supporting_evidence,
         assessment_status=assessment_status,
         flag_status=flag_status,
