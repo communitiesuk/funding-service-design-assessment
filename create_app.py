@@ -5,17 +5,17 @@ from gettext import ngettext
 from app.assets import compile_static_assets
 from app.blueprints.assessments.routes import assessment_bp
 from app.blueprints.authentication.auth import auth_protect
-from app.blueprints.core.filters import all_caps_to_human
-from app.blueprints.core.filters import datetime_format
-from app.blueprints.core.filters import datetime_format_24hr
-from app.blueprints.core.filters import format_address
-from app.blueprints.core.filters import format_project_ref
-from app.blueprints.core.filters import remove_dashes_underscores_capitalize
-from app.blueprints.core.filters import slash_separated_day_month_year
-from app.blueprints.core.filters import utc_to_bst
-from app.blueprints.core.routes import core_bp
 from app.blueprints.flagging.routes import flagging_bp
 from app.blueprints.scoring.routes import scoring_bp
+from app.blueprints.shared.filters import all_caps_to_human
+from app.blueprints.shared.filters import datetime_format
+from app.blueprints.shared.filters import datetime_format_24hr
+from app.blueprints.shared.filters import format_address
+from app.blueprints.shared.filters import format_project_ref
+from app.blueprints.shared.filters import remove_dashes_underscores_capitalize
+from app.blueprints.shared.filters import slash_separated_day_month_year
+from app.blueprints.shared.filters import utc_to_bst
+from app.blueprints.shared.routes import shared_bp
 from app.blueprints.tagging.routes import tagging_bp
 from app.error_handlers import forbidden
 from app.error_handlers import internal_server_error
@@ -56,7 +56,7 @@ def create_app() -> Flask:
         flask_app.register_error_handler(404, not_found)
         flask_app.register_error_handler(403, forbidden)
         flask_app.register_error_handler(500, internal_server_error)
-        flask_app.register_blueprint(core_bp)
+        flask_app.register_blueprint(shared_bp)
         flask_app.register_blueprint(assessment_bp)
         flask_app.register_blueprint(flagging_bp)
         flask_app.register_blueprint(tagging_bp)
@@ -67,7 +67,7 @@ def create_app() -> Flask:
 
         template_loaders = [
             PackageLoader("app"),
-            PackageLoader("app.blueprints.core"),
+            PackageLoader("app.blueprints.shared"),
             PackageLoader("app.blueprints.assessments"),
             PackageLoader("app.blueprints.flagging"),
             PackageLoader("app.blueprints.tagging"),

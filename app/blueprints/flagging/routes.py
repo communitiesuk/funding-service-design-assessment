@@ -1,8 +1,6 @@
 from app.blueprints.authentication.validation import (
     check_access_application_id,
 )
-from app.blueprints.core.helpers import determine_assessment_status
-from app.blueprints.core.helpers import determine_flag_status
 from app.blueprints.flagging.forms.continue_application_form import (
     ContinueApplicationForm,
 )
@@ -18,6 +16,8 @@ from app.blueprints.services.models.flag import FlagType
 from app.blueprints.services.shared_helpers import (
     get_state_for_tasklist_banner,
 )
+from app.blueprints.shared.helpers import determine_assessment_status
+from app.blueprints.shared.helpers import determine_flag_status
 from config import Config
 from flask import abort
 from flask import Blueprint

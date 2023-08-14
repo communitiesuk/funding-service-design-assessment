@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from functools import partial
 
 from app.blueprints.assessments.pdf_generator import generate_pdf
-from app.blueprints.core.filters import format_date
+from app.blueprints.shared.filters import format_date
 from fsd_utils.mapping.application.application_utils import format_answer
 
 

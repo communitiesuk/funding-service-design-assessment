@@ -6,9 +6,9 @@ from typing import List
 from typing import Mapping
 from typing import Sequence
 
-from app.blueprints.core.helpers import get_value_from_request
 from app.blueprints.services.data_services import get_application_metadata
 from app.blueprints.services.data_services import get_fund
+from app.blueprints.shared.helpers import get_value_from_request
 from flask import abort
 from flask import g
 from fsd_utils.authentication.decorators import login_required

@@ -1,5 +1,5 @@
-from app.blueprints.core.helpers import get_ttl_hash
 from app.blueprints.services.data_services import get_funds
+from app.blueprints.shared.helpers import get_ttl_hash
 from config import Config
 from flask import g
 from flask import redirect

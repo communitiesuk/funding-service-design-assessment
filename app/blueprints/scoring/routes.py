@@ -1,8 +1,6 @@
 from app.blueprints.authentication.validation import (
     check_access_application_id,
 )
-from app.blueprints.core.helpers import determine_assessment_status
-from app.blueprints.core.helpers import determine_flag_status
 from app.blueprints.flagging.helpers import get_flags
 from app.blueprints.scoring.forms.rescore_form import RescoreForm
 from app.blueprints.scoring.forms.scores_and_justifications import ScoreForm
@@ -18,6 +16,8 @@ from app.blueprints.services.models.sub_criteria import SubCriteria
 from app.blueprints.services.shared_helpers import (
     get_state_for_tasklist_banner,
 )
+from app.blueprints.shared.helpers import determine_assessment_status
+from app.blueprints.shared.helpers import determine_flag_status
 from config import Config
 from flask import abort
 from flask import Blueprint

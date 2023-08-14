@@ -3,10 +3,10 @@ from config import Config
 from flask import Blueprint
 from flask import render_template
 
-core_bp = Blueprint("core_bp", __name__, template_folder="templates")
+shared_bp = Blueprint("shared_bp", __name__, template_folder="templates")
 
 
-@core_bp.route("/")
+@shared_bp.route("/")
 def index():
     return render_template(
         "index.html",
@@ -16,7 +16,7 @@ def index():
     )
 
 
-@core_bp.route("/help", methods=["GET"])
+@shared_bp.route("/help", methods=["GET"])
 def get_help():
     round_data = get_default_round_data() or {}
     return render_template(

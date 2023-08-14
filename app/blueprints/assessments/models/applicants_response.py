@@ -9,10 +9,10 @@ from typing import List
 from typing import Tuple
 from urllib.parse import quote
 
-from app.blueprints.core.filters import format_address
-from app.blueprints.core.filters import format_date
-from app.blueprints.core.filters import remove_dashes_underscores_capitalize
 from app.blueprints.services.aws import list_files_in_folder
+from app.blueprints.shared.filters import format_address
+from app.blueprints.shared.filters import format_date
+from app.blueprints.shared.filters import remove_dashes_underscores_capitalize
 from bs4 import BeautifulSoup
 from flask import current_app
 from flask import url_for
