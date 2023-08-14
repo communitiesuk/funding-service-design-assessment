@@ -121,7 +121,7 @@
                                         </td>
                                         {% if tag.active %}
                                             <td class="govuk-table__cell">
-                                                <a class="govuk-link" href="{{ url_for ('tag_bp.edit_tag',
+                                                <a class="govuk-link" data-qa="edit-tag" href="{{ url_for ('tag_bp.edit_tag',
                                                 fund_id = fund_round['fund_id'],
                                                 round_id = fund_round['round_id'],
                                                 tag_id=tag.id)}}">
