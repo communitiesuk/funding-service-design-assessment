@@ -19,9 +19,9 @@
         {{ logout_partial(sso_logout_url) }}
         </div>
     </nav>
-</div>
+
     <div class="fsd-banner-background">
-        <div class="fsd-dashboard-width-container">
+        <div class="govuk-width-container">
             <div class="govuk-grid-row">
                 <div class="govuk-grid-column-full">
                     <div class="govuk-grid-column-two-thirds">
@@ -58,9 +58,9 @@
 {% endblock header %}
 {% block content %}
 {#    CLOSE THE GOVUK-WIDTH-CONTAINER AND OPEN A WIDER CONTAINER FOR THE TABLE VIEW #}
-    </div>
-    <div class="fsd-dashboard-width-container">
-    <section class="govuk-grid-column-full">
+
+<div class="govuk-grid-row">
+    <section class="govuk-width-container govuk-grid-column-full">
         {% if round_details.fund_short_name.upper() == 'NSTF' %}
             {{ application_overviews_table_nstf.render(
                 application_overviews,
