@@ -1,7 +1,7 @@
-from app.assess.data import get_application_overviews
-from app.assess.data import get_comments
-from app.assess.data import get_fund
-from app.assess.data import get_round
+from app.blueprints.services.data_services import get_application_overviews
+from app.blueprints.services.data_services import get_comments
+from app.blueprints.services.data_services import get_fund
+from app.blueprints.services.data_services import get_round
 from flask import Flask
 from tests.api_data.test_data import mock_api_results
 

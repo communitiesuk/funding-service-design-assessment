@@ -2,8 +2,8 @@ from io import BytesIO
 from unittest.mock import patch
 
 import pytest
-from app.pdf.pdf_generator import generate_pdf
-from app.pdf.pdf_generator import PDFCreationException
+from app.blueprints.assessments.pdf_generator import generate_pdf
+from app.blueprints.assessments.pdf_generator import PDFCreationException
 
 
 @pytest.fixture

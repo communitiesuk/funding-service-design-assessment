@@ -2,8 +2,8 @@ from unittest import mock
 
 import app
 import pytest
-from app.assess.models.flag import Flag
-from app.assess.models.round import Round
+from app.blueprints.services.models.flag import Flag
+from app.blueprints.services.models.round import Round
 from bs4 import BeautifulSoup
 from flask import session
 from tests.api_data.test_data import mock_api_results

@@ -1,5 +1,5 @@
 import pytest
-from app.assess.models.round import Round
+from app.blueprints.services.models.round import Round
 from bs4 import BeautifulSoup
 from config import Config
 from flask import g

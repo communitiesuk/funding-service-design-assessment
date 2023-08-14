@@ -1,5 +1,5 @@
-from app.assess.models.flag import Flag
-from app.assess.models.flag_teams import TeamsFlagData
+from app.blueprints.assessments.models.flag_teams import TeamsFlagData
+from app.blueprints.services.models.flag import Flag
 
 
 class TestTeamsFlagData:

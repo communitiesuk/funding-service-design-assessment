@@ -1,7 +1,9 @@
 from unittest import mock
 
 import app as flask_app
-from app.assess.data import get_files_for_application_upload_fields
+from app.blueprints.services.data_services import (
+    get_files_for_application_upload_fields,
+)
 from fsd_utils import extract_questions_and_answers
 from fsd_utils import generate_text_of_application
 from tests.api_data.example_application_answers import test_application_answers

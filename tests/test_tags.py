@@ -1,13 +1,15 @@
 from unittest import mock
 
 import pytest
-from app.assess.data import get_associated_tags_for_application
-from app.assess.data import get_tags_for_fund_round
-from app.assess.data import post_new_tag_for_fund_round
-from app.assess.data import update_associated_tags
-from app.assess.models.tag import AssociatedTag
-from app.assess.models.tag import Tag
-from app.assess.tag_routes import FLAG_ERROR_MESSAGE
+from app.blueprints.services.data_services import (
+    get_associated_tags_for_application,
+)
+from app.blueprints.services.data_services import get_tags_for_fund_round
+from app.blueprints.services.data_services import post_new_tag_for_fund_round
+from app.blueprints.services.data_services import update_associated_tags
+from app.blueprints.tagging.models.tag import AssociatedTag
+from app.blueprints.tagging.models.tag import Tag
+from app.blueprints.tagging.routes import FLAG_ERROR_MESSAGE
 from bs4 import BeautifulSoup
 from tests.api_data.test_data import test_fund_id
 from tests.api_data.test_data import test_round_id

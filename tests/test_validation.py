@@ -1,17 +1,25 @@
 import pytest
 import werkzeug
-from app.assess.auth.validation import _get_all_country_roles
-from app.assess.auth.validation import _get_all_users_roles
-from app.assess.auth.validation import _get_roles_by_fund_short_name
-from app.assess.auth.validation import _normalise_country
-from app.assess.auth.validation import check_access_application_id
-from app.assess.auth.validation import check_access_fund_short_name
-from app.assess.auth.validation import get_countries_from_roles
-from app.assess.auth.validation import get_valid_country_roles
-from app.assess.auth.validation import has_access_to_fund
-from app.assess.auth.validation import has_devolved_authority_validation
-from app.assess.auth.validation import has_relevant_country_role
-from app.assess.models.fund import Fund
+from app.blueprints.authentication.validation import _get_all_country_roles
+from app.blueprints.authentication.validation import _get_all_users_roles
+from app.blueprints.authentication.validation import (
+    _get_roles_by_fund_short_name,
+)
+from app.blueprints.authentication.validation import _normalise_country
+from app.blueprints.authentication.validation import (
+    check_access_application_id,
+)
+from app.blueprints.authentication.validation import (
+    check_access_fund_short_name,
+)
+from app.blueprints.authentication.validation import get_countries_from_roles
+from app.blueprints.authentication.validation import get_valid_country_roles
+from app.blueprints.authentication.validation import has_access_to_fund
+from app.blueprints.authentication.validation import (
+    has_devolved_authority_validation,
+)
+from app.blueprints.authentication.validation import has_relevant_country_role
+from app.blueprints.services.models.fund import Fund
 
 
 class _MockUser:

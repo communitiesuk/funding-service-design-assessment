@@ -1,7 +1,7 @@
 import app
-from app.aws import FileData
-from app.aws import generate_url
-from app.aws import list_files_in_folder
+from app.blueprints.services.aws import FileData
+from app.blueprints.services.aws import generate_url
+from app.blueprints.services.aws import list_files_in_folder
 
 
 def test_generate_url_short_id(app):
