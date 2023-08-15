@@ -59,7 +59,7 @@
             </div>
         </form>
 
-        <a class="govuk-link deactivate" href="{{ url_for('tag_bp.deactivate_tag',
+        <a class="govuk-link deactivate" data-qa="deactivate-tag" href="{{ url_for('tag_bp.deactivate_tag',
         fund_id=fund_round['fund_id'],
         round_id=fund_round['round_id'],
         tag_id=tag.id)}}">Deactivate tag</a>

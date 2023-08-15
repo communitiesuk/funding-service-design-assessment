@@ -21,7 +21,7 @@
                 <div class="govuk-grid-row govuk-!-text-align-left">
                     <div class="govuk-grid-column-two-thirds">
                         <a href="{{ url_for('tag_bp.create_tag', fund_id = fund_round['fund_id'], round_id = fund_round['round_id']) }}"
-                            class="govuk-button govuk-button--secondary" data-module="govuk-button">
+                            class="govuk-button govuk-button--secondary" data-module="govuk-button" data-qa="create-new-tag">
                             Create new tag
                         </a>
                     </div>
@@ -75,7 +75,7 @@
                                 </div>
                                 <div class="govuk-grid-column-one-quarter">
                                     <div class="govuk-button-group govuk-!-margin-top-6">
-                                        <button class="govuk-button primary-button search-button" type="submit">
+                                        <button class="govuk-button primary-button search-button" data-qa="search-tag" type="submit">
                                             Search
                                         </button>
                                         {% if show_clear_filters %}
@@ -121,7 +121,7 @@
                                         </td>
                                         {% if tag.active %}
                                             <td class="govuk-table__cell">
-                                                <a class="govuk-link" href="{{ url_for ('tag_bp.edit_tag',
+                                                <a class="govuk-link" data-qa="edit-tag" href="{{ url_for ('tag_bp.edit_tag',
                                                 fund_id = fund_round['fund_id'],
                                                 round_id = fund_round['round_id'],
                                                 tag_id=tag.id)}}">
@@ -130,7 +130,7 @@
                                             </td>
                                         {% else %}
                                             <td class="govuk-table__cell">
-                                                <a class="govuk-link" href="{{ url_for('tag_bp.reactivate_tag',
+                                                <a class="govuk-link" data-qa="reactivate" href="{{ url_for('tag_bp.reactivate_tag',
                                                 fund_id=fund_round['fund_id'],
                                                 round_id=fund_round['round_id'],
                                                 tag_id=tag.id) }}">
