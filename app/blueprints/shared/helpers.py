@@ -8,7 +8,7 @@ from config.display_value_mappings import assessment_statuses
 from flask import request
 
 
-def get_assessments_stats(application_overviews) -> Dict:
+def process_assessments_stats(application_overviews) -> Dict:
     num_completed = 0
     num_assessing = 0
     num_not_started = 0

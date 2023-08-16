@@ -1,7 +1,7 @@
 from unittest import mock
 
 import app as flask_app
-from app.blueprints.services.data_services import (
+from app.blueprints.assessments.helpers import (
     get_files_for_application_upload_fields,
 )
 from fsd_utils import extract_questions_and_answers
@@ -44,7 +44,7 @@ class TestExport:
             ]
         )
 
-    def test_generate_text(self):
+    def test_generate_text(self, app):
         result = generate_text_of_application(
             test_application_answers, "TEST FUND"
         )
@@ -64,11 +64,13 @@ class TestExport:
             }
 
         monkeypatch.setattr(
-            flask_app.aws._S3_CLIENT, "list_objects_v2", mock_list_objects_v2
+            flask_app.blueprints.services.aws._S3_CLIENT,
+            "list_objects_v2",
+            mock_list_objects_v2,
         )
 
         with mock.patch(
-            "app.assess.data.url_for",
+            "app.blueprints.assessments.helpers.url_for",
             return_value="dummy/path/to/file.dmp",
         ):
             ans = get_files_for_application_upload_fields(

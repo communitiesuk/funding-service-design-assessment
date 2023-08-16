@@ -13,7 +13,7 @@ from app.blueprints.services.data_services import get_flags
 from app.blueprints.services.data_services import get_sub_criteria_banner_state
 from app.blueprints.services.data_services import submit_flag
 from app.blueprints.services.models.flag import FlagType
-from app.blueprints.services.shared_helpers import (
+from app.blueprints.services.shared_data_helpers import (
     get_state_for_tasklist_banner,
 )
 from app.blueprints.shared.helpers import determine_assessment_status

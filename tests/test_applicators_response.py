@@ -2,7 +2,6 @@ import json  # noqa
 
 import app
 import pytest  # noqa
-from app.assess.routes import assess_bp
 from app.blueprints.assessments.models.applicants_response import (
     _convert_checkbox_items,
 )
@@ -58,7 +57,8 @@ from app.blueprints.assessments.models.applicants_response import (
     QuestionHeading,
 )
 from app.blueprints.assessments.models.applicants_response import sanitise_html
-from app.blueprints.core.filters import format_address
+from app.blueprints.assessments.routes import assessment_bp
+from app.blueprints.shared.filters import format_address
 from flask import Flask
 from tests.api_data.test_data import TestSanitiseData
 
@@ -259,7 +259,7 @@ class TestApplicantResponseComponentConcreteSubclasses:
 class TestApplicatorsResponseComponentFactory:
     test_app = Flask("app")
     test_app.config["SERVER_NAME"] = "example.org:5000"
-    test_app.register_blueprint(assess_bp)
+    test_app.register_blueprint(assessment_bp)
 
     @pytest.mark.parametrize(
         "item, expected_class",
@@ -813,7 +813,7 @@ class TestUtilMethods:
 def test_create_ui_components_retains_order(monkeypatch):
     test_app = Flask("app")
     test_app.config["SERVER_NAME"] = "example.org:5000"
-    test_app.register_blueprint(assess_bp)
+    test_app.register_blueprint(assessment_bp)
     response_with_unhashable_fields = [
         {
             "field_id": "field_1",
@@ -908,7 +908,7 @@ def test_create_ui_components_retains_order(monkeypatch):
     ]
 
     monkeypatch.setattr(
-        app.assess.models.ui.applicants_response,
+        app.blueprints.assessments.models.applicants_response,
         "list_files_in_folder",
         lambda x: ["form_name/path/name/filename.png"],
     )

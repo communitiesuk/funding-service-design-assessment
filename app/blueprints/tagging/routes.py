@@ -18,7 +18,7 @@ from app.blueprints.services.data_services import post_new_tag_for_fund_round
 from app.blueprints.services.data_services import update_associated_tags
 from app.blueprints.services.data_services import update_tag
 from app.blueprints.services.data_services import update_tags
-from app.blueprints.services.shared_helpers import (
+from app.blueprints.services.shared_data_helpers import (
     get_state_for_tasklist_banner,
 )
 from app.blueprints.shared.helpers import determine_assessment_status

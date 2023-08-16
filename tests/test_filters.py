@@ -1,12 +1,12 @@
 import pytest
-from app.blueprints.core.filters import all_caps_to_human
-from app.blueprints.core.filters import datetime_format
-from app.blueprints.core.filters import datetime_format_24hr
-from app.blueprints.core.filters import format_address
-from app.blueprints.core.filters import format_date
-from app.blueprints.core.filters import format_project_ref
-from app.blueprints.core.filters import remove_dashes_underscores_capitalize
-from app.blueprints.core.filters import slash_separated_day_month_year
+from app.blueprints.shared.filters import all_caps_to_human
+from app.blueprints.shared.filters import datetime_format
+from app.blueprints.shared.filters import datetime_format_24hr
+from app.blueprints.shared.filters import format_address
+from app.blueprints.shared.filters import format_date
+from app.blueprints.shared.filters import format_project_ref
+from app.blueprints.shared.filters import remove_dashes_underscores_capitalize
+from app.blueprints.shared.filters import slash_separated_day_month_year
 
 
 class TestFilters(object):

@@ -78,16 +78,16 @@ from app.blueprints.services.data_services import get_tags_for_fund_round
 from app.blueprints.services.data_services import match_comment_to_theme
 from app.blueprints.services.data_services import submit_comment
 from app.blueprints.services.models.theme import Theme
-from app.blueprints.services.shared_helpers import (
+from app.blueprints.services.shared_data_helpers import (
     get_state_for_tasklist_banner,
 )
 from app.blueprints.shared.filters import utc_to_bst
 from app.blueprints.shared.helpers import determine_assessment_status
 from app.blueprints.shared.helpers import determine_flag_status
-from app.blueprints.shared.helpers import get_assessments_stats
 from app.blueprints.shared.helpers import get_ttl_hash
 from app.blueprints.shared.helpers import is_flaggable
 from app.blueprints.shared.helpers import match_search_params
+from app.blueprints.shared.helpers import process_assessments_stats
 from config import Config
 from config.display_value_mappings import assessment_statuses
 from config.display_value_mappings import asset_types
@@ -198,7 +198,7 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
 
     # note, we are not sending search parameters here as we don't want to filter
     # the stats at all.  see https://dluhcdigital.atlassian.net/browse/FS-3249
-    stats = get_assessments_stats(application_overviews)
+    stats = process_assessments_stats(application_overviews)
     teams_flag_stats = get_team_flag_stats(application_overviews)
 
     # this is only used for querying applications, so remove it from the search params,

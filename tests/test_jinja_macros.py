@@ -33,13 +33,13 @@ from app.blueprints.assessments.models.applicants_response import (
     QuestionHeading,
 )
 from app.blueprints.authentication.validation import AssessmentAccessController
-from app.blueprints.core.filters import format_address
 from app.blueprints.scoring.forms.scores_and_justifications import ScoreForm
 from app.blueprints.services.models.assessor_task_list import _Criteria
 from app.blueprints.services.models.assessor_task_list import (
     _CriteriaSubCriteria,
 )
 from app.blueprints.services.models.assessor_task_list import _SubCriteria
+from app.blueprints.shared.filters import format_address
 from bs4 import BeautifulSoup
 from flask import g
 from flask import get_template_attribute
