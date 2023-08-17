@@ -1,4 +1,5 @@
 from collections import namedtuple
+from os import getenv
 from urllib.parse import quote
 
 from boto3 import client
@@ -12,6 +13,7 @@ _S3_CLIENT = client(
     aws_access_key_id=Config.AWS_ACCESS_KEY_ID,
     aws_secret_access_key=Config.AWS_SECRET_ACCESS_KEY,
     region_name=Config.AWS_REGION,
+    endpoint_url=getenv("AWS_ENDPOINT_OVERRIDE", None),
 )
 
 
