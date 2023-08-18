@@ -2,45 +2,63 @@ import json  # noqa
 
 import app
 import pytest  # noqa
-from app.assess.models.ui.applicants_response import _convert_checkbox_items
-from app.assess.models.ui.applicants_response import (
+from app.blueprints.assessments.models.applicants_response import (
+    _convert_checkbox_items,
+)
+from app.blueprints.assessments.models.applicants_response import (
     _convert_heading_description_amount,
 )
-from app.assess.models.ui.applicants_response import (
+from app.blueprints.assessments.models.applicants_response import (
     _convert_non_number_grouped_fields,
 )
-from app.assess.models.ui.applicants_response import _flatten_field_ids
-from app.assess.models.ui.applicants_response import _make_field_ids_hashable
-from app.assess.models.ui.applicants_response import (
+from app.blueprints.assessments.models.applicants_response import (
+    _flatten_field_ids,
+)
+from app.blueprints.assessments.models.applicants_response import (
+    _make_field_ids_hashable,
+)
+from app.blueprints.assessments.models.applicants_response import (
     _ui_component_from_factory,
 )
-from app.assess.models.ui.applicants_response import AboveQuestionAnswerPair
-from app.assess.models.ui.applicants_response import (
+from app.blueprints.assessments.models.applicants_response import (
+    AboveQuestionAnswerPair,
+)
+from app.blueprints.assessments.models.applicants_response import (
     AboveQuestionAnswerPairHref,
 )
-from app.assess.models.ui.applicants_response import (
+from app.blueprints.assessments.models.applicants_response import (
     ANSWER_NOT_PROVIDED_DEFAULT,
 )
-from app.assess.models.ui.applicants_response import (
+from app.blueprints.assessments.models.applicants_response import (
     ApplicantResponseComponent,
 )
-from app.assess.models.ui.applicants_response import BesideQuestionAnswerPair
-from app.assess.models.ui.applicants_response import (
+from app.blueprints.assessments.models.applicants_response import (
+    BesideQuestionAnswerPair,
+)
+from app.blueprints.assessments.models.applicants_response import (
     BesideQuestionAnswerPairHref,
 )
-from app.assess.models.ui.applicants_response import create_ui_components
-from app.assess.models.ui.applicants_response import (
+from app.blueprints.assessments.models.applicants_response import (
+    create_ui_components,
+)
+from app.blueprints.assessments.models.applicants_response import (
     FormattedBesideQuestionAnswerPair,
 )
-from app.assess.models.ui.applicants_response import MonetaryKeyValues
-from app.assess.models.ui.applicants_response import NewAddAnotherTable
-from app.assess.models.ui.applicants_response import (
+from app.blueprints.assessments.models.applicants_response import (
+    MonetaryKeyValues,
+)
+from app.blueprints.assessments.models.applicants_response import (
+    NewAddAnotherTable,
+)
+from app.blueprints.assessments.models.applicants_response import (
     QuestionAboveHrefAnswerList,
 )
-from app.assess.models.ui.applicants_response import QuestionHeading
-from app.assess.models.ui.applicants_response import sanitise_html
-from app.assess.routes import assess_bp
-from app.assess.views.filters import format_address
+from app.blueprints.assessments.models.applicants_response import (
+    QuestionHeading,
+)
+from app.blueprints.assessments.models.applicants_response import sanitise_html
+from app.blueprints.assessments.routes import assessment_bp
+from app.blueprints.shared.filters import format_address
 from flask import Flask
 from tests.api_data.test_data import TestSanitiseData
 
@@ -241,7 +259,7 @@ class TestApplicantResponseComponentConcreteSubclasses:
 class TestApplicatorsResponseComponentFactory:
     test_app = Flask("app")
     test_app.config["SERVER_NAME"] = "example.org:5000"
-    test_app.register_blueprint(assess_bp)
+    test_app.register_blueprint(assessment_bp)
 
     @pytest.mark.parametrize(
         "item, expected_class",
@@ -795,7 +813,7 @@ class TestUtilMethods:
 def test_create_ui_components_retains_order(monkeypatch):
     test_app = Flask("app")
     test_app.config["SERVER_NAME"] = "example.org:5000"
-    test_app.register_blueprint(assess_bp)
+    test_app.register_blueprint(assessment_bp)
     response_with_unhashable_fields = [
         {
             "field_id": "field_1",
@@ -890,7 +908,7 @@ def test_create_ui_components_retains_order(monkeypatch):
     ]
 
     monkeypatch.setattr(
-        app.assess.models.ui.applicants_response,
+        app.blueprints.assessments.models.applicants_response,
         "list_files_in_folder",
         lambda x: ["form_name/path/name/filename.png"],
     )

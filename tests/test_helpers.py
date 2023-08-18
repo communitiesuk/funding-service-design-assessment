@@ -1,13 +1,13 @@
 from collections import OrderedDict
 
 import pytest
-from app.assess.helpers import determine_display_status
-from app.assess.helpers import generate_assessment_info_csv
-from app.assess.helpers import generate_csv_of_application
-from app.assess.helpers import generate_maps_from_form_names
-from app.assess.helpers import is_flaggable
-from app.assess.models.flag import Flag
-from app.assess.models.fund import Fund
+from app.blueprints.assessments.helpers import generate_assessment_info_csv
+from app.blueprints.assessments.helpers import generate_csv_of_application
+from app.blueprints.assessments.helpers import generate_maps_from_form_names
+from app.blueprints.services.models.flag import Flag
+from app.blueprints.services.models.fund import Fund
+from app.blueprints.shared.helpers import determine_display_status
+from app.blueprints.shared.helpers import is_flaggable
 
 RAISED_FLAG = [
     Flag.from_dict(

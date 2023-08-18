@@ -1,8 +1,12 @@
 from unittest.mock import MagicMock
 
 import pytest
-from app.assess.models.file_factory import ApplicationFileRepresentationArgs
-from app.assess.models.file_factory import generate_file_content
+from app.blueprints.assessments.models.file_factory import (
+    ApplicationFileRepresentationArgs,
+)
+from app.blueprints.assessments.models.file_factory import (
+    generate_file_content,
+)
 from werkzeug.exceptions import NotFound
 
 
@@ -43,11 +47,12 @@ def test_generate_file_content_supported_types(
     mocked_response = MagicMock()
     mocked_response.seek = lambda _: None
     mocker.patch(
-        f"app.assess.models.file_factory.{expected_function}",
+        f"app.blueprints.assessments.models.file_factory.{expected_function}",
         return_value=mocked_response,
     )
     mocker.patch(
-        "app.assess.models.file_factory.send_file", return_value=MagicMock()
+        "app.blueprints.assessments.models.file_factory.send_file",
+        return_value=MagicMock(),
     )
     result = generate_file_content(application_args, file_type)
     assert result is not None

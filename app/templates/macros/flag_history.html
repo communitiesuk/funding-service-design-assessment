@@ -1,0 +1,105 @@
+{%- from "govuk_frontend_jinja/components/table/macro.html" import govukTable -%}
+{%- from "govuk_frontend_jinja/components/tabs/macro.html" import govukTabs -%}
+
+{% macro display_flagged_sections(state, application_id, sections_to_flag) %}
+    {% for sub_section_id in sections_to_flag %}
+        {% set sub_section_data = state.get_section_from_sub_criteria_id(sub_section_id) %}
+        {% if sub_section_data %}
+            <p><a class="govuk-link govuk-link--no-visited-state" href="{{ url_for('assessment_bp.display_sub_criteria',application_id=application_id ,sub_criteria_id=sub_section_id) }}" target="_blank">{{ sub_section_data["sub_section_name"] }}</a> ({{ sub_section_data["parent_section_name"] }}) (Opens in new tab) </p>
+        {% else %}
+            <p>{{ sub_section_id }}</p>
+        {% endif %}
+    {% endfor %}
+{% endmacro %}
+
+{% macro flag_team_table(state, application_id, teams_flag_stats, accounts_list) %}
+    <h2 class="govuk-heading-l">{{ "Flagged for "+ teams_flag_stats.team_name }}</h2>
+    {% for flag_item in teams_flag_stats.flags_list %}
+        {% if teams_flag_stats.flags_list|length > 1 %}
+            <h3>{{ teams_flag_stats.ordinal_list[loop.index0] }} flag raised</h3>
+        {% endif %}
+        {{ flag_table(state, application_id, flag_item, accounts_list) }}
+    {% endfor %}
+
+{% endmacro %}
+
+{% macro flag_table(state, application_id, flag_data, accounts_list) %}
+    {% set items = [] %}
+    {% for data in flag_data.updates %}
+        {% set FlagDetails %}
+            {% if data['status'].name=='RAISED' %}
+                <p><strong>Reason</strong><br>{{ data['justification'] }}</p>
+                <p><strong>Section(s) flagged</strong><br></p>
+                {{ display_flagged_sections(state, application_id, flag_data.sections_to_flag) }}
+                <p><strong>Flag allocation</strong><br> <span class="flagged-tag"> {{ "Flagged for "+ data['allocation'] if data['allocation'] else "N/A" }}</span></p>
+                <p><strong>Notification sent</strong><br>No</p>
+            {% else %}
+                {% if data['status'].name=='STOPPED' %}
+                    <p><strong>Resolve flag action</strong><br>Stop assessment</p>
+                {% elif data['status'].name=='ESCALATED' %}
+                    <p><strong>Resolve flag action</strong><br>Flag escalated to {{ data['allocation'] }}</p>
+                {% elif data['status'].name=='RESOLVED' %}
+                    <p><strong>Resolve flag action</strong><br>Query resolved</p>
+                {% endif %}
+                <p><strong>Reason</strong><br>{{ data['justification'] }}</p>
+            {% endif %}
+
+        {% endset %}
+
+        {% set user_full_name = accounts_list[data['user_id']]['full_name'] or 'N/A' %}
+        {% set username_date = '('+ user_full_name + ')<br>'+ data['date_created'] | utc_to_bst %}
+        {% set CreatedBy = username_date if data['status'].name=='RAISED' else 'N/A' %}
+        {% set ResolvedBy = username_date if data['status'].name!='RAISED' else 'N/A' %}
+
+        {% set addItem = items.append([{'html': CreatedBy},
+                                        {'text': FlagDetails},
+                                        {'html': ResolvedBy},
+                                        {'text': data['status'].name | capitalize}]) %}
+    {% endfor %}
+
+    {{ govukTable({
+    'head': [
+        {'text': "Created by"},
+        {'text': "Flag details"},
+        {'text': "Resolved by"},
+        {'text': "Flag status"}
+    ],
+    'rows': items
+    })}}
+{% endmacro %}
+
+{% macro flag_tabs(state, application_id, teams_flag_stats, flags_list, accounts_list) %}
+    {% set TabsData %}
+        {% set items = [] %}
+        {% for team, stats in teams_flag_stats.items() %}
+                {% set addItem = items.append({
+                'label': ("Flagged for " + team),
+                'id': "tab-" + (team | replace(" ", "-")),
+                'panel': {
+                    'html': flag_team_table(state, application_id, stats, accounts_list)}
+                })%}
+                {# <p>items: {{ flag_table(state, application_id, flag_item, accounts_list) }}</p> #}
+        {% endfor %}
+
+        {%  if items|length > 0 %}
+            {{ govukTabs({
+            'items': items
+            }) }}
+        {% else %}
+            <div class="govuk-warning-text">
+                <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+              <strong class="govuk-warning-text__text">
+                <span class="govuk-warning-text__assistive">Warning</span>
+                No flags raised yet, so no history to display.
+              </strong>
+            </div>
+        {% endif %}
+    {% endset %}
+
+    <details class="govuk-details">
+        <summary class="govuk-details__summary">
+            <span class="govuk-details__summary-text">Flag history</span>
+        </summary>
+        <div class="govuk-!-padding-top-4">{{ TabsData }}</div>
+    </details>
+{% endmacro %}

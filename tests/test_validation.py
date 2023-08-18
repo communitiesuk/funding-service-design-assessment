@@ -1,17 +1,25 @@
 import pytest
 import werkzeug
-from app.assess.auth.validation import _get_all_country_roles
-from app.assess.auth.validation import _get_all_users_roles
-from app.assess.auth.validation import _get_roles_by_fund_short_name
-from app.assess.auth.validation import _normalise_country
-from app.assess.auth.validation import check_access_application_id
-from app.assess.auth.validation import check_access_fund_short_name
-from app.assess.auth.validation import get_countries_from_roles
-from app.assess.auth.validation import get_valid_country_roles
-from app.assess.auth.validation import has_access_to_fund
-from app.assess.auth.validation import has_devolved_authority_validation
-from app.assess.auth.validation import has_relevant_country_role
-from app.assess.models.fund import Fund
+from app.blueprints.authentication.validation import _get_all_country_roles
+from app.blueprints.authentication.validation import _get_all_users_roles
+from app.blueprints.authentication.validation import (
+    _get_roles_by_fund_short_name,
+)
+from app.blueprints.authentication.validation import _normalise_country
+from app.blueprints.authentication.validation import (
+    check_access_application_id,
+)
+from app.blueprints.authentication.validation import (
+    check_access_fund_short_name,
+)
+from app.blueprints.authentication.validation import get_countries_from_roles
+from app.blueprints.authentication.validation import get_valid_country_roles
+from app.blueprints.authentication.validation import has_access_to_fund
+from app.blueprints.authentication.validation import (
+    has_devolved_authority_validation,
+)
+from app.blueprints.authentication.validation import has_relevant_country_role
+from app.blueprints.services.models.fund import Fund
 
 
 class _MockUser:
@@ -50,7 +58,7 @@ def test__get_all_country_roles():
 
 def test__get_all_users_roles(monkeypatch):
     monkeypatch.setattr(
-        "app.assess.auth.validation.g",
+        "app.blueprints.authentication.validation.g",
         _MockGlobal(
             roles=[
                 "COF_LEAD_ASSESSOR",
@@ -72,7 +80,7 @@ def test__get_all_users_roles(monkeypatch):
 
 def test_get_valid_country_roles(monkeypatch):
     monkeypatch.setattr(
-        "app.assess.auth.validation.g",
+        "app.blueprints.authentication.validation.g",
         _MockGlobal(roles=["COF_ENGLAND", "COF_SCOTLAND"]),
     )
     valid_country_roles = get_valid_country_roles("COF")
@@ -101,7 +109,7 @@ def test_get_valid_country_roles(monkeypatch):
 )
 def test_get_countries_from_roles(monkeypatch, roles, expected):
     monkeypatch.setattr(
-        "app.assess.auth.validation.g", _MockGlobal(roles=roles)
+        "app.blueprints.authentication.validation.g", _MockGlobal(roles=roles)
     )
     countries = get_countries_from_roles("COF")
     assert countries == expected
@@ -109,7 +117,7 @@ def test_get_countries_from_roles(monkeypatch, roles, expected):
 
 def test_has_relevant_country_role(monkeypatch):
     monkeypatch.setattr(
-        "app.assess.auth.validation.g",
+        "app.blueprints.authentication.validation.g",
         _MockGlobal(roles=["COF_ENGLAND"]),
     )
     assert has_relevant_country_role("ENGLAND", "COF") is True
@@ -150,7 +158,7 @@ def test_has_devolved_authority_validation_ids(fund_id, expected):
 )
 def test_has_access_to_fund(monkeypatch, short_name, roles, expected):
     monkeypatch.setattr(
-        "app.assess.auth.validation.g",
+        "app.blueprints.authentication.validation.g",
         _MockGlobal(roles=roles),
     )
     assert has_access_to_fund(short_name) == expected
@@ -178,18 +186,18 @@ def test_check_access_application_id_cant_access_application_when_no_country_rol
     # WHEN the user has no COF_ENGLAND role
     # THEN the user cannot access the application
     monkeypatch.setattr(
-        "app.assess.auth.validation.get_value_from_request",
+        "app.blueprints.authentication.validation.get_value_from_request",
         lambda _: "00000000-0000-0000-0000-000000000000",
     )
     monkeypatch.setattr(
-        "app.assess.auth.validation.get_application_metadata",
+        "app.blueprints.authentication.validation.get_application_metadata",
         lambda _: {
             "location_json_blob": {"country": "England"},
             "fund_id": "47aef2f5-3fcb-4d45-acb5-f0152b5f03c4",
         },
     )
     monkeypatch.setattr(
-        "app.assess.auth.validation.get_fund",
+        "app.blueprints.authentication.validation.get_fund",
         lambda _: Fund.from_json(
             {
                 "id": "47aef2f5-3fcb-4d45-acb5-f0152b5f03c4",
@@ -200,7 +208,7 @@ def test_check_access_application_id_cant_access_application_when_no_country_rol
         ),
     )
     monkeypatch.setattr(
-        "app.assess.auth.validation.g",
+        "app.blueprints.authentication.validation.g",
         _MockGlobal(
             roles=["COF_SCOTLAND", "COF_WALES", "COF_NORTHERNIRELAND"]
         ),
@@ -219,23 +227,23 @@ def test_check_access_application_id_can_access_application_when_has_country_rol
 
     # we're not testing the decorator here, so we can just mock it out
     monkeypatch.setattr(
-        "app.assess.auth.validation.login_required",
+        "app.blueprints.authentication.validation.login_required",
         lambda *_, **__: lambda *_, **__: ...,
     )
 
     monkeypatch.setattr(
-        "app.assess.auth.validation.get_value_from_request",
+        "app.blueprints.authentication.validation.get_value_from_request",
         lambda _: "00000000-0000-0000-0000-000000000000",
     )
     monkeypatch.setattr(
-        "app.assess.auth.validation.get_application_metadata",
+        "app.blueprints.authentication.validation.get_application_metadata",
         lambda _: {
             "location_json_blob": {"country": "England"},
             "fund_id": "47aef2f5-3fcb-4d45-acb5-f0152b5f03c4",
         },
     )
     monkeypatch.setattr(
-        "app.assess.auth.validation.get_fund",
+        "app.blueprints.authentication.validation.get_fund",
         lambda _: Fund.from_json(
             {
                 "id": "47aef2f5-3fcb-4d45-acb5-f0152b5f03c4",
@@ -246,7 +254,7 @@ def test_check_access_application_id_can_access_application_when_has_country_rol
         ),
     )
     monkeypatch.setattr(
-        "app.assess.auth.validation.g",
+        "app.blueprints.authentication.validation.g",
         _MockGlobal(roles=["COF_ENGLAND", "COF_COMMENTER"]),
     )
 
@@ -263,23 +271,23 @@ def test_check_access_application_id_can_access_application_when_fund_has_no_dev
 
     # we're not testing the decorator here, so we can just mock it out
     monkeypatch.setattr(
-        "app.assess.auth.validation.login_required",
+        "app.blueprints.authentication.validation.login_required",
         lambda *_, **__: lambda *_, **__: ...,
     )
 
     monkeypatch.setattr(
-        "app.assess.auth.validation.get_value_from_request",
+        "app.blueprints.authentication.validation.get_value_from_request",
         lambda _: "00000000-0000-0000-0000-000000000000",
     )
     monkeypatch.setattr(
-        "app.assess.auth.validation.get_application_metadata",
+        "app.blueprints.authentication.validation.get_application_metadata",
         lambda _: {
             "location_json_blob": {"country": "England"},
             "fund_id": "mock-nstf-fund-id",
         },
     )
     monkeypatch.setattr(
-        "app.assess.auth.validation.get_fund",
+        "app.blueprints.authentication.validation.get_fund",
         lambda _: Fund.from_json(
             {
                 "id": "mock-nstf-fund-id",
@@ -290,7 +298,7 @@ def test_check_access_application_id_can_access_application_when_fund_has_no_dev
         ),
     )
     monkeypatch.setattr(
-        "app.assess.auth.validation.g",
+        "app.blueprints.authentication.validation.g",
         _MockGlobal(roles=["NSTF_COMMENTER"]),
     )
 
@@ -304,18 +312,18 @@ def test_check_access_application_id_cant_access_application_when_no_relevant_fu
     # WHEN the user has no COF role
     # THEN the user cannot access the application
     monkeypatch.setattr(
-        "app.assess.auth.validation.get_value_from_request",
+        "app.blueprints.authentication.validation.get_value_from_request",
         lambda _: "00000000-0000-0000-0000-000000000000",
     )
     monkeypatch.setattr(
-        "app.assess.auth.validation.get_application_metadata",
+        "app.blueprints.authentication.validation.get_application_metadata",
         lambda _: {
             "location_json_blob": {"country": "England"},
             "fund_id": "47aef2f5-3fcb-4d45-acb5-f0152b5f03c4",
         },
     )
     monkeypatch.setattr(
-        "app.assess.auth.validation.get_fund",
+        "app.blueprints.authentication.validation.get_fund",
         lambda _: Fund.from_json(
             {
                 "id": "47aef2f5-3fcb-4d45-acb5-f0152b5f03c4",
@@ -326,7 +334,7 @@ def test_check_access_application_id_cant_access_application_when_no_relevant_fu
         ),
     )
     monkeypatch.setattr(
-        "app.assess.auth.validation.g",
+        "app.blueprints.authentication.validation.g",
         _MockGlobal(roles=["NSTF_COMMENTER"]),  # no COF role
     )
 
@@ -339,9 +347,7 @@ def _dummy_function_check_access_fund_short_name():
     ...
 
 
-def test_check_access_fund_short_name_throws_404_when_no_fund_short_name(
-    request_ctx,
-):
+def test_check_access_fund_short_name_throws_404_when_no_fund_short_name(app):
     # GIVEN no fund short name
     # WHEN the decorator is applied
     # THEN a 404 is thrown
@@ -349,16 +355,16 @@ def test_check_access_fund_short_name_throws_404_when_no_fund_short_name(
         _dummy_function_check_access_fund_short_name()
 
 
-def test_check_access_fund_short_name_cant_access(request_ctx, monkeypatch):
+def test_check_access_fund_short_name_cant_access(monkeypatch):
     # GIVEN a COF fund short name page
     # WHEN the user has no COF role
     # THEN the user cannot the page
     monkeypatch.setattr(
-        "app.assess.auth.validation.get_value_from_request",
+        "app.blueprints.authentication.validation.get_value_from_request",
         lambda _: "cof",
     )
     monkeypatch.setattr(
-        "app.assess.auth.validation.g",
+        "app.blueprints.authentication.validation.g",
         _MockGlobal(roles=["NSTF_COMMENTER"]),  # no COF role
     )
 
@@ -366,23 +372,23 @@ def test_check_access_fund_short_name_cant_access(request_ctx, monkeypatch):
         _dummy_function_check_access_fund_short_name()
 
 
-def test_check_access_fund_short_name_can_access(request_ctx, monkeypatch):
+def test_check_access_fund_short_name_can_access(monkeypatch):
     # GIVEN a COF fund short name page
     # WHEN the user has the COF role
     # THEN the user can access the page
 
     # we're not testing the decorator here, so we can just mock it out
     monkeypatch.setattr(
-        "app.assess.auth.validation.login_required",
+        "app.blueprints.authentication.validation.login_required",
         lambda *_, **__: lambda *_, **__: ...,
     )
 
     monkeypatch.setattr(
-        "app.assess.auth.validation.get_value_from_request",
+        "app.blueprints.authentication.validation.get_value_from_request",
         lambda _: "cof",
     )
     monkeypatch.setattr(
-        "app.assess.auth.validation.g",
+        "app.blueprints.authentication.validation.g",
         _MockGlobal(roles=["COF_COMMENTER"]),
     )
 

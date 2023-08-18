@@ -1,0 +1,46 @@
+{%- from "govuk_frontend_jinja/components/table/macro.html" import govukTable -%}
+{% macro criteria_element(criteria, name_classes, application_id) %}
+
+    {% set rows = [] %}
+    {% for sub_criteria in criteria.sub_criterias %}
+        {% set _ = rows.append([
+            {
+                "html": '<a class="govuk-link" data-qa="sub_criteria_name" href="{}">{}</a>'.format(
+                    url_for(
+                        'assessment_bp.display_sub_criteria',
+                         application_id=application_id,
+                         sub_criteria_id=sub_criteria.id
+                    ),
+                    sub_criteria.name
+                )
+            },
+            { "text": sub_criteria.score or "", "format": "numeric" } if g.access_controller.has_any_assessor_role else None,
+            { "html": '<span class="{}">{}</span>'.format('govuk-tag--scored-criteria' if sub_criteria.status == 'NOT_STARTED' else '', 'Complete' if sub_criteria.status=='COMPLETED' else sub_criteria.status|all_caps_to_human),
+                "format": "numeric" }
+        ]) %}
+    {% endfor %}
+
+    {% set _ = rows.append([
+        { "html": "<strong>Total criteria score</strong>" },
+        { "text": "" },
+        { "text": "{} of {}".format(criteria.total_criteria_score, criteria.total_criteria_score_possible), "format": "numeric" },
+    ]) if g.access_controller.has_any_assessor_role %}
+
+    <h3 class="{{ name_classes or '' }}">{{ criteria.name }}</h3>
+    <p class="govuk-body govuk-!-margin-bottom-2">
+        <strong>{{ (criteria.weighting * 100)|int }}%</strong> of overall score.
+    </p>
+
+    {{
+        govukTable({
+        "firstCellIsHeader":false,
+        "head": [
+            { "text": "Assessment sub criteria", "classes": "govuk-!-width-one-half"  },
+            { "text": "Score out of 5", "format": "numeric" } if g.access_controller.has_any_assessor_role else None,
+            { "text": "Status", "format": "numeric" }
+        ],
+        "rows": rows,
+        "classes": "govuk-!-margin-bottom-6 govuk-table-no-bottom-border"
+    }) }}
+
+{% endmacro %}

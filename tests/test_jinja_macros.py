@@ -1,33 +1,45 @@
 import re
 
 import pytest
-from app.assess.auth.validation import AssessmentAccessController
-from app.assess.forms.comments_form import CommentsForm
-from app.assess.forms.scores_and_justifications import ScoreForm
-from app.assess.models.ui.applicants_response import AboveQuestionAnswerPair
-from app.assess.models.ui.applicants_response import (
+from app.blueprints.assessments.forms.comments_form import CommentsForm
+from app.blueprints.assessments.models.applicants_response import (
+    AboveQuestionAnswerPair,
+)
+from app.blueprints.assessments.models.applicants_response import (
     AboveQuestionAnswerPairHref,
 )
-from app.assess.models.ui.applicants_response import (
+from app.blueprints.assessments.models.applicants_response import (
     AboveQuestionAnswerPairHtml,
 )
-from app.assess.models.ui.applicants_response import BesideQuestionAnswerPair
-from app.assess.models.ui.applicants_response import (
+from app.blueprints.assessments.models.applicants_response import (
+    BesideQuestionAnswerPair,
+)
+from app.blueprints.assessments.models.applicants_response import (
     BesideQuestionAnswerPairHref,
 )
-from app.assess.models.ui.applicants_response import (
+from app.blueprints.assessments.models.applicants_response import (
     FormattedBesideQuestionAnswerPair,
 )
-from app.assess.models.ui.applicants_response import MonetaryKeyValues
-from app.assess.models.ui.applicants_response import NewAddAnotherTable
-from app.assess.models.ui.applicants_response import (
+from app.blueprints.assessments.models.applicants_response import (
+    MonetaryKeyValues,
+)
+from app.blueprints.assessments.models.applicants_response import (
+    NewAddAnotherTable,
+)
+from app.blueprints.assessments.models.applicants_response import (
     QuestionAboveHrefAnswerList,
 )
-from app.assess.models.ui.applicants_response import QuestionHeading
-from app.assess.models.ui.assessor_task_list import _Criteria
-from app.assess.models.ui.assessor_task_list import _CriteriaSubCriteria
-from app.assess.models.ui.assessor_task_list import _SubCriteria
-from app.assess.views.filters import format_address
+from app.blueprints.assessments.models.applicants_response import (
+    QuestionHeading,
+)
+from app.blueprints.authentication.validation import AssessmentAccessController
+from app.blueprints.scoring.forms.scores_and_justifications import ScoreForm
+from app.blueprints.services.models.assessor_task_list import _Criteria
+from app.blueprints.services.models.assessor_task_list import (
+    _CriteriaSubCriteria,
+)
+from app.blueprints.services.models.assessor_task_list import _SubCriteria
+from app.blueprints.shared.filters import format_address
 from bs4 import BeautifulSoup
 from flask import g
 from flask import get_template_attribute

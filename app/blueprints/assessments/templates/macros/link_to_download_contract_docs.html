@@ -1,0 +1,5 @@
+{% macro link_to_download_contract_docs(csrf_token, application_id) %}
+    <a href="{{ url_for('assessment_bp.generate_doc_list_for_download', application_id=application_id) }}"
+       class="govuk-button secondary-button govuk-!-margin-bottom-0"
+       data-module="govuk-button">Export application data</a>
+{% endmacro %}

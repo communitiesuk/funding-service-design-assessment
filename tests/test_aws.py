@@ -1,7 +1,7 @@
 import app
-from app.aws import FileData
-from app.aws import generate_url
-from app.aws import list_files_in_folder
+from app.blueprints.services.aws import FileData
+from app.blueprints.services.aws import generate_url
+from app.blueprints.services.aws import list_files_in_folder
 
 
 def test_generate_url_short_id(app):
@@ -41,7 +41,9 @@ def test_list_files_in_folder(monkeypatch):
         }
 
     monkeypatch.setattr(
-        app.aws._S3_CLIENT, "list_objects_v2", mock_list_objects_v2
+        app.blueprints.services.aws._S3_CLIENT,
+        "list_objects_v2",
+        mock_list_objects_v2,
     )
 
     prefix = "app_id/form_name/path/name/"

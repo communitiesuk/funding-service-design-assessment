@@ -1,0 +1,38 @@
+{%- from "govuk_frontend_jinja/components/table/macro.html" import govukTable -%}
+{% macro section_element(name, sub_criterias, application_id, show_caption=True) %}
+    {% if name != "Unscored" %}
+        <h2 class="govuk-heading-l govuk-!-margin-top-4">{{ name }}</h2>
+    {% endif %}
+    {% set rows = [] %}
+    {% for sub_criteria in sub_criterias %}
+        {% set _ = rows.append([
+            {
+                'html': '<a class="govuk-link" data-qa="sub_criteria_name" href="{}">{}</a>'.format(
+                    url_for(
+                        'assessment_bp.display_sub_criteria',
+                         application_id=application_id,
+                         sub_criteria_id=sub_criteria.id
+                    ),
+                    sub_criteria.name
+                )
+            }
+        ]) %}
+    {% endfor %}
+    {% if name == "Declarations" %}
+        {{ govukTable({
+            "caption": "Review against legal and policy requirements.",
+            "firstCellIsHeader":false,
+            "head": [[{ "text": "" }]],
+            "captionClasses": "govuk-body govuk-!-text-align-left govuk-!-font-weight-regular govuk-!-margin-bottom-4",
+            "rows": rows,
+        }) }}
+    {% else %}
+        {{ govukTable({
+            "caption": "Use for due diligence checks." if show_caption else "",
+            "firstCellIsHeader":false,
+            "head": [[{ "text": "" }]],
+            "captionClasses": "govuk-body govuk-!-text-align-left govuk-!-font-weight-regular govuk-!-margin-bottom-4",
+            "rows": rows,
+        }) }}
+    {% endif %}
+{% endmacro %}

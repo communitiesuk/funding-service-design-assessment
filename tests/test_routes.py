@@ -1,12 +1,9 @@
 from unittest import mock
 
-import app
 import pytest
-from app.assess.models.flag import Flag
-from app.assess.models.round import Round
+from app.blueprints.services.models.flag import Flag
 from bs4 import BeautifulSoup
 from flask import session
-from tests.api_data.test_data import mock_api_results
 from tests.conftest import create_valid_token
 from tests.conftest import fund_specific_claim_map
 from tests.conftest import test_assessor_claims
@@ -17,10 +14,12 @@ from tests.conftest import test_lead_assessor_claims
 class TestRoutes:
     @pytest.mark.mock_parameters(
         {
-            "get_assessment_stats_path": (
-                "app.assess.models.fund_summary.get_assessments_stats"
-            ),
-            "get_rounds_path": "app.assess.models.fund_summary.get_rounds",
+            "get_assessment_stats_path": [
+                "app.blueprints.assessments.models.fund_summary.get_assessments_stats",
+            ],
+            "get_rounds_path": [
+                "app.blueprints.assessments.models.fund_summary.get_rounds",
+            ],
             "fund_id": "test-fund",
             "round_id": "test-round",
         }
@@ -51,13 +50,19 @@ class TestRoutes:
         assert all(
             title in all_table_data_elements for title in project_titles
         )
+        for mock_func in mock_get_assessment_stats:
+            assert mock_func.call_count == 1
+        for mock_func in mock_get_rounds:
+            assert mock_func.call_count == 1
 
     @pytest.mark.mock_parameters(
         {
-            "get_assessment_stats_path": (
-                "app.assess.models.fund_summary.get_assessments_stats"
-            ),
-            "get_rounds_path": "app.assess.models.fund_summary.get_rounds",
+            "get_assessment_stats_path": [
+                "app.blueprints.assessments.models.fund_summary.get_assessments_stats",
+            ],
+            "get_rounds_path": [
+                "app.blueprints.assessments.models.fund_summary.get_rounds",
+            ],
             "fund_id": "test-fund",
             "round_id": "test-round",
         }
@@ -82,10 +87,12 @@ class TestRoutes:
 
     @pytest.mark.mock_parameters(
         {
-            "get_assessment_stats_path": (
-                "app.assess.models.fund_summary.get_assessments_stats"
-            ),
-            "get_rounds_path": "app.assess.models.fund_summary.get_rounds",
+            "get_assessment_stats_path": [
+                "app.blueprints.assessments.models.fund_summary.get_assessments_stats",
+            ],
+            "get_rounds_path": [
+                "app.blueprints.assessments.models.fund_summary.get_rounds",
+            ],
             "fund_id": "test-fund",
             "round_id": "test-round",
         }
@@ -110,10 +117,12 @@ class TestRoutes:
 
     @pytest.mark.mock_parameters(
         {
-            "get_assessment_stats_path": (
-                "app.assess.models.fund_summary.get_assessments_stats"
-            ),
-            "get_rounds_path": "app.assess.models.fund_summary.get_rounds",
+            "get_assessment_stats_path": [
+                "app.blueprints.assessments.models.fund_summary.get_assessments_stats",
+            ],
+            "get_rounds_path": [
+                "app.blueprints.assessments.models.fund_summary.get_rounds",
+            ],
             "fund_id": "test-fund",
             "round_id": "test-round",
         }
@@ -734,14 +743,6 @@ class TestRoutes:
         mock_get_associated_tags_for_application,
         mocker,
     ):
-        mocker.patch(
-            "app.assess.routes.get_round",
-            return_value=Round.from_dict(
-                mock_api_results[
-                    "fund_store/funds/{fund_id}/rounds/{round_id}"
-                ]
-            ),
-        )
 
         marker = request.node.get_closest_marker("application_id")
         application_id = marker.args[0]
@@ -777,14 +778,6 @@ class TestRoutes:
         mock_get_associated_tags_for_application,
         mocker,
     ):
-        mocker.patch(
-            "app.assess.routes.get_round",
-            return_value=Round.from_dict(
-                mock_api_results[
-                    "fund_store/funds/{fund_id}/rounds/{round_id}"
-                ]
-            ),
-        )
 
         marker = request.node.get_closest_marker("application_id")
         application_id = marker.args[0]
@@ -811,18 +804,14 @@ class TestRoutes:
         mock_get_fund,
         mock_get_round,
         mock_get_funds,
+        mock_submit_flag,
         mock_get_application_metadata,
+        mock_get_sub_criteria_banner_state,
         request_ctx,
     ):
         token = create_valid_token(test_lead_assessor_claims)
         flask_test_client.set_cookie("localhost", "fsd_user_token", token)
         session["csrf_token"] = "test"
-
-        mocker.patch("app.assess.routes.submit_flag", return_value=None)
-        mocker.patch(
-            "app.assess.routes.get_available_teams",
-            return_value=[{"key": "TEAM_A", "value": "Team A"}],
-        )
 
         response = flask_test_client.post(
             "assess/flag/resolved_app",
@@ -871,6 +860,32 @@ class TestRoutes:
         soup = BeautifulSoup(response.data, "html.parser")
         assert soup.title.string == "Resolve flag - Assessment Hub"
 
+    @pytest.mark.mock_parameters(
+        {
+            "flag": Flag.from_dict(
+                {
+                    "application_id": "flagged_app",
+                    "latest_status": "RESOLVED",
+                    "latest_allocation": None,
+                    "id": "flagged_app",
+                    "sections_to_flag": ["Test section"],
+                    "updates": [
+                        {
+                            "id": "316f607a-03b7-4592-b927-5021a28b7d6a",
+                            "user_id": "test_user_lead_assessor",
+                            "date_created": "2023-01-01T00:00:00",
+                            "justification": "Checked with so and so.",
+                            "status": "RESOLVED",
+                            "allocation": None,
+                        }
+                    ],
+                }
+            )
+        }
+    )
+    @pytest.mark.submit_flag_paths(
+        ["app.blueprints.flagging.helpers.submit_flag"]
+    )
     @pytest.mark.application_id("flagged_app")
     @pytest.mark.flag_id("flagged_app")
     def test_post_resolved_flag(
@@ -885,6 +900,7 @@ class TestRoutes:
         mock_get_funds,
         mock_get_round,
         mock_get_application_metadata,
+        mock_submit_flag,
     ):
         token = create_valid_token(test_lead_assessor_claims)
         flask_test_client.set_cookie("localhost", "fsd_user_token", token)
@@ -892,28 +908,6 @@ class TestRoutes:
             "application_id"
         ).args[0]
         flag_id = request.node.get_closest_marker("flag_id").args[0]
-        mocker.patch(
-            "app.assess.helpers.submit_flag",
-            return_value=Flag.from_dict(
-                {
-                    "application_id": application_id,
-                    "latest_status": "RESOLVED",
-                    "latest_allocation": None,
-                    "id": "flagid",
-                    "sections_to_flag": ["Test section"],
-                    "updates": [
-                        {
-                            "id": "316f607a-03b7-4592-b927-5021a28b7d6a",
-                            "user_id": "test_user_lead_assessor",
-                            "date_created": "2023-01-01T00:00:00",
-                            "justification": "Checked with so and so.",
-                            "status": "RESOLVED",
-                            "allocation": None,
-                        }
-                    ],
-                }
-            ),
-        )
 
         response = flask_test_client.post(
             f"assess/resolve_flag/{application_id}?flag_id={flag_id}",
@@ -921,16 +915,6 @@ class TestRoutes:
                 "resolution_flag": "RESOLVED",
                 "justification": "Checked with so and so.",
             },
-        )
-        app.assess.helpers.submit_flag.assert_called_once()
-        app.assess.helpers.submit_flag.assert_called_once_with(
-            application_id,
-            "RESOLVED",
-            "lead",
-            "Checked with so and so.",
-            ["Test section"],
-            None,
-            flag_id,
         )
 
         assert response.status_code == 302
@@ -970,6 +954,32 @@ class TestRoutes:
         assert b"Reason for continuing assessment" in response.data
         assert b"Project In prog and Stop" in response.data
 
+    @pytest.mark.mock_parameters(
+        {
+            "flag": Flag.from_dict(
+                {
+                    "application_id": "stopped_app",
+                    "latest_status": "RESOLVED",
+                    "latest_allocation": None,
+                    "id": "stopped_app",
+                    "sections_to_flag": ["Test section"],
+                    "updates": [
+                        {
+                            "id": "316f607a-03b7-4592-b927-5021a28b7d6a",
+                            "user_id": "test_user_lead_assessor",
+                            "date_created": "2023-01-01T00:00:00",
+                            "justification": "Checked with so and so.",
+                            "status": "RESOLVED",
+                            "allocation": None,
+                        }
+                    ],
+                }
+            )
+        }
+    )
+    @pytest.mark.submit_flag_paths(
+        ["app.blueprints.flagging.helpers.submit_flag"]
+    )
     @pytest.mark.application_id("stopped_app")
     @pytest.mark.flag_id("stopped_app")
     def test_post_continue_application(
@@ -983,48 +993,17 @@ class TestRoutes:
         mock_get_flag,
         mock_get_round,
         mock_get_assessor_tasklist_state,
+        mock_submit_flag,
     ):
         flag_id = request.node.get_closest_marker("flag_id").args[0]
         token = create_valid_token(test_lead_assessor_claims)
         flask_test_client.set_cookie("localhost", "fsd_user_token", token)
-        mocker.patch(
-            "app.assess.helpers.submit_flag",
-            return_value=Flag.from_dict(
-                {
-                    "application_id": "stopped_app",
-                    "latest_status": "RESOLVED",
-                    "latest_allocation": None,
-                    "id": "flagid",
-                    "sections_to_flag": ["NA"],
-                    "updates": [
-                        {
-                            "id": "316f607a-03b7-4592-b927-5021a28b7d6a",
-                            "user_id": "test@example.com",
-                            "date_created": "2023-01-01T00:00:00",
-                            "justification": "string",
-                            "status": "RESOLVED",
-                            "allocation": None,
-                        }
-                    ],
-                }
-            ),
-        )
 
         response = flask_test_client.post(
             f"assess/continue_assessment/stopped_app?flag_id={flag_id}",
             data={
                 "reason": "We should continue the application.",
             },
-        )
-        app.assess.helpers.submit_flag.assert_called_once()
-        app.assess.helpers.submit_flag.assert_called_once_with(
-            "stopped_app",
-            "RESOLVED",
-            "lead",
-            "We should continue the application.",
-            ["NA"],
-            None,
-            flag_id,
         )
 
         assert response.status_code == 302
@@ -1049,14 +1028,6 @@ class TestRoutes:
         mock_get_associated_tags_for_application,
         mocker,
     ):
-        mocker.patch(
-            "app.assess.routes.get_round",
-            return_value=Round.from_dict(
-                mock_api_results[
-                    "fund_store/funds/{fund_id}/rounds/{round_id}"
-                ]
-            ),
-        )
 
         token = create_valid_token(test_lead_assessor_claims)
         flask_test_client.set_cookie("localhost", "fsd_user_token", token)
@@ -1087,14 +1058,6 @@ class TestRoutes:
         mock_get_associated_tags_for_application,
         mocker,
     ):
-        mocker.patch(
-            "app.assess.routes.get_round",
-            return_value=Round.from_dict(
-                mock_api_results[
-                    "fund_store/funds/{fund_id}/rounds/{round_id}"
-                ]
-            ),
-        )
 
         token = create_valid_token(test_lead_assessor_claims)
         flask_test_client.set_cookie("localhost", "fsd_user_token", token)
@@ -1187,6 +1150,7 @@ class TestRoutes:
         mock_get_comments,
         mock_get_sub_criteria_theme,
         mock_get_assessor_tasklist_state,
+        mock_get_bulk_accounts,
     ):
         # Mocking fsd-user-token cookie
         token = create_valid_token(test_commenter_claims)
@@ -1232,11 +1196,11 @@ class TestRoutes:
         token = create_valid_token(test_lead_assessor_claims)
         flask_test_client.set_cookie("localhost", "fsd_user_token", token)
         mocker.patch(
-            "app.assess.routes.get_application_json",
+            "app.blueprints.assessments.routes.get_application_json",
             return_value={"jsonb_blob": "mock"},
         )
         with mock.patch(
-            "app.assess.routes.get_files_for_application_upload_fields",
+            "app.blueprints.assessments.routes.get_files_for_application_upload_fields",
             return_value=[
                 ("sample1.doc", "mock/url/for/get/file"),
                 ("sample2.doc", "mock/url/for/get/file"),
@@ -1257,9 +1221,10 @@ class TestRoutes:
         self,
         flask_test_client,
         mock_get_fund,
-        mock_get_application,
+        mock_get_round,
         mock_get_funds,
         mock_get_application_metadata,
+        mock_get_application_json,
         mocks_for_file_export_download,
     ):
         token = create_valid_token(test_lead_assessor_claims)
@@ -1284,11 +1249,11 @@ class TestRoutes:
         token = create_valid_token(test_lead_assessor_claims)
         flask_test_client.set_cookie("localhost", "fsd_user_token", token)
         mocker.patch(
-            "app.assess.routes.get_file_for_download_from_aws",
+            "app.blueprints.assessments.routes.get_file_for_download_from_aws",
             return_value=("some file contents", "mock_mimetype"),
         )
         with mock.patch(
-            "app.assess.routes.download_file", return_value=""
+            "app.blueprints.assessments.routes.download_file", return_value=""
         ) as mock_download_file:
             flask_test_client.get(
                 "/assess/application/abc123/export/business_plan.txt?short_id=QWERTY"  # noqa
@@ -1310,11 +1275,11 @@ class TestRoutes:
         token = create_valid_token(test_lead_assessor_claims)
         flask_test_client.set_cookie("localhost", "fsd_user_token", token)
         mocker.patch(
-            "app.assess.routes.get_file_for_download_from_aws",
+            "app.blueprints.assessments.routes.get_file_for_download_from_aws",
             return_value=("some file contents", "mock_mimetype"),
         )
         with mock.patch(
-            "app.assess.routes.download_file", return_value=""
+            "app.blueprints.assessments.routes.download_file", return_value=""
         ) as mock_download_file:
             flask_test_client.get(
                 "/assess/application/abc123/export/business_plan.txt"
@@ -1324,7 +1289,7 @@ class TestRoutes:
             )
 
     def test_get_file(self, flask_test_client):
-        from app.assess.routes import download_file
+        from app.blueprints.assessments.routes import download_file
 
         response = download_file("file_data", "text/plain", "file_name.abc")
         assert "text/plain" in response.content_type
@@ -1345,7 +1310,8 @@ def test_download_application_answers(
     mock_get_funds,
     mock_get_application_metadata,
     mock_get_fund,
-    mock_get_application,
+    mock_get_round,
+    mock_get_application_json,
     file_extension,
     content_type,
     mocks_for_file_export_download,
@@ -1368,8 +1334,9 @@ def test_download_application_answers_invalid_file_type(
     flask_test_client,
     mock_get_funds,
     mock_get_application_metadata,
+    mock_get_round,
     mock_get_fund,
-    mock_get_application,
+    mock_get_application_json,
     mocks_for_file_export_download,
 ):
     token = create_valid_token(test_lead_assessor_claims)

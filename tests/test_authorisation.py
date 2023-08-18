@@ -1,9 +1,7 @@
 import pytest
-from app.assess.models.round import Round
 from bs4 import BeautifulSoup
 from config import Config
 from flask import g
-from tests.api_data.test_data import mock_api_results
 from tests.conftest import create_invalid_token
 from tests.conftest import create_valid_token
 from tests.conftest import test_assessor_claims
@@ -110,10 +108,12 @@ class TestAuthorisation:
 
     @pytest.mark.mock_parameters(
         {
-            "get_assessment_stats_path": (
-                "app.assess.models.fund_summary.get_assessments_stats"
-            ),
-            "get_rounds_path": "app.assess.models.fund_summary.get_rounds",
+            "get_assessment_stats_path": [
+                "app.blueprints.assessments.models.fund_summary.get_assessments_stats",
+            ],
+            "get_rounds_path": [
+                "app.blueprints.assessments.models.fund_summary.get_rounds"
+            ],
             "fund_id": "test-fund",
             "round_id": "test-round",
         }
@@ -183,6 +183,7 @@ class TestAuthorisation:
         mock_get_application_metadata,
         mock_get_sub_criteria_theme,
         mock_get_assessor_tasklist_state,
+        mock_get_bulk_accounts,
         claims,
         ability_to_score,
     ):
@@ -254,6 +255,7 @@ class TestAuthorisation:
         mock_get_comments,
         mock_get_sub_criteria_theme,
         mock_get_assessor_tasklist_state,
+        mock_get_bulk_accounts,
     ):
         """
         GIVEN authorized users
@@ -546,14 +548,6 @@ class TestAuthorisation:
         mock_get_associated_tags_for_application,
         mocker,
     ):
-        mocker.patch(
-            "app.assess.routes.get_round",
-            return_value=Round.from_dict(
-                mock_api_results[
-                    "fund_store/funds/{fund_id}/rounds/{round_id}"
-                ]
-            ),
-        )
 
         token = create_valid_token(user_account)
         flask_test_client.set_cookie("localhost", "fsd_user_token", token)

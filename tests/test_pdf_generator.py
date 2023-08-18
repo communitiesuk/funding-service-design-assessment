@@ -2,27 +2,33 @@ from io import BytesIO
 from unittest.mock import patch
 
 import pytest
-from app.pdf.pdf_generator import generate_pdf
-from app.pdf.pdf_generator import PDFCreationException
+from app.blueprints.assessments.pdf_generator import generate_pdf
+from app.blueprints.assessments.pdf_generator import PDFCreationException
 
 
 @pytest.fixture
 def mock_render_template():
-    with patch("app.pdf.pdf_generator._render_template") as mock:
+    with patch(
+        "app.blueprints.assessments.pdf_generator._render_template"
+    ) as mock:
         mock.return_value = "<html><body>Test PDF</body></html>"
         yield mock
 
 
 @pytest.fixture
 def mock_convert_html_to_pdf_error():
-    with patch("app.pdf.pdf_generator._convert_html_to_pdf") as mock:
+    with patch(
+        "app.blueprints.assessments.pdf_generator._convert_html_to_pdf"
+    ) as mock:
         mock.side_effect = PDFCreationException("Mocked Error")
         yield mock
 
 
 @pytest.fixture
 def mock_convert_html_to_pdf_success():
-    with patch("app.pdf.pdf_generator._convert_html_to_pdf") as mock:
+    with patch(
+        "app.blueprints.assessments.pdf_generator._convert_html_to_pdf"
+    ) as mock:
         yield mock
 
 
