@@ -32,7 +32,7 @@ from app.blueprints.assessments.models.file_factory import (
 )
 from app.blueprints.assessments.models.flag_teams import TeamsFlagData
 from app.blueprints.assessments.models.fund_summary import (
-    create_fund_summaries,
+    create_round_summaries,
 )
 from app.blueprints.assessments.models.fund_summary import is_after_today
 from app.blueprints.assessments.status import all_status_completed
@@ -153,7 +153,7 @@ def landing():
     return render_template(
         "assessor_tool_dashboard.html",
         fund_summaries={
-            fund.id: create_fund_summaries(fund) for fund in funds
+            fund.id: create_round_summaries(fund) for fund in funds
         },
         funds={fund.id: fund for fund in funds},
         todays_date=utc_to_bst(datetime.now().strftime("%Y-%m-%dT%H:%M:%S")),

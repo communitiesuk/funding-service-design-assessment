@@ -97,6 +97,10 @@ class DefaultConfig:
     APPLICATION_ENDPOINT = CommonConfig.APPLICATION_ENDPOINT
     APPLICATION_STATUS_ENDPOINT = CommonConfig.APPLICATION_STATUS_ENDPOINT
     APPLICATION_SEARCH_ENDPOINT = CommonConfig.APPLICATION_SEARCH_ENDPOINT
+    APPLICATION_METRICS_ENDPOINT = (
+        APPLICATION_STORE_API_HOST
+        + "/applications/reporting/applications_statuses_data?format=json"
+    )
 
     # Assessment store endpoints
     ASSESSMENTS_STATS_ENDPOINT = (
