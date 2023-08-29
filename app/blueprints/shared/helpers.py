@@ -141,12 +141,28 @@ def get_value_from_request(parameter_names) -> str | None:
 
 @dataclass
 class LocationData:
+    """
+    A class to represent location data.
+
+    Attributes:
+        locations: A list of location dictionaries.
+        local_authorities: A list of local authority names.
+    """
+
     locations: list
     local_authorities: list
 
     @classmethod
     def from_json_blob(cls, json_blob):
+        """
+        Creates a new LocationData object from a JSON blob.
 
+        Args:
+            json_blob: A JSON blob containing location data.
+
+        Returns:
+            A new LocationData object.
+        """
         locations = [
             location["location_json_blob"]
             for location in json_blob
@@ -158,6 +174,16 @@ class LocationData:
         return cls(locations, local_authorities)
 
     def _create_ordered_dict(self, key):
+        """
+        Creates an ordered dictionary of location data for the specified key.
+
+        Args:
+            key: The key to use for the dictionary.
+
+        Returns:
+            An ordered dictionary of location data.
+        """
+
         def _items(item):
             return item if key == "local_authority" else item[key]
 
@@ -181,12 +207,21 @@ class LocationData:
 
     @property
     def countries(self):
+        """
+        Returns an ordered dictionary of countries.
+        """
         return self._create_ordered_dict("country")
 
     @property
     def regions(self):
+        """
+        Returns an ordered dictionary of regions.
+        """
         return self._create_ordered_dict("region")
 
     @property
     def _local_authorities(self):
+        """
+        Returns an ordered dictionary of local authorities.
+        """
         return self._create_ordered_dict("local_authority")
