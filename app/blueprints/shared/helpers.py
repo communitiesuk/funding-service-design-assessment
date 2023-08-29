@@ -154,15 +154,6 @@ class LocationData:
 
     @classmethod
     def from_json_blob(cls, json_blob):
-        """
-        Creates a new LocationData object from a JSON blob.
-
-        Args:
-            json_blob: A JSON blob containing location data.
-
-        Returns:
-            A new LocationData object.
-        """
         locations = [
             location["location_json_blob"]
             for location in json_blob
@@ -175,13 +166,8 @@ class LocationData:
 
     def _create_ordered_dict(self, key):
         """
-        Creates an ordered dictionary of location data for the specified key.
-
-        Args:
-            key: The key to use for the dictionary.
-
-        Returns:
-            An ordered dictionary of location data.
+        Creates an sorted and ordered dictionary of location data for the specified key.
+        Returns an ordered dictionary of location data.
         """
 
         def _items(item):
@@ -194,34 +180,24 @@ class LocationData:
                 else self.locations
             )
 
-        return OrderedDict(
-            {
-                "ALL": "All",
-                **{
-                    _items(item): _items(item)
-                    for item in _data(key)
-                    if item is not None
-                },
-            }
+        sorted_items = sorted(
+            [
+                (_items(item), _items(item))
+                for item in _data(key)
+                if item is not None
+            ]
         )
+
+        return OrderedDict({"ALL": "All", **dict(sorted_items)})
 
     @property
     def countries(self):
-        """
-        Returns an ordered dictionary of countries.
-        """
         return self._create_ordered_dict("country")
 
     @property
     def regions(self):
-        """
-        Returns an ordered dictionary of regions.
-        """
         return self._create_ordered_dict("region")
 
     @property
     def _local_authorities(self):
-        """
-        Returns an ordered dictionary of local authorities.
-        """
         return self._create_ordered_dict("local_authority")
