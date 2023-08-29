@@ -166,11 +166,11 @@ class LocationData:
 
     def _create_ordered_dict(self, key):
         """
-        Creates an sorted and ordered dictionary of location data for the specified key.
+        Creates a sorted and ordered dictionary of location data for the specified key.
         Returns an ordered dictionary of location data.
         """
 
-        def _items(item):
+        def _item(item):
             return item if key == "local_authority" else item[key]
 
         def _data(key):
@@ -182,7 +182,7 @@ class LocationData:
 
         sorted_items = sorted(
             [
-                (_items(item), _items(item))
+                (_item(item), _item(item))
                 for item in _data(key)
                 if item is not None
             ]
