@@ -142,6 +142,7 @@ stopped_app = {
     "project_name": "Project In prog and Stop",
     "short_id": "FS",
     "asset_type": "gallery",
+    "local_authority": "wokefield",
     "flags": [
         {
             "id": "1c5e8bea-f5ed-4b74-8823-e64fec27a7bd",
@@ -276,6 +277,7 @@ mock_api_results = {
             "round_id": test_round_id,
             "application_id": flagged_qa_completed_app_id,
             "asset_type": "gallery",
+            "local_authority": "wokefield",
             "tag_associations": flagged_qa_completed_app["tag_associations"],
             "flags": flagged_qa_completed_app["flags"],
             "qa_complete": flagged_qa_completed_app["qa_complete"],
@@ -300,6 +302,7 @@ mock_api_results = {
             "round_id": test_round_id,
             "application_id": stopped_app_id,
             "asset_type": stopped_app["asset_type"],
+            "local_authority": stopped_app["local_authority"],
             "tag_associations": stopped_app["tag_associations"],
             "flags": stopped_app["flags"],
             "qa_complete": stopped_app["qa_complete"],
@@ -324,6 +327,7 @@ mock_api_results = {
             "round_id": test_round_id,
             "application_id": resolved_app_id,
             "asset_type": "gallery",
+            "local_authority": "wokefield",
             "tag_associations": resolved_app["tag_associations"],
             "flags": resolved_app["flags"],
             "qa_complete": resolved_app["qa_complete"],
@@ -344,12 +348,13 @@ mock_api_results = {
             "workflow_status": resolved_app["workflow_status"],
         },
     ],
-    "assessment_store/application_overviews/{fund_id}/{round_id}?search_term=Project+S&search_in=project_name%2Cshort_id&asset_type=gallery&status=STOPPED": [
+    "assessment_store/application_overviews/{fund_id}/{round_id}?search_term=Project+S&search_in=project_name%2Cshort_id&asset_type=gallery&local_authority=wokefield&status=STOPPED": [
         {
             "fund_id": test_fund_id,
             "round_id": test_round_id,
             "application_id": stopped_app_id,
             "asset_type": stopped_app["asset_type"],
+            "local_authority": stopped_app["local_authority"],
             "tag_associations": stopped_app["tag_associations"],
             "flags": stopped_app["flags"],
             "qa_complete": stopped_app["qa_complete"],
@@ -630,6 +635,7 @@ mock_api_results = {
         "round_id": test_round_id,
         "application_id": stopped_app_id,
         "asset_type": stopped_app["asset_type"],
+        "local_authority": stopped_app["local_authority"],
         "tag_associations": stopped_app["tag_associations"],
         "flags": stopped_app["flags"],
         "qa_complete": stopped_app["qa_complete"],

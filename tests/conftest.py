@@ -393,6 +393,9 @@ def mock_get_application_overviews(request, mocker):
             "asset_type": "ALL",
             "status": "ALL",
             "filter_by_tag": "ALL",
+            "country": "ALL",
+            "region": "ALL",
+            "local_authority": "ALL",
         }
         path = func_path
         fund_id = "test-fund"

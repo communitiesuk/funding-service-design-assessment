@@ -1,4 +1,6 @@
 import time
+from collections import OrderedDict
+from dataclasses import dataclass
 from typing import Dict
 from typing import List
 
@@ -109,7 +111,6 @@ def determine_flag_status(Flags: List[Flag]) -> str:
 
 
 def match_search_params(search_params, request_args):
-
     show_clear_filters = False
     if "clear_filters" not in request_args:
         search_params.update(
@@ -136,3 +137,56 @@ def get_value_from_request(parameter_names) -> str | None:
         )
         if value:
             return value
+
+
+@dataclass
+class LocationData:
+    locations: list
+    local_authorities: list
+
+    @classmethod
+    def from_json_blob(cls, json_blob):
+
+        locations = [
+            location["location_json_blob"]
+            for location in json_blob
+            if location is not None
+        ]
+        local_authorities = [
+            item["local_authority"] for item in json_blob if item is not None
+        ]
+        return cls(locations, local_authorities)
+
+    def _create_ordered_dict(self, key):
+        def _items(item):
+            return item if key == "local_authority" else item[key]
+
+        def _data(key):
+            return (
+                self.local_authorities
+                if key == "local_authority"
+                else self.locations
+            )
+
+        return OrderedDict(
+            {
+                "ALL": "All",
+                **{
+                    _items(item): _items(item)
+                    for item in _data(key)
+                    if item is not None
+                },
+            }
+        )
+
+    @property
+    def countries(self):
+        return self._create_ordered_dict("country")
+
+    @property
+    def regions(self):
+        return self._create_ordered_dict("region")
+
+    @property
+    def _local_authorities(self):
+        return self._create_ordered_dict("local_authority")
