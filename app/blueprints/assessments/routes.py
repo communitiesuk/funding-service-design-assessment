@@ -35,6 +35,7 @@ from app.blueprints.assessments.models.fund_summary import (
     create_fund_summaries,
 )
 from app.blueprints.assessments.models.fund_summary import is_after_today
+from app.blueprints.assessments.models.location_data import LocationData
 from app.blueprints.assessments.status import all_status_completed
 from app.blueprints.assessments.status import update_ar_status_to_completed
 from app.blueprints.assessments.status import update_ar_status_to_qa_completed
@@ -86,7 +87,6 @@ from app.blueprints.shared.helpers import determine_assessment_status
 from app.blueprints.shared.helpers import determine_flag_status
 from app.blueprints.shared.helpers import get_ttl_hash
 from app.blueprints.shared.helpers import is_flaggable
-from app.blueprints.shared.helpers import LocationData
 from app.blueprints.shared.helpers import match_search_params
 from app.blueprints.shared.helpers import process_assessments_stats
 from config import Config
@@ -185,7 +185,7 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
         countries = get_countries_from_roles(fund.short_name)
 
     # This call is to get the location data such as country, region and local_authority
-    # from al the existing applications.
+    # from all the existing applications.
     applications_metadata = get_application_overviews(
         fund_id, round_id, search_params=""
     )
