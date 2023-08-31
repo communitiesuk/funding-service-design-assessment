@@ -31,7 +31,7 @@
 </nav>
 
 {% if not application_overviews %}
-<div role="status" aria-live="assertive">
+<div role="status" aria-live="assertive" class="govuk-!-margin-top-4">
   <p class="govuk-body" autofocus>
     <strong>No matching results.</strong>
   </p>
@@ -42,7 +42,7 @@
   </ul>
 </div>
 {% else %}
-<table class="govuk-table" id="application_overviews_table">
+<table class="govuk-table govuk-!-margin-top-4" id="application_overviews_table">
   <thead class="govuk-table__head">
     <tr class="govuk-table__row">
       <th scope="col" class="govuk-table__header">
