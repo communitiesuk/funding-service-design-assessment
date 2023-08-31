@@ -155,6 +155,9 @@ class TestRoutes:
                 "funding_type": "ALL",
                 "status": "ALL",
                 "filter_by_tag": "ALL",
+                "local_authority": "ALL",
+                "country": "ALL",
+                "region": "ALL",
             },
         }
     )
@@ -212,6 +215,9 @@ class TestRoutes:
                 "asset_type": "ALL",
                 "status": "ALL",
                 "filter_by_tag": "ALL",
+                "local_authority": "ALL",
+                "country": "ALL",
+                "region": "ALL",
             },
         }
     )
@@ -284,6 +290,9 @@ class TestRoutes:
                 "asset_type": "ALL",
                 "status": "QA_COMPLETE",
                 "filter_by_tag": "ALL",
+                "local_authority": "ALL",
+                "country": "ALL",
+                "region": "ALL",
             },
         }
     )
@@ -326,6 +335,9 @@ class TestRoutes:
                 "asset_type": "pub",
                 "status": "ALL",
                 "filter_by_tag": "ALL",
+                "local_authority": "ALL",
+                "country": "ALL",
+                "region": "ALL",
             },
         }
     )
@@ -368,6 +380,9 @@ class TestRoutes:
                 "asset_type": "ALL",
                 "status": "ALL",
                 "filter_by_tag": "ALL",
+                "local_authority": "ALL",
+                "country": "ALL",
+                "region": "ALL",
             },
         }
     )
@@ -411,6 +426,9 @@ class TestRoutes:
                 "asset_type": "ALL",
                 "status": "ALL",
                 "filter_by_tag": "ALL",
+                "local_authority": "ALL",
+                "country": "ALL",
+                "region": "ALL",
             },
         }
     )
@@ -458,6 +476,9 @@ class TestRoutes:
                 "asset_type": "ALL",
                 "status": "ALL",
                 "filter_by_tag": "ALL",
+                "local_authority": "ALL",
+                "country": "ALL",
+                "region": "ALL",
             },
         }
     )
@@ -1086,6 +1107,9 @@ class TestRoutes:
                 "asset_type": "ALL",
                 "status": "ALL",
                 "filter_by_tag": "ALL",
+                "local_authority": "ALL",
+                "country": "ALL",
+                "region": "ALL",
             },
         }
     )

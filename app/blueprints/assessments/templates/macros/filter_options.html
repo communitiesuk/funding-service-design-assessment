@@ -1,4 +1,4 @@
-{% macro filter_options(query_params, item_types, item_type, search_label, assessment_statuses, round_details, show_clear_filters, tag_option_groups) %}
+{% macro filter_options(query_params, item_types, item_type, search_label, assessment_statuses, countries, regions, local_authorities, round_details, show_clear_filters, tag_option_groups) %}
 
     <fieldset class="govuk-fieldset">
         <div class="govuk-grid-row">
@@ -14,9 +14,10 @@
             </div>
         </div>
 
-        <div style="margin=0;padding:0;">
+        <div style="margin:0;padding:0;">
             <div class="govuk-grid-row">
-                <div class="govuk-grid-column-two-thirds dluhc-column-auto">
+                <div class="govuk-grid-column-three-quarters dluhc-column-auto">
+                    <div>
                     <div class="govuk-form-group govuk-!-display-inline-block govuk-!-margin-bottom-0 govuk-!-margin-right-2">
                         <label class="govuk-label" for="filter_{{ item_type }}">
                             Filter by {{ "asset type" if item_type == "asset_type" else "funding type" }}
@@ -71,6 +72,43 @@
                             </select>
                         </div>
                     {% endif %}
+                </div>
+
+                <div>
+                    <div class="govuk-form-group govuk-!-display-inline-block govuk-!-margin-bottom-0 govuk-!-margin-right-2">
+                        <label class="govuk-label" for="filter_country">
+                            Filter by country
+                        </label>
+                        <select class="govuk-select" name="country" id="filter_country">
+                            {% for item in countries %}
+                                <option value='{{ item }}' {% if query_params.country == item %}
+                                        selected=""{% endif %}>{{ countries[item] }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="govuk-form-group govuk-!-display-inline-block govuk-!-margin-bottom-0 govuk-!-margin-right-2">
+                        <label class="govuk-label" for="filter_region">
+                            Filter by region
+                        </label>
+                        <select class="govuk-select" name="region" id="filter_region">
+                            {% for item in regions %}
+                                <option value='{{ item }}' {% if query_params.region == item %}
+                                        selected=""{% endif %}>{{ regions[item] }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="govuk-form-group govuk-!-display-inline-block govuk-!-margin-bottom-0 govuk-!-margin-right-2">
+                        <label class="govuk-label" for="filter_local_authority">
+                            Filter by local authority
+                        </label>
+                        <select class="govuk-select" name="local_authority" id="filter_local_authority">
+                            {% for item in local_authorities %}
+                                <option value='{{ item }}' {% if query_params.local_authority == item %}
+                                        selected=""{% endif %}>{{ local_authorities[item] }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
                 </div>
 
                 <div class="govuk-grid-column-one-quarter">

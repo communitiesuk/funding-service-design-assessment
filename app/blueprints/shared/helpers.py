@@ -109,7 +109,6 @@ def determine_flag_status(Flags: List[Flag]) -> str:
 
 
 def match_search_params(search_params, request_args):
-
     show_clear_filters = False
     if "clear_filters" not in request_args:
         search_params.update(

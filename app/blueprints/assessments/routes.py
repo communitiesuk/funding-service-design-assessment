@@ -35,6 +35,7 @@ from app.blueprints.assessments.models.fund_summary import (
     create_fund_summaries,
 )
 from app.blueprints.assessments.models.fund_summary import is_after_today
+from app.blueprints.assessments.models.location_data import LocationData
 from app.blueprints.assessments.status import all_status_completed
 from app.blueprints.assessments.status import update_ar_status_to_completed
 from app.blueprints.assessments.status import update_ar_status_to_qa_completed
@@ -183,6 +184,13 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
     if has_devolved_authority_validation(fund_id=fund_id):
         countries = get_countries_from_roles(fund.short_name)
 
+    # This call is to get the location data such as country, region and local_authority
+    # from all the existing applications.
+    applications_metadata = get_application_overviews(
+        fund_id, round_id, search_params=""
+    )
+    locations = LocationData.from_json_blob(applications_metadata)
+
     search_params = {
         **search_params,
         "countries": ",".join(countries),
@@ -283,6 +291,9 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
         tag_option_groups=tag_option_groups,
         tags=tag_map,
         tagging_purpose_config=Config.TAGGING_PURPOSE_CONFIG,
+        countries=locations.countries,
+        regions=locations.regions,
+        local_authorities=locations._local_authorities,
     )
 
 

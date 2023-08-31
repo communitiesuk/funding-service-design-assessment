@@ -3,7 +3,9 @@
 {% from "macros/filter_options.html" import filter_options %}
 {% from "macros/tags_table.html" import tags_table %}
 
-{% macro render(application_overviews, round_details, query_params, funding_types, assessment_statuses, show_clear_filters, sort_column, sort_order, tag_option_groups, tags, tagging_purpose_config) -%}
+{% macro render(application_overviews, round_details, query_params, funding_types,
+   assessment_statuses, countries, regions, local_authorities, show_clear_filters,
+    sort_column, sort_order, tag_option_groups, tags, tagging_purpose_config) -%}
 <nav class="search-bar-flex-container">
   <form method="get" class="govuk-!-width-full">
   {{ filter_options(
@@ -12,6 +14,9 @@
     'funding_type',
     'Search reference or organisation name',
     assessment_statuses,
+    countries,
+    regions,
+    local_authorities,
     round_details,
     show_clear_filters,
     tag_option_groups
