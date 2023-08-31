@@ -294,7 +294,6 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
         countries=locations.countries,
         regions=locations.regions,
         local_authorities=locations._local_authorities,
-        locations=locations,  # remove after testing
     )
 
 
