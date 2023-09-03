@@ -43,6 +43,9 @@ search_params_cof = {
     "asset_type": ALL_VALUE,
     "status": ALL_VALUE,
     "filter_by_tag": ALL_VALUE,
+    "country": ALL_VALUE,
+    "region": ALL_VALUE,
+    "local_authority": ALL_VALUE,
 }
 search_params_nstf = {
     "search_term": "",
@@ -50,6 +53,9 @@ search_params_nstf = {
     "funding_type": ALL_VALUE,
     "status": ALL_VALUE,
     "filter_by_tag": ALL_VALUE,
+    "country": ALL_VALUE,
+    "region": ALL_VALUE,
+    "local_authority": ALL_VALUE,
 }
 
 search_params_tag = {

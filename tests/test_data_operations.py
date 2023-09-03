@@ -55,6 +55,7 @@ class TestDataOperations:
                 "search_in": "project_name,short_id",
                 "asset_type": "ALL",
                 "status": "ALL",
+                "local_authority": "ALL",
             }
             args = ("test-fund", "test-round")
             result = get_application_overviews(*args, params)
@@ -66,7 +67,7 @@ class TestDataOperations:
         mock_overview_result = mock_api_results[
             "assessment_store/application_overviews/{fund_id}/{round_id}?"
             "search_term=Project+S&search_in=project_name%2Cshort_id&"
-            "asset_type=gallery&status=STOPPED"
+            "asset_type=gallery&local_authority=wokefield&status=STOPPED"
         ]
         get_data_mock = mocker.patch(
             "app.blueprints.services.data_services.get_data",
@@ -79,6 +80,7 @@ class TestDataOperations:
                 "search_in": "project_name,short_id",
                 "asset_type": "ALL",
                 "status": "ALL",
+                "local_authority": "ALL",
             }
             args = ("test-fund", "test-round")
             result = get_application_overviews(*args, params)
