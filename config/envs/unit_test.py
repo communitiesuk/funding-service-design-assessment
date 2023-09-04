@@ -25,3 +25,5 @@ class UnitTestConfig(DefaultConfig):
     AWS_SECRET_ACCESS_KEY = getenv("AWS_SECRET_ACCESS_KEY")
     AWS_BUCKET_NAME = getenv("AWS_BUCKET_NAME")
     AWS_REGION = "eu-west-2"
+
+    SHOW_ALL_ROUNDS = True

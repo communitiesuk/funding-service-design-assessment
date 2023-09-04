@@ -1,3 +1,5 @@
+from collections import namedtuple
+
 ALL_VALUE = "ALL"
 ON_VALUE = "ON"
 OFF_VALUE = "OFF"
@@ -36,7 +38,6 @@ funding_types = {
     "revenue": "Revenue",
 }
 
-
 search_params_cof = {
     "search_term": "",
     "search_in": "project_name,short_id",
@@ -64,3 +65,10 @@ search_params_tag = {
     "tag_purpose": ALL_VALUE,
     "tag_status": True,
 }
+
+LandingFilters = namedtuple(
+    "LandingFilters", ["filter_status", "filter_fund_type", "filter_fund_name"]
+)
+landing_filters = LandingFilters(
+    filter_status=ALL_VALUE, filter_fund_type=ALL_VALUE, filter_fund_name=""
+)

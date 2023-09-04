@@ -4,7 +4,9 @@ from typing import List
 
 from app.blueprints.services.models.flag import Flag
 from app.blueprints.services.models.flag import FlagType
+from app.blueprints.services.models.fund import Fund
 from config.display_value_mappings import assessment_statuses
+from config.display_value_mappings import LandingFilters
 from flask import request
 
 
@@ -135,3 +137,11 @@ def get_value_from_request(parameter_names) -> str | None:
         )
         if value:
             return value
+
+
+def fund_matches_filters(fund: Fund, filters: LandingFilters):
+    if filters.filter_fund_name.casefold() not in fund.name.casefold():
+        return False
+    if filters.filter_fund_type not in fund.fund_types:
+        return False
+    return True

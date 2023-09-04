@@ -5,6 +5,7 @@
 {% from "macros/banner_summary.html" import banner_summary %}
 {% from "macros/logout_partial.html" import logout_partial %}
 {% from "macros/fund_dashboard_summary.html" import fund_summary %}
+{% from "macros/assessor_tool_dashboard_filters.html" import assessor_tool_dashboard_filters %}
 
 {% set pageHeading %}Assessment tool dashboard{% endset %}
 {% block content %}
@@ -13,19 +14,65 @@
     </div>
 
     <div class="govuk-width-container">
-        <h1 class="govuk-heading-l">Assessment tool dashboard</h1>
-        {% for fund_id in funds %}
-            <h2 class="govuk-heading-m">{{ funds[fund_id].name }}</h2>
-            <div class="govuk-!-padding-0 govuk-grid-column-full">
-                {% for summary in fund_summaries[fund_id] %}
-                    {{ fund_summary(**summary.__dict__) }}
-                {% endfor %}
-            </div>
-        {% endfor %}
+        <h1 class="govuk-heading-xl">Funding service dashboard</h1>
+        <div class="govuk-grid-column">
+            {{ assessor_tool_dashboard_filters(landing_filters) }}
+        </div>
 
-        {% if not funds %}
-            <h3 class="govuk-body">You do not have access to any funds.</h3>
-        {% endif %}
+        <h2 class="govuk-heading-l">
+            All funds ({{ funds | length }}), sorted A-Z
+        </h2>
+
+        <div class="govuk-accordion" data-module="govuk-accordion" id="accordion-default">
+            {% if funds %}
+            <div class="govuk-accordion__controls">
+                <button type="button" class="govuk-accordion__show-all">
+                    <span class="govuk-accordion-nav__chevron govuk-accordion-nav__chevron--down"></span>
+                    <span class="govuk-accordion__show-all-text">Show all sections</span>
+                </button>
+            </div>
+            {% endif %}
+            {% for fund_id in funds %}
+                <div class="govuk-accordion__section">
+                    <div class="govuk-accordion__section-header">
+                        <h2 class="govuk-accordion__section-heading">
+                            <button type="button" aria-controls="accordion-default-content-{{ loop.index }}"
+                                    class="govuk-accordion__section-button landing-accordion"
+                                    aria-label="{{ funds[fund_id].name }} ({{ fund_summaries[fund_id] | length }}), Show this section">
+                                <span class="govuk-accordion__section-heading-text" id="accordion-default-heading-{{ loop.index }}">
+                                    <span class="govuk-accordion__section-heading-text-focus">
+                                      {{ funds[fund_id].name }} ({{ fund_summaries[fund_id] | length }})
+                                    </span>
+                                </span>
+                                {% if fund_summaries[fund_id] %}
+                                <span class="govuk-visually-hidden govuk-accordion__section-heading-divider">, </span>
+                                    <span class="govuk-accordion__section-toggle" data-nosnippet="">
+                                    <span class="govuk-accordion__section-toggle-focus">
+                                        <span class="govuk-accordion-nav__chevron govuk-accordion-nav__chevron--down"></span>
+                                        <span class="govuk-accordion__section-toggle-text">Show</span>
+                                    </span>
+                                </span>
+                                {% endif %}
+                            </button>
+                        </h2>
+                        {% if fund_summaries[fund_id] %}
+                        <div id="accordion-default-content-{{ loop.index }}" class="govuk-accordion__section-content"
+                             aria-labelledby="accordion-default-heading-{{ loop.index }}" style="display: none">
+                            {% set chunk_size = 3 %}
+                            {% set summaries = fund_summaries[fund_id] %}
+                            {% for chunk in summaries|batch(chunk_size) %}
+                                <div class="govuk-grid-row">
+                                    {% for summary in chunk %}
+                                        {{ fund_summary(**summary.__dict__) }}
+                                    {% endfor %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
 
         <p class="govuk-!-padding-top-6 govuk-body govuk-!-display-inline-block">
             Information last updated: [{{ todays_date }}]<br/>
