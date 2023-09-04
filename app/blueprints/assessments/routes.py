@@ -165,14 +165,20 @@ def landing():
     sorted_funds_map = OrderedDict(
         (fund.id, fund) for fund in sorted(funds, key=lambda f: f.name)
     )
+    round_summaries = {
+        fund.id: create_round_summaries(fund, filters) for fund in funds
+    }
     return render_template(
         "assessor_tool_dashboard.html",
-        fund_summaries={
-            fund.id: create_round_summaries(fund, filters) for fund in funds
-        },
+        fund_summaries=round_summaries,
         funds=sorted_funds_map,
         todays_date=utc_to_bst(datetime.now().strftime("%Y-%m-%dT%H:%M:%S")),
         landing_filters=filters,
+        has_any_assessor_role=any(
+            rs.access_controller.has_any_assessor_role
+            for rsl in round_summaries.values()
+            for rs in rsl
+        ),
     )
 
 

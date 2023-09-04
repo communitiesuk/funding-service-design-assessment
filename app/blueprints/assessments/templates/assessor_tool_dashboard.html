@@ -16,7 +16,7 @@
     <div class="govuk-width-container">
         <h1 class="govuk-heading-xl">Funding service dashboard</h1>
         <div class="govuk-grid-column">
-            {{ assessor_tool_dashboard_filters(landing_filters) }}
+            {{ assessor_tool_dashboard_filters(landing_filters, has_any_assessor_role) }}
         </div>
 
         <h2 class="govuk-heading-l">
@@ -37,7 +37,7 @@
                     <div class="govuk-accordion__section-header">
                         <h2 class="govuk-accordion__section-heading">
                             <button type="button" aria-controls="accordion-default-content-{{ loop.index }}"
-                                    class="govuk-accordion__section-button landing-accordion"
+                                    class="govuk-accordion__section-button landing-accordion" data-qa="show"
                                     aria-label="{{ funds[fund_id].name }} ({{ fund_summaries[fund_id] | length }}), Show this section">
                                 <span class="govuk-accordion__section-heading-text" id="accordion-default-heading-{{ loop.index }}">
                                     <span class="govuk-accordion__section-heading-text-focus">

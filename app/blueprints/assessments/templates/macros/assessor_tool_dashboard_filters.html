@@ -4,7 +4,7 @@
     </option>
 {% endmacro %}
 
-{% macro assessor_tool_dashboard_filters(filters) -%}
+{% macro assessor_tool_dashboard_filters(filters, has_any_assessor_role) -%}
     <form method="get" class="govuk-!-width-full">
         <div class="govuk-form-group govuk-!-display-inline-block">
             <div>
@@ -32,7 +32,9 @@
             <select class="govuk-select" id="filter_status" name="filter_status">
                 {{ generate_option(filters.filter_status, 'ALL', 'All') }}
                 {{ generate_option(filters.filter_status, 'active', 'Active assessments') }}
+                {% if has_any_assessor_role %}
                 {{ generate_option(filters.filter_status, 'live', 'Live applications') }}
+                {% endif %}
                 {{ generate_option(filters.filter_status, 'closed', 'Closed assessments') }}
             </select>
             <button class="govuk-button primary-button search-button" type="submit">
