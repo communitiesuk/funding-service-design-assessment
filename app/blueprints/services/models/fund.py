@@ -3,6 +3,7 @@ from dataclasses import field
 from typing import List
 
 from app.blueprints.services.models.round import Round
+from config.display_value_mappings import ALL_VALUE
 
 
 @dataclass
@@ -33,6 +34,14 @@ class Fund:
                 "owner_organisation_logo_uri"
             ),
         )
+
+    @property
+    def fund_types(self) -> set[str]:
+        if self.short_name == "COF":
+            return {ALL_VALUE, "allocative"}
+        elif self.short_name == "NSTF":
+            return {ALL_VALUE, "allocative"}
+        return {ALL_VALUE}
 
     def add_round(self, fund_round: Round):
         if not self.rounds:

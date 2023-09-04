@@ -1,12 +1,13 @@
 from unittest import mock
 
 import pytest
+from app.blueprints.assessments.models.fund_summary import RoundSummary
+from app.blueprints.assessments.models.fund_summary import Stats
 from app.blueprints.services.models.flag import Flag
 from bs4 import BeautifulSoup
 from flask import session
 from tests.conftest import create_valid_token
 from tests.conftest import fund_specific_claim_map
-from tests.conftest import test_assessor_claims
 from tests.conftest import test_commenter_claims
 from tests.conftest import test_lead_assessor_claims
 
@@ -31,7 +32,6 @@ class TestRoutes:
         mock_get_rounds,
         mock_get_assessment_stats,
     ):
-
         response = flask_test_client.get("/assess/assessor_tool_dashboard/")
         assert 200 == response.status_code, "Wrong status code on response"
         soup = BeautifulSoup(response.data, "html.parser")
@@ -41,14 +41,24 @@ class TestRoutes:
         all_table_data_elements = str(
             soup.find_all("td", class_="govuk-table__cell")
         )
+        assert len(all_table_data_elements) > 0
         project_titles = [
             "Assessment closing date",
             "Applications received",
             "Assessments completed",
             "QA Complete",
         ]
+        live_round_titles = [
+            "Application closing date",
+            "Applications submitted",
+            "Applications in progress",
+            "Applications not started",
+            "Applications completed but not started",
+        ]
         assert all(
             title in all_table_data_elements for title in project_titles
+        ) or all(
+            title in all_table_data_elements for title in live_round_titles
         )
         for mock_func in mock_get_assessment_stats:
             assert mock_func.call_count == 1
@@ -67,83 +77,67 @@ class TestRoutes:
             "round_id": "test-round",
         }
     )
-    def test_route_landing_export_link_visible_as_lead_assessor(
+    @pytest.mark.parametrize(
+        "exp_link_count, mock_is_lead_assessor", [(1, True), (0, False)]
+    )
+    def test_route_landing_export_link_visibility(
         self,
         flask_test_client,
         mock_get_funds,
-        mock_get_rounds,
-        mock_get_assessment_stats,
+        mocker,
+        exp_link_count,
+        mock_is_lead_assessor,
     ):
+        access_controller_mock = mock.MagicMock()
+        access_controller_mock.is_lead_assessor = mock_is_lead_assessor
+        mocker.patch(
+            "app.blueprints.assessments.routes.create_round_summaries",
+            return_value=[
+                RoundSummary(
+                    is_assessment_active_status=True,
+                    is_round_open_status=False,
+                    is_not_yet_open_status=False,
+                    fund_id="111",
+                    round_id="222",
+                    fund_name="test fund",
+                    round_name="test round",
+                    assessments_href="",
+                    access_controller=access_controller_mock,
+                    export_href=(
+                        "/assess/assessor_export/TF/tr/ASSESSOR_EXPORT"
+                    ),
+                    assessment_tracker_href="",
+                    round_application_fields_download_available=False,
+                    sorting_date="",
+                    assessment_stats=Stats(
+                        date="2023-12-12T12:00:00",
+                        total_received=1,
+                        completed=1,
+                        started=1,
+                        qa_complete=1,
+                        stopped=1,
+                    ),
+                    live_round_stats=None,
+                )
+            ],
+        )
         token = create_valid_token(test_lead_assessor_claims)
         flask_test_client.set_cookie("localhost", "fsd_user_token", token)
         response = flask_test_client.get("/assess/assessor_tool_dashboard/")
         assert 200 == response.status_code, "Wrong status code on response"
         soup = BeautifulSoup(response.data, "html.parser")
 
-        export_link = soup.find(
-            "a", href="/assess/assessor_export/TF/tr/ASSESSOR_EXPORT"
+        assert (
+            len(
+                soup.find_all(
+                    "a",
+                    string=lambda text: "Assessment Tracker Export" in text
+                    if text
+                    else False,
+                )
+            )
+            == exp_link_count
         )
-        assert len(export_link) != 0
-
-    @pytest.mark.mock_parameters(
-        {
-            "get_assessment_stats_path": [
-                "app.blueprints.assessments.models.fund_summary.get_assessments_stats",
-            ],
-            "get_rounds_path": [
-                "app.blueprints.assessments.models.fund_summary.get_rounds",
-            ],
-            "fund_id": "test-fund",
-            "round_id": "test-round",
-        }
-    )
-    def test_route_landing_export_link_not_visible_as_assessor(
-        self,
-        flask_test_client,
-        mock_get_funds,
-        mock_get_rounds,
-        mock_get_assessment_stats,
-    ):
-        token = create_valid_token(test_assessor_claims)
-        flask_test_client.set_cookie("localhost", "fsd_user_token", token)
-        response = flask_test_client.get("/assess/assessor_tool_dashboard/")
-        assert 200 == response.status_code, "Wrong status code on response"
-        soup = BeautifulSoup(response.data, "html.parser")
-
-        export_link = soup.find(
-            "a", href="/assess/assessor_export/TF/tr/ASSESSOR_EXPORT"
-        )
-        assert export_link is None
-
-    @pytest.mark.mock_parameters(
-        {
-            "get_assessment_stats_path": [
-                "app.blueprints.assessments.models.fund_summary.get_assessments_stats",
-            ],
-            "get_rounds_path": [
-                "app.blueprints.assessments.models.fund_summary.get_rounds",
-            ],
-            "fund_id": "test-fund",
-            "round_id": "test-round",
-        }
-    )
-    def test_route_landing_export_link_not_visible_as_commentor(
-        self,
-        flask_test_client,
-        mock_get_funds,
-        mock_get_rounds,
-        mock_get_assessment_stats,
-    ):
-        token = create_valid_token(test_commenter_claims)
-        flask_test_client.set_cookie("localhost", "fsd_user_token", token)
-        response = flask_test_client.get("/assess/assessor_tool_dashboard/")
-        assert 200 == response.status_code, "Wrong status code on response"
-        soup = BeautifulSoup(response.data, "html.parser")
-
-        export_link = soup.find(
-            "a", href="/assess/assessor_export/TF/tr/ASSESSOR_EXPORT"
-        )
-        assert export_link is None
 
     @pytest.mark.mock_parameters(
         {
@@ -308,7 +302,6 @@ class TestRoutes:
         mock_get_active_tags_for_fund_round,
         mock_get_tag_types,
     ):
-
         params = request.node.get_closest_marker("mock_parameters").args[0]
         fund_short_name = params["fund_short_name"]
         round_short_name = params["round_short_name"]
@@ -353,7 +346,6 @@ class TestRoutes:
         mock_get_active_tags_for_fund_round,
         mock_get_tag_types,
     ):
-
         params = request.node.get_closest_marker("mock_parameters").args[0]
         fund_short_name = params["fund_short_name"]
         round_short_name = params["round_short_name"]
@@ -398,7 +390,6 @@ class TestRoutes:
         mock_get_active_tags_for_fund_round,
         mock_get_tag_types,
     ):
-
         params = request.node.get_closest_marker("mock_parameters").args[0]
         fund_short_name = params["fund_short_name"]
         round_short_name = params["round_short_name"]
@@ -444,7 +435,6 @@ class TestRoutes:
         mock_get_active_tags_for_fund_round,
         mock_get_tag_types,
     ):
-
         params = request.node.get_closest_marker("mock_parameters").args[0]
         fund_short_name = params["fund_short_name"]
         round_short_name = params["round_short_name"]
@@ -508,7 +498,6 @@ class TestRoutes:
         mock_get_active_tags_for_fund_round,
         mock_get_tag_types,
     ):
-
         flask_test_client.set_cookie(
             "localhost",
             "fsd_user_token",
@@ -639,7 +628,6 @@ class TestRoutes:
         mock_get_application_metadata,
         mock_get_fund,
     ):
-
         # Mocking fsd-user-token cookie
         token = create_valid_token(test_commenter_claims)
         flask_test_client.set_cookie("localhost", "fsd_user_token", token)
@@ -662,7 +650,6 @@ class TestRoutes:
     def test_homepage_route_accessible(
         self, flask_test_client, mock_get_funds
     ):
-
         # Remove fsd-user-token cookie
         flask_test_client.set_cookie("localhost", "fsd_user_token", "")
 
@@ -685,7 +672,6 @@ class TestRoutes:
     def test_healthcheck_route_accessible(
         self, flask_test_client, mock_get_funds
     ):
-
         # Remove fsd-user-token cookie
         flask_test_client.set_cookie("localhost", "fsd_user_token", "")
 
@@ -711,7 +697,6 @@ class TestRoutes:
         mock_get_round,
         mock_get_application_metadata,
     ):
-
         application_id = request.node.get_closest_marker(
             "application_id"
         ).args[0]
@@ -738,7 +723,6 @@ class TestRoutes:
         mock_get_round,
         mock_get_application_metadata,
     ):
-
         marker = request.node.get_closest_marker("application_id")
         application_id = marker.args[0]
         token = create_valid_token(test_lead_assessor_claims)
@@ -764,7 +748,6 @@ class TestRoutes:
         mock_get_associated_tags_for_application,
         mocker,
     ):
-
         marker = request.node.get_closest_marker("application_id")
         application_id = marker.args[0]
         token = create_valid_token(test_lead_assessor_claims)
@@ -799,7 +782,6 @@ class TestRoutes:
         mock_get_associated_tags_for_application,
         mocker,
     ):
-
         marker = request.node.get_closest_marker("application_id")
         application_id = marker.args[0]
         token = create_valid_token(test_lead_assessor_claims)
@@ -1049,7 +1031,6 @@ class TestRoutes:
         mock_get_associated_tags_for_application,
         mocker,
     ):
-
         token = create_valid_token(test_lead_assessor_claims)
         flask_test_client.set_cookie("localhost", "fsd_user_token", token)
         application_id = request.node.get_closest_marker(
@@ -1079,7 +1060,6 @@ class TestRoutes:
         mock_get_associated_tags_for_application,
         mocker,
     ):
-
         token = create_valid_token(test_lead_assessor_claims)
         flask_test_client.set_cookie("localhost", "fsd_user_token", token)
 
@@ -1213,7 +1193,6 @@ class TestRoutes:
         mock_get_associated_tags_for_application,
         mocker,
     ):
-
         marker = request.node.get_closest_marker("application_id")
         application_id = marker.args[0]
 

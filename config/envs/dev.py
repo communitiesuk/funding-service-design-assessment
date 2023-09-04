@@ -12,3 +12,5 @@ class DevConfig(DefaultConfig):
         )
     )
     TOGGLES_URL = REDIS_INSTANCE_URI + "/0"
+
+    FSD_LOG_LEVEL = "DEBUG"

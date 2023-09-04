@@ -402,6 +402,13 @@ def get_applications(params: dict) -> Union[List[Application], None]:
     return None
 
 
+def get_application_stats(fund_ids: List = None, round_ids: List = None):
+    url = Config.APPLICATION_METRICS_ENDPOINT
+    url += f"&fund_id={'&fund_id='.join(fund_ids)}" if fund_ids else None
+    url += f"&round_id={'&round_id='.join(round_ids)}" if round_ids else None
+    return get_data(url)
+
+
 def get_assessments_stats(
     fund_id: str, round_id: str, search_params: dict = {}
 ) -> Dict | None:

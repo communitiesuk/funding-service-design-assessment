@@ -68,3 +68,61 @@ Array.from(tabAnchors).forEach(tabAnchor => {
         }
     });
 })
+
+
+function toggleAccordionOff(accordion, index) {
+    const content = document.getElementById(`accordion-default-content-${index}`);
+    content.style.display = ''; // Set display to empty to hide the content
+    const textSpan = accordion.querySelector('.govuk-accordion__section-toggle-text');
+    textSpan.textContent = 'Show'; // Change the text to 'Show'
+    const chavron = accordion.querySelector('.govuk-accordion-nav__chevron');
+    chavron.classList.add('govuk-accordion-nav__chevron--down'); // Add the class to change the chevron direction
+}
+
+function toggleAccordionOn(accordion, index) {
+    const content = document.getElementById(`accordion-default-content-${index}`);
+    content.style.display = 'block'; // Set display to 'block' to show the content
+    const textSpan = accordion.querySelector('.govuk-accordion__section-toggle-text');
+    textSpan.textContent = 'Hide'; // Change the text to 'Hide'
+    const chavron = accordion.querySelector('.govuk-accordion-nav__chevron');
+    chavron.classList.remove('govuk-accordion-nav__chevron--down'); // Remove the class to change the chevron direction
+}
+
+function toggleAccordion(accordion, index) {
+    const content = document.getElementById(`accordion-default-content-${index}`);
+    if (content.style.display) {
+        toggleAccordionOff(accordion, index);
+    } else {
+        toggleAccordionOn(accordion, index);
+    }
+}
+
+const closedAccordionButtons = Array.from(document.getElementsByClassName('landing-accordion'))
+closedAccordionButtons.forEach((accordion, index) => {
+    accordion.onclick = (_e) => {
+        toggleAccordion(accordion, index + 1);
+    }
+})
+
+const showAllAccordion = document.querySelector('.govuk-accordion__show-all');
+if (showAllAccordion) {
+    showAllAccordion.toggledOn = false;
+    showAllAccordion.onclick = (_e) => {
+        showAllAccordion.toggledOn = !showAllAccordion.toggledOn;
+        const showAllText = showAllAccordion.querySelector('.govuk-accordion__show-all-text');
+        const showAllChavron = showAllAccordion.querySelector('.govuk-accordion-nav__chevron');
+        if (showAllAccordion.toggledOn) {
+            closedAccordionButtons.forEach((accordion, index) => {
+                toggleAccordionOn(accordion, index + 1);
+            })
+            showAllText.textContent = 'Hide all sections';
+            showAllChavron.classList.remove('govuk-accordion-nav__chevron--down');
+        } else {
+            closedAccordionButtons.forEach((accordion, index) => {
+                toggleAccordionOff(accordion, index + 1);
+            })
+            showAllText.textContent = 'Show all sections';
+            showAllChavron.classList.add('govuk-accordion-nav__chevron--down');
+        }
+    }
+}

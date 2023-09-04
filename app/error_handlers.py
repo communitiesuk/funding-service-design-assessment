@@ -1,5 +1,10 @@
 import traceback
 
+from app.blueprints.assessments.routes import assessment_bp
+from app.blueprints.flagging.routes import flagging_bp
+from app.blueprints.scoring.routes import scoring_bp
+from app.blueprints.shared.routes import shared_bp
+from app.blueprints.tagging.routes import tagging_bp
 from flask import current_app
 from flask import render_template
 from flask import request
@@ -17,6 +22,16 @@ def forbidden(error):
     return render_template("403.html"), 403
 
 
+@assessment_bp.errorhandler(500)
+@assessment_bp.errorhandler(Exception)
+@shared_bp.errorhandler(500)
+@shared_bp.errorhandler(Exception)
+@flagging_bp.errorhandler(500)
+@flagging_bp.errorhandler(Exception)
+@tagging_bp.errorhandler(500)
+@tagging_bp.errorhandler(Exception)
+@scoring_bp.errorhandler(500)
+@scoring_bp.errorhandler(Exception)
 def internal_server_error(error):
     error_message = f"Encountered 500: {error}"
     stack_trace = traceback.format_exc()

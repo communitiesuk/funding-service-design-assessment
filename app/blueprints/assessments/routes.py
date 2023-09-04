@@ -1,5 +1,6 @@
 import io
 import zipfile
+from collections import OrderedDict
 from datetime import datetime
 from urllib.parse import quote_plus
 from urllib.parse import unquote_plus
@@ -32,7 +33,7 @@ from app.blueprints.assessments.models.file_factory import (
 )
 from app.blueprints.assessments.models.flag_teams import TeamsFlagData
 from app.blueprints.assessments.models.fund_summary import (
-    create_fund_summaries,
+    create_round_summaries,
 )
 from app.blueprints.assessments.models.fund_summary import is_after_today
 from app.blueprints.assessments.models.location_data import LocationData
@@ -85,6 +86,7 @@ from app.blueprints.services.shared_data_helpers import (
 from app.blueprints.shared.filters import utc_to_bst
 from app.blueprints.shared.helpers import determine_assessment_status
 from app.blueprints.shared.helpers import determine_flag_status
+from app.blueprints.shared.helpers import fund_matches_filters
 from app.blueprints.shared.helpers import get_ttl_hash
 from app.blueprints.shared.helpers import is_flaggable
 from app.blueprints.shared.helpers import match_search_params
@@ -93,6 +95,7 @@ from config import Config
 from config.display_value_mappings import assessment_statuses
 from config.display_value_mappings import asset_types
 from config.display_value_mappings import funding_types
+from config.display_value_mappings import landing_filters
 from config.display_value_mappings import search_params_cof
 from config.display_value_mappings import search_params_nstf
 from flask import abort
@@ -146,18 +149,30 @@ def old_landing():
 
 @assessment_bp.route("/assessor_tool_dashboard/", methods=["GET"])
 def landing():
+    filters = landing_filters._replace(
+        **{
+            k: v
+            for k, v in request.args.items()
+            if k in landing_filters._fields
+        }
+    )  # noqa
     funds = [
         f
         for f in get_funds(get_ttl_hash(seconds=300))
         if has_access_to_fund(f.short_name)
+        and fund_matches_filters(f, filters)
     ]
+    sorted_funds_map = OrderedDict(
+        (fund.id, fund) for fund in sorted(funds, key=lambda f: f.name)
+    )
     return render_template(
         "assessor_tool_dashboard.html",
         fund_summaries={
-            fund.id: create_fund_summaries(fund) for fund in funds
+            fund.id: create_round_summaries(fund, filters) for fund in funds
         },
-        funds={fund.id: fund for fund in funds},
+        funds=sorted_funds_map,
         todays_date=utc_to_bst(datetime.now().strftime("%Y-%m-%dT%H:%M:%S")),
+        landing_filters=filters,
     )
 
 
