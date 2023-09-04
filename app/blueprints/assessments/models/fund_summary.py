@@ -66,6 +66,8 @@ def create_round_summaries(
     fund: Fund, filters: LandingFilters
 ) -> list[RoundSummary]:
     """Get all the round stats in a fund."""
+    access_controller = AssessmentAccessController(fund.short_name)
+
     summaries = []
     live_rounds = []
     round_id_to_summary_map = {}
@@ -93,6 +95,9 @@ def create_round_summaries(
             ]
         ):
             if filters.filter_status not in (ALL_VALUE, "live"):
+                continue
+
+            if not access_controller.has_any_assessor_role:
                 continue
 
             current_app.logger.info(
@@ -161,7 +166,7 @@ def create_round_summaries(
                 fund_short_name=fund.short_name,
                 round_short_name=round.short_name.lower(),
             ),
-            access_controller=AssessmentAccessController(fund.short_name),
+            access_controller=access_controller,
             export_href=url_for(
                 "assessment_bp.assessor_export",
                 fund_short_name=fund.short_name,
