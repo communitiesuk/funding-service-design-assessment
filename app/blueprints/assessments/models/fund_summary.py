@@ -11,7 +11,6 @@ from app.blueprints.services.data_services import get_application_stats
 from app.blueprints.services.data_services import get_assessments_stats
 from app.blueprints.services.data_services import get_rounds
 from app.blueprints.services.models.fund import Fund
-from config import Config
 from config.display_value_mappings import ALL_VALUE
 from config.display_value_mappings import LandingFilters
 from flask import current_app
@@ -72,12 +71,14 @@ def create_round_summaries(
     live_rounds = []
     round_id_to_summary_map = {}
     for round in get_rounds(fund.id):
+        search_params = {}
+        if has_devolved_authority_validation(fund_id=fund.id):
+            countries = get_countries_from_roles(fund.short_name)
+            search_params = {"countries": ",".join(countries)}
+
         if _round_not_yet_open := current_datetime_before_given_iso_string(  # noqa
             round.opens
         ):
-            if filters.filter_status not in (ALL_VALUE, "closed"):
-                continue
-
             current_app.logger.info(
                 f"Round {fund.short_name} - {round.short_name} is not yet open"
                 f" (opens: {round.opens})"
@@ -111,28 +112,26 @@ def create_round_summaries(
             round_open = True
             not_yet_open = False
 
-        elif _round_assessment_active := any(  # noqa
-            [
-                current_datetime_before_given_iso_string(
-                    round.assessment_deadline
-                ),
-                Config.SHOW_ALL_ROUNDS,  # For development or testing purposes
-            ]
-        ):
-            if filters.filter_status not in (ALL_VALUE, "active"):
-                continue
+        else:
+            if current_datetime_before_given_iso_string(  # assessment is active
+                round.assessment_deadline
+            ):
+                if filters.filter_status not in (ALL_VALUE, "active"):
+                    continue
+                current_app.logger.info(
+                    f"Round {fund.short_name} - {round.short_name} is active"
+                    f" in assessment (opens: {round.opens}, closes:"
+                    f" {round.deadline}, asesssment deadline:"
+                    f" {round.assessment_deadline})"
+                )
+                assessment_active = True
+            else:
+                if filters.filter_status not in (ALL_VALUE, "closed"):
+                    continue
+                assessment_active = False
 
-            current_app.logger.info(
-                f"Round {fund.short_name} - {round.short_name} is active in"
-                f" assessment (opens: {round.opens}, closes: {round.deadline},"
-                f" asesssment deadline: {round.assessment_deadline})"
-            )
-
-            search_params = {}
-            if has_devolved_authority_validation(fund_id=fund.id):
-                countries = get_countries_from_roles(fund.short_name)
-                search_params = {"countries": ",".join(countries)}
-
+            round_open = False
+            not_yet_open = False
             round_stats = get_assessments_stats(
                 fund.id, round.id, search_params
             )
@@ -152,12 +151,6 @@ def create_round_summaries(
                 stopped=round_stats["stopped"],
             )
             sorting_date = round.assessment_deadline
-            assessment_active = True
-            round_open = False
-            not_yet_open = False
-
-        else:  # Assessment is closed and SHOW_ALL_ROUNDS is False so don't include this round in results
-            continue
 
         summary = RoundSummary(
             is_assessment_active_status=assessment_active,
