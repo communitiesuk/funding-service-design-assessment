@@ -42,13 +42,13 @@
                     [{'html': '<strong>Application closing date</strong>', 'classes': 'govuk-!-width-one-third'},
                     {'text': live_round_stats.closing_date | datetime_format("%d %B %Y at %H:%M") }],
                     [{'html': '<strong>Applications submitted</strong>'},
-                    {'text': live_round_stats.submitted}],
+                    {'text': live_round_stats.submitted if live_round_stats.submitted is not none else 'Unavailable'}],
                     [{'html': '<strong>Applications in progress</strong>'},
-                    {'text': live_round_stats.in_progress}],
+                    {'text': live_round_stats.in_progress if live_round_stats.in_progress is not none else 'Unavailable'}],
                     [{'html': '<strong>Applications not started</strong>'},
-                    {'text': live_round_stats.not_started}],
+                    {'text': live_round_stats.not_started if live_round_stats.not_started is not none else 'Unavailable'}],
                     [{'html': '<strong>Applications completed but not submitted</strong>'},
-                    {'text': live_round_stats.completed}],
+                    {'text': live_round_stats.completed if live_round_stats.completed is not none else 'Unavailable'}],
                     ],
                 })
             }}

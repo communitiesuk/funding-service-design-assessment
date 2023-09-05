@@ -1,3 +1,4 @@
+import traceback
 from copy import deepcopy
 from functools import lru_cache
 from typing import Dict
@@ -26,26 +27,29 @@ from fsd_utils.locale_selector.get_lang import get_lang
 
 
 def get_data(endpoint: str, payload: Dict = None):
-    if payload:
-        current_app.logger.info(
-            f"Fetching data from '{endpoint}', with payload: {payload}."
-        )
-        response = requests.get(endpoint, payload)
-    else:
-        current_app.logger.info(f"Fetching data from '{endpoint}'.")
-        response = requests.get(endpoint)
-    if response.status_code == 200:
-        return response.json()
-    elif response.status_code == 204:
-        current_app.logger.warn(
-            "Request successful but no resources returned for endpoint"
-            f" '{endpoint}'."
-        )
-    else:
-        current_app.logger.error(
-            f"Could not get data for endpoint '{endpoint}' "
-        )
-    return None
+    try:
+        if payload:
+            current_app.logger.info(
+                f"Fetching data from '{endpoint}', with payload: {payload}."
+            )
+            response = requests.get(endpoint, payload)
+        else:
+            current_app.logger.info(f"Fetching data from '{endpoint}'.")
+            response = requests.get(endpoint)
+        if response.status_code == 200:
+            return response.json()
+        elif response.status_code == 204:
+            current_app.logger.warn(
+                "Request successful but no resources returned for endpoint"
+                f" '{endpoint}'."
+            )
+        else:
+            current_app.logger.error(
+                f"Could not get data for endpoint '{endpoint}' "
+            )
+    except requests.exceptions.RequestException as e:
+        stack_trace = traceback.format_exc()
+        current_app.logger.error(f"{e}\n{stack_trace}")
 
 
 def get_assessment_progress(application_metadata, fund_id, round_id):
