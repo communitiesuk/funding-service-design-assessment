@@ -13,7 +13,7 @@ http:
   path: '/'
   # You can specify a custom health check path. The default is "/".
   healthcheck: '/healthcheck'
-  alias: assessment.test.pre-award.test.access-funding.test.levellingup.gov.uk
+  alias: assessment.test.access-funding.test.levellingup.gov.uk
 
 # Configuration for your containers and service.
 image:
