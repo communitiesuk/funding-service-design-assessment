@@ -140,6 +140,13 @@ def create_round_summaries(
             round_stats = get_assessments_stats(
                 fund.id, round.id, search_params
             )
+
+            if not round_stats:
+                current_app.logger.warn(
+                    "Error retrieving round stats, assessment-store may be"
+                    " down."
+                )
+
             if not round_stats:
                 current_app.logger.warn(
                     "Error retrieving round stats, assessment-store may be"
