@@ -118,34 +118,23 @@ def create_round_summaries(
             ):
                 if filters.filter_status not in (ALL_VALUE, "active"):
                     continue
-
                 current_app.logger.info(
                     f"Round {fund.short_name} - {round.short_name} is active"
                     f" in assessment (opens: {round.opens}, closes:"
                     f" {round.deadline}, asesssment deadline:"
                     f" {round.assessment_deadline})"
                 )
-
                 assessment_active = True
-                round_open = False
-                not_yet_open = False
             else:
                 if filters.filter_status not in (ALL_VALUE, "closed"):
                     continue
-
                 assessment_active = False
-                round_open = False
-                not_yet_open = False
 
+            round_open = False
+            not_yet_open = False
             round_stats = get_assessments_stats(
                 fund.id, round.id, search_params
             )
-
-            if not round_stats:
-                current_app.logger.warn(
-                    "Error retrieving round stats, assessment-store may be"
-                    " down."
-                )
 
             if not round_stats:
                 current_app.logger.warn(
