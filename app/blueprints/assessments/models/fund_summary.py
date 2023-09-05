@@ -37,10 +37,10 @@ class Stats:
 @dataclass
 class LiveRoundStats:
     closing_date: str
-    not_started: int
-    in_progress: int
-    completed: int
-    submitted: int
+    not_started: int | None
+    in_progress: int | None
+    completed: int | None
+    submitted: int | None
 
 
 @dataclass
@@ -136,6 +136,13 @@ def create_round_summaries(
             round_stats = get_assessments_stats(
                 fund.id, round.id, search_params
             )
+
+            if not round_stats:
+                current_app.logger.warn(
+                    "Error retrieving round stats, assessment-store may be"
+                    " down."
+                )
+
             application_stats = Stats(
                 date=round.assessment_deadline,
                 total_received=round_stats["total"],
@@ -190,25 +197,41 @@ def create_round_summaries(
         round_stats = get_application_stats(
             [fund.id], [r.id for r in live_rounds]
         )
-        this_fund_stats = next(
-            f for f in round_stats["metrics"] if f["fund_id"] == fund.id
-        )
-        for this_round_stats in this_fund_stats["rounds"]:
-            current_round_id = this_round_stats["round_id"]
-            if current_round_id not in live_rounds_map:
-                continue
-
-            statuses = this_round_stats["application_statuses"]
-            live_round = live_rounds_map[current_round_id]
-            round_id_to_summary_map[
-                current_round_id
-            ].live_round_stats = LiveRoundStats(
-                closing_date=live_round.deadline,
-                not_started=statuses["NOT_STARTED"],
-                in_progress=statuses["IN_PROGRESS"],
-                completed=statuses["COMPLETED"],
-                submitted=statuses["SUBMITTED"],
+        if not round_stats:
+            current_app.logger.warn(
+                "Error retrieving round stats, application-store may be down."
             )
+            for live_round_id in live_rounds_map:
+                live_round = live_rounds_map[live_round_id]
+                round_id_to_summary_map[
+                    live_round_id
+                ].live_round_stats = LiveRoundStats(
+                    closing_date=live_round.deadline,
+                    not_started=None,
+                    in_progress=None,
+                    completed=None,
+                    submitted=None,
+                )
+        else:
+            this_fund_stats = next(
+                f for f in round_stats["metrics"] if f["fund_id"] == fund.id
+            )
+            for this_round_stats in this_fund_stats["rounds"]:
+                current_round_id = this_round_stats["round_id"]
+                if current_round_id not in live_rounds_map:
+                    continue
+
+                statuses = this_round_stats["application_statuses"]
+                live_round = live_rounds_map[current_round_id]
+                round_id_to_summary_map[
+                    current_round_id
+                ].live_round_stats = LiveRoundStats(
+                    closing_date=live_round.deadline,
+                    not_started=statuses["NOT_STARTED"],
+                    in_progress=statuses["IN_PROGRESS"],
+                    completed=statuses["COMPLETED"],
+                    submitted=statuses["SUBMITTED"],
+                )
 
     return sorted(summaries, key=lambda s: s.sorting_date, reverse=True)
 
