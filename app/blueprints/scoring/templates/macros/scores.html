@@ -1,13 +1,15 @@
 {%- from 'govuk_frontend_jinja/components/radios/macro.html' import govukRadios -%}
 
 {% macro scores(form, score_list) %}
-<p class="govuk-body">Select a score from the list:&nbsp;</p>
+<fieldset class = "govuk-body custom-fieldset">
+<legend class="govuk-body">Select a score from the list:&nbsp;</legend>
 <div class="govuk-form-group {% if form.errors.get('score') %}govuk-form-group--error{% endif %}" name="score-div" id="score-div">
     {% if form.errors.get("score") %}
     <p id="scores-error" class="govuk-error-message">
         <span class="govuk-visually-hidden">Error:</span> Select a score
     </p>
     {% endif %}
+
     <div class="govuk-radios" data-module="govuk-radios">
         {% for score, description in score_list %}
         <div class="govuk-radios__item">
@@ -20,4 +22,5 @@
         {% endfor %}
     </div>
 </div>
+</fieldset>
 {% endmacro %}
