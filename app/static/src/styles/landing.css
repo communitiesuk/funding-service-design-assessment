@@ -286,3 +286,9 @@
   margin: 0px;
   display: inline-block;
 }
+
+.custom-fieldset {
+    border: none !important;
+    padding: inherit !important;
+    margin: inherit !important;
+}

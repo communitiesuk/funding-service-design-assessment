@@ -225,7 +225,7 @@ class TestJinjaMacros(object):
         soup = BeautifulSoup(rendered_html, "html.parser")
 
         assert (
-            soup.find("p", {"class": "govuk-body"}).text.strip()
+            soup.find("legend", {"class": "govuk-body"}).text.strip()
             == "Select a score from the list:"
         ), "Title not found"
 
