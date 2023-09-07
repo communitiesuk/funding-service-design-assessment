@@ -645,7 +645,7 @@ class TestJinjaMacros(object):
             text="Submitted",
         ), "Assessment status not found"
         assert soup.find(
-            "h3", class_="fsd-banner-content", text="Flagged"
+            "p", class_="fsd-banner-content", text="Flagged"
         ), "Flag status not found"
 
     def test_stopped_flag_macro(self, request_ctx):
