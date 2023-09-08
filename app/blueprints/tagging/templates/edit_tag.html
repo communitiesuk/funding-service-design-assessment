@@ -1,6 +1,10 @@
 {% extends "base.html" %}
 {% from "macros/tag_header.html" import tag_header %}
 
+{% set pageHeading -%}
+{{ "Error: " if form.errors }}Edit {{tag.value}} tag
+{% endset %}
+
 {% block header %}
 {{ tag_header("manage tags", url_for("tagging_bp.load_fund_round_tags", fund_id=fund_round["fund_id"], round_id=fund_round["round_id"]), fund_round, sso_logout_url) }}
 {% endblock header %}
@@ -48,7 +52,6 @@
                 <input class="govuk-input govuk-!-width-two-thirds" id="{{form.value.id}}" name="{{form.value.id}}" type="text" value="{{ tag.value }}">
               </div>
 
-
             <div class="govuk-button-group">
                 <button class="govuk-button primary-button" data-module="govuk-button">
                     Save and continue
@@ -63,7 +66,6 @@
         fund_id=fund_round['fund_id'],
         round_id=fund_round['round_id'],
         tag_id=tag.id)}}">Deactivate tag</a>
-
 
     </div>
 </div>

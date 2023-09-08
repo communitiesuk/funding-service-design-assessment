@@ -5,7 +5,11 @@
 {% from "macros/flag_application_button.html" import flag_application_button %}
 {% from "macros/comments.html" import comment %}
 {% from "macros/comments_box.html" import comment_box %}
+
 {% set pageHeading -%}
+{% if comment_form.comment.errors %}
+Error:
+{% endif %}
 {% if current_theme.id == sub_criteria.id %}
 {{ sub_criteria.name }} - {{ sub_criteria.project_name }}
 {% else %}

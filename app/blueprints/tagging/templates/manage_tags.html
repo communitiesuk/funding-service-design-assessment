@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% from "macros/tag_header.html" import tag_header %}
+{% set pageHeading = "Manage tags" %}
 
 {% block header %}
 {{ tag_header("assessment landing", url_for("assessment_bp.landing"), fund_round, sso_logout_url) }}
@@ -8,10 +9,7 @@
 {% block content %}
 
     <div class="govuk-grid-column-two-thirds">
-
-
-                <h1 class="govuk-heading-xl govuk-!-margin-bottom-4">Manage tags</h1>
-
+                <h1 class="govuk-heading-xl govuk-!-margin-bottom-4">{{pageHeading}}</h1>
                 <div id="contact-hint" class="govuk-hint govuk-!-margin-bottom-6">
                     <p>View and edit the existing tags for this assessment round, create new ones, or deactivate and
                         reactivate tags.</p>
