@@ -103,7 +103,9 @@ def get_application_overviews(fund_id, round_id, search_params):
     return overviews_response
 
 
-def get_tags_for_fund_round(fund_id, round_id, search_params) -> List[Tag]:
+def get_tags_for_fund_round(
+    fund_id, round_id, search_params: dict = {}
+) -> List[Tag]:
     endpoint = Config.ASSESSMENT_TAGS_ENDPOINT.format(
         fund_id=fund_id, round_id=round_id, params=urlencode(search_params)
     )

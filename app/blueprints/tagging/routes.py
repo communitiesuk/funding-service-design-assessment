@@ -144,9 +144,7 @@ def create_tag(fund_id, round_id):
     tag_types = get_tag_types()
     new_tag_form.type.choices = [tag_type.id for tag_type in tag_types]
     fund_round = get_fund_round(fund_id, round_id)
-    fund_round_tags = get_tags_for_fund_round(
-        fund_id, round_id, {"tag_status": "True"}
-    ) + get_tags_for_fund_round(fund_id, round_id, {"tag_status": "False"})
+    fund_round_tags = get_tags_for_fund_round(fund_id, round_id)
     if new_tag_form.validate_on_submit():
         current_app.logger.info("Tag creation form validated")
         tag = {
