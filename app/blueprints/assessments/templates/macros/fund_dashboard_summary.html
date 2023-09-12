@@ -52,6 +52,11 @@
                     ],
                 })
             }}
+            {% if assessments_href %}
+                <a class="govuk-link" data-qa="dashboard_summary" href="{{ assessments_href }}">
+                    View all submitted applications
+                </a>
+            {% endif %}
         {% endif %}
         {% if assessment_stats %}
             {{ govukTable({
