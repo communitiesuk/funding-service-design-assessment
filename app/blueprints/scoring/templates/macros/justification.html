@@ -1,6 +1,6 @@
 {%- from 'govuk_frontend_jinja/components/textarea/macro.html' import govukTextarea -%}
 
-{% macro justification(form, state, justification_error) %}
+{% macro justification(form, assessment_criteria_link) %}
 
 <div class="govuk-form-group comments {% if form.errors.get('justification') %}govuk-form-group--error{% endif %}" name="just-text-area" id="just-text-area">
     <h2 class="govuk-label-wrapper">
@@ -8,7 +8,7 @@
     </h2>
     <div id="more-detail-hint" class="govuk-hint">
         Explain why you think this score is justified based on the
-        <a class="govuk-link govuk-link--no-visited-state" href={{ state }}>assessment
+        <a class="govuk-link govuk-link--no-visited-state" href={{ assessment_criteria_link }}>assessment
             criteria</a>.
     </div>
     {% if form.errors.get("justification") %}
