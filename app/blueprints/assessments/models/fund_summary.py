@@ -11,6 +11,7 @@ from app.blueprints.services.data_services import get_application_stats
 from app.blueprints.services.data_services import get_assessments_stats
 from app.blueprints.services.data_services import get_rounds
 from app.blueprints.services.models.fund import Fund
+from config import Config
 from config.display_value_mappings import ALL_VALUE
 from config.display_value_mappings import LandingFilters
 from flask import current_app
@@ -72,6 +73,26 @@ def create_round_summaries(
     round_id_to_summary_map = {}
     for round in get_rounds(fund.id):
         search_params = {}
+        assessments_href = url_for(
+            "assessment_bp.fund_dashboard",
+            fund_short_name=fund.short_name,
+            round_short_name=round.short_name.lower(),
+        )
+        export_href = (
+            url_for(
+                "assessment_bp.assessor_export",
+                fund_short_name=fund.short_name,
+                round_short_name=round.short_name.lower(),
+                report_type="ASSESSOR_EXPORT",
+            ),
+        )
+        assessment_tracker_href = url_for(
+            "assessment_bp.assessor_export",
+            fund_short_name=fund.short_name,
+            round_short_name=round.short_name.lower(),
+            report_type="OUTPUT_TRACKER",
+        )
+
         if has_devolved_authority_validation(fund_id=fund.id):
             countries = get_countries_from_roles(fund.short_name)
             search_params = {"countries": ",".join(countries)}
@@ -111,7 +132,11 @@ def create_round_summaries(
             assessment_active = False
             round_open = True
             not_yet_open = False
-
+            assessments_href = (
+                assessments_href
+                if Config.SHOW_ASSESSMENTS_LIVE_ROUNDS
+                else None
+            )
         else:
             if current_datetime_before_given_iso_string(  # assessment is active
                 round.assessment_deadline
@@ -161,24 +186,10 @@ def create_round_summaries(
             fund_name=fund.name,
             round_name=round.title,
             assessment_stats=application_stats,
-            assessments_href=url_for(
-                "assessment_bp.fund_dashboard",
-                fund_short_name=fund.short_name,
-                round_short_name=round.short_name.lower(),
-            ),
+            assessments_href=assessments_href,
             access_controller=access_controller,
-            export_href=url_for(
-                "assessment_bp.assessor_export",
-                fund_short_name=fund.short_name,
-                round_short_name=round.short_name.lower(),
-                report_type="ASSESSOR_EXPORT",
-            ),
-            assessment_tracker_href=url_for(
-                "assessment_bp.assessor_export",
-                fund_short_name=fund.short_name,
-                round_short_name=round.short_name.lower(),
-                report_type="OUTPUT_TRACKER",
-            ),
+            export_href=export_href,
+            assessment_tracker_href=assessment_tracker_href,
             round_application_fields_download_available=round.application_fields_download_available,
             sorting_date=sorting_date,
         )
