@@ -3,6 +3,10 @@
 {%- from "govuk_frontend_jinja/components/textarea/macro.html" import govukTextarea -%}
 {% from "macros/banner_summary.html" import banner_summary %}
 
+{% set pageHeading -%}
+{{ "Error: " if form.errors }}Continue assessment
+{% endset %}
+
 {% block header %}
 {% include "./components/header.html" %}
 {% endblock header %}
@@ -29,7 +33,7 @@
             <div class="govuk-grid-column-two-thirds flagging-container">
                 <form method="post">
                     {{ form.csrf_token }}
-                    <h1 class="govuk-heading govuk-heading-l">Continue assessment</h1>
+                    <h1 class="govuk-heading govuk-heading-l">{{ 'Continue assessment' if form.errors else pageHeading }}</h1>
 
                     <p class="govuk-body">This will remove the flag and allow assessment to continue.</p>
 

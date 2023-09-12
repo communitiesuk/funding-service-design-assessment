@@ -42,7 +42,9 @@ class DefaultConfig:
     DASHBOARD_ROUTE = "/assess/assessor_tool_dashboard"
 
     # Assessement settings
-    SHOW_ALL_ROUNDS = strtobool(getenv("SHOW_ALL_ROUNDS", "False"))
+    SHOW_ASSESSMENTS_LIVE_ROUNDS = strtobool(
+        getenv("SHOW_ASSESSMENTS_LIVE_ROUNDS", "False")
+    )  # Set to True to show assessments on live rounds
 
     """
     Security

@@ -10,10 +10,10 @@
                     <p class="govuk-body-l fsd-banner-content ">Total funding requested: £{{ "{:,.2f}".format(funding_amount_requested | float) }}</p>
 
                     {% if g.access_controller.has_any_assessor_role %}
-                    <strong class="govuk-tag govuk-tag--grey govuk-!-margin-top-4">{{assessment_status}}</strong>
-                    {% endif %}
-                    {% if g.access_controller.has_any_assessor_role and (("Flagged" in  flag_status) or (flag_status in ["Multiple flags to resolve", "Stopped", "Flagged"])) %}
-                        <h3 class="govuk-body-l fsd-banner-content fsd-banner-collapse-padding govuk-!-margin-top-3">{{ flag_status or "" }}</h3>
+                        <p><strong class="govuk-tag govuk-tag--grey govuk-!-margin-top-4">{{ assessment_status }}</strong>
+                        {% if "Flagged" in flag_status or flag_status in ["Multiple flags to resolve", "Stopped", "Flagged"] %}
+                            <p class="govuk-body-l fsd-banner-content fsd-banner-collapse-padding govuk-!-margin-top-3">{{ flag_status or "" }}</p>
+                        {% endif %}
                     {% endif %}
                 </div>
             </div>

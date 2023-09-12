@@ -36,7 +36,8 @@ class TestRoutes:
         assert 200 == response.status_code, "Wrong status code on response"
         soup = BeautifulSoup(response.data, "html.parser")
         assert (
-            soup.title.string == "Assessment tool dashboard - Assessment Hub"
+            soup.title.string
+            == "Assessment tool dashboard - Assessment Hub - GOV.UK"
         ), "Response does not contain expected heading"
         all_table_data_elements = str(
             soup.find_all("td", class_="govuk-table__cell")
@@ -246,7 +247,7 @@ class TestRoutes:
         assert 200 == response.status_code, "Wrong status code on response"
         soup = BeautifulSoup(response.data, "html.parser")
         assert (
-            soup.title.string == "Team dashboard - Assessment Hub"
+            soup.title.string == "Team dashboard - Assessment Hub - GOV.UK"
         ), "Response does not contain expected heading"
 
         all_table_headings = str(
@@ -315,7 +316,7 @@ class TestRoutes:
         assert 200 == response.status_code, "Wrong status code on response"
         soup = BeautifulSoup(response.data, "html.parser")
         assert (
-            soup.title.string == "Team dashboard - Assessment Hub"
+            soup.title.string == "Team dashboard - Assessment Hub - GOV.UK"
         ), "Response does not contain expected heading"
 
     @pytest.mark.mock_parameters(
@@ -359,7 +360,7 @@ class TestRoutes:
         assert 200 == response.status_code, "Wrong status code on response"
         soup = BeautifulSoup(response.data, "html.parser")
         assert (
-            soup.title.string == "Team dashboard - Assessment Hub"
+            soup.title.string == "Team dashboard - Assessment Hub - GOV.UK"
         ), "Response does not contain expected heading"
 
     @pytest.mark.mock_parameters(
@@ -404,7 +405,7 @@ class TestRoutes:
         soup = BeautifulSoup(response.data, "html.parser")
         soup = BeautifulSoup(response.data, "html.parser")
         assert (
-            soup.title.string == "Team dashboard - Assessment Hub"
+            soup.title.string == "Team dashboard - Assessment Hub - GOV.UK"
         ), "Response does not contain expected heading"
 
     @pytest.mark.mock_parameters(
@@ -453,7 +454,7 @@ class TestRoutes:
         assert 200 == response.status_code, "Wrong status code on response"
         soup = BeautifulSoup(response.data, "html.parser")
         assert (
-            soup.title.string == "Team dashboard - Assessment Hub"
+            soup.title.string == "Team dashboard - Assessment Hub - GOV.UK"
         ), "Response does not contain expected heading"
 
     @pytest.mark.mock_parameters(
@@ -614,7 +615,7 @@ class TestRoutes:
         assert (
             soup.title.string
             == "Score - test_sub_criteria - Project In prog and Res -"
-            " Assessment Hub"
+            " Assessment Hub - GOV.UK"
         )
         assert b"Current score: 3" in response.data
         assert b"Rescore" in response.data
@@ -861,7 +862,7 @@ class TestRoutes:
         assert b"Stop assessment" in response.data
         assert b"Reason" in response.data
         soup = BeautifulSoup(response.data, "html.parser")
-        assert soup.title.string == "Resolve flag - Assessment Hub"
+        assert soup.title.string == "Resolve flag - Assessment Hub - GOV.UK"
 
     @pytest.mark.mock_parameters(
         {
@@ -1136,7 +1137,7 @@ class TestRoutes:
         assert 200 == response.status_code, "Wrong status code on response"
         soup = BeautifulSoup(response.data, "html.parser")
         assert (
-            soup.title.string == "Team dashboard - Assessment Hub"
+            soup.title.string == "Team dashboard - Assessment Hub - GOV.UK"
         ), "Response does not contain expected heading"
 
     @pytest.mark.application_id("resolved_app")
@@ -1175,7 +1176,7 @@ class TestRoutes:
             soup.title.string
             == "test_theme_name - test_sub_criteria - Project In prog and"
             " Res -"
-            " Assessment Hub"
+            " Assessment Hub - GOV.UK"
         )
 
     @pytest.mark.application_id("resolved_app")

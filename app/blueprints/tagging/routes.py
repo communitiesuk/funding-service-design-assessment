@@ -144,6 +144,7 @@ def create_tag(fund_id, round_id):
     tag_types = get_tag_types()
     new_tag_form.type.choices = [tag_type.id for tag_type in tag_types]
     fund_round = get_fund_round(fund_id, round_id)
+    fund_round_tags = get_tags_for_fund_round(fund_id, round_id)
     if new_tag_form.validate_on_submit():
         current_app.logger.info("Tag creation form validated")
         tag = {
@@ -151,6 +152,20 @@ def create_tag(fund_id, round_id):
             "tag_type_id": new_tag_form.type.data,
             "creator_user_id": g.account_id,
         }
+        # check if tag already exits for fund-round
+        for tag_item in fund_round_tags:
+            if (
+                tag["value"] == tag_item.value
+                and tag["tag_type_id"] == tag_item.type_id
+            ):
+                flash(FLAG_ERROR_MESSAGE)
+                return redirect(
+                    url_for(
+                        "tagging_bp.create_tag",
+                        fund_id=fund_id,
+                        round_id=round_id,
+                    )
+                )
 
         tag_created = post_new_tag_for_fund_round(fund_id, round_id, tag)
         if not tag_created:
