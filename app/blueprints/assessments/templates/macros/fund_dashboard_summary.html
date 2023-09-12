@@ -1,5 +1,22 @@
 {%- from "govuk_frontend_jinja/components/table/macro.html" import govukTable -%}
 
+{% macro round_links(access_controller, export_href, assessment_tracker_href) %}
+    {% if access_controller.is_lead_assessor %}
+        {% if access_controller.round_application_fields_download_available %}
+            </br>
+            </br>
+            <a class="govuk-link" href="{{ export_href }}">
+                Export applicant information
+            </a>
+        {% endif %}
+        </br>
+        </br>
+        <a class="govuk-link" href="{{ assessment_tracker_href }}">
+            Assessment Tracker Export
+        </a>
+    {% endif %}
+{% endmacro %}
+
 {% macro fund_summary(name, is_assessment_active_status, is_round_open_status, is_not_yet_open_status, fund_id, round_id, fund_name, round_name, assessment_stats, live_round_stats, assessments_href, access_controller, export_href, assessment_tracker_href, round_application_fields_download_available, sorting_date) %}
 <div class="govuk-!-padding-0 govuk-!-padding-right-2 govuk-!-padding-bottom-3 govuk-!-margin-bottom-6 govuk-grid-column-one-third content-container">
 
@@ -57,6 +74,8 @@
                     View all submitted applications
                 </a>
             {% endif %}
+            {{ round_links(access_controller, export_href, assessment_tracker_href) }}
+
         {% endif %}
         {% if assessment_stats %}
             {{ govukTable({
@@ -82,20 +101,8 @@
                 View all {% if is_assessment_active_status %}active{% else %}
                 closed{% endif %} assessments
             </a>
-            {% if round_application_fields_download_available and access_controller.is_lead_assessor %}
-            </br>
-            </br>
-            <a class="govuk-link" href="{{ export_href }}">
-                Export applicant information
-            </a>
-            {% endif %}
-            {% if access_controller.is_lead_assessor %}
-            </br>
-            </br>
-            <a class="govuk-link" href="{{ assessment_tracker_href }}">
-                Assessment Tracker Export
-            </a>
-            {% endif %}
+            {{ round_links(access_controller, export_href, assessment_tracker_href) }}
+
         {% endif %}
     </div>
 </div>
