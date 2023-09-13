@@ -226,7 +226,7 @@ class TestJinjaMacros(object):
 
         assert (
             soup.find("legend", {"class": "govuk-body"}).text.strip()
-            == "Select a score from the list:"
+            == "You can rescore at any point."
         ), "Title not found"
 
         radios = soup.find_all("div", {"class": "govuk-radios__item"})
