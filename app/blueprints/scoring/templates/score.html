@@ -9,7 +9,7 @@
 {% if score_form.errors.get('score') or score_form.errors.get('justification') %}
 Error:
 {% endif %}
-Score - {{ sub_criteria.name }} - {{ sub_criteria.project_name }}
+Score – {{ sub_criteria.name }} – {{ sub_criteria.project_name }}
 {% endset %}
 
 {% block header %}
@@ -56,7 +56,7 @@ Score - {{ sub_criteria.name }} - {{ sub_criteria.project_name }}
         </div>
         <div class="theme govuk-grid-column-two-thirds">
             {{ scores_justification(score_form, rescore_form, is_rescore, score_list, latest_score, application_id,
-            sub_criteria.id, scoring_list, state) }}
+            sub_criteria.id, scoring_list, state.fund_guidance_url) }}
             {{ comment_summary(comments,sub_criteria.themes) }}
         </div>
 
