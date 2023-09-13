@@ -209,9 +209,9 @@ class TestAuthorisation:
         soup = BeautifulSoup(response.data, "html.parser")
         assert (
             soup.title.string
-            == "test_theme_name - test_sub_criteria - Project In prog and"
-            " Res -"
-            " Assessment Hub - GOV.UK"
+            == "test_theme_name – test_sub_criteria – Project In prog and"
+            " Res –"
+            " Assessment Hub – GOV.UK"
         )
         if ability_to_score:
             assert (

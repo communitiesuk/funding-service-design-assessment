@@ -2,7 +2,7 @@
 
 {% macro scores(form, score_list) %}
 <fieldset class = "govuk-body custom-fieldset">
-<legend class="govuk-body">Select a score from the list:&nbsp;</legend>
+<legend class="govuk-body">You can rescore at any point.&nbsp;</legend>
 <div class="govuk-form-group {% if form.errors.get('score') %}govuk-form-group--error{% endif %}" name="score-div" id="score-div">
     {% if form.errors.get("score") %}
     <p id="scores-error" class="govuk-error-message">

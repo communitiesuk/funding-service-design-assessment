@@ -59,19 +59,18 @@
     {% if is_rescore or not latest_score %}
     <form id="score_form" method="post">
         {{ score_form.csrf_token }}
-        <div class="govuk-form-group govuk-!-margin-top-4">
+        <div class="govuk-form-group">
             {% if latest_score %}
             <h2 class="govuk-heading-m">Rescore</h2>
             {% else %}
             <h2 class="govuk-heading-m">Score</h2>
             {% endif %}
-            <p class="govuk-body">Based on the <a class="govuk-link govuk-link--no-visited-state"
-                    href="#comments">comments</a>, score this sub criteria against
-                the&nbsp;<a class="govuk-link govuk-link--no-visited-state" href={{ state.fund_guidance_url }}>assessment
+            <p class="govuk-body">Score this sub criteria against the&nbsp;
+                <a class="govuk-link govuk-link--no-visited-state" href={{ state.fund_guidance_url }}>assessment
                     criteria</a>.</p>
-            <p class="govuk-body">You can rescore at any point.</p>
+            <p class="govuk-body">You can use the comments about this subcriteria from other assessors to inform your score.</p>
             {{ scores(score_form, scoring_list) }}
-            {{ justification(score_form) }}
+            {{ justification(score_form, state.fund_guidance_url) }}
         </div>
         {% if latest_score %}
             {{ govukButton({'text': 'Save a new score', 'type':'submit', 'classes': 'primary-button'}) }}

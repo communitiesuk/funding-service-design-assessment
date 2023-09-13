@@ -1,7 +1,8 @@
 {% macro comment_summary(comments, themes) %}
 
 <div class="govuk-grid-column-full govuk-!-margin-top-7" id="comments">
-    <h2 class="govuk-heading-l">Comments</h2>
+    <h2 class="govuk-heading-l">Comments about this subcriteria</h2>
+    <p class="govuk-body">Read comments from others who reviewed this section</p>
 
     {% for theme in themes %}
        <h3 class="govuk-heading-m">{{ theme.name }}</h3>

@@ -1,14 +1,15 @@
 {%- from 'govuk_frontend_jinja/components/textarea/macro.html' import govukTextarea -%}
 
-{% macro justification(form, justification_error) %}
+{% macro justification(form, assessment_criteria_link) %}
 
 <div class="govuk-form-group comments {% if form.errors.get('justification') %}govuk-form-group--error{% endif %}" name="just-text-area" id="just-text-area">
     <h2 class="govuk-label-wrapper">
         <label for="justification" class="govuk-label govuk-label--m">Add rationale for this score</label>
     </h2>
     <div id="more-detail-hint" class="govuk-hint">
-        Explain why you think this score is justified based on the assessment
-        criteria
+        Explain why you think this score is justified based on the
+        <a class="govuk-link govuk-link--no-visited-state" href={{ assessment_criteria_link }}>assessment
+            criteria</a>.
     </div>
     {% if form.errors.get("justification") %}
     <p id="justification-error" class="govuk-error-message">
