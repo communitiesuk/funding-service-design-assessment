@@ -33,6 +33,7 @@ from app.blueprints.assessments.models.applicants_response import (
     QuestionHeading,
 )
 from app.blueprints.authentication.validation import AssessmentAccessController
+from app.blueprints.scoring.forms.rescore_form import RescoreForm
 from app.blueprints.scoring.forms.scores_and_justifications import ScoreForm
 from app.blueprints.services.models.assessor_task_list import _Criteria
 from app.blueprints.services.models.assessor_task_list import (
@@ -910,4 +911,32 @@ class TestJinjaMacros(object):
         assert (
             soup.find("h2", class_="assessment-alert__heading").string
             == "All sections assessed"
+        )
+
+    @pytest.mark.parametrize(
+        "sub_criteria, expected_heading, has_forms",
+        [
+            ({"name": "Engagement"}, "Score engagement", True),
+            ({"name": "Engagement"}, "Engagement", False),
+            # Add more test cases as needed
+        ],
+    )
+    def test_sub_criteria_heading(
+        self, request_ctx, sub_criteria, expected_heading, has_forms
+    ):
+        rendered_html = render_template_string(
+            "{{sub_criteria_heading(sub_criteria, score_form, rescore_form)}}",
+            sub_criteria_heading=get_template_attribute(
+                "macros/sub_criteria_heading.html", "sub_criteria_heading"
+            ),
+            score_form=ScoreForm() if has_forms else None,
+            rescore_form=RescoreForm() if has_forms else None,
+            sub_criteria=sub_criteria,
+        )
+
+        soup = BeautifulSoup(rendered_html, "html.parser")
+
+        assert (
+            soup.find("h2", class_="govuk-heading-l scoring-heading").string
+            == expected_heading
         )
