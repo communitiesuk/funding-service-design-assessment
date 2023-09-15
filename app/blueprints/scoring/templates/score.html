@@ -5,6 +5,7 @@
 {% from "macros/banner_summary.html" import banner_summary %}
 {% from "macros/flag_application_button.html" import flag_application_button %}
 {% from "macros/comments_summary.html" import comment_summary %}
+{% from "macros/sub_criteria_heading.html" import sub_criteria_heading %}
 {% set pageHeading -%}
 {% if score_form.errors.get('score') or score_form.errors.get('justification') %}
 Error:
@@ -43,14 +44,9 @@ Score – {{ sub_criteria.name }} – {{ sub_criteria.project_name }}
 {{ flag_application_button(application_id) }}
 {% endif %}
 
-<div class="govuk-grid-row">
-    <div class="govuk-grid-column-one-third">
-        <h2 class="govuk-heading-l scoring-heading">{{ sub_criteria.name }}</h2>
-    </div>
-</div>
+{{ sub_criteria_heading(sub_criteria, score_form, rescore_form)}}
 
 <div class="govuk-grid-row">
-
         <div class="govuk-grid-column-one-third">
             {{ navbar(application_id, sub_criteria, current_theme_id, is_score_page=True) }}
         </div>
@@ -59,6 +55,5 @@ Score – {{ sub_criteria.name }} – {{ sub_criteria.project_name }}
             sub_criteria.id, scoring_list, state.fund_guidance_url) }}
             {{ comment_summary(comments,sub_criteria.themes) }}
         </div>
-
 </div>
 {% endblock content %}
