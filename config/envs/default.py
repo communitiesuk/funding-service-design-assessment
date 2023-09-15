@@ -248,7 +248,9 @@ class DefaultConfig:
             environ.get("VCAP_SERVICES")
         )
 
-        if VCAP_SERVICES.does_service_exist(service_key="aws-s3-bucket"):
+        if VCAP_SERVICES.does_service_exist(
+            service_key="aws-s3-bucket"  # pragma: allowlist secret
+        ):
             s3_credentials = VCAP_SERVICES.services.get("aws-s3-bucket")[
                 0
             ].get("credentials")
