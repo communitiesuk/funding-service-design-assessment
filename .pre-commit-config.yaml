@@ -27,5 +27,5 @@ repos:
     rev: v1.4.0
     hooks:
     -   id: detect-secrets
-        args: ['--disable-plugin', 'Base64HighEntropyString']
+        args: ['--disable-plugin', 'HexHighEntropyString']
         exclude: tests/keys/rsa256
