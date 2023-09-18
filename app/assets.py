@@ -1,6 +1,14 @@
 """Compile static assets."""
+import time
+
 from flask_assets import Bundle
 from webassets.exceptions import BuildError
+
+
+# we use the current time to cache-bust
+# so users don't need to clear their cache manually on js/css changes
+def asset_version():
+    return int(time.time())
 
 
 def compile_static_assets(assets, flask_app):
@@ -32,6 +40,7 @@ def compile_static_assets(assets, flask_app):
         filters="pyscss,cssmin",
         output="css/main.min.css",
         extra={"rel": "stylesheet/css"},
+        version=asset_version(),
     )
 
     default_js_bundle = Bundle(
@@ -41,6 +50,7 @@ def compile_static_assets(assets, flask_app):
         "../src/js/components/*/*.js",
         filters="jsmin",
         output="js/main.min.js",
+        version=asset_version(),
     )
 
     assets.register("default_styles", default_style_bundle)
