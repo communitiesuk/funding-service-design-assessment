@@ -179,6 +179,7 @@ def landing():
             for rsl in round_summaries.values()
             for rs in rsl
         ),
+        show_assessments_live_rounds=Config.SHOW_ASSESSMENTS_LIVE_ROUNDS,
     )
 
 
