@@ -227,7 +227,8 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
 
     # note, we are not sending search parameters here as we don't want to filter
     # the stats at all.  see https://dluhcdigital.atlassian.net/browse/FS-3249
-    stats = process_assessments_stats(application_overviews)
+    stats = process_assessments_stats(applications_metadata)
+
     teams_flag_stats = get_team_flag_stats(application_overviews)
 
     # this is only used for querying applications, so remove it from the search params,
