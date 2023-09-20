@@ -66,3 +66,4 @@ class DevelopmentConfig(DefaultConfig):
     AWS_REGION = "eu-west-2"
 
     FEATURE_CONFIG = {"TAGGING": True}
+    ASSETS_AUTO_BUILD = True

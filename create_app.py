@@ -2,6 +2,7 @@ import os
 import re
 from gettext import ngettext
 
+from app import static_assets
 from app.blueprints.assessments.routes import assessment_bp
 from app.blueprints.authentication.auth import auth_protect
 from app.blueprints.flagging.routes import flagging_bp
@@ -19,8 +20,6 @@ from app.blueprints.tagging.routes import tagging_bp
 from app.error_handlers import forbidden
 from app.error_handlers import internal_server_error
 from app.error_handlers import not_found
-from app.static_assets import get_css
-from app.static_assets import get_js
 from config import Config
 from flask import Flask
 from flask import g
@@ -132,9 +131,7 @@ def create_app() -> Flask:
         # Bundle and compile assets
         assets = Environment()
         assets.init_app(flask_app)
-        assets.auto_build = False
-        assets.register("default_styles", get_css())
-        assets.register("main_js", get_js())
+        static_assets.init(flask_app, auto_build=False)
 
         health = Healthcheck(flask_app)
         health.add_check(FlaskRunningChecker())

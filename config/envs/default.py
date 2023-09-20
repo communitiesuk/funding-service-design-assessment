@@ -263,3 +263,4 @@ class DefaultConfig:
     REDIS_INSTANCE_URI = getenv("REDIS_INSTANCE_URI", "redis://localhost:6379")
     TOGGLES_URL = REDIS_INSTANCE_URI + "/0"
     FEATURE_CONFIG = {"TAGGING": True}
+    ASSETS_AUTO_BUILD = False
