@@ -8,6 +8,7 @@ from app.blueprints.services.models.flag import Flag
 from app.blueprints.services.models.fund import Fund
 from app.blueprints.shared.helpers import determine_display_status
 from app.blueprints.shared.helpers import is_flaggable
+from app.blueprints.shared.helpers import process_assessments_stats
 
 RAISED_FLAG = [
     Flag.from_dict(
@@ -231,3 +232,30 @@ def test_generate_maps_from_form_names_nested_case():
     )
     assert title_map == expected_title
     assert path_map == expected_path
+
+
+@pytest.mark.parametrize(
+    "input_data, expected_response",
+    [
+        (
+            [
+                {
+                    "workflow_status": "NOT_STARTED",
+                    "flags": [],
+                    "is_qa_complete": False,
+                },
+                {
+                    "workflow_status": "NOT_STARTED",
+                    "flags": [],
+                    "is_qa_complete": True,
+                },
+            ],
+            {"total": 2, "qa_completed": 1},
+        )
+    ],
+)
+def test_process_assessment_stats(input_data, expected_response):
+    stats = process_assessments_stats(input_data)
+
+    assert stats["total"] == expected_response["total"]
+    assert stats["qa_completed"] == expected_response["qa_completed"]
