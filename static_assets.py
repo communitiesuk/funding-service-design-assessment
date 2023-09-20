@@ -40,7 +40,7 @@ def init_assets(app=None, auto_build=False, static_folder="app/static/dist"):
         return bundles
 
 
-def build_bundles(static_folder):
+def build_bundles(static_folder="app/static/dist"):
     bundles = init_assets(static_folder=static_folder)
     for bundle in bundles:
         bundle.build()
