@@ -1,15 +1,14 @@
 from os import path
 
-import config
 from flask import Flask
 from flask_assets import Bundle
 from flask_assets import Environment
 
 
-def init(app=None, auto_build=False):
+def init_assets(app=None, auto_build=False, static_folder="app/static/dist"):
     app = app or Flask(__name__)
-    app.static_folder = config.Config.STATIC_FOLDER
-    app.static_url_path = config.Config.STATIC_URL_PATH
+    app.static_folder = static_folder  # config.Config.STATIC_FOLDER
+    # app.static_url_path = config.Config.STATIC_URL_PATH
     with app.app_context():
         env = Environment(app)
         env.load_path = [path.join(path.dirname(__file__), "app/static/src")]
@@ -41,7 +40,11 @@ def init(app=None, auto_build=False):
         return bundles
 
 
-if __name__ == "__main__":
-    bundles = init()
+def build_bundles(static_folder):
+    bundles = init_assets(static_folder=static_folder)
     for bundle in bundles:
         bundle.build()
+
+
+if __name__ == "__main__":
+    build_bundles()

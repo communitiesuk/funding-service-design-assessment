@@ -4,10 +4,11 @@ import shutil
 import urllib.request
 import zipfile
 
+import static_assets
 
-def build_govuk_assets():
 
-    DIST_ROOT = "./app/static/dist"
+def build_govuk_assets(static_dist_root="app/static/dist"):
+    DIST_ROOT = "./" + static_dist_root
     GOVUK_DIR = "/govuk-frontend"
     GOVUK_URL = (
         "https://github.com/alphagov/govuk-frontend/"
@@ -61,7 +62,6 @@ def build_govuk_assets():
     cwd = os.getcwd()
     os.chdir(DIST_PATH)
     for css_file in glob.glob("*.css"):
-
         # Read in the file
         with open(css_file, "r") as file:
             filedata = file.read()
@@ -95,6 +95,14 @@ def build_govuk_assets():
     os.remove(ZIP_FILE)
 
 
-if __name__ == "__main__":
+def build_all(static_dist_root="app/static/dist", remove_existing=False):
+    if remove_existing:
+        relative_dist_root = "./" + static_dist_root
+        if os.path.exists(relative_dist_root):
+            shutil.rmtree(relative_dist_root)
+    build_govuk_assets(static_dist_root=static_dist_root)
+    static_assets.build_bundles(static_folder=static_dist_root)
 
-    build_govuk_assets()
+
+if __name__ == "__main__":
+    build_all(remove_existing=True)

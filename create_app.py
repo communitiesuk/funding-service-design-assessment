@@ -131,7 +131,11 @@ def create_app() -> Flask:
         # Bundle and compile assets
         assets = Environment()
         assets.init_app(flask_app)
-        static_assets.init(flask_app, auto_build=Config.ASSETS_AUTO_BUILD)
+        static_assets.init_assets(
+            flask_app,
+            auto_build=Config.ASSETS_AUTO_BUILD,
+            static_folder=Config.STATIC_FOLDER,
+        )
 
         health = Healthcheck(flask_app)
         health.add_check(FlaskRunningChecker())
