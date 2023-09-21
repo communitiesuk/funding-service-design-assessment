@@ -105,7 +105,7 @@ class DefaultConfig:
     )
     APPLICATION_FEEDBACK_SURVEY_ENDPOINT = (
         APPLICATION_STORE_API_HOST
-        + "/all_feedbacks_and_survey?fund_id={fund_id}&round_id={roundid}&status_only={status_only}"
+        + "/applications/all_feedbacks_and_survey?fund_id={fund_id}&round_id={round_id}&status_only={status_only}"
     )
 
     # Assessment store endpoints

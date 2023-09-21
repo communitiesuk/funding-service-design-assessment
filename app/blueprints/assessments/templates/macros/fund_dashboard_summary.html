@@ -1,12 +1,17 @@
 {%- from "govuk_frontend_jinja/components/table/macro.html" import govukTable -%}
 
-{% macro round_links(access_controller, export_href, assessment_tracker_href) %}
+{% macro round_links(access_controller, download_available, export_href, feedback_export_href, assessment_tracker_href) %}
     {% if access_controller.is_lead_assessor %}
-        {% if access_controller.round_application_fields_download_available %}
+        {% if download_available %}
             </br>
             </br>
             <a class="govuk-link" href="{{ export_href }}">
                 Export applicant information
+            </a>
+            </br>
+            </br>
+            <a class="govuk-link" href="{{ feedback_export_href }}">
+                Export applicants feedback information
             </a>
         {% endif %}
         </br>
@@ -69,13 +74,11 @@
                     ],
                 })
             }}
-            {% if summary.assessments_href %}
+            {% if show_assessments_live_rounds %}
                 <a class="govuk-link" data-qa="dashboard_summary" href="{{ summary.assessments_href }}">
                     View all submitted applications
                 </a>
-            {% endif %}
-            {% if show_assessments_live_rounds %}
-            {{ round_links(summary.access_controller, summary.export_href, summary.assessment_tracker_href) }}
+                {{ round_links(summary.access_controller, summary.round_application_fields_download_available, summary.export_href, summary.feedback_export_href, summary.assessment_tracker_href) }}
             {% endif %}
 
         {% endif %}
@@ -103,7 +106,7 @@
                 View all {% if is_assessment_active_status %}active{% else %}
                 closed{% endif %} assessments
             </a>
-            {{ round_links(summary.access_controller, summary.export_href, summary.assessment_tracker_href) }}
+            {{ round_links(summary.access_controller, summary.round_application_fields_download_available, summary.export_href, summary.feedback_export_href, summary.assessment_tracker_href) }}
 
         {% endif %}
     </div>

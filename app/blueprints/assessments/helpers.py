@@ -1,5 +1,6 @@
 import csv
 from collections import OrderedDict
+from io import BytesIO
 from io import StringIO
 from typing import Dict
 from typing import List
@@ -190,7 +191,7 @@ def generate_assessment_info_csv(data: dict):
 
 
 def generate_assessment_info_excel(data: dict):
-    output = StringIO()
+    output = BytesIO()
 
     if not data:
         return output.getvalue()

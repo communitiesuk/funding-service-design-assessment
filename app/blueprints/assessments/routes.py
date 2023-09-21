@@ -1,4 +1,5 @@
 import io
+import time
 import zipfile
 from collections import OrderedDict
 from datetime import datetime
@@ -645,13 +646,11 @@ def assessor_export(
 
 
 @assessment_bp.route(
-    "/feedback_export/<fund_short_name>/<round_short_name>/",
+    "/feedback_export/<fund_short_name>/<round_short_name>",
     methods=["GET"],
 )
 @check_access_fund_short_name(roles_required=["LEAD_ASSESSOR"])
-def feedback_export(
-    fund_short_name: str, round_short_name: str, report_type: str
-):
+def feedback_export(fund_short_name: str, round_short_name: str):
     _round = get_round(fund_short_name, round_short_name, use_short_name=True)
     fund_id = _round.fund_id
     round_id = _round.id
@@ -659,10 +658,12 @@ def feedback_export(
 
     export = get_applicant_feedback_and_survey(fund_id, round_id, status_only)
     en_export_data = generate_assessment_info_excel(export)
-    short_name = fund_short_name + round_short_name
+    short_name = (fund_short_name + "_" + round_short_name).lower()
 
     return download_file(
-        en_export_data, "application/zip", f"FSD_Feedback_{short_name}.xlsx"
+        en_export_data,
+        "application/vnd.ms-excel",
+        f"fsd_feedback_{short_name}_{str(int(time.time())) }.xlsx",
     )
 
 
