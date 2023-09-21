@@ -791,14 +791,19 @@ def get_applicant_export(fund_id, round_id, report_type):
     return applicant_export_response
 
 
-def get_applicant_feedback_and_survey(fund_id, round_id, status_only):
-    applicant_export_endpoint = (
-        Config.APPLICATION_FEEDBACK_SURVEY_ENDPOINT.format(
+def get_applicant_feedback_and_survey_report(fund_id, round_id, status_only):
+    applicant_feedback_endpoint = (
+        Config.APPLICATION_FEEDBACK_SURVEY_REPORT_ENDPOINT.format(
             fund_id=fund_id, round_id=round_id, status_only=status_only
         )
     )
 
-    current_app.logger.info(f"Endpoint '{applicant_export_endpoint}'.")
-    response = get_data(applicant_export_endpoint)
+    current_app.logger.info(f"Endpoint '{applicant_feedback_endpoint}'.")
+    response = requests.get(applicant_feedback_endpoint)
 
-    return response
+    if response.status_code == 200:
+        return response
+    else:
+        current_app.logger.error(
+            f"Could not get data for endpoint '{current_app}' "
+        )

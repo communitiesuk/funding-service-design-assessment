@@ -15,7 +15,6 @@ from app.blueprints.assessments.forms.mark_qa_complete_form import (
 )
 from app.blueprints.assessments.helpers import download_file
 from app.blueprints.assessments.helpers import generate_assessment_info_csv
-from app.blueprints.assessments.helpers import generate_assessment_info_excel
 from app.blueprints.assessments.helpers import generate_maps_from_form_names
 from app.blueprints.assessments.helpers import (
     get_files_for_application_upload_fields,
@@ -59,7 +58,7 @@ from app.blueprints.services.data_services import (
 )
 from app.blueprints.services.data_services import get_applicant_export
 from app.blueprints.services.data_services import (
-    get_applicant_feedback_and_survey,
+    get_applicant_feedback_and_survey_report,
 )
 from app.blueprints.services.data_services import get_application_json
 from app.blueprints.services.data_services import get_application_overviews
@@ -656,13 +655,14 @@ def feedback_export(fund_short_name: str, round_short_name: str):
     round_id = _round.id
     status_only = "SUBMITTED"
 
-    export = get_applicant_feedback_and_survey(fund_id, round_id, status_only)
-    en_export_data = generate_assessment_info_excel(export)
+    response = get_applicant_feedback_and_survey_report(
+        fund_id, round_id, status_only
+    )
     short_name = (fund_short_name + "_" + round_short_name).lower()
 
     return download_file(
-        en_export_data,
-        "application/vnd.ms-excel",
+        response.content,
+        response.headers["Content-Type"],
         f"fsd_feedback_{short_name}_{str(int(time.time())) }.xlsx",
     )
 

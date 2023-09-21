@@ -1,12 +1,10 @@
 import csv
 from collections import OrderedDict
-from io import BytesIO
 from io import StringIO
 from typing import Dict
 from typing import List
 from urllib.parse import quote_plus
 
-import pandas as pd
 from app.blueprints.assessments.models.common import Option
 from app.blueprints.assessments.models.common import OptionGroup
 from app.blueprints.services.aws import generate_url
@@ -186,22 +184,6 @@ def generate_assessment_info_csv(data: dict):
     for data_entry in data:
         rows = data_entry.values()
         csv_writer.writerow(rows)
-
-    return output.getvalue()
-
-
-def generate_assessment_info_excel(data: dict):
-    output = BytesIO()
-
-    if not data:
-        return output.getvalue()
-
-    writer = pd.ExcelWriter(output)
-    for key in data.keys():
-        df = pd.DataFrame(data[key])
-        df.to_excel(writer, sheet_name=key)
-
-    writer.close()
 
     return output.getvalue()
 
