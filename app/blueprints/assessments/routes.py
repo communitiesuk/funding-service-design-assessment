@@ -14,6 +14,7 @@ from app.blueprints.assessments.forms.mark_qa_complete_form import (
 )
 from app.blueprints.assessments.helpers import download_file
 from app.blueprints.assessments.helpers import generate_assessment_info_csv
+from app.blueprints.assessments.helpers import generate_assessment_info_excel
 from app.blueprints.assessments.helpers import generate_maps_from_form_names
 from app.blueprints.assessments.helpers import (
     get_files_for_application_upload_fields,
@@ -56,6 +57,9 @@ from app.blueprints.services.data_services import (
     get_all_uploaded_documents_theme_answers,
 )
 from app.blueprints.services.data_services import get_applicant_export
+from app.blueprints.services.data_services import (
+    get_applicant_feedback_and_survey,
+)
 from app.blueprints.services.data_services import get_application_json
 from app.blueprints.services.data_services import get_application_overviews
 from app.blueprints.services.data_services import (
@@ -638,6 +642,28 @@ def assessor_export(
     ]
 
     return download_multiple_files(files_to_download, report_type)
+
+
+@assessment_bp.route(
+    "/feedback_export/<fund_short_name>/<round_short_name>/",
+    methods=["GET"],
+)
+@check_access_fund_short_name(roles_required=["LEAD_ASSESSOR"])
+def feedback_export(
+    fund_short_name: str, round_short_name: str, report_type: str
+):
+    _round = get_round(fund_short_name, round_short_name, use_short_name=True)
+    fund_id = _round.fund_id
+    round_id = _round.id
+    status_only = "SUBMITTED"
+
+    export = get_applicant_feedback_and_survey(fund_id, round_id, status_only)
+    en_export_data = generate_assessment_info_excel(export)
+    short_name = fund_short_name + round_short_name
+
+    return download_file(
+        en_export_data, "application/zip", f"FSD_Feedback_{short_name}.xlsx"
+    )
 
 
 @assessment_bp.route("/qa_complete/<application_id>", methods=["GET", "POST"])

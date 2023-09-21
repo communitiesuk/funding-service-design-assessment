@@ -103,6 +103,10 @@ class DefaultConfig:
         APPLICATION_STORE_API_HOST
         + "/applications/reporting/applications_statuses_data?format=json"
     )
+    APPLICATION_FEEDBACK_SURVEY_ENDPOINT = (
+        APPLICATION_STORE_API_HOST
+        + "/all_feedbacks_and_survey?fund_id={fund_id}&round_id={roundid}&status_only={status_only}"
+    )
 
     # Assessment store endpoints
     ASSESSMENTS_STATS_ENDPOINT = (
