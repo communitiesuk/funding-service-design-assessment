@@ -50,7 +50,7 @@ variables:
   ASSESSMENT_STORE_API_HOST: "http://fsd-assessment-store:8080"
   FUND_STORE_API_HOST: "http://fsd-fund-store:8080"
   ACCOUNT_STORE_API_HOST: "http://fsd-account-store:8080"
-  AUTHENTICATOR_HOST: "https://fsd:fsd@authenticator.access-funding.${COPILOT_ENVIRONMENT_NAME}.levellingup.gov.uk"
+  AUTHENTICATOR_HOST: "https://fsd:fsd@authenticator.access-funding.${COPILOT_ENVIRONMENT_NAME}.levellingup.gov.uk" # pragma: allowlist secret
   COPILOT_AWS_BUCKET_NAME:
     from_cfn: ${COPILOT_APPLICATION_NAME}-${COPILOT_ENVIRONMENT_NAME}-FormUploadsBucket
   REDIS_INSTANCE_URI:
