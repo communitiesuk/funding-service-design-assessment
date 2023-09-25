@@ -8,13 +8,20 @@ from config import Config
 from flask import current_app
 from flask import url_for
 
-_S3_CLIENT = client(
-    "s3",
-    aws_access_key_id=Config.AWS_ACCESS_KEY_ID,
-    aws_secret_access_key=Config.AWS_SECRET_ACCESS_KEY,
-    region_name=Config.AWS_REGION,
-    endpoint_url=getenv("AWS_ENDPOINT_OVERRIDE", None),
-)
+if hasattr(Config, "VCAP_SERVICES"):
+    _S3_CLIENT = client(
+        "s3",
+        aws_access_key_id=Config.AWS_ACCESS_KEY_ID,
+        aws_secret_access_key=Config.AWS_SECRET_ACCESS_KEY,
+        region_name=Config.AWS_REGION,
+        endpoint_url=getenv("AWS_ENDPOINT_OVERRIDE", None),
+    )
+else:
+    _S3_CLIENT = client(
+        "s3",
+        region_name=Config.AWS_REGION,
+        endpoint_url=getenv("AWS_ENDPOINT_OVERRIDE", None),
+    )
 
 
 def get_file_for_download_from_aws(file_name: str, application_id: str):
