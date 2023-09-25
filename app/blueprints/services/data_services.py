@@ -37,7 +37,10 @@ def get_data(endpoint: str, payload: Dict = None):
             current_app.logger.info(f"Fetching data from '{endpoint}'.")
             response = requests.get(endpoint)
         if response.status_code == 200:
-            return response.json()
+            if "application/json" == response.headers["Content-Type"]:
+                return response.json()
+            else:
+                return response.content
         elif response.status_code == 204:
             current_app.logger.warn(
                 "Request successful but no resources returned for endpoint"
@@ -799,11 +802,6 @@ def get_applicant_feedback_and_survey_report(fund_id, round_id, status_only):
     )
 
     current_app.logger.info(f"Endpoint '{applicant_feedback_endpoint}'.")
-    response = requests.get(applicant_feedback_endpoint)
+    response = get_data(applicant_feedback_endpoint)
 
-    if response.status_code == 200:
-        return response
-    else:
-        current_app.logger.error(
-            f"Could not get data for endpoint '{current_app}' "
-        )
+    return response

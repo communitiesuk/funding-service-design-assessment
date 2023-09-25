@@ -655,16 +655,16 @@ def feedback_export(fund_short_name: str, round_short_name: str):
     round_id = _round.id
     status_only = "SUBMITTED"
 
-    response = get_applicant_feedback_and_survey_report(
+    content = get_applicant_feedback_and_survey_report(
         fund_id, round_id, status_only
     )
-    short_name = (fund_short_name + "_" + round_short_name).lower()
-
-    return download_file(
-        response.content,
-        response.headers["Content-Type"],
-        f"fsd_feedback_{short_name}_{str(int(time.time())) }.xlsx",
-    )
+    if content:
+        short_name = (fund_short_name + "_" + round_short_name).lower()
+        return download_file(
+            content,
+            "application/vnd.ms-excel",
+            f"fsd_feedback_{short_name}_{str(int(time.time())) }.xlsx",
+        )
 
 
 @assessment_bp.route("/qa_complete/<application_id>", methods=["GET", "POST"])
