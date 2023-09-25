@@ -243,7 +243,11 @@ class DefaultConfig:
     Aws Config
     """
 
-    if "VCAP_SERVICES" in os.environ:
+    if "COPILOT_AWS_BUCKET_NAME" in os.environ:
+        AWS_BUCKET_NAME = environ.get("COPILOT_AWS_BUCKET_NAME")
+        AWS_REGION = environ.get("AWS_REGION")
+        ASSETS_AUTO_BUILD = False
+    elif "VCAP_SERVICES" in os.environ:
         VCAP_SERVICES = VcapServices.from_env_json(
             environ.get("VCAP_SERVICES")
         )
@@ -263,3 +267,4 @@ class DefaultConfig:
     REDIS_INSTANCE_URI = getenv("REDIS_INSTANCE_URI", "redis://localhost:6379")
     TOGGLES_URL = REDIS_INSTANCE_URI + "/0"
     FEATURE_CONFIG = {"TAGGING": True}
+    ASSETS_AUTO_BUILD = False

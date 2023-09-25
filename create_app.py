@@ -2,7 +2,7 @@ import os
 import re
 from gettext import ngettext
 
-from app.assets import compile_static_assets
+import static_assets
 from app.blueprints.assessments.routes import assessment_bp
 from app.blueprints.authentication.auth import auth_protect
 from app.blueprints.flagging.routes import flagging_bp
@@ -131,7 +131,11 @@ def create_app() -> Flask:
         # Bundle and compile assets
         assets = Environment()
         assets.init_app(flask_app)
-        compile_static_assets(assets, flask_app)
+        static_assets.init_assets(
+            flask_app,
+            auto_build=Config.ASSETS_AUTO_BUILD,
+            static_folder=Config.STATIC_FOLDER,
+        )
 
         health = Healthcheck(flask_app)
         health.add_check(FlaskRunningChecker())
