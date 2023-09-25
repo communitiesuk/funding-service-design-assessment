@@ -79,7 +79,8 @@ class TestRoutes:
         }
     )
     @pytest.mark.parametrize(
-        "exp_link_count, mock_is_lead_assessor", [(1, True), (0, False)]
+        "exp_link_count, download_available, mock_is_lead_assessor",
+        [(1, False, True), (3, True, True), (0, False, False)],
     )
     def test_route_landing_export_link_visibility(
         self,
@@ -87,6 +88,7 @@ class TestRoutes:
         mock_get_funds,
         mocker,
         exp_link_count,
+        download_available,
         mock_is_lead_assessor,
     ):
         access_controller_mock = mock.MagicMock()
@@ -109,7 +111,7 @@ class TestRoutes:
                     ),
                     feedback_export_href="/assess/feedback_export/TF/tr",
                     assessment_tracker_href="",
-                    round_application_fields_download_available=False,
+                    round_application_fields_download_available=download_available,
                     sorting_date="",
                     assessment_stats=Stats(
                         date="2023-12-12T12:00:00",
@@ -129,17 +131,13 @@ class TestRoutes:
         assert 200 == response.status_code, "Wrong status code on response"
         soup = BeautifulSoup(response.data, "html.parser")
 
-        assert (
-            len(
-                soup.find_all(
-                    "a",
-                    string=lambda text: "Assessment Tracker Export" in text
-                    if text
-                    else False,
-                )
-            )
-            == exp_link_count
+        all_exports_links = soup.find_all(
+            "a",
+            string=lambda text: "Export" in text if text else False,
         )
+        assert len(all_exports_links) == exp_link_count
+        if not download_available and mock_is_lead_assessor:
+            assert "Assessment Tracker Export" in all_exports_links[-1].text
 
     @pytest.mark.mock_parameters(
         {
