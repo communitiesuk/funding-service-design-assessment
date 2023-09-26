@@ -133,6 +133,7 @@ class TestRoutes:
 
         all_exports_links = soup.find_all(
             "a",
+            class_="govuk-link",
             string=lambda text: "Export" in text if text else False,
         )
         assert len(all_exports_links) == exp_link_count
