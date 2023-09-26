@@ -665,6 +665,8 @@ def feedback_export(fund_short_name: str, round_short_name: str):
             "application/vnd.ms-excel",
             f"fsd_feedback_{short_name}_{str(int(time.time())) }.xlsx",
         )
+    else:
+        abort(404)
 
 
 @assessment_bp.route("/qa_complete/<application_id>", methods=["GET", "POST"])
