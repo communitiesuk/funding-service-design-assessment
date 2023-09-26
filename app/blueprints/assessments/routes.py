@@ -1,4 +1,5 @@
 import io
+import time
 import zipfile
 from collections import OrderedDict
 from datetime import datetime
@@ -56,6 +57,9 @@ from app.blueprints.services.data_services import (
     get_all_uploaded_documents_theme_answers,
 )
 from app.blueprints.services.data_services import get_applicant_export
+from app.blueprints.services.data_services import (
+    get_applicant_feedback_and_survey_report,
+)
 from app.blueprints.services.data_services import get_application_json
 from app.blueprints.services.data_services import get_application_overviews
 from app.blueprints.services.data_services import (
@@ -638,6 +642,31 @@ def assessor_export(
     ]
 
     return download_multiple_files(files_to_download, report_type)
+
+
+@assessment_bp.route(
+    "/feedback_export/<fund_short_name>/<round_short_name>",
+    methods=["GET"],
+)
+@check_access_fund_short_name(roles_required=["LEAD_ASSESSOR"])
+def feedback_export(fund_short_name: str, round_short_name: str):
+    _round = get_round(fund_short_name, round_short_name, use_short_name=True)
+    fund_id = _round.fund_id
+    round_id = _round.id
+    status_only = "SUBMITTED"
+
+    content = get_applicant_feedback_and_survey_report(
+        fund_id, round_id, status_only
+    )
+    if content:
+        short_name = (fund_short_name + "_" + round_short_name).lower()
+        return download_file(
+            content,
+            "application/vnd.ms-excel",
+            f"fsd_feedback_{short_name}_{str(int(time.time())) }.xlsx",
+        )
+    else:
+        abort(404)
 
 
 @assessment_bp.route("/qa_complete/<application_id>", methods=["GET", "POST"])
