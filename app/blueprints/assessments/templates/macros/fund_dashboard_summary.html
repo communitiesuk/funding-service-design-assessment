@@ -3,16 +3,20 @@
 {% macro round_links(access_controller, download_available, export_href, feedback_export_href, assessment_tracker_href) %}
     {% if access_controller.is_lead_assessor %}
         {% if download_available %}
-            </br>
-            </br>
-            <a class="govuk-link" href="{{ export_href }}">
-                Export applicant information
-            </a>
-            </br>
-            </br>
-            <a class="govuk-link" href="{{ feedback_export_href }}">
-                Export applicants feedback information
-            </a>
+            {% if export_href %}
+                </br>
+                </br>
+                <a class="govuk-link" href="{{ export_href }}">
+                    Export applicant information
+                </a>
+            {% endif %}
+            {% if feedback_export_href %}
+                </br>
+                </br>
+                <a class="govuk-link" href="{{ feedback_export_href }}">
+                    Export applicants feedback information
+                </a>
+            {% endif %}
         {% endif %}
         </br>
         </br>
@@ -78,7 +82,12 @@
                 <a class="govuk-link" data-qa="dashboard_summary" href="{{ summary.assessments_href }}">
                     View all submitted applications
                 </a>
-                {{ round_links(summary.access_controller, summary.round_application_fields_download_available, summary.export_href, summary.feedback_export_href, summary.assessment_tracker_href) }}
+                {{ round_links(summary.access_controller, summary.round_application_fields_download_available, summary.export_href, "", summary.assessment_tracker_href) }}
+            {% endif %}
+            {% if summary.access_controller.is_lead_assessor %}
+                <a class="govuk-link" href="{{ summary.feedback_export_href }}">
+                    Export applicants feedback information
+                </a>
             {% endif %}
 
         {% endif %}
