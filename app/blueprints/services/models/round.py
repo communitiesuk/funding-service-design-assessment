@@ -14,6 +14,7 @@ class Round:
     opens: str
     title: str
     short_name: str
+    guidance_url: str = ""
     all_uploaded_documents_section_available: bool = False
     application_fields_download_available: bool = False
     display_logo_on_pdf_exports: bool = False
@@ -38,6 +39,7 @@ class Round:
             fund_id=data.get("fund_id"),
             opens=data.get("opens"),
             deadline=data.get("deadline"),
+            guidance_url=data.get("guidance_url"),
             all_uploaded_documents_section_available=data.get(
                 "all_uploaded_documents_section_available"
             )
