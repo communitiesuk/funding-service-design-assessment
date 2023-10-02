@@ -45,7 +45,7 @@ network:
 #
 # Pass environment variables as key value pairs.
 variables:
-  # SENTRY_DSN: "https://5ea1346b1c1b4dd8af0c95435ca77945@o1432034.ingest.sentry.io/4503903486148608"
+  SENTRY_DSN: "https://cae245fff7d8483e9d73c73b30137ffc@o1432034.ingest.sentry.io/4504418515550208"
   FLASK_ENV: ${COPILOT_ENVIRONMENT_NAME}
   ASSESSMENT_STORE_API_HOST: "http://fsd-assessment-store:8080"
   FUND_STORE_API_HOST: "http://fsd-fund-store:8080"
@@ -55,6 +55,9 @@ variables:
     from_cfn: ${COPILOT_APPLICATION_NAME}-${COPILOT_ENVIRONMENT_NAME}-FormUploadsBucket
   REDIS_INSTANCE_URI:
     from_cfn: ${COPILOT_APPLICATION_NAME}-${COPILOT_ENVIRONMENT_NAME}-RedisInstanceURI
+
+secrets:
+  RSA256_PUBLIC_KEY_BASE64: /copilot/${COPILOT_APPLICATION_NAME}/${COPILOT_ENVIRONMENT_NAME}/secrets/RSA256_PUBLIC_KEY_BASE64
 
 # You can override any of the values defined above by environment.
 environments:
