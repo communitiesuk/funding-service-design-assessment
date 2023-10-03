@@ -22,6 +22,7 @@ from app.blueprints.services.shared_data_helpers import (
     get_state_for_tasklist_banner,
 )
 from app.blueprints.shared.helpers import determine_assessment_status
+from app.blueprints.shared.helpers import get_ttl_hash
 from app.blueprints.shared.helpers import match_search_params
 from app.blueprints.tagging.forms.tags import DeactivateTagForm
 from app.blueprints.tagging.forms.tags import EditTagForm
@@ -93,8 +94,17 @@ def load_change_tags(application_id):
 
 
 def get_fund_round(fund_id, round_id) -> Dict:
-    fund = get_fund(fund_id, use_short_name=False)
-    round = get_round(fund_id, round_id, use_short_name=False)
+    fund = get_fund(
+        fund_id,
+        use_short_name=False,
+        ttl_hash=get_ttl_hash(Config.LRU_CACHE_TIME),
+    )
+    round = get_round(
+        fund_id,
+        round_id,
+        use_short_name=False,
+        ttl_hash=get_ttl_hash(Config.LRU_CACHE_TIME),
+    )
     fund_round = {
         "fund_name": fund.name,
         "round_name": round.title,
@@ -206,8 +216,17 @@ def create_tag(fund_id, round_id):
 def deactivate_tag(fund_id, round_id, tag_id):
     deactivate_tag_form = DeactivateTagForm()
     tag_to_deactivate = get_tag_for_fund_round(fund_id, round_id, tag_id)
-    fund = get_fund(fund_id, use_short_name=False)
-    round = get_round(fund_id, round_id, use_short_name=False)
+    fund = get_fund(
+        fund_id,
+        use_short_name=False,
+        ttl_hash=get_ttl_hash(Config.LRU_CACHE_TIME),
+    )
+    round = get_round(
+        fund_id,
+        round_id,
+        use_short_name=False,
+        ttl_hash=get_ttl_hash(Config.LRU_CACHE_TIME),
+    )
     fund_round = {
         "fund_name": fund.name,
         "round_name": round.title,
@@ -254,8 +273,17 @@ def deactivate_tag(fund_id, round_id, tag_id):
 def reactivate_tag(fund_id, round_id, tag_id):
     reactivate_tag_form = ReactivateTagForm()
     tag_to_reactivate = get_tag_for_fund_round(fund_id, round_id, tag_id)
-    fund = get_fund(fund_id, use_short_name=False)
-    round = get_round(fund_id, round_id, use_short_name=False)
+    fund = get_fund(
+        fund_id,
+        use_short_name=False,
+        ttl_hash=get_ttl_hash(Config.LRU_CACHE_TIME),
+    )
+    round = get_round(
+        fund_id,
+        round_id,
+        use_short_name=False,
+        ttl_hash=get_ttl_hash(Config.LRU_CACHE_TIME),
+    )
     fund_round = {
         "fund_name": fund.name,
         "round_name": round.title,

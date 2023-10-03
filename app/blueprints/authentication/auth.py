@@ -33,7 +33,7 @@ def auth_protect(minimum_roles_required: list, unprotected_routes: list):
     minimum_roles_required = [
         f"{fund.short_name}_{role}".upper()
         for fund in get_funds(
-            get_ttl_hash(seconds=300)
+            get_ttl_hash(seconds=Config.LRU_CACHE_TIME)
         )  # expensive call, so cache it & refresh every 5 minutes
         for role in minimum_roles_required
     ]

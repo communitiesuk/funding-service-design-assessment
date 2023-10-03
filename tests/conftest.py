@@ -7,9 +7,11 @@ from unittest import mock
 import jwt as jwt
 import pytest
 from app.blueprints.services.models.assessor_task_list import AssessorTaskList
+from app.blueprints.shared.helpers import get_ttl_hash
 from app.blueprints.tagging.models.tag import AssociatedTag
 from app.blueprints.tagging.models.tag import Tag
 from app.blueprints.tagging.models.tag import TagType
+from config import Config
 from create_app import create_app
 from flask import template_rendered
 from selenium import webdriver
@@ -370,7 +372,9 @@ def mock_get_rounds(request, mocker):
     yield mocked_get_rounds
 
     for mocked_round in mocked_get_rounds:
-        mocked_round.assert_called_with(fund_id)
+        mocked_round.assert_called_with(
+            fund_id, ttl_hash=get_ttl_hash(Config.LRU_CACHE_TIME)
+        )
 
 
 @pytest.fixture(scope="function")

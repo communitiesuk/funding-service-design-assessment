@@ -162,7 +162,7 @@ def landing():
     )  # noqa
     funds = [
         f
-        for f in get_funds(get_ttl_hash(seconds=300))
+        for f in get_funds(get_ttl_hash(seconds=Config.LRU_CACHE_TIME))
         if has_access_to_fund(f.short_name)
         and fund_matches_filters(f, filters)
     ]
@@ -198,10 +198,19 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
     else:
         search_params = {**search_params_cof}
 
-    fund = get_fund(fund_short_name, use_short_name=True)
+    fund = get_fund(
+        fund_short_name,
+        use_short_name=True,
+        ttl_hash=get_ttl_hash(Config.LRU_CACHE_TIME),
+    )
     if not fund:
         return redirect("/assess/assessor_tool_dashboard/")
-    _round = get_round(fund_short_name, round_short_name, use_short_name=True)
+    _round = get_round(
+        fund_short_name,
+        round_short_name,
+        use_short_name=True,
+        ttl_hash=get_ttl_hash(Config.LRU_CACHE_TIME),
+    )
     if not _round:
         return redirect("/assess/assessor_tool_dashboard/")
     fund_id, round_id = fund.id, _round.id
@@ -481,9 +490,15 @@ def download_application_answers(
     application_json = get_application_json(application_id)
     application_json_blob = application_json["jsonb_blob"]
 
-    fund = get_fund(application_json["jsonb_blob"]["fund_id"])
+    fund = get_fund(
+        application_json["jsonb_blob"]["fund_id"],
+        ttl_hash=get_ttl_hash(Config.LRU_CACHE_TIME),
+    )
     round_ = get_round(
-        fund.id, application_json["round_id"], use_short_name=False
+        fund.id,
+        application_json["round_id"],
+        use_short_name=False,
+        ttl_hash=get_ttl_hash(Config.LRU_CACHE_TIME),
     )
 
     qanda_dict = extract_questions_and_answers(application_json_blob["forms"])
@@ -575,7 +590,11 @@ def application(application_id):
         update_ar_status_to_completed(application_id)
 
     state = get_state_for_tasklist_banner(application_id)
-    fund_round = get_round(state.fund_id, state.round_id)
+    fund_round = get_round(
+        state.fund_id,
+        state.round_id,
+        ttl_hash=get_ttl_hash(Config.LRU_CACHE_TIME),
+    )
 
     user_id_list = []
     flags_list = get_flags(application_id)
@@ -594,7 +613,10 @@ def application(application_id):
                 if flag_item["user_id"] not in user_id_list:
                     user_id_list.append(flag_item["user_id"])
 
-    accounts_list = get_bulk_accounts_dict(user_id_list, state.fund_short_name)
+    accounts_list = get_bulk_accounts_dict(
+        user_id_list,
+        state.fund_short_name,
+    )
 
     teams_flag_stats = TeamsFlagData.from_flags(flags_list).teams_stats
 
@@ -630,7 +652,12 @@ def application(application_id):
 def assessor_export(
     fund_short_name: str, round_short_name: str, report_type: str
 ):
-    _round = get_round(fund_short_name, round_short_name, use_short_name=True)
+    _round = get_round(
+        fund_short_name,
+        round_short_name,
+        use_short_name=True,
+        ttl_hash=get_ttl_hash(Config.LRU_CACHE_TIME),
+    )
     export = get_applicant_export(_round.fund_id, _round.id, report_type)
 
     en_export_data = generate_assessment_info_csv(export["en_list"])
@@ -650,7 +677,12 @@ def assessor_export(
 )
 @check_access_fund_short_name(roles_required=["LEAD_ASSESSOR"])
 def feedback_export(fund_short_name: str, round_short_name: str):
-    _round = get_round(fund_short_name, round_short_name, use_short_name=True)
+    _round = get_round(
+        fund_short_name,
+        round_short_name,
+        use_short_name=True,
+        ttl_hash=get_ttl_hash(Config.LRU_CACHE_TIME),
+    )
     fund_id = _round.fund_id
     round_id = _round.id
     status_only = "SUBMITTED"

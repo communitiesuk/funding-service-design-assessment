@@ -18,6 +18,7 @@ from app.blueprints.services.shared_data_helpers import (
 )
 from app.blueprints.shared.helpers import determine_assessment_status
 from app.blueprints.shared.helpers import determine_flag_status
+from app.blueprints.shared.helpers import get_ttl_hash
 from config import Config
 from flask import abort
 from flask import Blueprint
@@ -52,6 +53,7 @@ def flag(application_id):
     teams_available = get_available_teams(
         state.fund_id,
         state.round_id,
+        ttl_hash=get_ttl_hash(Config.LRU_CACHE_TIME),
     )
 
     form = FlagApplicationForm(

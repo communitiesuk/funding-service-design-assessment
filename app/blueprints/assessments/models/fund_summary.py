@@ -11,6 +11,8 @@ from app.blueprints.services.data_services import get_application_stats
 from app.blueprints.services.data_services import get_assessments_stats
 from app.blueprints.services.data_services import get_rounds
 from app.blueprints.services.models.fund import Fund
+from app.blueprints.shared.helpers import get_ttl_hash
+from config import Config
 from config.display_value_mappings import ALL_VALUE
 from config.display_value_mappings import LandingFilters
 from flask import current_app
@@ -71,7 +73,9 @@ def create_round_summaries(
     summaries = []
     live_rounds = []
     round_id_to_summary_map = {}
-    for round in get_rounds(fund.id):
+    for round in get_rounds(
+        fund.id, ttl_hash=get_ttl_hash(Config.LRU_CACHE_TIME)
+    ):
         search_params = {}
         assessments_href = url_for(
             "assessment_bp.fund_dashboard",
