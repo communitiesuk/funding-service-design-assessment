@@ -2,7 +2,7 @@
 {% from "macros/justification.html" import justification %}
 {%- from "govuk_frontend_jinja/components/button/macro.html" import govukButton -%}
 
-{% macro scores_justification(score_form, rescore_form, is_rescore, score_list, latest_score, application_id, sub_criteria_id, scoring_list, state) %}
+{% macro scores_justification(score_form, rescore_form, is_rescore, score_list, latest_score, application_id, sub_criteria_id, scoring_list, round_guidance_url) %}
 
 <div class="govuk-grid-column-full s26-scoring">
     {% if latest_score %}
@@ -64,11 +64,11 @@
             <h2 class="govuk-heading-m govuk-!-margin-top-4">Rescore</h2>
             {% endif %}
             <p class="govuk-body">Score this sub criteria against the
-                <a class="govuk-link govuk-link--no-visited-state" href={{ state.fund_guidance_url }}>assessment
+                <a class="govuk-link govuk-link--no-visited-state" href={{ round_guidance_url }}>assessment
                     criteria</a>.</p>
             <p class="govuk-body">You can use the comments about this subcriteria from other assessors to inform your score.</p>
             {{ scores(score_form, scoring_list) }}
-            {{ justification(score_form, state.fund_guidance_url) }}
+            {{ justification(score_form, round_guidance_url) }}
         </div>
         {% if latest_score %}
             {{ govukButton({'text': 'Save a new score', 'type':'submit', 'classes': 'primary-button'}) }}
