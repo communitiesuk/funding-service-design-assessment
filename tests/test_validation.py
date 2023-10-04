@@ -198,7 +198,7 @@ def test_check_access_application_id_cant_access_application_when_no_country_rol
     )
     monkeypatch.setattr(
         "app.blueprints.authentication.validation.get_fund",
-        lambda _: Fund.from_json(
+        lambda *_, **__: Fund.from_json(
             {
                 "id": "47aef2f5-3fcb-4d45-acb5-f0152b5f03c4",
                 "short_name": "cof",
@@ -244,7 +244,7 @@ def test_check_access_application_id_can_access_application_when_has_country_rol
     )
     monkeypatch.setattr(
         "app.blueprints.authentication.validation.get_fund",
-        lambda _: Fund.from_json(
+        lambda *_, **__: Fund.from_json(
             {
                 "id": "47aef2f5-3fcb-4d45-acb5-f0152b5f03c4",
                 "short_name": "cof",
@@ -288,7 +288,7 @@ def test_check_access_application_id_can_access_application_when_fund_has_no_dev
     )
     monkeypatch.setattr(
         "app.blueprints.authentication.validation.get_fund",
-        lambda _: Fund.from_json(
+        lambda *_, **__: Fund.from_json(
             {
                 "id": "mock-nstf-fund-id",
                 "short_name": "nstf",
@@ -324,7 +324,7 @@ def test_check_access_application_id_cant_access_application_when_no_relevant_fu
     )
     monkeypatch.setattr(
         "app.blueprints.authentication.validation.get_fund",
-        lambda _: Fund.from_json(
+        lambda *_, **__: Fund.from_json(
             {
                 "id": "47aef2f5-3fcb-4d45-acb5-f0152b5f03c4",
                 "short_name": "cof",

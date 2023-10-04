@@ -41,9 +41,12 @@ class DevelopmentConfig(DefaultConfig):
             "COF_SCOTLAND",
             "COF_WALES",
             "COF_NORTHERNIRELAND",
-            # "NSTF_LEAD_ASSESSOR",
+            "NSTF_LEAD_ASSESSOR",
             "NSTF_ASSESSOR",
             "NSTF_COMMENTER",
+            "CYP_LEAD_ASSESSOR",
+            "CYP_ASSESSOR",
+            "CYP_COMMENTER",
         ],
         "highest_role_map": {"COF": DEBUG_USER_ROLE, "NSTF": DEBUG_USER_ROLE},
     }
@@ -67,3 +70,6 @@ class DevelopmentConfig(DefaultConfig):
 
     FEATURE_CONFIG = {"TAGGING": True}
     ASSETS_AUTO_BUILD = True
+
+    # LRU cache settings
+    LRU_CACHE_TIME = 30  # in seconds

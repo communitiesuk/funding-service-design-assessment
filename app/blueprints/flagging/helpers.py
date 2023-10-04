@@ -4,6 +4,8 @@ from app.blueprints.services.data_services import get_sub_criteria_banner_state
 from app.blueprints.services.data_services import submit_flag
 from app.blueprints.shared.helpers import determine_assessment_status
 from app.blueprints.shared.helpers import determine_flag_status
+from app.blueprints.shared.helpers import get_ttl_hash
+from config import Config
 from flask import redirect
 from flask import render_template
 from flask import request
@@ -67,7 +69,10 @@ def resolve_application(
     )
     flag_status = determine_flag_status(flags_list)
 
-    fund = get_fund(sub_criteria_banner_state.fund_id)
+    fund = get_fund(
+        sub_criteria_banner_state.fund_id,
+        ttl_hash=get_ttl_hash(Config.LRU_CACHE_TIME),
+    )
     return render_template(
         page_to_render,
         application_id=application_id,

@@ -256,7 +256,11 @@ def get_funds(ttl_hash=None) -> Union[List[Fund], None]:
     return []
 
 
-def get_fund(fid: str, use_short_name: bool = False) -> Union[Fund, None]:
+@lru_cache(maxsize=1)
+def get_fund(
+    fid: str, use_short_name: bool = False, ttl_hash=None
+) -> Union[Fund, None]:
+    del ttl_hash  # unused, but required for lru_cache
     endpoint = Config.FUND_STORE_API_HOST + Config.FUND_ENDPOINT.format(
         fund_id=fid, use_short_name=use_short_name
     )
@@ -271,7 +275,9 @@ def get_fund(fid: str, use_short_name: bool = False) -> Union[Fund, None]:
     return fund
 
 
-def get_rounds(fund_id: str) -> list[Round]:
+@lru_cache(maxsize=1)
+def get_rounds(fund_id: str, ttl_hash=None) -> list[Round]:
+    del ttl_hash  # unused, but required for lru_cache
     endpoint = Config.FUND_STORE_API_HOST + Config.ROUNDS_ENDPOINT.format(
         fund_id=fund_id
     )
@@ -284,9 +290,11 @@ def get_rounds(fund_id: str) -> list[Round]:
     return rounds
 
 
+@lru_cache(maxsize=1)
 def get_round(
-    fid: str, rid: str, use_short_name: bool = False
+    fid: str, rid: str, use_short_name: bool = False, ttl_hash=None
 ) -> Union[Round, None]:
+    del ttl_hash  # unused, but required for lru_cache
     round_endpoint = Config.FUND_STORE_API_HOST + Config.ROUND_ENDPOINT.format(
         fund_id=fid, round_id=rid, use_short_name=use_short_name
     )
@@ -298,7 +306,9 @@ def get_round(
     return None
 
 
-def get_available_teams(fund_id: str, round_id: str) -> list:
+@lru_cache(maxsize=1)
+def get_available_teams(fund_id: str, round_id: str, ttl_hash=None) -> list:
+    del ttl_hash  # unused, but required for lru_cache
     teams_available = get_data(
         Config.GET_AVIALABLE_TEAMS_FOR_FUND.format(
             fund_id=fund_id,
@@ -361,7 +371,10 @@ def get_score_and_justification(
 
 def match_score_to_user_account(scores, fund_short_name):
     account_ids = [score["user_id"] for score in scores]
-    bulk_accounts_dict = get_bulk_accounts_dict(account_ids, fund_short_name)
+    bulk_accounts_dict = get_bulk_accounts_dict(
+        account_ids,
+        fund_short_name,
+    )
     scores_with_account: list[Score] = [
         Score.from_dict(
             score
@@ -683,7 +696,10 @@ def match_comment_to_theme(comment_response, themes, fund_short_name):
         Returns a dictionary of comments.
     """
     account_ids = [comment["user_id"] for comment in comment_response]
-    bulk_accounts_dict = get_bulk_accounts_dict(account_ids, fund_short_name)
+    bulk_accounts_dict = get_bulk_accounts_dict(
+        account_ids,
+        fund_short_name,
+    )
 
     comments: list[Comment] = [
         Comment.from_dict(

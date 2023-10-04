@@ -8,7 +8,9 @@ from typing import Sequence
 
 from app.blueprints.services.data_services import get_application_metadata
 from app.blueprints.services.data_services import get_fund
+from app.blueprints.shared.helpers import get_ttl_hash
 from app.blueprints.shared.helpers import get_value_from_request
+from config import Config
 from flask import abort
 from flask import g
 from fsd_utils.authentication.decorators import login_required
@@ -117,7 +119,10 @@ def check_access_application_id(
             abort(404)
 
         application_metadata = get_application_metadata(application_id)
-        short_name = get_fund(application_metadata["fund_id"]).short_name
+        short_name = get_fund(
+            application_metadata["fund_id"],
+            ttl_hash=get_ttl_hash(Config.LRU_CACHE_TIME),
+        ).short_name
         if not has_access_to_fund(short_name):
             abort(403)
 
@@ -165,7 +170,9 @@ def _check_access_fund_common(
         short_name = (
             fund_value
             if fund_key == "fund_short_name"
-            else get_fund(fund_value).short_name
+            else get_fund(
+                fund_value, ttl_hash=get_ttl_hash(Config.LRU_CACHE_TIME)
+            ).short_name
         )
         fund_roles_required = _get_roles_by_fund_short_name(
             short_name, roles_required
