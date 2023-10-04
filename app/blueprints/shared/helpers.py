@@ -127,6 +127,19 @@ def match_search_params(search_params, request_args):
 
 
 def get_ttl_hash(seconds=3600) -> int:
+    """
+    The @lru_cache decorator from the functools module in Python
+    requires that the decorated function takes arguments that are
+    hashable so that it can use those arguments as keys in its cache.
+
+    get_ttl_hash exploits the fact that lru_cache depends
+    on the 'ttl_hash' argument. The ttl_hash (result of this function)
+    will stay the same within a time period. If seconds is exceeded
+    within time.time(), we get a different hash value.
+    ttl_hash changes. lru_cache can't find a cache key for this new value and
+    calls the cacheable function.
+    (deleting the other if it exceeds the maxsize cache limit).
+    """
     return round(time.time() / seconds)
 
 
