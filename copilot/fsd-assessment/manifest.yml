@@ -24,7 +24,7 @@ image:
 
 # Valid values: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-cpu-memory-error.html
 # Number of CPU units for the task.
-cpu: 256
+cpu: 512
 # Amount of memory in MiB used by the task.
 memory: 1024
 
@@ -45,16 +45,19 @@ network:
 #
 # Pass environment variables as key value pairs.
 variables:
-  # SENTRY_DSN: "https://5ea1346b1c1b4dd8af0c95435ca77945@o1432034.ingest.sentry.io/4503903486148608"
+  SENTRY_DSN: "https://cae245fff7d8483e9d73c73b30137ffc@o1432034.ingest.sentry.io/4504418515550208"
   FLASK_ENV: ${COPILOT_ENVIRONMENT_NAME}
   ASSESSMENT_STORE_API_HOST: "http://fsd-assessment-store:8080"
   FUND_STORE_API_HOST: "http://fsd-fund-store:8080"
   ACCOUNT_STORE_API_HOST: "http://fsd-account-store:8080"
-  AUTHENTICATOR_HOST: "https://fsd:fsd@authenticator.access-funding.${COPILOT_ENVIRONMENT_NAME}.levellingup.gov.uk" # pragma: allowlist secret
   COPILOT_AWS_BUCKET_NAME:
     from_cfn: ${COPILOT_APPLICATION_NAME}-${COPILOT_ENVIRONMENT_NAME}-FormUploadsBucket
   REDIS_INSTANCE_URI:
     from_cfn: ${COPILOT_APPLICATION_NAME}-${COPILOT_ENVIRONMENT_NAME}-RedisInstanceURI
+
+secrets:
+  RSA256_PUBLIC_KEY_BASE64: /copilot/${COPILOT_APPLICATION_NAME}/${COPILOT_ENVIRONMENT_NAME}/secrets/RSA256_PUBLIC_KEY_BASE64
+  AUTHENTICATOR_HOST: /copilot/${COPILOT_APPLICATION_NAME}/${COPILOT_ENVIRONMENT_NAME}/secrets/AUTHENTICATOR_HOST
 
 # You can override any of the values defined above by environment.
 environments:
