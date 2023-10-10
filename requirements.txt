@@ -294,7 +294,7 @@ tzlocal==5.0.1
     # via pyhanko
 uritools==4.0.1
     # via pyhanko-certvalidator
-urllib3==1.26.14
+urllib3==1.26.17
     # via
     #   botocore
     #   requests
