@@ -111,7 +111,7 @@
             }) }}
 
             <a class="govuk-link" data-qa="dashboard_summary" href="{{ summary.assessments_href }}">
-                View all {% if is_assessment_active_status %}active{% else %}
+                View all {% if summary.is_assessment_active_status %}active{% else %}
                 closed{% endif %} assessments
             </a>
             {{ round_links(summary.access_controller, summary.round_application_fields_download_available, summary.export_href, summary.feedback_export_href, summary.assessment_tracker_href) }}
