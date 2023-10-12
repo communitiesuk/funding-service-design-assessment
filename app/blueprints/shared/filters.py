@@ -1,3 +1,4 @@
+import ast
 from datetime import datetime
 
 from pytz import timezone
@@ -69,3 +70,8 @@ def all_caps_to_human(word):
 def format_project_ref(value: str):
     secions = value.split("-")
     return secions[len(secions) - 1]
+
+
+def ast_literal_eval(value):
+    """Evaluate an expression node or a string containing only a Python literal or container display"""
+    return ast.literal_eval(value)

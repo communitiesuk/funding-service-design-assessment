@@ -98,9 +98,11 @@ from app.blueprints.shared.helpers import process_assessments_stats
 from config import Config
 from config.display_value_mappings import assessment_statuses
 from config.display_value_mappings import asset_types
+from config.display_value_mappings import cohort
 from config.display_value_mappings import funding_types
 from config.display_value_mappings import landing_filters
 from config.display_value_mappings import search_params_cof
+from config.display_value_mappings import search_params_cyp
 from config.display_value_mappings import search_params_nstf
 from flask import abort
 from flask import Blueprint
@@ -195,8 +197,12 @@ def landing():
 def fund_dashboard(fund_short_name: str, round_short_name: str):
     if fund_short_name.upper() == "NSTF":
         search_params = {**search_params_nstf}
-    else:
+    elif fund_short_name.upper() == "COF":
         search_params = {**search_params_cof}
+    elif fund_short_name.upper() == "CYP":
+        search_params = {**search_params_cyp}
+    else:
+        search_params = {}
 
     fund = get_fund(
         fund_short_name,
@@ -317,6 +323,7 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
         query_params=search_params,
         asset_types=asset_types,
         funding_types=funding_types,
+        cohort=cohort,
         assessment_statuses=assessment_statuses,
         show_clear_filters=show_clear_filters,
         stats=stats,
