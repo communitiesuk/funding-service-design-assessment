@@ -202,7 +202,7 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
     elif fund_short_name.upper() == "CYP":
         search_params = {**search_params_cyp}
     else:
-        search_params = {}
+        search_params = {**search_params_cof}
 
     fund = get_fund(
         fund_short_name,
