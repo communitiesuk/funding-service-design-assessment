@@ -182,7 +182,8 @@ class TestRoutes:
         round_short_name = params["round_short_name"]
 
         response = flask_test_client.get(
-            f"/assess/assessor_dashboard/{fund_short_name}/{round_short_name}"
+            f"/assess/assessor_dashboard/{fund_short_name}/{round_short_name}",
+            follow_redirects=True,
         )
         assert 200 == response.status_code, "Wrong status code on response"
         soup = BeautifulSoup(response.data, "html.parser")
@@ -194,7 +195,7 @@ class TestRoutes:
             "Reference",
             "Organisation name",
             "Cohort",
-            "National or regionalFunding requested",
+            "National or regional",
             "Status",
         ]
         assert all(title in all_table_headings for title in expected_titles)

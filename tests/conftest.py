@@ -295,6 +295,7 @@ def mock_get_funds():
     mock_fund_info = [
         Fund.from_json(mock_api_results["fund_store/funds/{fund_id}"]),
         Fund.from_json(mock_api_results["fund_store/funds/NSTF"]),
+        Fund.from_json(mock_api_results["fund_store/funds/CYP"]),
         Fund.from_json(mock_api_results["fund_store/funds/COF"]),
     ]
 
