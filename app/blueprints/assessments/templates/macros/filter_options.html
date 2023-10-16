@@ -20,7 +20,7 @@
                     <div>
                     <div class="govuk-form-group govuk-!-display-inline-block govuk-!-margin-bottom-0 govuk-!-margin-right-2">
                         <label class="govuk-label" for="filter_{{ item_type }}">
-                            Filter by {{ "asset type" if item_type == "asset_type" else "funding type" }}
+                            Filter by {{ item_type | replace("_", " ") }}
                         </label>
                         <select class="govuk-select" id="filter_{{ item_type }}" name="{{ item_type }}">
                             {% for item in item_types %}

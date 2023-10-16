@@ -4,15 +4,16 @@
 {% from "macros/application_status_column.html" import application_status_column %}
 {% from "macros/tags_table.html" import tags_table %}
 
-{% macro render(application_overviews, round_details, query_params, funding_types,
+
+{% macro render(application_overviews, round_details, query_params, cohort,
    assessment_statuses, countries, regions, local_authorities, show_clear_filters,
     sort_column, sort_order, tag_option_groups, tags, tagging_purpose_config) -%}
 <nav class="search-bar-flex-container">
   <form method="get" class="govuk-!-width-full">
   {{ filter_options(
     query_params,
-    funding_types,
-    'funding_type',
+    cohort,
+    'cohort',
     'Search reference or organisation name',
     assessment_statuses,
     countries,
@@ -46,11 +47,11 @@
 
       {{ sortable_table_header('organisation_name', 'Organisation name', sort_order, sort_column, round_details, query_params) }}
 
-      {{ sortable_table_header('local_authority', 'Local authority name', sort_order, sort_column, round_details, query_params) }}
-
-      {{ sortable_table_header('funding_type', 'Funding type', sort_order, sort_column, round_details, query_params) }}
+      {{ sortable_table_header('cohort', 'Cohort', sort_order, sort_column, round_details, query_params) }}
 
       {{ sortable_table_header('funding_requested', 'Funding requested', sort_order, sort_column, round_details, query_params) }}
+
+      {{ sortable_table_header('national_or_regional', 'National or regional', sort_order, sort_column, round_details, query_params) }}
 
       {{ sortable_table_header('tags', 'Tags', sort_order, sort_column, round_details, query_params) }}
 
@@ -66,9 +67,17 @@
 
                 <td class="govuk-table__cell">{{ overview.short_id[-6:] }}</td>
                 <td class="govuk-table__cell"><a class="govuk-link" data-qa="organisation_name" href="{{ url_for('assessment_bp.application',application_id=overview.application_id) }}">{{ overview.organisation_name }}</a></td>
-                <td class="govuk-table__cell">{{ overview.local_authority }}</td>
-                <td class="govuk-table__cell">{{ funding_types[overview.funding_type] }}</td>
+
+                {% set cohort_display_list = [] %}
+                {% set cohort_list = overview.get("cohort", "[]") | ast_literal_eval %}
+                {% for cohrt in cohort_list %}
+                  {% set _ = cohort_display_list.append(cohort.get(cohrt))  %}
+                {% endfor %}
+
+                <td class="govuk-table__cell">{{ cohort_display_list | join(' ') }}</td>
+
                 <td class="govuk-table__cell">£{{ "{:,.2f}".format(overview.funding_amount_requested|int|round) }}</td>
+                <td class="govuk-table__cell">{{ "Regional" if overview.get("is_project_regional") else "National"}}</td>
 
                 {{ tags_table(tags[overview.application_id], tagging_purpose_config, query_params.show_tags == "ON") }}
 

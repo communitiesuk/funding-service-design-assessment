@@ -1,0 +1,38 @@
+{% macro application_status_column(application_status, application_progress, assessment_statuses) %}
+
+    <td class="govuk-table__cell">
+    {% if application_status == "QA_COMPLETED" %}
+    <span>{{ assessment_statuses[application_status] }}</span>
+    {% elif application_status == "STOPPED" %}
+    <span class="stopped-tag">
+        {{ assessment_statuses[application_status] }}
+    </span>
+    {% elif application_status == "FLAGGED" %}
+    <span class="flagged-tag">
+        {{ assessment_statuses[application_status] }}
+    </span>
+    {% elif "Flagged" in application_status %}
+    <span class="flagged-tag">
+        {{ application_status }}
+    </span>
+    {% elif application_status == "NOT_STARTED" %}
+    <span class="not-started-tag">
+        {{ assessment_statuses[application_status] }}
+    </span>
+    {% elif application_status == "COMPLETED" %}
+    <span>
+        {{ assessment_statuses[application_status] }}
+    </span>
+    {% elif application_status == "MULTIPLE_FLAGS" %}
+    <span class="flagged-tag">
+        {{ assessment_statuses[application_status] }}
+    </span>
+    {% else %}
+    <span>
+        {{ assessment_statuses[application_status] }}
+        {{ '(' + application_progress|string + '%)' if application_progress else '(0%)' }}
+    </span>
+    {% endif %}
+    </td>
+
+{% endmacro %}

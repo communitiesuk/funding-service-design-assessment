@@ -251,6 +251,12 @@ mock_api_results = {
         "short_name": "NSTF",
         "description": "unit testing fund",
     },
+    "fund_store/funds/CYP": {
+        "id": "CYP",
+        "name": "The Children and Young People's Resettlement Fund",
+        "short_name": "CYP",
+        "description": "unit testing fund",
+    },
     "fund_store/funds/COF": {
         "id": "COF",
         "name": "Community Ownership Fund",

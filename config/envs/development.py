@@ -48,7 +48,11 @@ class DevelopmentConfig(DefaultConfig):
             "CYP_ASSESSOR",
             "CYP_COMMENTER",
         ],
-        "highest_role_map": {"COF": DEBUG_USER_ROLE, "NSTF": DEBUG_USER_ROLE},
+        "highest_role_map": {
+            "COF": DEBUG_USER_ROLE,
+            "NSTF": DEBUG_USER_ROLE,
+            "CYP": DEBUG_USER_ROLE,
+        },
     }
     DEBUG_USER_ACCOUNT_ID = "00000000-0000-0000-0000-000000000000"
 

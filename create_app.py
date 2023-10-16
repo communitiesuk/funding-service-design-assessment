@@ -8,6 +8,7 @@ from app.blueprints.authentication.auth import auth_protect
 from app.blueprints.flagging.routes import flagging_bp
 from app.blueprints.scoring.routes import scoring_bp
 from app.blueprints.shared.filters import all_caps_to_human
+from app.blueprints.shared.filters import ast_literal_eval
 from app.blueprints.shared.filters import datetime_format
 from app.blueprints.shared.filters import datetime_format_24hr
 from app.blueprints.shared.filters import format_address
@@ -81,6 +82,7 @@ def create_app() -> Flask:
 
         flask_app.jinja_env.trim_blocks = True
         flask_app.jinja_env.lstrip_blocks = True
+        flask_app.jinja_env.filters["ast_literal_eval"] = ast_literal_eval
         flask_app.jinja_env.filters["datetime_format"] = datetime_format
         flask_app.jinja_env.filters["utc_to_bst"] = utc_to_bst
         flask_app.jinja_env.filters[

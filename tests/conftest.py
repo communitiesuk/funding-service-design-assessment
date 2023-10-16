@@ -52,6 +52,26 @@ test_commenter_claims = {
 }
 
 fund_specific_claim_map = {
+    "CYP": {
+        "LEAD_ASSESSOR": {
+            "accountId": "cyp-lead-assessor",
+            "email": "cyp-lead-assessor@test.com",
+            "fullName": "Test User",
+            "roles": ["CYP_LEAD_ASSESSOR", "CYP_ASSESSOR", "CYP_COMMENTER"],
+        },
+        "ASSESSOR": {
+            "accountId": "cyp-assessor",
+            "email": "cyp-assessor@test.com",
+            "fullName": "Test User",
+            "roles": ["CYP_ASSESSOR", "CYP_COMMENTER"],
+        },
+        "COMMENTER": {
+            "accountId": "cyp-commenter",
+            "email": "cyp-commenter@test.com",
+            "fullName": "Test User",
+            "roles": ["CYP_COMMENTER"],
+        },
+    },
     "NSTF": {
         "LEAD_ASSESSOR": {
             "accountId": "nstf-lead-assessor",
@@ -275,6 +295,7 @@ def mock_get_funds():
     mock_fund_info = [
         Fund.from_json(mock_api_results["fund_store/funds/{fund_id}"]),
         Fund.from_json(mock_api_results["fund_store/funds/NSTF"]),
+        Fund.from_json(mock_api_results["fund_store/funds/CYP"]),
         Fund.from_json(mock_api_results["fund_store/funds/COF"]),
     ]
 

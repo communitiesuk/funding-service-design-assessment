@@ -40,3 +40,6 @@ class FlagApplicationForm(FlaskForm):
         super().__init__()
         self.section.choices = section_choices
         self.teams_available.choices = team_choices
+        if not team_choices:
+            self.teams_available.validators = []
+            self.teams_available.validate_choice = False
