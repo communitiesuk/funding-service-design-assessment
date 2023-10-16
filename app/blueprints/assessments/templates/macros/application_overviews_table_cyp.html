@@ -68,7 +68,7 @@
                 <td class="govuk-table__cell"><a class="govuk-link" data-qa="organisation_name" href="{{ url_for('assessment_bp.application',application_id=overview.application_id) }}">{{ overview.organisation_name }}</a></td>
 
                 {% set cohort_display_list = [] %}
-                {% set cohort_list = overview.cohort | ast_literal_eval %}
+                {% set cohort_list = overview.get("cohort", "[]") | ast_literal_eval %}
                 {% for cohrt in cohort_list %}
                   {% set _ = cohort_display_list.append(cohort.get(cohrt))  %}
                 {% endfor %}
@@ -76,7 +76,7 @@
                 <td class="govuk-table__cell">{{ cohort_display_list | join(' ') }}</td>
 
                 <td class="govuk-table__cell">£{{ "{:,.2f}".format(overview.funding_amount_requested|int|round) }}</td>
-                <td class="govuk-table__cell">{{ "Regional" if overview.is_project_regional else "National"}}</td>
+                <td class="govuk-table__cell">{{ "Regional" if overview.get("is_project_regional") else "National"}}</td>
 
                 {{ tags_table(tags[overview.application_id], tagging_purpose_config, query_params.show_tags == "ON") }}
 
