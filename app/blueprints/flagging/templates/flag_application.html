@@ -220,31 +220,33 @@
                                 }}
                             {% endfor %}
                             {# Flag Allocation #}
-                            <div class="govuk-form-group">
-                                <label class="govuk-label govuk-label--m">Flag allocation</label>
-                                {% set items = [] %}
-                                    {% for team in teams_available %}
-                                        {% set addItem = items.append({
-                                                                        "value": team["value"],
-                                                                        "text": team["value"],
-                                                                        "label": {
-                                                                        "text": "teams_available",
-                                                                        "for": form.teams_available.id
-                                                                        },
-                                                                        "checked": form.teams_available.data==team["value"]
-                                                                        }) %}
-                                    {% endfor %}
-                                {{ govukRadios({
-                                    "id": form.teams_available.id,
-                                    "name": form.teams_available.id,
-                                    "items": items,
-                                    'attributes': {'data-qa': 'select_teams_to_flag'},
-                                    "errorMessage": {
-                                    "text": form.errors.get(form.teams_available.id) | join("\n"),
-                                    } if form.errors.get(form.teams_available.id) else None
-                                    }) }}
+                            {% if teams_available %}
+                                <div class="govuk-form-group">
+                                    <label class="govuk-label govuk-label--m">Flag allocation</label>
+                                    {% set items = [] %}
+                                        {% for team in teams_available %}
+                                            {% set addItem = items.append({
+                                                                            "value": team["value"],
+                                                                            "text": team["value"],
+                                                                            "label": {
+                                                                            "text": "teams_available",
+                                                                            "for": form.teams_available.id
+                                                                            },
+                                                                            "checked": form.teams_available.data==team["value"]
+                                                                            }) %}
+                                        {% endfor %}
+                                    {{ govukRadios({
+                                        "id": form.teams_available.id,
+                                        "name": form.teams_available.id,
+                                        "items": items,
+                                        'attributes': {'data-qa': 'select_teams_to_flag'},
+                                        "errorMessage": {
+                                        "text": form.errors.get(form.teams_available.id) | join("\n"),
+                                        } if form.errors.get(form.teams_available.id) else None
+                                        }) }}
 
-                            </div>
+                                </div>
+                            {% endif %}
                             {% endcall %}
                         </div>
                     </div>
