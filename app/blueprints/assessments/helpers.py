@@ -46,11 +46,11 @@ def get_team_flag_stats(application_overviews) -> List[Dict]:
 
             for team in team_flag_stats:
                 if team["team_name"] == allocated_team:
-                    if latest_status == FlagType.RAISED:
+                    if latest_status == FlagType.RAISED.value:
                         team["raised"] += 1
-                    elif latest_status == FlagType.STOPPED:
+                    elif latest_status == FlagType.STOPPED.value:
                         team["stopped"] += 1
-                    elif latest_status == FlagType.RESOLVED:
+                    elif latest_status == FlagType.RESOLVED.value:
                         team["resolved"] += 1
 
     return team_flag_stats
