@@ -113,6 +113,29 @@ def test_change_tags_route(
 
 
 @pytest.mark.application_id("resolved_app")
+def test_change_tags_route_does_not_show_deactivated_tags_as_options(
+    mock_get_tasklist_state_for_banner,
+    client_with_valid_session,
+    mock_get_funds,
+    mock_get_application_metadata,
+    mock_get_fund,
+    mock_get_inactive_tags_for_fund_round,
+    mock_get_associated_tags_for_application,
+):
+
+    response = client_with_valid_session.get("/assess/application/app_id/tags")
+    soup = BeautifulSoup(response.data, "html.parser")
+    assert soup.find("h1").text == "Change tags"
+    assert (
+        soup.find(
+            "p",
+            class_="govuk-body dluhc-body-empty",
+        ).text.strip()
+        == "There are no tags available"
+    )
+
+
+@pytest.mark.application_id("resolved_app")
 def test_change_tags_route_associated_tag_checked(
     mock_get_tasklist_state_for_banner,
     client_with_valid_session,

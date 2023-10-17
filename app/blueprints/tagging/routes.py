@@ -72,13 +72,16 @@ def load_change_tags(application_id):
             )
         )
     state = get_state_for_tasklist_banner(application_id)
-    available_tags = get_tags_for_fund_round(state.fund_id, state.round_id, "")
+    all_tags = get_tags_for_fund_round(state.fund_id, state.round_id, "")
     associated_tags = get_associated_tags_for_application(application_id)
+    active_tags = []
     if associated_tags:
         associated_tag_ids = [tag.tag_id for tag in associated_tags]
-        for tag in available_tags:
+        for tag in all_tags:
             if tag.id in associated_tag_ids:
                 tag.associated = True
+            if tag.active:
+                active_tags.append(tag)
     assessment_status = determine_assessment_status(
         state.workflow_status, state.is_qa_complete
     )
@@ -86,7 +89,7 @@ def load_change_tags(application_id):
         "change_tags.html",
         form=tag_association_form,
         state=state,
-        available_tags=available_tags,
+        available_tags=active_tags,
         tag_config=Config.TAGGING_PURPOSE_CONFIG,
         application_id=application_id,
         assessment_status=assessment_status,
