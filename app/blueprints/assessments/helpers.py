@@ -119,9 +119,9 @@ def get_tag_map_and_tag_options(fund_round_tags, post_processed_overviews):
         )
         for purposes in Config.TAGGING_FILTER_CONFIG
     ]
-    tag_map = {}
+    tags_in_application_map = {}
     for overview in post_processed_overviews:
-        tag_map[overview["application_id"]] = (
+        tags_in_application_map[overview["application_id"]] = (
             [
                 AssociatedTag(
                     application_id=overview["application_id"],
@@ -132,13 +132,13 @@ def get_tag_map_and_tag_options(fund_round_tags, post_processed_overviews):
                     purpose=item["tag"]["tag_type"]["purpose"],
                 )
                 for item in overview["tag_associations"]
-                if item["associated"] is True
+                if item["associated"] is True and item["tag"]["active"] is True
             ]
             if overview["tag_associations"]
             else None
         )
 
-    return tag_map, tag_option_groups
+    return tags_in_application_map, tag_option_groups
 
 
 def generate_csv_of_application(q_and_a: dict, fund: Fund, application_json):

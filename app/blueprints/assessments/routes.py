@@ -227,10 +227,15 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
 
     # This call is to get the location data such as country, region and local_authority
     # from all the existing applications.
-    applications_metadata = get_application_overviews(
+    all_applications_metadata = get_application_overviews(
         fund_id, round_id, search_params=""
     )
-    locations = LocationData.from_json_blob(applications_metadata)
+    # note, we are not sending search parameters here as we don't want to filter
+    # the stats at all.  see https://dluhcdigital.atlassian.net/browse/FS-3249
+    unfiltered_stats = process_assessments_stats(all_applications_metadata)
+    all_application_locations = LocationData.from_json_blob(
+        all_applications_metadata
+    )
 
     search_params = {
         **search_params,
@@ -244,10 +249,6 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
     application_overviews = get_application_overviews(
         fund_id, round_id, search_params
     )
-
-    # note, we are not sending search parameters here as we don't want to filter
-    # the stats at all.  see https://dluhcdigital.atlassian.net/browse/FS-3249
-    stats = process_assessments_stats(applications_metadata)
 
     teams_flag_stats = get_team_flag_stats(application_overviews)
 
@@ -278,7 +279,7 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
     active_fund_round_tags = get_tags_for_fund_round(
         fund_id, round_id, {"tag_status": "True"}
     )
-    tag_map, tag_option_groups = get_tag_map_and_tag_options(
+    tags_in_application_map, tag_option_groups = get_tag_map_and_tag_options(
         active_fund_round_tags, post_processed_overviews
     )
 
@@ -296,7 +297,9 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
             "organisation_name": lambda x: x["organisation_name"],
             "funding_type": lambda x: x["funding_type"],
             "status": lambda x: x["application_status"],
-            "tags": lambda x: len(tag_map.get(x["application_id"]) or []),
+            "tags": lambda x: len(
+                tags_in_application_map.get(x["application_id"]) or []
+            ),
         }
 
         # Define the sorting function based on the specified column
@@ -326,17 +329,17 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
         cohort=cohort,
         assessment_statuses=assessment_statuses,
         show_clear_filters=show_clear_filters,
-        stats=stats,
+        stats=unfiltered_stats,
         team_flag_stats=teams_flag_stats,
         is_active_status=is_active_status,
         sort_column=sort_column,
         sort_order=sort_order,
         tag_option_groups=tag_option_groups,
-        tags=tag_map,
+        tags=tags_in_application_map,
         tagging_purpose_config=Config.TAGGING_PURPOSE_CONFIG,
-        countries=locations.countries,
-        regions=locations.regions,
-        local_authorities=locations._local_authorities,
+        countries=all_application_locations.countries,
+        regions=all_application_locations.regions,
+        local_authorities=all_application_locations._local_authorities,
     )
 
 
