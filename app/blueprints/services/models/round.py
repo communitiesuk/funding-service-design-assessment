@@ -6,6 +6,25 @@ from .application import Application
 
 
 @dataclass
+class FeedbackSurveyConfig:
+    has_feedback_survey: bool = False
+    is_feedback_survey_optional: bool = True
+    has_section_feedback: bool = False
+    is_section_feedback_optional: bool = True
+
+    @staticmethod
+    def from_json(d: dict):
+        # Filter unknown fields from JSON dictionary
+        return FeedbackSurveyConfig(
+            **{
+                k: v
+                for k, v in d.items()
+                if k in inspect.signature(FeedbackSurveyConfig).parameters
+            }
+        )
+
+
+@dataclass
 class Round:
     id: str
     assessment_deadline: str
@@ -19,6 +38,15 @@ class Round:
     application_fields_download_available: bool = False
     display_logo_on_pdf_exports: bool = False
     applications: List[Application] = None
+    feedback_survey_config: FeedbackSurveyConfig = None
+
+    def __post_init__(self):
+        if isinstance(self.feedback_survey_config, dict):
+            self.feedback_survey_config = FeedbackSurveyConfig.from_json(
+                self.feedback_survey_config
+            )
+        elif self.feedback_survey_config is None:
+            self.feedback_survey_config = FeedbackSurveyConfig()
 
     @classmethod
     def from_dict(cls, d: dict):
@@ -50,6 +78,8 @@ class Round:
             or False,
             display_logo_on_pdf_exports=data.get("display_logo_on_pdf_exports")
             or False,
+            feedback_survey_config=data.get("feedback_survey_config")
+            or FeedbackSurveyConfig(),
         )
 
     def add_application(self, application: Application):

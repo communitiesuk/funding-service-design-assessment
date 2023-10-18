@@ -82,11 +82,8 @@
                 <a class="govuk-link" data-qa="dashboard_summary" href="{{ summary.assessments_href }}">
                     View all submitted applications
                 </a>
-                {{ round_links(summary.access_controller, summary.round_application_fields_download_available, summary.export_href, "", summary.assessment_tracker_href) }}
-                </br>
-                </br>
-            {% endif %}
-            {% if summary.access_controller.is_lead_assessor %}
+                {{ round_links(summary.access_controller, summary.round_application_fields_download_available, summary.export_href, summary.feedback_export_href, summary.assessment_tracker_href) }}
+            {% elif summary.access_controller.is_lead_assessor and summary.feedback_export_href %}
                 <a class="govuk-link" href="{{ summary.feedback_export_href }}">
                     Export applicants feedback information
                 </a>

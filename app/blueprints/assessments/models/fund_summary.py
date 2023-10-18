@@ -94,10 +94,17 @@ def create_round_summaries(
             round_short_name=round.short_name.lower(),
             report_type="OUTPUT_TRACKER",
         )
-        feedback_export_href = url_for(
-            "assessment_bp.feedback_export",
-            fund_short_name=fund.short_name,
-            round_short_name=round.short_name.lower(),
+        feedback_export_href = (
+            url_for(
+                "assessment_bp.feedback_export",
+                fund_short_name=fund.short_name,
+                round_short_name=round.short_name.lower(),
+            )
+            if (
+                round.feedback_survey_config.has_feedback_survey
+                or round.feedback_survey_config.has_section_feedback
+            )
+            else ""
         )
 
         if has_devolved_authority_validation(fund_id=fund.id):
