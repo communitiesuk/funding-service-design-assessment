@@ -82,13 +82,11 @@ def create_round_summaries(
             fund_short_name=fund.short_name,
             round_short_name=round.short_name.lower(),
         )
-        export_href = (
-            url_for(
-                "assessment_bp.assessor_export",
-                fund_short_name=fund.short_name,
-                round_short_name=round.short_name.lower(),
-                report_type="ASSESSOR_EXPORT",
-            ),
+        export_href = url_for(
+            "assessment_bp.assessor_export",
+            fund_short_name=fund.short_name,
+            round_short_name=round.short_name.lower(),
+            report_type="ASSESSOR_EXPORT",
         )
         assessment_tracker_href = url_for(
             "assessment_bp.assessor_export",
