@@ -83,7 +83,7 @@
                     View all submitted applications
                 </a>
                 {{ round_links(summary.access_controller, summary.round_application_fields_download_available, summary.export_href, summary.feedback_export_href, summary.assessment_tracker_href) }}
-            {% elif summary.access_controller.is_lead_assessor %}
+            {% elif summary.access_controller.is_lead_assessor and summary.feedback_export_href %}
                 <a class="govuk-link" href="{{ summary.feedback_export_href }}">
                     Export applicants feedback information
                 </a>

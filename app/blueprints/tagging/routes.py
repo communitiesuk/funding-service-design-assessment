@@ -74,14 +74,18 @@ def load_change_tags(application_id):
     state = get_state_for_tasklist_banner(application_id)
     all_tags = get_tags_for_fund_round(state.fund_id, state.round_id, "")
     associated_tags = get_associated_tags_for_application(application_id)
+    associated_tag_ids = (
+        [tag.tag_id for tag in associated_tags]
+        if associated_tags
+        else current_app.logger.info("No associated tags found.")
+    )
+
     active_tags = []
-    if associated_tags:
-        associated_tag_ids = [tag.tag_id for tag in associated_tags]
-        for tag in all_tags:
-            if tag.id in associated_tag_ids:
-                tag.associated = True
-            if tag.active:
-                active_tags.append(tag)
+    for tag in all_tags:
+        if associated_tag_ids and tag.id in associated_tag_ids:
+            tag.associated = True
+        if tag.active:
+            active_tags.append(tag)
     assessment_status = determine_assessment_status(
         state.workflow_status, state.is_qa_complete
     )
