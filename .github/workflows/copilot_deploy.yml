@@ -39,7 +39,6 @@ jobs:
       application: funding-service-design-assessment
       assets_required: true
   pre_deploy_tests:
-    if: ${{ github.event.inputs.copilot }}
     secrets:
       E2E_PAT: ${{secrets.E2E_PAT}}
     uses: communitiesuk/funding-design-service-workflows/.github/workflows/pre-deploy.yml@main
