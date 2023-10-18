@@ -33,12 +33,15 @@ class Fund:
             ),
         )
 
+    # TODO: Move this config to database
     @property
     def fund_types(self) -> set[str]:
         if self.short_name == "COF":
             return {ALL_VALUE, "allocative"}
         elif self.short_name == "NSTF":
             return {ALL_VALUE, "allocative"}
+        elif self.short_name == "CYP":
+            return {ALL_VALUE, "competitive"}
         return {ALL_VALUE}
 
     def add_round(self, fund_round: Round):
