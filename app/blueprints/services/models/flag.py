@@ -27,6 +27,12 @@ class Flag:
                 item["date_created"]
             ).strftime("%Y-%m-%d %X")
 
+        # sort the updates in the order they are created
+        if self.updates:
+            self.updates = sorted(
+                self.updates, key=lambda x: x["date_created"]
+            )
+
         self.latest_user_id = (
             self.updates[-1]["user_id"] if self.updates else ""
         )
