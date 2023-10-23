@@ -620,7 +620,7 @@ def get_all_uploaded_documents_theme_answers(
         all_uploaded_documents_theme_answers_endpoint
     )
 
-    if all_uploaded_documents_theme_answers_response:
+    if isinstance(all_uploaded_documents_theme_answers_response, list):
         return all_uploaded_documents_theme_answers_response
     else:
         msg = (
