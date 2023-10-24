@@ -673,9 +673,10 @@ def assessor_export(
     en_export_data = generate_assessment_info_csv(export["en_list"])
     cy_export_data = generate_assessment_info_csv(export["cy_list"])
 
+    formatted_datetime = datetime.utcnow().strftime("%Y-%m-%d_%H-%M-%S")
     files_to_download = [
-        ("en_export_data.csv", en_export_data),
-        ("cy_export_data.csv", cy_export_data),
+        (f"{report_type.lower()}_{formatted_datetime}_en.csv", en_export_data),
+        (f"{report_type.lower()}_{formatted_datetime}_cy.csv", cy_export_data),
     ]
 
     return download_multiple_files(files_to_download, report_type)
