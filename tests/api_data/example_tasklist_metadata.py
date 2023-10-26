@@ -12,7 +12,7 @@ assessor_task_list_test_metadata = metadata = {
                 },
             ],
             "total_criteria_score": 12,
-            "total_criteria_score_possible": 15,
+            "number_of_scored_sub_criteria": 15,
             "weighting": 0.3,
         },
         {
@@ -27,7 +27,7 @@ assessor_task_list_test_metadata = metadata = {
                 },
             ],
             "total_criteria_score": 16,
-            "total_criteria_score_possible": 20,
+            "number_of_scored_sub_criteria": 20,
             "weighting": 0.3,
         },
         {
@@ -42,7 +42,7 @@ assessor_task_list_test_metadata = metadata = {
                 },
             ],
             "total_criteria_score": 10,
-            "total_criteria_score_possible": 10,
+            "number_of_scored_sub_criteria": 10,
             "weighting": 0.3,
         },
         {
@@ -57,7 +57,7 @@ assessor_task_list_test_metadata = metadata = {
                 }
             ],
             "total_criteria_score": 2,
-            "total_criteria_score_possible": 5,
+            "number_of_scored_sub_criteria": 5,
             "weighting": 0.1,
         },
     ],
