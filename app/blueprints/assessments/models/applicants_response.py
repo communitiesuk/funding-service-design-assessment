@@ -107,8 +107,8 @@ class FormattedBesideQuestionAnswerPair(QuestionAnswerPair):
     def from_dict(cls, data: dict, formatter: callable):  # noqa
         return cls(
             question=data["question"],
-            answer=data["answer"]
-            if data["answer"]
+            answer=data.get("answer")
+            if data.get("answer")
             else ANSWER_NOT_PROVIDED_DEFAULT,
             formatter=formatter if data.get("answer") else lambda x: x,
         )
