@@ -5,9 +5,11 @@
     <h4 class="govuk-summary-list govuk-!-margin-bottom-4">
         <strong>{{ meta.question }}</strong></h4>
     {% for key, href in meta.key_to_url_dict.items() %}
+    <p class="govuk-body">
         <a class="govuk-link govuk-!-font-weight-regular"
            {# we split by / and render just the filename #}
            href="{{ href }}">{{ key.rsplit("/", 1)[-1] }}</a>
+    </p>
     {% endfor %}
     {% if not meta.key_to_url_dict %}
         <p class="govuk-body">Not provided.</p>
