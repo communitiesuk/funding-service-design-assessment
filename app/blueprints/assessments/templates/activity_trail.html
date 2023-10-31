@@ -1,0 +1,23 @@
+{% from "macros/banner_summary.html" import banner_summary %}
+
+{% block header %}
+<header role="banner" data-module="govuk-header">
+    <nav class="govuk-width-container govuk-header__navigation">
+        <div class="govuk-phase-banner flex-parent-element">
+            <p class="govuk-!-text-align-left flex-parent-element flexed-element-margins-collapse">
+                {{ govukBackLink({'href': url_for("assessment_bp.fund_dashboard", fund_short_name=state['fund_short_name'], round_short_name=state['round_short_name']), 'html': 'Back to <b>assessment dashboard</b>', 'attributes': {'data-qa': 'back-to-assessment-dashboard'} }) }}
+            </p>
+            {{ logout_partial(sso_logout_url) }}
+        </div>
+    </nav>
+
+    {{ banner_summary(
+        state.fund_name,
+        state.short_id,
+        state.project_name,
+        state.funding_amount_requested,
+        assessment_status,
+        flag_status
+    ) }}
+</header>
+{% endblock header %}
