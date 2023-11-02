@@ -824,8 +824,9 @@ def get_applicant_feedback_and_survey_report(fund_id, round_id, status_only):
 
 
 def get_scoring_system(round_id: str) -> List[Flag]:
-    scoring_system_endpoint = get_data(
-        Config.ASSESSMENT_SCORING_SYSTEM_ENDPOINT.format(round_id=round_id)
+    scoring_endpoint = Config.ASSESSMENT_SCORING_SYSTEM_ENDPOINT.format(
+        round_id=round_id
     )
-    current_app.logger.info(f"Calling endpoint '{scoring_system_endpoint}'.")
-    return get_data(scoring_system_endpoint)
+    current_app.logger.info(f"Calling endpoint '{scoring_endpoint}'.")
+    scoring_system = get_data(scoring_endpoint)["scoring_system"]
+    return scoring_system

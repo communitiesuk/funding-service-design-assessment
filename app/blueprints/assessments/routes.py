@@ -52,6 +52,7 @@ from app.blueprints.authentication.validation import has_access_to_fund
 from app.blueprints.authentication.validation import (
     has_devolved_authority_validation,
 )
+from app.blueprints.scoring.helpers import get_scoring_class
 from app.blueprints.services.aws import get_file_for_download_from_aws
 from app.blueprints.services.data_services import (
     get_all_uploaded_documents_theme_answers,
@@ -600,8 +601,6 @@ def application(application_id):
         update_ar_status_to_completed(application_id)
 
     state = get_state_for_tasklist_banner(application_id)
-
-    from app.blueprints.scoring.helpers import get_scoring_class
 
     scoring_form = get_scoring_class(state.round_id)()
 

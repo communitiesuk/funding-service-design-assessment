@@ -5,12 +5,8 @@ from flask import current_app
 
 
 def get_scoring_class(round_id):
-    # scoring systems:
-    # - OneToFive
-    # - ZeroToThree
-    # TODO: Add endpoint to assessment store to retrieve scoring system
-    # scoring_system  = get_scoring_system()
-    scoring_system = "OneToFive"
+    scoring_system = get_scoring_system(round_id)
+
     try:
         scoring_form_class = getattr(
             scoring_form_classes, f"{scoring_system}ScoreForm"
