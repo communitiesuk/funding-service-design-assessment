@@ -107,7 +107,9 @@ class FormattedBesideQuestionAnswerPair(QuestionAnswerPair):
     def from_dict(cls, data: dict, formatter: callable):  # noqa
         return cls(
             question=data["question"],
-            answer=data.get("answer", ANSWER_NOT_PROVIDED_DEFAULT),
+            answer=data.get("answer")
+            if data.get("answer")
+            else ANSWER_NOT_PROVIDED_DEFAULT,
             formatter=formatter if data.get("answer") else lambda x: x,
         )
 
@@ -269,11 +271,13 @@ def _ui_component_from_factory(item: dict, application_id: str):
     ):
         if isinstance(answer, list):
             try:
-                if answer[1][2] == "monthYearField":
-                    input_date = answer[1][1][0]
-                    item["answer"][1][1][0] = _convert_to_month_year(
-                        input_date
-                    )
+                for i, ans in enumerate(answer):
+                    if ans[2] == "monthYearField":
+                        for j, val in enumerate(ans[1]):
+                            input_date = val
+                            item["answer"][i][1][j] = _convert_to_month_year(
+                                input_date
+                            )
             except IndexError:
                 pass
         else:
