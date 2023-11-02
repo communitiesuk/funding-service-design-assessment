@@ -547,6 +547,7 @@ class TestAuthorisation:
         mock_get_bulk_accounts,
         mock_get_associated_tags_for_application,
         mocker,
+        mock_get_scoring_system,
     ):
 
         token = create_valid_token(user_account)
