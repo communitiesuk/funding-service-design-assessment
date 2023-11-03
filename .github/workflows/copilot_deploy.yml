@@ -26,6 +26,10 @@ on:
     paths: # Ignore README markdown and only deploy when something in the copilot folder has changed
       - 'copilot/**'
       - '!**/README.md'
+      - 'requirements-dev.in'
+      - 'requirements-dev.txt'
+      - 'requirements.in'
+      - 'requirements.txt'
   pull_request:
     types:
       - closed # Further protection - only allow this workflow to run automatically on closed pull requests
