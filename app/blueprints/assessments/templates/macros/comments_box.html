@@ -1,0 +1,35 @@
+{%- from 'govuk_frontend_jinja/components/textarea/macro.html' import govukTextarea -%}
+{%- from "govuk_frontend_jinja/components/button/macro.html" import govukButton -%}
+
+{% macro comment_box(comment_form) %}
+
+<form method="post">
+<div class="govuk-grid-row">
+    {{ comment_form.csrf_token }}
+    <div class="govuk-grid-column-full">
+    {{ govukTextarea({
+    "name": comment_form.comment.id,
+    "id": comment_form.comment.id,
+    "rows": 8,
+    "label": {
+      "text": "Add a comment",
+      "classes": "govuk-label--m",
+      isPageHeading: true
+    },
+    "errorMessage": {
+      "text": comment_form.comment.errors.0
+  } if comment_form.comment.errors
+  }) }}
+
+  {{ govukButton({
+    "text": "Save comment",
+    "type": "submit",
+    "classes": "primary-button govuk-!-margin-bottom-9",
+    "data-qa": "save-comment-button"
+  }) }}
+
+    </div>
+</div>
+</form>
+
+{% endmacro %}

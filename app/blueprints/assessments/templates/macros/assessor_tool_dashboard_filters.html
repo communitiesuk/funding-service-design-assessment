@@ -1,0 +1,45 @@
+{% macro generate_option(selected_value, value, text) %}
+    <option value="{{ value }}" {% if selected_value == value %}selected{% endif %}>
+        {{ text }}
+    </option>
+{% endmacro %}
+
+{% macro assessor_tool_dashboard_filters(filters, has_any_assessor_role) -%}
+    <form method="get" class="govuk-!-width-full">
+        <div class="govuk-form-group govuk-!-display-inline-block">
+            <div>
+                <label class="govuk-label" for="filter_fund_name">
+                    Search fund name
+                </label>
+                <input class="search-input govuk-input" id="filter_fund_name" name="filter_fund_name"
+                       type="text" value="{{ filters.filter_fund_name }}">
+            </div>
+        </div>
+        <div class="govuk-form-group govuk-width-full govuk-!-display-inline-block">
+            <label class="govuk-label" for="filter_fund_type">
+                Filter by fund type
+            </label>
+            <select id="filter_fund_type" name="filter_fund_type" class="govuk-select">
+                {{ generate_option(filters.filter_fund_type, 'ALL', 'All') }}
+                {{ generate_option(filters.filter_fund_type, 'competitive', 'Competitive fund') }}
+                {{ generate_option(filters.filter_fund_type, 'allocative', 'Allocative fund') }}
+            </select>
+        </div>
+        <div class="govuk-form-group govuk-!-display-inline-block">
+            <label class="govuk-label" for="filter_status">
+                Filter by assessment status
+            </label>
+            <select class="govuk-select" id="filter_status" name="filter_status">
+                {{ generate_option(filters.filter_status, 'ALL', 'All') }}
+                {{ generate_option(filters.filter_status, 'active', 'Active assessments') }}
+                {% if has_any_assessor_role %}
+                {{ generate_option(filters.filter_status, 'live', 'Live applications') }}
+                {% endif %}
+                {{ generate_option(filters.filter_status, 'closed', 'Closed assessments') }}
+            </select>
+            <button class="govuk-button primary-button search-button" type="submit">
+                Search
+            </button>
+        </div>
+    </form>
+{%- endmacro %}

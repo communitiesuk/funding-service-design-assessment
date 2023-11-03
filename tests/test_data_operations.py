@@ -1,7 +1,7 @@
-from app.assess.data import get_application_overviews
-from app.assess.data import get_comments
-from app.assess.data import get_fund
-from app.assess.data import get_round
+from app.blueprints.services.data_services import get_application_overviews
+from app.blueprints.services.data_services import get_comments
+from app.blueprints.services.data_services import get_fund
+from app.blueprints.services.data_services import get_round
 from flask import Flask
 from tests.api_data.test_data import mock_api_results
 
@@ -13,7 +13,8 @@ class TestDataOperations:
     def test_get_fund(self, mocker):
         mock_fund_result = mock_api_results["fund_store/funds/{fund_id}"]
         get_data_mock = mocker.patch(
-            "app.assess.data.get_data", return_value=mock_fund_result
+            "app.blueprints.services.data_services.get_data",
+            return_value=mock_fund_result,
         )
         arg = "test-fund"
         with self.test_app.app_context():
@@ -29,7 +30,8 @@ class TestDataOperations:
             "fund_store/funds/{fund_id}/rounds/{round_id}"
         ]
         get_data_mock = mocker.patch(
-            "app.assess.data.get_data", return_value=mock_round_result
+            "app.blueprints.services.data_services.get_data",
+            return_value=mock_round_result,
         )
         args = ("test-fund", "test-round")
         with self.test_app.app_context():
@@ -43,7 +45,8 @@ class TestDataOperations:
             "assessment_store/application_overviews/{fund_id}/{round_id}?"
         ]
         get_data_mock = mocker.patch(
-            "app.assess.data.get_data", return_value=mock_fund_result
+            "app.blueprints.services.data_services.get_data",
+            return_value=mock_fund_result,
         )
 
         with self.test_app.app_context():
@@ -52,6 +55,7 @@ class TestDataOperations:
                 "search_in": "project_name,short_id",
                 "asset_type": "ALL",
                 "status": "ALL",
+                "local_authority": "ALL",
             }
             args = ("test-fund", "test-round")
             result = get_application_overviews(*args, params)
@@ -63,10 +67,11 @@ class TestDataOperations:
         mock_overview_result = mock_api_results[
             "assessment_store/application_overviews/{fund_id}/{round_id}?"
             "search_term=Project+S&search_in=project_name%2Cshort_id&"
-            "asset_type=gallery&status=STOPPED"
+            "asset_type=gallery&local_authority=wokefield&status=STOPPED"
         ]
         get_data_mock = mocker.patch(
-            "app.assess.data.get_data", return_value=mock_overview_result
+            "app.blueprints.services.data_services.get_data",
+            return_value=mock_overview_result,
         )
 
         with self.test_app.app_context():
@@ -75,6 +80,7 @@ class TestDataOperations:
                 "search_in": "project_name,short_id",
                 "asset_type": "ALL",
                 "status": "ALL",
+                "local_authority": "ALL",
             }
             args = ("test-fund", "test-round")
             result = get_application_overviews(*args, params)
@@ -87,7 +93,8 @@ class TestDataOperations:
     def test_get_comments(self, mocker):
         mock_comments_result = mock_api_results["assessment_store/comment?"]
         get_data_mock = mocker.patch(
-            "app.assess.data.get_data", return_value=mock_comments_result
+            "app.blueprints.services.data_services.get_data",
+            return_value=mock_comments_result,
         )
         args = ("resolved_app", "test_sub_criteria_id", "test_theme_id")
         with self.test_app.app_context():

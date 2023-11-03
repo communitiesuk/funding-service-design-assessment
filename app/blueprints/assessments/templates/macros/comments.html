@@ -1,0 +1,30 @@
+{% macro comment(comments) %}
+<div class="govuk-!-margin-top-7" id="comments">
+    <h2 class="govuk-heading-m govuk-!-margin-bottom-2">Comments</h2>
+    <div id="more-detail-hint" class="govuk-hint">
+      <p class="govuk-hint govuk-!-margin-top-0">Summarise any thoughts you have on the information provided.</p>
+      <p class="govuk-hint govuk-!-margin-top-0">You cannot edit or delete your comment once you have saved it.</p>
+    </div>
+    {% if comments == None %}
+    <div class="govuk-body govuk-!-margin-top-6">
+        No comments have been left yet.
+        </div>
+    {% else %}
+    {% for comment_list in comments.values() %}
+        {% for comment in comment_list %}
+        {% if not g.access_controller.has_any_assessor_role and comment.from_any_assessor %}
+            <div class="comment-group">
+             <p class="govuk-body">Permission required to see comment.</p>
+            </div>
+        {% else %}
+            <div class="comment-group">
+                <p class="govuk-body">{{ comment.comment }}</p>
+                <p class="govuk-body-s">{{ comment.full_name }} ({{ comment.highest_role|all_caps_to_human }}) {{ comment.email_address }}</p>
+                <p class="govuk-body-s">{{ comment.date_created|utc_to_bst }}</p>
+            </div>
+        {% endif %}
+        {% endfor %}
+    {% endfor %}
+    {% endif %}
+</div>
+{% endmacro %}

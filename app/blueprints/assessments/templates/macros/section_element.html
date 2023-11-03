@@ -1,0 +1,28 @@
+{%- from "govuk_frontend_jinja/components/table/macro.html" import govukTable -%}
+{% macro section_element(name, sub_criterias, application_id, show_caption=True) %}
+    {% if name != "Unscored" %}
+        <h2 class="govuk-heading-l govuk-!-margin-top-4">{{ name }}</h2>
+    {% endif %}
+
+    {% set caption = "Review against legal and policy requirements." if name == "Declarations" else
+                 ("Use for due diligence checks." if show_caption else "") %}
+    <p class="govuk-body govuk-!-text-align-left govuk-!-font-weight-regular govuk-!-margin-bottom-4">
+        {{ caption }}
+    </p>
+    <dl class="govuk-summary-list">
+        {% for sub_criteria in sub_criterias %}
+            {% set sub_criteria_url = url_for(
+                'assessment_bp.display_sub_criteria',
+                application_id=application_id,
+                sub_criteria_id=sub_criteria.id
+            ) %}
+
+            <div class="govuk-summary-list__row">
+                <dd class="govuk-summary-list__actions govuk-!-text-align-left">
+                    <a class="govuk-link" data-qa="sub_criteria_name" href="{{ sub_criteria_url }}">{{ sub_criteria.name }}</a>
+                </dd>
+            </div>
+        {% endfor %}
+    </dl>
+
+{% endmacro %}

@@ -1,0 +1,28 @@
+{% macro tags_table(tags, tagging_purpose_config, expand_tags) %}
+
+    {% if tags %}
+        <td class="govuk-table__cell govuk-table__cell">
+            <details class="govuk-details dlhuc-tag-expand" data-module="govuk-details">
+                <summary class="govuk-details__summary">
+                            <span class="govuk-details__summary-text">
+                                {{ "1 tag" if tags|length == 1 else tags|length|string + " tags" }}
+                            </span>
+                </summary>
+                <div>
+                    {% for tag in tags %}
+                        <div class="govuk-!-margin-top-2">
+                            <strong class="govuk-tag govuk-tag--{{ tagging_purpose_config[tag.purpose]["colour"] }} dluhc-tag">
+                                {{ tag.value }}
+                            </strong>
+                        </div>
+                    {% endfor %}
+                </div>
+            </details>
+        </td>
+    {% else %}
+        <td class="govuk-table__cell govuk-table__cell">
+            -
+        </td>
+    {% endif %}
+
+{% endmacro %}

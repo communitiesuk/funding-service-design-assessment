@@ -1,11 +1,13 @@
 from unittest import mock
 
-import app
 import pytest
-from app.assess.models.flag import Flag
+from app.blueprints.assessments.models.fund_summary import RoundSummary
+from app.blueprints.assessments.models.fund_summary import Stats
+from app.blueprints.services.models.flag import Flag
 from bs4 import BeautifulSoup
 from flask import session
 from tests.conftest import create_valid_token
+from tests.conftest import fund_specific_claim_map
 from tests.conftest import test_commenter_claims
 from tests.conftest import test_lead_assessor_claims
 
@@ -13,10 +15,12 @@ from tests.conftest import test_lead_assessor_claims
 class TestRoutes:
     @pytest.mark.mock_parameters(
         {
-            "get_assessment_stats_path": (
-                "app.assess.models.fund_summary.get_assessments_stats"
-            ),
-            "get_rounds_path": "app.assess.models.fund_summary.get_rounds",
+            "get_assessment_stats_path": [
+                "app.blueprints.assessments.models.fund_summary.get_assessments_stats",
+            ],
+            "get_rounds_path": [
+                "app.blueprints.assessments.models.fund_summary.get_rounds",
+            ],
             "fund_id": "test-fund",
             "round_id": "test-round",
         }
@@ -28,48 +32,268 @@ class TestRoutes:
         mock_get_rounds,
         mock_get_assessment_stats,
     ):
-
         response = flask_test_client.get("/assess/assessor_tool_dashboard/")
         assert 200 == response.status_code, "Wrong status code on response"
         soup = BeautifulSoup(response.data, "html.parser")
         assert (
-            soup.title.string == "Assessment tool dashboard - Assessment Hub"
+            soup.title.string
+            == "Assessment tool dashboard – Assessment Hub – GOV.UK"
         ), "Response does not contain expected heading"
         all_table_data_elements = str(
             soup.find_all("td", class_="govuk-table__cell")
         )
+        assert len(all_table_data_elements) > 0
         project_titles = [
             "Assessment closing date",
             "Applications received",
             "Assessments completed",
             "QA Complete",
         ]
+        live_round_titles = [
+            "Application closing date",
+            "Applications submitted",
+            "Applications in progress",
+            "Applications not started",
+            "Applications completed but not started",
+        ]
         assert all(
             title in all_table_data_elements for title in project_titles
+        ) or all(
+            title in all_table_data_elements for title in live_round_titles
         )
+        for mock_func in mock_get_assessment_stats:
+            assert mock_func.call_count == 1
+        for mock_func in mock_get_rounds:
+            assert mock_func.call_count == 1
 
     @pytest.mark.mock_parameters(
         {
-            "fund_short_name": "TF",
+            "get_assessment_stats_path": [
+                "app.blueprints.assessments.models.fund_summary.get_assessments_stats",
+            ],
+            "get_rounds_path": [
+                "app.blueprints.assessments.models.fund_summary.get_rounds",
+            ],
+            "fund_id": "test-fund",
+            "round_id": "test-round",
+        }
+    )
+    @pytest.mark.parametrize(
+        "exp_link_count, download_available, mock_is_lead_assessor",
+        [(1, False, True), (3, True, True), (0, False, False)],
+    )
+    def test_route_landing_export_link_visibility(
+        self,
+        flask_test_client,
+        mock_get_funds,
+        mocker,
+        exp_link_count,
+        download_available,
+        mock_is_lead_assessor,
+    ):
+        access_controller_mock = mock.MagicMock()
+        access_controller_mock.is_lead_assessor = mock_is_lead_assessor
+        mocker.patch(
+            "app.blueprints.assessments.routes.create_round_summaries",
+            return_value=[
+                RoundSummary(
+                    is_assessment_active_status=True,
+                    is_round_open_status=False,
+                    is_not_yet_open_status=False,
+                    fund_id="111",
+                    round_id="222",
+                    fund_name="test fund",
+                    round_name="test round",
+                    assessments_href="",
+                    access_controller=access_controller_mock,
+                    export_href=(
+                        "/assess/assessor_export/TF/tr/ASSESSOR_EXPORT"
+                    ),
+                    feedback_export_href="/assess/feedback_export/TF/tr",
+                    assessment_tracker_href="",
+                    round_application_fields_download_available=download_available,
+                    sorting_date="",
+                    assessment_stats=Stats(
+                        date="2023-12-12T12:00:00",
+                        total_received=1,
+                        completed=1,
+                        started=1,
+                        qa_complete=1,
+                        stopped=1,
+                    ),
+                    live_round_stats=None,
+                )
+            ],
+        )
+        token = create_valid_token(test_lead_assessor_claims)
+        flask_test_client.set_cookie("localhost", "fsd_user_token", token)
+        response = flask_test_client.get("/assess/assessor_tool_dashboard/")
+        assert 200 == response.status_code, "Wrong status code on response"
+        soup = BeautifulSoup(response.data, "html.parser")
+
+        all_exports_links = soup.find_all(
+            "a",
+            class_="govuk-link",
+            string=lambda text: "Export" in text if text else False,
+        )
+        assert len(all_exports_links) == exp_link_count
+        if not download_available and mock_is_lead_assessor:
+            assert "Assessment Tracker Export" in all_exports_links[-1].text
+
+    @pytest.mark.mock_parameters(
+        {
+            "fund_short_name": "CYP",
+            "round_short_name": "TR",
+            "expected_search_params": {
+                "search_term": "",
+                "search_in": "organisation_name,short_id",
+                "cohort": "ALL",
+                "status": "ALL",
+                "filter_by_tag": "ALL",
+                "local_authority": "ALL",
+                "country": "ALL",
+                "region": "ALL",
+            },
+        }
+    )
+    @pytest.mark.application_id("resolved_app")
+    def test_route_fund_dashboard_CYP(
+        self,
+        request,
+        flask_test_client,
+        mock_get_funds,
+        mock_get_round,
+        mock_get_fund,
+        mock_get_application_overviews,
+        mock_get_assessment_progress,
+        mock_get_application_metadata,
+        mock_get_active_tags_for_fund_round,
+        mock_get_tag_types,
+    ):
+        flask_test_client.set_cookie(
+            "localhost",
+            "fsd_user_token",
+            create_valid_token(fund_specific_claim_map["CYP"]["ASSESSOR"]),
+        )
+
+        params = request.node.get_closest_marker("mock_parameters").args[0]
+
+        fund_short_name = params["fund_short_name"]
+        round_short_name = params["round_short_name"]
+
+        response = flask_test_client.get(
+            f"/assess/assessor_dashboard/{fund_short_name}/{round_short_name}",
+            follow_redirects=True,
+        )
+        assert 200 == response.status_code, "Wrong status code on response"
+        soup = BeautifulSoup(response.data, "html.parser")
+
+        all_table_headings = str(
+            soup.find_all("th", class_="govuk-table__header")
+        )
+        expected_titles = [
+            "Reference",
+            "Organisation name",
+            "Cohort",
+            "National or regional",
+            "Status",
+        ]
+        assert all(title in all_table_headings for title in expected_titles)
+
+    @pytest.mark.mock_parameters(
+        {
+            "fund_short_name": "NSTF",
+            "round_short_name": "TR",
+            "expected_search_params": {
+                "search_term": "",
+                "search_in": "organisation_name,short_id",
+                "funding_type": "ALL",
+                "status": "ALL",
+                "filter_by_tag": "ALL",
+                "local_authority": "ALL",
+                "country": "ALL",
+                "region": "ALL",
+            },
+        }
+    )
+    @pytest.mark.application_id("resolved_app")
+    def test_route_fund_dashboard_NSTF(
+        self,
+        request,
+        flask_test_client,
+        mock_get_funds,
+        mock_get_round,
+        mock_get_fund,
+        mock_get_application_overviews,
+        mock_get_assessment_progress,
+        mock_get_application_metadata,
+        mock_get_active_tags_for_fund_round,
+        mock_get_tag_types,
+    ):
+        flask_test_client.set_cookie(
+            "localhost",
+            "fsd_user_token",
+            create_valid_token(fund_specific_claim_map["NSTF"]["ASSESSOR"]),
+        )
+
+        params = request.node.get_closest_marker("mock_parameters").args[0]
+
+        fund_short_name = params["fund_short_name"]
+        round_short_name = params["round_short_name"]
+
+        response = flask_test_client.get(
+            f"/assess/assessor_dashboard/{fund_short_name}/{round_short_name}",
+            follow_redirects=True,
+        )
+        assert 200 == response.status_code, "Wrong status code on response"
+        soup = BeautifulSoup(response.data, "html.parser")
+
+        all_table_headings = str(
+            soup.find_all("th", class_="govuk-table__header")
+        )
+        expected_titles = [
+            "Reference",
+            "Organisation name",
+            "Funding type",
+            "Funding requested",
+            "Status",
+        ]
+        assert all(title in all_table_headings for title in expected_titles)
+
+    @pytest.mark.mock_parameters(
+        {
+            "fund_short_name": "COF",
             "round_short_name": "TR",
             "expected_search_params": {
                 "search_term": "",
                 "search_in": "project_name,short_id",
                 "asset_type": "ALL",
                 "status": "ALL",
+                "filter_by_tag": "ALL",
+                "local_authority": "ALL",
+                "country": "ALL",
+                "region": "ALL",
             },
         }
     )
-    def test_route_fund_dashboard(
+    @pytest.mark.application_id("resolved_app")
+    def test_route_fund_dashboard_COF(
         self,
         request,
         flask_test_client,
         mock_get_fund,
+        mock_get_funds,
         mock_get_round,
         mock_get_application_overviews,
-        mock_get_assessment_stats,
         mock_get_assessment_progress,
+        mock_get_active_tags_for_fund_round,
+        mock_get_tag_types,
     ):
+        flask_test_client.set_cookie(
+            "localhost",
+            "fsd_user_token",
+            create_valid_token(fund_specific_claim_map["COF"]["ASSESSOR"]),
+        )
 
         params = request.node.get_closest_marker("mock_parameters").args[0]
 
@@ -83,8 +307,22 @@ class TestRoutes:
         assert 200 == response.status_code, "Wrong status code on response"
         soup = BeautifulSoup(response.data, "html.parser")
         assert (
-            soup.title.string == "Team dashboard - Assessment Hub"
+            soup.title.string == "Team dashboard – Assessment Hub – GOV.UK"
         ), "Response does not contain expected heading"
+
+        all_table_headings = str(
+            soup.find_all("th", class_="govuk-table__header")
+        )
+        expected_titles = [
+            "Reference",
+            "Project name",
+            "Asset type",
+            "Funding requested",
+            "Location",
+            "Status",
+        ]
+        assert all(title in all_table_headings for title in expected_titles)
+
         all_table_data_elements = str(
             soup.find_all("td", class_="govuk-table__cell")
         )
@@ -106,6 +344,10 @@ class TestRoutes:
                 "search_in": "project_name,short_id",
                 "asset_type": "ALL",
                 "status": "QA_COMPLETE",
+                "filter_by_tag": "ALL",
+                "local_authority": "ALL",
+                "country": "ALL",
+                "region": "ALL",
             },
         }
     )
@@ -114,12 +356,13 @@ class TestRoutes:
         request,
         flask_test_client,
         mock_get_fund,
+        mock_get_funds,
         mock_get_round,
         mock_get_application_overviews,
-        mock_get_assessment_stats,
         mock_get_assessment_progress,
+        mock_get_active_tags_for_fund_round,
+        mock_get_tag_types,
     ):
-
         params = request.node.get_closest_marker("mock_parameters").args[0]
         fund_short_name = params["fund_short_name"]
         round_short_name = params["round_short_name"]
@@ -133,7 +376,7 @@ class TestRoutes:
         assert 200 == response.status_code, "Wrong status code on response"
         soup = BeautifulSoup(response.data, "html.parser")
         assert (
-            soup.title.string == "Team dashboard - Assessment Hub"
+            soup.title.string == "Team dashboard – Assessment Hub – GOV.UK"
         ), "Response does not contain expected heading"
 
     @pytest.mark.mock_parameters(
@@ -145,6 +388,10 @@ class TestRoutes:
                 "search_in": "project_name,short_id",
                 "asset_type": "pub",
                 "status": "ALL",
+                "filter_by_tag": "ALL",
+                "local_authority": "ALL",
+                "country": "ALL",
+                "region": "ALL",
             },
         }
     )
@@ -153,12 +400,13 @@ class TestRoutes:
         request,
         flask_test_client,
         mock_get_fund,
+        mock_get_funds,
         mock_get_round,
         mock_get_application_overviews,
-        mock_get_assessment_stats,
         mock_get_assessment_progress,
+        mock_get_active_tags_for_fund_round,
+        mock_get_tag_types,
     ):
-
         params = request.node.get_closest_marker("mock_parameters").args[0]
         fund_short_name = params["fund_short_name"]
         round_short_name = params["round_short_name"]
@@ -172,7 +420,7 @@ class TestRoutes:
         assert 200 == response.status_code, "Wrong status code on response"
         soup = BeautifulSoup(response.data, "html.parser")
         assert (
-            soup.title.string == "Team dashboard - Assessment Hub"
+            soup.title.string == "Team dashboard – Assessment Hub – GOV.UK"
         ), "Response does not contain expected heading"
 
     @pytest.mark.mock_parameters(
@@ -184,6 +432,10 @@ class TestRoutes:
                 "search_in": "project_name,short_id",
                 "asset_type": "ALL",
                 "status": "ALL",
+                "filter_by_tag": "ALL",
+                "local_authority": "ALL",
+                "country": "ALL",
+                "region": "ALL",
             },
         }
     )
@@ -192,12 +444,13 @@ class TestRoutes:
         request,
         flask_test_client,
         mock_get_fund,
+        mock_get_funds,
         mock_get_round,
         mock_get_application_overviews,
-        mock_get_assessment_stats,
         mock_get_assessment_progress,
+        mock_get_active_tags_for_fund_round,
+        mock_get_tag_types,
     ):
-
         params = request.node.get_closest_marker("mock_parameters").args[0]
         fund_short_name = params["fund_short_name"]
         round_short_name = params["round_short_name"]
@@ -210,8 +463,9 @@ class TestRoutes:
 
         assert 200 == response.status_code, "Wrong status code on response"
         soup = BeautifulSoup(response.data, "html.parser")
+        soup = BeautifulSoup(response.data, "html.parser")
         assert (
-            soup.title.string == "Team dashboard - Assessment Hub"
+            soup.title.string == "Team dashboard – Assessment Hub – GOV.UK"
         ), "Response does not contain expected heading"
 
     @pytest.mark.mock_parameters(
@@ -223,6 +477,10 @@ class TestRoutes:
                 "search_in": "project_name,short_id",
                 "asset_type": "ALL",
                 "status": "ALL",
+                "filter_by_tag": "ALL",
+                "local_authority": "ALL",
+                "country": "ALL",
+                "region": "ALL",
             },
         }
     )
@@ -231,12 +489,13 @@ class TestRoutes:
         request,
         flask_test_client,
         mock_get_fund,
+        mock_get_funds,
         mock_get_round,
         mock_get_application_overviews,
-        mock_get_assessment_stats,
         mock_get_assessment_progress,
+        mock_get_active_tags_for_fund_round,
+        mock_get_tag_types,
     ):
-
         params = request.node.get_closest_marker("mock_parameters").args[0]
         fund_short_name = params["fund_short_name"]
         round_short_name = params["round_short_name"]
@@ -255,18 +514,22 @@ class TestRoutes:
         assert 200 == response.status_code, "Wrong status code on response"
         soup = BeautifulSoup(response.data, "html.parser")
         assert (
-            soup.title.string == "Team dashboard - Assessment Hub"
+            soup.title.string == "Team dashboard – Assessment Hub – GOV.UK"
         ), "Response does not contain expected heading"
 
     @pytest.mark.mock_parameters(
         {
-            "fund_short_name": "TF",
+            "fund_short_name": "COF",
             "round_short_name": "TR",
             "expected_search_params": {
                 "search_term": "",
                 "search_in": "project_name,short_id",
                 "asset_type": "ALL",
                 "status": "ALL",
+                "filter_by_tag": "ALL",
+                "local_authority": "ALL",
+                "country": "ALL",
+                "region": "ALL",
             },
         }
     )
@@ -285,14 +548,22 @@ class TestRoutes:
         request,
         flask_test_client,
         mock_get_fund,
+        mock_get_funds,
         mock_get_round,
         mock_get_application_overviews,
-        mock_get_assessment_stats,
         mock_get_assessment_progress,
+        mock_get_application_metadata,
         sort_column,
         sort_order,
         column_id,
+        mock_get_active_tags_for_fund_round,
+        mock_get_tag_types,
     ):
+        flask_test_client.set_cookie(
+            "localhost",
+            "fsd_user_token",
+            create_valid_token(fund_specific_claim_map["COF"]["ASSESSOR"]),
+        )
 
         params = request.node.get_closest_marker("mock_parameters").args[0]
         fund_short_name = params["fund_short_name"]
@@ -373,12 +644,15 @@ class TestRoutes:
         request,
         mock_get_sub_criteria,
         mock_get_fund,
+        mock_get_funds,
+        mock_get_round,
+        mock_get_application_metadata,
         mock_get_comments,
-        mock_get_latest_flag,
+        mock_get_flags,
         mock_get_scores,
         mock_get_bulk_accounts,
+        mock_get_assessor_tasklist_state,
     ):
-
         application_id = request.node.get_closest_marker(
             "application_id"
         ).args[0]
@@ -400,8 +674,8 @@ class TestRoutes:
         soup = BeautifulSoup(response.data, "html.parser")
         assert (
             soup.title.string
-            == "Score - test_sub_criteria - Project In prog and Res -"
-            " Assessment Hub"
+            == "Score – test_sub_criteria – Project In prog and Res –"
+            " Assessment Hub – GOV.UK"
         )
         assert b"Current score: 3" in response.data
         assert b"Rescore" in response.data
@@ -409,9 +683,12 @@ class TestRoutes:
         assert b"This is a comment" in response.data
 
     def test_route_sub_criteria_scoring_inaccessible_to_commenters(
-        self, flask_test_client
+        self,
+        flask_test_client,
+        mock_get_funds,
+        mock_get_application_metadata,
+        mock_get_fund,
     ):
-
         # Mocking fsd-user-token cookie
         token = create_valid_token(test_commenter_claims)
         flask_test_client.set_cookie("localhost", "fsd_user_token", token)
@@ -428,11 +705,12 @@ class TestRoutes:
         )
         assert (
             response.location
-            == "https://authenticator/service/user?roles_required=LEAD_ASSESSOR|ASSESSOR"  # noqa
+            == "https://authenticator/service/user?roles_required=TF_LEAD_ASSESSOR|TF_ASSESSOR"  # noqa
         )
 
-    def test_homepage_route_accessible(self, flask_test_client):
-
+    def test_homepage_route_accessible(
+        self, flask_test_client, mock_get_funds
+    ):
         # Remove fsd-user-token cookie
         flask_test_client.set_cookie("localhost", "fsd_user_token", "")
 
@@ -452,8 +730,9 @@ class TestRoutes:
             200 == response.status_code
         ), "Homepage route should be accessible"
 
-    def test_healthcheck_route_accessible(self, flask_test_client):
-
+    def test_healthcheck_route_accessible(
+        self, flask_test_client, mock_get_funds
+    ):
         # Remove fsd-user-token cookie
         flask_test_client.set_cookie("localhost", "fsd_user_token", "")
 
@@ -470,11 +749,15 @@ class TestRoutes:
         self,
         request,
         flask_test_client,
-        mock_get_latest_flag,
+        mock_get_flags,
+        mock_get_available_teams,
+        mock_get_assessor_tasklist_state,
         mock_get_sub_criteria_banner_state,
         mock_get_fund,
+        mock_get_funds,
+        mock_get_round,
+        mock_get_application_metadata,
     ):
-
         application_id = request.node.get_closest_marker(
             "application_id"
         ).args[0]
@@ -483,18 +766,24 @@ class TestRoutes:
 
         response = flask_test_client.get(f"assess/flag/{application_id}")
 
-        assert response.status_code == 400
+        assert response.status_code == 200
 
     @pytest.mark.application_id("resolved_app")
+    @pytest.mark.flag_id("resolved_app")
     def test_flag_route_works_for_application_with_latest_resolved_flag(
         self,
         request,
         flask_test_client,
-        mock_get_latest_flag,
+        mock_get_flags,
+        mock_get_available_teams,
+        mock_get_flag,
+        mock_get_assessor_tasklist_state,
         mock_get_sub_criteria_banner_state,
         mock_get_fund,
+        mock_get_funds,
+        mock_get_round,
+        mock_get_application_metadata,
     ):
-
         marker = request.node.get_closest_marker("application_id")
         application_id = marker.args[0]
         token = create_valid_token(test_lead_assessor_claims)
@@ -511,9 +800,14 @@ class TestRoutes:
         flask_test_client,
         mock_get_assessor_tasklist_state,
         mock_get_fund,
+        mock_get_funds,
+        mock_get_application_metadata,
         mock_get_round,
-        mock_get_latest_flag,
+        mock_get_flags,
+        mock_get_qa_complete,
         mock_get_bulk_accounts,
+        mock_get_associated_tags_for_application,
+        mocker,
     ):
         marker = request.node.get_closest_marker("application_id")
         application_id = marker.args[0]
@@ -527,22 +821,27 @@ class TestRoutes:
         assert 200 == response.status_code, "Wrong status code on response"
         soup = BeautifulSoup(response.data, "html.parser")
         assert (
-            soup.find("h1", class_="assessment-alert__heading").string
-            == "Assessment Stopped"
+            soup.find("h1", class_="assessment-alert__heading").string.strip()
+            == "Flagged - Assessment stopped"
         )
         assert b"Lead User (Lead assessor) lead@test.com" in response.data
         assert b"20/02/2023 at 12:00" in response.data
 
     @pytest.mark.application_id("resolved_app")
-    def test_application_route_should_not_show_resolved_flag(
+    def test_application_route_should_show_resolved_flag(
         self,
         request,
         flask_test_client,
         mock_get_assessor_tasklist_state,
         mock_get_fund,
+        mock_get_funds,
+        mock_get_application_metadata,
         mock_get_round,
-        mock_get_latest_flag,
+        mock_get_flags,
+        mock_get_qa_complete,
         mock_get_bulk_accounts,
+        mock_get_associated_tags_for_application,
+        mocker,
     ):
         marker = request.node.get_closest_marker("application_id")
         application_id = marker.args[0]
@@ -555,47 +854,66 @@ class TestRoutes:
 
         assert response.status_code == 200
         assert b"Remove flag" not in response.data
-        assert b"Resolve flag" not in response.data
-        assert b"Reason" not in response.data
-        assert b"flagged" not in response.data
-        assert b"Flagged" not in response.data
+        assert b"Flagged resolved" in response.data
+        assert b"Resolve flag action" in response.data
+        assert b"Reason" in response.data
 
+    @pytest.mark.application_id("resolved_app")
     def test_flag_route_submit_flag(
-        self, flask_test_client, mocker, request_ctx
+        self,
+        flask_test_client,
+        mocker,
+        mock_get_assessor_tasklist_state,
+        mock_get_available_teams,
+        mock_get_fund,
+        mock_get_round,
+        mock_get_funds,
+        mock_submit_flag,
+        mock_get_application_metadata,
+        mock_get_sub_criteria_banner_state,
+        request_ctx,
     ):
         token = create_valid_token(test_lead_assessor_claims)
         flask_test_client.set_cookie("localhost", "fsd_user_token", token)
         session["csrf_token"] = "test"
 
-        mocker.patch("app.assess.routes.submit_flag", return_value=None)
-
         response = flask_test_client.post(
-            "assess/flag/1",
+            "assess/flag/resolved_app",
             data={
                 "justification": "Test justification",
-                "section": "Test section",
+                "section": ["test_sub_criteria_id"],
+                "teams_available": "Team A",
             },
         )
 
         assert response.status_code == 302
-        assert response.headers["Location"] == "/assess/application/1"
+        assert (
+            response.headers["Location"] == "/assess/application/resolved_app"
+        )
 
     @pytest.mark.application_id("flagged_qa_completed_app")
+    @pytest.mark.flag_id("flagged_qa_completed_app")
     def test_flag_route_get_resolve_flag(
         self,
         request,
         flask_test_client,
-        mock_get_latest_flag,
+        mock_get_flags,
+        mock_get_flag,
+        mock_get_assessor_tasklist_state,
         mock_get_sub_criteria_banner_state,
         mock_get_fund,
+        mock_get_funds,
+        mock_get_round,
+        mock_get_application_metadata,
     ):
         token = create_valid_token(test_lead_assessor_claims)
         flask_test_client.set_cookie("localhost", "fsd_user_token", token)
         application_id = request.node.get_closest_marker(
             "application_id"
         ).args[0]
+        flag_id = request.node.get_closest_marker("flag_id").args[0]
         response = flask_test_client.get(
-            f"assess/resolve_flag/{application_id}?section=org_info",
+            f"assess/resolve_flag/{application_id}?flag_id={flag_id}",
         )
 
         assert response.status_code == 200
@@ -604,62 +922,95 @@ class TestRoutes:
         assert b"Stop assessment" in response.data
         assert b"Reason" in response.data
         soup = BeautifulSoup(response.data, "html.parser")
-        assert soup.title.string == "Resolve flag - Assessment Hub"
+        assert soup.title.string == "Resolve flag – Assessment Hub – GOV.UK"
 
-    def test_post_resolved_flag(self, flask_test_client, mocker):
+    @pytest.mark.mock_parameters(
+        {
+            "flag": Flag.from_dict(
+                {
+                    "application_id": "flagged_app",
+                    "latest_status": "RESOLVED",
+                    "latest_allocation": None,
+                    "id": "flagged_app",
+                    "sections_to_flag": ["Test section"],
+                    "updates": [
+                        {
+                            "id": "316f607a-03b7-4592-b927-5021a28b7d6a",
+                            "user_id": "test_user_lead_assessor",
+                            "date_created": "2023-01-01T00:00:00",
+                            "justification": "Checked with so and so.",
+                            "status": "RESOLVED",
+                            "allocation": None,
+                        }
+                    ],
+                }
+            )
+        }
+    )
+    @pytest.mark.submit_flag_paths(
+        ["app.blueprints.flagging.helpers.submit_flag"]
+    )
+    @pytest.mark.application_id("flagged_app")
+    @pytest.mark.flag_id("flagged_app")
+    def test_post_resolved_flag(
+        self,
+        request,
+        flask_test_client,
+        mocker,
+        mock_get_flags,
+        mock_get_flag,
+        mock_get_assessor_tasklist_state,
+        mock_get_fund,
+        mock_get_funds,
+        mock_get_round,
+        mock_get_application_metadata,
+        mock_submit_flag,
+    ):
         token = create_valid_token(test_lead_assessor_claims)
         flask_test_client.set_cookie("localhost", "fsd_user_token", token)
-        mocker.patch(
-            "app.assess.helpers.submit_flag",
-            return_value=Flag.from_dict(
-                {
-                    "application_id": "app_123",
-                    "date_created": "2023-01-01T00:00:00",
-                    "flag_type": "RESOLVED",
-                    "id": "flagid",
-                    "justification": "string",
-                    "section_to_flag": "community",
-                    "user_id": "test@example.com",
-                }
-            ),
-        )
+        application_id = request.node.get_closest_marker(
+            "application_id"
+        ).args[0]
+        flag_id = request.node.get_closest_marker("flag_id").args[0]
 
         response = flask_test_client.post(
-            "assess/resolve_flag/app_123?section=org_info",
+            f"assess/resolve_flag/{application_id}?flag_id={flag_id}",
             data={
                 "resolution_flag": "RESOLVED",
                 "justification": "Checked with so and so.",
             },
         )
-        app.assess.helpers.submit_flag.assert_called_once()
-        app.assess.helpers.submit_flag.assert_called_once_with(
-            "app_123",
-            "RESOLVED",
-            "lead",
-            "Checked with so and so.",
-            "section not specified",
-        )
 
         assert response.status_code == 302
-        assert response.headers["Location"] == "/assess/application/app_123"
+        assert (
+            response.headers["Location"]
+            == f"/assess/application/{application_id}"
+        )
 
     @pytest.mark.application_id("stopped_app")
+    @pytest.mark.flag_id("stopped_app")
     def test_flag_route_get_continue_application(
         self,
         request,
         flask_test_client,
-        mock_get_latest_flag,
+        mock_get_flags,
+        mock_get_flag,
         mock_get_sub_criteria_banner_state,
+        mock_get_assessor_tasklist_state,
+        mock_get_round,
         mock_get_fund,
+        mock_get_funds,
+        mock_get_application_metadata,
     ):
         application_id = request.node.get_closest_marker(
             "application_id"
         ).args[0]
+        flag_id = request.node.get_closest_marker("flag_id").args[0]
         token = create_valid_token(test_lead_assessor_claims)
         flask_test_client.set_cookie("localhost", "fsd_user_token", token)
 
         response = flask_test_client.get(
-            f"/assess/continue_assessment/{application_id}",
+            f"/assess/continue_assessment/{application_id}?flag_id={flag_id}",
         )
 
         assert response.status_code == 200
@@ -667,42 +1018,62 @@ class TestRoutes:
         assert b"Reason for continuing assessment" in response.data
         assert b"Project In prog and Stop" in response.data
 
-    def test_post_continue_application(self, flask_test_client, mocker):
+    @pytest.mark.mock_parameters(
+        {
+            "flag": Flag.from_dict(
+                {
+                    "application_id": "stopped_app",
+                    "latest_status": "RESOLVED",
+                    "latest_allocation": None,
+                    "id": "stopped_app",
+                    "sections_to_flag": ["Test section"],
+                    "updates": [
+                        {
+                            "id": "316f607a-03b7-4592-b927-5021a28b7d6a",
+                            "user_id": "test_user_lead_assessor",
+                            "date_created": "2023-01-01T00:00:00",
+                            "justification": "Checked with so and so.",
+                            "status": "RESOLVED",
+                            "allocation": None,
+                        }
+                    ],
+                }
+            )
+        }
+    )
+    @pytest.mark.submit_flag_paths(
+        ["app.blueprints.flagging.helpers.submit_flag"]
+    )
+    @pytest.mark.application_id("stopped_app")
+    @pytest.mark.flag_id("stopped_app")
+    def test_post_continue_application(
+        self,
+        request,
+        flask_test_client,
+        mocker,
+        mock_get_funds,
+        mock_get_application_metadata,
+        mock_get_fund,
+        mock_get_flag,
+        mock_get_round,
+        mock_get_assessor_tasklist_state,
+        mock_submit_flag,
+    ):
+        flag_id = request.node.get_closest_marker("flag_id").args[0]
         token = create_valid_token(test_lead_assessor_claims)
         flask_test_client.set_cookie("localhost", "fsd_user_token", token)
-        mocker.patch(
-            "app.assess.helpers.submit_flag",
-            return_value=Flag.from_dict(
-                {
-                    "application_id": "app_123",
-                    "date_created": "2023-01-01T00:00:00",
-                    "flag_type": "RESOLVED",
-                    "id": "flagid",
-                    "justification": "string",
-                    "section_to_flag": "community",
-                    "user_id": "test@example.com",
-                }
-            ),
-        )
 
         response = flask_test_client.post(
-            "assess/resolve_flag/app_123?section=org_info",
+            f"assess/continue_assessment/stopped_app?flag_id={flag_id}",
             data={
-                "resolution_flag": "RESOLVED",
-                "justification": "We should continue the application.",
+                "reason": "We should continue the application.",
             },
-        )
-        app.assess.helpers.submit_flag.assert_called_once()
-        app.assess.helpers.submit_flag.assert_called_once_with(
-            "app_123",
-            "RESOLVED",
-            "lead",
-            "We should continue the application.",
-            "section not specified",
         )
 
         assert response.status_code == 302
-        assert response.headers["Location"] == "/assess/application/app_123"
+        assert (
+            response.headers["Location"] == "/assess/application/stopped_app"
+        )
 
     @pytest.mark.application_id("flagged_qa_completed_app")
     def test_qa_complete_flag_displayed(
@@ -711,10 +1082,15 @@ class TestRoutes:
         flask_test_client,
         mock_get_round,
         mock_get_assessor_tasklist_state,
-        mock_get_latest_flag,
+        mock_get_flags,
+        mock_get_qa_complete,
         mock_get_bulk_accounts,
         mock_get_sub_criteria_banner_state,
         mock_get_fund,
+        mock_get_funds,
+        mock_get_application_metadata,
+        mock_get_associated_tags_for_application,
+        mocker,
     ):
         token = create_valid_token(test_lead_assessor_claims)
         flask_test_client.set_cookie("localhost", "fsd_user_token", token)
@@ -736,9 +1112,14 @@ class TestRoutes:
         flask_test_client,
         mock_get_assessor_tasklist_state,
         mock_get_fund,
+        mock_get_funds,
+        mock_get_application_metadata,
         mock_get_round,
-        mock_get_latest_flag,
+        mock_get_flags,
+        mock_get_qa_complete,
         mock_get_bulk_accounts,
+        mock_get_associated_tags_for_application,
+        mocker,
     ):
         token = create_valid_token(test_lead_assessor_claims)
         flask_test_client.set_cookie("localhost", "fsd_user_token", token)
@@ -753,19 +1134,23 @@ class TestRoutes:
         assert response.status_code == 200
         assert b"Marked as QA complete" in response.data
         assert b"20/02/2023 at 12:00" in response.data
-        assert b"Section flagged" in response.data
+        assert b"Section(s) flagged" in response.data
         assert b"Reason" in response.data
         assert b"Resolve flag" in response.data
 
     @pytest.mark.mock_parameters(
         {
-            "fund_short_name": "TF",
+            "fund_short_name": "COF",
             "round_short_name": "TR",
             "expected_search_params": {
                 "search_term": "",
                 "search_in": "project_name,short_id",
                 "asset_type": "ALL",
                 "status": "ALL",
+                "filter_by_tag": "ALL",
+                "local_authority": "ALL",
+                "country": "ALL",
+                "region": "ALL",
             },
         }
     )
@@ -773,12 +1158,19 @@ class TestRoutes:
         self,
         request,
         flask_test_client,
+        mock_get_funds,
         mock_get_fund,
         mock_get_round,
         mock_get_application_overviews,
-        mock_get_assessment_stats,
         mock_get_assessment_progress,
+        mock_get_active_tags_for_fund_round,
+        mock_get_tag_types,
     ):
+        flask_test_client.set_cookie(
+            "localhost",
+            "fsd_user_token",
+            create_valid_token(fund_specific_claim_map["COF"]["ASSESSOR"]),
+        )
 
         params = request.node.get_closest_marker("mock_parameters").args[0]
         fund_short_name = params["fund_short_name"]
@@ -805,7 +1197,7 @@ class TestRoutes:
         assert 200 == response.status_code, "Wrong status code on response"
         soup = BeautifulSoup(response.data, "html.parser")
         assert (
-            soup.title.string == "Team dashboard - Assessment Hub"
+            soup.title.string == "Team dashboard – Assessment Hub – GOV.UK"
         ), "Response does not contain expected heading"
 
     @pytest.mark.application_id("resolved_app")
@@ -816,9 +1208,14 @@ class TestRoutes:
         flask_test_client,
         mock_get_sub_criteria,
         mock_get_fund,
-        mock_get_latest_flag,
+        mock_get_funds,
+        mock_get_round,
+        mock_get_application_metadata,
+        mock_get_flags,
         mock_get_comments,
         mock_get_sub_criteria_theme,
+        mock_get_assessor_tasklist_state,
+        mock_get_bulk_accounts,
     ):
         # Mocking fsd-user-token cookie
         token = create_valid_token(test_commenter_claims)
@@ -837,9 +1234,9 @@ class TestRoutes:
         soup = BeautifulSoup(response.data, "html.parser")
         assert (
             soup.title.string
-            == "test_theme_name - test_sub_criteria - Project In prog and"
-            " Res -"
-            " Assessment Hub"
+            == "test_theme_name – test_sub_criteria – Project In prog and"
+            " Res –"
+            " Assessment Hub – GOV.UK"
         )
 
     @pytest.mark.application_id("resolved_app")
@@ -847,24 +1244,27 @@ class TestRoutes:
         self,
         flask_test_client,
         request,
-        mock_get_sub_criteria_banner_state,
+        mock_get_assessor_tasklist_state,
         mock_get_fund,
-        mock_get_latest_flag,
+        mock_get_funds,
+        mock_get_application_metadata,
+        mock_get_flags,
+        mock_get_round,
         templates_rendered,
+        mock_get_associated_tags_for_application,
         mocker,
     ):
-
         marker = request.node.get_closest_marker("application_id")
         application_id = marker.args[0]
 
         token = create_valid_token(test_lead_assessor_claims)
         flask_test_client.set_cookie("localhost", "fsd_user_token", token)
         mocker.patch(
-            "app.assess.routes.get_application_json",
+            "app.blueprints.assessments.routes.get_application_json",
             return_value={"jsonb_blob": "mock"},
         )
         with mock.patch(
-            "app.assess.routes.get_files_for_application_upload_fields",
+            "app.blueprints.assessments.routes.get_files_for_application_upload_fields",
             return_value=[
                 ("sample1.doc", "mock/url/for/get/file"),
                 ("sample2.doc", "mock/url/for/get/file"),
@@ -882,30 +1282,42 @@ class TestRoutes:
             assert b"sample2.doc" in response.data
 
     def test_download_q_and_a(
-        self, flask_test_client, mock_get_fund, mock_get_application
+        self,
+        flask_test_client,
+        mock_get_fund,
+        mock_get_round,
+        mock_get_funds,
+        mock_get_application_metadata,
+        mock_get_application_json,
+        mocks_for_file_export_download,
     ):
-
         token = create_valid_token(test_lead_assessor_claims)
         flask_test_client.set_cookie("localhost", "fsd_user_token", token)
         response = flask_test_client.get(
             "/assess/application/test_app_id/export/test_short_id/answers.txt"
         )
-        sample_expected_q_a = (
-            "Project information\n\n  Q) Have you been given funding through"
-            " the Community Ownership Fund before?\n  A) Yes\n\n"
-        )
+        sample_1 = "Project information"
+        sample_2 = "Q) Have you been given"
         assert response.status_code == 200
-        assert sample_expected_q_a in response.text
+        assert sample_1 in response.text
+        assert sample_2 in response.text
 
-    def test_get_file_with_short_id(self, flask_test_client, mocker):
+    def test_get_file_with_short_id(
+        self,
+        flask_test_client,
+        mocker,
+        mock_get_funds,
+        mock_get_fund,
+        mock_get_application_metadata,
+    ):
         token = create_valid_token(test_lead_assessor_claims)
         flask_test_client.set_cookie("localhost", "fsd_user_token", token)
         mocker.patch(
-            "app.assess.routes.get_file_for_download_from_aws",
+            "app.blueprints.assessments.routes.get_file_for_download_from_aws",
             return_value=("some file contents", "mock_mimetype"),
         )
         with mock.patch(
-            "app.assess.routes.download_file", return_value=""
+            "app.blueprints.assessments.routes.download_file", return_value=""
         ) as mock_download_file:
             flask_test_client.get(
                 "/assess/application/abc123/export/business_plan.txt?short_id=QWERTY"  # noqa
@@ -916,15 +1328,22 @@ class TestRoutes:
                 "QWERTY_business_plan.txt",
             )
 
-    def test_get_file_without_short_id(self, flask_test_client, mocker):
+    def test_get_file_without_short_id(
+        self,
+        flask_test_client,
+        mocker,
+        mock_get_funds,
+        mock_get_fund,
+        mock_get_application_metadata,
+    ):
         token = create_valid_token(test_lead_assessor_claims)
         flask_test_client.set_cookie("localhost", "fsd_user_token", token)
         mocker.patch(
-            "app.assess.routes.get_file_for_download_from_aws",
+            "app.blueprints.assessments.routes.get_file_for_download_from_aws",
             return_value=("some file contents", "mock_mimetype"),
         )
         with mock.patch(
-            "app.assess.routes.download_file", return_value=""
+            "app.blueprints.assessments.routes.download_file", return_value=""
         ) as mock_download_file:
             flask_test_client.get(
                 "/assess/application/abc123/export/business_plan.txt"
@@ -934,10 +1353,59 @@ class TestRoutes:
             )
 
     def test_get_file(self, flask_test_client):
-        from app.assess.routes import download_file
+        from app.blueprints.assessments.routes import download_file
 
         response = download_file("file_data", "text/plain", "file_name.abc")
         assert "text/plain" in response.content_type
         assert "attachment;filename=file_name.abc" == response.headers.get(
             "Content-Disposition"
         )
+
+
+@pytest.mark.parametrize(
+    "file_extension, content_type",
+    [
+        ("txt", "text/plain; charset=utf-8"),
+        ("csv", "text/csv; charset=utf-8"),
+    ],
+)
+def test_download_application_answers(
+    flask_test_client,
+    mock_get_funds,
+    mock_get_application_metadata,
+    mock_get_fund,
+    mock_get_round,
+    mock_get_application_json,
+    file_extension,
+    content_type,
+    mocks_for_file_export_download,
+):
+    token = create_valid_token(test_lead_assessor_claims)
+    flask_test_client.set_cookie("localhost", "fsd_user_token", token)
+    url = f"/assess/application/123/export/456/answers.{file_extension}"
+    response = flask_test_client.get(url)
+
+    assert response.status_code == 200
+
+    assert response.headers["Content-Type"] == content_type
+    assert (
+        response.headers["Content-Disposition"]
+        == f"attachment;filename=456_answers.{file_extension}"
+    )
+
+
+def test_download_application_answers_invalid_file_type(
+    flask_test_client,
+    mock_get_funds,
+    mock_get_application_metadata,
+    mock_get_round,
+    mock_get_fund,
+    mock_get_application_json,
+    mocks_for_file_export_download,
+):
+    token = create_valid_token(test_lead_assessor_claims)
+    flask_test_client.set_cookie("localhost", "fsd_user_token", token)
+    response = flask_test_client.get(
+        "/assess/application/123/export/456/answers.invalid"
+    )
+    assert response.status_code == 404

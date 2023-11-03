@@ -1,17 +1,17 @@
 import base64
-import json
 import os
 from os import environ
 from os import getenv
 from pathlib import Path
 
+from distutils.util import strtobool
 from fsd_utils import CommonConfig
 from fsd_utils import configclass
+from fsd_utils.toggles.vcap_services import VcapServices
 
 
 @configclass
 class DefaultConfig:
-
     # ---------------
     #  General App Config
     # ---------------
@@ -40,6 +40,11 @@ class DefaultConfig:
     LOCAL_SERVICE_NAME = "local_flask"
     ASSESSMENT_HUB_ROUTE = "/assess"
     DASHBOARD_ROUTE = "/assess/assessor_tool_dashboard"
+
+    # Assessement settings
+    SHOW_ASSESSMENTS_LIVE_ROUNDS = strtobool(
+        getenv("SHOW_ASSESSMENTS_LIVE_ROUNDS", "False")
+    )  # Set to True to show assessments on live rounds
 
     """
     Security
@@ -72,6 +77,16 @@ class DefaultConfig:
     GET_ROUND_DATA_FOR_FUND_ENDPOINT = (
         FUND_STORE_API_HOST + "/funds/{fund_id}/rounds/{round_id}"
     )
+    # TODO: Rework on the avialable teams allocated after implemented in fundstore
+    GET_AVIALABLE_TEAMS_FOR_FUND = (
+        FUND_STORE_API_HOST
+        + "/funds/{fund_id}/rounds/{round_id}/available_flag_allocations"
+    )
+
+    GET_APPLICATION_DISPLAY_FOR_FUND_ENDPOINT = (
+        FUND_STORE_API_HOST
+        + "/funds/{fund_id}/rounds/{round_id}/sections/application?language={language}"
+    )
 
     # Round Store Endpoints
 
@@ -84,11 +99,21 @@ class DefaultConfig:
     APPLICATION_ENDPOINT = CommonConfig.APPLICATION_ENDPOINT
     APPLICATION_STATUS_ENDPOINT = CommonConfig.APPLICATION_STATUS_ENDPOINT
     APPLICATION_SEARCH_ENDPOINT = CommonConfig.APPLICATION_SEARCH_ENDPOINT
+    APPLICATION_METRICS_ENDPOINT = (
+        APPLICATION_STORE_API_HOST
+        + "/applications/reporting/applications_statuses_data?format=json"
+    )
+    APPLICATION_FEEDBACK_SURVEY_REPORT_ENDPOINT = (
+        APPLICATION_STORE_API_HOST
+        + "/applications/get_all_feedbacks_and_survey_report"
+        + "?fund_id={fund_id}&round_id={round_id}&status_only={status_only}"
+    )
 
     # Assessment store endpoints
     ASSESSMENTS_STATS_ENDPOINT = (
         "/assessments/get-stats/{fund_id}/{round_id}?{params}"
     )
+
     APPLICATION_OVERVIEW_ENDPOINT_FUND_ROUND_PARAMS = (
         "/application_overviews/{fund_id}/{round_id}?{params}"
     )
@@ -101,8 +126,13 @@ class DefaultConfig:
         ASSESSMENT_STORE_API_HOST + "/application/{application_id}/json"
     )
 
-    APPLICATION_JSON_ENDPOINT = (
-        ASSESSMENT_STORE_API_HOST + "/application/{application_id}/json"
+    APPLICATION_METADATA_ENDPOINT = (
+        ASSESSMENT_STORE_API_HOST + "/application/{application_id}/metadata"
+    )
+
+    ALL_UPLOADED_DOCUMENTS_THEME_ANSWERS_ENDPOINT = (
+        ASSESSMENT_STORE_API_HOST
+        + "/application/{application_id}/all_uploaded_documents"
     )
 
     SUB_CRITERIA_THEME_ANSWERS_ENDPOINT = (
@@ -122,14 +152,80 @@ class DefaultConfig:
         ASSESSMENT_STORE_API_HOST
         + "/application/{application_id}/status/complete"
     )
-
-    ASSESSMENT_COMMENT_ENDPOINT = ASSESSMENT_STORE_API_HOST + "/comment"
-    ASSESSMENT_PROGRESS_ENDPOINT = ASSESSMENT_STORE_API_HOST + "/progress"
-
-    ASSESSMENT_LATEST_FLAG_ENDPOINT = (
-        ASSESSMENT_STORE_API_HOST + "/flag?application_id={application_id}"
+    ASSESSMENT_UPDATE_QA_STATUS = (
+        ASSESSMENT_STORE_API_HOST + "/qa_complete/{application_id}/{user_id}"
     )
 
+    ASSESSMENT_GET_QA_STATUS_ENDPOINT = (
+        ASSESSMENT_STORE_API_HOST + "/qa_complete/{application_id}"
+    )
+
+    ASSESSMENT_COMMENT_ENDPOINT = ASSESSMENT_STORE_API_HOST + "/comment"
+    ASSESSMENT_PROGRESS_ENDPOINT = (
+        ASSESSMENT_STORE_API_HOST + "/progress/{fund_id}/{round_id}"
+    )
+
+    ASSESSMENT_FLAGS_ENDPOINT = (
+        ASSESSMENT_STORE_API_HOST + "/flags/{application_id}"
+    )
+    ASSESSMENT_FLAGS_POST_ENDPOINT = ASSESSMENT_STORE_API_HOST + "/flags/"
+    ASSESSMENT_FLAG_ENDPOINT = (
+        ASSESSMENT_STORE_API_HOST + "/flag_data?flag_id={flag_id}"
+    )
+    ASSESSMENT_TAGS_ENDPOINT = (
+        ASSESSMENT_STORE_API_HOST
+        + "/funds/{fund_id}/rounds/{round_id}/tags?{params}"
+    )
+    ASSESSMENT_TAG_ENDPOINT = (
+        ASSESSMENT_STORE_API_HOST
+        + "/funds/{fund_id}/rounds/{round_id}/tags/{tag_id}"
+    )
+    ASSESSMENT_UPDATE_TAGS_ENDPOINT = (
+        ASSESSMENT_STORE_API_HOST + "/funds/{fund_id}/rounds/{round_id}/tags"
+    )
+    ASSESSMENT_ASSOCIATE_TAGS_ENDPOINT = (
+        ASSESSMENT_STORE_API_HOST + "/application/{application_id}/tag"
+    )
+    ASSESSMENT_GET_TAG_ENDPOINT = (
+        ASSESSMENT_STORE_API_HOST
+        + "/funds/{fund_id}/rounds/{round_id}/tags/{tag_id}"
+    )
+    ASSESSMENT_GET_TAG_USAGE_ENDPOINT = (
+        ASSESSMENT_STORE_API_HOST
+        + "/funds/{fund_id}/rounds/{round_id}/tags/{tag_id}/count"
+    )
+    ASSESSMENT_TAG_TYPES_ENDPOINT = ASSESSMENT_STORE_API_HOST + "/tag_types"
+
+    APPLICANT_EXPORT_ENDPOINT = (
+        ASSESSMENT_STORE_API_HOST
+        + "/application_fields_export/{fund_id}/{round_id}/{report_type}"
+    )
+    TAGGING_PURPOSE_CONFIG = {
+        "GENERAL": {
+            "colour": "blue",
+        },
+        "PEOPLE": {
+            "colour": "grey",
+        },
+        "POSITIVE": {
+            "colour": "green",
+        },
+        "NEGATIVE": {
+            "colour": "red",
+        },
+        "ACTION": {
+            "colour": "yellow",
+        },
+    }
+    TAGGING_FILTER_CONFIG = (
+        (
+            "POSITIVE",
+            "NEGATIVE",
+            "ACTION",
+        ),
+        ("GENERAL",),
+        ("PEOPLE",),
+    )
     # Account store endpoints
     BULK_ACCOUNTS_ENDPOINT = ACCOUNT_STORE_API_HOST + "/bulk-accounts"
 
@@ -152,12 +248,31 @@ class DefaultConfig:
     Aws Config
     """
 
-    if "VCAP_SERVICES" in os.environ:
-        vcap_services = json.loads(os.environ["VCAP_SERVICES"])
+    if "COPILOT_AWS_BUCKET_NAME" in os.environ:
+        AWS_BUCKET_NAME = environ.get("COPILOT_AWS_BUCKET_NAME")
+        AWS_REGION = environ.get("AWS_REGION")
+        ASSETS_AUTO_BUILD = False
+    elif "VCAP_SERVICES" in os.environ:
+        VCAP_SERVICES = VcapServices.from_env_json(
+            environ.get("VCAP_SERVICES")
+        )
 
-        if "aws-s3-bucket" in vcap_services:
-            s3_credentials = vcap_services["aws-s3-bucket"][0]["credentials"]
+        if VCAP_SERVICES.does_service_exist(
+            service_key="aws-s3-bucket"  # pragma: allowlist secret
+        ):
+            s3_credentials = VCAP_SERVICES.services.get("aws-s3-bucket")[
+                0
+            ].get("credentials")
             AWS_REGION = s3_credentials["aws_region"]
             AWS_ACCESS_KEY_ID = s3_credentials["aws_access_key_id"]
             AWS_SECRET_ACCESS_KEY = s3_credentials["aws_secret_access_key"]
             AWS_BUCKET_NAME = s3_credentials["bucket_name"]
+
+    # Redis Feature Toggle Configuration
+    REDIS_INSTANCE_URI = getenv("REDIS_INSTANCE_URI", "redis://localhost:6379")
+    TOGGLES_URL = REDIS_INSTANCE_URI + "/0"
+    FEATURE_CONFIG = {"TAGGING": True}
+    ASSETS_AUTO_BUILD = False
+
+    # LRU cache settings
+    LRU_CACHE_TIME = int(environ.get("LRU_CACHE_TIME", 3600))  # in seconds

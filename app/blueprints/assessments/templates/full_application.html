@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <style>
+        body {
+            font-family: 'nta', Arial, sans-serif;
+            font-size: 16px;
+            line-height: 1.5;
+            color: #0b0c0c;
+            margin: 20px 40px;
+            background-color: #f8f8f8;
+        }
+        h1, h2, h3, h4 {
+            font-weight: 700;
+            margin-top: 20px;
+        }
+        h2 {
+            border-bottom: 1px solid #bfc1c3;
+            padding-bottom: 5px;
+        }
+        .header {
+            text-align: left;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+        }
+        .header-logo {
+            height: 100px;
+            margin-right: 20px;
+        }
+        .section {
+            margin-bottom: 40px;
+        }
+        .question {
+            margin: 20px 0;
+        }
+        p {
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        {% if False %}
+        <img src="{{ organisation_logo_uri }}" alt="Organisation Logo" class="header-logo">
+        {% endif %}
+        <div>
+            <p><strong>{{ organisation_name }}</strong> ({{ organisation_shortname }})</p>
+            <h1>Response ID: {{ response_id }}</h1>
+            <p>Submitted to: {{ submission_to }}</p>
+            <p>Submitted on: {{ submitted_on }}</p>
+        </div>
+    </div>
+    {% for section in sections %}
+        <div class="section">
+            <h2>{{ section.number }} {{ section.title }}</h2>
+            {% for q_and_a in section.questions_and_answers %}
+                <div class="question">
+                    <p><strong>{{ q_and_a.number }} {{ q_and_a.question }}</strong></p>
+                    <p>{{ q_and_a.answer or "Not provided" }}</p>
+                </div>
+            {% endfor %}
+        </div>
+    {% endfor %}
+</body>
+</html>

@@ -1,13 +1,17 @@
 #-----------------------------------
 #   FSD Utils
 #-----------------------------------
-funding-service-design-utils>=2.0.1,<2.1.0
+funding-service-design-utils>=2.0.27,<2.1.0
+
+
 requests
 
 #-----------------------------------
 #   Flask Version
 #-----------------------------------
 Flask
+Babel
+flask-babel
 
 #-----------------------------------
 #   Security
@@ -37,6 +41,10 @@ connexion
 swagger-ui-bundle
 openapi-spec-validator
 
+#-----------------------------------
+#   Beautiful soup
+#-----------------------------------
+beautifulsoup4==4.12.2
 
 #-----------------------------------
 #   AWS
@@ -44,4 +52,6 @@ openapi-spec-validator
 boto3
 pyOpenSSL
 
+num2words
+xhtml2pdf
 git+https://github.com/SergeyPirogov/webdriver_manager@dc73f4a27e8f40cd81dc4718a3f26c22ede29586

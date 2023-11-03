@@ -2,44 +2,65 @@ import json  # noqa
 
 import app
 import pytest  # noqa
-from app.assess.models.ui.applicants_response import _convert_checkbox_items
-from app.assess.models.ui.applicants_response import (
+from app.blueprints.assessments.models.applicants_response import (
+    _convert_checkbox_items,
+)
+from app.blueprints.assessments.models.applicants_response import (
     _convert_heading_description_amount,
 )
-from app.assess.models.ui.applicants_response import (
+from app.blueprints.assessments.models.applicants_response import (
     _convert_non_number_grouped_fields,
 )
-from app.assess.models.ui.applicants_response import _flatten_field_ids
-from app.assess.models.ui.applicants_response import _make_field_ids_hashable
-from app.assess.models.ui.applicants_response import (
+from app.blueprints.assessments.models.applicants_response import (
+    _flatten_field_ids,
+)
+from app.blueprints.assessments.models.applicants_response import (
+    _make_field_ids_hashable,
+)
+from app.blueprints.assessments.models.applicants_response import (
     _ui_component_from_factory,
 )
-from app.assess.models.ui.applicants_response import AboveQuestionAnswerPair
-from app.assess.models.ui.applicants_response import (
+from app.blueprints.assessments.models.applicants_response import (
+    AboveQuestionAnswerPair,
+)
+from app.blueprints.assessments.models.applicants_response import (
     AboveQuestionAnswerPairHref,
 )
-from app.assess.models.ui.applicants_response import (
+from app.blueprints.assessments.models.applicants_response import (
     ANSWER_NOT_PROVIDED_DEFAULT,
 )
-from app.assess.models.ui.applicants_response import (
+from app.blueprints.assessments.models.applicants_response import (
     ApplicantResponseComponent,
 )
-from app.assess.models.ui.applicants_response import BesideQuestionAnswerPair
-from app.assess.models.ui.applicants_response import (
+from app.blueprints.assessments.models.applicants_response import (
+    BesideQuestionAnswerPair,
+)
+from app.blueprints.assessments.models.applicants_response import (
     BesideQuestionAnswerPairHref,
 )
-from app.assess.models.ui.applicants_response import create_ui_components
-from app.assess.models.ui.applicants_response import (
+from app.blueprints.assessments.models.applicants_response import (
+    create_ui_components,
+)
+from app.blueprints.assessments.models.applicants_response import (
     FormattedBesideQuestionAnswerPair,
 )
-from app.assess.models.ui.applicants_response import MonetaryKeyValues
-from app.assess.models.ui.applicants_response import (
+from app.blueprints.assessments.models.applicants_response import (
+    MonetaryKeyValues,
+)
+from app.blueprints.assessments.models.applicants_response import (
+    NewAddAnotherTable,
+)
+from app.blueprints.assessments.models.applicants_response import (
     QuestionAboveHrefAnswerList,
 )
-from app.assess.models.ui.applicants_response import QuestionHeading
-from app.assess.routes import assess_bp
-from app.assess.views.filters import format_address
+from app.blueprints.assessments.models.applicants_response import (
+    QuestionHeading,
+)
+from app.blueprints.assessments.models.applicants_response import sanitise_html
+from app.blueprints.assessments.routes import assessment_bp
+from app.blueprints.shared.filters import format_address
 from flask import Flask
+from tests.api_data.test_data import TestSanitiseData
 
 
 class TestApplicantResponseComponentConcreteSubclasses:
@@ -76,6 +97,72 @@ class TestApplicantResponseComponentConcreteSubclasses:
         assert isinstance(above_qa_pair, AboveQuestionAnswerPair)
         assert above_qa_pair.question == "Test question"
         assert above_qa_pair.answer == ANSWER_NOT_PROVIDED_DEFAULT
+
+    @pytest.mark.parametrize(
+        "new_add_another_data",
+        [
+            {
+                "question": "Test caption",
+                "answer": [
+                    ["Example text child", ["test1", "test2"], "text"],
+                    ["Example currency child", [1, 2], "currency"],
+                    [
+                        "Example month year child",
+                        ["2020-01", "2020-02"],
+                        "text",
+                    ],
+                    ["Example yes no child", ["Yes", "No"], "text"],
+                    ["Example radio child", ["Low", "High"], "text"],
+                    [
+                        "Example multiline text child",
+                        ["test\r\n1", "test\r\n2"],
+                        "html",
+                    ],
+                ],
+            },
+        ],
+    )
+    def test_new_add_another_table_should_render(self, new_add_another_data):
+        new_add_another_table = NewAddAnotherTable.from_dict(
+            new_add_another_data
+        )
+
+        assert isinstance(new_add_another_table, NewAddAnotherTable)
+        assert new_add_another_table.caption == "Test caption"
+        assert new_add_another_table.head == [
+            {"text": "Example text child", "format": ""},
+            {"text": "Example currency child", "format": "numeric"},
+            {"text": "Example month year child", "format": ""},
+            {"text": "Example yes no child", "format": ""},
+            {"text": "Example radio child", "format": ""},
+            {"text": "Example multiline text child", "format": ""},
+        ]
+        assert new_add_another_table.rows == [
+            [
+                {"text": "test1", "format": ""},
+                {"text": "£1.00", "format": "numeric"},
+                {"text": "2020-01", "format": ""},
+                {"text": "Yes", "format": ""},
+                {"text": "Low", "format": ""},
+                {"html": "test\r\n1", "format": ""},
+            ],
+            [
+                {"text": "test2", "format": ""},
+                {"text": "£2.00", "format": "numeric"},
+                {"text": "2020-02", "format": ""},
+                {"text": "No", "format": ""},
+                {"text": "High", "format": ""},
+                {"html": "test\r\n2", "format": ""},
+            ],
+            [
+                {"text": "Total", "classes": "govuk-table__header"},
+                {"text": "£3.00", "format": "numeric"},
+                {"text": "", "format": ""},
+                {"text": "", "format": ""},
+                {"text": "", "format": ""},
+                {"text": "", "format": ""},
+            ],
+        ]
 
     @pytest.mark.parametrize(
         "clazz, data",
@@ -172,7 +259,7 @@ class TestApplicantResponseComponentConcreteSubclasses:
 class TestApplicatorsResponseComponentFactory:
     test_app = Flask("app")
     test_app.config["SERVER_NAME"] = "example.org:5000"
-    test_app.register_blueprint(assess_bp)
+    test_app.register_blueprint(assessment_bp)
 
     @pytest.mark.parametrize(
         "item, expected_class",
@@ -214,6 +301,36 @@ class TestApplicatorsResponseComponentFactory:
             ),
             (
                 {
+                    "presentation_type": "integer",
+                    "field_type": "numberField",
+                    "answer": "100.0",
+                    "question": "foo",
+                },
+                BesideQuestionAnswerPair,
+            ),
+            (
+                {
+                    "presentation_type": "text",
+                    "field_type": "monthYearField",
+                    "answer": "06-2023",
+                    "question": "foo",
+                },
+                BesideQuestionAnswerPair,
+            ),
+            (
+                {
+                    "presentation_type": "table",
+                    "field_type": "multiInputField",
+                    "answer": [
+                        ["", "", "html"],
+                        ["", ["06-2023"], "monthYearField"],
+                    ],
+                    "question": "foo",
+                },
+                NewAddAnotherTable,
+            ),
+            (
+                {
                     "presentation_type": "file",
                     "answer": "https://www.example.com/file.pdf",
                     "question": "foo",
@@ -227,6 +344,31 @@ class TestApplicatorsResponseComponentFactory:
                     "question": "foo",
                 },
                 FormattedBesideQuestionAnswerPair,
+            ),
+            (
+                {
+                    "presentation_type": "grouped_fields",
+                    "answer": [("foo", "1"), ("bar", "2")],
+                    "question": ["foo", "foo"],
+                },
+                MonetaryKeyValues,
+            ),
+            (
+                {
+                    "answer": [["Both revenue and capital", "1"]],
+                    "branched_field": "1",
+                    "field_id": ("pVBwci", "GRWtfV"),
+                    "field_type": "numberField",
+                    "form_name": "funding-required-ns",
+                    "presentation_type": "grouped_fields",
+                    "question": [
+                        "How much revenue are you applying for? 1 April 2023"
+                        " to 31 March 2024",
+                        "How much revenue are you applying for? 1 April 2023"
+                        " to 31 March 2024",
+                    ],
+                },
+                BesideQuestionAnswerPair,
             ),
         ],
     )
@@ -671,7 +813,7 @@ class TestUtilMethods:
 def test_create_ui_components_retains_order(monkeypatch):
     test_app = Flask("app")
     test_app.config["SERVER_NAME"] = "example.org:5000"
-    test_app.register_blueprint(assess_bp)
+    test_app.register_blueprint(assessment_bp)
     response_with_unhashable_fields = [
         {
             "field_id": "field_1",
@@ -748,14 +890,25 @@ def test_create_ui_components_retains_order(monkeypatch):
             "form_name": "mock_form_name",
             "path": "mock_path",
             "question": "Eleventh",
-            "answer": None,
+            "answer": None,  # we dynamically grab the state of the bucket
             "presentation_type": "s3bucketPath",
             "field_type": "clientSideFileUploadField",
+        },
+        {
+            "field_id": "NdFwgy",
+            "form_name": "funding-required",
+            "field_type": "multiInputField",
+            "presentation_type": "table",
+            "question": "Twelve",
+            "answer": [
+                ["Description", ["first", "second"], "text"],
+                ["Amount", [100, 50.25], "currency"],
+            ],
         },
     ]
 
     monkeypatch.setattr(
-        app.assess.models.ui.applicants_response,
+        app.blueprints.assessments.models.applicants_response,
         "list_files_in_folder",
         lambda x: ["form_name/path/name/filename.png"],
     )
@@ -770,7 +923,7 @@ def test_create_ui_components_retains_order(monkeypatch):
         for ui_component in ui_components
     )
 
-    assert len(ui_components) == 12
+    assert len(ui_components) == 13
 
     assert isinstance(ui_components[0], BesideQuestionAnswerPair)
     assert ui_components[0].question == "First"
@@ -814,6 +967,48 @@ def test_create_ui_components_retains_order(monkeypatch):
     assert ui_components[11].key_to_url_dict == {
         "form_name/path/name/filename.png": (
             "http://example.org:5000/assess/application/app_123/export/"
-            "form_name/path/name/filename.png"
+            "form_name%252Fpath%252Fname%252Ffilename.png?quoted=True"
         )
     }
+
+    assert isinstance(ui_components[12], NewAddAnotherTable)
+    assert ui_components[12].caption == "Twelve"
+    assert ui_components[12].head == [
+        {"text": "Description", "format": ""},
+        {"text": "Amount", "format": "numeric"},
+    ]
+    assert ui_components[12].rows == [
+        [
+            {"text": "first", "format": ""},
+            {"text": "£100.00", "format": "numeric"},
+        ],
+        [
+            {"text": "second", "format": ""},
+            {"text": "£50.25", "format": "numeric"},
+        ],
+        [
+            {"text": "Total", "classes": "govuk-table__header"},
+            {"text": "£150.25", "format": "numeric"},
+        ],
+    ]
+
+
+@pytest.mark.parametrize(
+    "tag, style",
+    [
+        ("ul", "circle"),
+        ("ul", "square"),
+        ("ul", ""),
+        ("ol", "lower-alpha"),
+        ("ol", "upper-alpha"),
+        ("ol", "lower-roman"),
+        ("ol", "upper-roman"),
+        ("ol", "lower-greek"),
+        ("ol", ""),
+        ("p", ""),
+    ],
+)
+def test_sanitise_html(tag, style):
+    test_data = TestSanitiseData(tag=tag, style=style)
+    response = sanitise_html(test_data.input.copy())
+    assert response["answer"] == test_data.response["answer"].replace("'", '"')

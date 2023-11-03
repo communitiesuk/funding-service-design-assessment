@@ -1,6 +1,7 @@
 import pytest
 from bs4 import BeautifulSoup
 from config import Config
+from flask import g
 from tests.conftest import create_invalid_token
 from tests.conftest import create_valid_token
 from tests.conftest import test_assessor_claims
@@ -10,7 +11,9 @@ from tests.conftest import test_roleless_user_claims
 
 
 class TestAuthorisation:
-    def test_any_unauthorised_route_redirects_to_home(self, flask_test_client):
+    def test_any_unauthorised_route_redirects_to_home(
+        self, flask_test_client, mock_get_funds
+    ):
         """
         GIVEN an unauthorised user
         WHEN the user tries to access any route
@@ -29,7 +32,7 @@ class TestAuthorisation:
         assert response.location == "/"
 
     def test_any_invalid_token_route_redirects_to_home(
-        self, flask_test_client
+        self, flask_test_client, mock_get_funds
     ):
         """
         GIVEN an unauthorised user
@@ -53,7 +56,7 @@ class TestAuthorisation:
         assert response.location == "/"
 
     def test_any_unauthorised_visit_to_route_prompts_user_to_sign_in(
-        self, flask_test_client
+        self, flask_test_client, mock_get_funds
     ):
         """
         GIVEN an unauthorised user
@@ -77,7 +80,9 @@ class TestAuthorisation:
             in response.data
         )
 
-    def test_roleless_user_redirected_to_roles_error(self, flask_test_client):
+    def test_roleless_user_redirected_to_roles_error(
+        self, flask_test_client, mock_get_funds
+    ):
         """
         GIVEN an authorised user with no roles
         WHEN the user tries to access any route
@@ -96,17 +101,19 @@ class TestAuthorisation:
         response = flask_test_client.get("/any-route")
 
         assert response.status_code == 302
-        assert (
-            response.location
-            == "https://authenticator/service/user?roles_required=COMMENTER"
+        assert response.location == (
+            "https://authenticator/service/user?roles_required=TF_COMMENTER|NSTF_COMMENTER"
+            + "|CYP_COMMENTER|COF_COMMENTER"
         )
 
     @pytest.mark.mock_parameters(
         {
-            "get_assessment_stats_path": (
-                "app.assess.models.fund_summary.get_assessments_stats"
-            ),
-            "get_rounds_path": "app.assess.models.fund_summary.get_rounds",
+            "get_assessment_stats_path": [
+                "app.blueprints.assessments.models.fund_summary.get_assessments_stats",
+            ],
+            "get_rounds_path": [
+                "app.blueprints.assessments.models.fund_summary.get_rounds"
+            ],
             "fund_id": "test-fund",
             "round_id": "test-round",
         }
@@ -169,9 +176,14 @@ class TestAuthorisation:
         request,
         mock_get_sub_criteria,
         mock_get_fund,
-        mock_get_latest_flag,
+        mock_get_funds,
+        mock_get_round,
+        mock_get_flags,
         mock_get_comments,
+        mock_get_application_metadata,
         mock_get_sub_criteria_theme,
+        mock_get_assessor_tasklist_state,
+        mock_get_bulk_accounts,
         claims,
         ability_to_score,
     ):
@@ -197,9 +209,9 @@ class TestAuthorisation:
         soup = BeautifulSoup(response.data, "html.parser")
         assert (
             soup.title.string
-            == "test_theme_name - test_sub_criteria - Project In prog and"
-            " Res -"
-            " Assessment Hub"
+            == "test_theme_name – test_sub_criteria – Project In prog and"
+            " Res –"
+            " Assessment Hub – GOV.UK"
         )
         if ability_to_score:
             assert (
@@ -236,9 +248,14 @@ class TestAuthorisation:
         expect_all_comments_available,
         mock_get_sub_criteria,
         mock_get_fund,
-        mock_get_latest_flag,
+        mock_get_funds,
+        mock_get_round,
+        mock_get_application_metadata,
+        mock_get_flags,
         mock_get_comments,
         mock_get_sub_criteria_theme,
+        mock_get_assessor_tasklist_state,
+        mock_get_bulk_accounts,
     ):
         """
         GIVEN authorized users
@@ -279,6 +296,7 @@ class TestAuthorisation:
         is_lead_assessor_comment_visible = (
             b"This is a comment" in response.data
         )
+        assert g.user.roles is not None
 
         if expect_all_comments_available:
             assert is_lead_assessor_comment_visible
@@ -290,23 +308,25 @@ class TestAuthorisation:
             assert is_commenter_comment_visible
 
     @pytest.mark.parametrize(
-        "claim,expect_continue_available",
+        "claim",
         [
-            (test_commenter_claims, False),
-            (test_assessor_claims, False),
-            (test_lead_assessor_claims, True),
+            (test_commenter_claims),
+            (test_assessor_claims),
         ],
     )
     @pytest.mark.application_id("stopped_app")
-    def test_user_levels_have_correct_permissions_to_restart_an_assessment(
+    @pytest.mark.flag_id("stopped_app")
+    def test_user_levels_have_correct_permissions_to_restart_an_assessment_commenter_assessor(
         self,
         flask_test_client,
         request,
         claim,
-        expect_continue_available,
-        mock_get_latest_flag,
+        mock_get_flags,
+        mock_get_flag,
         mock_get_sub_criteria_banner_state,
         mock_get_fund,
+        mock_get_funds,
+        mock_get_application_metadata,
     ):
         """
         GIVEN authorised users
@@ -314,7 +334,6 @@ class TestAuthorisation:
         THEN the user sees the appropriate page:
             - commenter role cannot continue assessment
             - assessor role cannot continue assessment
-            - lead assessor role can continue assessment
         """
         application_id = request.node.get_closest_marker(
             "application_id"
@@ -325,28 +344,59 @@ class TestAuthorisation:
             create_valid_token(claim),
         )
 
-        if not expect_continue_available:
-            with pytest.raises(RuntimeError) as exec_info:
-                flask_test_client.get(
-                    f"assess/continue_assessment/{application_id}",
-                    follow_redirects=True,
-                )
-            # Tries to redirect to authenticator
-            assert (
-                str(exec_info.value)
-                == "Following external redirects is not supported."
-            )
-        else:
-            response = flask_test_client.get(
+        with pytest.raises(RuntimeError) as exec_info:
+            flask_test_client.get(
                 f"assess/continue_assessment/{application_id}",
                 follow_redirects=True,
             )
-            assert response.status_code == 200
-            assert b"Continue assessment" in response.data
-            assert b"Reason for continuing assessment" in response.data
+        # Tries to redirect to authenticator
+        assert (
+            str(exec_info.value)
+            == "Following external redirects is not supported."
+        )
+
+    @pytest.mark.application_id("stopped_app")
+    @pytest.mark.flag_id("stopped_app")
+    def test_user_levels_have_correct_permissions_to_restart_an_assessment_lead(
+        self,
+        flask_test_client,
+        request,
+        mock_get_flags,
+        mock_get_flag,
+        mock_get_sub_criteria_banner_state,
+        mock_get_assessor_tasklist_state,
+        mock_get_fund,
+        mock_get_round,
+        mock_get_funds,
+        mock_get_application_metadata,
+    ):
+        """
+        GIVEN authorised users
+        WHEN the user accesses the continue assessment route
+        THEN the user sees the appropriate page:
+            - lead assessor role can continue assessment
+        """
+        claim = test_lead_assessor_claims
+        application_id = request.node.get_closest_marker(
+            "application_id"
+        ).args[0]
+        flag_id = request.node.get_closest_marker("flag_id").args[0]
+        flask_test_client.set_cookie(
+            "localhost",
+            "fsd_user_token",
+            create_valid_token(claim),
+        )
+
+        response = flask_test_client.get(
+            f"assess/continue_assessment/{application_id}?flag_id={flag_id}",
+            follow_redirects=True,
+        )
+        assert response.status_code == 200
+        assert b"Continue assessment" in response.data
+        assert b"Reason for continuing assessment" in response.data
 
     @pytest.mark.parametrize(
-        "claim,expect_flagging_available",
+        "claim,expect_flagging",
         [
             (test_commenter_claims, False),
             (test_assessor_claims, True),
@@ -359,10 +409,15 @@ class TestAuthorisation:
         request,
         flask_test_client,
         claim,
-        expect_flagging_available,
-        mock_get_latest_flag,
+        expect_flagging,
+        mock_get_flags,
+        mock_get_available_teams,
+        mock_get_assessor_tasklist_state,
         mock_get_sub_criteria_banner_state,
         mock_get_fund,
+        mock_get_funds,
+        mock_get_round,
+        mock_get_application_metadata,
     ):
         """
         GIVEN authorised users
@@ -383,7 +438,7 @@ class TestAuthorisation:
             create_valid_token(claim),
         )
 
-        if not expect_flagging_available:
+        if not expect_flagging:
             with pytest.raises(RuntimeError) as exec_info:
                 flask_test_client.get(
                     f"assess/flag/{application_id}",
@@ -403,7 +458,7 @@ class TestAuthorisation:
             assert b"Flag application" in response.data
 
     @pytest.mark.parametrize(
-        "claim,expect_resolve_flag_available",
+        "claim,expect_flagging",
         [
             (test_commenter_claims, False),
             (test_assessor_claims, False),
@@ -411,15 +466,21 @@ class TestAuthorisation:
         ],
     )
     @pytest.mark.application_id("resolved_app")
+    @pytest.mark.flag_id("resolved_app")
     def test_different_user_levels_have_correct_permissions_to_resolve_flag(
         self,
         flask_test_client,
         request,
         claim,
-        expect_resolve_flag_available,
-        mock_get_latest_flag,
+        expect_flagging,
+        mock_get_flags,
+        mock_get_assessor_tasklist_state,
+        mock_get_flag,
+        mock_get_funds,
+        mock_get_application_metadata,
         mock_get_sub_criteria_banner_state,
         mock_get_fund,
+        mock_get_round,
     ):
         """
         GIVEN authorised users
@@ -433,12 +494,14 @@ class TestAuthorisation:
             "application_id"
         ).args[0]
 
+        flag_id = request.node.get_closest_marker("flag_id").args[0]
+
         flask_test_client.set_cookie(
             "localhost",
             "fsd_user_token",
             create_valid_token(claim),
         )
-        if not expect_resolve_flag_available:
+        if not expect_flagging:
             with pytest.raises(RuntimeError) as exec_info:
                 flask_test_client.get(
                     f"assess/resolve_flag/{application_id}",
@@ -451,7 +514,7 @@ class TestAuthorisation:
             )
         else:
             response = flask_test_client.get(
-                f"assess/resolve_flag/{application_id}",
+                f"assess/resolve_flag/{application_id}?flag_id={flag_id}",
                 follow_redirects=True,
             )
             assert response.status_code == 200
@@ -460,7 +523,7 @@ class TestAuthorisation:
             assert b"Stop assessment" in response.data
 
     @pytest.mark.parametrize(
-        "user_account, visible",
+        "user_account, expect_flagging",
         [
             (test_commenter_claims, False),
             (test_assessor_claims, False),
@@ -473,13 +536,19 @@ class TestAuthorisation:
         flask_test_client,
         request,
         user_account,
-        visible,
+        expect_flagging,
         mock_get_assessor_tasklist_state,
         mock_get_fund,
+        mock_get_funds,
+        mock_get_application_metadata,
         mock_get_round,
-        mock_get_latest_flag,
+        mock_get_flags,
+        mock_get_qa_complete,
         mock_get_bulk_accounts,
+        mock_get_associated_tags_for_application,
+        mocker,
     ):
+
         token = create_valid_token(user_account)
         flask_test_client.set_cookie("localhost", "fsd_user_token", token)
         application_id = request.node.get_closest_marker(
@@ -490,7 +559,7 @@ class TestAuthorisation:
             f"assess/application/{application_id}"
         )
         assert response.status_code == 200
-        if visible:
+        if expect_flagging:
             assert b"Resolve flag" in response.data
         else:
             assert b"Resolve flag" not in response.data
