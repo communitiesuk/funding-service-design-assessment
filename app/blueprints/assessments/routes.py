@@ -6,6 +6,9 @@ from datetime import datetime
 from urllib.parse import quote_plus
 from urllib.parse import unquote_plus
 
+from app.blueprints.assessments.activity_trail import get_dates
+from app.blueprints.assessments.activity_trail import order_by_dates
+from app.blueprints.assessments.activity_trail import UpdatedFlags
 from app.blueprints.assessments.forms.assessment_form import (
     AssessmentCompleteForm,
 )
@@ -651,6 +654,57 @@ def application(application_id):
         flag_status=flag_status,
         assessment_status=assessment_status,
         all_uploaded_documents_section_available=fund_round.all_uploaded_documents_section_available,
+    )
+
+
+@assessment_bp.route("/activity_trail/<application_id>", methods=["GET"])
+@check_access_application_id
+def activity_trail(application_id: str):
+
+    state = get_state_for_tasklist_banner(application_id)
+    user_id_list = []
+    # get all flags history
+    flags_list = get_flags(application_id)
+    if flags_list:
+        for flag_data in flags_list:
+            for flag_item in flag_data.updates:
+                if flag_item["user_id"] not in user_id_list:
+                    user_id_list.append(flag_item["user_id"])
+
+    updated_flags = UpdatedFlags.from_dict(flags_list)
+    all_flags = flags_list + updated_flags
+    # print(f"STOPPED FLAGSSS::::: {len(updated_flags)}:-> {updated_flags} END")
+    # print(f"ALL FLAGS::::: {len(all_flags)} {all_flags} END")
+
+    print(f"DATES BEFORE for all flags::::: {len(all_flags)}")
+    get_dates(all_flags)
+
+    sorted_flags = order_by_dates(all_flags)
+
+    print(f"DATES AFTER for all flags::::: {len(sorted_flags)}")
+    get_dates(sorted_flags)
+
+    fund_round = get_round(
+        state.fund_id,
+        state.round_id,
+        ttl_hash=get_ttl_hash(Config.LRU_CACHE_TIME),
+    )
+    print(fund_round)
+
+    # GET USER INFORMATION
+    accounts_list = get_bulk_accounts_dict(
+        user_id_list,
+        state.fund_short_name,
+    )
+    # print(f"UER INFORMATION::::: {len(flags_list)}")
+
+    return render_template(
+        "activity_trail.html",
+        application_id=application_id,
+        state=state,
+        flags_list=flags_list,
+        accounts_list=accounts_list,
+        updated_flags=updated_flags,
     )
 
 
