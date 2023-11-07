@@ -3,6 +3,7 @@ from app.blueprints.authentication.validation import (
 )
 from app.blueprints.flagging.helpers import get_flags
 from app.blueprints.scoring.forms.rescore_form import RescoreForm
+from app.blueprints.scoring.helpers import get_scoring_class
 from app.blueprints.services.data_services import get_comments
 from app.blueprints.services.data_services import get_score_and_justification
 from app.blueprints.services.data_services import get_sub_criteria
@@ -51,8 +52,6 @@ def score(
 
     state = get_state_for_tasklist_banner(application_id)
     flags_list = get_flags(application_id)
-
-    from app.blueprints.scoring.helpers import get_scoring_class
 
     score_form = get_scoring_class(state.round_id)()
     rescore_form = RescoreForm()
