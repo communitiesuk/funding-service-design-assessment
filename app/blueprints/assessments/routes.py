@@ -52,6 +52,7 @@ from app.blueprints.authentication.validation import has_access_to_fund
 from app.blueprints.authentication.validation import (
     has_devolved_authority_validation,
 )
+from app.blueprints.scoring.helpers import get_scoring_class
 from app.blueprints.services.aws import get_file_for_download_from_aws
 from app.blueprints.services.data_services import (
     get_all_uploaded_documents_theme_answers,
@@ -600,12 +601,14 @@ def application(application_id):
         update_ar_status_to_completed(application_id)
 
     state = get_state_for_tasklist_banner(application_id)
+
+    scoring_form = get_scoring_class(state.round_id)()
+
     fund_round = get_round(
         state.fund_id,
         state.round_id,
         ttl_hash=get_ttl_hash(Config.LRU_CACHE_TIME),
     )
-
     user_id_list = []
     flags_list = get_flags(application_id)
     qa_complete = get_qa_complete(application_id)
@@ -651,6 +654,7 @@ def application(application_id):
         flag_status=flag_status,
         assessment_status=assessment_status,
         all_uploaded_documents_section_available=fund_round.all_uploaded_documents_section_available,
+        max_possible_sub_criteria_score=scoring_form.max_score,
     )
 
 
