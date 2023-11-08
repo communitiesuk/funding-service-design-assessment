@@ -139,7 +139,7 @@
                 {% if loop.index > 0 %}
                     {% set name_classes = "govuk-heading-m govuk-!-margin-bottom-2 govuk-!-margin-top-8" %}
                 {% endif %}
-                {{ criteria_element(criteria, name_classes, application_id) }}
+                {{ criteria_element(criteria, name_classes, application_id, max_possible_sub_criteria_score) }}
             {% endfor %}
         </div>
 
