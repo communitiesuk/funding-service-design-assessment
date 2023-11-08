@@ -405,7 +405,7 @@ mock_api_results = {
                     }
                 ],
                 "total_criteria_score": 0,
-                "total_criteria_score_possible": 0,
+                "number_of_scored_sub_criteria": 0,
                 "weighting": 0,
             }
         ],
@@ -436,7 +436,7 @@ mock_api_results = {
                     }
                 ],
                 "total_criteria_score": 4,
-                "total_criteria_score_possible": 5,
+                "number_of_scored_sub_criteria": 5,
                 "weighting": 0,
             }
         ],
@@ -467,7 +467,7 @@ mock_api_results = {
                     }
                 ],
                 "total_criteria_score": 4,
-                "total_criteria_score_possible": 5,
+                "number_of_scored_sub_criteria": 5,
                 "weighting": 0,
             }
         ],

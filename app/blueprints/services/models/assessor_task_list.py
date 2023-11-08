@@ -27,7 +27,7 @@ class _CriteriaSubCriteria(_SubCriteria):
 class _Criteria:
     name: str
     total_criteria_score: int
-    total_criteria_score_possible: int
+    number_of_scored_sub_criteria: int
     weighting: float
     sub_criterias: List[_CriteriaSubCriteria]
 
@@ -85,8 +85,8 @@ class AssessorTaskList:
                 _Criteria(
                     name=criteria["name"],
                     total_criteria_score=criteria["total_criteria_score"],
-                    total_criteria_score_possible=criteria[
-                        "total_criteria_score_possible"
+                    number_of_scored_sub_criteria=criteria[
+                        "number_of_scored_sub_criteria"
                     ],
                     weighting=criteria["weighting"],
                     sub_criterias=[

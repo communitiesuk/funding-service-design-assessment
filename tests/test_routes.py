@@ -652,6 +652,7 @@ class TestRoutes:
         mock_get_scores,
         mock_get_bulk_accounts,
         mock_get_assessor_tasklist_state,
+        mock_get_scoring_system,
     ):
         application_id = request.node.get_closest_marker(
             "application_id"
@@ -808,6 +809,7 @@ class TestRoutes:
         mock_get_bulk_accounts,
         mock_get_associated_tags_for_application,
         mocker,
+        mock_get_scoring_system,
     ):
         marker = request.node.get_closest_marker("application_id")
         application_id = marker.args[0]
@@ -842,6 +844,7 @@ class TestRoutes:
         mock_get_bulk_accounts,
         mock_get_associated_tags_for_application,
         mocker,
+        mock_get_scoring_system,
     ):
         marker = request.node.get_closest_marker("application_id")
         application_id = marker.args[0]
@@ -1091,6 +1094,7 @@ class TestRoutes:
         mock_get_application_metadata,
         mock_get_associated_tags_for_application,
         mocker,
+        mock_get_scoring_system,
     ):
         token = create_valid_token(test_lead_assessor_claims)
         flask_test_client.set_cookie("localhost", "fsd_user_token", token)
@@ -1120,6 +1124,7 @@ class TestRoutes:
         mock_get_bulk_accounts,
         mock_get_associated_tags_for_application,
         mocker,
+        mock_get_scoring_system,
     ):
         token = create_valid_token(test_lead_assessor_claims)
         flask_test_client.set_cookie("localhost", "fsd_user_token", token)

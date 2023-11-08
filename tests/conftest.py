@@ -876,6 +876,16 @@ def mock_get_tag_map_and_tag_options(mocker):
     yield
 
 
+@pytest.fixture(scope="function")
+def mock_get_scoring_system(request, mocker):
+    mocker.patch(
+        "app.blueprints.scoring.helpers.get_scoring_system",
+        return_value="OneToFive",
+    )
+
+    yield
+
+
 COF_R2_W2_FORM_NAME_TO_TITLE_MAP = OrderedDict(
     [
         ("organisation-information", "Organisation Information"),
