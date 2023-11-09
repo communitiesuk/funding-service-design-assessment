@@ -635,6 +635,7 @@ mock_api_results = {
     ],
     "assessment_store/applications/{application_id}": {
         "fund_id": "TF",
+        "round_id": "TR",
     },
     "/application/stopped_app/metadata": {
         "fund_id": test_fund_id,
