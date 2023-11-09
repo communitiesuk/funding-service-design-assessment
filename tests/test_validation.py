@@ -445,7 +445,7 @@ def test_is_assessment_active_validation(
     # Make sure the check is_assessment_active function is returning correctly
     # positive datetime_offset sets the deadline to a future datetime
     mocker.patch(
-        "app.blueprints.authentication.validation.Config.SHOW_ASSESSMENTS_LIVE_ROUNDS",
+        "app.blueprints.authentication.validation.Config.FORCE_OPEN_ALL_LIVE_ASSESSMENT_ROUNDS",
         new=show_live_rounds_flag,
     )
     mocker.patch(
@@ -470,7 +470,7 @@ def test_check_access_application_id_decorator_returns_403_for_inactive_assessme
         return_value="test",
     )
     mocker.patch(
-        "app.blueprints.authentication.validation.Config.SHOW_ASSESSMENTS_LIVE_ROUNDS",
+        "app.blueprints.authentication.validation.Config.FORCE_OPEN_ALL_LIVE_ASSESSMENT_ROUNDS",
         new=False,
     )
     mocker.patch(

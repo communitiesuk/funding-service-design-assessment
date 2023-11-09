@@ -112,7 +112,10 @@ def is_assessment_active(fund_id, round_id):
     deadline = datetime.strptime(
         round_information.deadline, "%Y-%m-%dT%H:%M:%S"
     )
-    if datetime.now() > deadline or Config.SHOW_ASSESSMENTS_LIVE_ROUNDS:
+    if (
+        datetime.now() > deadline
+        or Config.FORCE_OPEN_ALL_LIVE_ASSESSMENT_ROUNDS
+    ):
         return True
     else:
         return False
