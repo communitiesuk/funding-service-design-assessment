@@ -16,7 +16,9 @@ asn1crypto==1.5.1
 async-timeout==4.0.2
     # via redis
 attrs==22.2.0
-    # via jsonschema
+    # via
+    #   jsonschema
+    #   referencing
 babel==2.11.0
     # via
     #   -r requirements.in
@@ -142,14 +144,17 @@ jmespath==1.0.1
     #   botocore
 jsmin==3.0.1
     # via -r requirements.in
-jsonschema==4.17.3
+jsonschema==4.19.2
     # via
     #   connexion
-    #   jsonschema-spec
     #   openapi-schema-validator
     #   openapi-spec-validator
-jsonschema-spec==0.1.3
+jsonschema-path==0.3.1
     # via openapi-spec-validator
+jsonschema-specifications==2023.7.1
+    # via
+    #   jsonschema
+    #   openapi-schema-validator
 lazy-object-proxy==1.9.0
     # via openapi-spec-validator
 lxml==4.9.3
@@ -165,16 +170,16 @@ markupsafe==2.1.2
     #   wtforms
 num2words==0.5.12
     # via -r requirements.in
-openapi-schema-validator==0.4.3
+openapi-schema-validator==0.6.2
     # via openapi-spec-validator
-openapi-spec-validator==0.5.5
+openapi-spec-validator==0.7.1
     # via -r requirements.in
 oscrypto==1.3.0
     # via pyhanko-certvalidator
 packaging==23.0
     # via connexion
 pathable==0.4.3
-    # via jsonschema-spec
+    # via jsonschema-path
 pillow==10.0.1
     # via
     #   reportlab
@@ -201,8 +206,6 @@ pypdf==3.17.0
     # via xhtml2pdf
 pypng==0.20220715.0
     # via qrcode
-pyrsistent==0.19.3
-    # via jsonschema
 pyscss==1.4.0
     # via -r requirements.in
 python-bidi==0.4.2
@@ -227,7 +230,7 @@ pyyaml==6.0
     #   clickclick
     #   connexion
     #   funding-service-design-utils
-    #   jsonschema-spec
+    #   jsonschema-path
     #   pyhanko
 qrcode==7.4.2
     # via pyhanko
@@ -235,6 +238,11 @@ redis==4.5.4
     # via
     #   flask-redis
     #   flipper-client
+referencing==0.30.2
+    # via
+    #   jsonschema
+    #   jsonschema-path
+    #   jsonschema-specifications
 reportlab==3.6.13
     # via
     #   svglib
@@ -244,6 +252,7 @@ requests==2.31.0
     #   -r requirements.in
     #   connexion
     #   funding-service-design-utils
+    #   jsonschema-path
     #   pyhanko
     #   pyhanko-certvalidator
     #   python-consul
@@ -252,6 +261,10 @@ rfc3339-validator==0.1.4
     # via openapi-schema-validator
 rich==12.6.0
     # via funding-service-design-utils
+rpds-py==0.12.0
+    # via
+    #   jsonschema
+    #   referencing
 s3transfer==0.6.0
     # via boto3
 sentry-sdk[flask]==1.31.0
@@ -291,7 +304,6 @@ tqdm==4.64.1
 typing-extensions==4.5.0
     # via
     #   alembic
-    #   jsonschema-spec
     #   qrcode
     #   sqlalchemy
 tzlocal==5.0.1
