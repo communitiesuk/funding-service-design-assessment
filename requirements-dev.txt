@@ -344,7 +344,7 @@ pyjwt[crypto]==2.6.0
     #   pyjwt
 pyopenssl==23.1.1
     # via -r requirements.txt
-pypdf==3.14.0
+pypdf==3.17.0
     # via
     #   -r requirements.txt
     #   xhtml2pdf
