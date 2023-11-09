@@ -62,8 +62,15 @@ def load_change_tags(application_id):
 
     if request.method == "POST":
         updated_tags = []
-        for tag_id in tag_association_form.tags.data:
-            updated_tags.append({"tag_id": tag_id, "user_id": g.account_id})
+        association_form_data = tag_association_form.tags.data
+        if association_form_data:
+            for tag_id in association_form_data:
+                updated_tags.append(
+                    {"tag_id": tag_id, "user_id": g.account_id}
+                )
+        else:
+            updated_tags.append({"tag_id": "", "user_id": g.account_id})
+        print(f"ARGS TO SEND: {updated_tags}")
         update_associated_tags(application_id, updated_tags)
         return redirect(
             url_for(
@@ -71,9 +78,11 @@ def load_change_tags(application_id):
                 application_id=application_id,
             )
         )
+
     state = get_state_for_tasklist_banner(application_id)
     all_tags = get_tags_for_fund_round(state.fund_id, state.round_id, "")
     associated_tags = get_associated_tags_for_application(application_id)
+    print(f"ASSESSMENT ASSOCIATED TAGS RESPONSE=====>>>> {associated_tags}")
     associated_tag_ids = (
         [tag.tag_id for tag in associated_tags]
         if associated_tags

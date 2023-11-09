@@ -6,8 +6,12 @@ from datetime import datetime
 from urllib.parse import quote_plus
 from urllib.parse import unquote_plus
 
-from app.blueprints.assessments.activity_trail import get_dates
-from app.blueprints.assessments.activity_trail import order_by_dates
+from app.blueprints.assessments.activity_trail import Comments
+from app.blueprints.assessments.activity_trail import extract_user_info
+from app.blueprints.assessments.activity_trail import Scores
+from app.blueprints.assessments.activity_trail import (
+    update_comment_with_user_info,
+)
 from app.blueprints.assessments.activity_trail import UpdatedFlags
 from app.blueprints.assessments.forms.assessment_form import (
     AssessmentCompleteForm,
@@ -57,6 +61,9 @@ from app.blueprints.authentication.validation import (
 )
 from app.blueprints.services.aws import get_file_for_download_from_aws
 from app.blueprints.services.data_services import (
+    get_all_associated_tags_for_application,
+)
+from app.blueprints.services.data_services import (
     get_all_uploaded_documents_theme_answers,
 )
 from app.blueprints.services.data_services import get_applicant_export
@@ -79,6 +86,7 @@ from app.blueprints.services.data_services import get_fund
 from app.blueprints.services.data_services import get_funds
 from app.blueprints.services.data_services import get_qa_complete
 from app.blueprints.services.data_services import get_round
+from app.blueprints.services.data_services import get_score_and_justification
 from app.blueprints.services.data_services import get_sub_criteria
 from app.blueprints.services.data_services import (
     get_sub_criteria_theme_answers,
@@ -663,7 +671,8 @@ def activity_trail(application_id: str):
 
     state = get_state_for_tasklist_banner(application_id)
     user_id_list = []
-    # get all flags history
+
+    # TODO:  GET ALL FLAGS and CREATE A FUNCTION TO GET user_info
     flags_list = get_flags(application_id)
     if flags_list:
         for flag_data in flags_list:
@@ -671,32 +680,41 @@ def activity_trail(application_id: str):
                 if flag_item["user_id"] not in user_id_list:
                     user_id_list.append(flag_item["user_id"])
 
-    updated_flags = UpdatedFlags.from_dict(flags_list)
-    all_flags = flags_list + updated_flags
-    # print(f"STOPPED FLAGSSS::::: {len(updated_flags)}:-> {updated_flags} END")
-    # print(f"ALL FLAGS::::: {len(all_flags)} {all_flags} END")
+    updated_flags = UpdatedFlags.from_list(flags_list)
 
-    print(f"DATES BEFORE for all flags::::: {len(all_flags)}")
-    get_dates(all_flags)
+    print(f"UPDATED FLAGS::----> {len(updated_flags)}: {updated_flags}")
+    # print(f"ALL FLAGS:->{all_flags}")
 
-    sorted_flags = order_by_dates(all_flags)
-
-    print(f"DATES AFTER for all flags::::: {len(sorted_flags)}")
-    get_dates(sorted_flags)
-
-    fund_round = get_round(
-        state.fund_id,
-        state.round_id,
-        ttl_hash=get_ttl_hash(Config.LRU_CACHE_TIME),
-    )
-    print(fund_round)
-
-    # GET USER INFORMATION
+    # TODO: GET USER INFORMATION
     accounts_list = get_bulk_accounts_dict(
         user_id_list,
         state.fund_short_name,
     )
-    # print(f"UER INFORMATION::::: {len(flags_list)}")
+    # print(f"UER INFORMATION::::: {len(accounts_list)}: {accounts_list}")
+
+    # TODO: GET COMMENTS
+    comments_list = get_comments(application_id)
+    # print(f"COMMENTS::::: {len(comments_list)}: {comments_list}")
+    user_id = extract_user_info(comments_list, state)
+    # print(f"EXTRACT USERS::::: {len(user_id)}: {user_id}")
+    updated_comments = update_comment_with_user_info(comments_list, user_id)
+    # print(f"USERS INFO:::::{len(updated_comments)}: {updated_comments}")
+    all_comments = Comments.from_list(updated_comments)
+    print(f"COMMENTS::----> {len(all_comments)}: {all_comments}")
+
+    # TODO: GET ALL SCORES
+
+    scores = get_score_and_justification(
+        application_id=application_id, score_history=True
+    )
+    all_scores = Scores.from_list(scores)
+    print(f"SCORES::----> {len(all_scores)}: {all_scores}")
+
+    # TODO: GET ALL TAGS
+    tags = get_all_associated_tags_for_application(application_id)
+    print(f"TAGS::----> {len(tags)}: {tags}")
+
+    # TODO: GET ALL STATUSES
 
     return render_template(
         "activity_trail.html",
