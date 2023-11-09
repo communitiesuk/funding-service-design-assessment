@@ -197,7 +197,7 @@ pyjwt[crypto]==2.6.0
     #   pyjwt
 pyopenssl==23.1.1
     # via -r requirements.in
-pypdf==3.14.0
+pypdf==3.17.0
     # via xhtml2pdf
 pypng==0.20220715.0
     # via qrcode
