@@ -175,7 +175,7 @@ packaging==23.0
     # via connexion
 pathable==0.4.3
     # via jsonschema-spec
-pillow==10.0.0
+pillow==10.0.1
     # via
     #   reportlab
     #   xhtml2pdf
