@@ -183,7 +183,7 @@ pycparser==2.21
     # via cffi
 pyee==6.0.0
     # via flipper-client
-pygments==2.14.0
+pygments==2.15.0
     # via rich
 pyhanko==0.20.0
     # via xhtml2pdf
@@ -192,7 +192,9 @@ pyhanko-certvalidator==0.23.0
     #   pyhanko
     #   xhtml2pdf
 pyjwt[crypto]==2.6.0
-    # via funding-service-design-utils
+    # via
+    #   funding-service-design-utils
+    #   pyjwt
 pyopenssl==23.1.1
     # via -r requirements.in
 pypdf==3.14.0
@@ -253,7 +255,9 @@ rich==12.6.0
 s3transfer==0.6.0
     # via boto3
 sentry-sdk[flask]==1.31.0
-    # via funding-service-design-utils
+    # via
+    #   funding-service-design-utils
+    #   sentry-sdk
 six==1.16.0
     # via
     #   html5lib
