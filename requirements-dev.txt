@@ -118,7 +118,7 @@ cssselect2==0.7.0
     #   svglib
 debugpy==1.6.7
     # via -r requirements-dev.in
-deepdiff==6.2.3
+deepdiff==6.7.0
     # via -r requirements-dev.in
 distlib==0.3.6
     # via virtualenv
@@ -279,8 +279,6 @@ openapi-schema-validator==0.4.3
 openapi-spec-validator==0.5.5
     # via -r requirements.txt
 ordered-set==4.1.0
-    # via deepdiff
-orjson==3.8.6
     # via deepdiff
 oscrypto==1.3.0
     # via
