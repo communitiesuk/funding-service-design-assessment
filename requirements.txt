@@ -39,7 +39,7 @@ brotli==1.0.9
     # via flask-compress
 cachetools==5.3.0
     # via flipper-client
-certifi==2022.12.7
+certifi==2023.7.22
     # via
     #   requests
     #   sentry-sdk
@@ -175,7 +175,7 @@ packaging==23.0
     # via connexion
 pathable==0.4.3
     # via jsonschema-spec
-pillow==10.0.0
+pillow==10.0.1
     # via
     #   reportlab
     #   xhtml2pdf
@@ -183,7 +183,7 @@ pycparser==2.21
     # via cffi
 pyee==6.0.0
     # via flipper-client
-pygments==2.14.0
+pygments==2.15.0
     # via rich
 pyhanko==0.20.0
     # via xhtml2pdf
@@ -197,7 +197,7 @@ pyjwt[crypto]==2.6.0
     #   pyjwt
 pyopenssl==23.1.1
     # via -r requirements.in
-pypdf==3.14.0
+pypdf==3.17.0
     # via xhtml2pdf
 pypng==0.20220715.0
     # via qrcode
@@ -239,7 +239,7 @@ reportlab==3.6.13
     # via
     #   svglib
     #   xhtml2pdf
-requests==2.28.2
+requests==2.31.0
     # via
     #   -r requirements.in
     #   connexion
@@ -298,7 +298,7 @@ tzlocal==5.0.1
     # via pyhanko
 uritools==4.0.1
     # via pyhanko-certvalidator
-urllib3==1.26.14
+urllib3==1.26.18
     # via
     #   botocore
     #   requests
