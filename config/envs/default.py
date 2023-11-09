@@ -226,6 +226,9 @@ class DefaultConfig:
         ("GENERAL",),
         ("PEOPLE",),
     )
+    ASSESSMENT_SCORING_SYSTEM_ENDPOINT = (
+        ASSESSMENT_STORE_API_HOST + "/scoring-system/{round_id}"
+    )
     # Account store endpoints
     BULK_ACCOUNTS_ENDPOINT = ACCOUNT_STORE_API_HOST + "/bulk-accounts"
 

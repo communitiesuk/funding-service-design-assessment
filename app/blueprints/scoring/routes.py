@@ -3,7 +3,7 @@ from app.blueprints.authentication.validation import (
 )
 from app.blueprints.flagging.helpers import get_flags
 from app.blueprints.scoring.forms.rescore_form import RescoreForm
-from app.blueprints.scoring.forms.scores_and_justifications import ScoreForm
+from app.blueprints.scoring.helpers import get_scoring_class
 from app.blueprints.services.data_services import get_comments
 from app.blueprints.services.data_services import get_score_and_justification
 from app.blueprints.services.data_services import get_sub_criteria
@@ -50,8 +50,12 @@ def score(
     if not sub_criteria.is_scored:
         abort(404)
 
-    score_form = ScoreForm()
+    state = get_state_for_tasklist_banner(application_id)
+    flags_list = get_flags(application_id)
+
+    score_form = get_scoring_class(state.round_id)()
     rescore_form = RescoreForm()
+
     is_rescore = rescore_form.validate_on_submit()
     if not is_rescore and request.method == "POST":
         if score_form.validate_on_submit():
@@ -72,9 +76,6 @@ def score(
             )
         else:
             is_rescore = True
-
-    state = get_state_for_tasklist_banner(application_id)
-    flags_list = get_flags(application_id)
 
     comment_response = get_comments(
         application_id=application_id,
@@ -109,20 +110,12 @@ def score(
         else None
     )
     # TODO make COF_score_list extendable to other funds.
-    scoring_list = [
-        (5, "Strong"),
-        (4, "Good"),
-        (3, "Satisfactory"),
-        (2, "Partial"),
-        (1, "Poor"),
-    ]
 
     return render_template(
         "score.html",
         application_id=application_id,
         score_list=scores_with_account_details or None,
         latest_score=latest_score,
-        scoring_list=scoring_list,
         score_form=score_form,
         rescore_form=rescore_form,
         is_rescore=is_rescore,
@@ -132,35 +125,4 @@ def score(
         flag_status=flag_status,
         assessment_status=assessment_status,
         is_flaggable=False,  # Flag button is disabled in sub-criteria page
-    )
-
-
-@scoring_bp.route("/fragments/sub_criteria_scoring", methods=["POST", "GET"])
-def sub_crit_scoring():
-    form = ScoreForm()
-
-    if form.validate_on_submit():
-
-        score = int(form.score.data)
-        just = form.justification.data
-
-        assessment_id = "test_assess_id"
-        person_id = "test_person_id"
-        sub_crit_id = "test_sub_crit_id"
-
-        submit_score_and_justification(
-            score=score,
-            assessment_id=assessment_id,
-            person_id=person_id,
-            justification=just,
-            sub_crit_id=sub_crit_id,
-        )
-        scores_submitted = True
-    else:
-        scores_submitted = False
-
-    return render_template(
-        "scores_justification.html",
-        scores_submitted=scores_submitted,
-        form=form,
     )

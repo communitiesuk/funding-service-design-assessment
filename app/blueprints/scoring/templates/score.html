@@ -51,8 +51,8 @@ Score – {{ sub_criteria.name }} – {{ sub_criteria.project_name }}
             {{ navbar(application_id, sub_criteria, current_theme_id, is_score_page=True) }}
         </div>
         <div class="theme govuk-grid-column-two-thirds">
-            {{ scores_justification(score_form, rescore_form, is_rescore, score_list, latest_score, application_id,
-            sub_criteria.id, scoring_list, state.fund_guidance_url) }}
+            {{ scores_justification(score_form, rescore_form, is_rescore, latest_score, application_id,
+            sub_criteria.id,state.fund_guidance_url) }}
             {{ comment_summary(comments, sub_criteria.themes) }}
         </div>
 </div>

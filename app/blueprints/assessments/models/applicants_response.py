@@ -315,7 +315,7 @@ def _ui_component_from_factory(item: dict, application_id: str):
         return NewAddAnotherTable.from_dict(item)
 
     elif presentation_type == "currency":
-        if item.get("answer"):
+        if item.get("answer") is not None and item.get("answer") != "":
             item["answer"] = "£{:.2f}".format(float(item["answer"]))
         return BesideQuestionAnswerPair.from_dict(item)
 
