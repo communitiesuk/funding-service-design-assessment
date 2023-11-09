@@ -1,5 +1,5 @@
 {%- from "govuk_frontend_jinja/components/table/macro.html" import govukTable -%}
-{% macro criteria_element(criteria, name_classes, application_id) %}
+{% macro criteria_element(criteria, name_classes, application_id, max_possible_sub_criteria_score) %}
 
     {% set rows = [] %}
     {% for sub_criteria in criteria.sub_criterias %}
@@ -14,7 +14,7 @@
                     sub_criteria.name
                 )
             },
-            { "text": sub_criteria.score or "", "format": "numeric" } if g.access_controller.has_any_assessor_role else None,
+            { "text": sub_criteria.score if sub_criteria.score is not none or "", "format": "numeric" } if g.access_controller.has_any_assessor_role else None,
             { "html": '<span class="{}">{}</span>'.format('govuk-tag--scored-criteria' if sub_criteria.status == 'NOT_STARTED' else '', 'Complete' if sub_criteria.status=='COMPLETED' else sub_criteria.status|all_caps_to_human),
                 "format": "numeric" }
         ]) %}
@@ -23,7 +23,7 @@
     {% set _ = rows.append([
         { "html": "<strong>Total criteria score</strong>" },
         { "text": "" },
-        { "text": "{} of {}".format(criteria.total_criteria_score, criteria.total_criteria_score_possible), "format": "numeric" },
+        { "text": "{} of {}".format(criteria.total_criteria_score, criteria.number_of_scored_sub_criteria * max_possible_sub_criteria_score), "format": "numeric" },
     ]) if g.access_controller.has_any_assessor_role %}
 
     <h3 class="{{ name_classes or '' }}">{{ criteria.name }}</h3>
@@ -36,7 +36,7 @@
         "firstCellIsHeader":false,
         "head": [
             { "text": "Assessment sub criteria", "classes": "govuk-!-width-one-half"  },
-            { "text": "Score out of 5", "format": "numeric" } if g.access_controller.has_any_assessor_role else None,
+            { "text": "Score out of {}".format(max_possible_sub_criteria_score), "format": "numeric" } if g.access_controller.has_any_assessor_role else None,
             { "text": "Status", "format": "numeric" }
         ],
         "rows": rows,

@@ -34,7 +34,12 @@ from app.blueprints.assessments.models.applicants_response import (
 )
 from app.blueprints.authentication.validation import AssessmentAccessController
 from app.blueprints.scoring.forms.rescore_form import RescoreForm
-from app.blueprints.scoring.forms.scores_and_justifications import ScoreForm
+from app.blueprints.scoring.forms.scores_and_justifications import (
+    OneToFiveScoreForm,
+)
+from app.blueprints.scoring.forms.scores_and_justifications import (
+    ZeroToThreeScoreForm,
+)
 from app.blueprints.services.models.assessor_task_list import _Criteria
 from app.blueprints.services.models.assessor_task_list import (
     _CriteriaSubCriteria,
@@ -63,14 +68,15 @@ def default_flask_g():
 class TestJinjaMacros(object):
     def test_criteria_macro_lead_assessor(self, request_ctx):
         rendered_html = render_template_string(
-            "{{criteria_element(criteria, name_classes, application_id)}}",
+            "{{criteria_element(criteria, name_classes, application_id,"
+            " max_possible_sub_criteria_score)}}",
             criteria_element=get_template_attribute(
                 "macros/criteria_element.html", "criteria_element"
             ),
             criteria=_Criteria(
                 name="Example title",
-                total_criteria_score=0,
-                total_criteria_score_possible=0,
+                total_criteria_score=2,
+                number_of_scored_sub_criteria=2,
                 weighting=0.5,
                 sub_criterias=[
                     _CriteriaSubCriteria(
@@ -78,7 +84,7 @@ class TestJinjaMacros(object):
                         name="Sub Criteria 1",
                         status="NOT_STARTED",
                         theme_count=1,
-                        score=2,
+                        score=0,
                     ),
                     _CriteriaSubCriteria(
                         id="2",
@@ -91,6 +97,7 @@ class TestJinjaMacros(object):
             ),
             name_classes="example-class",
             application_id=1,
+            max_possible_sub_criteria_score=4,
             g=default_flask_g(),
         )
 
@@ -114,7 +121,9 @@ class TestJinjaMacros(object):
                 " govuk-table-no-bottom-border"
             ),
         )
+
         assert table is not None, "Table should have border negation class"
+
         assert len(soup.find_all("table")) == 1, "Should have 1 table"
         assert len(table.find_all("thead")) == 1, "Should have 1 table header"
         assert len(table.find_all("tbody")) == 1, "Should have 1 table body"
@@ -124,8 +133,20 @@ class TestJinjaMacros(object):
             table.find("strong", text="Total criteria score") is not None
         ), "Should have Total criteria score"
         assert (
-            table.find("th", text="Score out of 5") is not None
-        ), "Should have Score out of 5 column"
+            table.find("th", text="Score out of 4") is not None
+        ), "Should have Score out of 4 column"
+        assert (
+            soup.find_all("td", class_="govuk-table__cell--numeric")[0].text
+            == "0"
+        ), "Should have 0 score"
+        assert (
+            soup.find_all("td", class_="govuk-table__cell--numeric")[2].text
+            == "2"
+        ), "Should have 2 score"
+        assert (
+            soup.find_all("td", class_="govuk-table__cell--numeric")[4].text
+            == "2 of 8"
+        ), "Should have 2 of 8 score"
 
     def test_criteria_macro_commenter(self, request_ctx):
         g.user = User(
@@ -143,7 +164,7 @@ class TestJinjaMacros(object):
             criteria=_Criteria(
                 name="Example title",
                 total_criteria_score=0,
-                total_criteria_score_possible=0,
+                number_of_scored_sub_criteria=0,
                 weighting=0.5,
                 sub_criterias=[
                     _CriteriaSubCriteria(
@@ -207,20 +228,23 @@ class TestJinjaMacros(object):
             text="Example title",
         ), "Title not found"
 
-    def test_score_macro(self, request_ctx):
-        form = ScoreForm()
-        form.score.errors = True
+    @pytest.mark.parametrize(
+        "scoring_system_form,expected_score_option_count,error_present",
+        [(OneToFiveScoreForm, 5, True), (ZeroToThreeScoreForm, 4, False)],
+    )
+    def test_score_macro(
+        self,
+        request_ctx,
+        scoring_system_form,
+        expected_score_option_count,
+        error_present,
+    ):
+        form = scoring_system_form()
+        form.score.errors = error_present
         rendered_html = render_template_string(
-            "{{scores(form, score_list)}}",
+            "{{scores(form)}}",
             scores=get_template_attribute("macros/scores.html", "scores"),
             form=form,
-            score_list=[
-                (5, "Strong"),
-                (4, "Good"),
-                (3, "Satisfactory"),
-                (2, "Partial"),
-                (1, "Poor"),
-            ],
         )
 
         soup = BeautifulSoup(rendered_html, "html.parser")
@@ -231,12 +255,27 @@ class TestJinjaMacros(object):
         ), "Title not found"
 
         radios = soup.find_all("div", {"class": "govuk-radios__item"})
-        assert len(radios) == 5, "Should have 5 radios"
+        assert (
+            len(radios) == expected_score_option_count
+        ), f"Should have {expected_score_option_count} radios"
 
         score_spans = soup.find_all(
             "span", {"class": "govuk-!-font-weight-bold"}
         )
-        assert len(score_spans) == 5, "Should have 5 score values for radios"
+        assert (
+            len(score_spans) == expected_score_option_count
+        ), f"Should have {expected_score_option_count} score values for radios"
+
+        if error_present:
+            assert (
+                soup.find("p", {"class": "govuk-error-message"}).text.strip()
+                == "Error: Select a score"
+            )
+        else:
+            assert (
+                soup.find("p", {"class": "govuk-error-message"})
+                == None  # noqa
+            )
 
     def test_comment_macro(self, request_ctx):
         rendered_html = render_template_string(
@@ -258,7 +297,7 @@ class TestJinjaMacros(object):
         assert save_comment_button is not None, "Save comment button not found"
 
     def test_justification_macro(self, request_ctx):
-        form = ScoreForm()
+        form = OneToFiveScoreForm()
         form.justification.errors = True
         rendered_html = render_template_string(
             "{{justification(form)}}",
@@ -929,7 +968,7 @@ class TestJinjaMacros(object):
             sub_criteria_heading=get_template_attribute(
                 "macros/sub_criteria_heading.html", "sub_criteria_heading"
             ),
-            score_form=ScoreForm() if has_forms else None,
+            score_form=OneToFiveScoreForm() if has_forms else None,
             rescore_form=RescoreForm() if has_forms else None,
             sub_criteria=sub_criteria,
         )

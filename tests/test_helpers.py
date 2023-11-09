@@ -4,11 +4,19 @@ import pytest
 from app.blueprints.assessments.helpers import generate_assessment_info_csv
 from app.blueprints.assessments.helpers import generate_csv_of_application
 from app.blueprints.assessments.helpers import generate_maps_from_form_names
+from app.blueprints.scoring.forms.scores_and_justifications import (
+    OneToFiveScoreForm,
+)
+from app.blueprints.scoring.forms.scores_and_justifications import (
+    ZeroToThreeScoreForm,
+)
+from app.blueprints.scoring.helpers import get_scoring_class
 from app.blueprints.services.models.flag import Flag
 from app.blueprints.services.models.fund import Fund
 from app.blueprints.shared.helpers import determine_display_status
 from app.blueprints.shared.helpers import is_flaggable
 from app.blueprints.shared.helpers import process_assessments_stats
+from werkzeug.exceptions import HTTPException
 
 RAISED_FLAG = [
     Flag.from_dict(
@@ -259,3 +267,32 @@ def test_process_assessment_stats(input_data, expected_response):
 
     assert stats["total"] == expected_response["total"]
     assert stats["qa_completed"] == expected_response["qa_completed"]
+
+
+@pytest.mark.parametrize(
+    "returned_scoring_system, expect_exception, scoring_class",
+    [
+        ("OneToFive", False, OneToFiveScoreForm),
+        ("ZeroToThree", False, ZeroToThreeScoreForm),
+        ("NotScoringSystem", True, None),
+    ],
+)
+def test_get_scoring_class(
+    flask_test_client,
+    mocker,
+    returned_scoring_system,
+    expect_exception,
+    scoring_class,
+):
+    mocker.patch(
+        "app.blueprints.scoring.helpers.get_scoring_system",
+        return_value=returned_scoring_system,
+    )
+
+    if expect_exception:
+        with pytest.raises(HTTPException) as excinfo:
+            response = get_scoring_class("test_round_id")
+        assert excinfo.value.code == 500
+    else:
+        response = get_scoring_class("test_round_id")
+        assert response == scoring_class
