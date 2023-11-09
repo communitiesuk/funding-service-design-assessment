@@ -344,6 +344,7 @@ pyjwt[crypto]==2.6.0
     # via
     #   -r requirements.txt
     #   funding-service-design-utils
+    #   pyjwt
 pyopenssl==23.1.1
     # via -r requirements.txt
 pypdf==3.14.0
@@ -454,6 +455,7 @@ sentry-sdk[flask]==1.31.0
     # via
     #   -r requirements.txt
     #   funding-service-design-utils
+    #   sentry-sdk
 six==1.16.0
     # via
     #   -r requirements.txt
@@ -526,7 +528,7 @@ uritools==4.0.1
     # via
     #   -r requirements.txt
     #   pyhanko-certvalidator
-urllib3[socks]==1.26.14
+urllib3[socks]==1.26.18
     # via
     #   -r requirements.txt
     #   botocore
