@@ -119,7 +119,7 @@ cssselect2==0.7.0
     #   svglib
 debugpy==1.6.7
     # via -r requirements-dev.in
-deepdiff==6.2.3
+deepdiff==6.7.0
     # via -r requirements-dev.in
 distlib==0.3.6
     # via virtualenv
@@ -281,8 +281,6 @@ openapi-spec-validator==0.5.5
     # via -r requirements.txt
 ordered-set==4.1.0
     # via deepdiff
-orjson==3.8.6
-    # via deepdiff
 oscrypto==1.3.0
     # via
     #   -r requirements.txt
@@ -344,6 +342,7 @@ pyjwt[crypto]==2.6.0
     # via
     #   -r requirements.txt
     #   funding-service-design-utils
+    #   pyjwt
 pyopenssl==23.1.1
     # via -r requirements.txt
 pypdf==3.14.0
@@ -454,6 +453,7 @@ sentry-sdk[flask]==1.31.0
     # via
     #   -r requirements.txt
     #   funding-service-design-utils
+    #   sentry-sdk
 six==1.16.0
     # via
     #   -r requirements.txt
