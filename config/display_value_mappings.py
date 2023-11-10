@@ -76,6 +76,13 @@ search_params_cyp = {
     "local_authority": ALL_VALUE,
 }
 
+search_params_dpif = {
+    "search_term": "",
+    "search_in": "value",
+    "status": ALL_VALUE,
+    "filter_by_tag": ALL_VALUE,
+}
+
 search_params_tag = {
     "search_term": "",
     "search_in": "value",

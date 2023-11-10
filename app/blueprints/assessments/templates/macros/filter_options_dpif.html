@@ -1,0 +1,94 @@
+{% macro filter_options(query_params, item_types, item_type, search_label, assessment_statuses, countries, regions, local_authorities, round_details, show_clear_filters, tag_option_groups) %}
+<!--THIS FILE IS TEMPOARY UNTIL WE COM UP WITH A WAY FOR PER FUND FILTERING OPTIONS -->
+    <fieldset class="govuk-fieldset">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-one-half">
+                <div class="govuk-form-group">
+                    <div class="govuk-width-full govuk-!-display-none-print gem-c-search--on-white govuk-!-margin-bottom-0">
+                        <label for="application_search" class="govuk-label">{{ search_label }}</label>
+                        <input class="govuk-input" type="text" spellcheck="false"
+                                aria-label="{{ search_label }}" id="application_search"
+                               name="search_term" , value="{{ query_params['search_term'] }}">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div style="margin:0;padding:0;">
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-three-quarters dluhc-column-auto">
+                    <div>
+                    <div class="govuk-form-group govuk-!-display-inline-block govuk-!-margin-bottom-0 govuk-!-margin-right-2">
+                        <label class="govuk-label" for="filter_by_tag">
+                            Filter by tag
+                        </label>
+                        <select class="govuk-select" id="filter_by_tag" name="filter_by_tag">
+                            <option value="ALL">All</option>
+                            {% for option_group in tag_option_groups %}
+                                {% if option_group.options %}
+                                <optgroup label="{{ option_group.label }}">
+                                    {% for option in option_group.options %}
+                                        <option value="{{ option.value }}"
+                                                {% if query_params.filter_by_tag == option.value %}
+                                                selected=""{% endif %}>{{ option.text_content }}</option>
+                                    {% endfor %}
+                                </optgroup>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                        <div class="govuk-checkboxes govuk-checkboxes--small govuk-!-margin-top-1">
+                            <div class="govuk-checkboxes__item">
+                                <input class="govuk-checkboxes__input" id="show-tags"
+                                       type="checkbox">
+                                <label class="govuk-label govuk-checkboxes__label" style="white-space: nowrap;"
+                                       for="show-tags">
+                                    Show tags
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    {% if g.access_controller.has_any_assessor_role %}
+                        <div class="govuk-form-group govuk-!-display-inline-block govuk-!-margin-bottom-0 govuk-!-margin-right-2">
+                            <label class="govuk-label" for="filter_status">
+                                Filter by status
+                            </label>
+                            <select class="govuk-select" name="status" id="filter_status">
+                                {% for item in assessment_statuses %}
+                                    <option value='{{ item }}' {% if query_params.status == item %}
+                                            selected=""{% endif %}>{{ assessment_statuses[item] }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div>
+
+                </div>
+                </div>
+
+                <div class="govuk-grid-column-one-quarter">
+                    <div class="govuk-button-group govuk-!-margin-top-3">
+                        <button class="govuk-button primary-button search-button govuk-!-margin-top-4"
+                                type="submit">
+                            Search
+                        </button>
+                        {% if show_clear_filters %}
+                            <p>
+                                <a class="govuk-link govuk-link--no-visited-state"
+                                   href="{{ url_for('assessment_bp.fund_dashboard',
+                                      fund_short_name=round_details.fund_short_name,
+                                      round_short_name=round_details.round_short_name,
+                                      clear_filters=true) }}"
+                                   aria-label="Clear Filters">Clear search</a>
+                            </p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </fieldset>
+
+{% endmacro %}
