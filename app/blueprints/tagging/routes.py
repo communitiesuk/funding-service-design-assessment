@@ -58,19 +58,37 @@ tagging_bp = Blueprint(
 )
 @check_access_application_id(roles_required=["ASSESSOR"])
 def load_change_tags(application_id):
-    tag_association_form = TagAssociationForm()
 
+    tag_association_form = TagAssociationForm()
     if request.method == "POST":
-        updated_tags = []
+        associated_tags = get_associated_tags_for_application(application_id)
         association_form_data = tag_association_form.tags.data
-        if association_form_data:
-            for tag_id in association_form_data:
-                updated_tags.append(
-                    {"tag_id": tag_id, "user_id": g.account_id}
-                )
+        updated_tags = []
+
+        if associated_tags and len(associated_tags) > len(
+            association_form_data
+        ):
+            num_empty_slots = len(associated_tags) - len(association_form_data)
+
+            # Create a list of dictionaries with tag_id and user_id
+            updated_tags = [
+                {"tag_id": tag_id, "user_id": g.account_id}
+                for tag_id in association_form_data
+            ]
+            # Fill remaining slots with empty string for tag_id and current user account_id
+            updated_tags.extend(
+                [
+                    {"tag_id": "", "user_id": g.account_id}
+                    for _ in range(num_empty_slots)
+                ]
+            )
         else:
-            updated_tags.append({"tag_id": "", "user_id": g.account_id})
-        print(f"ARGS TO SEND: {updated_tags}")
+            # If associated_tags is zero or null, or not greater than association_form_data
+            updated_tags = [
+                {"tag_id": tag_id, "user_id": g.account_id}
+                for tag_id in association_form_data
+            ]
+
         update_associated_tags(application_id, updated_tags)
         return redirect(
             url_for(
@@ -82,7 +100,6 @@ def load_change_tags(application_id):
     state = get_state_for_tasklist_banner(application_id)
     all_tags = get_tags_for_fund_round(state.fund_id, state.round_id, "")
     associated_tags = get_associated_tags_for_application(application_id)
-    print(f"ASSESSMENT ASSOCIATED TAGS RESPONSE=====>>>> {associated_tags}")
     associated_tag_ids = (
         [tag.tag_id for tag in associated_tags]
         if associated_tags
