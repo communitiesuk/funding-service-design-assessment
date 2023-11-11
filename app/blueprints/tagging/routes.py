@@ -68,20 +68,13 @@ def load_change_tags(application_id):
         if associated_tags and len(associated_tags) > len(
             association_form_data
         ):
-            num_empty_slots = len(associated_tags) - len(association_form_data)
-
             # Create a list of dictionaries with tag_id and user_id
             updated_tags = [
                 {"tag_id": tag_id, "user_id": g.account_id}
                 for tag_id in association_form_data
             ]
-            # Fill remaining slots with empty string for tag_id and current user account_id
-            updated_tags.extend(
-                [
-                    {"tag_id": "", "user_id": g.account_id}
-                    for _ in range(num_empty_slots)
-                ]
-            )
+            # Fill remaining with a empty tag_id and current user account_id
+            updated_tags.extend([{"tag_id": "", "user_id": g.account_id}])
         else:
             # If associated_tags is zero or null, or not greater than association_form_data
             updated_tags = [
