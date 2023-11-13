@@ -5,9 +5,9 @@ from dataclasses import dataclass
 
 test_fund_id = "test-fund"
 test_round_id = "test-round"
-test_user_id_lead_assessor = "test_user_lead_assessor"
-test_user_id_assessor = "test_user_assessor"
-test_user_id_commenter = "test_user_commenter"
+test_user_id_lead_assessor = "lead"
+test_user_id_assessor = "assessor"
+test_user_id_commenter = "commenter"
 test_funding_requested = 5000.0
 
 # application specific config
