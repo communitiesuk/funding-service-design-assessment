@@ -1,7 +1,7 @@
 {%- from 'govuk_frontend_jinja/components/textarea/macro.html' import govukTextarea -%}
 {%- from "govuk_frontend_jinja/components/button/macro.html" import govukButton -%}
 
-{% macro comment_box(comment_form) %}
+{% macro comment_box(comment_form, html_text, placeholder) %}
 
 <form method="post">
 <div class="govuk-grid-row">
@@ -12,10 +12,12 @@
     "id": comment_form.comment.id,
     "rows": 8,
     "label": {
-      "text": "Add a comment",
+      "text": "" if html_text else "Add a comment",
+      "html": html_text if html_text else "",
       "classes": "govuk-label--m",
       isPageHeading: true
     },
+    "value": placeholder if placeholder else "",
     "errorMessage": {
       "text": comment_form.comment.errors.0
   } if comment_form.comment.errors
