@@ -326,6 +326,123 @@ class TestAuthorisation:
         [
             (test_commenter_claims),
             (test_assessor_claims),
+            (test_lead_assessor_claims),
+        ],
+    )
+    @pytest.mark.application_id("resolved_app")
+    @pytest.mark.sub_criteria_id("test_sub_criteria_id")
+    def test_different_user_levels_see_comment_history_on_sub_criteria_view(
+        self,
+        mocker,
+        flask_test_client,
+        request,
+        claim,
+        mock_get_sub_criteria,
+        mock_get_fund,
+        mock_get_funds,
+        mock_get_round,
+        mock_get_application_metadata,
+        mock_get_flags,
+        mock_get_comments,
+        mock_get_sub_criteria_theme,
+        mock_get_assessor_tasklist_state,
+        mock_get_bulk_accounts,
+    ):
+        """
+        GIVEN authorized users
+        WHEN the user accesses the service sub_criteria route
+        THEN the user sees the appropriate comments based on role permissions:
+            - test commenter can not see comment set by assessor
+            - test commenter can not see comment set by lead assessor
+            - test commenter can see comment set by commenter
+            - test assessor can see all comments
+            - test lead assessor can see all comments
+        Args:
+            flask_test_client:
+
+        Returns:
+
+        """
+        flask_test_client.set_cookie(
+            "localhost",
+            "fsd_user_token",
+            create_valid_token(claim),
+        )
+
+        # Send a request to the route you want to test
+        application_id = request.node.get_closest_marker(
+            "application_id"
+        ).args[0]
+        sub_criteria_id = request.node.get_closest_marker(
+            "sub_criteria_id"
+        ).args[0]
+
+        mocker.patch(
+            "app.blueprints.assessments.routes.get_comments",
+            return_value=[
+                {
+                    "id": "test_id_1",
+                    "user_id": claim["accountId"],
+                    "date_created": "2022-12-08T08:00:01.748170",
+                    "theme_id": "test_theme_id",
+                    "sub_criteria_id": sub_criteria_id,
+                    "application_id": application_id,
+                    "updates": [
+                        {
+                            "comment": "This is old comment",
+                            "comment_id": "test_id_1",
+                            "date_created": "2022-12-08T08:00:01.748170",
+                        },
+                        {
+                            "comment": "This is comment has history",
+                            "comment_id": "test_id_1",
+                            "date_created": "2022-12-09T08:00:01.748170",
+                        },
+                    ],
+                },
+                {
+                    "id": "test_id_2",
+                    "user_id": claim["accountId"],
+                    "date_created": "2022-10-27T08:00:02.748170",
+                    "theme_id": "test_theme_id",
+                    "sub_criteria_id": sub_criteria_id,
+                    "application_id": application_id,
+                    "updates": [
+                        {
+                            "comment": "This is comment has no history",
+                            "comment_id": "test_id_2",
+                            "date_created": "2022-10-27T08:00:02.748170",
+                        }
+                    ],
+                },
+            ],
+        ),
+
+        response = flask_test_client.get(
+            f"/assess/application_id/{application_id}/sub_criteria_id/{sub_criteria_id}",  # noqa
+            follow_redirects=True,
+        )
+        assert response.status_code == 200
+
+        soup = BeautifulSoup(response.data, "html.parser")
+        all_comments = soup.find_all("div", class_="comment-group")
+
+        for comment in all_comments:
+            comment_str = str(comment)
+            # "Edit comment" button is available only for the comment owner
+            # "See history" button is available only for the comment owner and when history available
+            if "This is comment has history" in comment_str:
+                assert "Edit comment" in comment_str
+                assert "See history" in comment_str
+            else:
+                assert "Edit comment" in comment_str
+                assert "See history" not in comment_str
+
+    @pytest.mark.parametrize(
+        "claim",
+        [
+            (test_commenter_claims),
+            (test_assessor_claims),
         ],
     )
     @pytest.mark.application_id("stopped_app")
