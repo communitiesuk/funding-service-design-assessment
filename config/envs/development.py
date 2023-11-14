@@ -25,7 +25,7 @@ class DevelopmentConfig(DefaultConfig):
     SSO_LOGOUT_URL = AUTHENTICATOR_HOST + "/sso/logout"
 
     DEBUG_USER_ON = True  # Set to True to use DEBUG user
-    SHOW_ASSESSMENTS_LIVE_ROUNDS = (
+    FORCE_OPEN_ALL_LIVE_ASSESSMENT_ROUNDS = (
         True  # Set to True to show assessments on live rounds
     )
 

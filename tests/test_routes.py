@@ -689,6 +689,7 @@ class TestRoutes:
         mock_get_funds,
         mock_get_application_metadata,
         mock_get_fund,
+        mock_get_round,
     ):
         # Mocking fsd-user-token cookie
         token = create_valid_token(test_commenter_claims)

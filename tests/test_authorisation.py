@@ -341,6 +341,7 @@ class TestAuthorisation:
         mock_get_fund,
         mock_get_funds,
         mock_get_application_metadata,
+        mock_get_round,
     ):
         """
         GIVEN authorised users
