@@ -350,6 +350,7 @@ def mock_get_round(mocker):
         "app.blueprints.assessments.routes.get_round",
         "app.blueprints.tagging.routes.get_round",
         "app.blueprints.services.shared_data_helpers.get_round",
+        "app.blueprints.authentication.validation.get_round",
     ]
 
     mock_round_info = Round.from_dict(

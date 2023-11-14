@@ -88,6 +88,7 @@ def test_change_tags_route(
     mock_get_fund,
     mock_get_active_tags_for_fund_round,
     mock_get_associated_tags_for_application,
+    mock_get_round,
 ):
 
     response = client_with_valid_session.get("/assess/application/app_id/tags")
@@ -121,6 +122,7 @@ def test_change_tags_route_does_not_show_deactivated_tags_as_options(
     mock_get_fund,
     mock_get_inactive_tags_for_fund_round,
     mock_get_associated_tags_for_application,
+    mock_get_round,
 ):
 
     response = client_with_valid_session.get("/assess/application/app_id/tags")
@@ -144,6 +146,7 @@ def test_change_tags_route_associated_tag_checked(
     mock_get_fund,
     mock_get_active_tags_for_fund_round,
     mock_get_associated_tags_for_application,
+    mock_get_round,
 ):
 
     response = client_with_valid_session.get("/assess/application/app_id/tags")
@@ -167,6 +170,7 @@ def test_change_tags_route_no_tags(
     mock_get_funds,
     mock_get_application_metadata,
     mock_get_fund,
+    mock_get_round,
 ):
     mocker.patch(
         "app.blueprints.tagging.routes.get_tags_for_fund_round",
@@ -699,6 +703,7 @@ def test_edit_tag_get(
     mocker,
     mock_get_fund_round,
     mock_get_tag_and_count,
+    mock_get_round,
 ):
     response = client_with_valid_session.get(
         f"/assess/tags/edit/{test_fund_id}/{test_round_id}/{mock_get_tag_and_count[0]}"
@@ -728,6 +733,7 @@ def test_edit_tag_post(
     mock_get_fund_round,
     mocker,
     mock_get_tag_and_count,
+    mock_get_round,
 ):
     mocker.patch(
         "app.blueprints.tagging.routes.update_tag",
