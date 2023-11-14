@@ -60,6 +60,7 @@ jobs:
       E2E_PAT: ${{secrets.E2E_PAT}}
     uses: communitiesuk/funding-design-service-workflows/.github/workflows/pre-deploy.yml@main
     with:
+      assets_required: true
       postgres_unit_testing: false
 
   copilot_environments_workflow_setup:
@@ -121,10 +122,6 @@ jobs:
     - name: Inject replacement image into manifest
       run: |
         yq -i '.image.location = "ghcr.io/communitiesuk/funding-service-design-assessment:${{ github.ref_name == 'main' && 'latest' || github.ref_name }}"'  copilot/fsd-assessment/manifest.yml
-
-    - name: Inject RSA256_PUBLIC_KEY_BASE64 into manifest
-      run: |
-        yq -i '.variables.RSA256_PUBLIC_KEY_BASE64 = "${{ secrets.RSA256_PUBLIC_KEY_BASE64 }}"'  copilot/fsd-assessment/manifest.yml
 
     - name: Copilot ${{ matrix.value }} deploy
       id: deploy_build
