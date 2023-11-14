@@ -651,7 +651,10 @@ def get_sub_criteria_theme_answers(
 
 
 def get_comments(
-    application_id: str, sub_criteria_id: str, theme_id: str | None
+    application_id: str = None,
+    sub_criteria_id: str = None,
+    theme_id: str = None,
+    comment_id: str = None,
 ):
     """_summary_: Get comments from the assessment store
     Args:
@@ -665,6 +668,7 @@ def get_comments(
         "application_id": application_id,
         "sub_criteria_id": sub_criteria_id,
         "theme_id": theme_id,
+        "comment_id": comment_id,
     }
     # Strip theme_id from dict if None
     query_params_strip_nones = {

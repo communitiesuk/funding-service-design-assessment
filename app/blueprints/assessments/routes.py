@@ -397,22 +397,6 @@ def display_sub_criteria(
             )
         )
 
-    edit_comment_argument = request.args.get("edit_comment")
-    comment_id = request.args.get("comment_id")
-    if edit_comment_argument and comment_form.validate_on_submit():
-        comment = comment_form.comment.data
-        submit_comment(comment=comment, comment_id=comment_id)
-
-        return redirect(
-            url_for(
-                "assessment_bp.display_sub_criteria",
-                application_id=application_id,
-                sub_criteria_id=sub_criteria_id,
-                theme_id=theme_id,
-                _anchor="comments",
-            )
-        )
-
     state = get_state_for_tasklist_banner(application_id)
     flags_list = get_flags(application_id)
 
@@ -435,6 +419,46 @@ def display_sub_criteria(
         sub_criteria.workflow_status, state.is_qa_complete
     )
     flag_status = determine_flag_status(flags_list)
+
+    edit_comment_argument = request.args.get("edit_comment")
+    comment_id = request.args.get("comment_id")
+    show_comment_history = request.args.get("show_comment_history")
+
+    if comment_id and show_comment_history:
+        comment_data = next(
+            cmnt if cmnt.id == comment_id else None
+            for cmnt in theme_matched_comments[theme_id]
+        )
+        if comment_data and g.account_id == comment_data.user_id:
+            return render_template(
+                "comments_history.html",
+                comment_data=comment_data,
+                back_href=url_for(
+                    "assessment_bp.display_sub_criteria",
+                    application_id=application_id,
+                    sub_criteria_id=sub_criteria_id,
+                    theme_id=theme_id,
+                ),
+                state=state,
+                flag_status=flag_status,
+                assessment_status=assessment_status,
+            )
+        else:
+            abort(403)
+
+    if edit_comment_argument and comment_form.validate_on_submit():
+        comment = comment_form.comment.data
+        submit_comment(comment=comment, comment_id=comment_id)
+
+        return redirect(
+            url_for(
+                "assessment_bp.display_sub_criteria",
+                application_id=application_id,
+                sub_criteria_id=sub_criteria_id,
+                theme_id=theme_id,
+                _anchor="comments",
+            )
+        )
 
     common_template_config = {
         "sub_criteria": sub_criteria,
