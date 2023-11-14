@@ -104,6 +104,7 @@ from config.display_value_mappings import funding_types
 from config.display_value_mappings import landing_filters
 from config.display_value_mappings import search_params_cof
 from config.display_value_mappings import search_params_cyp
+from config.display_value_mappings import search_params_dpif
 from config.display_value_mappings import search_params_nstf
 from flask import abort
 from flask import Blueprint
@@ -202,6 +203,8 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
         search_params = {**search_params_cof}
     elif fund_short_name.upper() == "CYP":
         search_params = {**search_params_cyp}
+    elif fund_short_name.upper() == "DPIF":
+        search_params = {**search_params_dpif}
     else:
         search_params = {**search_params_cof}
 
@@ -301,6 +304,9 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
             "tags": lambda x: len(
                 tags_in_application_map.get(x["application_id"]) or []
             ),
+            "team_in_place": lambda x: x["team_in_place"],
+            "datasets": lambda x: x["datasets"],
+            "publish_datasets": lambda x: x["publish_datasets"],
         }
 
         # Define the sorting function based on the specified column
