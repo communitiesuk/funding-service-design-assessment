@@ -306,7 +306,7 @@ class TestAuthorisation:
 
         for comment in all_comments:
             comment_str = str(comment)
-            # "Edit comment" is available only for comment owner
+            # "Edit comment" button is available only for the comment owner
             if claim["email"] in comment_str:
                 assert "Edit comment" in comment_str
             else:
