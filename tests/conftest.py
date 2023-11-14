@@ -825,7 +825,7 @@ def mock_get_tag_types(mocker):
             function_module_path,
             return_value=[
                 TagType(
-                    id="tag_type_1",
+                    id="type_1",
                     purpose="POSITIVE",
                     description="Tag type 1 description",
                 )
