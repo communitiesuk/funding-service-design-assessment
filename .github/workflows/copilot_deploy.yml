@@ -123,10 +123,6 @@ jobs:
       run: |
         yq -i '.image.location = "ghcr.io/communitiesuk/funding-service-design-assessment:${{ github.ref_name == 'main' && 'latest' || github.ref_name }}"'  copilot/fsd-assessment/manifest.yml
 
-    - name: Inject RSA256_PUBLIC_KEY_BASE64 into manifest
-      run: |
-        yq -i '.variables.RSA256_PUBLIC_KEY_BASE64 = "${{ secrets.RSA256_PUBLIC_KEY_BASE64 }}"'  copilot/fsd-assessment/manifest.yml
-
     - name: Copilot ${{ matrix.value }} deploy
       id: deploy_build
       run: |
