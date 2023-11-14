@@ -397,6 +397,22 @@ def display_sub_criteria(
             )
         )
 
+    edit_comment_argument = request.args.get("edit_comment")
+    comment_id = request.args.get("comment_id")
+    if edit_comment_argument and comment_form.validate_on_submit():
+        comment = comment_form.comment.data
+        submit_comment(comment=comment, comment_id=comment_id)
+
+        return redirect(
+            url_for(
+                "assessment_bp.display_sub_criteria",
+                application_id=application_id,
+                sub_criteria_id=sub_criteria_id,
+                theme_id=theme_id,
+                _anchor="comments",
+            )
+        )
+
     state = get_state_for_tasklist_banner(application_id)
     flags_list = get_flags(application_id)
 
@@ -426,6 +442,8 @@ def display_sub_criteria(
         "comments": theme_matched_comments,
         "is_flaggable": False,  # Flag button is disabled in sub-criteria page,
         "display_comment_box": add_comment_argument,
+        "display_comment_edit_box": edit_comment_argument,
+        "comment_id": comment_id,
         "comment_form": comment_form,
         "current_theme": current_theme,
         "flag_status": flag_status,

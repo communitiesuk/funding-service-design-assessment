@@ -298,6 +298,20 @@ class TestAuthorisation:
         )
         assert g.user.roles is not None
 
+        soup = BeautifulSoup(response.data, "html.parser")
+        all_comments = soup.find_all("div", class_="comment-group")
+
+        if claim["accountId"] == "commenter":
+            assert "Permission required to see comment." in str(all_comments)
+
+        for comment in all_comments:
+            comment_str = str(comment)
+            # "Edit comment" button is available only for the comment owner
+            if claim["email"] in comment_str:
+                assert "Edit comment" in comment_str
+            else:
+                assert "Edit comment" not in comment_str
+
         if expect_all_comments_available:
             assert is_lead_assessor_comment_visible
             assert is_assessor_comment_visible

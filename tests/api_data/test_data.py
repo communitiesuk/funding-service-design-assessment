@@ -5,9 +5,9 @@ from dataclasses import dataclass
 
 test_fund_id = "test-fund"
 test_round_id = "test-round"
-test_user_id_lead_assessor = "test_user_lead_assessor"
-test_user_id_assessor = "test_user_assessor"
-test_user_id_commenter = "test_user_commenter"
+test_user_id_lead_assessor = "lead"
+test_user_id_assessor = "assessor"
+test_user_id_commenter = "commenter"
 test_funding_requested = 5000.0
 
 # application specific config
@@ -583,34 +583,79 @@ mock_api_results = {
     ],
     "assessment_store/comment?": [
         {
-            "comment": "This is a comment",
+            "id": "test_id_1",
             "user_id": test_user_id_lead_assessor,
             "date_created": "2022-12-08T08:00:01.748170",
             "theme_id": resolved_app["theme_id"],
+            "sub_criteria_id": "test_sub_criteria_id",
+            "application_id": resolved_app["id"],
+            "updates": [
+                {
+                    "comment": "This is a comment",
+                    "comment_id": "test_id_1",
+                    "date_created": "2022-12-08T08:00:01.748170",
+                }
+            ],
         },
         {
-            "comment": "You're missing some details",
+            "id": "test_id_2",
             "user_id": test_user_id_lead_assessor,
             "date_created": "2022-10-27T08:00:02.748170",
             "theme_id": resolved_app["theme_id"],
+            "sub_criteria_id": "test_sub_criteria_id",
+            "application_id": resolved_app["id"],
+            "updates": [
+                {
+                    "comment": "You're missing some details",
+                    "comment_id": "test_id_2",
+                    "date_created": "2022-10-27T08:00:02.748170",
+                }
+            ],
         },
         {
-            "comment": "Im a lead assessor",
+            "id": "test_id_3",
             "user_id": test_user_id_lead_assessor,
             "date_created": "2022-10-27T08:00:03.748170",
             "theme_id": resolved_app["theme_id"],
+            "sub_criteria_id": "test_sub_criteria_id",
+            "application_id": resolved_app["id"],
+            "updates": [
+                {
+                    "comment": "You're missing some details",
+                    "comment_id": "test_id_3",
+                    "date_created": "2022-10-27T08:00:03.748170",
+                }
+            ],
         },
         {
-            "comment": "Im an assessor",
+            "id": "test_id_4",
             "user_id": test_user_id_assessor,
             "date_created": "2022-10-27T08:00:04.748170",
             "theme_id": resolved_app["theme_id"],
+            "sub_criteria_id": "test_sub_criteria_id",
+            "application_id": resolved_app["id"],
+            "updates": [
+                {
+                    "comment": "Im an assessor",
+                    "comment_id": "test_id_4",
+                    "date_created": "2022-10-27T08:00:04.748170",
+                }
+            ],
         },
         {
-            "comment": "Im a commenter",
+            "id": "test_id_5",
             "user_id": test_user_id_commenter,
             "date_created": "2022-10-27T08:00:05.748170",
             "theme_id": resolved_app["theme_id"],
+            "sub_criteria_id": "test_sub_criteria_id",
+            "application_id": resolved_app["id"],
+            "updates": [
+                {
+                    "comment": "Im a commenter",
+                    "comment_id": "test_id_5",
+                    "date_created": "2022-10-27T08:00:05.748170",
+                }
+            ],
         },
     ],
     "assessment_store/score?": [
