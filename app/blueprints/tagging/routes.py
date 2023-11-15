@@ -4,7 +4,9 @@ from typing import Dict
 from app.blueprints.authentication.validation import (
     check_access_application_id,
 )
-from app.blueprints.authentication.validation import check_access_fund_id
+from app.blueprints.authentication.validation import (
+    check_access_fund_id_round_id,
+)
 from app.blueprints.services.data_services import (
     get_associated_tags_for_application,
 )
@@ -122,7 +124,7 @@ def get_fund_round(fund_id, round_id) -> Dict:
 
 
 @tagging_bp.route("/tags/manage/<fund_id>/<round_id>", methods=["GET"])
-@check_access_fund_id(roles_required=["ASSESSOR"])
+@check_access_fund_id_round_id(roles_required=["ASSESSOR"])
 def load_fund_round_tags(fund_id, round_id):
     fund_round = get_fund_round(fund_id, round_id)
     search_params, show_clear_filters = match_search_params(
@@ -154,7 +156,7 @@ FLAG_ERROR_MESSAGE = (
 
 
 @tagging_bp.route("/tags/create/<fund_id>/<round_id>", methods=["GET", "POST"])
-@check_access_fund_id(roles_required=["ASSESSOR"])
+@check_access_fund_id_round_id(roles_required=["ASSESSOR"])
 def create_tag(fund_id, round_id):
     errors = None
     go_back = request.args.get("go_back") or False
@@ -243,7 +245,7 @@ def create_tag(fund_id, round_id):
 @tagging_bp.route(
     "/tags/deactivate/<fund_id>/<round_id>/<tag_id>", methods=["GET", "POST"]
 )
-@check_access_fund_id(roles_required=["ASSESSOR"])
+@check_access_fund_id_round_id(roles_required=["ASSESSOR"])
 def deactivate_tag(fund_id, round_id, tag_id):
     deactivate_tag_form = DeactivateTagForm()
     tag_to_deactivate = get_tag_for_fund_round(fund_id, round_id, tag_id)
@@ -300,7 +302,7 @@ def deactivate_tag(fund_id, round_id, tag_id):
 @tagging_bp.route(
     "/tags/reactivate/<fund_id>/<round_id>/<tag_id>", methods=["GET", "POST"]
 )
-@check_access_fund_id(roles_required=["ASSESSOR"])
+@check_access_fund_id_round_id(roles_required=["ASSESSOR"])
 def reactivate_tag(fund_id, round_id, tag_id):
     reactivate_tag_form = ReactivateTagForm()
     tag_to_reactivate = get_tag_for_fund_round(fund_id, round_id, tag_id)
@@ -354,7 +356,7 @@ def reactivate_tag(fund_id, round_id, tag_id):
 @tagging_bp.route(
     "/tags/edit/<fund_id>/<round_id>/<tag_id>", methods=["GET", "POST"]
 )
-@check_access_fund_id(roles_required=["ASSESSOR"])
+@check_access_fund_id_round_id(roles_required=["ASSESSOR"])
 def edit_tag(fund_id, round_id, tag_id):
     edit_tag_form = EditTagForm()
     fund_round = get_fund_round(fund_id, round_id)
