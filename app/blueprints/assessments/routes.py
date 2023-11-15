@@ -45,7 +45,7 @@ from app.blueprints.authentication.validation import (
     check_access_application_id,
 )
 from app.blueprints.authentication.validation import (
-    check_access_fund_short_name,
+    check_access_fund_short_name_round_sn,
 )
 from app.blueprints.authentication.validation import get_countries_from_roles
 from app.blueprints.authentication.validation import has_access_to_fund
@@ -187,7 +187,7 @@ def landing():
             for rsl in round_summaries.values()
             for rs in rsl
         ),
-        show_assessments_live_rounds=Config.SHOW_ASSESSMENTS_LIVE_ROUNDS,
+        force_open_all_live_assessment_rounds=Config.FORCE_OPEN_ALL_LIVE_ASSESSMENT_ROUNDS,
     )
 
 
@@ -195,7 +195,7 @@ def landing():
     "/assessor_dashboard/<fund_short_name>/<round_short_name>/",
     methods=["GET"],
 )
-@check_access_fund_short_name
+@check_access_fund_short_name_round_sn
 def fund_dashboard(fund_short_name: str, round_short_name: str):
     if fund_short_name.upper() == "NSTF":
         search_params = {**search_params_nstf}
@@ -710,7 +710,7 @@ def application(application_id):
     "/assessor_export/<fund_short_name>/<round_short_name>/<report_type>",
     methods=["GET"],
 )
-@check_access_fund_short_name(roles_required=["LEAD_ASSESSOR"])
+@check_access_fund_short_name_round_sn(roles_required=["LEAD_ASSESSOR"])
 def assessor_export(
     fund_short_name: str, round_short_name: str, report_type: str
 ):
@@ -738,7 +738,7 @@ def assessor_export(
     "/feedback_export/<fund_short_name>/<round_short_name>",
     methods=["GET"],
 )
-@check_access_fund_short_name(roles_required=["LEAD_ASSESSOR"])
+@check_access_fund_short_name_round_sn(roles_required=["LEAD_ASSESSOR"])
 def feedback_export(fund_short_name: str, round_short_name: str):
     _round = get_round(
         fund_short_name,
