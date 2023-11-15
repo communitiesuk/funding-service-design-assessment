@@ -52,7 +52,7 @@ round_id=fund_round["round_id"]), fund_round, sso_logout_url) }}
       <p id="tag-value-error" class="govuk-error-message">
         <span class="govuk-visually-hidden">Error:</span> {{errors[form.value.id][0]}}
       </p>
-      <input class="govuk-input govuk-input--error" id="{{form.value.id}}" name="{{form.value.id}}" type="text"
+      <input class="govuk-input govuk-input--error" id="{{form.value.id}}" name="{{form.value.id}}" type="text" value="{{form.value.data or ''}}"
         aria-describedby="tag-value-hint tag-value-error">
     </div>
     {% else %}
