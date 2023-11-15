@@ -14,7 +14,7 @@ from app.blueprints.authentication.validation import (
     check_access_application_id,
 )
 from app.blueprints.authentication.validation import (
-    check_access_fund_short_name,
+    check_access_fund_short_name_round_sn,
 )
 from app.blueprints.authentication.validation import get_countries_from_roles
 from app.blueprints.authentication.validation import get_valid_country_roles
@@ -368,20 +368,24 @@ def test_check_access_application_id_cant_access_application_when_no_relevant_fu
         _dummy_function_check_access_application_id()
 
 
-@check_access_fund_short_name
-def _dummy_function_check_access_fund_short_name():
+@check_access_fund_short_name_round_sn
+def _dummy_function_check_access_fund_short_name_round_sn():
     ...
 
 
-def test_check_access_fund_short_name_throws_404_when_no_fund_short_name(app):
+def test_check_access_fund_short_name_round_sn_throws_404_when_no_fund_short_name(
+    app,
+):
     # GIVEN no fund short name
     # WHEN the decorator is applied
     # THEN a 404 is thrown
     with pytest.raises(werkzeug.exceptions.NotFound):
-        _dummy_function_check_access_fund_short_name()
+        _dummy_function_check_access_fund_short_name_round_sn()
 
 
-def test_check_access_fund_short_name_cant_access(monkeypatch, mock_get_round):
+def test_check_access_fund_short_name_round_sn_cant_access(
+    monkeypatch, mock_get_round
+):
     # GIVEN a COF fund short name page
     # WHEN the user has no COF role
     # THEN the user cannot the page
@@ -395,10 +399,12 @@ def test_check_access_fund_short_name_cant_access(monkeypatch, mock_get_round):
     )
 
     with pytest.raises(werkzeug.exceptions.Forbidden):
-        _dummy_function_check_access_fund_short_name()
+        _dummy_function_check_access_fund_short_name_round_sn()
 
 
-def test_check_access_fund_short_name_can_access(monkeypatch, mock_get_round):
+def test_check_access_fund_short_name_round_sn_can_access(
+    monkeypatch, mock_get_round
+):
     # GIVEN a COF fund short name page
     # WHEN the user has the COF role
     # THEN the user can access the page
@@ -422,7 +428,7 @@ def test_check_access_fund_short_name_can_access(monkeypatch, mock_get_round):
         _MockGlobal(roles=["COF_COMMENTER"]),
     )
 
-    _dummy_function_check_access_fund_short_name()  # no fail means pass
+    _dummy_function_check_access_fund_short_name_round_sn()  # no fail means pass
 
 
 def test__get_roles_by_fund_short_name():

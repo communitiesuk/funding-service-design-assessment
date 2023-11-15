@@ -187,9 +187,12 @@ def _check_access_fund_common(
     round_key: str = "round_short_name",
 ) -> Callable:
 
-    if func is None:
+    if func is None:  # if used as a partial function
         return lambda f: _check_access_fund_common(
-            func=f, roles_required=roles_required, fund_key=fund_key
+            func=f,
+            roles_required=roles_required,
+            fund_key=fund_key,
+            round_key=round_key,
         )
 
     @wraps(func)
@@ -199,15 +202,17 @@ def _check_access_fund_common(
         if not fund_value:
             abort(404)
 
+        using_short_name = fund_key == "fund_short_name"
+
         short_name = (
             fund_value
-            if fund_key == "fund_short_name"
+            if using_short_name
             else get_fund(
                 fund_value, ttl_hash=get_ttl_hash(Config.LRU_CACHE_TIME)
             ).short_name
         )
 
-        round_details = get_round(fund_value, round_value, True)
+        round_details = get_round(fund_value, round_value, using_short_name)
         assessment_open = is_assessment_active(
             round_details.fund_id, round_details.id
         )
@@ -230,11 +235,13 @@ def _check_access_fund_common(
     return decorated_function
 
 
-check_access_fund_short_name = functools.partial(
-    _check_access_fund_common, fund_key="fund_short_name"
+check_access_fund_id_round_id = functools.partial(
+    _check_access_fund_common, fund_key="fund_id", round_key="round_id"
 )
-check_access_fund_id = functools.partial(
-    _check_access_fund_common, fund_key="fund_id"
+check_access_fund_short_name_round_sn = functools.partial(
+    _check_access_fund_common,
+    fund_key="fund_short_name",
+    round_key="round_short_name",
 )
 
 
