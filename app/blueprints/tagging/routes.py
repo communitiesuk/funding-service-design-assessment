@@ -181,7 +181,7 @@ def create_tag(fund_id, round_id):
             ):
                 errors = {
                     "value": [
-                        "Tag already exists for this fund-round. Please ensure"
+                        "Tag already exists for this round. Please ensure"
                         " that the tag is unique."
                     ]
                 }
