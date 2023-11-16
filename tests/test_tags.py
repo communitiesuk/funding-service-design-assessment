@@ -333,7 +333,7 @@ def test_create_duplicate_tag_fails(
     mock_get_active_tags_for_fund_round,
 ):
     expected_errors = [
-        "Tag already exists for this fund-round. Please ensure that the tag is"
+        "Tag already exists for this round. Please ensure that the tag is"
         " unique."
     ]
     response = client_with_valid_session.post(
