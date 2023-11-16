@@ -78,7 +78,7 @@ search_params_cyp = {
 
 search_params_dpif = {
     "search_term": "",
-    "search_in": "value",
+    "search_in": "organisation_name,short_id",
     "status": ALL_VALUE,
     "filter_by_tag": ALL_VALUE,
 }
