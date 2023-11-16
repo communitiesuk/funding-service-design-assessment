@@ -9,9 +9,12 @@
 {%- from 'govuk_frontend_jinja/components/back-link/macro.html' import govukBackLink -%}
 {% from "macros/logout_partial.html" import logout_partial %}
 {% from "macros/banner_summary.html" import banner_summary %}
-{% from "macros/assessment_flag.html" import assessment_flagged %}
-{% from "macros/assessment_flag.html" import assessment_resolved %}
-{% from "macros/assessment_flag.html" import assessment_stopped %}
+{% from "macros/assessment_flag.html" import assessment_flag as assessment_flagged %}
+{% from "macros/assessment_flag.html" import assessment_resolve as assessment_resolved %}
+{% from "macros/assessment_flag.html" import assessment_stop as assessment_stopped %}
+{% from "macros/comments.html" import comments %}
+{% from "macros/scores_justification.html" import score as scores %}
+{% from "macros/tags_table.html" import tags %}
 
 
 {# ---------------------------------------- HEADER AND THE BACK LINK --------------------------------------------- #}
@@ -40,8 +43,6 @@
 {% endblock header %}
 {# ---------------------------------------- PAGE STARTS HERE --------------------------------------------- #}
 
-
-
 {% block content %}
 
 <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content" role="main">
@@ -49,7 +50,8 @@
         <div>
             <div class="">
                 <h1 class="govuk-heading-l">Activity trail</h1>
-                <p class="govuk-body">Current assessment status: <span class="flagged-tag">Get curent status</span></p>
+                {# TODO: Add background colour for specific status #}
+                <p class="govuk-body">Current assessment status: <span class="">{{state.workflow_status|remove_dashes_underscores_capitalize}}</span></p>
             </div>
 
 {# ---------------------------------------- ONE THIRD OF THE PAGE STARTS HERE --------------------------------------------- #}
@@ -65,13 +67,15 @@
                     </thead>
                 </table>
 
-                {# Apply search logic here #}
-                <div class="govuk-form-group">
-                    <label class="govuk-label">Search</label>
-                    <input class="search-input govuk-input govuk-!-width-full" id="event-name" name="event-name"
-                        type="text">
-                </div>
-                {# Apply checkbox logics here #}
+        {# TODO:---------------------- Apply search logic here ------------------------- #}
+
+
+
+
+
+
+
+        {# TODO: ---------------------- Apply checkbox logics here -------------------- #}
 
                 <div class="govuk-form-group">
                     <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
@@ -120,7 +124,7 @@
                     </div>
                 </div>
 
-                {# Apply Show all sections logic here #}
+        {# TODO: ----------------------- Apply Show all sections logic here ----------------------- #}
 
                 <div class="govuk-accordion" data-module="govuk-accordion" id="accordion-default">
                     <div class="govuk-accordion__controls"><button type="button" class="govuk-accordion__show-all"
@@ -148,7 +152,7 @@
                             </h2>
                         </div>
 
-                        {#  Apply filter by sub criteria/section here #}
+        {# TODO: --------------------------   Apply filter by sub criteria/section here -------------------------#}
                         <div id="accordion-default-content-1" class="govuk-accordion__section-content"
                             aria-labelledby="accordion-default-heading-1" hidden="until-found">
                             <div class="govuk-checkboxes " data-module="govuk-checkboxes">
@@ -207,7 +211,7 @@
                 </div>
             </div>
 
-    {# ---------------------------------------- TWO THIRD OF THE PAGE STARTS HERE --------------------------------------------- #}
+{# ---------------------------------------- TWO THIRD OF THE PAGE STARTS HERE --------------------------------------------- #}
             <div class="govuk-grid-column-two-thirds">
                 <div class="">
 
@@ -215,45 +219,55 @@
                         <thead class="govuk-table__head" role="rowgroup">
                             <tr class="govuk-table__row" role="row">
                                 <th role="columnheader" scope="col" class="govuk-!-width-one-third govuk-table__header">
-                                    Actions (get length of total actions)</th>
+                                    Actions ({{ activities|length }}) </th>
                             </tr>
                         </thead>
+                        {% for activity in activities %}
+
                         <tbody class="govuk-table__body">
                             <tr class="govuk-table__row" id="commentItem1" style="">
                                 <td scope="row" class="govuk-table__cell govuk-!-width-one-third">
                                     <div>
+                                        {% if activity.__class__.__name__ == 'Flags' %}
+                                            {% if activity.status.name == "RAISED" %}
+                                                {{assessment_flagged(state, activity, application_id)}}
+                                            {% elif activity.status.name == "RESOLVED" %}
+                                                {{assessment_resolved(activity, application_id)}}
+                                            {% elif activity.status.name == "STOPPED" %}
+                                                {{assessment_stopped(activity, application_id)}}
+                                            {% endif %}
 
+                                        {% elif activity.__class__.__name__ == 'Comments' %}
+                                            {{comments(activity)}}
 
-                                        {# if comment - comment box #}
-                                        <p class="govuk-!-static-padding-top-1"><span
-                                                class="govuk-body govuk-!-font-weight-bold">Comment</span> on <a
-                                                href="#">Engagement - Engaging the community</a></p>
-                                        <p class="govuk-body-s">Christian Williams (Assessor)
-                                            christian.williams@tpximpact.com</p>
+                                        {% elif activity.__class__.__name__ == 'Scores' %}
+                                            {{scores(activity)}}
 
-                                        {# if flag - flag box #}
+                                        {% elif activity.__class__.__name__ == 'AssociatedTags' %}
+                                             {% if activity.purpose =="NEGATIVE" %}
+                                                 {{tags(activity, "red")}}
+                                             {% elif activity.purpose =="POSITIVE" %}
+                                                 {{tags(activity, "green")}}
+                                             {% elif activity.purpose =="GENERAL" %}
+                                                 {{tags(activity, "blue")}}
+                                             {% elif activity.purpose =="ACTION" %}
+                                                 {{tags(activity, "yellow")}}
+                                             {% elif activity.purpose =="PEOPLE" %}
+                                                 {{tags(activity, "grey")}}
+                                             {% endif %}
 
+                                        {% else %}
+                                        {{activity}}
 
-
-                                        {% for flag in flags_list %}
-
-                                        {{assessment_flagged(state, flag, accounts_list[flag.latest_user_id], application_id)}}
-
-                                        {% endfor %}
-
-                                        {# else information about the user #}
-                                        <p class="govuk-body">This is a comment that has been left by another user and
-                                            has not been edited, and therefore has no history.</p>
-                                        <p class="govuk-body-s">19/05/2022 at 14:58</p>
-
+                                        {% endif %}
 
                                     </div>
                                 </td>
                             </tr>
-
                         </tbody>
-                    </table>
+                        {% endfor %}
 
+                    </table>
                 </div>
             </div>
 

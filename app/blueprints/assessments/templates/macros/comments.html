@@ -28,3 +28,20 @@
     {% endif %}
 </div>
 {% endmacro %}
+
+{# This macro is only being used in the activity_trail.html #}
+{% macro comments(comment) %}
+<div id="comments">
+    <p class="govuk-!-static-padding-top-1"><span
+        class="govuk-body govuk-!-font-weight-bold">Comment</span> on <a
+        href="#">{{comment.theme_id|remove_dashes_underscores_capitalize}}</a></p>
+
+
+    <div class="comment-group">
+        <p class="govuk-body">{{ comment.comment }}</p>
+        <p class="govuk-body-s">{{ comment.full_name }} ({{ comment.highest_role|all_caps_to_human }}) {{ comment.email_address }}</p>
+        <p class="govuk-body-s">{{ comment.date_created|utc_to_bst }}</p>
+    </div>
+
+</div>
+{% endmacro %}

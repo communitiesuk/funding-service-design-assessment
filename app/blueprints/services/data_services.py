@@ -245,8 +245,6 @@ def update_associated_tags(application_id, tags) -> bool:
         f" application_id '{application_id}'"
     )
     response = requests.put(endpoint, json=payload)
-    print(f"RESPONSE:::=====>>>>>>>>>>>{response}")
-
     was_successful = response.ok
     if not was_successful:
         current_app.logger.error(

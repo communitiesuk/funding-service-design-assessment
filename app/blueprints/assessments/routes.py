@@ -6,13 +6,16 @@ from datetime import datetime
 from urllib.parse import quote_plus
 from urllib.parse import unquote_plus
 
+from app.blueprints.assessments.activity_trail import (
+    _add_user_info,
+)
+from app.blueprints.assessments.activity_trail import AssociatedTags
 from app.blueprints.assessments.activity_trail import Comments
 from app.blueprints.assessments.activity_trail import extract_user_info
+from app.blueprints.assessments.activity_trail import Flags
+from app.blueprints.assessments.activity_trail import get_dates
+from app.blueprints.assessments.activity_trail import order_by_dates
 from app.blueprints.assessments.activity_trail import Scores
-from app.blueprints.assessments.activity_trail import (
-    update_comment_with_user_info,
-)
-from app.blueprints.assessments.activity_trail import UpdatedFlags
 from app.blueprints.assessments.forms.assessment_form import (
     AssessmentCompleteForm,
 )
@@ -210,6 +213,7 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
         search_params = {**search_params_nstf}
     elif fund_short_name.upper() == "COF":
         search_params = {**search_params_cof}
+        print(f"SEARCH PARAMS::::=======>>>>>>>>> {search_params}")
     elif fund_short_name.upper() == "CYP":
         search_params = {**search_params_cyp}
     else:
@@ -252,9 +256,14 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
         **search_params,
         "countries": ",".join(countries),
     }
+    print(f"SEARCH PARAMS::::=======>>>>>>>>> {search_params}")
 
     search_params, show_clear_filters = match_search_params(
         search_params, request.args
+    )
+    print(
+        "SEARCH PARAMS THREE::::=======>>>>>>>>>"
+        f" {search_params} {show_clear_filters}"
     )
 
     application_overviews = get_application_overviews(
@@ -665,7 +674,9 @@ def application(application_id):
     )
 
 
-@assessment_bp.route("/activity_trail/<application_id>", methods=["GET"])
+@assessment_bp.route(
+    "/activity_trail/<application_id>", methods=["GET", "POST"]
+)
 @check_access_application_id
 def activity_trail(application_id: str):
 
@@ -674,16 +685,10 @@ def activity_trail(application_id: str):
 
     # TODO:  GET ALL FLAGS and CREATE A FUNCTION TO GET user_info
     flags_list = get_flags(application_id)
-    if flags_list:
-        for flag_data in flags_list:
-            for flag_item in flag_data.updates:
-                if flag_item["user_id"] not in user_id_list:
-                    user_id_list.append(flag_item["user_id"])
-
-    updated_flags = UpdatedFlags.from_list(flags_list)
-
-    print(f"UPDATED FLAGS::----> {len(updated_flags)}: {updated_flags}")
-    # print(f"ALL FLAGS:->{all_flags}")
+    _flags = Flags.from_list(flags_list)
+    user_info = extract_user_info(_flags, state, "Flags")
+    all_flags = _add_user_info(_flags, user_info, "Flags")
+    print(f"ALL FLAGS:->{all_flags}")
 
     # TODO: GET USER INFORMATION
     accounts_list = get_bulk_accounts_dict(
@@ -694,27 +699,38 @@ def activity_trail(application_id: str):
 
     # TODO: GET COMMENTS
     comments_list = get_comments(application_id)
-    # print(f"COMMENTS::::: {len(comments_list)}: {comments_list}")
     user_id = extract_user_info(comments_list, state)
-    # print(f"EXTRACT USERS::::: {len(user_id)}: {user_id}")
-    updated_comments = update_comment_with_user_info(comments_list, user_id)
-    # print(f"USERS INFO:::::{len(updated_comments)}: {updated_comments}")
+    updated_comments = _add_user_info(comments_list, user_id)
     all_comments = Comments.from_list(updated_comments)
-    print(f"COMMENTS::----> {len(all_comments)}: {all_comments}")
+    # print(f"COMMENTS::----> {len(all_comments)}: {all_comments}")
 
     # TODO: GET ALL SCORES
 
     scores = get_score_and_justification(
         application_id=application_id, score_history=True
     )
-    all_scores = Scores.from_list(scores)
-    print(f"SCORES::----> {len(all_scores)}: {all_scores}")
+    user_id = extract_user_info(scores, state)
+    updated_scores = _add_user_info(scores, user_id)
+    all_scores = Scores.from_list(updated_scores)
+    # print(f"SCORES::----> {len(all_scores)}: {all_scores}")
 
     # TODO: GET ALL TAGS
     tags = get_all_associated_tags_for_application(application_id)
-    print(f"TAGS::----> {len(tags)}: {tags}")
+    _tags = AssociatedTags.from_associated_tags_list(tags)
+    user_info = extract_user_info(_tags, state, "AssociatedTags")
+    all_tags = _add_user_info(_tags, user_info, "AssociatedTags")
+    # print(f"ALL TAGS AFTER::----> {len(all_tags)}: -> {all_tags}")
+    # all_tags = AssociatedTags.from_associated_tags_list(tags)
 
-    # TODO: GET ALL STATUSES
+    # TODO: Get current assessment ststus
+
+    # TODO: GET workflow STATUSES
+
+    # TODO: Fet Flag status
+
+    all_activities = all_scores + all_comments + all_tags + all_flags
+    dates = order_by_dates(all_activities)
+    get_dates(dates)
 
     return render_template(
         "activity_trail.html",
@@ -722,7 +738,8 @@ def activity_trail(application_id: str):
         state=state,
         flags_list=flags_list,
         accounts_list=accounts_list,
-        updated_flags=updated_flags,
+        updated_flags=all_flags,
+        activities=dates,
     )
 
 
