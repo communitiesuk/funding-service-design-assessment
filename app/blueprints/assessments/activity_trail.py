@@ -106,6 +106,7 @@ class Flags(BaseModel):
 class Comments(BaseModel):
     id: str
     comment: str
+    comment_type: str
     date_created: str
     sub_criteria_id: str
     theme_id: str
@@ -114,6 +115,31 @@ class Comments(BaseModel):
     email_address: str
     highest_role: str
     email_address: str
+
+    @classmethod
+    def process_comments(cls, comments_list) -> list[dict]:
+        result = []
+
+        for comment in comments_list:
+            for update in comment.get("updates"):
+                updated_update = {
+                    **update,
+                    "user_id": comment.get("user_id"),
+                    "sub_criteria_id": comment.get("sub_criteria_id"),
+                    "theme_id": comment.get("theme_id"),
+                    "comment_type": comment.get("comment_type"),
+                    "full_name": comment.get("full_name"),
+                    "email_address": comment.get("email_address"),
+                    "highest_role": comment.get("highest_role"),
+                }
+                result.append(updated_update)
+
+        return result
+
+    @classmethod
+    def from_list(cls, comments_list: list[dict]):
+        comments = cls.process_comments(comments_list)
+        return super().from_list(comments)
 
 
 @dataclass

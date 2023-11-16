@@ -43,11 +43,13 @@
 {% endmacro %}
 
 {# This macro is only being used in the activity_trail.html #}
-{% macro comments(comment) %}
+{% macro comments(comment, application_id) %}
+
+
 <div id="comments">
     <p class="govuk-!-static-padding-top-1"><span
         class="govuk-body govuk-!-font-weight-bold">Comment</span> on <a
-        href="#">{{comment.theme_id|remove_dashes_underscores_capitalize}}</a></p>
+        href="{{ url_for('assessment_bp.display_sub_criteria',application_id=application_id ,sub_criteria_id=comment.sub_criteria_id) }}" target="_blank">{{comment.sub_criteria_id|remove_dashes_underscores_capitalize}}</a></p>
 
 
     <div class="comment-group">

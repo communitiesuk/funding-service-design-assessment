@@ -44,14 +44,18 @@
 {# ---------------------------------------- PAGE STARTS HERE --------------------------------------------- #}
 
 {% block content %}
+{% set tag_color =
+    'flagged-tag' if state.workflow_status == 'FLAGGED'
+    else 'stopped-tag' if state.workflow_status == 'STOPPED'
+    else 'not-started-tag' if state.workflow_status == 'NOT_STARTED'
+%}
 
 <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content" role="main">
     <div class="govuk-grid-row">
         <div>
             <div class="">
                 <h1 class="govuk-heading-l">Activity trail</h1>
-                {# TODO: Add background colour for specific status #}
-                <p class="govuk-body">Current assessment status: <span class="">{{state.workflow_status|remove_dashes_underscores_capitalize}}</span></p>
+                <p class="govuk-body">Current assessment status: <span class="{{tag_color}} govuk-body">{{state.workflow_status|remove_dashes_underscores_capitalize|title }}</span></p>
             </div>
 
 {# ---------------------------------------- ONE THIRD OF THE PAGE STARTS HERE --------------------------------------------- #}
@@ -67,7 +71,9 @@
                     </thead>
                 </table>
 
-        {# TODO:---------------------- Apply search logic here ------------------------- #}
+        {# TODO:---------------------- Apply search Form logic here ------------------------- #}
+
+
 
 
 
@@ -238,10 +244,10 @@
                                             {% endif %}
 
                                         {% elif activity.__class__.__name__ == 'Comments' %}
-                                            {{comments(activity)}}
+                                            {{comments(activity, application_id)}}
 
                                         {% elif activity.__class__.__name__ == 'Scores' %}
-                                            {{scores(activity)}}
+                                            {{scores(activity, application_id)}}
 
                                         {% elif activity.__class__.__name__ == 'AssociatedTags' %}
                                              {% if activity.purpose =="NEGATIVE" %}

@@ -215,7 +215,6 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
         search_params = {**search_params_nstf}
     elif fund_short_name.upper() == "COF":
         search_params = {**search_params_cof}
-        print(f"SEARCH PARAMS::::=======>>>>>>>>> {search_params}")
     elif fund_short_name.upper() == "CYP":
         search_params = {**search_params_cyp}
     elif fund_short_name.upper() == "DPIF":
@@ -260,14 +259,9 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
         **search_params,
         "countries": ",".join(countries),
     }
-    print(f"SEARCH PARAMS::::=======>>>>>>>>> {search_params}")
 
     search_params, show_clear_filters = match_search_params(
         search_params, request.args
-    )
-    print(
-        "SEARCH PARAMS THREE::::=======>>>>>>>>>"
-        f" {search_params} {show_clear_filters}"
     )
 
     application_overviews = get_application_overviews(
@@ -709,21 +703,18 @@ def application(application_id):
 def activity_trail(application_id: str):
 
     state = get_state_for_tasklist_banner(application_id)
-    user_id_list = []
+
+    # TODO: get links to theme id
+    # sub_criteria = get_sub_criteria(application_id, sub_criteria_id)
+    # theme_id = request.args.get("theme_id")
+    # print(f"THEME_ID:::: {theme_id}")
 
     # TODO:  GET ALL FLAGS and CREATE A FUNCTION TO GET user_info
     flags_list = get_flags(application_id)
     _flags = Flags.from_list(flags_list)
     user_info = extract_user_info(_flags, state, "Flags")
     all_flags = _add_user_info(_flags, user_info, "Flags")
-    print(f"ALL FLAGS:->{all_flags}")
-
-    # TODO: GET USER INFORMATION
-    accounts_list = get_bulk_accounts_dict(
-        user_id_list,
-        state.fund_short_name,
-    )
-    # print(f"UER INFORMATION::::: {len(accounts_list)}: {accounts_list}")
+    # print(f"ALL FLAGS:->{all_flags}")
 
     # TODO: GET COMMENTS
     comments_list = get_comments(application_id)
@@ -751,10 +742,13 @@ def activity_trail(application_id: str):
     # all_tags = AssociatedTags.from_associated_tags_list(tags)
 
     # TODO: Get current assessment ststus
+    # current_status = determine_display_status(state.workflow_status, )
 
     # TODO: GET workflow STATUSES
 
     # TODO: Fet Flag status
+
+    # TODO: Get all forms:
 
     all_activities = all_scores + all_comments + all_tags + all_flags
     dates = order_by_dates(all_activities)
@@ -765,7 +759,6 @@ def activity_trail(application_id: str):
         application_id=application_id,
         state=state,
         flags_list=flags_list,
-        accounts_list=accounts_list,
         updated_flags=all_flags,
         activities=dates,
     )
