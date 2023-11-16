@@ -2,7 +2,7 @@
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-one-third">
-        {% set sub_criteria_heading = 'Score ' + sub_criteria.name|lower if score_form or rescore_form else sub_criteria.name %}
+        {% set sub_criteria_heading = 'Score ' + (sub_criteria.name[0].lower() + sub_criteria.name[1:]) if (score_form or rescore_form) else sub_criteria.name %}
         <h2 class="govuk-heading-l scoring-heading">{{ sub_criteria_heading }}</h2>
 
     </div>
