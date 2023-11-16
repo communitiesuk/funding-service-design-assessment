@@ -430,7 +430,7 @@ class TestAuthorisation:
         for comment in all_comments:
             comment_str = str(comment)
             # "Edit comment" button is available only for the comment owner
-            # "See history" button is available only for the comment owner and when history available
+            # "See history" button is available for other users(min assessor level) also when history is available
             if "This is comment has history" in comment_str:
                 assert "Edit comment" in comment_str
                 assert "See history" in comment_str
