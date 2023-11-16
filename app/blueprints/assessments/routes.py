@@ -426,10 +426,14 @@ def display_sub_criteria(
 
     if comment_id and show_comment_history:
         comment_data = next(
-            cmnt if cmnt.id == comment_id else None
-            for cmnt in theme_matched_comments[theme_id]
+            (
+                cmnt
+                for cmnt in theme_matched_comments[theme_id]
+                if cmnt.id == comment_id
+            ),
+            None,
         )
-        if comment_data and g.account_id == comment_data.user_id:
+        if comment_data:
             return render_template(
                 "comments_history.html",
                 comment_data=comment_data,
@@ -443,8 +447,6 @@ def display_sub_criteria(
                 flag_status=flag_status,
                 assessment_status=assessment_status,
             )
-        else:
-            abort(403)
 
     if edit_comment_argument and comment_form.validate_on_submit():
         comment = comment_form.comment.data
