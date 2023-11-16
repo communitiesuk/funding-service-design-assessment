@@ -55,13 +55,14 @@ from app.blueprints.authentication.validation import (
     check_access_application_id,
 )
 from app.blueprints.authentication.validation import (
-    check_access_fund_short_name,
+    check_access_fund_short_name_round_sn,
 )
 from app.blueprints.authentication.validation import get_countries_from_roles
 from app.blueprints.authentication.validation import has_access_to_fund
 from app.blueprints.authentication.validation import (
     has_devolved_authority_validation,
 )
+from app.blueprints.scoring.helpers import get_scoring_class
 from app.blueprints.services.aws import get_file_for_download_from_aws
 from app.blueprints.services.data_services import (
     get_all_associated_tags_for_application,
@@ -117,6 +118,7 @@ from config.display_value_mappings import funding_types
 from config.display_value_mappings import landing_filters
 from config.display_value_mappings import search_params_cof
 from config.display_value_mappings import search_params_cyp
+from config.display_value_mappings import search_params_dpif
 from config.display_value_mappings import search_params_nstf
 from flask import abort
 from flask import Blueprint
@@ -199,7 +201,7 @@ def landing():
             for rsl in round_summaries.values()
             for rs in rsl
         ),
-        show_assessments_live_rounds=Config.SHOW_ASSESSMENTS_LIVE_ROUNDS,
+        force_open_all_live_assessment_rounds=Config.FORCE_OPEN_ALL_LIVE_ASSESSMENT_ROUNDS,
     )
 
 
@@ -207,7 +209,7 @@ def landing():
     "/assessor_dashboard/<fund_short_name>/<round_short_name>/",
     methods=["GET"],
 )
-@check_access_fund_short_name
+@check_access_fund_short_name_round_sn
 def fund_dashboard(fund_short_name: str, round_short_name: str):
     if fund_short_name.upper() == "NSTF":
         search_params = {**search_params_nstf}
@@ -216,6 +218,8 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
         print(f"SEARCH PARAMS::::=======>>>>>>>>> {search_params}")
     elif fund_short_name.upper() == "CYP":
         search_params = {**search_params_cyp}
+    elif fund_short_name.upper() == "DPIF":
+        search_params = {**search_params_dpif}
     else:
         search_params = {**search_params_cof}
 
@@ -320,6 +324,9 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
             "tags": lambda x: len(
                 tags_in_application_map.get(x["application_id"]) or []
             ),
+            "team_in_place": lambda x: x["team_in_place"],
+            "datasets": lambda x: x["datasets"],
+            "publish_datasets": lambda x: x["publish_datasets"],
         }
 
         # Define the sorting function based on the specified column
@@ -410,6 +417,22 @@ def display_sub_criteria(
             )
         )
 
+    edit_comment_argument = request.args.get("edit_comment")
+    comment_id = request.args.get("comment_id")
+    if edit_comment_argument and comment_form.validate_on_submit():
+        comment = comment_form.comment.data
+        submit_comment(comment=comment, comment_id=comment_id)
+
+        return redirect(
+            url_for(
+                "assessment_bp.display_sub_criteria",
+                application_id=application_id,
+                sub_criteria_id=sub_criteria_id,
+                theme_id=theme_id,
+                _anchor="comments",
+            )
+        )
+
     state = get_state_for_tasklist_banner(application_id)
     flags_list = get_flags(application_id)
 
@@ -439,6 +462,8 @@ def display_sub_criteria(
         "comments": theme_matched_comments,
         "is_flaggable": False,  # Flag button is disabled in sub-criteria page,
         "display_comment_box": add_comment_argument,
+        "display_comment_edit_box": edit_comment_argument,
+        "comment_id": comment_id,
         "comment_form": comment_form,
         "current_theme": current_theme,
         "flag_status": flag_status,
@@ -620,12 +645,14 @@ def application(application_id):
         update_ar_status_to_completed(application_id)
 
     state = get_state_for_tasklist_banner(application_id)
+
+    scoring_form = get_scoring_class(state.round_id)()
+
     fund_round = get_round(
         state.fund_id,
         state.round_id,
         ttl_hash=get_ttl_hash(Config.LRU_CACHE_TIME),
     )
-
     user_id_list = []
     flags_list = get_flags(application_id)
     qa_complete = get_qa_complete(application_id)
@@ -671,6 +698,7 @@ def application(application_id):
         flag_status=flag_status,
         assessment_status=assessment_status,
         all_uploaded_documents_section_available=fund_round.all_uploaded_documents_section_available,
+        max_possible_sub_criteria_score=scoring_form.max_score,
     )
 
 
@@ -747,7 +775,7 @@ def activity_trail(application_id: str):
     "/assessor_export/<fund_short_name>/<round_short_name>/<report_type>",
     methods=["GET"],
 )
-@check_access_fund_short_name(roles_required=["LEAD_ASSESSOR"])
+@check_access_fund_short_name_round_sn(roles_required=["LEAD_ASSESSOR"])
 def assessor_export(
     fund_short_name: str, round_short_name: str, report_type: str
 ):
@@ -775,7 +803,7 @@ def assessor_export(
     "/feedback_export/<fund_short_name>/<round_short_name>",
     methods=["GET"],
 )
-@check_access_fund_short_name(roles_required=["LEAD_ASSESSOR"])
+@check_access_fund_short_name_round_sn(roles_required=["LEAD_ASSESSOR"])
 def feedback_export(fund_short_name: str, round_short_name: str):
     _round = get_round(
         fund_short_name,

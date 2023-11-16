@@ -1,6 +1,6 @@
 {%- from 'govuk_frontend_jinja/components/radios/macro.html' import govukRadios -%}
 
-{% macro scores(form, score_list) %}
+{% macro scores(form) %}
 <fieldset class = "govuk-body custom-fieldset">
 <legend class="govuk-body">You can rescore at any point.&nbsp;</legend>
 <div class="govuk-form-group {% if form.errors.get('score') %}govuk-form-group--error{% endif %}" name="score-div" id="score-div">
@@ -11,10 +11,10 @@
     {% endif %}
 
     <div class="govuk-radios" data-module="govuk-radios">
-        {% for score, description in score_list %}
+        {% for score, description in form.scores_list %}
         <div class="govuk-radios__item">
             <input class="govuk-radios__input" id={{ "score-{}".format(score) }} name={{ form.score.id }} type="radio"
-                value="{{ score }}" {% if form.score.data|int==score %}checked{% endif %}>
+                value="{{ score }}" {% if form.score.data|int==score and form.score.data !=None %}checked{% endif %}>
             <label class="govuk-label govuk-radios__label" for={{ "score-{}".format(score) }}>
                 <span class="govuk-!-font-weight-bold">{{ score }}</span> {{ description }}
             </label>

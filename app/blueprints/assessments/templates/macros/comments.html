@@ -3,7 +3,6 @@
     <h2 class="govuk-heading-m govuk-!-margin-bottom-2">Comments</h2>
     <div id="more-detail-hint" class="govuk-hint">
       <p class="govuk-hint govuk-!-margin-top-0">Summarise any thoughts you have on the information provided.</p>
-      <p class="govuk-hint govuk-!-margin-top-0">You cannot edit or delete your comment once you have saved it.</p>
     </div>
     {% if comments == None %}
     <div class="govuk-body govuk-!-margin-top-6">
@@ -18,9 +17,23 @@
             </div>
         {% else %}
             <div class="comment-group">
-                <p class="govuk-body">{{ comment.comment }}</p>
+                <p class="govuk-body">{{ comment.updates[-1]['comment'] }}</p>
                 <p class="govuk-body-s">{{ comment.full_name }} ({{ comment.highest_role|all_caps_to_human }}) {{ comment.email_address }}</p>
                 <p class="govuk-body-s">{{ comment.date_created|utc_to_bst }}</p>
+                {% if g.account_id == comment.user_id %}
+                    <div class="govuk-button-group">
+                        <a class="govuk-link" href="{{ url_for(
+                            "assessment_bp.display_sub_criteria",
+                            application_id=comment.application_id,
+                            sub_criteria_id=comment.sub_criteria_id,
+                            edit_comment="1",
+                            comment_id=comment.id
+                        ) }}" >Edit comment</a>
+                        {# {% if comment.updates|length > 1 %}
+                            <a class="govuk-link" href="./comment-history.html">See history</a>
+                        {% endif %} #}
+                    </div>
+                {% endif %}
             </div>
         {% endif %}
         {% endfor %}

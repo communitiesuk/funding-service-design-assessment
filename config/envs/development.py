@@ -25,7 +25,7 @@ class DevelopmentConfig(DefaultConfig):
     SSO_LOGOUT_URL = AUTHENTICATOR_HOST + "/sso/logout"
 
     DEBUG_USER_ON = True  # Set to True to use DEBUG user
-    SHOW_ASSESSMENTS_LIVE_ROUNDS = (
+    FORCE_OPEN_ALL_LIVE_ASSESSMENT_ROUNDS = (
         True  # Set to True to show assessments on live rounds
     )
 
@@ -47,11 +47,15 @@ class DevelopmentConfig(DefaultConfig):
             "CYP_LEAD_ASSESSOR",
             "CYP_ASSESSOR",
             "CYP_COMMENTER",
+            "DPIF_LEAD_ASSESSOR",
+            "DPIF_ASSESSOR",
+            "DPIF_COMMENTER",
         ],
         "highest_role_map": {
             "COF": DEBUG_USER_ROLE,
             "NSTF": DEBUG_USER_ROLE,
             "CYP": DEBUG_USER_ROLE,
+            "DPIF": DEBUG_USER_ROLE,
         },
     }
     DEBUG_USER_ACCOUNT_ID = "00000000-0000-0000-0000-000000000000"

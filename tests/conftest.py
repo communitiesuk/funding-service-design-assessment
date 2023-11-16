@@ -350,6 +350,7 @@ def mock_get_round(mocker):
         "app.blueprints.assessments.routes.get_round",
         "app.blueprints.tagging.routes.get_round",
         "app.blueprints.services.shared_data_helpers.get_round",
+        "app.blueprints.authentication.validation.get_round",
     ]
 
     mock_round_info = Round.from_dict(
@@ -824,7 +825,7 @@ def mock_get_tag_types(mocker):
             function_module_path,
             return_value=[
                 TagType(
-                    id="tag_type_1",
+                    id="type_1",
                     purpose="POSITIVE",
                     description="Tag type 1 description",
                 )
@@ -873,6 +874,16 @@ def mock_get_tag_map_and_tag_options(mocker):
                 ],
             ),
         )
+    yield
+
+
+@pytest.fixture(scope="function")
+def mock_get_scoring_system(request, mocker):
+    mocker.patch(
+        "app.blueprints.scoring.helpers.get_scoring_system",
+        return_value="OneToFive",
+    )
+
     yield
 
 

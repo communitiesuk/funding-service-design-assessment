@@ -42,8 +42,8 @@ class DefaultConfig:
     DASHBOARD_ROUTE = "/assess/assessor_tool_dashboard"
 
     # Assessement settings
-    SHOW_ASSESSMENTS_LIVE_ROUNDS = strtobool(
-        getenv("SHOW_ASSESSMENTS_LIVE_ROUNDS", "False")
+    FORCE_OPEN_ALL_LIVE_ASSESSMENT_ROUNDS = strtobool(
+        getenv("FORCE_OPEN_ALL_LIVE_ASSESSMENT_ROUNDS", "False")
     )  # Set to True to show assessments on live rounds
 
     """
@@ -228,6 +228,9 @@ class DefaultConfig:
         ),
         ("GENERAL",),
         ("PEOPLE",),
+    )
+    ASSESSMENT_SCORING_SYSTEM_ENDPOINT = (
+        ASSESSMENT_STORE_API_HOST + "/scoring-system/{round_id}"
     )
     # Account store endpoints
     BULK_ACCOUNTS_ENDPOINT = ACCOUNT_STORE_API_HOST + "/bulk-accounts"

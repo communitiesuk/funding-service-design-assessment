@@ -743,22 +743,35 @@ def match_comment_to_theme(comment_response, themes, fund_short_name):
 
 
 def submit_comment(
-    comment, application_id, sub_criteria_id, user_id, theme_id
+    comment,
+    application_id=None,
+    sub_criteria_id=None,
+    user_id=None,
+    theme_id=None,
+    comment_id=None,
 ):
-    data_dict = {
-        "comment": comment,
-        "user_id": user_id,
-        "application_id": application_id,
-        "sub_criteria_id": sub_criteria_id,
-        "comment_type": "COMMENT",
-        "theme_id": theme_id,
-    }
-    url = Config.ASSESSMENT_COMMENT_ENDPOINT
-    response = requests.post(url, json=data_dict)
+    if not comment_id:
+        data_dict = {
+            "comment": comment,
+            "user_id": user_id,
+            "application_id": application_id,
+            "sub_criteria_id": sub_criteria_id,
+            "comment_type": "COMMENT",
+            "theme_id": theme_id,
+        }
+        url = Config.ASSESSMENT_COMMENT_ENDPOINT
+        response = requests.post(url, json=data_dict)
+    else:
+        data_dict = {
+            "comment": comment,
+            "comment_id": comment_id,
+        }
+        url = Config.ASSESSMENT_COMMENT_ENDPOINT
+        response = requests.put(url, json=data_dict)
+
     current_app.logger.info(
         f"Response from Assessment Store: '{response.json()}'."
     )
-
     return response.ok
 
 
@@ -835,3 +848,12 @@ def get_applicant_feedback_and_survey_report(fund_id, round_id, status_only):
     response = get_data(applicant_feedback_endpoint)
 
     return response
+
+
+def get_scoring_system(round_id: str) -> List[Flag]:
+    scoring_endpoint = Config.ASSESSMENT_SCORING_SYSTEM_ENDPOINT.format(
+        round_id=round_id
+    )
+    current_app.logger.info(f"Calling endpoint '{scoring_endpoint}'.")
+    scoring_system = get_data(scoring_endpoint)["scoring_system"]
+    return scoring_system
