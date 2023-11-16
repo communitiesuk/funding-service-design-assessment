@@ -438,6 +438,20 @@ class TestAuthorisation:
                 assert "Edit comment" in comment_str
                 assert "See history" not in comment_str
 
+        # Assert contents in comments history page
+        response = flask_test_client.get(
+            f"/assess/application_id/{application_id}/sub_criteria_id/{sub_criteria_id}?comment_id=test_id_1&show_comment_history=1",  # noqa
+            follow_redirects=True,
+        )
+        assert response.status_code == 200
+        assert b"Comment edit history" in response.data
+        assert b"Original comment" in response.data
+
+        soup = BeautifulSoup(response.data, "html.parser")
+        all_comments_history = soup.find_all("div", class_="comment-group")
+        assert "This is comment has history" in str(all_comments_history[0])
+        assert "This is old comment" in str(all_comments_history[1])
+
     @pytest.mark.parametrize(
         "claim",
         [
