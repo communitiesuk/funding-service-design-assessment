@@ -306,7 +306,9 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
             ),
             "team_in_place": lambda x: x["team_in_place"],
             "datasets": lambda x: x["datasets"],
-            "publish_datasets": lambda x: x["publish_datasets"],
+            "publish_datasets": lambda x: x["publish_datasets"]
+            if x["publish_datasets"]
+            else str(x["publish_datasets"]),
         }
 
         # Define the sorting function based on the specified column
