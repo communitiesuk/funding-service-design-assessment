@@ -19,19 +19,28 @@
             <div class="comment-group">
                 <p class="govuk-body">{{ comment.updates[-1]['comment'] }}</p>
                 <p class="govuk-body-s">{{ comment.full_name }} ({{ comment.highest_role|all_caps_to_human }}) {{ comment.email_address }}</p>
-                <p class="govuk-body-s">{{ comment.date_created|utc_to_bst }}</p>
-                {% if g.account_id == comment.user_id %}
+                <p class="govuk-body-s">{{ comment.updates[-1].date_created|utc_to_bst }}</p>
+                {% if g.account_id == comment.user_id or comment.updates|length > 1 %}
                     <div class="govuk-button-group">
-                        <a class="govuk-link" href="{{ url_for(
+                        {% if g.account_id == comment.user_id %}
+                            <a class="govuk-link" href="{{ url_for(
+                                "assessment_bp.display_sub_criteria",
+                                application_id=comment.application_id,
+                                sub_criteria_id=comment.sub_criteria_id,
+                                theme_id=comment.theme_id,
+                                edit_comment="1",
+                                comment_id=comment.id
+                            ) }}" >Edit comment</a>
+                        {% endif %}
+                        {% if comment.updates|length > 1 %}
+                            <a class="govuk-link" href="{{  url_for(
                             "assessment_bp.display_sub_criteria",
                             application_id=comment.application_id,
                             sub_criteria_id=comment.sub_criteria_id,
-                            edit_comment="1",
-                            comment_id=comment.id
-                        ) }}" >Edit comment</a>
-                        {# {% if comment.updates|length > 1 %}
-                            <a class="govuk-link" href="./comment-history.html">See history</a>
-                        {% endif %} #}
+                            theme_id=comment.theme_id,
+                            show_comment_history="1",
+                            comment_id=comment.id) }}">See history</a>
+                        {% endif %}
                     </div>
                 {% endif %}
             </div>
