@@ -320,7 +320,9 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
             ),
             "team_in_place": lambda x: x["team_in_place"],
             "datasets": lambda x: x["datasets"],
-            "publish_datasets": lambda x: x["publish_datasets"],
+            "publish_datasets": lambda x: x["publish_datasets"]
+            if x["publish_datasets"]
+            else str(x["publish_datasets"]),
         }
 
         # Define the sorting function based on the specified column
@@ -411,22 +413,6 @@ def display_sub_criteria(
             )
         )
 
-    edit_comment_argument = request.args.get("edit_comment")
-    comment_id = request.args.get("comment_id")
-    if edit_comment_argument and comment_form.validate_on_submit():
-        comment = comment_form.comment.data
-        submit_comment(comment=comment, comment_id=comment_id)
-
-        return redirect(
-            url_for(
-                "assessment_bp.display_sub_criteria",
-                application_id=application_id,
-                sub_criteria_id=sub_criteria_id,
-                theme_id=theme_id,
-                _anchor="comments",
-            )
-        )
-
     state = get_state_for_tasklist_banner(application_id)
     flags_list = get_flags(application_id)
 
@@ -449,6 +435,42 @@ def display_sub_criteria(
         sub_criteria.workflow_status, state.is_qa_complete
     )
     flag_status = determine_flag_status(flags_list)
+
+    edit_comment_argument = request.args.get("edit_comment")
+    comment_id = request.args.get("comment_id")
+    show_comment_history = request.args.get("show_comment_history")
+
+    if comment_id and show_comment_history:
+        for comment_data in theme_matched_comments[theme_id]:
+            if comment_data.id == comment_id:
+                return render_template(
+                    "comments_history.html",
+                    comment_data=comment_data,
+                    back_href=url_for(
+                        "assessment_bp.display_sub_criteria",
+                        application_id=application_id,
+                        sub_criteria_id=sub_criteria_id,
+                        theme_id=theme_id,
+                    ),
+                    application_id=application_id,
+                    state=state,
+                    flag_status=flag_status,
+                    assessment_status=assessment_status,
+                )
+
+    if edit_comment_argument and comment_form.validate_on_submit():
+        comment = comment_form.comment.data
+        submit_comment(comment=comment, comment_id=comment_id)
+
+        return redirect(
+            url_for(
+                "assessment_bp.display_sub_criteria",
+                application_id=application_id,
+                sub_criteria_id=sub_criteria_id,
+                theme_id=theme_id,
+                _anchor="comments",
+            )
+        )
 
     common_template_config = {
         "sub_criteria": sub_criteria,
