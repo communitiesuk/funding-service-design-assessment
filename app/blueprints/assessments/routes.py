@@ -7,13 +7,13 @@ from urllib.parse import quote_plus
 from urllib.parse import unquote_plus
 
 from app.blueprints.assessments.activity_trail import (
-    _add_user_info,
+    add_user_info,
 )
 from app.blueprints.assessments.activity_trail import AssociatedTags
 from app.blueprints.assessments.activity_trail import Comments
-from app.blueprints.assessments.activity_trail import extract_user_info
 from app.blueprints.assessments.activity_trail import Flags
 from app.blueprints.assessments.activity_trail import get_dates
+from app.blueprints.assessments.activity_trail import get_user_info
 from app.blueprints.assessments.activity_trail import order_by_dates
 from app.blueprints.assessments.activity_trail import Scores
 from app.blueprints.assessments.forms.assessment_form import (
@@ -712,14 +712,14 @@ def activity_trail(application_id: str):
     # TODO:  GET ALL FLAGS and CREATE A FUNCTION TO GET user_info
     flags_list = get_flags(application_id)
     _flags = Flags.from_list(flags_list)
-    user_info = extract_user_info(_flags, state, "Flags")
-    all_flags = _add_user_info(_flags, user_info, "Flags")
+    user_info = get_user_info(_flags, state, "Flags")
+    all_flags = add_user_info(_flags, user_info, "Flags")
     # print(f"ALL FLAGS:->{all_flags}")
 
     # TODO: GET COMMENTS
     comments_list = get_comments(application_id)
-    user_id = extract_user_info(comments_list, state)
-    updated_comments = _add_user_info(comments_list, user_id)
+    user_id = get_user_info(comments_list, state)
+    updated_comments = add_user_info(comments_list, user_id)
     all_comments = Comments.from_list(updated_comments)
     # print(f"COMMENTS::----> {len(all_comments)}: {all_comments}")
 
@@ -728,16 +728,16 @@ def activity_trail(application_id: str):
     scores = get_score_and_justification(
         application_id=application_id, score_history=True
     )
-    user_id = extract_user_info(scores, state)
-    updated_scores = _add_user_info(scores, user_id)
+    user_id = get_user_info(scores, state)
+    updated_scores = add_user_info(scores, user_id)
     all_scores = Scores.from_list(updated_scores)
     # print(f"SCORES::----> {len(all_scores)}: {all_scores}")
 
     # TODO: GET ALL TAGS
     tags = get_all_associated_tags_for_application(application_id)
     _tags = AssociatedTags.from_associated_tags_list(tags)
-    user_info = extract_user_info(_tags, state, "AssociatedTags")
-    all_tags = _add_user_info(_tags, user_info, "AssociatedTags")
+    user_info = get_user_info(_tags, state, "AssociatedTags")
+    all_tags = add_user_info(_tags, user_info, "AssociatedTags")
     # print(f"ALL TAGS AFTER::----> {len(all_tags)}: -> {all_tags}")
     # all_tags = AssociatedTags.from_associated_tags_list(tags)
 

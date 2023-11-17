@@ -3,19 +3,16 @@ from dataclasses import asdict
 from dataclasses import dataclass
 from dataclasses import field
 from datetime import datetime
-from enum import auto
-from enum import Enum
 
 from app.blueprints.services.data_services import get_bulk_accounts_dict
+from app.blueprints.services.models.assessor_task_list import AssessorTaskList
+from app.blueprints.services.models.flag import FlagType
 from app.blueprints.tagging.models.tag import AssociatedTag
+from flask import current_app
 from flask_wtf import FlaskForm
 from wtforms import StringField
 from wtforms import SubmitField
 from wtforms.validators import DataRequired
-
-
-class FlagType(Enum):
-    STOPPED = auto()
 
 
 @dataclass
@@ -39,11 +36,11 @@ class BaseModel:
     def _format_date(date_str):
         if date_str:
             try:
+                current_app.logger.info("Formatting date")
                 return datetime.fromisoformat(date_str).strftime(
                     "%Y-%m-%d %H:%M:%S"
                 )
             except ValueError:
-                # Handle the case where the date_str is not in ISO format
                 return date_str
         return date_str
 
@@ -58,6 +55,7 @@ class AssociatedTags(AssociatedTag):
 
     @classmethod
     def from_associated_tags_list(cls, associated_tags_list):
+        """Change the  attribute 'created_at' to 'date_created'"""
         return [
             cls(**asdict(tag), date_created=tag.created_at)
             for tag in associated_tags_list
@@ -80,6 +78,14 @@ class Flags(BaseModel):
 
     @classmethod
     def process_flags(cls, flags_list) -> list[dict]:
+        """
+        Retrive all flags from updates & add sections_to_flag to RAISED flag.
+
+        Args: flags_list (list): A list of flags.
+
+        Returns:
+            list[dict]: A list of dictionaries containing flags with additional attribute.
+        """
         result = []
 
         for flag in flags_list:
@@ -91,6 +97,9 @@ class Flags(BaseModel):
                         **update,
                         "sections_to_flag": sections_to_flag,
                     }
+                    current_app.logger.info(
+                        "Adding flagged sections to RAISED flag"
+                    )
                     result.append(updated_update)
                 else:
                     result.append(update)
@@ -117,7 +126,22 @@ class Comments(BaseModel):
     email_address: str
 
     @classmethod
-    def process_comments(cls, comments_list) -> list[dict]:
+    def process_comments(cls, comments_list: list) -> list[dict]:
+        """
+        Retrieve all comments from updates and add the following attributes to each comment:
+        - "user_id"
+        - "sub_criteria_id"
+        - "theme_id"
+        - "comment_type"
+        - "full_name"
+        - "email_address"
+        - "highest_role"
+
+        Args: comments_list (list): A list of comments.
+
+        Returns:
+            list[dict]: A list of dictionaries containing comments with additional attributes.
+        """
         result = []
 
         for comment in comments_list:
@@ -132,6 +156,9 @@ class Comments(BaseModel):
                     "email_address": comment.get("email_address"),
                     "highest_role": comment.get("highest_role"),
                 }
+                current_app.logger.info(
+                    "Adding required information to comment"
+                )
                 result.append(updated_update)
 
         return result
@@ -157,27 +184,20 @@ class Scores(BaseModel):
     email_address: str
 
 
-def order_by_dates(lst: list[dict]) -> tuple[dict]:
-    """Sort items by date_created"""
+def get_user_info(
+    list_data: list, state: AssessorTaskList, class_name=None
+) -> dict:
+    """Retrieves account information based on user data.
 
-    return sorted(lst, key=lambda item: item.date_created, reverse=True)
+    Args:
+        list_data: List of user data or a dictionary containing user information.
+        state: Object representing the state with fund_short_name attribute.
+        class_name (str, optional): Name of the class. Defaults to None.
 
+    Returns:
+        dict: A dictionary containing account information for unique user IDs retrieved from list_data.
+    """
 
-def get_dates(all_flags):
-    """Just to check the dates and delete it aftewards"""
-
-    for flag in all_flags:
-        print(flag.date_created)
-
-
-def validate_class(obj, class_name: list):
-    """Not sure we need this"""
-    if obj.__class__.__name__ in class_name:
-        return True
-    return False
-
-
-def extract_user_info(list_data, state, class_name=None):
     if list_data is None:
         return []
 
@@ -194,17 +214,34 @@ def extract_user_info(list_data, state, class_name=None):
             user_list.append(user_id)
 
     if user_list:
+        current_app.logger.info("Retrieving account information")
         account_list = get_bulk_accounts_dict(
             user_list,
             state.fund_short_name,
         )
-
         return account_list
     else:
+        current_app.logger.warning(
+            "Could not retrieve the account information"
+        )
         return []
 
 
-def _add_user_info(list_data, user_info, class_name=None):
+def add_user_info(
+    list_data: list, account_info: list, class_name=None
+) -> list:
+    """Add user information to a list of data.
+
+    Parameters:
+    - list_data: List containing user data.
+    - account_info: Dictionary containing user information mapped by user IDs.
+    - class_name (str, optional):
+      - For dictionary items, it updates the dictionary with user information from account_info.
+      - For class instances, it sets attributes matching user information from account_info.
+
+    Returns:
+    List containing user data with updated information."""
+
     if list_data is None:
         return []
 
@@ -216,18 +253,34 @@ def _add_user_info(list_data, user_info, class_name=None):
         else:
             continue
 
-        if user_id in user_info:
-            user_data = user_info[user_id]
+        if user_id in account_info:
+            user_data = account_info[user_id]
             if isinstance(item, dict):
+                current_app.logger.info("Adding account information to dict")
                 item.update(user_data)
             elif class_name:
+                current_app.logger.info(
+                    f"Adding account information to class {class_name}"
+                )
                 for key, value in user_data.items():
                     setattr(item, key, value)
-
     return list_data
 
 
+def order_by_dates(lst: list[dict]) -> tuple[dict]:
+    """Sorts a list of items by 'date_created' in descending order"""
+
+    return sorted(lst, key=lambda item: item.date_created, reverse=True)
+
+
+# TODO: This form is to be implemented when protype is ready
 class SearchForm(FlaskForm):
     search_term = StringField("Search", validators=[DataRequired()])
-    # Define other fields if needed
     submit = SubmitField("Submit")
+
+
+# TODO: DELETE IT LATER (Testing purpose only)
+def get_dates(all_flags):
+
+    for flag in all_flags:
+        print(flag.date_created)
