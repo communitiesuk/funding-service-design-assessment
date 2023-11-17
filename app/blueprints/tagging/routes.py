@@ -175,10 +175,7 @@ def create_tag(fund_id, round_id):
 
         # check if tag already exits for fund-round TODO: Move logic to the datastore to reduce calls?
         for tag_item in fund_round_tags:
-            if (
-                tag["value"] == tag_item.value
-                and tag["tag_type_id"] == tag_item.type_id
-            ):
+            if tag["value"] == tag_item.value:
                 errors = {
                     "value": [
                         "Tag already exists for this round. Please ensure"
