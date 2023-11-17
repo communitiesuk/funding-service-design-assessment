@@ -425,28 +425,22 @@ def display_sub_criteria(
     show_comment_history = request.args.get("show_comment_history")
 
     if comment_id and show_comment_history:
-        comment_data = next(
-            (
-                cmnt
-                for cmnt in theme_matched_comments[theme_id]
-                if cmnt.id == comment_id
-            ),
-            None,
-        )
-        if comment_data:
-            return render_template(
-                "comments_history.html",
-                comment_data=comment_data,
-                back_href=url_for(
-                    "assessment_bp.display_sub_criteria",
+        for comment_data in theme_matched_comments[theme_id]:
+            if comment_data.id == comment_id:
+                return render_template(
+                    "comments_history.html",
+                    comment_data=comment_data,
+                    back_href=url_for(
+                        "assessment_bp.display_sub_criteria",
+                        application_id=application_id,
+                        sub_criteria_id=sub_criteria_id,
+                        theme_id=theme_id,
+                    ),
                     application_id=application_id,
-                    sub_criteria_id=sub_criteria_id,
-                    theme_id=theme_id,
-                ),
-                state=state,
-                flag_status=flag_status,
-                assessment_status=assessment_status,
-            )
+                    state=state,
+                    flag_status=flag_status,
+                    assessment_status=assessment_status,
+                )
 
     if edit_comment_argument and comment_form.validate_on_submit():
         comment = comment_form.comment.data

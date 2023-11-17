@@ -8,7 +8,7 @@
 
 {% block content %}
 <div class="govuk-grid-row">
-    <div class="content-container">
+    <div class="govuk-width-content-container">
         <div class="govuk-grid-column-two-thirds">
             <div class="">
                 <div class="govuk-button-group">
@@ -22,7 +22,7 @@
             {% for data in comment_data.updates|reverse %}
                 {% if loop.index0 < updates_length-1 %}
                     <div class="comment-group">
-                        <p class="govuk-body">{{ data['comment'] }}.</p>
+                        <p class="govuk-body">{{ data['comment'] }}</p>
                         <p class="govuk-body-s">{{ comment_data.full_name }} ({{ comment_data.highest_role|all_caps_to_human }}) {{ comment_data.email_address }}</p>
                         <p class="govuk-body-s">{{ data.date_created|utc_to_bst }}</p>
                     </div>
@@ -30,7 +30,7 @@
                     <div class="govuk-!-padding-top-7">
                         <h2 class="govuk-heading-s govuk-!-padding-bottom-0">Original comment</h2>
                         <div class="comment-group">
-                        <p class="govuk-body">{{ data['comment'] }}.</p>
+                        <p class="govuk-body">{{ data['comment'] }}</p>
                         <p class="govuk-body-s">{{ comment_data.full_name }} ({{ comment_data.highest_role|all_caps_to_human }}) {{ comment_data.email_address }}</p>
                         <p class="govuk-body-s">{{ data.date_created|utc_to_bst }}</p>
                         </div>
