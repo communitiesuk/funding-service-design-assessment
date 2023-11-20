@@ -50,6 +50,7 @@ variables:
   ASSESSMENT_STORE_API_HOST: "http://fsd-assessment-store:8080"
   FUND_STORE_API_HOST: "http://fsd-fund-store:8080"
   ACCOUNT_STORE_API_HOST: "http://fsd-account-store:8080"
+  APPLICATION_STORE_API_HOST: "http://fsd-application-store:8080"
   COPILOT_AWS_BUCKET_NAME:
     from_cfn: ${COPILOT_APPLICATION_NAME}-${COPILOT_ENVIRONMENT_NAME}-FormUploadsBucket
   REDIS_INSTANCE_URI:
@@ -61,12 +62,30 @@ secrets:
 
 # You can override any of the values defined above by environment.
 environments:
-  # uat:
-    # http:
-    #   alias: assessment.uat.access-funding.test.levellingup.gov.uk
-  # production:
-    # http:
-    #   alias: assessment.prod.access-funding.levellingup.gov.uk
   test:
     deployment:
       rolling: 'recreate'
+  uat:
+    count:
+      range: 2-4
+      cooldown:
+        in: 60s
+        out: 30s
+      cpu_percentage:
+        value: 70
+      memory_percentage:
+        value: 80
+      requests: 30
+      response_time: 2s
+  production:
+    alias: assessment.production.access-funding.levellingup.gov.uk
+    count:
+      range: 2-4
+      cooldown:
+        in: 60s
+        out: 30s
+      cpu_percentage:
+        value: 70
+      memory_percentage:
+        value: 80
+      requests: 30
