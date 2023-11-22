@@ -56,8 +56,6 @@ jobs:
       assets_required: true
 
   pre_deploy_tests:
-    secrets:
-      E2E_PAT: ${{secrets.E2E_PAT}}
     uses: communitiesuk/funding-design-service-workflows/.github/workflows/pre-deploy.yml@main
     with:
       assets_required: true
