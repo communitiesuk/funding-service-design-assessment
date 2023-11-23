@@ -45,7 +45,7 @@ from app.blueprints.authentication.validation import (
     check_access_application_id,
 )
 from app.blueprints.authentication.validation import (
-    check_access_fund_short_name,
+    check_access_fund_short_name_round_sn,
 )
 from app.blueprints.authentication.validation import get_countries_from_roles
 from app.blueprints.authentication.validation import has_access_to_fund
@@ -187,7 +187,7 @@ def landing():
             for rsl in round_summaries.values()
             for rs in rsl
         ),
-        show_assessments_live_rounds=Config.SHOW_ASSESSMENTS_LIVE_ROUNDS,
+        force_open_all_live_assessment_rounds=Config.FORCE_OPEN_ALL_LIVE_ASSESSMENT_ROUNDS,
     )
 
 
@@ -195,7 +195,7 @@ def landing():
     "/assessor_dashboard/<fund_short_name>/<round_short_name>/",
     methods=["GET"],
 )
-@check_access_fund_short_name
+@check_access_fund_short_name_round_sn
 def fund_dashboard(fund_short_name: str, round_short_name: str):
     if fund_short_name.upper() == "NSTF":
         search_params = {**search_params_nstf}
@@ -306,7 +306,9 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
             ),
             "team_in_place": lambda x: x["team_in_place"],
             "datasets": lambda x: x["datasets"],
-            "publish_datasets": lambda x: x["publish_datasets"],
+            "publish_datasets": lambda x: x["publish_datasets"]
+            if x["publish_datasets"]
+            else str(x["publish_datasets"]),
         }
 
         # Define the sorting function based on the specified column
@@ -420,12 +422,50 @@ def display_sub_criteria(
     )
     flag_status = determine_flag_status(flags_list)
 
+    edit_comment_argument = request.args.get("edit_comment")
+    comment_id = request.args.get("comment_id")
+    show_comment_history = request.args.get("show_comment_history")
+
+    if comment_id and show_comment_history:
+        for comment_data in theme_matched_comments[theme_id]:
+            if comment_data.id == comment_id:
+                return render_template(
+                    "comments_history.html",
+                    comment_data=comment_data,
+                    back_href=url_for(
+                        "assessment_bp.display_sub_criteria",
+                        application_id=application_id,
+                        sub_criteria_id=sub_criteria_id,
+                        theme_id=theme_id,
+                    ),
+                    application_id=application_id,
+                    state=state,
+                    flag_status=flag_status,
+                    assessment_status=assessment_status,
+                )
+
+    if edit_comment_argument and comment_form.validate_on_submit():
+        comment = comment_form.comment.data
+        submit_comment(comment=comment, comment_id=comment_id)
+
+        return redirect(
+            url_for(
+                "assessment_bp.display_sub_criteria",
+                application_id=application_id,
+                sub_criteria_id=sub_criteria_id,
+                theme_id=theme_id,
+                _anchor="comments",
+            )
+        )
+
     common_template_config = {
         "sub_criteria": sub_criteria,
         "application_id": application_id,
         "comments": theme_matched_comments,
         "is_flaggable": False,  # Flag button is disabled in sub-criteria page,
         "display_comment_box": add_comment_argument,
+        "display_comment_edit_box": edit_comment_argument,
+        "comment_id": comment_id,
         "comment_form": comment_form,
         "current_theme": current_theme,
         "flag_status": flag_status,
@@ -668,7 +708,7 @@ def application(application_id):
     "/assessor_export/<fund_short_name>/<round_short_name>/<report_type>",
     methods=["GET"],
 )
-@check_access_fund_short_name(roles_required=["LEAD_ASSESSOR"])
+@check_access_fund_short_name_round_sn(roles_required=["LEAD_ASSESSOR"])
 def assessor_export(
     fund_short_name: str, round_short_name: str, report_type: str
 ):
@@ -696,7 +736,7 @@ def assessor_export(
     "/feedback_export/<fund_short_name>/<round_short_name>",
     methods=["GET"],
 )
-@check_access_fund_short_name(roles_required=["LEAD_ASSESSOR"])
+@check_access_fund_short_name_round_sn(roles_required=["LEAD_ASSESSOR"])
 def feedback_export(fund_short_name: str, round_short_name: str):
     _round = get_round(
         fund_short_name,

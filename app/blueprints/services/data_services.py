@@ -651,7 +651,10 @@ def get_sub_criteria_theme_answers(
 
 
 def get_comments(
-    application_id: str, sub_criteria_id: str, theme_id: str | None
+    application_id: str = None,
+    sub_criteria_id: str = None,
+    theme_id: str = None,
+    comment_id: str = None,
 ):
     """_summary_: Get comments from the assessment store
     Args:
@@ -665,6 +668,7 @@ def get_comments(
         "application_id": application_id,
         "sub_criteria_id": sub_criteria_id,
         "theme_id": theme_id,
+        "comment_id": comment_id,
     }
     # Strip theme_id from dict if None
     query_params_strip_nones = {
@@ -729,22 +733,35 @@ def match_comment_to_theme(comment_response, themes, fund_short_name):
 
 
 def submit_comment(
-    comment, application_id, sub_criteria_id, user_id, theme_id
+    comment,
+    application_id=None,
+    sub_criteria_id=None,
+    user_id=None,
+    theme_id=None,
+    comment_id=None,
 ):
-    data_dict = {
-        "comment": comment,
-        "user_id": user_id,
-        "application_id": application_id,
-        "sub_criteria_id": sub_criteria_id,
-        "comment_type": "COMMENT",
-        "theme_id": theme_id,
-    }
-    url = Config.ASSESSMENT_COMMENT_ENDPOINT
-    response = requests.post(url, json=data_dict)
+    if not comment_id:
+        data_dict = {
+            "comment": comment,
+            "user_id": user_id,
+            "application_id": application_id,
+            "sub_criteria_id": sub_criteria_id,
+            "comment_type": "COMMENT",
+            "theme_id": theme_id,
+        }
+        url = Config.ASSESSMENT_COMMENT_ENDPOINT
+        response = requests.post(url, json=data_dict)
+    else:
+        data_dict = {
+            "comment": comment,
+            "comment_id": comment_id,
+        }
+        url = Config.ASSESSMENT_COMMENT_ENDPOINT
+        response = requests.put(url, json=data_dict)
+
     current_app.logger.info(
         f"Response from Assessment Store: '{response.json()}'."
     )
-
     return response.ok
 
 
