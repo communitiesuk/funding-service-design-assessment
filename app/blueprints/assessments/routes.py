@@ -246,13 +246,36 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
         "countries": ",".join(countries),
     }
 
+    # matches the query parameters provided in the search and filter form
     search_params, show_clear_filters = match_search_params(
         search_params, request.args
     )
 
+    # request all the application overviews based on the search parameters
     application_overviews = get_application_overviews(
         fund_id, round_id, search_params
     )
+
+    dpi_filters = [
+        {
+            "name": "team_in_place",
+            "values": ["ALL", "Yes", "No"],
+        },
+        {
+            "name": "datasets",
+            "values": ["ALL", "Yes", "No"],
+        },
+        {
+            "name": "publish_datasets",
+            "values": [
+                "ALL",
+                "0-to-3-months",
+                "4-to-7-months",
+                "8-to-11-months",
+                "longer-than-11-months",
+            ],
+        },
+    ]
 
     teams_flag_stats = get_team_flag_stats(application_overviews)
 
@@ -349,6 +372,7 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
         countries=all_application_locations.countries,
         regions=all_application_locations.regions,
         local_authorities=all_application_locations._local_authorities,
+        dpi_filters=dpi_filters,
     )
 
 

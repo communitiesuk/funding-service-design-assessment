@@ -73,7 +73,6 @@ search_params_cyp = {
     "filter_by_tag": ALL_VALUE,
     "country": ALL_VALUE,
     "region": ALL_VALUE,
-    "local_authority": ALL_VALUE,
 }
 
 search_params_dpif = {
@@ -81,6 +80,9 @@ search_params_dpif = {
     "search_in": "organisation_name,short_id",
     "status": ALL_VALUE,
     "filter_by_tag": ALL_VALUE,
+    "publish_datasets": ALL_VALUE,
+    "datasets": ALL_VALUE,
+    "team_in_place": ALL_VALUE,
 }
 
 search_params_tag = {
