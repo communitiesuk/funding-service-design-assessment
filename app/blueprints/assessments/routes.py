@@ -10,12 +10,13 @@ from app.blueprints.assessments.activity_trail import (
     add_user_info,
 )
 from app.blueprints.assessments.activity_trail import AssociatedTags
+from app.blueprints.assessments.activity_trail import CheckboxForm
 from app.blueprints.assessments.activity_trail import Comments
+from app.blueprints.assessments.activity_trail import filter_all_activities
 from app.blueprints.assessments.activity_trail import Flags
-from app.blueprints.assessments.activity_trail import get_dates
 from app.blueprints.assessments.activity_trail import get_user_info
-from app.blueprints.assessments.activity_trail import order_by_dates
 from app.blueprints.assessments.activity_trail import Scores
+from app.blueprints.assessments.activity_trail import SearchForm
 from app.blueprints.assessments.forms.assessment_form import (
     AssessmentCompleteForm,
 )
@@ -718,63 +719,57 @@ def application(application_id):
     )
 
 
-@assessment_bp.route(
-    "/activity_trail/<application_id>", methods=["GET", "POST"]
-)
+@assessment_bp.route("/activity_trail/<application_id>", methods=["GET"])
 @check_access_application_id
 def activity_trail(application_id: str):
-
     state = get_state_for_tasklist_banner(application_id)
 
-    # TODO: get links to theme id
-    # sub_criteria = get_sub_criteria(application_id, sub_criteria_id)
-    # theme_id = request.args.get("theme_id")
-    # print(f"THEME_ID:::: {theme_id}")
+    # It seems there is a better way of doing it by moving
+    # all activity related information to an endpoint in the
+    # assessment store and write up a query to fetch activities
 
-    # TODO:  GET ALL FLAGS and CREATE A FUNCTION TO GET user_info
+    #  GET ALL FLAGS
     flags_list = get_flags(application_id)
     _flags = Flags.from_list(flags_list)
     user_info = get_user_info(_flags, state, "Flags")
     all_flags = add_user_info(_flags, user_info, "Flags")
-    # print(f"ALL FLAGS:->{all_flags}")
 
-    # TODO: GET COMMENTS
+    # GET ALL COMMENTS
     comments_list = get_comments(application_id)
     user_id = get_user_info(comments_list, state)
     updated_comments = add_user_info(comments_list, user_id)
     all_comments = Comments.from_list(updated_comments)
-    # print(f"COMMENTS::----> {len(all_comments)}: {all_comments}")
 
-    # TODO: GET ALL SCORES
-
+    # GET ALL SCORES
     scores = get_score_and_justification(
         application_id=application_id, score_history=True
     )
     user_id = get_user_info(scores, state)
     updated_scores = add_user_info(scores, user_id)
     all_scores = Scores.from_list(updated_scores)
-    # print(f"SCORES::----> {len(all_scores)}: {all_scores}")
 
-    # TODO: GET ALL TAGS
+    # GET ALL TAGS
     tags = get_all_associated_tags_for_application(application_id)
     _tags = AssociatedTags.from_associated_tags_list(tags)
     user_info = get_user_info(_tags, state, "AssociatedTags")
     all_tags = add_user_info(_tags, user_info, "AssociatedTags")
-    # print(f"ALL TAGS AFTER::----> {len(all_tags)}: -> {all_tags}")
-    # all_tags = AssociatedTags.from_associated_tags_list(tags)
 
-    # TODO: Get current assessment ststus
-    # current_status = determine_display_status(state.workflow_status, )
+    # TODO: Get current assessment status
 
     # TODO: GET workflow STATUSES
 
-    # TODO: Fet Flag status
+    # Add search box and checkbox filters
+    available_filters = ["All activity", "Comments", "Score", "Flags", "Tags"]
+    search_form = SearchForm(request.form)
+    checkbox_form = CheckboxForm(request.form)
 
-    # TODO: Get all forms:
-
+    # Filter all activities
+    search_keyword = request.args.get("search")
+    checkbox_filters = request.args.getlist("filter")
     all_activities = all_scores + all_comments + all_tags + all_flags
-    dates = order_by_dates(all_activities)
-    get_dates(dates)
+    _all_activities = filter_all_activities(
+        all_activities, search_keyword, checkbox_filters
+    )
 
     return render_template(
         "activity_trail.html",
@@ -782,7 +777,12 @@ def activity_trail(application_id: str):
         state=state,
         flags_list=flags_list,
         updated_flags=all_flags,
-        activities=dates,
+        activities=_all_activities,
+        search_form=search_form,
+        checkbox_form=checkbox_form,
+        available_filters=available_filters,
+        search_keyword=search_keyword,
+        checkbox_filters=checkbox_filters,
     )
 
 

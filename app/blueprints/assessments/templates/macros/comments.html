@@ -59,7 +59,6 @@
         class="govuk-body govuk-!-font-weight-bold">Comment</span> on <a
         href="{{ url_for('assessment_bp.display_sub_criteria',application_id=application_id ,sub_criteria_id=comment.sub_criteria_id)}}?theme_id={{comment.theme_id}}" target="_blank">{{comment.theme_id|remove_dashes_underscores_capitalize}}</a></p>
 
-
     <div class="comment-group">
         <p class="govuk-body">{{ comment.comment }}</p>
         <p class="govuk-body-s">{{ comment.full_name }} ({{ comment.highest_role|all_caps_to_human }}) {{ comment.email_address }}</p>

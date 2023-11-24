@@ -10,9 +10,8 @@ from app.blueprints.services.models.flag import FlagType
 from app.blueprints.tagging.models.tag import AssociatedTag
 from flask import current_app
 from flask_wtf import FlaskForm
+from wtforms import BooleanField
 from wtforms import StringField
-from wtforms import SubmitField
-from wtforms.validators import DataRequired
 
 
 @dataclass
@@ -273,14 +272,80 @@ def order_by_dates(lst: list[dict]) -> tuple[dict]:
     return sorted(lst, key=lambda item: item.date_created, reverse=True)
 
 
-# TODO: This form is to be implemented when protype is ready
-class SearchForm(FlaskForm):
-    search_term = StringField("Search", validators=[DataRequired()])
-    submit = SubmitField("Submit")
-
-
-# TODO: DELETE IT LATER (Testing purpose only)
 def get_dates(all_flags):
-
     for flag in all_flags:
         print(flag.date_created)
+
+
+class SearchForm(FlaskForm):
+    search = StringField("Search")
+
+
+class CheckboxForm(FlaskForm):
+    all_activity = BooleanField("All activity", default=True)
+    comments = BooleanField("Comments")
+    assessment_status = BooleanField("Assessment status")
+    score = BooleanField("Score")
+    flag = BooleanField("Flags")
+    tag = BooleanField("Tags")
+
+
+def map_activities_classes_with_checkbox_filters(filters):
+    filters = [f.replace(" ", "") for f in filters if f != "All activity"]
+    _filters = []
+    for filter in filters:
+        if filter == "Score":
+            _filters.append("Scores")
+        if filter == "Tags":
+            _filters.append("AssociatedTags")
+        else:
+            _filters.append(filter)
+
+    return _filters
+
+
+def filter_all_activities(
+    all_activities: list, search_keyword: str = "", filters: list = None
+):
+    all_activities = order_by_dates(all_activities)
+    filtered_classes = map_activities_classes_with_checkbox_filters(filters)
+
+    if not search_keyword and not filtered_classes:
+        return all_activities
+
+    if search_keyword and filtered_classes:
+        return [
+            activity
+            for activity in all_activities
+            if any(
+                search_keyword.lower() in str(attr).lower()
+                for attr in asdict(activity).values()
+            )
+            and any(
+                class_name.lower() == activity.__class__.__name__.lower()
+                for class_name in filtered_classes
+            )
+        ]
+
+    if not search_keyword and filters:
+        return [
+            activity
+            for activity in all_activities
+            if any(
+                class_name.lower() == activity.__class__.__name__.lower()
+                for class_name in filtered_classes
+            )
+        ]
+
+    if search_keyword and not filtered_classes:
+        return [
+            activity
+            for activity in all_activities
+            if any(
+                search_keyword.lower() in str(attr).lower()
+                for attr in asdict(activity).values()
+            )
+        ]
+
+    else:
+        return all_activities
