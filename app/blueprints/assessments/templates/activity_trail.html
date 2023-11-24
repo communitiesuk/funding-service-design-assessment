@@ -49,10 +49,10 @@
     else 'not-started-tag' if state.workflow_status == 'NOT_STARTED'
 %}
 
-<main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content" role="main">
+<main class="govuk-main-wrapper" id="main-content" role="main">
     <div class="govuk-grid-row">
         <div>
-            <div class="">
+            <div class="govuk-!-padding-left-3">
                 <h1 class="govuk-heading-l">Activity trail</h1>
                 <p class="govuk-body">Current assessment status: <span class="{{tag_color}} govuk-body">{{state.workflow_status|remove_dashes_underscores_capitalize|title }}</span></p>
             </div>
@@ -73,7 +73,7 @@
        <form method="GET" action="{{ url_for('assessment_bp.activity_trail', application_id=application_id) }}">
         {# Search input  #}
         <div class="govuk-form-group govuk-body">
-            <label class="govuk-label">Search</label>
+            <label class="govuk-label">Search keywords or users</label>
             <input class="search-input govuk-input govuk-!-width-full" id="search" name="search" type="text" value="{% if search_keyword %}{{ search_keyword }}{% endif %}">
         </div>
 

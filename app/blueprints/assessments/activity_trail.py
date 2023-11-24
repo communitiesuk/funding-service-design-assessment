@@ -272,11 +272,6 @@ def order_by_dates(lst: list[dict]) -> tuple[dict]:
     return sorted(lst, key=lambda item: item.date_created, reverse=True)
 
 
-def get_dates(all_flags):
-    for flag in all_flags:
-        print(flag.date_created)
-
-
 class SearchForm(FlaskForm):
     search = StringField("Search")
 
