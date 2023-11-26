@@ -14,7 +14,6 @@ from app.blueprints.assessments.activity_trail import CheckboxForm
 from app.blueprints.assessments.activity_trail import Comments
 from app.blueprints.assessments.activity_trail import filter_all_activities
 from app.blueprints.assessments.activity_trail import Flags
-from app.blueprints.assessments.activity_trail import get_user_info
 from app.blueprints.assessments.activity_trail import Scores
 from app.blueprints.assessments.activity_trail import SearchForm
 from app.blueprints.assessments.forms.assessment_form import (
@@ -724,35 +723,27 @@ def application(application_id):
 def activity_trail(application_id: str):
     state = get_state_for_tasklist_banner(application_id)
 
-    # It seems there is a better way of doing it by moving
-    # all activity related information to an endpoint in the
-    # assessment store and write up a query to fetch activities
+    # There is a better way of doing it by moving
+    # all activity related logics to an endpoint in the
+    # assessment store and write up a query to fetch all the information.
 
-    #  GET ALL FLAGS
+    # GET ALL FLAGS
     flags_list = get_flags(application_id)
     _flags = Flags.from_list(flags_list)
-    user_info = get_user_info(_flags, state, "Flags")
-    all_flags = add_user_info(_flags, user_info, "Flags")
 
     # GET ALL COMMENTS
     comments_list = get_comments(application_id)
-    user_id = get_user_info(comments_list, state)
-    updated_comments = add_user_info(comments_list, user_id)
-    all_comments = Comments.from_list(updated_comments)
+    all_comments = Comments.from_list(comments_list)
 
     # GET ALL SCORES
     scores = get_score_and_justification(
         application_id=application_id, score_history=True
     )
-    user_id = get_user_info(scores, state)
-    updated_scores = add_user_info(scores, user_id)
-    all_scores = Scores.from_list(updated_scores)
+    all_scores = Scores.from_list(scores)
 
     # GET ALL TAGS
     tags = get_all_associated_tags_for_application(application_id)
     _tags = AssociatedTags.from_associated_tags_list(tags)
-    user_info = get_user_info(_tags, state, "AssociatedTags")
-    all_tags = add_user_info(_tags, user_info, "AssociatedTags")
 
     # TODO: Get current assessment status
 
@@ -766,17 +757,17 @@ def activity_trail(application_id: str):
     # Filter all activities
     search_keyword = request.args.get("search")
     checkbox_filters = request.args.getlist("filter")
-    all_activities = all_scores + all_comments + all_tags + all_flags
+    all_activities = all_scores + all_comments + _tags + _flags
+
+    update_user_info = add_user_info(all_activities, state)
     _all_activities = filter_all_activities(
-        all_activities, search_keyword, checkbox_filters
+        update_user_info, search_keyword, checkbox_filters
     )
 
     return render_template(
         "activity_trail.html",
         application_id=application_id,
         state=state,
-        flags_list=flags_list,
-        updated_flags=all_flags,
         activities=_all_activities,
         search_form=search_form,
         checkbox_form=checkbox_form,

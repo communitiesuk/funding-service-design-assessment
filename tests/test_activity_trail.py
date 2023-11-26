@@ -10,6 +10,7 @@ class TestActivityTrail:
     test_app = Flask("app")
     list_data_class = [type("AssociatedTags", (), {"user_id": "00000"})]
     list_data_dict = [{"user_id": "00000"}]
+    state = type("AssessorTaskList", (), {"fund_short_name": "COF"})()
     _accounts_list = {
         "00000": {
             "full_name": "Development User",
@@ -21,11 +22,10 @@ class TestActivityTrail:
     }
 
     @pytest.mark.parametrize(
-        "list_data, class_name",
-        [(list_data_class, "AssociatedTags"), (list_data_dict, None)],
+        "list_data",
+        [(list_data_class)],
     )
-    def test_get_user_info(self, list_data, class_name, mocker):
-        state = type("AssessorTaskList", (), {"fund_short_name": "COF"})()
+    def test_get_user_info(self, list_data, mocker):
 
         # Patching the get_bulk_accounts_dict function
         mocker.patch(
@@ -34,13 +34,18 @@ class TestActivityTrail:
         )
 
         with self.test_app.app_context():
-            result = get_user_info(list_data, state, class_name)
+            result = get_user_info(list_data, self.state)
         assert result == self._accounts_list
 
-    def test_add_user_info(self):
+    def test_add_user_info(self, mocker):
         with self.test_app.app_context():
+            mocker.patch(
+                "app.blueprints.assessments.activity_trail.get_user_info",
+                return_value=self._accounts_list,
+            )
             result = add_user_info(
-                self.list_data_class, self._accounts_list, "AssociatedTags"
+                self.list_data_class,
+                self.state,
             )
 
         expected_result = [

@@ -73,7 +73,6 @@ class Flags(BaseModel):
     full_name: str = ""
     email_address: str = ""
     highest_role: str = ""
-    email_address: str = ""
 
     @classmethod
     def process_flags(cls, flags_list) -> list[dict]:
@@ -106,8 +105,11 @@ class Flags(BaseModel):
 
     @classmethod
     def from_list(cls, flags_list: list[dict]):
-        flags = cls.process_flags(flags_list)
-        return super().from_list(flags)
+        if flags_list:
+            flags = cls.process_flags(flags_list)
+            return super().from_list(flags)
+        else:
+            return []
 
 
 @dataclass
@@ -119,10 +121,9 @@ class Comments(BaseModel):
     sub_criteria_id: str
     theme_id: str
     user_id: str
-    full_name: str
-    email_address: str
-    highest_role: str
-    email_address: str
+    full_name: str = ""
+    highest_role: str = ""
+    email_address: str = ""
 
     @classmethod
     def process_comments(cls, comments_list: list) -> list[dict]:
@@ -164,8 +165,11 @@ class Comments(BaseModel):
 
     @classmethod
     def from_list(cls, comments_list: list[dict]):
-        comments = cls.process_comments(comments_list)
-        return super().from_list(comments)
+        if comments_list:
+            comments = cls.process_comments(comments_list)
+            return super().from_list(comments)
+        else:
+            return []
 
 
 @dataclass
@@ -177,38 +181,19 @@ class Scores(BaseModel):
     score: int
     sub_criteria_id: str
     user_id: str
-    full_name: str
-    email_address: str
-    highest_role: str
-    email_address: str
+    full_name: str = ""
+    highest_role: str = ""
+    email_address: str = ""
 
 
-def get_user_info(
-    list_data: list, state: AssessorTaskList, class_name=None
-) -> dict:
-    """Retrieves account information based on user data.
-
-    Args:
-        list_data: List of user data or a dictionary containing user information.
-        state: Object representing the state with fund_short_name attribute.
-        class_name (str, optional): Name of the class. Defaults to None.
-
-    Returns:
-        dict: A dictionary containing account information for unique user IDs retrieved from list_data.
-    """
+def get_user_info(list_data: list, state: AssessorTaskList) -> dict:
 
     if list_data is None:
         return []
 
     user_list = []
     for item in list_data:
-        if isinstance(item, dict):
-            user_id = item.get("user_id")
-        elif class_name:
-            user_id = item.user_id
-        else:
-            continue
-
+        user_id = item.user_id
         if user_id is not None and user_id not in user_list:
             user_list.append(user_id)
 
@@ -226,43 +211,19 @@ def get_user_info(
         return []
 
 
-def add_user_info(
-    list_data: list, account_info: list, class_name=None
-) -> list:
-    """Add user information to a list of data.
-
-    Parameters:
-    - list_data: List containing user data.
-    - account_info: Dictionary containing user information mapped by user IDs.
-    - class_name (str, optional):
-      - For dictionary items, it updates the dictionary with user information from account_info.
-      - For class instances, it sets attributes matching user information from account_info.
-
-    Returns:
-    List containing user data with updated information."""
-
+def add_user_info(list_data: list, state, account_info: list = None) -> list:
+    account_info = get_user_info(list_data, state)
     if list_data is None:
         return []
 
     for item in list_data:
-        if isinstance(item, dict):
-            user_id = item.get("user_id")
-        elif class_name:
-            user_id = item.user_id
-        else:
-            continue
+        user_id = item.user_id
 
         if user_id in account_info:
             user_data = account_info[user_id]
-            if isinstance(item, dict):
-                current_app.logger.info("Adding account information to dict")
-                item.update(user_data)
-            elif class_name:
-                current_app.logger.info(
-                    f"Adding account information to class {class_name}"
-                )
-                for key, value in user_data.items():
-                    setattr(item, key, value)
+            current_app.logger.info("Adding account information.")
+            for key, value in user_data.items():
+                setattr(item, key, value)
     return list_data
 
 
