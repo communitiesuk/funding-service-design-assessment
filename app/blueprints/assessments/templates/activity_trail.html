@@ -74,7 +74,7 @@
         {# Search input  #}
         <div class="govuk-form-group govuk-body">
             <label class="govuk-label">Search keywords or users</label>
-            <input class="search-input govuk-input govuk-!-width-full" id="search" name="search" type="text" value="{% if search_keyword %}{{ search_keyword }}{% endif %}">
+            <input class="search-input govuk-input govuk-!-width-full" aria-label="Search keywords or users" id="search" name="search" type="text" value="{% if search_keyword %}{{ search_keyword }}{% endif %}">
         </div>
 
         {# Checkbox filters #}
@@ -82,7 +82,7 @@
             {% for filter_option in available_filters %}
                 <div class="govuk-checkboxes__item">
                     <input class="govuk-checkboxes__input" id="{{ filter_option|lower }}Checkbox" type="checkbox" name="filter" value="{{ filter_option }}"
-                    {% if filter_option in checkbox_filters %}checked{% endif %}>
+                    {% if (filter_option =="All activity" and not checkbox_filters) or filter_option in checkbox_filters %}checked{% endif %}>
                     <label class="govuk-label govuk-checkboxes__label" for="{{ filter_option|lower }}Checkbox">
                         {{ filter_option }}
                     </label>

@@ -727,21 +727,21 @@ def activity_trail(application_id: str):
     # all activity related logics to an endpoint in the
     # assessment store and write up a query to fetch all the information.
 
-    # GET ALL FLAGS
+    # ALL FLAGS
     flags_list = get_flags(application_id)
     _flags = Flags.from_list(flags_list)
 
-    # GET ALL COMMENTS
+    # ALL COMMENTS
     comments_list = get_comments(application_id)
     all_comments = Comments.from_list(comments_list)
 
-    # GET ALL SCORES
+    # ALL SCORES
     scores = get_score_and_justification(
         application_id=application_id, score_history=True
     )
     all_scores = Scores.from_list(scores)
 
-    # GET ALL TAGS
+    # ALL TAGS
     tags = get_all_associated_tags_for_application(application_id)
     _tags = AssociatedTags.from_associated_tags_list(tags)
 

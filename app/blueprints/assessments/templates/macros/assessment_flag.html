@@ -88,7 +88,7 @@
         <h2>Notification sent</h2>
         <p>No</p><br>
         <p class="govuk-body-s">{{ flag.full_name or "N/A" }} ({{ flag.highest_role | all_caps_to_human }}) {{ flag.email_address }}</p>
-        <p class="govuk-body-s">{{ flag.date_created }}</p>
+        <p class="govuk-body-s">{{ flag.date_created|utc_to_bst }}</p>
 
     </div>
 {% endmacro %}
@@ -118,7 +118,7 @@
         {% endif %}
         <br>
         <p class="govuk-body-s">{{ flag.full_name or "N/A" }} ({{ flag.highest_role | all_caps_to_human }}) {{ flag.email_address }}</p>
-        <p class="govuk-body-s">{{ flag.date_created }}</p>
+        <p class="govuk-body-s">{{ flag.date_created|utc_to_bst }}</p>
     </div>
 {% endmacro %}
 
@@ -135,7 +135,7 @@
             <p class="govuk-body">{{ flag.justification }}</p>
         <br>
         <p class="govuk-body-s">{{ flag.full_name or "N/A" }} ({{ flag.highest_role | all_caps_to_human }}) {{ flag.email_address }}</p>
-        <p class="govuk-body-s">{{ flag.date_created }}</p>
+        <p class="govuk-body-s">{{ flag.date_created|utc_to_bst }}</p>
 
     </div>
 {% endmacro %}
