@@ -729,7 +729,7 @@ def activity_trail(application_id: str):
 
     # ALL FLAGS
     flags_list = get_flags(application_id)
-    _flags = Flags.from_list(flags_list)
+    all_flags = Flags.from_list(flags_list)
 
     # ALL COMMENTS
     comments_list = get_comments(application_id)
@@ -743,11 +743,7 @@ def activity_trail(application_id: str):
 
     # ALL TAGS
     tags = get_all_associated_tags_for_application(application_id)
-    _tags = AssociatedTags.from_associated_tags_list(tags)
-
-    # TODO: Get current assessment status
-
-    # TODO: GET workflow STATUSES
+    all_tags = AssociatedTags.from_associated_tags_list(tags)
 
     # Add search box and checkbox filters
     available_filters = ["All activity", "Comments", "Score", "Flags", "Tags"]
@@ -757,7 +753,7 @@ def activity_trail(application_id: str):
     # Filter all activities
     search_keyword = request.args.get("search")
     checkbox_filters = request.args.getlist("filter")
-    all_activities = all_scores + all_comments + _tags + _flags
+    all_activities = all_scores + all_comments + all_tags + all_flags
 
     update_user_info = add_user_info(all_activities, state)
     _all_activities = filter_all_activities(

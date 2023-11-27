@@ -34,13 +34,9 @@ class BaseModel:
     @staticmethod
     def _format_date(date_str):
         if date_str:
-            try:
-                current_app.logger.info("Formatting date")
-                return datetime.fromisoformat(date_str).strftime(
-                    "%Y-%m-%d %H:%M:%S"
-                )
-            except ValueError:
-                return date_str
+            return datetime.fromisoformat(date_str).strftime(
+                "%Y-%m-%d %H:%M:%S"
+            )
         return date_str
 
 
@@ -95,9 +91,6 @@ class Flags(BaseModel):
                         **update,
                         "sections_to_flag": sections_to_flag,
                     }
-                    current_app.logger.info(
-                        "Adding flagged sections to RAISED flag"
-                    )
                     result.append(updated_update)
                 else:
                     result.append(update)
@@ -156,9 +149,6 @@ class Comments(BaseModel):
                     "email_address": comment.get("email_address"),
                     "highest_role": comment.get("highest_role"),
                 }
-                current_app.logger.info(
-                    "Adding required information to comment"
-                )
                 result.append(updated_update)
 
         return result
@@ -186,28 +176,21 @@ class Scores(BaseModel):
     email_address: str = ""
 
 
-def get_user_info(list_data: list, state: AssessorTaskList) -> dict:
+def get_user_info(lst: list, state: AssessorTaskList) -> dict:
 
-    if list_data is None:
+    if lst is None:
         return []
 
-    user_list = []
-    for item in list_data:
-        user_id = item.user_id
-        if user_id is not None and user_id not in user_list:
-            user_list.append(user_id)
+    user_ids = {item.user_id for item in lst if item.user_id}
 
-    if user_list:
+    if user_ids:
         current_app.logger.info("Retrieving account information")
         account_list = get_bulk_accounts_dict(
-            user_list,
+            list(user_ids),
             state.fund_short_name,
         )
         return account_list
     else:
-        current_app.logger.warning(
-            "Could not retrieve the account information"
-        )
         return []
 
 
@@ -227,7 +210,7 @@ def add_user_info(list_data: list, state, account_info: list = None) -> list:
     return list_data
 
 
-def order_by_dates(lst: list[dict]) -> tuple[dict]:
+def order_by_dates(lst: list) -> tuple:
     """Sorts a list of items by 'date_created' in descending order"""
 
     return sorted(lst, key=lambda item: item.date_created, reverse=True)
