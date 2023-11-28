@@ -1,4 +1,5 @@
-{% macro banner_summary(fund_name, fund_shortname, project_reference, project_name, funding_amount_requested, assessment_status, flag_status) %}
+{% macro banner_summary(fund_name,fund_shortname, project_reference, project_name, funding_amount_requested, assessment_status, flag_status, display_status=True) %}
+
 <div class="fsd-banner-background">
 <div class="govuk-width-container">
     <div class="govuk-grid-row">
@@ -12,7 +13,7 @@
                         <p class="govuk-body-l fsd-banner-content ">Total funding requested: £{{ "{:,.2f}".format(funding_amount_requested | float) }}</p>
                     {% endif %}
 
-                    {% if g.access_controller.has_any_assessor_role %}
+                    {% if g.access_controller.has_any_assessor_role and display_status %}
                         <p><strong class="govuk-tag govuk-tag--grey govuk-!-margin-top-4">{{ assessment_status }}</strong>
                         {% if "Flagged" in flag_status or flag_status in ["Multiple flags to resolve", "Stopped", "Flagged"] %}
                             <p class="govuk-body-l fsd-banner-content fsd-banner-collapse-padding govuk-!-margin-top-3">{{ flag_status or "" }}</p>
