@@ -43,9 +43,7 @@ class TestActivityTrail:
                 "app.blueprints.assessments.activity_trail.get_user_info",
                 return_value=self._accounts_list,
             )
-            result = add_user_info(
-                self.list_data_class, self.state, self._accounts_list
-            )
+            result = add_user_info(self.list_data_class, self.state)
 
         expected_result = [
             AssociatedTags(
