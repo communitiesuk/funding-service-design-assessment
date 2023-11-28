@@ -16,7 +16,7 @@
 {% from "macros/scores_justification.html" import score as scores %}
 {% from "macros/tags_table.html" import tags %}
 
-
+{% set assessment_status = assessment_status if assessment_status is defined else None %}
 {% block header %}
 <header role="banner" data-module="govuk-header">
     <nav class="govuk-width-container govuk-header__navigation">
