@@ -17,6 +17,7 @@
 {% from "macros/tags_table.html" import tags %}
 
 {% set assessment_status = assessment_status if assessment_status is defined else None %}
+{% set fund_shortname = fund_shortname if fund_shortname is defined else None %}
 {% block header %}
 <header role="banner" data-module="govuk-header">
     <nav class="govuk-width-container govuk-header__navigation">
@@ -31,6 +32,7 @@
 
     {{ banner_summary(
     (state.fund_name if state else fund.name),
+    fund_shortname,
     sub_criteria.short_id if sub_criteria else state.short_id,
     sub_criteria.project_name if sub_criteria else state.project_name,
     sub_criteria.funding_amount_requested if sub_criteria else state.funding_amount_requested,
