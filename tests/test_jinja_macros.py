@@ -630,7 +630,16 @@ class TestJinjaMacros(object):
 
         assert expected_unique_id in rendered_html, "Unique ID not found"
 
-    def test_banner_summary_macro(self, request_ctx):
+    @pytest.mark.parametrize(
+        "fund_short_name, show_funding_amount_requested",
+        [
+            ("TFID", True),
+            ("DPIF", False),
+        ],
+    )
+    def test_banner_summary_macro(
+        self, request_ctx, fund_short_name, show_funding_amount_requested
+    ):
         fund_name = "Test Fund"
         project_reference = "TEST123"
         project_name = "Test Project"
@@ -639,12 +648,14 @@ class TestJinjaMacros(object):
         flag_status = "Flagged"
 
         rendered_html = render_template_string(
-            "{{ banner_summary(fund_name, project_reference, project_name,"
-            " funding_amount_requested, assessment_status, flag_status) }}",
+            "{{ banner_summary(fund_name, fund_short_name, project_reference,"
+            " project_name, funding_amount_requested, assessment_status,"
+            " flag_status) }}",
             banner_summary=get_template_attribute(
                 "macros/banner_summary.html", "banner_summary"
             ),
             fund_name=fund_name,
+            fund_short_name=fund_short_name,
             project_reference=project_reference,
             project_name=project_name,
             funding_amount_requested=funding_amount_requested,
@@ -674,11 +685,17 @@ class TestJinjaMacros(object):
             ),
             text="Project name: Test Project",
         ), "Project name not found"
-        assert soup.find(
+
+        funding_amount_requested_element = soup.find(
             "p",
             class_="govuk-body-l fsd-banner-content",
             text="Total funding requested: £123,456.78",
-        ), "Funding amount not found"
+        )
+        if show_funding_amount_requested:
+            assert funding_amount_requested_element, "Funding amount not found"
+        else:
+            assert not funding_amount_requested_element, "Funding amount found"
+
         assert soup.find(
             "strong",
             class_="govuk-tag",
@@ -690,6 +707,7 @@ class TestJinjaMacros(object):
 
     def test_stopped_flag_macro(self, request_ctx):
         fund_name = "Test Fund"
+        fund_short_name = "TFID"
         project_reference = "TEST123"
         project_name = "Test Project"
         funding_amount_requested = 123456.78
@@ -697,12 +715,14 @@ class TestJinjaMacros(object):
         flag_status = "Stopped"
 
         rendered_html = render_template_string(
-            "{{ banner_summary(fund_name, project_reference, project_name,"
-            " funding_amount_requested, assessment_status, flag_status) }}",
+            "{{ banner_summary(fund_name, fund_short_name, project_reference,"
+            " project_name, funding_amount_requested, assessment_status,"
+            " flag_status) }}",
             banner_summary=get_template_attribute(
                 "macros/banner_summary.html", "banner_summary"
             ),
             fund_name=fund_name,
+            fund_short_name=fund_short_name,
             project_reference=project_reference,
             project_name=project_name,
             funding_amount_requested=funding_amount_requested,
