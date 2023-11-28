@@ -44,8 +44,7 @@ class TestActivityTrail:
                 return_value=self._accounts_list,
             )
             result = add_user_info(
-                self.list_data_class,
-                self.state,
+                self.list_data_class, self.state, self._accounts_list
             )
 
         expected_result = [
