@@ -14,6 +14,7 @@
 
     {{ banner_summary(
         (state.fund_name if state else fund.name),
+        state.fund_short_name,
         sub_criteria.short_id if sub_criteria else state.short_id,
         sub_criteria.project_name if sub_criteria else state.project_name,
         sub_criteria.funding_amount_requested if sub_criteria else state.funding_amount_requested,
