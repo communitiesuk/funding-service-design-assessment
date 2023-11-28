@@ -194,7 +194,7 @@ def get_user_info(lst: list, state: AssessorTaskList) -> dict:
         return []
 
 
-def add_user_info(list_data: list, state, account_info: list = None) -> list:
+def add_user_info(list_data: list, state, account_info: dict) -> list:
     account_info = get_user_info(list_data, state)
     if list_data is None:
         return []
