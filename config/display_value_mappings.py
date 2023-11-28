@@ -85,6 +85,27 @@ search_params_dpif = {
     "team_in_place": ALL_VALUE,
 }
 
+dpi_filters = [
+    {
+        "name": "team_in_place",
+        "values": ["ALL", "Yes", "No"],
+    },
+    {
+        "name": "datasets",
+        "values": ["ALL", "Yes", "No"],
+    },
+    {
+        "name": "publish_datasets",
+        "values": [
+            "ALL",
+            "0-to-3-months",
+            "4-to-7-months",
+            "8-to-11-months",
+            "longer-than-11-months",
+        ],
+    },
+]
+
 search_params_tag = {
     "search_term": "",
     "search_in": "value",
