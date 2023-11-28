@@ -60,12 +60,30 @@ tagging_bp = Blueprint(
 )
 @check_access_application_id(roles_required=["ASSESSOR"])
 def load_change_tags(application_id):
-    tag_association_form = TagAssociationForm()
 
+    tag_association_form = TagAssociationForm()
     if request.method == "POST":
+        associated_tags = get_associated_tags_for_application(application_id)
+        association_form_data = tag_association_form.tags.data
         updated_tags = []
-        for tag_id in tag_association_form.tags.data:
-            updated_tags.append({"tag_id": tag_id, "user_id": g.account_id})
+
+        if associated_tags and len(associated_tags) > len(
+            association_form_data
+        ):
+            # Create a list of dictionaries with tag_id and user_id
+            updated_tags = [
+                {"tag_id": tag_id, "user_id": g.account_id}
+                for tag_id in association_form_data
+            ]
+            # Fill remaining with a empty tag_id and current user account_id
+            updated_tags.extend([{"tag_id": "", "user_id": g.account_id}])
+        else:
+            # If associated_tags is zero or null, or not greater than association_form_data
+            updated_tags = [
+                {"tag_id": tag_id, "user_id": g.account_id}
+                for tag_id in association_form_data
+            ]
+
         update_associated_tags(application_id, updated_tags)
         return redirect(
             url_for(
@@ -73,6 +91,7 @@ def load_change_tags(application_id):
                 application_id=application_id,
             )
         )
+
     state = get_state_for_tasklist_banner(application_id)
     all_tags = get_tags_for_fund_round(state.fund_id, state.round_id, "")
     associated_tags = get_associated_tags_for_application(application_id)

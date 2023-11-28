@@ -217,6 +217,21 @@ def get_associated_tags_for_application(application_id) -> List[Tag]:
         return None
 
 
+def get_all_associated_tags_for_application(application_id) -> List[Tag]:
+    endpoint = Config.APPLICATION_ASSOCIATED_ALL_TAGS_ENDPOINT.format(
+        application_id=application_id
+    )
+    result = get_data(endpoint)
+    if result:
+        result = [AssociatedTag.from_dict(item) for item in result]
+        return result
+    else:
+        current_app.logger.info(
+            f"No associated tags found for application: {application_id}."
+        )
+        return []
+
+
 def update_associated_tags(application_id, tags) -> bool:
     endpoint = Config.ASSESSMENT_ASSOCIATE_TAGS_ENDPOINT.format(
         application_id=application_id
@@ -230,7 +245,6 @@ def update_associated_tags(application_id, tags) -> bool:
         f" application_id '{application_id}'"
     )
     response = requests.put(endpoint, json=payload)
-
     was_successful = response.ok
     if not was_successful:
         current_app.logger.error(
@@ -347,7 +361,7 @@ def get_bulk_accounts_dict(account_ids: List, fund_short_name: str):
 
 
 def get_score_and_justification(
-    application_id, sub_criteria_id, score_history=True
+    application_id, sub_criteria_id=None, score_history=True
 ):
     score_url = Config.ASSESSMENT_SCORES_ENDPOINT
     score_params = {
