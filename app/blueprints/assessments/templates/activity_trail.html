@@ -16,6 +16,8 @@
 {% from "macros/scores_justification.html" import score as scores %}
 {% from "macros/tags_table.html" import tags %}
 
+{% set pageHeading = "Activity trail" %}
+
 {% set assessment_status = assessment_status if assessment_status is defined else None %}
 {% set fund_shortname = fund_shortname if fund_shortname is defined else None %}
 {% block header %}
