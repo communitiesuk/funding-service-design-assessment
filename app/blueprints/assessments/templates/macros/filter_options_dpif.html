@@ -21,7 +21,7 @@ local_authorities, round_details, show_clear_filters, tag_option_groups) %}
                     {% for filter_type in filter_types %}
                     <div
                         class="govuk-form-group govuk-!-display-inline-block govuk-!-margin-bottom-0 govuk-!-margin-right-2">
-                        <label class="govuk-label" for="filter_{{ filter_type[" name"] }}">
+                        <label class="govuk-label" for="filter_{{ filter_type['name'] }}">
                             Filter by {{ filter_type["name"] | replace("_", " ") }}
                         </label>
                         <select class="govuk-select" id="filter_{{ filter_type['name']}}"
