@@ -2,7 +2,7 @@
 {% from "macros/justification.html" import justification %}
 {%- from "govuk_frontend_jinja/components/button/macro.html" import govukButton -%}
 
-{% macro scores_justification(score_form, rescore_form, is_rescore, latest_score, application_id, sub_criteria_id, round_guidance_url) %}
+{% macro scores_justification(score_form, rescore_form, is_rescore, latest_score, application_id, sub_criteria_id, round_guidance_url, score_list) %}
 
 <div class="govuk-grid-column-full s26-scoring">
     {% if latest_score %}
@@ -21,7 +21,7 @@
             <p class="govuk-body-s"> <strong>Date/time:</strong> {{ latest_score.date_created|utc_to_bst }}</p>
         </div>
     </div>
-    {% if score_form.score_list %}
+    {% if score_list %}
     <details class="govuk-details govuk-!-margin-top-4" data-module="govuk-details">
         <summary class="govuk-details__summary">
           <span class="govuk-details__summary-text">
@@ -30,7 +30,7 @@
         </summary>
         <div class="govuk-details__text">
           <div id="anchor">
-            {% for score in score_form.score_list %}
+            {% for score in score_list %}
             <p><strong>Score: </strong>{{ score["score"] }}</p>
             <p><strong>Rationale: </strong>{{ score["justification"] }}</p>
             <p class="govuk-body-s"><strong>{{ score["user_full_name"] }}: </strong> {{ score["highest_role"]|all_caps_to_human }}, {{ score["user_email"] }}</p>
