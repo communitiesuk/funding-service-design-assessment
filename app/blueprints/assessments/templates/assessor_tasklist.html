@@ -41,7 +41,7 @@
 
 {% block content %}
 <div class="govuk-grid-row">
-    {% if migration_banner %}
+    {% if migration_banner_enabled %}
         {{ migration_banner() }}
     {% endif %}
 {% if toggle_dict.get("TAGGING") %}

@@ -95,7 +95,7 @@ def flag(application_id):
         referrer=request.referrer,
         state=state,
         teams_available=teams_available,
-        migration_banner=Config.MIGRATION_BANNER_ENABLED,
+        migration_banner_enabled=Config.MIGRATION_BANNER_ENABLED,
     )
 
 

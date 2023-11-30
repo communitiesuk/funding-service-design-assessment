@@ -65,7 +65,7 @@
 {#    CLOSE THE GOVUK-WIDTH-CONTAINER AND OPEN A WIDER CONTAINER FOR THE TABLE VIEW #}
 
 <div class="govuk-grid-row">
-    {% if migration_banner %}
+    {% if migration_banner_enabled %}
         {{ migration_banner() }}
     {% endif %}
     <section class="govuk-width-container govuk-grid-column-full">

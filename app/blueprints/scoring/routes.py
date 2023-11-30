@@ -125,5 +125,5 @@ def score(
         flag_status=flag_status,
         assessment_status=assessment_status,
         is_flaggable=False,  # Flag button is disabled in sub-criteria page
-        migration_banner=Config.MIGRATION_BANNER_ENABLED,
+        migration_banner_enabled=Config.MIGRATION_BANNER_ENABLED,
     )
