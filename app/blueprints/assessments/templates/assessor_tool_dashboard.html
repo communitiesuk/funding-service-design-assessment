@@ -12,16 +12,16 @@
 {% block content %}
     <div class="govuk-phase-banner flex-parent-element">
         {{ logout_partial(sso_logout_url) }}
-    </div>  
+    </div>
 
     <div class="govuk-width-container">
-        
+
         <h1 class="govuk-heading-xl">Funding service dashboard</h1>
 
         {% if migration_banner_enabled %}
             {{ migration_banner() }}
         {% endif %}
-        
+
         <div class="govuk-grid-column">
             {{ assessor_tool_dashboard_filters(landing_filters, has_any_assessor_role) }}
         </div>

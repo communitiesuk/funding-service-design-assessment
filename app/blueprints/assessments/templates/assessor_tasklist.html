@@ -30,6 +30,7 @@
 
     {{ banner_summary(
         state.fund_name,
+        state.fund_short_name,
         state.short_id,
         state.project_name,
         state.funding_amount_requested,
@@ -77,12 +78,20 @@
 
 {% if g.access_controller.has_any_assessor_role %}
 <div class="govuk-grid-row">
-<div class="govuk-grid-column-three-quarters">
-       {{ flag_tabs(state, application_id, teams_flag_stats, flags_list, accounts_list) }}
-</div>
-<div class="govuk-grid-column-one-quarter">
+
+
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-one-half">
+        {{ flag_tabs(state, application_id, teams_flag_stats, flags_list, accounts_list) }}
+    </div>
+
+    <div class="govuk-grid-column-one-quarter gov-uk-table__cell--align-right left-margin govuk-!-padding-top-1">
+        <p class="govuk-body"> <a href="{{ url_for('assessment_bp.activity_trail', application_id=application_id) }}">View activity trail</a></p>
+      </div>
+
     <div class="gov-uk-table__cell--align-right">
-    <span class="left govuk-!-padding-right-1">
+    <span class="left govuk-!-padding-right-4">
         {% if is_flaggable and g.access_controller.has_any_assessor_role %}
         {{ flag_application_button(application_id) }}
         {% endif %}
