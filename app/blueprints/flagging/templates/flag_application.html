@@ -7,6 +7,7 @@
 {%- from "govuk_frontend_jinja/components/checkboxes/macro.html" import govukCheckboxes -%}
 {%- from "govuk_frontend_jinja/components/radios/macro.html" import govukRadios %}
 {% from "macros/banner_summary.html" import banner_summary %}
+{% from "macros/migration_banner.html" import migration_banner %}
 {% set pageHeading -%}
 {{ "Error: " if form.errors }}Flag application
 {% endset %}
@@ -46,6 +47,10 @@
 {% endif %}
 
 <div class="govuk-grid-row">
+    {% if migration_banner %}
+        {{ migration_banner() }}
+    {% endif %}
+
         <div>
             <div class="govuk-grid-column-two-thirds">
                 <form method="post">

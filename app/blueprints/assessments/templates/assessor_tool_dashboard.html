@@ -6,15 +6,22 @@
 {% from "macros/logout_partial.html" import logout_partial %}
 {% from "macros/fund_dashboard_summary.html" import fund_summary %}
 {% from "macros/assessor_tool_dashboard_filters.html" import assessor_tool_dashboard_filters %}
+{% from "macros/migration_banner.html" import migration_banner %}
 
 {% set pageHeading %}Assessment tool dashboard{% endset %}
 {% block content %}
     <div class="govuk-phase-banner flex-parent-element">
         {{ logout_partial(sso_logout_url) }}
-    </div>
+    </div>  
 
     <div class="govuk-width-container">
+        
         <h1 class="govuk-heading-xl">Funding service dashboard</h1>
+
+        {% if migration_banner %}
+            {{ migration_banner() }}
+        {% endif %}
+        
         <div class="govuk-grid-column">
             {{ assessor_tool_dashboard_filters(landing_filters, has_any_assessor_role) }}
         </div>

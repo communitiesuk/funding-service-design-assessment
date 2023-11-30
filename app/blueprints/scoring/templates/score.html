@@ -6,6 +6,7 @@
 {% from "macros/flag_application_button.html" import flag_application_button %}
 {% from "macros/comments_summary.html" import comment_summary %}
 {% from "macros/sub_criteria_heading.html" import sub_criteria_heading %}
+{% from "macros/migration_banner.html" import migration_banner %}
 {% set pageHeading -%}
 {% if score_form.errors.get('score') or score_form.errors.get('justification') %}
 Error:
@@ -38,6 +39,10 @@ Score – {{ sub_criteria.name }} – {{ sub_criteria.project_name }}
             </ul>
         </div>
     </div>
+{% endif %}
+
+{% if migration_banner %}
+    {{migration_banner()}}
 {% endif %}
 
 {% if is_flaggable and g.access_controller.has_any_assessor_role %}

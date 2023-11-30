@@ -2,6 +2,7 @@
 {%- from "govuk_frontend_jinja/components/table/macro.html" import govukTable -%}
 {%- from "govuk_frontend_jinja/components/textarea/macro.html" import govukTextarea -%}
 {% from "macros/banner_summary.html" import banner_summary %}
+{% from "macros/migration_banner.html" import migration_banner %}
 
 {% block header %}
 {% include "./components/header.html" %}
@@ -10,6 +11,9 @@
 {% block content %}
 <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
+            {% if migration_banner %}
+                {{ migration_banner() }}
+            {% endif %}
 
             <h2 class="govuk-heading-l govuk-!-margin-top-4">Export application data</h2>
             <ul class="govuk-list">
