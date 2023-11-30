@@ -217,7 +217,6 @@ jobs:
       contents: read  # This is required for actions/checkout
     needs: [ tag_version, post_dev_deploy_tests, paketo_build, copilot_environments_workflow_setup ]
     runs-on: ubuntu-latest
-    continue-on-error: true
     environment: test
     steps:
     - name: Git clone the repository
