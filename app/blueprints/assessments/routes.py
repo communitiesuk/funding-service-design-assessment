@@ -6,6 +6,16 @@ from datetime import datetime
 from urllib.parse import quote_plus
 from urllib.parse import unquote_plus
 
+from app.blueprints.assessments.activity_trail import (
+    add_user_info,
+)
+from app.blueprints.assessments.activity_trail import AssociatedTags
+from app.blueprints.assessments.activity_trail import CheckboxForm
+from app.blueprints.assessments.activity_trail import Comments
+from app.blueprints.assessments.activity_trail import filter_all_activities
+from app.blueprints.assessments.activity_trail import Flags
+from app.blueprints.assessments.activity_trail import Scores
+from app.blueprints.assessments.activity_trail import SearchForm
 from app.blueprints.assessments.forms.assessment_form import (
     AssessmentCompleteForm,
 )
@@ -55,6 +65,9 @@ from app.blueprints.authentication.validation import (
 from app.blueprints.scoring.helpers import get_scoring_class
 from app.blueprints.services.aws import get_file_for_download_from_aws
 from app.blueprints.services.data_services import (
+    get_all_associated_tags_for_application,
+)
+from app.blueprints.services.data_services import (
     get_all_uploaded_documents_theme_answers,
 )
 from app.blueprints.services.data_services import get_applicant_export
@@ -77,6 +90,7 @@ from app.blueprints.services.data_services import get_fund
 from app.blueprints.services.data_services import get_funds
 from app.blueprints.services.data_services import get_qa_complete
 from app.blueprints.services.data_services import get_round
+from app.blueprints.services.data_services import get_score_and_justification
 from app.blueprints.services.data_services import get_sub_criteria
 from app.blueprints.services.data_services import (
     get_sub_criteria_theme_answers,
@@ -100,6 +114,7 @@ from config import Config
 from config.display_value_mappings import assessment_statuses
 from config.display_value_mappings import asset_types
 from config.display_value_mappings import cohort
+from config.display_value_mappings import dpi_filters
 from config.display_value_mappings import funding_types
 from config.display_value_mappings import landing_filters
 from config.display_value_mappings import search_params_cof
@@ -247,10 +262,12 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
         "countries": ",".join(countries),
     }
 
+    # matches the query parameters provided in the search and filter form
     search_params, show_clear_filters = match_search_params(
         search_params, request.args
     )
 
+    # request all the application overviews based on the search parameters
     application_overviews = get_application_overviews(
         fund_id, round_id, search_params
     )
@@ -351,6 +368,7 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
         regions=all_application_locations.regions,
         local_authorities=all_application_locations._local_authorities,
         migration_banner=Config.MIGRATION_BANNER_ENABLED,
+        dpi_filters=dpi_filters,
     )
 
 
@@ -709,6 +727,61 @@ def application(application_id):
         all_uploaded_documents_section_available=fund_round.all_uploaded_documents_section_available,
         max_possible_sub_criteria_score=scoring_form.max_score,
         migration_banner=Config.MIGRATION_BANNER_ENABLED,
+    )
+
+
+@assessment_bp.route("/activity_trail/<application_id>", methods=["GET"])
+@check_access_application_id
+def activity_trail(application_id: str):
+    state = get_state_for_tasklist_banner(application_id)
+
+    # There is a better way of doing it by moving
+    # all activity related logics to an endpoint in the
+    # assessment store and write up a query to fetch all the information.
+
+    # ALL FLAGS
+    flags_list = get_flags(application_id)
+    all_flags = Flags.from_list(flags_list)
+
+    # ALL COMMENTS
+    comments_list = get_comments(application_id)
+    all_comments = Comments.from_list(comments_list)
+
+    # ALL SCORES
+    scores = get_score_and_justification(
+        application_id=application_id, score_history=True
+    )
+    all_scores = Scores.from_list(scores)
+
+    # ALL TAGS
+    tags = get_all_associated_tags_for_application(application_id)
+    all_tags = AssociatedTags.from_associated_tags_list(tags)
+
+    # Add search box and checkbox filters
+    available_filters = ["All activity", "Comments", "Score", "Flags", "Tags"]
+    search_form = SearchForm(request.form)
+    checkbox_form = CheckboxForm(request.form)
+
+    # Filter all activities
+    search_keyword = request.args.get("search")
+    checkbox_filters = request.args.getlist("filter")
+    all_activities = all_scores + all_comments + all_tags + all_flags
+
+    update_user_info = add_user_info(all_activities, state)
+    _all_activities = filter_all_activities(
+        update_user_info, search_keyword, checkbox_filters
+    )
+
+    return render_template(
+        "activity_trail.html",
+        application_id=application_id,
+        state=state,
+        activities=_all_activities,
+        search_form=search_form,
+        checkbox_form=checkbox_form,
+        available_filters=available_filters,
+        search_keyword=search_keyword,
+        checkbox_filters=checkbox_filters,
     )
 
 
