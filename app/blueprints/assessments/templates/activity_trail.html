@@ -20,6 +20,8 @@
 
 {% set assessment_status = assessment_status if assessment_status is defined else None %}
 {% set fund_shortname = fund_shortname if fund_shortname is defined else None %}
+{% set funding_amount = sub_criteria.funding_amount_requested if sub_criteria else state.funding_amount_requested %}
+
 {% block header %}
 <header role="banner" data-module="govuk-header">
     <nav class="govuk-width-container govuk-header__navigation">
@@ -34,10 +36,10 @@
 
     {{ banner_summary(
     (state.fund_name if state else fund.name),
-    fund_shortname,
+    state.fund_short_name,
     sub_criteria.short_id if sub_criteria else state.short_id,
     sub_criteria.project_name if sub_criteria else state.project_name,
-    sub_criteria.funding_amount_requested if sub_criteria else state.funding_amount_requested,
+    funding_amount,
     assessment_status,
     flag_status,
     display_status=False
@@ -45,20 +47,23 @@
 </header>
 {% endblock header %}
 
-
 {% block content %}
-{% set tag_color =
-    'flagged-tag' if state.workflow_status == 'FLAGGED'
-    else 'stopped-tag' if state.workflow_status == 'STOPPED'
-    else 'not-started-tag' if state.workflow_status == 'NOT_STARTED'
+
+{% set tag_color = 'not-started-tag' if state.workflow_status == 'NOT_STARTED' else state.workflow_status
 %}
+
+{# this logic may need to be moved to python when the workflow status and flag status mechanism is sorted #}
+{% set status = state.workflow_status|remove_dashes_underscores_capitalize|title %}
+{% set display_workflow_status = "Assessment complete" if status=="Completed" and not state.is_qa_complete
+else "QA complete" if status=="Completed" and  state.is_qa_complete
+else status %}
 
 <main class="govuk-main-wrapper" id="main-content" role="main">
     <div class="govuk-grid-row">
         <div>
             <div class="govuk-!-padding-left-3">
                 <h1 class="govuk-heading-l">Activity trail</h1>
-                <p class="govuk-body">Current assessment status: <span class="{{tag_color}} govuk-body">{{state.workflow_status|remove_dashes_underscores_capitalize|title }}</span></p>
+                <p class="govuk-body">Current assessment status: <span class="{{tag_color}} govuk-body">{{display_workflow_status }}</span></p>
             </div>
 
 
