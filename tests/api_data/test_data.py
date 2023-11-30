@@ -263,6 +263,12 @@ mock_api_results = {
         "short_name": "COF",
         "description": "unit testing fund",
     },
+    "fund_store/funds/DPIF": {
+        "id": "DPIF",
+        "name": "Digital Planning Innovation Fund",
+        "short_name": "DPIF",
+        "description": "unit testing fund",
+    },
     "fund_store/funds/{fund_id}/rounds/{round_id}": {
         "id": test_round_id,
         "fund_id": test_fund_id,

@@ -114,6 +114,7 @@ from config import Config
 from config.display_value_mappings import assessment_statuses
 from config.display_value_mappings import asset_types
 from config.display_value_mappings import cohort
+from config.display_value_mappings import dpi_filters
 from config.display_value_mappings import funding_types
 from config.display_value_mappings import landing_filters
 from config.display_value_mappings import search_params_cof
@@ -260,10 +261,12 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
         "countries": ",".join(countries),
     }
 
+    # matches the query parameters provided in the search and filter form
     search_params, show_clear_filters = match_search_params(
         search_params, request.args
     )
 
+    # request all the application overviews based on the search parameters
     application_overviews = get_application_overviews(
         fund_id, round_id, search_params
     )
@@ -363,6 +366,7 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
         countries=all_application_locations.countries,
         regions=all_application_locations.regions,
         local_authorities=all_application_locations._local_authorities,
+        dpi_filters=dpi_filters,
     )
 
 
