@@ -62,9 +62,14 @@ secrets:
 
 # You can override any of the values defined above by environment.
 environments:
+  dev:
+    variables:
+      FORCE_OPEN_ALL_LIVE_ASSESSMENT_ROUNDS: "True"
   test:
     deployment:
       rolling: 'recreate'
+    variables:
+      FORCE_OPEN_ALL_LIVE_ASSESSMENT_ROUNDS: "True"
   uat:
     count:
       range: 2-4
