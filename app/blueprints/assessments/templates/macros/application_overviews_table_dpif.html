@@ -12,13 +12,12 @@
 
 {% macro render(application_overviews, round_details, query_params, asset_types,
    assessment_statuses,countries, regions, local_authorities, show_clear_filters,
-    sort_column, sort_order, tag_option_groups, tags, tagging_purpose_config) -%}
+    sort_column, sort_order, tag_option_groups, tags, tagging_purpose_config, dpi_filters) -%}
 <nav class="search-bar-flex-container">
   <form method="get" class="govuk-!-width-full">
     {{ filter_options(
       query_params,
-      team_in_place,
-      'team_in_place',
+      dpi_filters,
       'Search reference or project name',
       assessment_statuses,
       countries,
