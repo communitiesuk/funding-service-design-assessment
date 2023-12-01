@@ -22,7 +22,7 @@ from app.error_handlers import forbidden
 from app.error_handlers import internal_server_error
 from app.error_handlers import not_found
 from config import Config
-from flask import Flask
+from flask import Flask, request, render_template
 from flask import g
 from flask_assets import Environment
 from flask_compress import Compress
@@ -48,11 +48,11 @@ def create_app() -> Flask:
         init_sentry()
         flask_app.config.from_object("config.Config")
 
-        toggle_client = None
-        if os.getenv("FLASK_ENV") != "unit_test":
-            initialise_toggles_redis_store(flask_app)
-            toggle_client = create_toggles_client()
-            load_toggles(Config.FEATURE_CONFIG, toggle_client)
+        # toggle_client = None
+        # if os.getenv("FLASK_ENV") != "unit_test":
+        #     initialise_toggles_redis_store(flask_app)
+        #     toggle_client = create_toggles_client()
+        #     load_toggles(Config.FEATURE_CONFIG, toggle_client)
 
         flask_app.register_error_handler(404, not_found)
         flask_app.register_error_handler(403, forbidden)
@@ -122,12 +122,13 @@ def create_app() -> Flask:
                 service_meta_author="DLUHC",
                 sso_logout_url=flask_app.config.get("SSO_LOGOUT_URL"),
                 g=g,
-                toggle_dict={
-                    feature.name: feature.is_enabled()
-                    for feature in toggle_client.list()
-                }
-                if toggle_client
-                else {},
+                # toggle_dict={
+                #     feature.name: feature.is_enabled()
+                #     for feature in toggle_client.list()
+                # }
+                # if toggle_client
+                # else {},
+                toggle_dict = {}
             )
 
         # Bundle and compile assets
@@ -176,6 +177,12 @@ def create_app() -> Flask:
                 response.headers["Pragma"] = "no-cache"
                 response.headers["Expires"] = "0"
             return response
+        
+
+        @flask_app.before_request
+        def filter_all_requests():            
+            if not(request.path.endswith("js") or request.path.endswith("css")):
+                return render_template("system_unavailable.html")
 
         return flask_app
 
