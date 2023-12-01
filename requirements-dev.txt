@@ -458,7 +458,7 @@ s3transfer==0.7.0
     # via
     #   -r requirements.txt
     #   boto3
-selenium==4.8.2
+selenium==4.15.2
     # via -r requirements-dev.in
 sentry-sdk[flask]==1.31.0
     # via
