@@ -112,6 +112,26 @@ fund_specific_claim_map = {
             "roles": ["COF_COMMENTER"],
         },
     },
+    "DPIF": {
+        "LEAD_ASSESSOR": {
+            "accountId": "dpif-lead-assessor",
+            "email": "dpif-lead-assessor@test.com",
+            "fullName": "Test User",
+            "roles": ["DPIF_LEAD_ASSESSOR", "DPIF_ASSESSOR", "DPIF_COMMENTER"],
+        },
+        "ASSESSOR": {
+            "accountId": "dpif-assessor",
+            "email": "dpif-assessor@test.com",
+            "fullName": "Test User",
+            "roles": ["DPIF_ASSESSOR", "DPIF_COMMENTER"],
+        },
+        "COMMENTER": {
+            "accountId": "dpif-commenter",
+            "email": "dpif-commenter@test.com",
+            "fullName": "Test User",
+            "roles": ["DPIF_COMMENTER"],
+        },
+    },
 }
 
 test_roleless_user_claims = {
@@ -297,6 +317,7 @@ def mock_get_funds():
         Fund.from_json(mock_api_results["fund_store/funds/NSTF"]),
         Fund.from_json(mock_api_results["fund_store/funds/CYP"]),
         Fund.from_json(mock_api_results["fund_store/funds/COF"]),
+        Fund.from_json(mock_api_results["fund_store/funds/DPIF"]),
     ]
 
     with (
@@ -350,6 +371,7 @@ def mock_get_round(mocker):
         "app.blueprints.assessments.routes.get_round",
         "app.blueprints.tagging.routes.get_round",
         "app.blueprints.services.shared_data_helpers.get_round",
+        "app.blueprints.authentication.validation.get_round",
     ]
 
     mock_round_info = Round.from_dict(
@@ -824,7 +846,7 @@ def mock_get_tag_types(mocker):
             function_module_path,
             return_value=[
                 TagType(
-                    id="tag_type_1",
+                    id="type_1",
                     purpose="POSITIVE",
                     description="Tag type 1 description",
                 )

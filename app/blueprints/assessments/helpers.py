@@ -182,7 +182,7 @@ def generate_assessment_info_csv(data: dict):
     csv_writer.writerow(headers)
 
     for data_entry in data:
-        rows = data_entry.values()
+        rows = [data_entry.get(header, "") for header in headers]
         csv_writer.writerow(rows)
 
     return output.getvalue()

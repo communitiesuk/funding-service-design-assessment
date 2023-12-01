@@ -48,6 +48,7 @@ class AssociatedTag:
     user_id: str
     associated: bool
     purpose: str
+    created_at: str = ""
 
     @classmethod
     def from_dict(cls, d: dict):

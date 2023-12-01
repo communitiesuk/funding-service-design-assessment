@@ -6,6 +6,16 @@ from datetime import datetime
 from urllib.parse import quote_plus
 from urllib.parse import unquote_plus
 
+from app.blueprints.assessments.activity_trail import (
+    add_user_info,
+)
+from app.blueprints.assessments.activity_trail import AssociatedTags
+from app.blueprints.assessments.activity_trail import CheckboxForm
+from app.blueprints.assessments.activity_trail import Comments
+from app.blueprints.assessments.activity_trail import filter_all_activities
+from app.blueprints.assessments.activity_trail import Flags
+from app.blueprints.assessments.activity_trail import Scores
+from app.blueprints.assessments.activity_trail import SearchForm
 from app.blueprints.assessments.forms.assessment_form import (
     AssessmentCompleteForm,
 )
@@ -45,7 +55,7 @@ from app.blueprints.authentication.validation import (
     check_access_application_id,
 )
 from app.blueprints.authentication.validation import (
-    check_access_fund_short_name,
+    check_access_fund_short_name_round_sn,
 )
 from app.blueprints.authentication.validation import get_countries_from_roles
 from app.blueprints.authentication.validation import has_access_to_fund
@@ -54,6 +64,9 @@ from app.blueprints.authentication.validation import (
 )
 from app.blueprints.scoring.helpers import get_scoring_class
 from app.blueprints.services.aws import get_file_for_download_from_aws
+from app.blueprints.services.data_services import (
+    get_all_associated_tags_for_application,
+)
 from app.blueprints.services.data_services import (
     get_all_uploaded_documents_theme_answers,
 )
@@ -77,6 +90,7 @@ from app.blueprints.services.data_services import get_fund
 from app.blueprints.services.data_services import get_funds
 from app.blueprints.services.data_services import get_qa_complete
 from app.blueprints.services.data_services import get_round
+from app.blueprints.services.data_services import get_score_and_justification
 from app.blueprints.services.data_services import get_sub_criteria
 from app.blueprints.services.data_services import (
     get_sub_criteria_theme_answers,
@@ -100,6 +114,7 @@ from config import Config
 from config.display_value_mappings import assessment_statuses
 from config.display_value_mappings import asset_types
 from config.display_value_mappings import cohort
+from config.display_value_mappings import dpi_filters
 from config.display_value_mappings import funding_types
 from config.display_value_mappings import landing_filters
 from config.display_value_mappings import search_params_cof
@@ -187,7 +202,7 @@ def landing():
             for rsl in round_summaries.values()
             for rs in rsl
         ),
-        show_assessments_live_rounds=Config.SHOW_ASSESSMENTS_LIVE_ROUNDS,
+        force_open_all_live_assessment_rounds=Config.FORCE_OPEN_ALL_LIVE_ASSESSMENT_ROUNDS,
     )
 
 
@@ -195,7 +210,7 @@ def landing():
     "/assessor_dashboard/<fund_short_name>/<round_short_name>/",
     methods=["GET"],
 )
-@check_access_fund_short_name
+@check_access_fund_short_name_round_sn
 def fund_dashboard(fund_short_name: str, round_short_name: str):
     if fund_short_name.upper() == "NSTF":
         search_params = {**search_params_nstf}
@@ -246,10 +261,12 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
         "countries": ",".join(countries),
     }
 
+    # matches the query parameters provided in the search and filter form
     search_params, show_clear_filters = match_search_params(
         search_params, request.args
     )
 
+    # request all the application overviews based on the search parameters
     application_overviews = get_application_overviews(
         fund_id, round_id, search_params
     )
@@ -306,7 +323,9 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
             ),
             "team_in_place": lambda x: x["team_in_place"],
             "datasets": lambda x: x["datasets"],
-            "publish_datasets": lambda x: x["publish_datasets"],
+            "publish_datasets": lambda x: x["publish_datasets"]
+            if x["publish_datasets"]
+            else str(x["publish_datasets"]),
         }
 
         # Define the sorting function based on the specified column
@@ -347,6 +366,7 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
         countries=all_application_locations.countries,
         regions=all_application_locations.regions,
         local_authorities=all_application_locations._local_authorities,
+        dpi_filters=dpi_filters,
     )
 
 
@@ -420,12 +440,50 @@ def display_sub_criteria(
     )
     flag_status = determine_flag_status(flags_list)
 
+    edit_comment_argument = request.args.get("edit_comment")
+    comment_id = request.args.get("comment_id")
+    show_comment_history = request.args.get("show_comment_history")
+
+    if comment_id and show_comment_history:
+        for comment_data in theme_matched_comments[theme_id]:
+            if comment_data.id == comment_id:
+                return render_template(
+                    "comments_history.html",
+                    comment_data=comment_data,
+                    back_href=url_for(
+                        "assessment_bp.display_sub_criteria",
+                        application_id=application_id,
+                        sub_criteria_id=sub_criteria_id,
+                        theme_id=theme_id,
+                    ),
+                    application_id=application_id,
+                    state=state,
+                    flag_status=flag_status,
+                    assessment_status=assessment_status,
+                )
+
+    if edit_comment_argument and comment_form.validate_on_submit():
+        comment = comment_form.comment.data
+        submit_comment(comment=comment, comment_id=comment_id)
+
+        return redirect(
+            url_for(
+                "assessment_bp.display_sub_criteria",
+                application_id=application_id,
+                sub_criteria_id=sub_criteria_id,
+                theme_id=theme_id,
+                _anchor="comments",
+            )
+        )
+
     common_template_config = {
         "sub_criteria": sub_criteria,
         "application_id": application_id,
         "comments": theme_matched_comments,
         "is_flaggable": False,  # Flag button is disabled in sub-criteria page,
         "display_comment_box": add_comment_argument,
+        "display_comment_edit_box": edit_comment_argument,
+        "comment_id": comment_id,
         "comment_form": comment_form,
         "current_theme": current_theme,
         "flag_status": flag_status,
@@ -664,11 +722,66 @@ def application(application_id):
     )
 
 
+@assessment_bp.route("/activity_trail/<application_id>", methods=["GET"])
+@check_access_application_id
+def activity_trail(application_id: str):
+    state = get_state_for_tasklist_banner(application_id)
+
+    # There is a better way of doing it by moving
+    # all activity related logics to an endpoint in the
+    # assessment store and write up a query to fetch all the information.
+
+    # ALL FLAGS
+    flags_list = get_flags(application_id)
+    all_flags = Flags.from_list(flags_list)
+
+    # ALL COMMENTS
+    comments_list = get_comments(application_id)
+    all_comments = Comments.from_list(comments_list)
+
+    # ALL SCORES
+    scores = get_score_and_justification(
+        application_id=application_id, score_history=True
+    )
+    all_scores = Scores.from_list(scores)
+
+    # ALL TAGS
+    tags = get_all_associated_tags_for_application(application_id)
+    all_tags = AssociatedTags.from_associated_tags_list(tags)
+
+    # Add search box and checkbox filters
+    available_filters = ["All activity", "Comments", "Score", "Flags", "Tags"]
+    search_form = SearchForm(request.form)
+    checkbox_form = CheckboxForm(request.form)
+
+    # Filter all activities
+    search_keyword = request.args.get("search")
+    checkbox_filters = request.args.getlist("filter")
+    all_activities = all_scores + all_comments + all_tags + all_flags
+
+    update_user_info = add_user_info(all_activities, state)
+    _all_activities = filter_all_activities(
+        update_user_info, search_keyword, checkbox_filters
+    )
+
+    return render_template(
+        "activity_trail.html",
+        application_id=application_id,
+        state=state,
+        activities=_all_activities,
+        search_form=search_form,
+        checkbox_form=checkbox_form,
+        available_filters=available_filters,
+        search_keyword=search_keyword,
+        checkbox_filters=checkbox_filters,
+    )
+
+
 @assessment_bp.route(
     "/assessor_export/<fund_short_name>/<round_short_name>/<report_type>",
     methods=["GET"],
 )
-@check_access_fund_short_name(roles_required=["LEAD_ASSESSOR"])
+@check_access_fund_short_name_round_sn(roles_required=["LEAD_ASSESSOR"])
 def assessor_export(
     fund_short_name: str, round_short_name: str, report_type: str
 ):
@@ -696,7 +809,7 @@ def assessor_export(
     "/feedback_export/<fund_short_name>/<round_short_name>",
     methods=["GET"],
 )
-@check_access_fund_short_name(roles_required=["LEAD_ASSESSOR"])
+@check_access_fund_short_name_round_sn(roles_required=["LEAD_ASSESSOR"])
 def feedback_export(fund_short_name: str, round_short_name: str):
     _round = get_round(
         fund_short_name,

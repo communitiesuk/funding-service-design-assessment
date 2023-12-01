@@ -2,8 +2,12 @@
 
     <dl class="govuk-summary-list">
         <div class="govuk-summary-list__row">
-            <h4 class="govuk-heading-s"><strong> {{ meta.question }} </strong></h4>
-            <span class="govuk-body"> {{ meta.answer | safe }} </span>
+            <dt>
+                <h4 class="govuk-heading-s"><strong> {{ meta.question }} </strong></h4>
+            </dt>
+            <dd class="govuk-body govuk-!-margin-left-0">
+                <span> {{ meta.answer | safe }} </span>
+            </dd>
         </div>
     </dl>
 
