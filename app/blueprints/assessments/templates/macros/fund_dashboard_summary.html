@@ -26,7 +26,7 @@
     {% endif %}
 {% endmacro %}
 
-{% macro fund_summary(summary, show_assessments_live_rounds) %}
+{% macro fund_summary(summary, force_open_all_live_assessment_rounds) %}
 <div class="govuk-!-padding-0 govuk-!-padding-right-2 govuk-!-padding-bottom-3 govuk-!-margin-bottom-6 govuk-grid-column-one-third content-container">
 
     <div class="govuk-summary-card__title-wrapper">
@@ -78,7 +78,7 @@
                     ],
                 })
             }}
-            {% if show_assessments_live_rounds %}
+            {% if force_open_all_live_assessment_rounds %}
                 <a class="govuk-link" data-qa="dashboard_summary" href="{{ summary.assessments_href }}">
                     View all submitted applications
                 </a>

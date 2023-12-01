@@ -173,6 +173,10 @@ def test_generate_csv_for_fields():
             "Project name": "Save the humble pub in Bangor",
             "Doc Name": "sample1.doc",
         },
+        {
+            "AppId": "de36ae35-9ef6-4dc5-a2bf-de9ee481c8af",
+            "Charity number ": "Test missing keys",
+        },
     ]
 
     expected_result = (
@@ -181,7 +185,9 @@ def test_generate_csv_for_fields():
         " Name\r\n9a8b6c00-e461-466c-acb3-2519621b3a38,Test,False,Save the"
         " humble pub in"
         " Bangor,sample1.doc\r\nde36ae35-9ef6-4dc5-a2bf-de9ee481c8af,Test,False,Save"
-        " the humble pub in Bangor,sample1.doc\r\n"
+        " the humble pub in"
+        " Bangor,sample1.doc\r\nde36ae35-9ef6-4dc5-a2bf-de9ee481c8af,Test"
+        " missing keys,,,\r\n"
     )
 
     result = generate_assessment_info_csv(test_data)

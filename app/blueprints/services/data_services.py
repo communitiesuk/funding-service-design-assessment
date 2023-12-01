@@ -217,6 +217,21 @@ def get_associated_tags_for_application(application_id) -> List[Tag]:
         return None
 
 
+def get_all_associated_tags_for_application(application_id) -> List[Tag]:
+    endpoint = Config.APPLICATION_ASSOCIATED_ALL_TAGS_ENDPOINT.format(
+        application_id=application_id
+    )
+    result = get_data(endpoint)
+    if result:
+        result = [AssociatedTag.from_dict(item) for item in result]
+        return result
+    else:
+        current_app.logger.info(
+            f"No associated tags found for application: {application_id}."
+        )
+        return []
+
+
 def update_associated_tags(application_id, tags) -> bool:
     endpoint = Config.ASSESSMENT_ASSOCIATE_TAGS_ENDPOINT.format(
         application_id=application_id
@@ -230,7 +245,6 @@ def update_associated_tags(application_id, tags) -> bool:
         f" application_id '{application_id}'"
     )
     response = requests.put(endpoint, json=payload)
-
     was_successful = response.ok
     if not was_successful:
         current_app.logger.error(
@@ -347,7 +361,7 @@ def get_bulk_accounts_dict(account_ids: List, fund_short_name: str):
 
 
 def get_score_and_justification(
-    application_id, sub_criteria_id, score_history=True
+    application_id, sub_criteria_id=None, score_history=True
 ):
     score_url = Config.ASSESSMENT_SCORES_ENDPOINT
     score_params = {
@@ -651,7 +665,10 @@ def get_sub_criteria_theme_answers(
 
 
 def get_comments(
-    application_id: str, sub_criteria_id: str, theme_id: str | None
+    application_id: str = None,
+    sub_criteria_id: str = None,
+    theme_id: str = None,
+    comment_id: str = None,
 ):
     """_summary_: Get comments from the assessment store
     Args:
@@ -665,6 +682,7 @@ def get_comments(
         "application_id": application_id,
         "sub_criteria_id": sub_criteria_id,
         "theme_id": theme_id,
+        "comment_id": comment_id,
     }
     # Strip theme_id from dict if None
     query_params_strip_nones = {
@@ -729,22 +747,35 @@ def match_comment_to_theme(comment_response, themes, fund_short_name):
 
 
 def submit_comment(
-    comment, application_id, sub_criteria_id, user_id, theme_id
+    comment,
+    application_id=None,
+    sub_criteria_id=None,
+    user_id=None,
+    theme_id=None,
+    comment_id=None,
 ):
-    data_dict = {
-        "comment": comment,
-        "user_id": user_id,
-        "application_id": application_id,
-        "sub_criteria_id": sub_criteria_id,
-        "comment_type": "COMMENT",
-        "theme_id": theme_id,
-    }
-    url = Config.ASSESSMENT_COMMENT_ENDPOINT
-    response = requests.post(url, json=data_dict)
+    if not comment_id:
+        data_dict = {
+            "comment": comment,
+            "user_id": user_id,
+            "application_id": application_id,
+            "sub_criteria_id": sub_criteria_id,
+            "comment_type": "COMMENT",
+            "theme_id": theme_id,
+        }
+        url = Config.ASSESSMENT_COMMENT_ENDPOINT
+        response = requests.post(url, json=data_dict)
+    else:
+        data_dict = {
+            "comment": comment,
+            "comment_id": comment_id,
+        }
+        url = Config.ASSESSMENT_COMMENT_ENDPOINT
+        response = requests.put(url, json=data_dict)
+
     current_app.logger.info(
         f"Response from Assessment Store: '{response.json()}'."
     )
-
     return response.ok
 
 

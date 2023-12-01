@@ -42,8 +42,8 @@ class DefaultConfig:
     DASHBOARD_ROUTE = "/assess/assessor_tool_dashboard"
 
     # Assessement settings
-    SHOW_ASSESSMENTS_LIVE_ROUNDS = strtobool(
-        getenv("SHOW_ASSESSMENTS_LIVE_ROUNDS", "False")
+    FORCE_OPEN_ALL_LIVE_ASSESSMENT_ROUNDS = strtobool(
+        getenv("FORCE_OPEN_ALL_LIVE_ASSESSMENT_ROUNDS", "False")
     )  # Set to True to show assessments on live rounds
 
     """
@@ -185,6 +185,9 @@ class DefaultConfig:
     )
     ASSESSMENT_ASSOCIATE_TAGS_ENDPOINT = (
         ASSESSMENT_STORE_API_HOST + "/application/{application_id}/tag"
+    )
+    APPLICATION_ASSOCIATED_ALL_TAGS_ENDPOINT = (
+        ASSESSMENT_STORE_API_HOST + "/application/{application_id}/tags"
     )
     ASSESSMENT_GET_TAG_ENDPOINT = (
         ASSESSMENT_STORE_API_HOST
