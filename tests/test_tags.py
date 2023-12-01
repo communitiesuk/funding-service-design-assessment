@@ -88,6 +88,7 @@ def test_change_tags_route(
     mock_get_fund,
     mock_get_active_tags_for_fund_round,
     mock_get_associated_tags_for_application,
+    mock_get_round,
 ):
 
     response = client_with_valid_session.get("/assess/application/app_id/tags")
@@ -121,6 +122,7 @@ def test_change_tags_route_does_not_show_deactivated_tags_as_options(
     mock_get_fund,
     mock_get_inactive_tags_for_fund_round,
     mock_get_associated_tags_for_application,
+    mock_get_round,
 ):
 
     response = client_with_valid_session.get("/assess/application/app_id/tags")
@@ -144,6 +146,7 @@ def test_change_tags_route_associated_tag_checked(
     mock_get_fund,
     mock_get_active_tags_for_fund_round,
     mock_get_associated_tags_for_application,
+    mock_get_round,
 ):
 
     response = client_with_valid_session.get("/assess/application/app_id/tags")
@@ -167,6 +170,7 @@ def test_change_tags_route_no_tags(
     mock_get_funds,
     mock_get_application_metadata,
     mock_get_fund,
+    mock_get_round,
 ):
     mocker.patch(
         "app.blueprints.tagging.routes.get_tags_for_fund_round",
@@ -243,14 +247,7 @@ def test_create_tag_initial_render_get(
         "get_rounds_path": "app.blueprints.assessments.routes.get_round",
     }
 )
-@pytest.mark.parametrize(
-    "expect_flagging",
-    [
-        False,
-    ],
-)
 def test_create_tag_invalid_form_post(
-    expect_flagging,
     client_with_valid_session,
     mock_get_funds,
     mock_get_fund,
@@ -258,28 +255,39 @@ def test_create_tag_invalid_form_post(
     mock_get_round,
     mock_get_active_tags_for_fund_round,
 ):
+    expected_errors = [
+        "Provide a value for the tag.",
+        "This field is required.",
+    ]
     response = client_with_valid_session.post(
         f"/assess/tags/create/{test_fund_id}/{test_round_id}",
         data={},  # empty form, so invalid
     )
+    soup = BeautifulSoup(response.data, "html.parser")
 
+    # check component errors
+    component_errors = soup.find_all("p", class_="govuk-error-message")
     assert response.status_code == 200
-    assert FLAG_ERROR_MESSAGE in response.text
+    assert all(
+        error_string in str(component_errors)
+        for error_string in expected_errors
+    ), "Component errors not found"
+    # It is unlikely we will encounter an incorrect radio button submission
+    # which is not in the users direct control (although still possible)
+
+    # Check summary errors
+    summary_errors = soup.find_all(class_="govuk-error-summary__list")
+    assert all(
+        error_string in str(summary_errors) for error_string in expected_errors
+    ), "Component errors not found"
 
 
-@pytest.mark.parametrize(
-    "expect_flagging",
-    [
-        False,
-    ],
-)
 @pytest.mark.mock_parameters(
     {
         "get_rounds_path": "app.blueprints.assessments.routes.get_round",
     }
 )
 def test_create_tag_invalid_character_post(
-    expect_flagging,
     client_with_valid_session,
     mock_get_funds,
     mock_get_fund,
@@ -287,13 +295,71 @@ def test_create_tag_invalid_character_post(
     mock_get_round,
     mock_get_active_tags_for_fund_round,
 ):
+    expected_errors = ["Invalid characters in value.", "Not a valid choice."]
     response = client_with_valid_session.post(
         f"/assess/tags/create/{test_fund_id}/{test_round_id}",
-        data={"value": "!!", "type": "type_1"},  # SPECIAL CHARACTER
+        data={"value": "!!", "type": "invalid_type"},  # SPECIAL CHARACTER
     )
+    soup = BeautifulSoup(response.data, "html.parser")
 
+    # check component errors
+    component_errors = soup.find_all("p", class_="govuk-error-message")
     assert response.status_code == 200
-    assert FLAG_ERROR_MESSAGE in response.text
+    assert all(
+        error_string in str(component_errors)
+        for error_string in expected_errors
+    ), "Component errors not found"
+    # It is unlikely we will encounter an incorrect radio button submission
+    # which is not in the users direct control (although still possible)
+
+    # Check summary errors
+    summary_errors = soup.find_all(class_="govuk-error-summary__list")
+    assert all(
+        error_string in str(summary_errors) for error_string in expected_errors
+    ), "summary errors not found"
+
+
+@pytest.mark.mock_parameters(
+    {
+        "get_rounds_path": "app.blueprints.assessments.routes.get_round",
+    }
+)
+def test_create_duplicate_tag_fails(
+    client_with_valid_session,
+    mock_get_funds,
+    mock_get_fund,
+    mock_get_tag_types,
+    mock_get_round,
+    mock_get_active_tags_for_fund_round,
+):
+    expected_errors = [
+        "Tag already exists for this round. Please ensure that the tag is"
+        " unique."
+    ]
+    response = client_with_valid_session.post(
+        f"/assess/tags/create/{test_fund_id}/{test_round_id}",
+        data={
+            "value": "Val 1",
+            "type": "type_1",
+        },  # DUPLICATE TAG, mocked choices for tag types (id of the tag)
+    )
+    soup = BeautifulSoup(response.data, "html.parser")
+
+    # check component errors
+    component_errors = soup.find_all("p", class_="govuk-error-message")
+    assert response.status_code == 200
+    assert all(
+        error_string in str(component_errors)
+        for error_string in expected_errors
+    ), "Component errors not found"
+    # It is unlikely we will encounter an incorrect radio button submission
+    # which is not in the users direct control (although still possible)
+
+    # Check summary errors
+    summary_errors = soup.find_all(class_="govuk-error-summary__list")
+    assert all(
+        error_string in str(summary_errors) for error_string in expected_errors
+    ), "summary errors not found"
 
 
 @pytest.mark.parametrize(
@@ -468,14 +534,7 @@ def test_post_reactivate_non_existing_tag_returns_error(
     assert "Yes, reactivate tag" in response.text
 
 
-@pytest.mark.parametrize(
-    "expect_flagging",
-    [
-        False,
-    ],
-)
 def test_create_tag_shows_error_if_valid_form_post_but_request_fails(
-    expect_flagging,
     client_with_valid_session,
     mock_get_funds,
     mock_get_fund,
@@ -490,7 +549,7 @@ def test_create_tag_shows_error_if_valid_form_post_but_request_fails(
 
     response = client_with_valid_session.post(
         f"/assess/tags/create/{test_fund_id}/{test_round_id}",
-        data={"value": "Tag value", "type": "tag_type_1"},
+        data={"value": "Tag value", "type": "type_1"},
     )
 
     # this redirects and will flash the error message
@@ -498,19 +557,12 @@ def test_create_tag_shows_error_if_valid_form_post_but_request_fails(
     assert response.location == "/assess/tags/create/test-fund/test-round"
 
 
-@pytest.mark.parametrize(
-    "expect_flagging",
-    [
-        False,
-    ],
-)
 @pytest.mark.mock_parameters(
     {
         "get_rounds_path": "app.blueprints.assessments.routes.get_round",
     }
 )
 def test_create_tag_valid_form_post(
-    expect_flagging,
     client_with_valid_session,
     mock_get_funds,
     mock_get_fund,
@@ -525,7 +577,7 @@ def test_create_tag_valid_form_post(
 
     response = client_with_valid_session.post(
         f"/assess/tags/create/{test_fund_id}/{test_round_id}",
-        data={"value": "Tag value", "type": "tag_type_1"},
+        data={"value": "Tag value", "type": "type_1"},
     )
 
     assert response.status_code == 302
@@ -533,19 +585,12 @@ def test_create_tag_valid_form_post(
     assert FLAG_ERROR_MESSAGE not in response.text
 
 
-@pytest.mark.parametrize(
-    "expect_flagging",
-    [
-        False,
-    ],
-)
 @pytest.mark.mock_parameters(
     {
         "get_rounds_path": "app.blueprints.assessments.routes.get_round",
     }
 )
 def test_create_tag_valid_form_go_back_post(
-    expect_flagging,
     client_with_valid_session,
     mock_get_funds,
     mock_get_fund,
@@ -560,7 +605,7 @@ def test_create_tag_valid_form_go_back_post(
 
     response = client_with_valid_session.post(
         f"/assess/tags/create/{test_fund_id}/{test_round_id}?go_back=True",
-        data={"value": "Tag value", "type": "tag_type_1"},
+        data={"value": "Tag value", "type": "type_1"},
     )
 
     assert response.status_code == 302
@@ -699,6 +744,7 @@ def test_edit_tag_get(
     mocker,
     mock_get_fund_round,
     mock_get_tag_and_count,
+    mock_get_round,
 ):
     response = client_with_valid_session.get(
         f"/assess/tags/edit/{test_fund_id}/{test_round_id}/{mock_get_tag_and_count[0]}"
@@ -728,6 +774,7 @@ def test_edit_tag_post(
     mock_get_fund_round,
     mocker,
     mock_get_tag_and_count,
+    mock_get_round,
 ):
     mocker.patch(
         "app.blueprints.tagging.routes.update_tag",
