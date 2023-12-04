@@ -33,7 +33,7 @@ attrs==22.2.0
     #   outcome
     #   referencing
     #   trio
-babel==2.11.0
+babel==2.13.1
     # via
     #   -r requirements.txt
     #   flask-babel
@@ -44,18 +44,18 @@ beautifulsoup4==4.12.2
     #   -r requirements-dev.in
     #   -r requirements.txt
     #   funding-service-design-utils
-black==23.1.0
+black==23.11.0
     # via -r requirements-dev.in
 blinker==1.5
     # via
     #   -r requirements.txt
     #   sentry-sdk
-boto3==1.26.89
+boto3==1.29.3
     # via
     #   -r requirements-dev.in
     #   -r requirements.txt
     #   flipper-client
-botocore==1.29.89
+botocore==1.32.3
     # via
     #   -r requirements.txt
     #   boto3
@@ -155,7 +155,7 @@ flask-babel==2.0.0
     # via
     #   -r requirements.txt
     #   funding-service-design-utils
-flask-compress==1.13
+flask-compress==1.14
     # via -r requirements.txt
 flask-migrate==4.0.4
     # via
@@ -399,7 +399,6 @@ python-json-logger==2.0.7
 pytz==2022.7.1
     # via
     #   -r requirements.txt
-    #   babel
     #   flask-babel
     #   funding-service-design-utils
 pyyaml==6.0
@@ -455,11 +454,11 @@ rpds-py==0.12.0
     #   -r requirements.txt
     #   jsonschema
     #   referencing
-s3transfer==0.6.0
+s3transfer==0.7.0
     # via
     #   -r requirements.txt
     #   boto3
-selenium==4.8.2
+selenium==4.15.2
     # via -r requirements-dev.in
 sentry-sdk[flask]==1.31.0
     # via
