@@ -33,6 +33,10 @@ def forbidden(error):
     )
 
 
+def error_503(error):
+    return render_template("maintenance.html"), 503
+
+
 @assessment_bp.errorhandler(500)
 @assessment_bp.errorhandler(Exception)
 @shared_bp.errorhandler(500)

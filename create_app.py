@@ -18,6 +18,7 @@ from app.blueprints.shared.filters import slash_separated_day_month_year
 from app.blueprints.shared.filters import utc_to_bst
 from app.blueprints.shared.routes import shared_bp
 from app.blueprints.tagging.routes import tagging_bp
+from app.error_handlers import error_503
 from app.error_handlers import forbidden
 from app.error_handlers import internal_server_error
 from app.error_handlers import not_found
@@ -25,7 +26,6 @@ from config import Config
 from flask import Flask
 from flask import g
 from flask import render_template
-from flask import request
 from flask_assets import Environment
 from flask_compress import Compress
 from flask_talisman import Talisman
@@ -58,6 +58,7 @@ def create_app() -> Flask:
 
         flask_app.register_error_handler(404, not_found)
         flask_app.register_error_handler(403, forbidden)
+        flask_app.register_error_handler(503, error_503)
         flask_app.register_error_handler(500, internal_server_error)
         flask_app.register_blueprint(shared_bp)
         flask_app.register_blueprint(assessment_bp)
@@ -154,9 +155,7 @@ def create_app() -> Flask:
 
         @flask_app.before_request
         def check_for_maintenance():
-            if flask_app.config.get(
-                "MAINTENANCE_MODE"
-            ) and not request.path.startswith("/maintenance"):
+            if flask_app.config.get("MAINTENANCE_MODE"):
                 return render_template("maintenance.html"), 503
 
         # Get static filenames list
