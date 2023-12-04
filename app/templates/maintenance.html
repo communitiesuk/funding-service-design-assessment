@@ -13,7 +13,7 @@
         <div class="govuk-grid-column-two-thirds">
           <h1 class="govuk-heading-l">Sorry, the service is unavailable</h1>
           <p class="govuk-body">We are carrying out essential maintenance to the funding assessment tool.</p>
-          <p class="govuk-body">You will be able to use the service again on 18&nbsp;December&nbsp;2023 at 03:00pm.</p>
+          <p class="govuk-body">You will be able to use the service again {{ "on "+ maintenance_end_time if maintenance_end_time else "soon" }}.</p>
           <p class="govuk-body">
             <a class="govuk-link" href="mailto:fsd.support@levellingup.gov.uk">Contact the Funding Service Design team</a> if you need urgent support during this time.
           </p>

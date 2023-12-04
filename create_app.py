@@ -156,7 +156,15 @@ def create_app() -> Flask:
         @flask_app.before_request
         def check_for_maintenance():
             if flask_app.config.get("MAINTENANCE_MODE"):
-                return render_template("maintenance.html"), 503
+                return (
+                    render_template(
+                        "maintenance.html",
+                        maintenance_end_time=flask_app.config.get(
+                            "MAINTENANCE_END_TIME"
+                        ),
+                    ),
+                    503,
+                )
 
         # Get static filenames list
         static_files_list = []
