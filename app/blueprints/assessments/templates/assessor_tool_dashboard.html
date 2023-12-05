@@ -15,13 +15,12 @@
     </div>
 
     <div class="govuk-width-container">
-
-        <h1 class="govuk-heading-xl">Funding service dashboard</h1>
-
         {% if migration_banner_enabled %}
             {{ migration_banner() }}
         {% endif %}
 
+        <h1 class="govuk-heading-xl">Funding service dashboard</h1>
+        
         <div class="govuk-grid-column">
             {{ assessor_tool_dashboard_filters(landing_filters, has_any_assessor_role) }}
         </div>
