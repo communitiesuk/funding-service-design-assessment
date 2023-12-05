@@ -13,6 +13,7 @@ from app.blueprints.tagging.models.tag import Tag
 from app.blueprints.tagging.models.tag import TagType
 from config import Config
 from create_app import create_app
+from distutils.util import strtobool
 from flask import template_rendered
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -227,6 +228,26 @@ def flask_test_client(app, user_token=None):
     from our app, this is a test fixture.
     :return: A flask test client.
     """
+    with app.test_client() as test_client:
+        test_client.set_cookie(
+            "localhost",
+            "fsd_user_token",
+            user_token or create_valid_token(),
+        )
+        yield test_client
+
+
+@pytest.fixture(scope="function")
+def flask_test_maintenance_client(request, user_token=None):
+    """
+    Creates the test maintenance client we will be using to test the responses
+    from our app, this is a test fixture.
+    :return: A flask test client.
+    """
+    marker = request.node.get_closest_marker("maintenance_mode")
+    maintenance_mode = marker.args[0]
+    app = create_app()
+    app.config.update({"MAINTENANCE_MODE": strtobool(maintenance_mode)})
     with app.test_client() as test_client:
         test_client.set_cookie(
             "localhost",
