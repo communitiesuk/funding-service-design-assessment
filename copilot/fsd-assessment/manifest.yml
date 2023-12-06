@@ -71,6 +71,8 @@ environments:
     variables:
       FORCE_OPEN_ALL_LIVE_ASSESSMENT_ROUNDS: "True"
   uat:
+    http:
+      alias: ["assessment.${COPILOT_ENVIRONMENT_NAME}.access-funding.test.levellingup.gov.uk", "assessmentuat.access-funding.test.levellingup.gov.uk"]
     count:
       range: 2-4
       cooldown:
@@ -82,8 +84,10 @@ environments:
         value: 80
       requests: 30
       response_time: 2s
-  production:
-    alias: assessment.production.access-funding.levellingup.gov.uk
+  prod:
+    http:
+      alias: assessment.prod.access-funding.levellingup.gov.uk
+      # alias: ["assessment.prod.access-funding.levellingup.gov.uk", "assessment.access-funding.levellingup.gov.uk"] # For go live
     count:
       range: 2-4
       cooldown:
@@ -94,3 +98,5 @@ environments:
       memory_percentage:
         value: 80
       requests: 30
+    variables:
+      FLASK_ENV: production
