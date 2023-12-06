@@ -1,3 +1,5 @@
+{% from "macros/migration_banner.html" import migration_banner %}
+
 {% extends "base.html" %}
 {% set pageHeading = state.project_name %}
 
@@ -8,6 +10,9 @@
 {% block content %}
 
 <div class="govuk-grid-row">
+    {% if migration_banner_enabled %}
+        {{migration_banner()}}
+    {% endif %}
         <div class="govuk-grid-column-two-thirds">
             <form method="post">
                 {{ form.csrf_token }}

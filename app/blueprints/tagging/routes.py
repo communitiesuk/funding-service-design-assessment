@@ -118,6 +118,7 @@ def load_change_tags(application_id):
         tag_config=Config.TAGGING_PURPOSE_CONFIG,
         application_id=application_id,
         assessment_status=assessment_status,
+        migration_banner_enabled=Config.MIGRATION_BANNER_ENABLED,
     )
 
 

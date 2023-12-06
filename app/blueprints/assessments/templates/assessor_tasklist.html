@@ -13,6 +13,7 @@
 {% from "macros/logout_partial.html" import logout_partial %}
 {% from "macros/qa_complete_flag.html" import qa_complete_flag %}
 {% from "macros/assessment_completion.html" import assessment_complete %}
+{% from "macros/migration_banner.html" import migration_banner %}
 
 {% set pageHeading = state.project_name %}
 
@@ -41,6 +42,9 @@
 
 {% block content %}
 <div class="govuk-grid-row">
+    {% if migration_banner_enabled %}
+        {{ migration_banner() }}
+    {% endif %}
 {% if toggle_dict.get("TAGGING") %}
     {% if g.access_controller.is_assessor %}
         <div class="govuk-grid-column-full">

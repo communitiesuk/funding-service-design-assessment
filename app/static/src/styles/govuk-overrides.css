@@ -396,6 +396,10 @@ a.govuk-link.deactivate {
     color: #d4351c;
 }
 
+.govuk-notification-banner__content > p {
+    max-width: none;
+}
+
 /* .govuk-summary-list:first-of-type {
     border-top: 1px solid #b1b4b6;
 } */
