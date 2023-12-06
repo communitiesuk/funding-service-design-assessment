@@ -146,14 +146,6 @@ def create_app() -> Flask:
         health.add_check(FlaskRunningChecker())
 
         @flask_app.before_request
-        @login_requested
-        def ensure_minimum_required_roles():
-            return auth_protect(
-                minimum_roles_required=["COMMENTER"],
-                unprotected_routes=["/", "/healthcheck"],
-            )
-
-        @flask_app.before_request
         def check_for_maintenance():
             if flask_app.config.get("MAINTENANCE_MODE"):
                 return (
@@ -165,6 +157,14 @@ def create_app() -> Flask:
                     ),
                     503,
                 )
+
+        @flask_app.before_request
+        @login_requested
+        def ensure_minimum_required_roles():
+            return auth_protect(
+                minimum_roles_required=["COMMENTER"],
+                unprotected_routes=["/", "/healthcheck"],
+            )
 
         # Get static filenames list
         static_files_list = []
