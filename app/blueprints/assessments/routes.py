@@ -162,6 +162,7 @@ def _handle_all_uploaded_documents(application_id):
         is_flaggable=is_flaggable(flag_status),
         answers_meta=answers_meta,
         assessment_status=assessment_status,
+        migration_banner_enabled=Config.MIGRATION_BANNER_ENABLED,
     )
 
 
@@ -782,6 +783,7 @@ def activity_trail(application_id: str):
         available_filters=available_filters,
         search_keyword=search_keyword,
         checkbox_filters=checkbox_filters,
+        migration_banner_enabled=Config.MIGRATION_BANNER_ENABLED,
     )
 
 
@@ -872,4 +874,5 @@ def qa_complete(application_id):
         form=form,
         referrer=request.referrer,
         assessment_status=assessment_statuses[state.workflow_status],
+        migration_banner_enabled=Config.MIGRATION_BANNER_ENABLED,
     )

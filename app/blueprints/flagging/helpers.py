@@ -86,4 +86,5 @@ def resolve_application(
         sections_to_flag=section,
         reason_to_flag=reason_to_flag,
         allocated_team=allocated_team,
+        migration_banner_enabled=Config.MIGRATION_BANNER_ENABLED,
     )

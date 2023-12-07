@@ -15,6 +15,7 @@
 {% from "macros/comments.html" import comments %}
 {% from "macros/scores_justification.html" import score as scores %}
 {% from "macros/tags_table.html" import tags %}
+{% from "macros/migration_banner.html" import migration_banner %}
 
 {% set pageHeading = "Activity trail" %}
 
@@ -59,6 +60,9 @@ else "QA complete" if status=="Completed" and  state.is_qa_complete
 else status %}
 
 <main class="govuk-main-wrapper" id="main-content" role="main">
+    {% if migration_banner_enabled %}
+        {{migration_banner()}}
+    {% endif %}
     <div class="govuk-grid-row">
         <div>
             <div class="govuk-!-padding-left-3">
