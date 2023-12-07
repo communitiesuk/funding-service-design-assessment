@@ -23,6 +23,7 @@ from app.error_handlers import forbidden
 from app.error_handlers import internal_server_error
 from app.error_handlers import not_found
 from config import Config
+from flask import current_app
 from flask import Flask
 from flask import g
 from flask import render_template
@@ -151,6 +152,10 @@ def create_app() -> Flask:
             if flask_app.config.get("MAINTENANCE_MODE") and not (
                 request.path.endswith("js") or request.path.endswith("css")
             ):
+                current_app.logger.warning(
+                    f"""Application is in the Maintenance mode
+                    reach url: {request.url}"""
+                )
                 return (
                     render_template(
                         "maintenance.html",
