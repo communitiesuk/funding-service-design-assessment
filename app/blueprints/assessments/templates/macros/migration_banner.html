@@ -1,0 +1,8 @@
+{%- from "govuk_frontend_jinja/components/notification-banner/macro.html" import govukNotificationBanner -%}
+
+{% macro migration_banner() %}
+    {{ govukNotificationBanner({
+        'html': '<p class="govuk-body">The assessment tool will be unavailable on Monday 18th December 2023 between 10:00am and 3:00pm due to essential maintenance. You will be unable to access funding application and assessment data during this time.</p>'
+    })}}
+
+{% endmacro %}

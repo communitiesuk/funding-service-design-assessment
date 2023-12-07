@@ -8,6 +8,7 @@
 {% import "macros/application_overviews_table_dpif.html" as application_overviews_table_dpif -%}
 {% from "macros/banner_summary.html" import banner_summary %}
 {% from "macros/logout_partial.html" import logout_partial %}
+{% from "macros/migration_banner.html" import migration_banner %}
 
 {% set pageHeading %}Team dashboard{% endset %}
 
@@ -57,11 +58,16 @@
         </div>
     </div>
 </header>
+
 {% endblock header %}
+
 {% block content %}
 {#    CLOSE THE GOVUK-WIDTH-CONTAINER AND OPEN A WIDER CONTAINER FOR THE TABLE VIEW #}
 
 <div class="govuk-grid-row">
+    {% if migration_banner_enabled %}
+        {{ migration_banner() }}
+    {% endif %}
     <section class="govuk-width-container govuk-grid-column-full">
         {% if round_details.fund_short_name.upper() == 'CYP' %}
             {{ application_overviews_table_cyp.render(

@@ -203,6 +203,7 @@ def landing():
             for rs in rsl
         ),
         force_open_all_live_assessment_rounds=Config.FORCE_OPEN_ALL_LIVE_ASSESSMENT_ROUNDS,
+        migration_banner_enabled=Config.MIGRATION_BANNER_ENABLED,
     )
 
 
@@ -366,6 +367,7 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
         countries=all_application_locations.countries,
         regions=all_application_locations.regions,
         local_authorities=all_application_locations._local_authorities,
+        migration_banner_enabled=Config.MIGRATION_BANNER_ENABLED,
         dpi_filters=dpi_filters,
     )
 
@@ -455,11 +457,13 @@ def display_sub_criteria(
                         application_id=application_id,
                         sub_criteria_id=sub_criteria_id,
                         theme_id=theme_id,
+                        migration_banner_enabled=Config.MIGRATION_BANNER_ENABLED,
                     ),
                     application_id=application_id,
                     state=state,
                     flag_status=flag_status,
                     assessment_status=assessment_status,
+                    migration_banner_enabled=Config.MIGRATION_BANNER_ENABLED,
                 )
 
     if edit_comment_argument and comment_form.validate_on_submit():
@@ -472,6 +476,7 @@ def display_sub_criteria(
                 application_id=application_id,
                 sub_criteria_id=sub_criteria_id,
                 theme_id=theme_id,
+                migration_banner_enabled=Config.MIGRATION_BANNER_ENABLED,
                 _anchor="comments",
             )
         )
@@ -502,6 +507,7 @@ def display_sub_criteria(
         "sub_criteria.html",
         answers_meta=answers_meta,
         state=state,
+        migration_banner_enabled=Config.MIGRATION_BANNER_ENABLED,
         **common_template_config,
     )
 
@@ -548,6 +554,7 @@ def generate_doc_list_for_download(application_id):
         supporting_evidence=supporting_evidence,
         assessment_status=assessment_status,
         flag_status=flag_status,
+        migration_banner_enabled=Config.MIGRATION_BANNER_ENABLED,
     )
 
 
@@ -719,6 +726,7 @@ def application(application_id):
         assessment_status=assessment_status,
         all_uploaded_documents_section_available=fund_round.all_uploaded_documents_section_available,
         max_possible_sub_criteria_score=scoring_form.max_score,
+        migration_banner_enabled=Config.MIGRATION_BANNER_ENABLED,
     )
 
 
