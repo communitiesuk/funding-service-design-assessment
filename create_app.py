@@ -26,6 +26,7 @@ from config import Config
 from flask import Flask
 from flask import g
 from flask import render_template
+from flask import request
 from flask_assets import Environment
 from flask_compress import Compress
 from flask_talisman import Talisman
@@ -147,7 +148,9 @@ def create_app() -> Flask:
 
         @flask_app.before_request
         def check_for_maintenance():
-            if flask_app.config.get("MAINTENANCE_MODE"):
+            if flask_app.config.get("MAINTENANCE_MODE") and not (
+                request.path.endswith("js") or request.path.endswith("css")
+            ):
                 return (
                     render_template(
                         "maintenance.html",
