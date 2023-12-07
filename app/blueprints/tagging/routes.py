@@ -166,6 +166,7 @@ def load_fund_round_tags(fund_id, round_id):
         tag_types=tag_types,
         tag_status_configs=tag_status_configs,
         tag_config=Config.TAGGING_PURPOSE_CONFIG,
+        migration_banner_enabled=Config.MIGRATION_BANNER_ENABLED,
     )
 
 
@@ -209,6 +210,7 @@ def create_tag(fund_id, round_id):
                     tag_config=Config.TAGGING_PURPOSE_CONFIG,
                     fund_round=fund_round,
                     errors=errors,
+                    migration_banner_enabled=Config.MIGRATION_BANNER_ENABLED,
                 )
 
         tag_created = post_new_tag_for_fund_round(fund_id, round_id, tag)
@@ -227,6 +229,7 @@ def create_tag(fund_id, round_id):
                 tag_config=Config.TAGGING_PURPOSE_CONFIG,
                 fund_round=fund_round,
                 errors=errors,
+                migration_banner_enabled=Config.MIGRATION_BANNER_ENABLED,
             )
         if go_back and tag_created:
             return redirect(
@@ -256,6 +259,7 @@ def create_tag(fund_id, round_id):
         tag_config=Config.TAGGING_PURPOSE_CONFIG,
         fund_round=fund_round,
         errors=errors,
+        migration_banner_enabled=Config.MIGRATION_BANNER_ENABLED,
     )
 
 
@@ -313,6 +317,7 @@ def deactivate_tag(fund_id, round_id, tag_id):
         tag=tag_to_deactivate,
         tag_config=Config.TAGGING_PURPOSE_CONFIG,
         fund_round=fund_round,
+        migration_banner_enabled=Config.MIGRATION_BANNER_ENABLED,
     )
 
 
@@ -367,6 +372,7 @@ def reactivate_tag(fund_id, round_id, tag_id):
         tag=tag_to_reactivate,
         tag_config=Config.TAGGING_PURPOSE_CONFIG,
         fund_round=fund_round,
+        migration_banner_enabled=Config.MIGRATION_BANNER_ENABLED,
     )
 
 
@@ -410,4 +416,5 @@ def edit_tag(fund_id, round_id, tag_id):
         form=edit_tag_form,
         fund_round=fund_round,
         tag=tag,
+        migration_banner_enabled=Config.MIGRATION_BANNER_ENABLED,
     )

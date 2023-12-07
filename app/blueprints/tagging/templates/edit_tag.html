@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% from "macros/tag_header.html" import tag_header %}
+{% from "macros/migration_banner.html" import migration_banner %}
 
 {% set pageHeading -%}
 {{ "Error: " if form.errors }}Edit {{tag.value}} tag
@@ -10,7 +11,9 @@
 {% endblock header %}
 
 {% block content %}
-
+{% if migration_banner_enabled %}
+  {{migration_banner()}}
+{% endif %}
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds content-container">
         <h1 class="govuk-heading-xl govuk-!-margin-bottom-4">Edit tag "{{ tag.value }}"

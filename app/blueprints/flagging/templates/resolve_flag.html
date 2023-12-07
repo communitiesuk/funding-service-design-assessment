@@ -4,6 +4,7 @@
 {%- from "govuk_frontend_jinja/components/radios/macro.html" import govukRadios %}
 {% from "macros/flag_history.html" import display_flagged_sections %}
 {% from "macros/banner_summary.html" import banner_summary %}
+{% from "macros/migration_banner.html" import migration_banner %}
 {% set pageHeading -%}
 {{ "Error: " if form.errors }}Resolve flag
 {% endset %}
@@ -13,6 +14,10 @@
 {% endblock header %}
 
 {% block content %}
+
+{% if migration_banner_enabled %}
+  {{migration_banner()}}
+{% endif %}
 
 {% if form.errors.get(form.resolution_flag.id) or form.errors.get("justification") %}
 <div class="govuk-error-summary" data-module="govuk-error-summary">
