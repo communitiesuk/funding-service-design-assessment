@@ -21,6 +21,10 @@ class DefaultConfig:
     FLASK_ROOT = str(Path(__file__).parent.parent.parent)
     FLASK_ENV = CommonConfig.FLASK_ENV
     TEXT_AREA_INPUT_MAX_CHARACTERS = 10000
+    MAINTENANCE_MODE = strtobool(getenv("MAINTENANCE_MODE", "False"))
+    MAINTENANCE_END_TIME = getenv(
+        "MAINTENANCE_END_TIME", "18 December 2023 at 03:00pm"
+    )
 
     # Authentication
     FSD_USER_TOKEN_COOKIE_NAME = "fsd_user_token"
