@@ -149,8 +149,15 @@ def create_app() -> Flask:
 
         @flask_app.before_request
         def check_for_maintenance():
-            if flask_app.config.get("MAINTENANCE_MODE") and not (
-                request.path.endswith("js") or request.path.endswith("css")
+            current_app.logger.debug(
+                f"""Debug message request.path : {request.path}"""
+            )
+            if (
+                flask_app.config.get("MAINTENANCE_MODE")
+                and not (
+                    request.path.endswith("js") or request.path.endswith("css")
+                )
+                and not ("healthcheck" in request.url)
             ):
                 current_app.logger.warning(
                     f"""Application is in the Maintenance mode
