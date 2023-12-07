@@ -37,7 +37,6 @@ def test_route_landing_maintenance_mode_disabled(
 @pytest.mark.maintenance_mode("True")
 def test_route_landing_maintenance_mode_enabled(
     flask_test_maintenance_client,
-    mock_get_funds,
 ):
     response = flask_test_maintenance_client.get(
         "/assess/assessor_tool_dashboard/"
@@ -46,7 +45,7 @@ def test_route_landing_maintenance_mode_enabled(
     soup = BeautifulSoup(response.data, "html.parser")
     assert (
         soup.title.string
-        == "Sorry, the service is unavailable – Assessment Hub – GOV.UK"
+        == "Sorry, this service is unavailable – Assessment Hub – GOV.UK"
     ), "Response does not contain expected heading"
 
 
@@ -112,7 +111,6 @@ def test_route_fund_dashboard_maintenance_mode_disabled(
 def test_route_fund_dashboard_maintenance_mode_enabled(
     request,
     flask_test_maintenance_client,
-    mock_get_funds,
 ):
     flask_test_maintenance_client.set_cookie(
         "localhost",
@@ -133,5 +131,5 @@ def test_route_fund_dashboard_maintenance_mode_enabled(
     soup = BeautifulSoup(response.data, "html.parser")
     assert (
         soup.title.string
-        == "Sorry, the service is unavailable – Assessment Hub – GOV.UK"
+        == "Sorry, this service is unavailable – Assessment Hub – GOV.UK"
     ), "Response does not contain expected heading"

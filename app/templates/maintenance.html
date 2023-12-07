@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block pageTitle %}Sorry, the service is unavailable – {{ service_title }}{% endblock pageTitle %}
+{% block pageTitle %}Sorry, this service is unavailable – {{ service_title }}{% endblock pageTitle %}
 
 {% block content %}
     {# djlint:off #}</div>{# djlint:on #}
@@ -11,7 +11,7 @@
     <main class="govuk-main-wrapper govuk-main-wrapper--l" id="main-content" role="main">
       <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-          <h1 class="govuk-heading-l">Sorry, the service is unavailable</h1>
+          <h1 class="govuk-heading-l">Sorry, this service is unavailable</h1>
           <p class="govuk-body">We are carrying out essential maintenance to the funding assessment tool.</p>
           <p class="govuk-body">You will be able to use the service again {{ "on "+ maintenance_end_time if maintenance_end_time else "soon" }}.</p>
           <p class="govuk-body">
