@@ -34,6 +34,11 @@
 
 }
 
+button.left-margin-negative {
+    margin-left: -80px;
+
+}
+
 .search-bar-flex-container {
     float: none;
     display: flex;
