@@ -85,7 +85,7 @@
 {% macro score(score, application_id) %}
 <p class="govuk-body govuk-!-padding-top-6"> <span
     class="govuk-body govuk-!-font-weight-bold">Scored </span> on subcriteria <a
-    href="{{ url_for('assessment_bp.display_sub_criteria',application_id=application_id ,sub_criteria_id=score.sub_criteria_id) }}" target="_blank">{{score.sub_criteria_name}}</a></p>
+    href="{{ url_for('assessment_bp.display_sub_criteria',application_id=application_id ,sub_criteria_id=score.sub_criteria_id) }}" target="_blank">{{score.sub_criteria_id | remove_dashes_underscores_capitalize_keep_uppercase}}</a></p>
 <div class="score-group govuk-!-padding-bottom-5" id="score" role="status">
     <h2 class="govuk-heading-m">Scored: {{score.score }}</h2>
     <div>

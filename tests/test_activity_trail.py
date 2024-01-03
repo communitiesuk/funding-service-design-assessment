@@ -3,10 +3,6 @@ from app.blueprints.assessments.activity_trail import add_user_info
 from app.blueprints.assessments.activity_trail import AssociatedTags
 from app.blueprints.assessments.activity_trail import BaseModel
 from app.blueprints.assessments.activity_trail import get_user_info
-from app.blueprints.assessments.activity_trail import Scores
-from app.blueprints.services.data_services import get_score_and_justification
-from app.blueprints.services.data_services import get_sub_criteria
-from app.blueprints.services.models.sub_criteria import SubCriteria
 from flask import Flask
 
 
@@ -84,59 +80,3 @@ class TestActivityTrail:
             result = BaseModel._format_date(date_str)
 
         assert result == expected_date_format
-
-    def test_sub_criteria_name_populated(self, mocker):
-        mocker.patch(
-            "tests.test_activity_trail.get_score_and_justification",
-            return_value=[
-                {
-                    "application_id": "test-app",
-                    "date_created": "2023-12-12T10:22:22.785229",
-                    "id": "0cd3bc1a-5798-4cb3-aa0d-dadac3e65f57",
-                    "justification": "ok",
-                    "score": 2,
-                    "sub_criteria_id": "engaging_the_ODP_community",
-                    "user_id": "00000000-0000-0000-0000-000000000000",
-                }
-            ],
-        )
-        mocker.patch(
-            "tests.test_activity_trail.get_sub_criteria",
-            return_value=SubCriteria.from_filtered_dict(
-                {
-                    "fund_id": "f493d512-5eb4-11ee-8c99-0242ac120002",
-                    "funding_amount_requested": 0.0,
-                    "id": "engaging_the_ODP_community",
-                    "is_scored": True,
-                    "name": "Engaging the ODP community",
-                    "project_name": (
-                        "Rebuild the old community centre in Cardiff"
-                    ),
-                    "short_id": "DPIF-R2-XNIWEP",
-                    "themes": [
-                        {
-                            "id": "engaging_the_ODP_community",
-                            "name": "Engaging the ODP community",
-                        }
-                    ],
-                    "workflow_status": "IN_PROGRESS",
-                }
-            ),
-        )
-        scores = get_score_and_justification(
-            application_id="test-app", score_history=True
-        )
-        _ = [  # retrive sub_criteria name and populate it
-            score.update(
-                {
-                    "sub_criteria_name": get_sub_criteria(
-                        "test-app", score.get("sub_criteria_id")
-                    ).name
-                }
-            )
-            for score in scores
-        ]
-        all_scores = Scores.from_list(scores)
-
-        assert len(all_scores) == 1
-        assert all_scores[0].sub_criteria_name == "Engaging the ODP community"
