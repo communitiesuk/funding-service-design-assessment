@@ -170,7 +170,6 @@ class Scores(BaseModel):
     justification: str
     score: int
     sub_criteria_id: str
-    sub_criteria_name: str
     user_id: str
     full_name: str = ""
     highest_role: str = ""

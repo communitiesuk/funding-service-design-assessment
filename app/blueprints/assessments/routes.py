@@ -752,16 +752,6 @@ def activity_trail(application_id: str):
     scores = get_score_and_justification(
         application_id=application_id, score_history=True
     )
-    _ = [  # retrive sub_criteria name and populate it
-        score.update(
-            {
-                "sub_criteria_name": get_sub_criteria(
-                    application_id, score.get("sub_criteria_id")
-                ).name
-            }
-        )
-        for score in scores
-    ]
     all_scores = Scores.from_list(scores)
 
     # ALL TAGS

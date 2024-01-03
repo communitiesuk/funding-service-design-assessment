@@ -14,6 +14,9 @@ from app.blueprints.shared.filters import datetime_format_24hr
 from app.blueprints.shared.filters import format_address
 from app.blueprints.shared.filters import format_project_ref
 from app.blueprints.shared.filters import remove_dashes_underscores_capitalize
+from app.blueprints.shared.filters import (
+    remove_dashes_underscores_capitalize_keep_uppercase,
+)
 from app.blueprints.shared.filters import slash_separated_day_month_year
 from app.blueprints.shared.filters import utc_to_bst
 from app.blueprints.shared.routes import shared_bp
@@ -101,6 +104,9 @@ def create_app() -> Flask:
         flask_app.jinja_env.filters[
             "remove_dashes_underscores_capitalize"
         ] = remove_dashes_underscores_capitalize
+        flask_app.jinja_env.filters[
+            "remove_dashes_underscores_capitalize_keep_uppercase"
+        ] = remove_dashes_underscores_capitalize_keep_uppercase
         flask_app.jinja_env.filters["format_address"] = format_address
         flask_app.jinja_env.add_extension("jinja2.ext.i18n")
         flask_app.jinja_env.globals["ngettext"] = ngettext

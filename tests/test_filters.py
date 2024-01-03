@@ -6,6 +6,9 @@ from app.blueprints.shared.filters import format_address
 from app.blueprints.shared.filters import format_date
 from app.blueprints.shared.filters import format_project_ref
 from app.blueprints.shared.filters import remove_dashes_underscores_capitalize
+from app.blueprints.shared.filters import (
+    remove_dashes_underscores_capitalize_keep_uppercase,
+)
 from app.blueprints.shared.filters import slash_separated_day_month_year
 
 
@@ -83,6 +86,36 @@ class TestFilters(object):
     )
     def test_fremove_dashes_underscores_capitalize(self, address, expected):
         assert remove_dashes_underscores_capitalize(address) == expected
+
+    @pytest.mark.parametrize(
+        "address, expected",
+        [
+            (
+                "string_with_UPPERCASE_words-and-underscores_and-dashes",
+                "String with UPPERCASE words and underscores and dashes",
+            ),
+            (
+                "string with UPPERCASE words only",
+                "String with UPPERCASE words only",
+            ),
+            (
+                "test_string_with_underscores_only",
+                "Test string with underscores only",
+            ),
+            ("test-string-with-dashes-only", "Test string with dashes only"),
+            (
+                "teststringwithnodashesornunderscores",
+                "Teststringwithnodashesornunderscores",
+            ),
+        ],
+    )
+    def test_remove_dashes_underscores_capitalize_keep_uppercase(
+        self, address, expected
+    ):
+        assert (
+            remove_dashes_underscores_capitalize_keep_uppercase(address)
+            == expected
+        )
 
 
 @pytest.mark.parametrize(
