@@ -124,10 +124,15 @@ def create_round_summaries(
             round_open = False
             not_yet_open = True
 
-        elif _round_currently_open := all(  # noqa
+        elif application_open_but_assessment_not_yet_open := all(  # noqa
             [
                 current_datetime_after_given_iso_string(round.opens),
                 current_datetime_before_given_iso_string(round.deadline),
+                current_datetime_before_given_iso_string(
+                    round.assessment_start
+                )
+                if round.assessment_start
+                else True,
             ]
         ):
             if filters.filter_status not in (ALL_VALUE, "live"):

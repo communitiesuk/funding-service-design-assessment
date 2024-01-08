@@ -27,6 +27,7 @@ class FeedbackSurveyConfig:
 @dataclass
 class Round:
     id: str
+    assessment_start: str
     assessment_deadline: str
     deadline: str
     fund_id: str
@@ -64,6 +65,8 @@ class Round:
         return Round(
             title=data.get("title"),
             id=data.get("id"),
+            assessment_start=data.get("assessment_start"),
+            assessment_deadline=data.get("assessment_deadline"),
             fund_id=data.get("fund_id"),
             opens=data.get("opens"),
             deadline=data.get("deadline"),
@@ -81,11 +84,3 @@ class Round:
             feedback_survey_config=data.get("feedback_survey_config")
             or FeedbackSurveyConfig(),
         )
-
-    def add_application(self, application: Application):
-        if not self.applications:
-            self.applications = []
-        self.applications.append(application)
-
-    def add_eligibility_criteria(self, key: str, value: object):
-        self.eligibility_criteria.update({key: value})
