@@ -26,6 +26,7 @@ on:
     paths:
       - '!**/README.md'
       - 'app/**'
+      - 'config/**'
       - 'tests/**'
       - 'requirements-dev.in'
       - 'requirements-dev.txt'
