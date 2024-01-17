@@ -522,9 +522,6 @@ def generate_doc_list_for_download(application_id):
     state = get_state_for_tasklist_banner(application_id)
     short_id = state.short_id[-6:]
     flags_list = get_flags(application_id)
-    assessment_status = determine_assessment_status(
-        state.workflow_status, flags_list
-    )
     flag_status = determine_flag_status(flags_list)
 
     application_json = get_application_json(application_id)
@@ -546,6 +543,9 @@ def generate_doc_list_for_download(application_id):
         )
         for file_type in FILE_GENERATORS.keys()
     ]
+    assessment_status = determine_assessment_status(
+        state.workflow_status, state.is_qa_complete
+    )
 
     return render_template(
         "contract_downloads.html",
