@@ -56,18 +56,19 @@
 {# this logic may need to be moved to python when the workflow status and flag status mechanism is sorted #}
 {% set status = state.workflow_status|remove_dashes_underscores_capitalize|title %}
 {% set display_workflow_status = "Assessment complete" if status=="Completed" and not state.is_qa_complete
-else "QA complete" if status=="Completed" and  state.is_qa_complete
+else "QA complete" if status=="Completed" and state.is_qa_complete
 else status %}
 
 <main class="govuk-main-wrapper" id="main-content" role="main">
     {% if migration_banner_enabled %}
-        {{migration_banner()}}
+    {{migration_banner()}}
     {% endif %}
     <div class="govuk-grid-row">
         <div>
             <div class="govuk-!-padding-left-3">
                 <h1 class="govuk-heading-l">Activity trail</h1>
-                <p class="govuk-body">Current assessment status: <span class="{{tag_color}} govuk-body">{{display_workflow_status }}</span></p>
+                <p class="govuk-body">Current assessment status: <span
+                        class="{{tag_color}} govuk-body">{{display_workflow_status }}</span></p>
             </div>
 
 
@@ -83,39 +84,58 @@ else status %}
                 </table>
 
 
-       <form method="GET" action="{{ url_for('assessment_bp.activity_trail', application_id=application_id) }}">
-        {# Search input  #}
-        <div class="govuk-form-group govuk-body">
-            <label class="govuk-label">Search keywords or users</label>
-            <input class="search-input govuk-input govuk-!-width-full" aria-label="Search keywords or users" id="search" name="search" type="text" value="{% if search_keyword %}{{ search_keyword }}{% endif %}">
-        </div>
+                <form method="GET"
+                    action="{{ url_for('assessment_bp.activity_trail', application_id=application_id) }}">
+                    {# Search input #}
+                    <div class="govuk-form-group govuk-body">
+                        <label class="govuk-label">Search keywords or users</label>
+                        <input class="search-input govuk-input govuk-!-width-full" aria-label="Search keywords or users"
+                            id="search" name="search" type="text"
+                            value="{% if search_keyword %}{{ search_keyword }}{% endif %}">
+                    </div>
 
-        {# Checkbox filters #}
-        <div class="govuk-form-group">
-            {% for filter_option in available_filters %}
-                <div class="govuk-checkboxes__item">
-                    <input class="govuk-checkboxes__input" id="{{ filter_option|lower }}Checkbox" type="checkbox" name="filter" value="{{ filter_option }}"
-                    {% if (filter_option =="All activity" and not checkbox_filters) or filter_option in checkbox_filters %}checked{% endif %}>
-                    <label class="govuk-label govuk-checkboxes__label" for="{{ filter_option|lower }}Checkbox">
-                        {{ filter_option }}
-                    </label>
-                </div>
-            {% endfor %}
-        </div>
+                    {# Checkbox filters #}
+                    <div class="govuk-form-group">
+                        {% for filter_option in available_filters %}
+                        <div class="govuk-checkboxes__item">
+                            <input class="govuk-checkboxes__input" id="{{ filter_option|lower }}Checkbox"
+                                type="checkbox" name="filter" value="{{ filter_option }}" {% if
+                                (filter_option=="All activity" and not checkbox_filters) or filter_option in
+                                checkbox_filters %}checked{% endif %}>
+                            <label class="govuk-label govuk-checkboxes__label" for="{{ filter_option|lower }}Checkbox">
+                                {{ filter_option }}
+                            </label>
+                        </div>
+                        {% endfor %}
+                    </div>
 
-        {# Apply filters button #}
-        <div class="govuk-button-group">
-            <button class="govuk-button primary-button" type="submit">
-                Apply Filters
-            </button>
-        </div>
-    </form>
+                    {# Apply filters button #}
+                    <div class="govuk-button-group">
+                        <button class="govuk-button primary-button" type="submit">
+                            Apply Filters
+                        </button>
+                    </div>
+                </form>
             </div>
 
             <div class="govuk-grid-column-two-thirds">
                 <div class="">
 
                     <table class="govuk-table" role="table">
+
+                        {% if not activities %}
+                        <div role="status" aria-live="assertive" class="govuk-!-margin-top-4">
+                            <p class="govuk-body" autofocus>
+                                <strong>No matching results.</strong>
+                            </p>
+                            <p class="govuk-body">Improve your results by:</p>
+                            <ul class="govuk-list govuk-list--bullet">
+                                <li>removing filters</li>
+                                <li>double-checking your spelling</li>
+                            </ul>
+                        </div>
+
+                        {% elif activities %}
                         <thead class="govuk-table__head" role="rowgroup">
                             <tr class="govuk-table__row" role="row">
                                 <th role="columnheader" scope="col" class="govuk-!-width-one-third govuk-table__header">
@@ -129,32 +149,32 @@ else status %}
                                 <td scope="row" class="govuk-table__cell govuk-!-width-one-third">
                                     <div>
                                         {% if activity.__class__.__name__ == 'Flags' %}
-                                            {% if activity.status.name == "RAISED" %}
-                                                {{assessment_flagged(state, activity, application_id)}}
-                                            {% elif activity.status.name == "RESOLVED" %}
-                                                {{assessment_resolved(activity, application_id)}}
-                                            {% elif activity.status.name == "STOPPED" %}
-                                                {{assessment_stopped(activity, application_id)}}
-                                            {% endif %}
+                                        {% if activity.status.name == "RAISED" %}
+                                        {{assessment_flagged(state, activity, application_id)}}
+                                        {% elif activity.status.name == "RESOLVED" %}
+                                        {{assessment_resolved(activity, application_id)}}
+                                        {% elif activity.status.name == "STOPPED" %}
+                                        {{assessment_stopped(activity, application_id)}}
+                                        {% endif %}
 
                                         {% elif activity.__class__.__name__ == 'Comments' %}
-                                            {{comments(activity, application_id)}}
+                                        {{comments(activity, application_id)}}
 
                                         {% elif activity.__class__.__name__ == 'Scores' %}
-                                            {{scores(activity, application_id)}}
+                                        {{scores(activity, application_id)}}
 
                                         {% elif activity.__class__.__name__ == 'AssociatedTags' %}
-                                             {% if activity.purpose =="NEGATIVE" %}
-                                                 {{tags(activity, "red")}}
-                                             {% elif activity.purpose =="POSITIVE" %}
-                                                 {{tags(activity, "green")}}
-                                             {% elif activity.purpose =="GENERAL" %}
-                                                 {{tags(activity, "blue")}}
-                                             {% elif activity.purpose =="ACTION" %}
-                                                 {{tags(activity, "yellow")}}
-                                             {% elif activity.purpose =="PEOPLE" %}
-                                                 {{tags(activity, "grey")}}
-                                             {% endif %}
+                                        {% if activity.purpose =="NEGATIVE" %}
+                                        {{tags(activity, "red")}}
+                                        {% elif activity.purpose =="POSITIVE" %}
+                                        {{tags(activity, "green")}}
+                                        {% elif activity.purpose =="GENERAL" %}
+                                        {{tags(activity, "blue")}}
+                                        {% elif activity.purpose =="ACTION" %}
+                                        {{tags(activity, "yellow")}}
+                                        {% elif activity.purpose =="PEOPLE" %}
+                                        {{tags(activity, "grey")}}
+                                        {% endif %}
 
                                         {% else %}
                                         {{activity}}
@@ -167,6 +187,8 @@ else status %}
                         </tbody>
                         {% endfor %}
 
+                        {% endif %}
+
                     </table>
                 </div>
             </div>
@@ -174,7 +196,6 @@ else status %}
         </div>
 
     </div>
-
 
 </main>
 
