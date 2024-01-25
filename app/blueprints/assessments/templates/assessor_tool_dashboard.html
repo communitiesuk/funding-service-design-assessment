@@ -50,7 +50,6 @@
                                       {{ funds[fund_id].name }} ({{ fund_summaries[fund_id] | length }})
                                     </span>
                                 </span>
-                                {% if fund_summaries[fund_id] %}
                                 <span class="govuk-visually-hidden govuk-accordion__section-heading-divider">, </span>
                                     <span class="govuk-accordion__section-toggle" data-nosnippet="">
                                     <span class="govuk-accordion__section-toggle-focus">
@@ -58,23 +57,22 @@
                                         <span class="govuk-accordion__section-toggle-text">Show</span>
                                     </span>
                                 </span>
-                                {% endif %}
                             </button>
                         </h2>
-                        {% if fund_summaries[fund_id] %}
                         <div id="accordion-default-content-{{ loop.index }}" class="govuk-accordion__section-content"
                              aria-labelledby="accordion-default-heading-{{ loop.index }}" style="display: none">
-                            {% set chunk_size = 3 %}
-                            {% set summaries = fund_summaries[fund_id] %}
-                            {% for chunk in summaries|batch(chunk_size) %}
-                                <div class="govuk-grid-row">
-                                    {% for summary in chunk %}
-                                        {{ fund_summary(summary, force_open_all_live_assessment_rounds) }}
-                                    {% endfor %}
-                                </div>
-                            {% endfor %}
+                            {% if fund_summaries[fund_id] %}
+                                {% set chunk_size = 3 %}
+                                {% set summaries = fund_summaries[fund_id] %}
+                                {% for chunk in summaries|batch(chunk_size) %}
+                                    <div class="govuk-grid-row">
+                                        {% for summary in chunk %}
+                                            {{ fund_summary(summary, force_open_all_live_assessment_rounds) }}
+                                        {% endfor %}
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
                         </div>
-                        {% endif %}
                     </div>
                 </div>
             {% endfor %}
