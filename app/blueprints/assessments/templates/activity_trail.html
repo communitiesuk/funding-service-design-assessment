@@ -50,15 +50,6 @@
 
 {% block content %}
 
-{% set tag_color = 'not-started-tag' if state.workflow_status == 'NOT_STARTED' else state.workflow_status
-%}
-
-{# this logic may need to be moved to python when the workflow status and flag status mechanism is sorted #}
-{% set status = state.workflow_status|remove_dashes_underscores_capitalize|title %}
-{% set display_workflow_status = "Assessment complete" if status=="Completed" and not state.is_qa_complete
-else "QA complete" if status=="Completed" and state.is_qa_complete
-else status %}
-
 <main class="govuk-main-wrapper" id="main-content" role="main">
     {% if migration_banner_enabled %}
     {{migration_banner()}}
@@ -67,8 +58,39 @@ else status %}
         <div>
             <div class="govuk-!-padding-left-3">
                 <h1 class="govuk-heading-l">Activity trail</h1>
-                <p class="govuk-body">Current assessment status: <span
-                        class="{{tag_color}} govuk-body">{{display_workflow_status }}</span></p>
+                <p class="govuk-body">Current assessment status:
+                {% if display_status == "QA complete" %}
+                <span>{{ display_status }}</span>
+                {% elif display_status == "Stopped" %}
+                <span class="stopped-tag">
+                    {{ display_status }}
+                </span>
+                {% elif display_status == "Flagged" %}
+                <span class="flagged-tag">
+                    {{ display_status }}
+                </span>
+                {% elif "Flagged" in display_status %}
+                <span class="flagged-tag">
+                    {{ display_status }}
+                </span>
+                {% elif display_status == "Not started" %}
+                <span class="not-started-tag">
+                    {{ display_status }}
+                </span>
+                {% elif display_status == "Assessment complete" %}
+                <span>
+                    {{ display_status }}
+                </span>
+                {% elif display_status == "Multiple flags to resolve" %}
+                <span class="flagged-tag">
+                    {{ display_status }}
+                </span>
+                {% else %}
+                <span>
+                    {{ display_status }}
+                </span>
+                {% endif %}
+                </p>
             </div>
 
 

@@ -23,6 +23,7 @@ from app.blueprints.assessments.forms.comments_form import CommentsForm
 from app.blueprints.assessments.forms.mark_qa_complete_form import (
     MarkQaCompleteForm,
 )
+from app.blueprints.assessments.helpers import determine_display_status
 from app.blueprints.assessments.helpers import download_file
 from app.blueprints.assessments.helpers import generate_assessment_info_csv
 from app.blueprints.assessments.helpers import generate_maps_from_form_names
@@ -773,6 +774,12 @@ def activity_trail(application_id: str):
         update_user_info, search_keyword, checkbox_filters
     )
 
+    display_status = determine_display_status(
+        state.workflow_status,
+        flags_list,
+        state.is_qa_complete,
+    )
+
     return render_template(
         "activity_trail.html",
         application_id=application_id,
@@ -784,6 +791,7 @@ def activity_trail(application_id: str):
         search_keyword=search_keyword,
         checkbox_filters=checkbox_filters,
         migration_banner_enabled=Config.MIGRATION_BANNER_ENABLED,
+        display_status=display_status,
     )
 
 
