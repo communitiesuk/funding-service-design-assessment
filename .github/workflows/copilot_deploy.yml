@@ -105,7 +105,7 @@ jobs:
       AWS_ACCOUNT: ${{ secrets.AWS_ACCOUNT }}
     with:
       environment: test
-      app_name: assessment'
+      app_name: assessment
       version: sha-${{ github.sha }}
 
   post_test_deploy_tests:
