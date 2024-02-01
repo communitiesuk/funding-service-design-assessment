@@ -59,36 +59,22 @@
             <div class="govuk-!-padding-left-3">
                 <h1 class="govuk-heading-l">Activity trail</h1>
                 <p class="govuk-body">Current assessment status:
-                {% if display_status == "QA complete" %}
-                <span>{{ display_status }}</span>
-                {% elif display_status == "Stopped" %}
-                <span class="stopped-tag">
-                    {{ display_status }}
-                </span>
-                {% elif display_status == "Flagged" %}
-                <span class="flagged-tag">
-                    {{ display_status }}
-                </span>
-                {% elif "Flagged" in display_status %}
-                <span class="flagged-tag">
-                    {{ display_status }}
-                </span>
+                {% if display_status == "Stopped" %}
+                    <span class="stopped-tag">
+                        {{ display_status }}
+                    </span>
+                {% elif ("Flagged" in display_status) or (display_status in ("Flagged", "Multiple flags to resolve")) %}
+                    <span class="flagged-tag">
+                        {{ display_status }}
+                    </span>
                 {% elif display_status == "Not started" %}
-                <span class="not-started-tag">
-                    {{ display_status }}
-                </span>
-                {% elif display_status == "Assessment complete" %}
-                <span>
-                    {{ display_status }}
-                </span>
-                {% elif display_status == "Multiple flags to resolve" %}
-                <span class="flagged-tag">
-                    {{ display_status }}
-                </span>
+                    <span class="not-started-tag">
+                        {{ display_status }}
+                    </span>
                 {% else %}
-                <span>
-                    {{ display_status }}
-                </span>
+                    <span>
+                        {{ display_status }}
+                    </span>
                 {% endif %}
                 </p>
             </div>
