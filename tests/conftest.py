@@ -719,7 +719,7 @@ def mock_get_sub_criteria_theme(request, mocker):
         f"assessment_store/sub_criteria_themes/{application_id}/test_theme_id"
     ]
     mocker.patch(
-        "app.blueprints.assessments.routes.get_sub_criteria_theme_answers",
+        "app.blueprints.assessments.routes.get_sub_criteria_theme_answers_all",
         return_value=mock_theme,
     )
     yield
