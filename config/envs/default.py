@@ -140,7 +140,7 @@ class DefaultConfig:
     )
 
     SUB_CRITERIA_THEME_ANSWERS_ENDPOINT = (
-        "/sub_criteria_themes/{application_id}/{theme_id}"
+        "/sub_criteria_themes/{application_id}"
     )
 
     SUB_CRITERIA_OVERVIEW_ENDPOINT = (
