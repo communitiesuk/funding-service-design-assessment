@@ -114,9 +114,7 @@ def test_get_valid_country_roles(monkeypatch):
     ],
 )
 def test_get_countries_from_roles(monkeypatch, roles, expected):
-    monkeypatch.setattr(
-        "app.blueprints.authentication.validation.g", _MockGlobal(roles=roles)
-    )
+    monkeypatch.setattr("app.blueprints.authentication.validation.g", _MockGlobal(roles=roles))
     countries = get_countries_from_roles("COF")
     assert countries == expected
 
@@ -185,9 +183,7 @@ def test_check_access_application_id_throws_404_when_no_application_id(
         _dummy_function_check_access_application_id()
 
 
-def test_check_access_application_id_cant_access_application_when_no_country_role(
-    request_ctx, monkeypatch
-):
+def test_check_access_application_id_cant_access_application_when_no_country_role(request_ctx, monkeypatch):
     # GIVEN an English COF application/assessment record
     # WHEN the user has no COF_ENGLAND role
     # THEN the user cannot access the application
@@ -220,18 +216,14 @@ def test_check_access_application_id_cant_access_application_when_no_country_rol
     )
     monkeypatch.setattr(
         "app.blueprints.authentication.validation.g",
-        _MockGlobal(
-            roles=["COF_SCOTLAND", "COF_WALES", "COF_NORTHERNIRELAND"]
-        ),
+        _MockGlobal(roles=["COF_SCOTLAND", "COF_WALES", "COF_NORTHERNIRELAND"]),
     )
 
     with pytest.raises(werkzeug.exceptions.Forbidden):
         _dummy_function_check_access_application_id()
 
 
-def test_check_access_application_id_can_access_application_when_has_country_role(
-    request_ctx, monkeypatch
-):
+def test_check_access_application_id_can_access_application_when_has_country_role(request_ctx, monkeypatch):
     # GIVEN an English COF application/assessment record
     # WHEN the user has the COF_ENGLAND role
     # THEN the user can access the application
@@ -326,9 +318,7 @@ def test_check_access_application_id_can_access_application_when_fund_has_no_dev
     _dummy_function_check_access_application_id()  # no fail means pass
 
 
-def test_check_access_application_id_cant_access_application_when_no_relevant_fund_role(
-    request_ctx, monkeypatch
-):
+def test_check_access_application_id_cant_access_application_when_no_relevant_fund_role(request_ctx, monkeypatch):
     # GIVEN an COF application/assessment record
     # WHEN the user has no COF role
     # THEN the user cannot access the application
@@ -383,9 +373,7 @@ def test_check_access_fund_short_name_round_sn_throws_404_when_no_fund_short_nam
         _dummy_function_check_access_fund_short_name_round_sn()
 
 
-def test_check_access_fund_short_name_round_sn_cant_access(
-    monkeypatch, mock_get_round
-):
+def test_check_access_fund_short_name_round_sn_cant_access(monkeypatch, mock_get_round):
     # GIVEN a COF fund short name page
     # WHEN the user has no COF role
     # THEN the user cannot the page
@@ -402,9 +390,7 @@ def test_check_access_fund_short_name_round_sn_cant_access(
         _dummy_function_check_access_fund_short_name_round_sn()
 
 
-def test_check_access_fund_short_name_round_sn_can_access(
-    monkeypatch, mock_get_round
-):
+def test_check_access_fund_short_name_round_sn_can_access(monkeypatch, mock_get_round):
     # GIVEN a COF fund short name page
     # WHEN the user has the COF role
     # THEN the user can access the page
@@ -432,9 +418,10 @@ def test_check_access_fund_short_name_round_sn_can_access(
 
 
 def test__get_roles_by_fund_short_name():
-    assert _get_roles_by_fund_short_name(
-        "cof", ["lead_assessor", "COMMENTER"]
-    ) == ["COF_LEAD_ASSESSOR", "COF_COMMENTER"]
+    assert _get_roles_by_fund_short_name("cof", ["lead_assessor", "COMMENTER"]) == [
+        "COF_LEAD_ASSESSOR",
+        "COF_COMMENTER",
+    ]
 
 
 @pytest.mark.parametrize(
@@ -457,9 +444,7 @@ def test_is_assessment_active_validation(
     mocker.patch(
         "app.blueprints.authentication.validation.get_round",
         return_value=MagicMock(
-            deadline=(
-                datetime.now() + timedelta(days=datetime_offset)
-            ).strftime("%Y-%m-%dT%H:%M:%S")
+            deadline=(datetime.now() + timedelta(days=datetime_offset)).strftime("%Y-%m-%dT%H:%M:%S")
         ),
     )
 
@@ -481,11 +466,7 @@ def test_check_access_application_id_decorator_returns_403_for_inactive_assessme
     )
     mocker.patch(
         "app.blueprints.authentication.validation.get_round",
-        return_value=MagicMock(
-            deadline=(datetime.now() + timedelta(days=1)).strftime(
-                "%Y-%m-%dT%H:%M:%S"
-            )
-        ),
+        return_value=MagicMock(deadline=(datetime.now() + timedelta(days=1)).strftime("%Y-%m-%dT%H:%M:%S")),
     )
 
     @check_access_application_id

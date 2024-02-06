@@ -144,9 +144,7 @@ test_roleless_user_claims = {
 
 
 def create_valid_token(payload=test_assessor_claims):
-    _test_private_key_path = (
-        str(Path(__file__).parent) + "/keys/rsa256/private.pem"
-    )
+    _test_private_key_path = str(Path(__file__).parent) + "/keys/rsa256/private.pem"
     with open(_test_private_key_path, mode="rb") as private_key_file:
         rsa256_private_key = private_key_file.read()
 
@@ -154,15 +152,11 @@ def create_valid_token(payload=test_assessor_claims):
 
 
 def create_invalid_token():
-    _test_private_key_path = (
-        str(Path(__file__).parent) + "/keys/rsa256/private_invalid.pem"
-    )
+    _test_private_key_path = str(Path(__file__).parent) + "/keys/rsa256/private_invalid.pem"
     with open(_test_private_key_path, mode="rb") as private_key_file:
         rsa256_private_key = private_key_file.read()
 
-        return jwt.encode(
-            test_assessor_claims, rsa256_private_key, algorithm="RS256"
-        )
+        return jwt.encode(test_assessor_claims, rsa256_private_key, algorithm="RS256")
 
 
 def post_driver(driver, path, params):
@@ -272,9 +266,7 @@ def selenium_chrome_driver(request, live_server):
     chrome_options.add_argument("--headless")
     # TODO: set chrome_options.binary_location = ...
     #  (if setting to run in container or on GitHub)
-    chrome_driver = webdriver.Chrome(
-        service=service_object, options=chrome_options
-    )
+    chrome_driver = webdriver.Chrome(service=service_object, options=chrome_options)
     request.cls.driver = chrome_driver
     yield
     request.cls.driver.close()
@@ -288,10 +280,7 @@ def mock_get_sub_criteria_banner_state(request):
     application_id = marker.args[0]
 
     mock_banner_info = Banner.from_filtered_dict(
-        mock_api_results[
-            "assessment_store/sub_criteria_overview/"
-            f"banner_state/{application_id}"
-        ]
+        mock_api_results[f"assessment_store/sub_criteria_overview/banner_state/{application_id}"]
     )
 
     with (
@@ -311,9 +300,7 @@ def mock_get_sub_criteria_banner_state(request):
 def mock_get_fund(mocker):
     from app.blueprints.services.models.fund import Fund
 
-    mock_fund_info = Fund.from_json(
-        mock_api_results["fund_store/funds/{fund_id}"]
-    )
+    mock_fund_info = Fund.from_json(mock_api_results["fund_store/funds/{fund_id}"])
 
     mock_funcs = [
         "app.blueprints.assessments.routes.get_fund",
@@ -358,9 +345,7 @@ def mock_get_funds():
 def mock_get_application_metadata(mocker):
     mocker.patch(
         "app.blueprints.authentication.validation.get_application_metadata",
-        return_value=mock_api_results[
-            "assessment_store/applications/{application_id}"
-        ],
+        return_value=mock_api_results["assessment_store/applications/{application_id}"],
     )
     yield
 
@@ -395,9 +380,7 @@ def mock_get_round(mocker):
         "app.blueprints.authentication.validation.get_round",
     ]
 
-    mock_round_info = Round.from_dict(
-        mock_api_results["fund_store/funds/{fund_id}/rounds/{round_id}"]
-    )
+    mock_round_info = Round.from_dict(mock_api_results["fund_store/funds/{fund_id}/rounds/{round_id}"])
 
     mocked_rounds = []
     for mock_func in mock_funcs:
@@ -423,11 +406,7 @@ def mock_get_rounds(request, mocker):
         mock_funcs = func_calls
         fund_id = "test-fund"
 
-    mock_round_info = [
-        Round.from_dict(
-            mock_api_results["fund_store/funds/{fund_id}/rounds/{round_id}"]
-        )
-    ]
+    mock_round_info = [Round.from_dict(mock_api_results["fund_store/funds/{fund_id}/rounds/{round_id}"])]
     mocked_get_rounds = []
     for mock_func in mock_funcs:
         mocked_round = mocker.patch(mock_func, return_value=mock_round_info)
@@ -436,9 +415,7 @@ def mock_get_rounds(request, mocker):
     yield mocked_get_rounds
 
     for mocked_round in mocked_get_rounds:
-        mocked_round.assert_called_with(
-            fund_id, ttl_hash=get_ttl_hash(Config.LRU_CACHE_TIME)
-        )
+        mocked_round.assert_called_with(fund_id, ttl_hash=get_ttl_hash(Config.LRU_CACHE_TIME))
 
 
 @pytest.fixture(scope="function")
@@ -471,9 +448,7 @@ def mock_get_application_overviews(request, mocker):
 
     mocked_apps_overview = mocker.patch(
         path,
-        return_value=mock_api_results[
-            "assessment_store/application_overviews/{fund_id}/{round_id}?"
-        ],
+        return_value=mock_api_results["assessment_store/application_overviews/{fund_id}/{round_id}?"],
     )
 
     yield mocked_apps_overview
@@ -490,9 +465,7 @@ def mock_get_assessor_tasklist_state(request, mocker):
         expect_flagging = True
 
     application_id = marker.args[0]
-    mock_tasklist_state = mock_api_results[
-        f"assessment_store/application_overviews/{application_id}"
-    ]
+    mock_tasklist_state = mock_api_results[f"assessment_store/application_overviews/{application_id}"]
     mocked_tasklist_state = mocker.patch(
         "app.blueprints.services.shared_data_helpers.get_assessor_task_list_state",
         return_value=mock_tasklist_state,
@@ -516,9 +489,7 @@ def mock_get_assessment_stats(request, mocker):
     # fund_id = params.get("fund_id", "test-fund")
     # round_id = params.get("round_id", "test-round")
 
-    mock_stats = mock_api_results[
-        "assessment_store/assessments/get-stats/{fund_id}/{round_id}"
-    ]
+    mock_stats = mock_api_results["assessment_store/assessments/get-stats/{fund_id}/{round_id}"]
 
     mocked_get_stats = []
     for mock_func in mock_funcs:
@@ -536,9 +507,7 @@ def mock_get_assessment_stats(request, mocker):
 def mock_get_assessment_progress(mocker):
     mocked_progress_func = mocker.patch(
         "app.blueprints.assessments.routes.get_assessment_progress",
-        return_value=mock_api_results[
-            "assessment_store/application_overviews/{fund_id}/{round_id}?"
-        ],
+        return_value=mock_api_results["assessment_store/application_overviews/{fund_id}/{round_id}?"],
     )
     yield mocked_progress_func
 
@@ -549,9 +518,7 @@ def mock_get_assessment_progress(mocker):
 def mock_get_teams_flag_stats(mocker):
     mocked_progress_func = mocker.patch(
         "app.blueprints.assessments.routes.get_team_flag_stats",
-        return_value=mock_api_results[
-            "assessment_store/assessments/get-team-flag-stats/{fund_id}/{round_id}"
-        ],
+        return_value=mock_api_results["assessment_store/assessments/get-team-flag-stats/{fund_id}/{round_id}"],
     )
     yield mocked_progress_func
 
@@ -565,11 +532,7 @@ def mock_get_flags(request, mocker):
     marker = request.node.get_closest_marker("application_id")
     application_id = marker.args[0]
 
-    mock_flag_info = Flag.from_list(
-        mock_api_results[
-            f"assessment_store/flags?application_id={application_id}"
-        ]
-    )
+    mock_flag_info = Flag.from_list(mock_api_results[f"assessment_store/flags?application_id={application_id}"])
 
     mock_funcs = [
         "app.blueprints.assessments.routes.get_flags",
@@ -580,26 +543,15 @@ def mock_get_flags(request, mocker):
 
     mocked_flags = []
     for mock_func in mock_funcs:
-        mocked_flags.append(
-            mocker.patch(mock_func, return_value=mock_flag_info)
-        )
+        mocked_flags.append(mocker.patch(mock_func, return_value=mock_flag_info))
     yield mocked_flags
 
 
 @pytest.fixture(scope="function")
 def mock_submit_flag(request, mocker):
-    all_submit_flag_funcs = [
-        "app.blueprints.flagging.helpers.submit_flag"
-        "app.blueprints.flagging.routes.submit_flag"
-    ]
-    marker_submit_flag_paths = request.node.get_closest_marker(
-        "submit_flag_paths"
-    )
-    submit_flag_paths = (
-        marker_submit_flag_paths.args[0]
-        if marker_submit_flag_paths
-        else all_submit_flag_funcs
-    )
+    all_submit_flag_funcs = ["app.blueprints.flagging.helpers.submit_flagapp.blueprints.flagging.routes.submit_flag"]
+    marker_submit_flag_paths = request.node.get_closest_marker("submit_flag_paths")
+    submit_flag_paths = marker_submit_flag_paths.args[0] if marker_submit_flag_paths else all_submit_flag_funcs
 
     marker_flag = request.node.get_closest_marker("flag")
     flag = marker_flag.args[0] if marker_flag else None
@@ -629,9 +581,7 @@ def mock_get_qa_complete(request, mocker):
     marker = request.node.get_closest_marker("application_id")
     application_id = marker.args[0]
 
-    mock_qa_info = mock_api_results[
-        f"assessment_store/qa_complete/{application_id}"
-    ]
+    mock_qa_info = mock_api_results[f"assessment_store/qa_complete/{application_id}"]
     mocker.patch(
         "app.blueprints.assessments.routes.get_qa_complete",
         return_value=mock_qa_info,
@@ -646,17 +596,13 @@ def mock_get_flag(request, mocker):
     marker = request.node.get_closest_marker("flag_id")
     flag_id = marker.args[0]
 
-    mock_flag_info = Flag.from_dict(
-        mock_api_results[f"assessment_store/flag_data?flag_id={flag_id}"]
-    )
+    mock_flag_info = Flag.from_dict(mock_api_results[f"assessment_store/flag_data?flag_id={flag_id}"])
 
     mock_funcs = ["app.blueprints.flagging.routes.get_flag"]
 
     get_flag_mocks = []
     for mock_func in mock_funcs:
-        get_flag_mocks.append(
-            mocker.patch(mock_func, return_value=mock_flag_info)
-        )
+        get_flag_mocks.append(mocker.patch(mock_func, return_value=mock_flag_info))
 
     yield get_flag_mocks
 
@@ -688,9 +634,7 @@ def mock_get_bulk_accounts(request, mocker):
 @pytest.fixture(scope="function")
 def mock_get_sub_criteria(request, mocker):
     application_id = request.node.get_closest_marker("application_id").args[0]
-    sub_criteria_id = request.node.get_closest_marker("sub_criteria_id").args[
-        0
-    ]
+    sub_criteria_id = request.node.get_closest_marker("sub_criteria_id").args[0]
     from app.blueprints.services.models.sub_criteria import SubCriteria
 
     mock_funcs = [
@@ -698,16 +642,11 @@ def mock_get_sub_criteria(request, mocker):
         "app.blueprints.scoring.routes.get_sub_criteria",
     ]
     mock_sub_crit = SubCriteria.from_filtered_dict(
-        mock_api_results[
-            "assessment_store/sub_criteria_overview/"
-            f"{application_id}/{sub_criteria_id}"
-        ]
+        mock_api_results[f"assessment_store/sub_criteria_overview/{application_id}/{sub_criteria_id}"]
     )
     mocked_sub_crits = []
     for mock_func in mock_funcs:
-        mocked_sub_crits.append(
-            mocker.patch(mock_func, return_value=mock_sub_crit)
-        )
+        mocked_sub_crits.append(mocker.patch(mock_func, return_value=mock_sub_crit))
 
     yield mocked_sub_crits
 
@@ -715,9 +654,7 @@ def mock_get_sub_criteria(request, mocker):
 @pytest.fixture(scope="function")
 def mock_get_sub_criteria_theme(request, mocker):
     application_id = request.node.get_closest_marker("application_id").args[0]
-    mock_theme = mock_api_results[
-        f"assessment_store/sub_criteria_themes/{application_id}/test_theme_id"
-    ]
+    mock_theme = mock_api_results[f"assessment_store/sub_criteria_themes/{application_id}/test_theme_id"]
     mocker.patch(
         "app.blueprints.assessments.routes.get_sub_criteria_theme_answers",
         return_value=mock_theme,
@@ -878,9 +815,7 @@ def mock_get_tag_types(mocker):
 
 @pytest.fixture(scope="function")
 def mock_update_tags(mocker, request):
-    tag_updated_bool = request.node.get_closest_marker(
-        "tag_updated_bool"
-    ).args[0]
+    tag_updated_bool = request.node.get_closest_marker("tag_updated_bool").args[0]
     mocker.patch(
         "app.blueprints.tagging.routes.update_tags",
         return_value=tag_updated_bool,

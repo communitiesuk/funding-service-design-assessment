@@ -8,33 +8,25 @@ from app.blueprints.assessments.pdf_generator import PDFCreationException
 
 @pytest.fixture
 def mock_render_template():
-    with patch(
-        "app.blueprints.assessments.pdf_generator._render_template"
-    ) as mock:
+    with patch("app.blueprints.assessments.pdf_generator._render_template") as mock:
         mock.return_value = "<html><body>Test PDF</body></html>"
         yield mock
 
 
 @pytest.fixture
 def mock_convert_html_to_pdf_error():
-    with patch(
-        "app.blueprints.assessments.pdf_generator._convert_html_to_pdf"
-    ) as mock:
+    with patch("app.blueprints.assessments.pdf_generator._convert_html_to_pdf") as mock:
         mock.side_effect = PDFCreationException("Mocked Error")
         yield mock
 
 
 @pytest.fixture
 def mock_convert_html_to_pdf_success():
-    with patch(
-        "app.blueprints.assessments.pdf_generator._convert_html_to_pdf"
-    ) as mock:
+    with patch("app.blueprints.assessments.pdf_generator._convert_html_to_pdf") as mock:
         yield mock
 
 
-def test_generate_pdf_successful(
-    mock_render_template, mock_convert_html_to_pdf_success
-):
+def test_generate_pdf_successful(mock_render_template, mock_convert_html_to_pdf_success):
     template_path = "path/to/valid/template.html"
     context = {"key": "value"}
 
@@ -45,9 +37,7 @@ def test_generate_pdf_successful(
     assert isinstance(pdf_file, BytesIO)
 
 
-def test_generate_pdf_with_error(
-    mock_render_template, mock_convert_html_to_pdf_error
-):
+def test_generate_pdf_with_error(mock_render_template, mock_convert_html_to_pdf_error):
     template_path = "path/to/invalid/template.html"
     context = {"key": "value"}
 

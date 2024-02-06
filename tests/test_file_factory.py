@@ -41,9 +41,7 @@ def application_args(mock_fund, mock_round):
         ("pdf", "generate_full_application_pdf"),
     ],
 )
-def test_generate_file_content_supported_types(
-    file_type, expected_function, application_args, mocker, request_ctx
-):
+def test_generate_file_content_supported_types(file_type, expected_function, application_args, mocker, request_ctx):
     mocked_response = MagicMock()
     mocked_response.seek = lambda _: None
     mocker.patch(

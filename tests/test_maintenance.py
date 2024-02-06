@@ -23,14 +23,11 @@ def test_route_landing_maintenance_mode_disabled(
     mock_get_rounds,
     mock_get_assessment_stats,
 ):
-    response = flask_test_maintenance_client.get(
-        "/assess/assessor_tool_dashboard/"
-    )
+    response = flask_test_maintenance_client.get("/assess/assessor_tool_dashboard/")
     assert 200 == response.status_code, "Wrong status code on response"
     soup = BeautifulSoup(response.data, "html.parser")
     assert (
-        soup.title.string
-        == "Assessment tool dashboard – Assessment Hub – GOV.UK"
+        soup.title.string == "Assessment tool dashboard – Assessment Hub – GOV.UK"
     ), "Response does not contain expected heading"
 
 
@@ -38,14 +35,11 @@ def test_route_landing_maintenance_mode_disabled(
 def test_route_landing_maintenance_mode_enabled(
     flask_test_maintenance_client,
 ):
-    response = flask_test_maintenance_client.get(
-        "/assess/assessor_tool_dashboard/"
-    )
+    response = flask_test_maintenance_client.get("/assess/assessor_tool_dashboard/")
     assert 503 == response.status_code, "Wrong status code on response"
     soup = BeautifulSoup(response.data, "html.parser")
     assert (
-        soup.title.string
-        == "Sorry, this service is unavailable – Assessment Hub – GOV.UK"
+        soup.title.string == "Sorry, this service is unavailable – Assessment Hub – GOV.UK"
     ), "Response does not contain expected heading"
 
 
@@ -95,9 +89,7 @@ def test_route_fund_dashboard_maintenance_mode_disabled(
     )
     assert 200 == response.status_code, "Wrong status code on response"
     soup = BeautifulSoup(response.data, "html.parser")
-    assert (
-        soup.title.string == "Team dashboard – Assessment Hub – GOV.UK"
-    ), "Response does not contain expected heading"
+    assert soup.title.string == "Team dashboard – Assessment Hub – GOV.UK", "Response does not contain expected heading"
 
 
 @pytest.mark.mock_parameters(
@@ -130,6 +122,5 @@ def test_route_fund_dashboard_maintenance_mode_enabled(
     assert 503 == response.status_code, "Wrong status code on response"
     soup = BeautifulSoup(response.data, "html.parser")
     assert (
-        soup.title.string
-        == "Sorry, this service is unavailable – Assessment Hub – GOV.UK"
+        soup.title.string == "Sorry, this service is unavailable – Assessment Hub – GOV.UK"
     ), "Response does not contain expected heading"

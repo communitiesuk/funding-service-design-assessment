@@ -22,9 +22,7 @@ class DefaultConfig:
     FLASK_ENV = CommonConfig.FLASK_ENV
     TEXT_AREA_INPUT_MAX_CHARACTERS = 10000
     MAINTENANCE_MODE = strtobool(getenv("MAINTENANCE_MODE", "False"))
-    MAINTENANCE_END_TIME = getenv(
-        "MAINTENANCE_END_TIME", "18 December 2023 at 03:00pm"
-    )
+    MAINTENANCE_END_TIME = getenv("MAINTENANCE_END_TIME", "18 December 2023 at 03:00pm")
 
     # Authentication
     FSD_USER_TOKEN_COOKIE_NAME = "fsd_user_token"
@@ -75,37 +73,26 @@ class DefaultConfig:
     """
     # Fund Store Endpoints
     FUNDS_ENDPOINT = CommonConfig.FUNDS_ENDPOINT
-    FUND_ENDPOINT = (
-        CommonConfig.FUND_ENDPOINT + "?use_short_name={use_short_name}"
-    )
-    GET_ROUND_DATA_FOR_FUND_ENDPOINT = (
-        FUND_STORE_API_HOST + "/funds/{fund_id}/rounds/{round_id}"
-    )
+    FUND_ENDPOINT = CommonConfig.FUND_ENDPOINT + "?use_short_name={use_short_name}"
+    GET_ROUND_DATA_FOR_FUND_ENDPOINT = FUND_STORE_API_HOST + "/funds/{fund_id}/rounds/{round_id}"
     # TODO: Rework on the avialable teams allocated after implemented in fundstore
-    GET_AVIALABLE_TEAMS_FOR_FUND = (
-        FUND_STORE_API_HOST
-        + "/funds/{fund_id}/rounds/{round_id}/available_flag_allocations"
-    )
+    GET_AVIALABLE_TEAMS_FOR_FUND = FUND_STORE_API_HOST + "/funds/{fund_id}/rounds/{round_id}/available_flag_allocations"
 
     GET_APPLICATION_DISPLAY_FOR_FUND_ENDPOINT = (
-        FUND_STORE_API_HOST
-        + "/funds/{fund_id}/rounds/{round_id}/sections/application?language={language}"
+        FUND_STORE_API_HOST + "/funds/{fund_id}/rounds/{round_id}/sections/application?language={language}"
     )
 
     # Round Store Endpoints
 
     ROUNDS_ENDPOINT = CommonConfig.ROUNDS_ENDPOINT
-    ROUND_ENDPOINT = (
-        CommonConfig.ROUND_ENDPOINT + "?use_short_name={use_short_name}"
-    )
+    ROUND_ENDPOINT = CommonConfig.ROUND_ENDPOINT + "?use_short_name={use_short_name}"
 
     # Application Store Endpoints
     APPLICATION_ENDPOINT = CommonConfig.APPLICATION_ENDPOINT
     APPLICATION_STATUS_ENDPOINT = CommonConfig.APPLICATION_STATUS_ENDPOINT
     APPLICATION_SEARCH_ENDPOINT = CommonConfig.APPLICATION_SEARCH_ENDPOINT
     APPLICATION_METRICS_ENDPOINT = (
-        APPLICATION_STORE_API_HOST
-        + "/applications/reporting/applications_statuses_data?format=json"
+        APPLICATION_STORE_API_HOST + "/applications/reporting/applications_statuses_data?format=json"
     )
     APPLICATION_FEEDBACK_SURVEY_REPORT_ENDPOINT = (
         APPLICATION_STORE_API_HOST
@@ -114,98 +101,51 @@ class DefaultConfig:
     )
 
     # Assessment store endpoints
-    ASSESSMENTS_STATS_ENDPOINT = (
-        "/assessments/get-stats/{fund_id}/{round_id}?{params}"
-    )
+    ASSESSMENTS_STATS_ENDPOINT = "/assessments/get-stats/{fund_id}/{round_id}?{params}"
 
-    APPLICATION_OVERVIEW_ENDPOINT_FUND_ROUND_PARAMS = (
-        "/application_overviews/{fund_id}/{round_id}?{params}"
-    )
+    APPLICATION_OVERVIEW_ENDPOINT_FUND_ROUND_PARAMS = "/application_overviews/{fund_id}/{round_id}?{params}"
 
-    APPLICATION_OVERVIEW_ENDPOINT_APPLICATION_ID = (
-        "/application_overviews/{application_id}"
-    )
+    APPLICATION_OVERVIEW_ENDPOINT_APPLICATION_ID = "/application_overviews/{application_id}"
 
-    APPLICATION_JSON_ENDPOINT = (
-        ASSESSMENT_STORE_API_HOST + "/application/{application_id}/json"
-    )
+    APPLICATION_JSON_ENDPOINT = ASSESSMENT_STORE_API_HOST + "/application/{application_id}/json"
 
-    APPLICATION_METADATA_ENDPOINT = (
-        ASSESSMENT_STORE_API_HOST + "/application/{application_id}/metadata"
-    )
+    APPLICATION_METADATA_ENDPOINT = ASSESSMENT_STORE_API_HOST + "/application/{application_id}/metadata"
 
     ALL_UPLOADED_DOCUMENTS_THEME_ANSWERS_ENDPOINT = (
-        ASSESSMENT_STORE_API_HOST
-        + "/application/{application_id}/all_uploaded_documents"
+        ASSESSMENT_STORE_API_HOST + "/application/{application_id}/all_uploaded_documents"
     )
 
-    SUB_CRITERIA_THEME_ANSWERS_ENDPOINT = (
-        "/sub_criteria_themes/{application_id}/{theme_id}"
-    )
+    SUB_CRITERIA_THEME_ANSWERS_ENDPOINT = "/sub_criteria_themes/{application_id}/{theme_id}"
 
-    SUB_CRITERIA_OVERVIEW_ENDPOINT = (
-        "/sub_criteria_overview/{application_id}/{sub_criteria_id}"
-    )
+    SUB_CRITERIA_OVERVIEW_ENDPOINT = "/sub_criteria_overview/{application_id}/{sub_criteria_id}"
 
-    SUB_CRITERIA_BANNER_STATE_ENDPOINT = (
-        "/sub_criteria_overview/banner_state/{application_id}"
-    )
+    SUB_CRITERIA_BANNER_STATE_ENDPOINT = "/sub_criteria_overview/banner_state/{application_id}"
 
     ASSESSMENT_SCORES_ENDPOINT = ASSESSMENT_STORE_API_HOST + "/score"
-    ASSESSMENT_UPDATE_STATUS = (
-        ASSESSMENT_STORE_API_HOST
-        + "/application/{application_id}/status/complete"
-    )
-    ASSESSMENT_UPDATE_QA_STATUS = (
-        ASSESSMENT_STORE_API_HOST + "/qa_complete/{application_id}/{user_id}"
-    )
+    ASSESSMENT_UPDATE_STATUS = ASSESSMENT_STORE_API_HOST + "/application/{application_id}/status/complete"
+    ASSESSMENT_UPDATE_QA_STATUS = ASSESSMENT_STORE_API_HOST + "/qa_complete/{application_id}/{user_id}"
 
-    ASSESSMENT_GET_QA_STATUS_ENDPOINT = (
-        ASSESSMENT_STORE_API_HOST + "/qa_complete/{application_id}"
-    )
+    ASSESSMENT_GET_QA_STATUS_ENDPOINT = ASSESSMENT_STORE_API_HOST + "/qa_complete/{application_id}"
 
     ASSESSMENT_COMMENT_ENDPOINT = ASSESSMENT_STORE_API_HOST + "/comment"
-    ASSESSMENT_PROGRESS_ENDPOINT = (
-        ASSESSMENT_STORE_API_HOST + "/progress/{fund_id}/{round_id}"
-    )
+    ASSESSMENT_PROGRESS_ENDPOINT = ASSESSMENT_STORE_API_HOST + "/progress/{fund_id}/{round_id}"
 
-    ASSESSMENT_FLAGS_ENDPOINT = (
-        ASSESSMENT_STORE_API_HOST + "/flags/{application_id}"
-    )
+    ASSESSMENT_FLAGS_ENDPOINT = ASSESSMENT_STORE_API_HOST + "/flags/{application_id}"
     ASSESSMENT_FLAGS_POST_ENDPOINT = ASSESSMENT_STORE_API_HOST + "/flags/"
-    ASSESSMENT_FLAG_ENDPOINT = (
-        ASSESSMENT_STORE_API_HOST + "/flag_data?flag_id={flag_id}"
-    )
-    ASSESSMENT_TAGS_ENDPOINT = (
-        ASSESSMENT_STORE_API_HOST
-        + "/funds/{fund_id}/rounds/{round_id}/tags?{params}"
-    )
-    ASSESSMENT_TAG_ENDPOINT = (
-        ASSESSMENT_STORE_API_HOST
-        + "/funds/{fund_id}/rounds/{round_id}/tags/{tag_id}"
-    )
-    ASSESSMENT_UPDATE_TAGS_ENDPOINT = (
-        ASSESSMENT_STORE_API_HOST + "/funds/{fund_id}/rounds/{round_id}/tags"
-    )
-    ASSESSMENT_ASSOCIATE_TAGS_ENDPOINT = (
-        ASSESSMENT_STORE_API_HOST + "/application/{application_id}/tag"
-    )
-    APPLICATION_ASSOCIATED_ALL_TAGS_ENDPOINT = (
-        ASSESSMENT_STORE_API_HOST + "/application/{application_id}/tags"
-    )
-    ASSESSMENT_GET_TAG_ENDPOINT = (
-        ASSESSMENT_STORE_API_HOST
-        + "/funds/{fund_id}/rounds/{round_id}/tags/{tag_id}"
-    )
+    ASSESSMENT_FLAG_ENDPOINT = ASSESSMENT_STORE_API_HOST + "/flag_data?flag_id={flag_id}"
+    ASSESSMENT_TAGS_ENDPOINT = ASSESSMENT_STORE_API_HOST + "/funds/{fund_id}/rounds/{round_id}/tags?{params}"
+    ASSESSMENT_TAG_ENDPOINT = ASSESSMENT_STORE_API_HOST + "/funds/{fund_id}/rounds/{round_id}/tags/{tag_id}"
+    ASSESSMENT_UPDATE_TAGS_ENDPOINT = ASSESSMENT_STORE_API_HOST + "/funds/{fund_id}/rounds/{round_id}/tags"
+    ASSESSMENT_ASSOCIATE_TAGS_ENDPOINT = ASSESSMENT_STORE_API_HOST + "/application/{application_id}/tag"
+    APPLICATION_ASSOCIATED_ALL_TAGS_ENDPOINT = ASSESSMENT_STORE_API_HOST + "/application/{application_id}/tags"
+    ASSESSMENT_GET_TAG_ENDPOINT = ASSESSMENT_STORE_API_HOST + "/funds/{fund_id}/rounds/{round_id}/tags/{tag_id}"
     ASSESSMENT_GET_TAG_USAGE_ENDPOINT = (
-        ASSESSMENT_STORE_API_HOST
-        + "/funds/{fund_id}/rounds/{round_id}/tags/{tag_id}/count"
+        ASSESSMENT_STORE_API_HOST + "/funds/{fund_id}/rounds/{round_id}/tags/{tag_id}/count"
     )
     ASSESSMENT_TAG_TYPES_ENDPOINT = ASSESSMENT_STORE_API_HOST + "/tag_types"
 
     APPLICANT_EXPORT_ENDPOINT = (
-        ASSESSMENT_STORE_API_HOST
-        + "/application_fields_export/{fund_id}/{round_id}/{report_type}"
+        ASSESSMENT_STORE_API_HOST + "/application_fields_export/{fund_id}/{round_id}/{report_type}"
     )
     TAGGING_PURPOSE_CONFIG = {
         "GENERAL": {
@@ -233,9 +173,7 @@ class DefaultConfig:
         ("GENERAL",),
         ("PEOPLE",),
     )
-    ASSESSMENT_SCORING_SYSTEM_ENDPOINT = (
-        ASSESSMENT_STORE_API_HOST + "/scoring-system/{round_id}"
-    )
+    ASSESSMENT_SCORING_SYSTEM_ENDPOINT = ASSESSMENT_STORE_API_HOST + "/scoring-system/{round_id}"
     # Account store endpoints
     BULK_ACCOUNTS_ENDPOINT = ACCOUNT_STORE_API_HOST + "/bulk-accounts"
 
@@ -263,16 +201,10 @@ class DefaultConfig:
         AWS_REGION = environ.get("AWS_REGION")
         ASSETS_AUTO_BUILD = False
     elif "VCAP_SERVICES" in os.environ:
-        VCAP_SERVICES = VcapServices.from_env_json(
-            environ.get("VCAP_SERVICES")
-        )
+        VCAP_SERVICES = VcapServices.from_env_json(environ.get("VCAP_SERVICES"))
 
-        if VCAP_SERVICES.does_service_exist(
-            service_key="aws-s3-bucket"  # pragma: allowlist secret
-        ):
-            s3_credentials = VCAP_SERVICES.services.get("aws-s3-bucket")[
-                0
-            ].get("credentials")
+        if VCAP_SERVICES.does_service_exist(service_key="aws-s3-bucket"):  # pragma: allowlist secret
+            s3_credentials = VCAP_SERVICES.services.get("aws-s3-bucket")[0].get("credentials")
             AWS_REGION = s3_credentials["aws_region"]
             AWS_ACCESS_KEY_ID = s3_credentials["aws_access_key_id"]
             AWS_SECRET_ACCESS_KEY = s3_credentials["aws_secret_access_key"]

@@ -10,19 +10,13 @@ single_application_json_blob = {
                         {
                             "answer": "lots of surveys",
                             "key": "ieRCkI",
-                            "title": (
-                                "Tell us about the feasibility studies you"
-                                " have carried out for your project"
-                            ),
+                            "title": "Tell us about the feasibility studies you have carried out for your project",
                             "type": "text",
                         },
                         {
                             "answer": False,
                             "key": "aAeszH",
-                            "title": (
-                                "Do you need to do any further feasibility"
-                                " work?"
-                            ),
+                            "title": "Do you need to do any further feasibility work?",
                             "type": "list",
                         },
                     ],
@@ -58,10 +52,7 @@ single_application_json_blob = {
                         {
                             "answer": ["support-local-community"],
                             "key": "CDwTrG",
-                            "title": (
-                                "What policy aims will your project deliver"
-                                " against?"
-                            ),
+                            "title": "What policy aims will your project deliver against?",
                             "type": "list",
                         },
                         {
@@ -87,10 +78,7 @@ single_application_json_blob = {
                         {
                             "answer": "Test",
                             "key": "qsZLjZ",
-                            "title": (
-                                "Why will the asset be lost without community"
-                                " intervention?"
-                            ),
+                            "title": "Why will the asset be lost without community intervention?",
                             "type": "text",
                         },
                     ],
@@ -108,10 +96,7 @@ single_application_json_blob = {
                         {
                             "answer": "Test",
                             "key": "CvVZJv",
-                            "title": (
-                                "Tell us how you have considered the"
-                                " environmental sustainability of your project"
-                            ),
+                            "title": "Tell us how you have considered the environmental sustainability of your project",
                             "type": "text",
                         }
                     ],
@@ -129,10 +114,7 @@ single_application_json_blob = {
                         {
                             "answer": False,
                             "key": "KqoaJL",
-                            "title": (
-                                "Are you confident there is local support for"
-                                " your project?"
-                            ),
+                            "title": "Are you confident there is local support for your project?",
                             "type": "list",
                         }
                     ],
@@ -150,10 +132,7 @@ single_application_json_blob = {
                         {
                             "answer": False,
                             "key": "HvxXPI",
-                            "title": (
-                                "Does your project meet the definition of a"
-                                " subsidy?"
-                            ),
+                            "title": "Does your project meet the definition of a subsidy?",
                             "type": "list",
                         }
                     ],
@@ -171,10 +150,7 @@ single_application_json_blob = {
                         {
                             "answer": False,
                             "key": "CBIWnt",
-                            "title": (
-                                "Do you have experience of managing a"
-                                " community asset?"
-                            ),
+                            "title": "Do you have experience of managing a community asset?",
                             "type": "list",
                         }
                     ],
@@ -186,10 +162,7 @@ single_application_json_blob = {
                         {
                             "answer": False,
                             "key": "vKnMPG",
-                            "title": (
-                                "Do you have any plans to recruit people to"
-                                " help you manage the asset?"
-                            ),
+                            "title": "Do you have any plans to recruit people to help you manage the asset?",
                             "type": "list",
                         }
                     ],
@@ -225,10 +198,7 @@ single_application_json_blob = {
                         {
                             "answer": False,
                             "key": "gScdbf",
-                            "title": (
-                                "Have you been given funding through the"
-                                " Community Ownership Fund before?"
-                            ),
+                            "title": "Have you been given funding through the Community Ownership Fund before?",
                             "type": "list",
                         }
                     ],
@@ -238,9 +208,7 @@ single_application_json_blob = {
                 {
                     "fields": [
                         {
-                            "answer": (
-                                "Restore the beautiful museum in Bristol"
-                            ),
+                            "answer": "Restore the beautiful museum in Bristol",
                             "key": "KAgrBz",
                             "title": "Project name",
                             "type": "text",
@@ -268,10 +236,7 @@ single_application_json_blob = {
                         {
                             "answer": "Test",
                             "key": "GCjCse",
-                            "title": (
-                                "Give a brief summary of your project,"
-                                " including what you hope to achieve"
-                            ),
+                            "title": "Give a brief summary of your project, including what you hope to achieve",
                             "type": "text",
                         },
                     ],
@@ -281,10 +246,7 @@ single_application_json_blob = {
                 {
                     "fields": [
                         {
-                            "answer": (
-                                "Test Address, null, Test Town Or City, null,"
-                                " QQ12QQ"
-                            ),
+                            "answer": "Test Address, null, Test Town Or City, null, QQ12QQ",
                             "key": "yEmHpp",
                             "title": "Address of the community asset",
                             "type": "text",
@@ -298,9 +260,7 @@ single_application_json_blob = {
                         {
                             "answer": "Local Council",
                             "key": "MGRlEi",
-                            "title": (
-                                "In which local council area is your asset?"
-                            ),
+                            "title": "In which local council area is your asset?",
                             "type": "text",
                         },
                     ],
@@ -330,9 +290,7 @@ single_application_json_blob = {
                         {
                             "answer": False,
                             "key": "iBCGxY",
-                            "title": (
-                                "Does your organisation use any other names?"
-                            ),
+                            "title": "Does your organisation use any other names?",
                             "type": "list",
                         },
                     ],
@@ -344,44 +302,31 @@ single_application_json_blob = {
                         {
                             "answer": "Test",
                             "key": "emVGxS",
-                            "title": (
-                                "What is your organisation's main purpose?"
-                            ),
+                            "title": "What is your organisation's main purpose?",
                             "type": "text",
                         },
                         {
                             "answer": "Test",
                             "key": "btTtIb",
-                            "title": (
-                                "Tell us about your organisation's main"
-                                " activities"
-                            ),
+                            "title": "Tell us about your organisation's main activities",
                             "type": "text",
                         },
                         {
                             "answer": "",
                             "key": "SkocDi",
-                            "title": (
-                                "Tell us about your organisation's main"
-                                " activities - Activity 2 "
-                            ),
+                            "title": "Tell us about your organisation's main activities - Activity 2 ",
                             "type": "text",
                         },
                         {
                             "answer": "",
                             "key": "CNeeiC",
-                            "title": (
-                                "Tell us about your organisation's main"
-                                " activities - Activity 3 "
-                            ),
+                            "title": "Tell us about your organisation's main activities - Activity 3 ",
                             "type": "text",
                         },
                         {
                             "answer": False,
                             "key": "BBlCko",
-                            "title": (
-                                "Have you delivered projects like this before?"
-                            ),
+                            "title": "Have you delivered projects like this before?",
                             "type": "list",
                         },
                     ],
@@ -417,10 +362,7 @@ single_application_json_blob = {
                         {
                             "answer": False,
                             "key": "DwfHtk",
-                            "title": (
-                                "Is your organisation a trading subsidiary of"
-                                " a parent company?"
-                            ),
+                            "title": "Is your organisation a trading subsidiary of a parent company?",
                             "type": "list",
                         }
                     ],
@@ -430,10 +372,7 @@ single_application_json_blob = {
                 {
                     "fields": [
                         {
-                            "answer": (
-                                "Test Address, null, Test Town Or City, null,"
-                                " QQ12QQ"
-                            ),
+                            "answer": "Test Address, null, Test Town Or City, null, QQ12QQ",
                             "key": "ZQolYb",
                             "title": "Organisation address",
                             "type": "text",
@@ -441,10 +380,7 @@ single_application_json_blob = {
                         {
                             "answer": False,
                             "key": "zsoLdf",
-                            "title": (
-                                "Is your correspondence address different to"
-                                " the organisation address?"
-                            ),
+                            "title": "Is your correspondence address different to the organisation address?",
                             "type": "list",
                         },
                         {
@@ -456,17 +392,13 @@ single_application_json_blob = {
                         {
                             "answer": "",
                             "key": "FcdKlB",
-                            "title": (
-                                "Website and social media - Link or username 2"
-                            ),
+                            "title": "Website and social media - Link or username 2",
                             "type": "text",
                         },
                         {
                             "answer": "",
                             "key": "BzxgDA",
-                            "title": (
-                                "Website and social media - Link or username 3"
-                            ),
+                            "title": "Website and social media - Link or username 3",
                             "type": "text",
                         },
                     ],
@@ -478,10 +410,7 @@ single_application_json_blob = {
                         {
                             "answer": False,
                             "key": "hnLurH",
-                            "title": (
-                                "Is your application a joint bid in"
-                                " partnership with other organisations?"
-                            ),
+                            "title": "Is your application a joint bid in partnership with other organisations?",
                             "type": "list",
                         }
                     ],
@@ -503,8 +432,7 @@ single_application_json_blob = {
                             "type": "text",
                         },
                         {
-                            "answer": "testemailfundingservice@"
-                            + "testemailfundingservice.com",
+                            "answer": "testemailfundingservice@" + "testemailfundingservice.com",
                             "key": "LZBrEj",
                             "title": "Lead contact email address",
                             "type": "text",
@@ -542,17 +470,13 @@ single_application_json_blob = {
                         {
                             "answer": "buy-the-asset",
                             "key": "VWkLlk",
-                            "title": (
-                                "What do you intend to do with the asset?"
-                            ),
+                            "title": "What do you intend to do with the asset?",
                             "type": "list",
                         },
                         {
                             "answer": False,
                             "key": "IRfSZp",
-                            "title": (
-                                "Do you know who currently owns your asset?"
-                            ),
+                            "title": "Do you know who currently owns your asset?",
                             "type": "list",
                         },
                     ],
@@ -576,10 +500,7 @@ single_application_json_blob = {
                         {
                             "answer": False,
                             "key": "gkulUE",
-                            "title": (
-                                "Have you already completed the purchase or"
-                                " lease?"
-                            ),
+                            "title": "Have you already completed the purchase or lease?",
                             "type": "list",
                         }
                     ],
@@ -625,10 +546,7 @@ single_application_json_blob = {
                         {
                             "answer": False,
                             "key": "hvzzWB",
-                            "title": (
-                                "Is this a registered Asset of Community Value"
-                                " (ACV)?"
-                            ),
+                            "title": "Is this a registered Asset of Community Value (ACV)?",
                             "type": "list",
                         }
                     ],
@@ -640,10 +558,7 @@ single_application_json_blob = {
                         {
                             "answer": False,
                             "key": "VwxiGn",
-                            "title": (
-                                "Is the asset listed for disposal, or part of"
-                                " a Community Asset Transfer?"
-                            ),
+                            "title": "Is the asset listed for disposal, or part of a Community Asset Transfer?",
                             "type": "list",
                         }
                     ],
@@ -688,10 +603,7 @@ single_application_json_blob = {
                         {
                             "answer": False,
                             "key": "JCACTy",
-                            "title": (
-                                "Have you done any fundraising in the"
-                                " community?"
-                            ),
+                            "title": "Have you done any fundraising in the community?",
                             "type": "list",
                         },
                     ],
@@ -701,15 +613,9 @@ single_application_json_blob = {
                 {
                     "fields": [
                         {
-                            "answer": (
-                                "Tell us how your project supports any wider"
-                                " local plans"
-                            ),
+                            "answer": "Tell us how your project supports any wider local plans",
                             "key": "NZKHOp",
-                            "title": (
-                                "Tell us how your project supports any wider"
-                                " local plans"
-                            ),
+                            "title": "Tell us how your project supports any wider local plans",
                             "type": "text",
                         }
                     ],
@@ -758,8 +664,7 @@ single_application_json_blob = {
                             "answer": False,
                             "key": "NWTKzQ",
                             "title": (
-                                "Are you applying for revenue funding from the"
-                                " Community Ownership Fund? (optional)"
+                                "Are you applying for revenue funding from the Community Ownership Fund? (optional)"
                             ),
                             "type": "list",
                         }
@@ -784,10 +689,7 @@ single_application_json_blob = {
                         {
                             "answer": False,
                             "key": "RvbwSX",
-                            "title": (
-                                "Do you have any match funding identified but"
-                                " not yet secured?"
-                            ),
+                            "title": "Do you have any match funding identified but not yet secured?",
                             "type": "list",
                         }
                     ],
@@ -817,10 +719,7 @@ single_application_json_blob = {
                         {
                             "answer": ["community-pride"],
                             "key": "QjJtbs",
-                            "title": (
-                                "What community benefits do you expect to"
-                                " deliver with this project? "
-                            ),
+                            "title": "What community benefits do you expect to deliver with this project? ",
                             "type": "list",
                         },
                         {
@@ -837,18 +736,14 @@ single_application_json_blob = {
                             "answer": "Test",
                             "key": "kYjJFy",
                             "title": (
-                                "Explain how you plan to sustain, and"
-                                " potentially expand, these benefits over time"
+                                "Explain how you plan to sustain, and potentially expand, these benefits over time"
                             ),
                             "type": "text",
                         },
                         {
                             "answer": "Test",
                             "key": "UbjYqE",
-                            "title": (
-                                "Tell us how you'll make sure the whole"
-                                " community benefits from the asset"
-                            ),
+                            "title": "Tell us how you'll make sure the whole community benefits from the asset",
                             "type": "text",
                         },
                     ],
@@ -866,10 +761,7 @@ single_application_json_blob = {
                         {
                             "answer": "Test",
                             "key": "SrtVAs",
-                            "title": (
-                                "Describe the planned activities or services"
-                                " that will take place at the asset"
-                            ),
+                            "title": "Describe the planned activities or services that will take place at the asset",
                             "type": "text",
                         },
                         {
@@ -895,10 +787,7 @@ single_application_json_blob = {
                         {
                             "answer": "Test",
                             "key": "bkJsiO",
-                            "title": (
-                                "Describe how the project will bring people"
-                                " together from all over the community"
-                            ),
+                            "title": "Describe how the project will bring people together from all over the community",
                             "type": "text",
                         },
                     ],
@@ -916,19 +805,13 @@ single_application_json_blob = {
                         {
                             "answer": "Test",
                             "key": "WDDkVB",
-                            "title": (
-                                "Summarise your cash flow for the running of"
-                                " the asset"
-                            ),
+                            "title": "Summarise your cash flow for the running of the asset",
                             "type": "text",
                         },
                         {
                             "answer": False,
                             "key": "oaIntA",
-                            "title": (
-                                "If successful, will you use your funding in"
-                                " the next 12 months?"
-                            ),
+                            "title": "If successful, will you use your funding in the next 12 months?",
                             "type": "list",
                         },
                     ],
@@ -976,18 +859,14 @@ single_application_json_blob = {
                         {
                             "answer": "Test",
                             "key": "yMCivI",
-                            "title": (
-                                "Tell us about your governance and membership"
-                                " structures"
-                            ),
+                            "title": "Tell us about your governance and membership structures",
                             "type": "text",
                         },
                         {
                             "answer": "Test",
                             "key": "NUZOvS",
                             "title": (
-                                "Explain how you'll consider the views of the"
-                                " community in the running of the asset"
+                                "Explain how you'll consider the views of the community in the running of the asset"
                             ),
                             "type": "text",
                         },
@@ -1006,9 +885,7 @@ single_application_json_blob = {
                         {
                             "answer": "Test",
                             "key": "oOPUXI",
-                            "title": (
-                                "Tell us about your local community as a whole"
-                            ),
+                            "title": "Tell us about your local community as a whole",
                             "type": "text",
                         },
                         {

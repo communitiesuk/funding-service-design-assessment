@@ -11,15 +11,8 @@ def slash_separated_day_month_year(value: str):
 
 def datetime_format(value, format):
     am_pm_format = "%p"
-    formatted_time = datetime.strptime(value, "%Y-%m-%dT%H:%M:%S").strftime(
-        format
-    )
-    formatted_time = (
-        formatted_time
-        + datetime.strptime(value, "%Y-%m-%dT%H:%M:%S")
-        .strftime(am_pm_format)
-        .lower()
-    )
+    formatted_time = datetime.strptime(value, "%Y-%m-%dT%H:%M:%S").strftime(format)
+    formatted_time = formatted_time + datetime.strptime(value, "%Y-%m-%dT%H:%M:%S").strftime(am_pm_format).lower()
     return formatted_time
 
 
@@ -59,9 +52,7 @@ def remove_dashes_underscores_capitalize(s: str) -> str:
 def remove_dashes_underscores_capitalize_keep_uppercase(s: str) -> str:
     # Convert all words to lowercase except for originally uppercase words(Abbrevations are preserved)
     words = s.replace("-", " ").replace("_", " ").split(" ")
-    lowercase_words = [
-        word.lower() if word.islower() else word for word in words
-    ]
+    lowercase_words = [word.lower() if word.islower() else word for word in words]
 
     # Capitalize the first word
     lowercase_words[0] = lowercase_words[0].capitalize()

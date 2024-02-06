@@ -51,9 +51,7 @@ def test_from_data(
     expected_len_sections,
     expected_logo_uri,
 ):
-    mock_args.round.all_uploaded_documents_section_available = (
-        all_docs_available
-    )
+    mock_args.round.all_uploaded_documents_section_available = all_docs_available
     mock_args.round.display_logo_on_pdf_exports = display_logo
 
     context = FullApplicationPdfContext.from_data(mock_args)
