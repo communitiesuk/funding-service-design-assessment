@@ -274,9 +274,7 @@ mock_api_results = {
         "fund_id": test_fund_id,
         "short_name": "TR",
         "title": "Test round",
-        "assessment_criteria_weighting": [
-            {"id": "crit1", "name": "Test criteria", "value": 1.0}
-        ],
+        "assessment_criteria_weighting": [{"id": "crit1", "name": "Test criteria", "value": 1.0}],
         "assessment_deadline": "2023-03-01T12:00:00",
         "assessment_start": None,
         "deadline": "2022-12-01T12:00:00",
@@ -523,31 +521,17 @@ mock_api_results = {
         "fund_id": test_fund_id,
     },
     "assessment_store/flag_data?flag_id=flagged_app": flagged_app["flags"][-1],
-    "assessment_store/flag_data?flag_id=resolved_app": resolved_app["flags"][
-        -1
-    ],
+    "assessment_store/flag_data?flag_id=resolved_app": resolved_app["flags"][-1],
     "assessment_store/flag_data?flag_id=stopped_app": stopped_app["flags"][-1],
-    "assessment_store/flag_data?flag_id=flagged_qa_completed_app": flagged_qa_completed_app[
-        "flags"
-    ][
-        -1
-    ],
+    "assessment_store/flag_data?flag_id=flagged_qa_completed_app": flagged_qa_completed_app["flags"][-1],
     "assessment_store/flags?application_id=flagged_app": flagged_app["flags"],
-    "assessment_store/flags?application_id=resolved_app": resolved_app[
-        "flags"
-    ],
+    "assessment_store/flags?application_id=resolved_app": resolved_app["flags"],
     "assessment_store/flags?application_id=stopped_app": stopped_app["flags"],
-    "assessment_store/flags?application_id=flagged_qa_completed_app": flagged_qa_completed_app[
-        "flags"
-    ],
+    "assessment_store/flags?application_id=flagged_qa_completed_app": flagged_qa_completed_app["flags"],
     "assessment_store/qa_complete/flagged_app": {},
     "assessment_store/qa_complete/resolved_app": {},
     "assessment_store/qa_complete/stopped_app": {},
-    "assessment_store/qa_complete/flagged_qa_completed_app": flagged_qa_completed_app[
-        "qa_complete"
-    ][
-        0
-    ],
+    "assessment_store/qa_complete/flagged_qa_completed_app": flagged_qa_completed_app["qa_complete"][0],
     "account_store/bulk-accounts": {
         test_user_id_lead_assessor: {
             "user_id": test_user_id_lead_assessor,
@@ -585,9 +569,7 @@ mock_api_results = {
             }
         ],
     },
-    f"assessment_store/sub_criteria_themes/{resolved_app_id}/{resolved_app['theme_id']}": [
-        resolved_app["mock_field"]
-    ],
+    f"assessment_store/sub_criteria_themes/{resolved_app_id}/{resolved_app['theme_id']}": [resolved_app["mock_field"]],
     "assessment_store/comment?": [
         {
             "id": "test_id_1",
@@ -732,12 +714,7 @@ class TestSanitiseData:
                 )
             }
         else:
-            return {
-                "answer": (
-                    f"<{self.tag}>Example text"
-                    f" <li>One</li>\n<li>Two</li></{self.tag}>"
-                )
-            }
+            return {"answer": f"<{self.tag}>Example text <li>One</li>\n<li>Two</li></{self.tag}>"}
 
     @property
     def response(self):
@@ -753,10 +730,7 @@ class TestSanitiseData:
         else:
             if self.tag == "p":
                 return {
-                    "answer": (
-                        f"<{self.tag} class='govuk-body'>Example text"
-                        f" <li>One</li>\n<li>Two</li></{self.tag}>"
-                    )
+                    "answer": f"<{self.tag} class='govuk-body'>Example text <li>One</li>\n<li>Two</li></{self.tag}>"
                 }
             if self.tag == "ul":
                 return {

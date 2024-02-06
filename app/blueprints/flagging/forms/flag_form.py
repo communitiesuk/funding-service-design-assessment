@@ -12,9 +12,7 @@ class FlagApplicationForm(FlaskForm):
         "Reason for flagging",
         validators=[
             length(max=Config.TEXT_AREA_INPUT_MAX_CHARACTERS),
-            InputRequired(
-                message="Provide a justification for flagging this application"
-            ),
+            InputRequired(message="Provide a justification for flagging this application"),
         ],
     )
     section = SelectMultipleField(
@@ -29,11 +27,7 @@ class FlagApplicationForm(FlaskForm):
     teams_available = RadioField(
         "teams_available",
         choices=None,
-        validators=[
-            InputRequired(
-                message="Select which team the flag should be allocated to"
-            )
-        ],
+        validators=[InputRequired(message="Select which team the flag should be allocated to")],
     )
 
     def __init__(self, section_choices=None, team_choices=None):

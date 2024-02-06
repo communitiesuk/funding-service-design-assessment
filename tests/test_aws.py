@@ -15,8 +15,7 @@ def test_generate_url_short_id(app):
 def test_generate_url(app):
     file_data = FileData("app1", "form1", "path1", "comp1", "file1.txt")
     assert (
-        generate_url(file_data)
-        == "/assess/application/app1/export/form1%252Fpath1%252Fcomp1%252Ffile1.txt?quoted=True"
+        generate_url(file_data) == "/assess/application/app1/export/form1%252Fpath1%252Fcomp1%252Ffile1.txt?quoted=True"
     )
 
 

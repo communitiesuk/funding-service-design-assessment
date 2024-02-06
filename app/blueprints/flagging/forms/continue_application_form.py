@@ -10,8 +10,6 @@ class ContinueApplicationForm(FlaskForm):
         "reason",
         validators=[
             length(max=Config.TEXT_AREA_INPUT_MAX_CHARACTERS),
-            InputRequired(
-                message="Provide a reason for continuing assessment"
-            ),
+            InputRequired(message="Provide a reason for continuing assessment"),
         ],
     )

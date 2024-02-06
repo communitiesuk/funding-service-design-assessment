@@ -11,9 +11,7 @@ from tests.conftest import test_roleless_user_claims
 
 
 class TestAuthorisation:
-    def test_any_unauthorised_route_redirects_to_home(
-        self, flask_test_client, mock_get_funds
-    ):
+    def test_any_unauthorised_route_redirects_to_home(self, flask_test_client, mock_get_funds):
         """
         GIVEN an unauthorised user
         WHEN the user tries to access any route
@@ -31,9 +29,7 @@ class TestAuthorisation:
         assert response.status_code == 302
         assert response.location == "/"
 
-    def test_any_invalid_token_route_redirects_to_home(
-        self, flask_test_client, mock_get_funds
-    ):
+    def test_any_invalid_token_route_redirects_to_home(self, flask_test_client, mock_get_funds):
         """
         GIVEN an unauthorised user
         WHEN the user tries to access any route
@@ -55,9 +51,7 @@ class TestAuthorisation:
         assert response.status_code == 302
         assert response.location == "/"
 
-    def test_any_unauthorised_visit_to_route_prompts_user_to_sign_in(
-        self, flask_test_client, mock_get_funds
-    ):
+    def test_any_unauthorised_visit_to_route_prompts_user_to_sign_in(self, flask_test_client, mock_get_funds):
         """
         GIVEN an unauthorised user
         WHEN the user visits the homepage "/"
@@ -80,9 +74,7 @@ class TestAuthorisation:
             in response.data
         )
 
-    def test_roleless_user_redirected_to_roles_error(
-        self, flask_test_client, mock_get_funds
-    ):
+    def test_roleless_user_redirected_to_roles_error(self, flask_test_client, mock_get_funds):
         """
         GIVEN an authorised user with no roles
         WHEN the user tries to access any route
@@ -111,9 +103,7 @@ class TestAuthorisation:
             "get_assessment_stats_path": [
                 "app.blueprints.assessments.models.fund_summary.get_assessments_stats",
             ],
-            "get_rounds_path": [
-                "app.blueprints.assessments.models.fund_summary.get_rounds"
-            ],
+            "get_rounds_path": ["app.blueprints.assessments.models.fund_summary.get_rounds"],
             "fund_id": "test-fund",
             "round_id": "test-round",
         }
@@ -192,12 +182,8 @@ class TestAuthorisation:
         flask_test_client.set_cookie("localhost", "fsd_user_token", token)
 
         # Send a request to the route you want to test
-        application_id = request.node.get_closest_marker(
-            "application_id"
-        ).args[0]
-        sub_criteria_id = request.node.get_closest_marker(
-            "sub_criteria_id"
-        ).args[0]
+        application_id = request.node.get_closest_marker("application_id").args[0]
+        sub_criteria_id = request.node.get_closest_marker("sub_criteria_id").args[0]
 
         response = flask_test_client.get(
             f"/assess/application_id/{application_id}/sub_criteria_id/{sub_criteria_id}"  # noqa
@@ -209,26 +195,16 @@ class TestAuthorisation:
         soup = BeautifulSoup(response.data, "html.parser")
         assert (
             soup.title.string
-            == "test_theme_name – test_sub_criteria – Project In prog and"
-            " Res –"
-            " Assessment Hub – GOV.UK"
+            == "test_theme_name – test_sub_criteria – Project In prog and Res – Assessment Hub – GOV.UK"
         )
         if ability_to_score:
             assert (
-                b"score-subcriteria-link" in response.data
-                and b"Score the subcriteria" in response.data
-            ), (
-                "Sidebar should contain score subcriteria link or link to"
-                f" score subcriteria: {response.data}"
-            )
+                b"score-subcriteria-link" in response.data and b"Score the subcriteria" in response.data
+            ), f"Sidebar should contain score subcriteria link or link to score subcriteria: {response.data}"
         else:
             assert (
-                b"score-subcriteria-link" not in response.data
-                and b"Score the subcriteria" not in response.data
-            ), (
-                "Sidebar should not contain score subcriteria link or link to"
-                f" score subcriteria: {response.data}"
-            )
+                b"score-subcriteria-link" not in response.data and b"Score the subcriteria" not in response.data
+            ), f"Sidebar should not contain score subcriteria link or link to score subcriteria: {response.data}"
 
     @pytest.mark.parametrize(
         "claim,expect_all_comments_available",
@@ -279,12 +255,8 @@ class TestAuthorisation:
         )
 
         # Send a request to the route you want to test
-        application_id = request.node.get_closest_marker(
-            "application_id"
-        ).args[0]
-        sub_criteria_id = request.node.get_closest_marker(
-            "sub_criteria_id"
-        ).args[0]
+        application_id = request.node.get_closest_marker("application_id").args[0]
+        sub_criteria_id = request.node.get_closest_marker("sub_criteria_id").args[0]
 
         response = flask_test_client.get(
             f"/assess/application_id/{application_id}/sub_criteria_id/{sub_criteria_id}",  # noqa
@@ -293,9 +265,7 @@ class TestAuthorisation:
         assert response.status_code == 200
         is_commenter_comment_visible = b"Im a commenter" in response.data
         is_assessor_comment_visible = b"Im an assessor" in response.data
-        is_lead_assessor_comment_visible = (
-            b"This is a comment" in response.data
-        )
+        is_lead_assessor_comment_visible = b"This is a comment" in response.data
         assert g.user.roles is not None
 
         soup = BeautifulSoup(response.data, "html.parser")
@@ -370,12 +340,8 @@ class TestAuthorisation:
         )
 
         # Send a request to the route you want to test
-        application_id = request.node.get_closest_marker(
-            "application_id"
-        ).args[0]
-        sub_criteria_id = request.node.get_closest_marker(
-            "sub_criteria_id"
-        ).args[0]
+        application_id = request.node.get_closest_marker("application_id").args[0]
+        sub_criteria_id = request.node.get_closest_marker("sub_criteria_id").args[0]
 
         mocker.patch(
             "app.blueprints.assessments.routes.get_comments",
@@ -481,9 +447,7 @@ class TestAuthorisation:
             - commenter role cannot continue assessment
             - assessor role cannot continue assessment
         """
-        application_id = request.node.get_closest_marker(
-            "application_id"
-        ).args[0]
+        application_id = request.node.get_closest_marker("application_id").args[0]
         flask_test_client.set_cookie(
             "localhost",
             "fsd_user_token",
@@ -496,10 +460,7 @@ class TestAuthorisation:
                 follow_redirects=True,
             )
         # Tries to redirect to authenticator
-        assert (
-            str(exec_info.value)
-            == "Following external redirects is not supported."
-        )
+        assert str(exec_info.value) == "Following external redirects is not supported."
 
     @pytest.mark.application_id("stopped_app")
     @pytest.mark.flag_id("stopped_app")
@@ -523,9 +484,7 @@ class TestAuthorisation:
             - lead assessor role can continue assessment
         """
         claim = test_lead_assessor_claims
-        application_id = request.node.get_closest_marker(
-            "application_id"
-        ).args[0]
+        application_id = request.node.get_closest_marker("application_id").args[0]
         flag_id = request.node.get_closest_marker("flag_id").args[0]
         flask_test_client.set_cookie(
             "localhost",
@@ -574,9 +533,7 @@ class TestAuthorisation:
             - lead assessor role can flag
         """
 
-        application_id = request.node.get_closest_marker(
-            "application_id"
-        ).args[0]
+        application_id = request.node.get_closest_marker("application_id").args[0]
 
         flask_test_client.set_cookie(
             "localhost",
@@ -591,10 +548,7 @@ class TestAuthorisation:
                     follow_redirects=True,
                 )
             # Tries to redirect to authenticator
-            assert (
-                str(exec_info.value)
-                == "Following external redirects is not supported."
-            )
+            assert str(exec_info.value) == "Following external redirects is not supported."
         else:
             response = flask_test_client.get(
                 f"assess/flag/{application_id}",
@@ -636,9 +590,7 @@ class TestAuthorisation:
             - assessor role cannot resolve flag
             - lead assessor role can resolve flag
         """
-        application_id = request.node.get_closest_marker(
-            "application_id"
-        ).args[0]
+        application_id = request.node.get_closest_marker("application_id").args[0]
 
         flag_id = request.node.get_closest_marker("flag_id").args[0]
 
@@ -654,10 +606,7 @@ class TestAuthorisation:
                     follow_redirects=True,
                 )
             # Tries to redirect to authenticator
-            assert (
-                str(exec_info.value)
-                == "Following external redirects is not supported."
-            )
+            assert str(exec_info.value) == "Following external redirects is not supported."
         else:
             response = flask_test_client.get(
                 f"assess/resolve_flag/{application_id}?flag_id={flag_id}",
@@ -698,13 +647,9 @@ class TestAuthorisation:
 
         token = create_valid_token(user_account)
         flask_test_client.set_cookie("localhost", "fsd_user_token", token)
-        application_id = request.node.get_closest_marker(
-            "application_id"
-        ).args[0]
+        application_id = request.node.get_closest_marker("application_id").args[0]
 
-        response = flask_test_client.get(
-            f"assess/application/{application_id}"
-        )
+        response = flask_test_client.get(f"assess/application/{application_id}")
         assert response.status_code == 200
         if expect_flagging:
             assert b"Resolve flag" in response.data

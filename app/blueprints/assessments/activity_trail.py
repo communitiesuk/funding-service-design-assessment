@@ -20,12 +20,7 @@ class BaseModel:
     def from_list(cls, data_list: list[dict]):
         return [
             cls(
-                **{
-                    k: v
-                    for k, v in d.items()
-                    if k in inspect.signature(cls).parameters
-                    and k != "date_created"
-                },
+                **{k: v for k, v in d.items() if k in inspect.signature(cls).parameters and k != "date_created"},
                 date_created=cls._format_date(d.get("date_created")),
             )
             for d in data_list
@@ -34,9 +29,7 @@ class BaseModel:
     @staticmethod
     def _format_date(date_str):
         if date_str:
-            return datetime.fromisoformat(date_str).strftime(
-                "%Y-%m-%d %H:%M:%S"
-            )
+            return datetime.fromisoformat(date_str).strftime("%Y-%m-%d %H:%M:%S")
         return date_str
 
 
@@ -51,10 +44,7 @@ class AssociatedTags(AssociatedTag):
     @classmethod
     def from_associated_tags_list(cls, associated_tags_list):
         """Change the  attribute 'created_at' to 'date_created'"""
-        return [
-            cls(**asdict(tag), date_created=tag.created_at)
-            for tag in associated_tags_list
-        ]
+        return [cls(**asdict(tag), date_created=tag.created_at) for tag in associated_tags_list]
 
 
 @dataclass
@@ -243,9 +233,7 @@ def map_activities_classes_with_checkbox_filters(filters):
     return _filters
 
 
-def filter_all_activities(
-    all_activities: list, search_keyword: str = "", filters: list = None
-):
+def filter_all_activities(all_activities: list, search_keyword: str = "", filters: list = None):
     all_activities = order_by_dates(all_activities)
     filtered_classes = map_activities_classes_with_checkbox_filters(filters)
 
@@ -256,34 +244,22 @@ def filter_all_activities(
         return [
             activity
             for activity in all_activities
-            if any(
-                search_keyword.lower() in str(attr).lower()
-                for attr in asdict(activity).values()
-            )
-            and any(
-                class_name.lower() == activity.__class__.__name__.lower()
-                for class_name in filtered_classes
-            )
+            if any(search_keyword.lower() in str(attr).lower() for attr in asdict(activity).values())
+            and any(class_name.lower() == activity.__class__.__name__.lower() for class_name in filtered_classes)
         ]
 
     if not search_keyword and filters:
         return [
             activity
             for activity in all_activities
-            if any(
-                class_name.lower() == activity.__class__.__name__.lower()
-                for class_name in filtered_classes
-            )
+            if any(class_name.lower() == activity.__class__.__name__.lower() for class_name in filtered_classes)
         ]
 
     if search_keyword and not filtered_classes:
         return [
             activity
             for activity in all_activities
-            if any(
-                search_keyword.lower() in str(attr).lower()
-                for attr in asdict(activity).values()
-            )
+            if any(search_keyword.lower() in str(attr).lower() for attr in asdict(activity).values())
         ]
 
     else:

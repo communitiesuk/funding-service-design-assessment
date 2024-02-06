@@ -27,16 +27,12 @@ class ApplicationFileRepresentationArgs(NamedTuple):
 
 
 def _generate_text_of_application(args: ApplicationFileRepresentationArgs):
-    text = generate_text_of_application(
-        args.question_to_answer, args.fund.name
-    )
+    text = generate_text_of_application(args.question_to_answer, args.fund.name)
     return download_file(text, "text/plain", f"{args.short_id}_answers.txt")
 
 
 def _generate_csv_of_application(args: ApplicationFileRepresentationArgs):
-    csv = generate_csv_of_application(
-        args.question_to_answer, args.fund, args.application_json
-    )
+    csv = generate_csv_of_application(args.question_to_answer, args.fund, args.application_json)
     return download_file(csv, "text/csv", f"{args.short_id}_answers.csv")
 
 
@@ -58,9 +54,7 @@ FILE_GENERATORS = {
 }
 
 
-def generate_file_content(
-    args: ApplicationFileRepresentationArgs, file_type: str
-):
+def generate_file_content(args: ApplicationFileRepresentationArgs, file_type: str):
     """
     Generate the content of an application file based on the provided file type.
 

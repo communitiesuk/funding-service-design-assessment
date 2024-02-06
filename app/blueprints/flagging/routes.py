@@ -45,10 +45,7 @@ flagging_bp = Blueprint(
 def flag(application_id):
     # Get assessor tasks list
     state = get_state_for_tasklist_banner(application_id)
-    choices = [
-        (item["sub_section_id"], item["sub_section_name"])
-        for item in state.get_sub_sections_metadata()
-    ]
+    choices = [(item["sub_section_id"], item["sub_section_name"]) for item in state.get_sub_sections_metadata()]
 
     teams_available = get_available_teams(
         state.fund_id,
@@ -80,9 +77,7 @@ def flag(application_id):
     sub_criteria_banner_state = get_sub_criteria_banner_state(application_id)
 
     flags_list = get_flags(application_id)
-    assessment_status = determine_assessment_status(
-        state.workflow_status, state.is_qa_complete
-    )
+    assessment_status = determine_assessment_status(state.workflow_status, state.is_qa_complete)
     flag_status = determine_flag_status(flags_list)
     return render_template(
         "flag_application.html",
@@ -126,9 +121,7 @@ def resolve_flag(application_id):
     )
 
 
-@flagging_bp.route(
-    "/continue_assessment/<application_id>", methods=["GET", "POST"]
-)
+@flagging_bp.route("/continue_assessment/<application_id>", methods=["GET", "POST"])
 @check_access_application_id(roles_required=["LEAD_ASSESSOR"])
 def continue_assessment(application_id):
     form = ContinueApplicationForm()

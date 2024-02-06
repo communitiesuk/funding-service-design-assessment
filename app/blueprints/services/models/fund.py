@@ -25,12 +25,8 @@ class Fund:
             description=data.get("description"),
             short_name=data.get("short_name"),
             owner_organisation_name=data.get("owner_organisation_name"),
-            owner_organisation_shortname=data.get(
-                "owner_organisation_shortname"
-            ),
-            owner_organisation_logo_uri=data.get(
-                "owner_organisation_logo_uri"
-            ),
+            owner_organisation_shortname=data.get("owner_organisation_shortname"),
+            owner_organisation_logo_uri=data.get("owner_organisation_logo_uri"),
         )
 
     # TODO: Move this config to database

@@ -19,8 +19,7 @@ def forbidden(error):
     # Override the default message to match design if no custom message is provided
     error.description = (
         "You do not have permission to access this page."
-        if "It is either read-protected or not readable by the server."
-        in error.description
+        if "It is either read-protected or not readable by the server." in error.description
         else error.description
     )
 

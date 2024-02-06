@@ -62,9 +62,7 @@ def resolve_application(
     sub_criteria_banner_state = get_sub_criteria_banner_state(application_id)
     flags_list = get_flags(application_id)
     assessment_status = determine_assessment_status(
-        state.workflow_status
-        if state
-        else sub_criteria_banner_state.workflow_status,
+        state.workflow_status if state else sub_criteria_banner_state.workflow_status,
         state.is_qa_complete,
     )
     flag_status = determine_flag_status(flags_list)

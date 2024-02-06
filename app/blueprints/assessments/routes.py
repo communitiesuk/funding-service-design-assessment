@@ -145,17 +145,11 @@ def _handle_all_uploaded_documents(application_id):
     flags_list = get_flags(application_id)
     flag_status = determine_flag_status(flags_list)
 
-    theme_answers_response = get_all_uploaded_documents_theme_answers(
-        application_id
-    )
-    answers_meta = applicants_response.create_ui_components(
-        theme_answers_response, application_id
-    )
+    theme_answers_response = get_all_uploaded_documents_theme_answers(application_id)
+    answers_meta = applicants_response.create_ui_components(theme_answers_response, application_id)
 
     state = get_state_for_tasklist_banner(application_id)
-    assessment_status = determine_assessment_status(
-        state.workflow_status, state.is_qa_complete
-    )
+    assessment_status = determine_assessment_status(state.workflow_status, state.is_qa_complete)
     return render_template(
         "all_uploaded_documents.html",
         state=state,
@@ -175,24 +169,15 @@ def old_landing():
 @assessment_bp.route("/assessor_tool_dashboard/", methods=["GET"])
 def landing():
     filters = landing_filters._replace(
-        **{
-            k: v
-            for k, v in request.args.items()
-            if k in landing_filters._fields
-        }
+        **{k: v for k, v in request.args.items() if k in landing_filters._fields}
     )  # noqa
     funds = [
         f
         for f in get_funds(get_ttl_hash(seconds=Config.LRU_CACHE_TIME))
-        if has_access_to_fund(f.short_name)
-        and fund_matches_filters(f, filters)
+        if has_access_to_fund(f.short_name) and fund_matches_filters(f, filters)
     ]
-    sorted_funds_map = OrderedDict(
-        (fund.id, fund) for fund in sorted(funds, key=lambda f: f.name)
-    )
-    round_summaries = {
-        fund.id: create_round_summaries(fund, filters) for fund in funds
-    }
+    sorted_funds_map = OrderedDict((fund.id, fund) for fund in sorted(funds, key=lambda f: f.name))
+    round_summaries = {fund.id: create_round_summaries(fund, filters) for fund in funds}
     return render_template(
         "assessor_tool_dashboard.html",
         fund_summaries=round_summaries,
@@ -200,9 +185,7 @@ def landing():
         todays_date=utc_to_bst(datetime.now().strftime("%Y-%m-%dT%H:%M:%S")),
         landing_filters=filters,
         has_any_assessor_role=any(
-            rs.access_controller.has_any_assessor_role
-            for rsl in round_summaries.values()
-            for rs in rsl
+            rs.access_controller.has_any_assessor_role for rsl in round_summaries.values() for rs in rsl
         ),
         force_open_all_live_assessment_rounds=Config.FORCE_OPEN_ALL_LIVE_ASSESSMENT_ROUNDS,
         migration_banner_enabled=Config.MIGRATION_BANNER_ENABLED,
@@ -249,15 +232,11 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
 
     # This call is to get the location data such as country, region and local_authority
     # from all the existing applications.
-    all_applications_metadata = get_application_overviews(
-        fund_id, round_id, search_params=""
-    )
+    all_applications_metadata = get_application_overviews(fund_id, round_id, search_params="")
     # note, we are not sending search parameters here as we don't want to filter
     # the stats at all.  see https://dluhcdigital.atlassian.net/browse/FS-3249
     unfiltered_stats = process_assessments_stats(all_applications_metadata)
-    all_application_locations = LocationData.from_json_blob(
-        all_applications_metadata
-    )
+    all_application_locations = LocationData.from_json_blob(all_applications_metadata)
 
     search_params = {
         **search_params,
@@ -265,14 +244,10 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
     }
 
     # matches the query parameters provided in the search and filter form
-    search_params, show_clear_filters = match_search_params(
-        search_params, request.args
-    )
+    search_params, show_clear_filters = match_search_params(search_params, request.args)
 
     # request all the application overviews based on the search parameters
-    application_overviews = get_application_overviews(
-        fund_id, round_id, search_params
-    )
+    application_overviews = get_application_overviews(fund_id, round_id, search_params)
 
     teams_flag_stats = get_team_flag_stats(application_overviews)
 
@@ -290,26 +265,18 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
 
     is_active_status = is_after_today(_round.assessment_deadline)
     post_processed_overviews = (
-        get_assessment_progress(application_overviews, fund_id, round_id)
-        if application_overviews
-        else []
+        get_assessment_progress(application_overviews, fund_id, round_id) if application_overviews else []
     )
 
     # get and set application status
-    post_processed_overviews = set_application_status_in_overview(
-        post_processed_overviews
-    )
+    post_processed_overviews = set_application_status_in_overview(post_processed_overviews)
 
-    active_fund_round_tags = get_tags_for_fund_round(
-        fund_id, round_id, {"tag_status": "True"}
-    )
+    active_fund_round_tags = get_tags_for_fund_round(fund_id, round_id, {"tag_status": "True"})
     tags_in_application_map, tag_option_groups = get_tag_map_and_tag_options(
         active_fund_round_tags, post_processed_overviews
     )
 
-    def get_sorted_application_overviews(
-        application_overviews, column, reverse=False
-    ):
+    def get_sorted_application_overviews(application_overviews, column, reverse=False):
         """Sorts application_overviews list based on the specified column."""
 
         sort_field_to_lambda = {
@@ -321,9 +288,7 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
             "organisation_name": lambda x: x["organisation_name"],
             "funding_type": lambda x: x["funding_type"],
             "status": lambda x: x["application_status"],
-            "tags": lambda x: len(
-                tags_in_application_map.get(x["application_id"]) or []
-            ),
+            "tags": lambda x: len(tags_in_application_map.get(x["application_id"]) or []),
             "team_in_place": lambda x: x["team_in_place"],
             "datasets": lambda x: x["datasets"],
             "publish_datasets": lambda x: x["publish_datasets"]
@@ -394,9 +359,7 @@ def display_sub_criteria(
     theme_id = request.args.get("theme_id", sub_criteria.themes[0].id)
     comment_form = CommentsForm()
     try:
-        current_theme: Theme = next(
-            iter(t for t in sub_criteria.themes if t.id == theme_id)
-        )
+        current_theme: Theme = next(iter(t for t in sub_criteria.themes if t.id == theme_id))
     except StopIteration:
         current_app.logger.warn("Unknown theme ID requested: " + theme_id)
         abort(404)
@@ -432,16 +395,12 @@ def display_sub_criteria(
 
     # TODO add test for this function in data_operations
     theme_matched_comments = (
-        match_comment_to_theme(
-            comment_response, sub_criteria.themes, state.fund_short_name
-        )
+        match_comment_to_theme(comment_response, sub_criteria.themes, state.fund_short_name)
         if comment_response
         else None
     )
 
-    assessment_status = determine_assessment_status(
-        sub_criteria.workflow_status, state.is_qa_complete
-    )
+    assessment_status = determine_assessment_status(sub_criteria.workflow_status, state.is_qa_complete)
     flag_status = determine_flag_status(flags_list)
 
     edit_comment_argument = request.args.get("edit_comment")
@@ -497,13 +456,9 @@ def display_sub_criteria(
         "assessment_status": assessment_status,
     }
 
-    theme_answers_response = get_sub_criteria_theme_answers(
-        application_id, theme_id
-    )
+    theme_answers_response = get_sub_criteria_theme_answers(application_id, theme_id)
 
-    answers_meta = applicants_response.create_ui_components(
-        theme_answers_response, application_id
-    )
+    answers_meta = applicants_response.create_ui_components(theme_answers_response, application_id)
 
     return render_template(
         "sub_criteria.html",
@@ -517,9 +472,7 @@ def display_sub_criteria(
 @assessment_bp.route("/application/<application_id>/export", methods=["GET"])
 @check_access_application_id(roles_required=["LEAD_ASSESSOR"])
 def generate_doc_list_for_download(application_id):
-    current_app.logger.info(
-        f"Generating docs for application id {application_id}"
-    )
+    current_app.logger.info(f"Generating docs for application id {application_id}")
     state = get_state_for_tasklist_banner(application_id)
     short_id = state.short_id[-6:]
     flags_list = get_flags(application_id)
@@ -544,9 +497,7 @@ def generate_doc_list_for_download(application_id):
         )
         for file_type in FILE_GENERATORS.keys()
     ]
-    assessment_status = determine_assessment_status(
-        state.workflow_status, state.is_qa_complete
-    )
+    assessment_status = determine_assessment_status(state.workflow_status, state.is_qa_complete)
 
     return render_template(
         "contract_downloads.html",
@@ -560,16 +511,11 @@ def generate_doc_list_for_download(application_id):
     )
 
 
-@assessment_bp.route(
-    "/application/<application_id>/export/<short_id>/answers.<file_type>"
-)
+@assessment_bp.route("/application/<application_id>/export/<short_id>/answers.<file_type>")
 @check_access_application_id(roles_required=["LEAD_ASSESSOR"])
-def download_application_answers(
-    application_id: str, short_id: str, file_type: str
-):
+def download_application_answers(application_id: str, short_id: str, file_type: str):
     current_app.logger.info(
-        "Generating application Q+A download for application"
-        f" {application_id} in {file_type} format"
+        f"Generating application Q+A download for application {application_id} in {file_type} format"
     )
     application_json = get_application_json(application_id)
     application_json_blob = application_json["jsonb_blob"]
@@ -586,10 +532,8 @@ def download_application_answers(
     )
 
     qanda_dict = extract_questions_and_answers(application_json_blob["forms"])
-    application_sections_display_config = (
-        get_application_sections_display_config(
-            fund.id, round_.id, application_json["language"]
-        )
+    application_sections_display_config = get_application_sections_display_config(
+        fund.id, round_.id, application_json["language"]
     )
 
     (
@@ -597,17 +541,11 @@ def download_application_answers(
         form_name_to_path_map,
     ) = generate_maps_from_form_names(application_sections_display_config)
 
-    qanda_dict = {
-        key: qanda_dict[key]
-        for key in form_name_to_title_map
-        if key in qanda_dict
-    }
+    qanda_dict = {key: qanda_dict[key] for key in form_name_to_title_map if key in qanda_dict}
 
     all_uploaded_documents = []
     if file_type == "pdf":
-        all_uploaded_documents = get_all_uploaded_documents_theme_answers(
-            application_id
-        )
+        all_uploaded_documents = get_all_uploaded_documents_theme_answers(application_id)
 
     args = ApplicationFileRepresentationArgs(
         fund=fund,
@@ -630,9 +568,7 @@ def get_file(application_id: str, file_name: str):
     if request.args.get("quoted"):
         file_name = unquote_plus(file_name)
     short_id = request.args.get("short_id")
-    data, mimetype = get_file_for_download_from_aws(
-        application_id=application_id, file_name=file_name
-    )
+    data, mimetype = get_file_for_download_from_aws(application_id=application_id, file_name=file_name)
     if short_id:
         return download_file(data, mimetype, f"{short_id}_{file_name}")
 
@@ -651,11 +587,7 @@ def download_multiple_files(files, folder_name):
     return Response(
         zip_buffer.read(),
         mimetype="application/zip",
-        headers={
-            "Content-Disposition": (
-                f"attachment;filename={quote_plus(f'{folder_name}.zip')}"
-            )
-        },
+        headers={"Content-Disposition": f"attachment;filename={quote_plus(f'{folder_name}.zip')}"},
     )
 
 
@@ -688,9 +620,7 @@ def application(application_id):
     if qa_complete:
         user_id_list.append(qa_complete["user_id"])
 
-    assessment_status = determine_assessment_status(
-        state.workflow_status, state.is_qa_complete
-    )
+    assessment_status = determine_assessment_status(state.workflow_status, state.is_qa_complete)
     flag_status = determine_flag_status(flags_list)
 
     if flags_list:
@@ -750,9 +680,7 @@ def activity_trail(application_id: str):
     all_comments = Comments.from_list(comments_list)
 
     # ALL SCORES
-    scores = get_score_and_justification(
-        application_id=application_id, score_history=True
-    )
+    scores = get_score_and_justification(application_id=application_id, score_history=True)
     all_scores = Scores.from_list(scores)
 
     # ALL TAGS
@@ -770,9 +698,7 @@ def activity_trail(application_id: str):
     all_activities = all_scores + all_comments + all_tags + all_flags
 
     update_user_info = add_user_info(all_activities, state)
-    _all_activities = filter_all_activities(
-        update_user_info, search_keyword, checkbox_filters
-    )
+    _all_activities = filter_all_activities(update_user_info, search_keyword, checkbox_filters)
 
     display_status = determine_display_status(
         state.workflow_status,
@@ -800,9 +726,7 @@ def activity_trail(application_id: str):
     methods=["GET"],
 )
 @check_access_fund_short_name_round_sn(roles_required=["LEAD_ASSESSOR"])
-def assessor_export(
-    fund_short_name: str, round_short_name: str, report_type: str
-):
+def assessor_export(fund_short_name: str, round_short_name: str, report_type: str):
     _round = get_round(
         fund_short_name,
         round_short_name,
@@ -839,9 +763,7 @@ def feedback_export(fund_short_name: str, round_short_name: str):
     round_id = _round.id
     status_only = "SUBMITTED"
 
-    content = get_applicant_feedback_and_survey_report(
-        fund_id, round_id, status_only
-    )
+    content = get_applicant_feedback_and_survey_report(fund_id, round_id, status_only)
     if content:
         short_name = (fund_short_name + "_" + round_short_name).lower()
         return download_file(
