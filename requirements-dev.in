@@ -1,5 +1,4 @@
 -r requirements.txt
-bandit
 deepdiff
 invoke
 pip-tools>=6.13.0
