@@ -102,6 +102,7 @@ jobs:
       run_e2e_tests_application: ${{ inputs.run_e2e_tests_application || false }}
       app_name: assessment
       environment: dev
+      app_name: assessment
 
   test_deploy:
     needs: [ dev_deploy, post_dev_deploy_tests, paketo_build, setup ]
