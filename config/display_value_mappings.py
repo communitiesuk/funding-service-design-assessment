@@ -114,9 +114,5 @@ search_params_tag = {
     "tag_status": True,
 }
 
-LandingFilters = namedtuple(
-    "LandingFilters", ["filter_status", "filter_fund_type", "filter_fund_name"]
-)
-landing_filters = LandingFilters(
-    filter_status=ALL_VALUE, filter_fund_type=ALL_VALUE, filter_fund_name=""
-)
+LandingFilters = namedtuple("LandingFilters", ["filter_status", "filter_fund_type", "filter_fund_name"])
+landing_filters = LandingFilters(filter_status=ALL_VALUE, filter_fund_type=ALL_VALUE, filter_fund_name="")

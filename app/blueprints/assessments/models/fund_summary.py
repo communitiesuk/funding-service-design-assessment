@@ -64,18 +64,14 @@ class RoundSummary:
     live_round_stats: LiveRoundStats = None
 
 
-def create_round_summaries(
-    fund: Fund, filters: LandingFilters
-) -> list[RoundSummary]:
+def create_round_summaries(fund: Fund, filters: LandingFilters) -> list[RoundSummary]:
     """Get all the round stats in a fund."""
     access_controller = AssessmentAccessController(fund.short_name)
 
     summaries = []
     live_rounds = []
     round_id_to_summary_map = {}
-    for round in get_rounds(
-        fund.id, ttl_hash=get_ttl_hash(Config.LRU_CACHE_TIME)
-    ):
+    for round in get_rounds(fund.id, ttl_hash=get_ttl_hash(Config.LRU_CACHE_TIME)):
         search_params = {}
         assessments_href = url_for(
             "assessment_bp.fund_dashboard",
@@ -100,10 +96,7 @@ def create_round_summaries(
                 fund_short_name=fund.short_name,
                 round_short_name=round.short_name.lower(),
             )
-            if (
-                round.feedback_survey_config.has_feedback_survey
-                or round.feedback_survey_config.has_section_feedback
-            )
+            if (round.feedback_survey_config.has_feedback_survey or round.feedback_survey_config.has_section_feedback)
             else ""
         )
 
@@ -111,12 +104,9 @@ def create_round_summaries(
             countries = get_countries_from_roles(fund.short_name)
             search_params = {"countries": ",".join(countries)}
 
-        if _round_not_yet_open := current_datetime_before_given_iso_string(  # noqa
-            round.opens
-        ):
+        if _round_not_yet_open := current_datetime_before_given_iso_string(round.opens):  # noqa
             current_app.logger.info(
-                f"Round {fund.short_name} - {round.short_name} is not yet open"
-                f" (opens: {round.opens})"
+                f"Round {fund.short_name} - {round.short_name} is not yet open (opens: {round.opens})"
             )
             application_stats = None
             sorting_date = round.assessment_deadline
@@ -128,11 +118,7 @@ def create_round_summaries(
             [
                 current_datetime_after_given_iso_string(round.opens),
                 current_datetime_before_given_iso_string(round.deadline),
-                current_datetime_before_given_iso_string(
-                    round.assessment_start
-                )
-                if round.assessment_start
-                else True,
+                current_datetime_before_given_iso_string(round.assessment_start) if round.assessment_start else True,
             ]
         ):
             if filters.filter_status not in (ALL_VALUE, "live"):
@@ -152,9 +138,7 @@ def create_round_summaries(
             round_open = True
             not_yet_open = False
         else:
-            if current_datetime_before_given_iso_string(  # assessment is active
-                round.assessment_deadline
-            ):
+            if current_datetime_before_given_iso_string(round.assessment_deadline):  # assessment is active
                 if filters.filter_status not in (ALL_VALUE, "active"):
                     continue
                 current_app.logger.info(
@@ -171,15 +155,10 @@ def create_round_summaries(
 
             round_open = False
             not_yet_open = False
-            round_stats = get_assessments_stats(
-                fund.id, round.id, search_params
-            )
+            round_stats = get_assessments_stats(fund.id, round.id, search_params)
 
             if not round_stats:
-                current_app.logger.warn(
-                    "Error retrieving round stats, assessment-store may be"
-                    " down."
-                )
+                current_app.logger.warn("Error retrieving round stats, assessment-store may be down.")
 
             application_stats = Stats(
                 date=round.assessment_deadline,
@@ -213,18 +192,12 @@ def create_round_summaries(
 
     if live_rounds:
         live_rounds_map = {r.id: r for r in live_rounds}
-        round_stats = get_application_stats(
-            [fund.id], [r.id for r in live_rounds]
-        )
+        round_stats = get_application_stats([fund.id], [r.id for r in live_rounds])
         if not round_stats:
-            current_app.logger.warn(
-                "Error retrieving round stats, application-store may be down."
-            )
+            current_app.logger.warn("Error retrieving round stats, application-store may be down.")
             for live_round_id in live_rounds_map:
                 live_round = live_rounds_map[live_round_id]
-                round_id_to_summary_map[
-                    live_round_id
-                ].live_round_stats = LiveRoundStats(
+                round_id_to_summary_map[live_round_id].live_round_stats = LiveRoundStats(
                     closing_date=live_round.deadline,
                     not_started=None,
                     in_progress=None,
@@ -232,9 +205,7 @@ def create_round_summaries(
                     submitted=None,
                 )
         else:
-            this_fund_stats = next(
-                f for f in round_stats["metrics"] if f["fund_id"] == fund.id
-            )
+            this_fund_stats = next(f for f in round_stats["metrics"] if f["fund_id"] == fund.id)
             for this_round_stats in this_fund_stats["rounds"]:
                 current_round_id = this_round_stats["round_id"]
                 if current_round_id not in live_rounds_map:
@@ -242,9 +213,7 @@ def create_round_summaries(
 
                 statuses = this_round_stats["application_statuses"]
                 live_round = live_rounds_map[current_round_id]
-                round_id_to_summary_map[
-                    current_round_id
-                ].live_round_stats = LiveRoundStats(
+                round_id_to_summary_map[current_round_id].live_round_stats = LiveRoundStats(
                     closing_date=live_round.deadline,
                     not_started=statuses["NOT_STARTED"],
                     in_progress=statuses["IN_PROGRESS"],

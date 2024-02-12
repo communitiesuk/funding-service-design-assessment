@@ -7,9 +7,7 @@ from config import Config
 from flask import url_for
 
 
-def get_service_html_filepath(
-    root_dir: str, service_dict: dict, route_rel: str
-):
+def get_service_html_filepath(root_dir: str, service_dict: dict, route_rel: str):
     service = get_service(service_dict)
     path = [root_dir]
 
@@ -35,9 +33,7 @@ def print_html_page(html: str, service_dict: dict, route_rel: str):
     """
     Prints an html page to local dir
     """
-    html_basename, filename = get_service_html_filepath(
-        "html", service_dict, route_rel
-    )
+    html_basename, filename = get_service_html_filepath("html", service_dict, route_rel)
 
     os.makedirs(html_basename, exist_ok=True)
     f = open(html_basename + filename, "w")
@@ -53,11 +49,7 @@ def get_service(service: dict):
         }
     else:
         if "name" not in service:
-            raise Exception(
-                "Service, if set, must be a dict with a 'name' attribute"
-            )
+            raise Exception("Service, if set, must be a dict with a 'name' attribute")
         elif "host" not in service:
-            raise Exception(
-                "Service, if set, must be a dict with a 'host' attribute"
-            )
+            raise Exception("Service, if set, must be a dict with a 'host' attribute")
     return service

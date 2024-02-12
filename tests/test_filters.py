@@ -109,13 +109,8 @@ class TestFilters(object):
             ),
         ],
     )
-    def test_remove_dashes_underscores_capitalize_keep_uppercase(
-        self, address, expected
-    ):
-        assert (
-            remove_dashes_underscores_capitalize_keep_uppercase(address)
-            == expected
-        )
+    def test_remove_dashes_underscores_capitalize_keep_uppercase(self, address, expected):
+        assert remove_dashes_underscores_capitalize_keep_uppercase(address) == expected
 
 
 @pytest.mark.parametrize(

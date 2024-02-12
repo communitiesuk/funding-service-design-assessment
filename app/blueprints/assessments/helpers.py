@@ -39,9 +39,7 @@ def get_team_flag_stats(application_overviews) -> List[Dict]:
             latest_status = flag.get("latest_status")
             allocated_team = flag.get("latest_allocation")
 
-            if allocated_team not in [
-                team["team_name"] for team in team_flag_stats
-            ]:
+            if allocated_team not in [team["team_name"] for team in team_flag_stats]:
                 team_flag_stats.append(create_team_dict(allocated_team))
 
             for team in team_flag_stats:
@@ -107,12 +105,7 @@ def get_tag_map_and_tag_options(fund_round_tags, post_processed_overviews):
                 [
                     Option(value=tag.id, text_content=tag.value)
                     for tag in fund_round_tags
-                    if tag.type_id
-                    in {
-                        tag_type.id
-                        for tag_type in tag_types
-                        if tag_type.purpose in purposes
-                    }
+                    if tag.type_id in {tag_type.id for tag_type in tag_types if tag_type.purpose in purposes}
                 ],
                 key=lambda option: option.text_content,
             ),
@@ -157,11 +150,7 @@ def generate_csv_of_application(q_and_a: dict, fund: Fund, application_json):
         section_title = simplify_title(section_name, remove_text=["cof", "ns"])
         section_title = " ".join(section_title).capitalize()
         for questions, answers in values.items():
-            if (
-                answers
-                and isinstance(answers, str)
-                and answers.startswith("- ")
-            ):
+            if answers and isinstance(answers, str) and answers.startswith("- "):
                 answers = f"'{answers}"
 
             if not answers:
@@ -192,17 +181,11 @@ def download_file(data, mimetype, file_name):
     return Response(
         data,
         mimetype=mimetype,
-        headers={
-            "Content-Disposition": (
-                f"attachment;filename={quote_plus(file_name)}"
-            )
-        },
+        headers={"Content-Disposition": f"attachment;filename={quote_plus(file_name)}"},
     )
 
 
-def get_files_for_application_upload_fields(
-    application_id: str, short_id: str, application_json: dict
-) -> List[tuple]:
+def get_files_for_application_upload_fields(application_id: str, short_id: str, application_json: dict) -> List[tuple]:
     """
     This function retrieves the file names from an application_json
     then uses this to create a lsit of tuples containing the file name
@@ -242,9 +225,6 @@ def get_files_for_application_upload_fields(
 
     # files which used the client side file upload component
     client_side_upload_files = list_files_by_prefix(application_id)
-    files = [
-        (file.filename, generate_url(file, short_id))
-        for file in client_side_upload_files
-    ]
+    files = [(file.filename, generate_url(file, short_id)) for file in client_side_upload_files]
 
     return legacy_files + files

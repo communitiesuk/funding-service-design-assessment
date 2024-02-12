@@ -89,9 +89,7 @@ class TestApplicantResponseComponentConcreteSubclasses:
             {"question": ("Test caption", "Test question")},
         ],
     )
-    def test_monetary_key_values_should_default_to_not_provided(
-        self, mkv_data
-    ):
+    def test_monetary_key_values_should_default_to_not_provided(self, mkv_data):
         above_qa_pair = MonetaryKeyValues.from_dict(mkv_data)
 
         assert isinstance(above_qa_pair, AboveQuestionAnswerPair)
@@ -123,9 +121,7 @@ class TestApplicantResponseComponentConcreteSubclasses:
         ],
     )
     def test_new_add_another_table_should_render(self, new_add_another_data):
-        new_add_another_table = NewAddAnotherTable.from_dict(
-            new_add_another_data
-        )
+        new_add_another_table = NewAddAnotherTable.from_dict(new_add_another_data)
 
         assert isinstance(new_add_another_table, NewAddAnotherTable)
         assert new_add_another_table.caption == "Test caption"
@@ -233,9 +229,7 @@ class TestApplicantResponseComponentConcreteSubclasses:
             ),
         ],
     )
-    def test_question_answer_pair_href_should_render_default(
-        self, clazz, data
-    ):
+    def test_question_answer_pair_href_should_render_default(self, clazz, data):
         qa_pair = clazz.from_dict(data, "https://example.com")
         assert qa_pair.question == "What is your name?"
         assert qa_pair.answer == ANSWER_NOT_PROVIDED_DEFAULT
@@ -248,9 +242,7 @@ class TestApplicantResponseComponentConcreteSubclasses:
             "Burgers": "https://burgers.com",
             "Tacos": "https://tacos.com",
         }
-        question_answer_list = QuestionAboveHrefAnswerList.from_dict(
-            data, key_to_url_dict
-        )
+        question_answer_list = QuestionAboveHrefAnswerList.from_dict(data, key_to_url_dict)
         assert question_answer_list.question == "What are your favorite foods?"
         assert question_answer_list.key_to_url_dict == key_to_url_dict
         assert question_answer_list.should_render is True
@@ -362,10 +354,8 @@ class TestApplicatorsResponseComponentFactory:
                     "form_name": "funding-required-ns",
                     "presentation_type": "grouped_fields",
                     "question": [
-                        "How much revenue are you applying for? 1 April 2023"
-                        " to 31 March 2024",
-                        "How much revenue are you applying for? 1 April 2023"
-                        " to 31 March 2024",
+                        "How much revenue are you applying for? 1 April 2023 to 31 March 2024",
+                        "How much revenue are you applying for? 1 April 2023 to 31 March 2024",
                     ],
                 },
                 BesideQuestionAnswerPair,
@@ -495,9 +485,7 @@ class TestConvertHeadingDescriptionAmountToGroupedFields:
             ),
         ],
     )
-    def test__convert_heading_description_amount(
-        self, response, expected_grouped_fields_items, expected_field_ids
-    ):
+    def test__convert_heading_description_amount(self, response, expected_grouped_fields_items, expected_field_ids):
         result, field_ids = _convert_heading_description_amount(response)
         assert result == expected_grouped_fields_items
         assert field_ids == expected_field_ids
@@ -660,9 +648,7 @@ class TestConvertCheckboxItems:
             ),
         ],
     )
-    def test__convert_checkbox_items(
-        self, response, expected_text_items, expected_field_ids
-    ):
+    def test__convert_checkbox_items(self, response, expected_text_items, expected_field_ids):
         result, field_ids = _convert_checkbox_items(response)
         assert result == expected_text_items
         assert field_ids == expected_field_ids
@@ -778,9 +764,7 @@ class TestConvertNonNumberGroupedFields:
             ),
         ],
     )
-    def test__convert_non_number_grouped_fields(
-        self, response, expected_text_items, expected_field_ids
-    ):
+    def test__convert_non_number_grouped_fields(self, response, expected_text_items, expected_field_ids):
         result, field_ids = _convert_non_number_grouped_fields(response)
         assert result == expected_text_items
         assert field_ids == expected_field_ids
@@ -914,14 +898,9 @@ def test_create_ui_components_retains_order(monkeypatch):
     )
 
     with test_app.app_context():
-        ui_components = create_ui_components(
-            response_with_unhashable_fields, "app_123"
-        )
+        ui_components = create_ui_components(response_with_unhashable_fields, "app_123")
 
-    assert all(
-        isinstance(ui_component, ApplicantResponseComponent)
-        for ui_component in ui_components
-    )
+    assert all(isinstance(ui_component, ApplicantResponseComponent) for ui_component in ui_components)
 
     assert len(ui_components) == 13
 

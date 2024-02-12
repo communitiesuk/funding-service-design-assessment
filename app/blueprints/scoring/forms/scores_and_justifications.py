@@ -10,9 +10,7 @@ class ScoreForm(FlaskForm):
     """
 
     # for validation
-    justification = TextAreaField(
-        "Justification", validators=[InputRequired()]
-    )
+    justification = TextAreaField("Justification", validators=[InputRequired()])
 
 
 class OneToFiveScoreForm(ScoreForm):
@@ -28,9 +26,7 @@ class OneToFiveScoreForm(ScoreForm):
         self.max_score = 5
 
     # for validation
-    score = RadioField(
-        "Score", choices=[1, 2, 3, 4, 5], validators=[InputRequired()]
-    )
+    score = RadioField("Score", choices=[1, 2, 3, 4, 5], validators=[InputRequired()])
 
 
 class ZeroToThreeScoreForm(ScoreForm):
@@ -45,6 +41,4 @@ class ZeroToThreeScoreForm(ScoreForm):
         self.max_score = 3
 
     # for validation
-    score = RadioField(
-        "Score", choices=[0, 1, 2, 3], validators=[InputRequired()]
-    )
+    score = RadioField("Score", choices=[0, 1, 2, 3], validators=[InputRequired()])

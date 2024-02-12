@@ -43,9 +43,7 @@ def score(
     application_id,
     sub_criteria_id,
 ):
-    sub_criteria: SubCriteria = get_sub_criteria(
-        application_id, sub_criteria_id
-    )
+    sub_criteria: SubCriteria = get_sub_criteria(application_id, sub_criteria_id)
 
     if not sub_criteria.is_scored:
         abort(404)
@@ -71,9 +69,7 @@ def score(
                 sub_criteria_id=sub_criteria_id,
             )
             # re-get sub_criteria to have updated status.
-            sub_criteria: SubCriteria = get_sub_criteria(
-                application_id, sub_criteria_id
-            )
+            sub_criteria: SubCriteria = get_sub_criteria(application_id, sub_criteria_id)
         else:
             is_rescore = True
 
@@ -84,26 +80,18 @@ def score(
     )
 
     theme_matched_comments = (
-        match_comment_to_theme(
-            comment_response, sub_criteria.themes, state.fund_short_name
-        )
+        match_comment_to_theme(comment_response, sub_criteria.themes, state.fund_short_name)
         if comment_response
         else None
     )
 
-    assessment_status = determine_assessment_status(
-        sub_criteria.workflow_status, state.is_qa_complete
-    )
+    assessment_status = determine_assessment_status(sub_criteria.workflow_status, state.is_qa_complete)
     flag_status = determine_flag_status(flags_list)
 
     # call to assessment store to get latest score.
-    score_list = get_score_and_justification(
-        application_id, sub_criteria_id, score_history=True
-    )
+    score_list = get_score_and_justification(application_id, sub_criteria_id, score_history=True)
     # TODO add test for this function in data_operations
-    scores_with_account_details = match_score_to_user_account(
-        score_list, state.fund_short_name
-    )
+    scores_with_account_details = match_score_to_user_account(score_list, state.fund_short_name)
     latest_score = (
         scores_with_account_details.pop(0)
         if (score_list is not None and len(scores_with_account_details) > 0)

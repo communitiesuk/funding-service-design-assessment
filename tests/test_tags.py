@@ -66,8 +66,7 @@ test_get_tag = {
     "created_at": "2023-07-25T09:10:39.073315+00:00",
     "creator_user_id": "00000000-0000-0000-0000-000000000000",
     "description": (
-        "Use these tags to assign assessments to team members. Note: you"
-        " cannot send notifications using tags"
+        "Use these tags to assign assessments to team members. Note: you cannot send notifications using tags"
     ),
     "fund_id": "47aef2f5-3fcb-4d45-acb5-f0152b5f03c4",
     "id": "a48f4951-b26b-4820-9301-9ca2c835b163",
@@ -95,22 +94,12 @@ def test_change_tags_route(
     soup = BeautifulSoup(response.data, "html.parser")
     assert soup.find("h1").text == "Change tags"
     assert soup.find("strong").text == "In progress"
-    assert (
-        table := soup.find(
-            "table", class_="govuk-table dluhc-table-checkboxes"
-        )
-    )
+    assert (table := soup.find("table", class_="govuk-table dluhc-table-checkboxes"))
     assert len(table.findAll("tr")) == 3
     assert table.findAll("tr")[0].findAll("th")[0].text.strip() == "Tag name"
     assert table.findAll("tr")[1].findAll("th")[0].text.strip() == "Val 1"
     assert table.findAll("tr")[1].findAll("td")[0].text.strip() == "POSITIVE"
-    assert (
-        table.findAll("tr")[1]
-        .findAll("td")[0]
-        .find("strong", class_="govuk-tag--green")
-        .text.strip()
-        == "POSITIVE"
-    )
+    assert table.findAll("tr")[1].findAll("td")[0].find("strong", class_="govuk-tag--green").text.strip() == "POSITIVE"
 
 
 @pytest.mark.application_id("resolved_app")
@@ -154,11 +143,7 @@ def test_change_tags_route_associated_tag_checked(
     assert soup.find("h1").text == "Change tags"
     assert soup.find("input", {"id": "123"}).attrs.get("checked") is not None
     assert soup.find("input", {"id": "432"}).attrs.get("checked") is None
-    assert (
-        table := soup.find(
-            "table", class_="govuk-table dluhc-table-checkboxes"
-        )
-    )
+    assert (table := soup.find("table", class_="govuk-table dluhc-table-checkboxes"))
     assert len(table.findAll("tr")) == 3
 
 
@@ -230,9 +215,7 @@ def test_create_tag_initial_render_get(
     mock_get_round,
     mock_get_active_tags_for_fund_round,
 ):
-    response = client_with_valid_session.get(
-        f"/assess/tags/create/{test_fund_id}/{test_round_id}"
-    )
+    response = client_with_valid_session.get(f"/assess/tags/create/{test_fund_id}/{test_round_id}")
     soup = BeautifulSoup(response.data, "html.parser")
 
     assert response.status_code == 200
@@ -268,18 +251,13 @@ def test_create_tag_invalid_form_post(
     # check component errors
     component_errors = soup.find_all("p", class_="govuk-error-message")
     assert response.status_code == 200
-    assert all(
-        error_string in str(component_errors)
-        for error_string in expected_errors
-    ), "Component errors not found"
+    assert all(error_string in str(component_errors) for error_string in expected_errors), "Component errors not found"
     # It is unlikely we will encounter an incorrect radio button submission
     # which is not in the users direct control (although still possible)
 
     # Check summary errors
     summary_errors = soup.find_all(class_="govuk-error-summary__list")
-    assert all(
-        error_string in str(summary_errors) for error_string in expected_errors
-    ), "Component errors not found"
+    assert all(error_string in str(summary_errors) for error_string in expected_errors), "Component errors not found"
 
 
 @pytest.mark.mock_parameters(
@@ -305,18 +283,13 @@ def test_create_tag_invalid_character_post(
     # check component errors
     component_errors = soup.find_all("p", class_="govuk-error-message")
     assert response.status_code == 200
-    assert all(
-        error_string in str(component_errors)
-        for error_string in expected_errors
-    ), "Component errors not found"
+    assert all(error_string in str(component_errors) for error_string in expected_errors), "Component errors not found"
     # It is unlikely we will encounter an incorrect radio button submission
     # which is not in the users direct control (although still possible)
 
     # Check summary errors
     summary_errors = soup.find_all(class_="govuk-error-summary__list")
-    assert all(
-        error_string in str(summary_errors) for error_string in expected_errors
-    ), "summary errors not found"
+    assert all(error_string in str(summary_errors) for error_string in expected_errors), "summary errors not found"
 
 
 @pytest.mark.mock_parameters(
@@ -332,10 +305,7 @@ def test_create_duplicate_tag_fails(
     mock_get_round,
     mock_get_active_tags_for_fund_round,
 ):
-    expected_errors = [
-        "Tag already exists for this round. Please ensure that the tag is"
-        " unique."
-    ]
+    expected_errors = ["Tag already exists for this round. Please ensure that the tag is unique."]
     response = client_with_valid_session.post(
         f"/assess/tags/create/{test_fund_id}/{test_round_id}",
         data={
@@ -348,18 +318,13 @@ def test_create_duplicate_tag_fails(
     # check component errors
     component_errors = soup.find_all("p", class_="govuk-error-message")
     assert response.status_code == 200
-    assert all(
-        error_string in str(component_errors)
-        for error_string in expected_errors
-    ), "Component errors not found"
+    assert all(error_string in str(component_errors) for error_string in expected_errors), "Component errors not found"
     # It is unlikely we will encounter an incorrect radio button submission
     # which is not in the users direct control (although still possible)
 
     # Check summary errors
     summary_errors = soup.find_all(class_="govuk-error-summary__list")
-    assert all(
-        error_string in str(summary_errors) for error_string in expected_errors
-    ), "summary errors not found"
+    assert all(error_string in str(summary_errors) for error_string in expected_errors), "summary errors not found"
 
 
 @pytest.mark.parametrize(
@@ -620,13 +585,9 @@ def test_get_available_active_tags(flask_test_client):
         "app.blueprints.services.data_services.get_data",
         return_value=test_tags_active,
     ) as mock_get_data:
-        result = get_tags_for_fund_round(
-            "test_fund", "test_round", {"tag_status": "True"}
-        )
+        result = get_tags_for_fund_round("test_fund", "test_round", {"tag_status": "True"})
         mock_get_data.assert_called_once()
-        mock_get_data.assert_called_with(
-            "assessment_store/funds/test_fund/rounds/test_round/tags?tag_status=True"
-        )
+        mock_get_data.assert_called_with("assessment_store/funds/test_fund/rounds/test_round/tags?tag_status=True")
         assert len(result) == 2
         assert result[0].value == "Val 1"
 
@@ -636,21 +597,15 @@ def test_get_available_inactive_tags(flask_test_client):
         "app.blueprints.services.data_services.get_data",
         return_value=test_tags_inactive,
     ) as mock_get_data:
-        result = get_tags_for_fund_round(
-            "test_fund", "test_round", {"tag_status": "False"}
-        )
+        result = get_tags_for_fund_round("test_fund", "test_round", {"tag_status": "False"})
         mock_get_data.assert_called_once()
-        mock_get_data.assert_called_with(
-            "assessment_store/funds/test_fund/rounds/test_round/tags?tag_status=False"
-        )
+        mock_get_data.assert_called_with("assessment_store/funds/test_fund/rounds/test_round/tags?tag_status=False")
         assert len(result) == 2
         assert result[0].value == "Val 1 INACTIVE"
 
 
 def test_get_available_tags_no_tags(flask_test_client):
-    with mock.patch(
-        "app.blueprints.services.data_services.get_data", return_value=[]
-    ):
+    with mock.patch("app.blueprints.services.data_services.get_data", return_value=[]):
         result = get_tags_for_fund_round("test_fund", "test_round", "")
         assert len(result) == 0
 
@@ -669,9 +624,7 @@ def test_get_associated_tags_for_applications(flask_test_client):
             }
         ],
     ):
-        result = get_associated_tags_for_application(
-            "155df6dc-541e-4d7c-82bb-9d8e3b7e52ef"
-        )
+        result = get_associated_tags_for_application("155df6dc-541e-4d7c-82bb-9d8e3b7e52ef")
         assert len(result) == 1
         assert result[0].value == "test tag"
 
@@ -697,9 +650,7 @@ def test_update_associated_tag_returns_true(flask_test_client):
             },
         ]
 
-        result = update_associated_tags(
-            "155df6dc-541e-4d7c-82bb-9d8e3b7e52ef", new_tags
-        )
+        result = update_associated_tags("155df6dc-541e-4d7c-82bb-9d8e3b7e52ef", new_tags)
         assert result is True
 
 
@@ -733,9 +684,7 @@ def mock_get_tag_and_count(mocker):
         type_id="abcabc",
         tag_association_count=count,
     )
-    mocker.patch(
-        "app.blueprints.tagging.routes.get_tag", return_value=mock_tag
-    )
+    mocker.patch("app.blueprints.tagging.routes.get_tag", return_value=mock_tag)
     yield (tag_id, count)
 
 
@@ -752,8 +701,7 @@ def test_edit_tag_get(
     soup = BeautifulSoup(response.data, "html.parser")
     assert soup.find("h1").text.strip() == 'Edit tag "tag value 1"'
     assert (
-        f"{mock_get_tag_and_count[1]} tagged assessments"
-        in soup.find("strong", class_="govuk-warning-text__text").text
+        f"{mock_get_tag_and_count[1]} tagged assessments" in soup.find("strong", class_="govuk-warning-text__text").text
     )
 
 

@@ -14,26 +14,13 @@ from tests.api_data.example_application_json_blob import (
 
 class TestExport:
     def test_extract_q_and_a(self, app):
-        result = extract_questions_and_answers(
-            single_application_json_blob["forms"]
-        )
-        assert (
-            "sample1.doc"
-            == result["upload-business-plan"]["Upload business plan"]
-        )
+        result = extract_questions_and_answers(single_application_json_blob["forms"])
+        assert "sample1.doc" == result["upload-business-plan"]["Upload business plan"]
         assert (
             "lots of surveys"
-            == result["feasibility"][
-                "Tell us about the feasibility studies you have carried out"
-                " for your project"
-            ]
+            == result["feasibility"]["Tell us about the feasibility studies you have carried out for your project"]
         )
-        assert (
-            "No"
-            == result["feasibility"][
-                "Do you need to do any further feasibility work?"
-            ]
-        )
+        assert "No" == result["feasibility"]["Do you need to do any further feasibility work?"]
         assert (
             "Yes"
             == result["declarations"][
@@ -45,9 +32,7 @@ class TestExport:
         )
 
     def test_generate_text(self, app):
-        result = generate_text_of_application(
-            test_application_answers, "TEST FUND"
-        )
+        result = generate_text_of_application(test_application_answers, "TEST FUND")
         assert "********* TEST FUND" in result
         assert "Q) Capital funding" in result
         assert "A) 2300" in result

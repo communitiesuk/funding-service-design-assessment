@@ -84,12 +84,7 @@ STOPPED_FLAG = [
 
 
 def test_determine_display_status():
-    assert (
-        determine_display_status(
-            workflow_status="IN_PROGRESS", Flags=None, is_qa_complete=False
-        )
-        == "In progress"
-    )
+    assert determine_display_status(workflow_status="IN_PROGRESS", Flags=None, is_qa_complete=False) == "In progress"
     assert (
         determine_display_status(
             workflow_status="IN_PROGRESS",
@@ -238,12 +233,8 @@ def test_generate_maps_from_form_names_nested_case():
         }
     ]
     title_map, path_map = generate_maps_from_form_names(data)
-    expected_title = OrderedDict(
-        [("form1", "Title1"), ("form1_1", "Title1_1"), ("form1_2", "Title1_2")]
-    )
-    expected_path = OrderedDict(
-        [("form1", "Path1"), ("form1_1", "Path1_1"), ("form1_2", "Path1_2")]
-    )
+    expected_title = OrderedDict([("form1", "Title1"), ("form1_1", "Title1_1"), ("form1_2", "Title1_2")])
+    expected_path = OrderedDict([("form1", "Path1"), ("form1_1", "Path1_1"), ("form1_2", "Path1_2")])
     assert title_map == expected_title
     assert path_map == expected_path
 

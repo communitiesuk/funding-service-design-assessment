@@ -37,10 +37,7 @@ class FullApplicationPdfContext:
             Section(
                 number="",
                 title=args.form_name_to_title_map.get(section),
-                questions_and_answers=[
-                    QuestionAndAnswer(question=q, answer=a, number="")
-                    for q, a in q_and_a.items()
-                ],
+                questions_and_answers=[QuestionAndAnswer(question=q, answer=a, number="") for q, a in q_and_a.items()],
             )
             for section, q_and_a in args.question_to_answer.items()
         ]
@@ -80,6 +77,4 @@ class FullApplicationPdfContext:
         )
 
 
-generate_full_application_pdf = partial(
-    generate_pdf, "app/blueprints/assessments/templates/full_application.html"
-)
+generate_full_application_pdf = partial(generate_pdf, "app/blueprints/assessments/templates/full_application.html")

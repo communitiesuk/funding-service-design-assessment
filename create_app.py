@@ -81,9 +81,7 @@ def create_app() -> Flask:
             PackageLoader("app.blueprints.flagging"),
             PackageLoader("app.blueprints.tagging"),
             PackageLoader("app.blueprints.scoring"),
-            PrefixLoader(
-                {"govuk_frontend_jinja": PackageLoader("govuk_frontend_jinja")}
-            ),
+            PrefixLoader({"govuk_frontend_jinja": PackageLoader("govuk_frontend_jinja")}),
         ]
 
         flask_app.jinja_loader = ChoiceLoader(template_loaders)
@@ -93,17 +91,11 @@ def create_app() -> Flask:
         flask_app.jinja_env.filters["ast_literal_eval"] = ast_literal_eval
         flask_app.jinja_env.filters["datetime_format"] = datetime_format
         flask_app.jinja_env.filters["utc_to_bst"] = utc_to_bst
-        flask_app.jinja_env.filters[
-            "slash_separated_day_month_year"
-        ] = slash_separated_day_month_year
+        flask_app.jinja_env.filters["slash_separated_day_month_year"] = slash_separated_day_month_year
         flask_app.jinja_env.filters["all_caps_to_human"] = all_caps_to_human
-        flask_app.jinja_env.filters[
-            "datetime_format_24hr"
-        ] = datetime_format_24hr
+        flask_app.jinja_env.filters["datetime_format_24hr"] = datetime_format_24hr
         flask_app.jinja_env.filters["format_project_ref"] = format_project_ref
-        flask_app.jinja_env.filters[
-            "remove_dashes_underscores_capitalize"
-        ] = remove_dashes_underscores_capitalize
+        flask_app.jinja_env.filters["remove_dashes_underscores_capitalize"] = remove_dashes_underscores_capitalize
         flask_app.jinja_env.filters[
             "remove_dashes_underscores_capitalize_keep_uppercase"
         ] = remove_dashes_underscores_capitalize_keep_uppercase
@@ -133,10 +125,7 @@ def create_app() -> Flask:
                 service_meta_author="DLUHC",
                 sso_logout_url=flask_app.config.get("SSO_LOGOUT_URL"),
                 g=g,
-                toggle_dict={
-                    feature.name: feature.is_enabled()
-                    for feature in toggle_client.list()
-                }
+                toggle_dict={feature.name: feature.is_enabled() for feature in toggle_client.list()}
                 if toggle_client
                 else {},
             )
@@ -156,9 +145,7 @@ def create_app() -> Flask:
         @flask_app.before_request
         def check_for_maintenance():
             if flask_app.config.get("MAINTENANCE_MODE") and not (
-                request.path.endswith("js")
-                or request.path.endswith("css")
-                or request.path.endswith("/healthcheck")
+                request.path.endswith("js") or request.path.endswith("css") or request.path.endswith("/healthcheck")
             ):
                 current_app.logger.warning(
                     f"""Application is in the Maintenance mode
@@ -167,9 +154,7 @@ def create_app() -> Flask:
                 return (
                     render_template(
                         "maintenance.html",
-                        maintenance_end_time=flask_app.config.get(
-                            "MAINTENANCE_END_TIME"
-                        ),
+                        maintenance_end_time=flask_app.config.get("MAINTENANCE_END_TIME"),
                     ),
                     503,
                 )
@@ -191,9 +176,7 @@ def create_app() -> Flask:
         @flask_app.after_request
         def set_response_headers(response):
             filename = (
-                re.findall(
-                    "filename=(.+)", response.headers["Content-Disposition"]
-                )[0]
+                re.findall("filename=(.+)", response.headers["Content-Disposition"])[0]
                 if response.headers.get("Content-Disposition")
                 else ""
             )
@@ -202,9 +185,7 @@ def create_app() -> Flask:
             if filename in static_files_list:
                 response.headers["Cache-Control"] = "public, max-age=3600"
             else:
-                response.headers[
-                    "Cache-Control"
-                ] = "no-cache, no-store, must-revalidate"
+                response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
                 response.headers["Pragma"] = "no-cache"
                 response.headers["Expires"] = "0"
             return response
