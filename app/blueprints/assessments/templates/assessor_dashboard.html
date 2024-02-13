@@ -5,6 +5,7 @@
 {% import "macros/application_overviews_table_cyp.html" as application_overviews_table_cyp -%}
 {% import "macros/application_overviews_table_nstf.html" as application_overviews_table_nstf -%}
 {% import "macros/application_overviews_table_cof.html" as application_overviews_table_cof -%}
+{% import "macros/application_overviews_table_cof_eoi.html" as application_overviews_table_cof_eoi -%}
 {% import "macros/application_overviews_table_dpif.html" as application_overviews_table_dpif -%}
 {% from "macros/banner_summary.html" import banner_summary %}
 {% from "macros/logout_partial.html" import logout_partial %}
@@ -137,6 +138,23 @@
                 tags,
                 tagging_purpose_config,
                 dpi_filters
+            ) }}
+        {% elif round_details.fund_short_name.upper() == "COF-EOI" %}
+             {{ application_overviews_table_cof_eoi.render(
+                application_overviews,
+                round_details,
+                query_params,
+                asset_types,
+                assessment_statuses,
+                countries,
+                regions,
+                local_authorities,
+                show_clear_filters,
+                sort_column,
+                sort_order,
+                tag_option_groups,
+                tags,
+                tagging_purpose_config
             ) }}
         {% endif %}
     </section>
