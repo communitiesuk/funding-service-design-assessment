@@ -489,7 +489,7 @@ def mock_get_assessment_stats(request, mocker):
     # fund_id = params.get("fund_id", "test-fund")
     # round_id = params.get("round_id", "test-round")
 
-    mock_stats = mock_api_results["assessment_store/assessments/get-stats/{fund_id}/{round_id}"]
+    mock_stats = mock_api_results["assessment_store/assessments/get-stats/{fund_id}"]
 
     mocked_get_stats = []
     for mock_func in mock_funcs:
