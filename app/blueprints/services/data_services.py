@@ -1,6 +1,7 @@
 import traceback
 from copy import deepcopy
 from functools import lru_cache
+from typing import Collection
 from typing import Dict
 from typing import List
 from typing import Optional
@@ -358,12 +359,13 @@ def get_application_stats(fund_ids: List = None, round_ids: List = None):
     return get_data(url)
 
 
-def get_assessments_stats(fund_id: str, round_id: str, search_params: dict = {}) -> Dict | None:
+def get_assessments_stats(fund_id: str, round_ids: Collection[str], search_params: dict = {}) -> dict | None:
     assessments_stats_endpoint = (Config.ASSESSMENT_STORE_API_HOST) + Config.ASSESSMENTS_STATS_ENDPOINT.format(
-        fund_id=fund_id, round_id=round_id, params=urlencode(search_params)
+        fund_id=fund_id, params=urlencode(search_params)
     )
     current_app.logger.info(f"Endpoint '{assessments_stats_endpoint}'.")
-    return get_data(assessments_stats_endpoint)
+    response = requests.post(assessments_stats_endpoint, json={"round_ids": list(round_ids)})
+    return response.json()
 
 
 def get_assessor_task_list_state(application_id: str) -> Union[dict, None]:
