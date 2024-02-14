@@ -94,7 +94,7 @@ from app.blueprints.services.data_services import get_round
 from app.blueprints.services.data_services import get_score_and_justification
 from app.blueprints.services.data_services import get_sub_criteria
 from app.blueprints.services.data_services import (
-    get_sub_criteria_theme_answers,
+    get_sub_criteria_theme_answers_all,
 )
 from app.blueprints.services.data_services import get_tags_for_fund_round
 from app.blueprints.services.data_services import match_comment_to_theme
@@ -456,7 +456,7 @@ def display_sub_criteria(
         "assessment_status": assessment_status,
     }
 
-    theme_answers_response = get_sub_criteria_theme_answers(application_id, theme_id)
+    theme_answers_response = get_sub_criteria_theme_answers_all(application_id, theme_id)
 
     answers_meta = applicants_response.create_ui_components(theme_answers_response, application_id)
 

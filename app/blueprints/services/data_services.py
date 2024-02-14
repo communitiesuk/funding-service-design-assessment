@@ -21,6 +21,9 @@ from app.blueprints.services.models.sub_criteria import SubCriteria
 from app.blueprints.tagging.models.tag import AssociatedTag
 from app.blueprints.tagging.models.tag import Tag
 from app.blueprints.tagging.models.tag import TagType
+from app.blueprints.themes.deprecated_theme_mapper import (
+    map_application_with_sub_criteria_themes_fields,
+)
 from config import Config
 from flask import abort
 from flask import current_app
@@ -518,31 +521,26 @@ def submit_flag(
 def get_all_uploaded_documents_theme_answers(
     application_id: str,
 ) -> Union[list, None]:
-    all_uploaded_documents_theme_answers_endpoint = Config.ALL_UPLOADED_DOCUMENTS_THEME_ANSWERS_ENDPOINT.format(
-        application_id=application_id
+    return get_sub_criteria_theme_answers_all(
+        application_id,
+        "all_uploaded_documents",
     )
-    all_uploaded_documents_theme_answers_response = get_data(all_uploaded_documents_theme_answers_endpoint)
-
-    if isinstance(all_uploaded_documents_theme_answers_response, list):
-        return all_uploaded_documents_theme_answers_response
-    else:
-        msg = f"all_uploaded_documents_theme_answers: '{application_id}' not found."
-        current_app.logger.warn(msg)
-        abort(404, description=msg)
 
 
-def get_sub_criteria_theme_answers(application_id: str, theme_id: str) -> Union[list, None]:
-    theme_answers_endpoint = Config.ASSESSMENT_STORE_API_HOST + Config.SUB_CRITERIA_THEME_ANSWERS_ENDPOINT.format(
-        application_id=application_id, theme_id=theme_id
+def get_sub_criteria_theme_answers_all(
+    application_id: str,
+    theme_id: str,
+) -> Union[list, None]:
+    theme_mapping_data_url = (
+        f"{Config.ASSESSMENT_STORE_API_HOST}"
+        f"{Config.SUB_CRITERIA_THEME_ANSWERS_ENDPOINT.format(application_id=application_id)}"
     )
-    theme_answers_response = get_data(theme_answers_endpoint)
-
-    if theme_answers_response:
-        return theme_answers_response
-    else:
-        msg = f"theme_answers: '{theme_id}' not found."
-        current_app.logger.warn(msg)
-        abort(404, description=msg)
+    theme_mapping_data = get_data(theme_mapping_data_url)
+    return map_application_with_sub_criteria_themes_fields(
+        theme_mapping_data["application_json"],
+        theme_mapping_data["sub_criterias"],
+        theme_id,
+    )
 
 
 def get_comments(
