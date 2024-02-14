@@ -60,7 +60,7 @@ class RoundSummary:
     assessment_tracker_href: str
     round_application_fields_download_available: bool
     sorting_date: str
-    assessment_stats: Stats = None
+    assessment_stats: Stats | None = None
     live_round_stats: LiveRoundStats = None
 
 
@@ -68,11 +68,16 @@ def create_round_summaries(fund: Fund, filters: LandingFilters) -> list[RoundSum
     """Get all the round stats in a fund."""
     access_controller = AssessmentAccessController(fund.short_name)
 
+    search_params = {}
+    if has_devolved_authority_validation(fund_id=fund.id):
+        countries = get_countries_from_roles(fund.short_name)
+        search_params = {"countries": ",".join(countries)}
+
     summaries = []
     live_rounds = []
     round_id_to_summary_map = {}
+    round_ids_to_fetch_assessment_stats = set()
     for round in get_rounds(fund.id, ttl_hash=get_ttl_hash(Config.LRU_CACHE_TIME)):
-        search_params = {}
         assessments_href = url_for(
             "assessment_bp.fund_dashboard",
             fund_short_name=fund.short_name,
@@ -99,10 +104,6 @@ def create_round_summaries(fund: Fund, filters: LandingFilters) -> list[RoundSum
             if (round.feedback_survey_config.has_feedback_survey or round.feedback_survey_config.has_section_feedback)
             else ""
         )
-
-        if has_devolved_authority_validation(fund_id=fund.id):
-            countries = get_countries_from_roles(fund.short_name)
-            search_params = {"countries": ",".join(countries)}
 
         if _round_not_yet_open := current_datetime_before_given_iso_string(round.opens):  # noqa
             current_app.logger.info(
@@ -155,20 +156,9 @@ def create_round_summaries(fund: Fund, filters: LandingFilters) -> list[RoundSum
 
             round_open = False
             not_yet_open = False
-            round_stats = get_assessments_stats(fund.id, round.id, search_params)
-
-            if not round_stats:
-                current_app.logger.warn("Error retrieving round stats, assessment-store may be down.")
-
-            application_stats = Stats(
-                date=round.assessment_deadline,
-                total_received=round_stats["total"],
-                completed=round_stats["completed"],
-                started=round_stats["assessing"],
-                qa_complete=round_stats["qa_completed"],
-                stopped=round_stats["stopped"],
-            )
+            round_ids_to_fetch_assessment_stats.add(round.id)
             sorting_date = round.assessment_deadline
+            application_stats = None  # populated later, with a bulk request
 
         summary = RoundSummary(
             is_assessment_active_status=assessment_active,
@@ -189,6 +179,18 @@ def create_round_summaries(fund: Fund, filters: LandingFilters) -> list[RoundSum
         )
         round_id_to_summary_map[round.id] = summary
         summaries.append(summary)
+
+    round_id_to_round_stats = get_assessments_stats(fund.id, round_ids_to_fetch_assessment_stats, search_params)
+    for round_id, round_stats in round_id_to_round_stats.items():
+        summary = round_id_to_summary_map[round_id]
+        summary.assessment_stats = Stats(
+            date=summary.sorting_date,  # which is same as round.assessment_deadline
+            total_received=round_stats["total"],
+            completed=round_stats["completed"],
+            started=round_stats["assessing"],
+            qa_complete=round_stats["qa_completed"],
+            stopped=round_stats["stopped"],
+        )
 
     if live_rounds:
         live_rounds_map = {r.id: r for r in live_rounds}

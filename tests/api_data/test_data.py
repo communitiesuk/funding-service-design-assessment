@@ -386,14 +386,16 @@ mock_api_results = {
             "workflow_status": stopped_app["workflow_status"],
         }
     ],
-    "assessment_store/assessments/get-stats/{fund_id}/{round_id}": {
-        "completed": 1,
-        "assessing": 1,
-        "not_started": 1,
-        "qa_completed": 1,
-        "stopped": 1,
-        "flagged": 1,
-        "total": 3,
+    "assessment_store/assessments/get-stats/{fund_id}": {
+        test_round_id: {
+            "completed": 1,
+            "assessing": 1,
+            "not_started": 1,
+            "qa_completed": 1,
+            "stopped": 1,
+            "flagged": 1,
+            "total": 3,
+        }
     },
     "assessment_store/progress": [],
     "assessment_store/application_overviews/stopped_app": {
