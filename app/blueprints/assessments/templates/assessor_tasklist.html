@@ -97,7 +97,7 @@
         {% endif %}
     </span>
     <span class="right">
-        {% if g.access_controller.is_lead_assessor and state.workflow_status=="COMPLETED" and (not is_qa_complete) and flag_status not in ["Stopped", "Flagged", "Multiple flags to resolve"] and "Flagged" not in flag_status %}
+        {% if g.access_controller.is_lead_assessor and state.workflow_status=="COMPLETED" and (not is_qa_complete) and flag_status not in ["Stopped", "Flagged", "Multiple flags to resolve"] and "Flagged" not in flag_status and state.fund_short_name.upper() != "COF-EOI" %} <!--TODO: temp solution, we will need to come up with a better mechanism when more eoi funds get onbaorded -->
         {{ mark_qa_complete_button(application_id) }}
         {% endif %}
     </span>
@@ -124,7 +124,7 @@
         {% endif %}
     {% endfor %}
 
-    {% if sub_criteria_status_completed and g.access_controller.has_any_assessor_role and (not is_qa_complete) and (not flag_status) %}
+    {% if sub_criteria_status_completed and g.access_controller.has_any_assessor_role and (not is_qa_complete) and (not flag_status) and state.fund_short_name.upper() != "COF-EOI"%}
         {{ assessment_complete(state, form.csrf_token, application_id)}}
     {% endif %}
 </div>
