@@ -98,7 +98,7 @@
                         {# Get list of sub-sections from Unscored section #}
                         {% set items = [] %}
                         {% for section in state.sections %}
-                            {% if section.name == 'Unscored' %}
+                            {% if section.name in ['Unscored', 'Expression of interest'] %}
                                 {% for sub_section in section.sub_criterias %}
                                     {% set checked = False %}
                                     {% if form.section.data and (sub_section["id"] in form.section.data) %}
@@ -125,6 +125,7 @@
                                     {% endfor %}
                                 {% endif %}
                             {% endfor %}
+                            {% if items %}
                             {{ govukCheckboxes({
                                 'idPrefix': 'Unscored',
                                 'name': form.section.id,
@@ -141,8 +142,10 @@
                                 'classes': 'govuk-checkboxes--small'
                                 })
                             }}
+                            {% endif %}
                         {% else %}
                         <!-- ^^^ Remove once assessment_store uses fund-store db ^^^ -->
+                        {% if items %}
                         {{ govukCheckboxes({
                             'idPrefix': 'Unscored',
                             'name': form.section.id,
@@ -157,6 +160,7 @@
                             'classes': 'govuk-checkboxes--small'
                             })
                         }}
+                        {% endif %}
                         {% endif %}
 
                         {# Get list of sub-sections from Declaration section #}
@@ -174,6 +178,7 @@
                                 {% endfor %}
                             {% endif %}
                         {% endfor %}
+                        {% if items %}
                         {{ govukCheckboxes({
                             'idPrefix': 'Declarations',
                             'name': form.section.id,
@@ -188,9 +193,11 @@
                             'classes': 'govuk-checkboxes--small'
                             })
                         }}
+                        {% endif %}
 
                         <div class="govuk-form-group">
                             {# Get list of sub-sections from Scored section #}
+                            {% if state.criterias %}
                             {% call govukFieldset({
                                     'legend': {
                                         'html': "<h1 class=\"govuk-fieldset__heading\">Scored</h1>",
@@ -209,6 +216,7 @@
                                                                 'text': sub_section["name"],
                                                                 'checked': checked }) %}
                                 {% endfor %}
+                                {% if items %}
                                 {{ govukCheckboxes({
                                     'idPrefix': section["name"],
                                     'name': form.section.id,
@@ -223,7 +231,9 @@
                                     'classes': 'govuk-checkboxes--small'
                                     })
                                 }}
+                                {% endif %}
                             {% endfor %}
+
                             {# Flag Allocation #}
                             {% if teams_available %}
                                 <div class="govuk-form-group">
@@ -253,6 +263,7 @@
                                 </div>
                             {% endif %}
                             {% endcall %}
+                            {% endif %}
                         </div>
                     </div>
 
