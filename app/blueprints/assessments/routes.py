@@ -118,7 +118,8 @@ from config.display_value_mappings import cohort
 from config.display_value_mappings import dpi_filters
 from config.display_value_mappings import funding_types
 from config.display_value_mappings import landing_filters
-from config.display_value_mappings import search_params_cof, search_params_cof_eoi
+from config.display_value_mappings import search_params_cof
+from config.display_value_mappings import search_params_cof_eoi
 from config.display_value_mappings import search_params_cyp
 from config.display_value_mappings import search_params_dpif
 from config.display_value_mappings import search_params_nstf
