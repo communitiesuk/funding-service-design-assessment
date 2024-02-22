@@ -119,6 +119,7 @@ from config.display_value_mappings import dpi_filters
 from config.display_value_mappings import funding_types
 from config.display_value_mappings import landing_filters
 from config.display_value_mappings import search_params_cof
+from config.display_value_mappings import search_params_cof_eoi
 from config.display_value_mappings import search_params_cyp
 from config.display_value_mappings import search_params_dpif
 from config.display_value_mappings import search_params_nstf
@@ -206,6 +207,8 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
         search_params = {**search_params_cyp}
     elif fund_short_name.upper() == "DPIF":
         search_params = {**search_params_dpif}
+    elif fund_short_name.upper() == "COF-EOI":
+        search_params = {**search_params_cof_eoi}
     else:
         search_params = {**search_params_cof}
 

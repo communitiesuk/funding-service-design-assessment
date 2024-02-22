@@ -17,7 +17,7 @@
   <form method="get" class="govuk-!-width-full">
     {{ filter_options(
       query_params,
-      'Search reference or project name',
+      'Search reference',
       round_details,
       show_clear_filters,
       tag_option_groups
@@ -45,6 +45,7 @@
       </th>
       {{ sortable_table_header('organisation_name', 'Organisation name', sort_order, sort_column, round_details, query_params) }}
       {{ sortable_table_header('lead_contact_email', 'Email address', sort_order, sort_column, round_details, query_params) }}
+      {{ sortable_table_header('submission_date', 'Submission date', sort_order, sort_column, round_details, query_params) }}
       {{ sortable_table_header('tags', 'Tags', sort_order, sort_column, round_details, query_params) }}
     </tr>
   </thead>
@@ -54,6 +55,7 @@
                 <td class="govuk-table__cell">{{ overview.short_id[-6:] }}</td>
                 <td class="govuk-table__cell"><a class="govuk-link" data-qa="organisation_name" href="{{ url_for('assessment_bp.application',application_id=overview.application_id) }}">{{ overview.organisation_name }}</a></td>
                 <td class="govuk-table__cell">{{ overview.lead_contact_email }}</td>
+                <td class="govuk-table__cell">{{ overview.submission_date }}</td>
                 {{ tags_table(tags[overview.application_id], tagging_purpose_config, query_params.show_tags == "ON") }}
 
 
