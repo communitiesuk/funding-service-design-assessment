@@ -141,19 +141,21 @@
             ) }}
             {% endif %}
 
-            <h2 class="govuk-heading-l govuk-!-margin-top-8">Unscored</h2>
+            {% if state.criterias|length > 0 %}<h2 class="govuk-heading-l govuk-!-margin-top-8">Unscored</h2>{% endif %}
             {% for section in state.sections %}
-                {{ section_element(section.name, section.sub_criterias, application_id) }}
+                {{ section_element(section.name, section.sub_criterias, application_id, show_caption=(state.fund_short_name.upper() != "COF-EOI")) }}
             {% endfor %}
-            <h2 class="govuk-heading-l govuk-!-margin-top-8">Scored</h2>
-            <p class="govuk-body">Assess all responses under each sub criteria.</p>
-            {% for criteria in state.criterias %}
-                {% set name_classes = "govuk-heading-m govuk-!-margin-bottom-2" %}
-                {% if loop.index > 0 %}
-                    {% set name_classes = "govuk-heading-m govuk-!-margin-bottom-2 govuk-!-margin-top-8" %}
-                {% endif %}
-                {{ criteria_element(criteria, name_classes, application_id, max_possible_sub_criteria_score) }}
-            {% endfor %}
+            {% if state.criterias|length > 0 %}
+                <h2 class="govuk-heading-l govuk-!-margin-top-8">Scored</h2>
+                <p class="govuk-body">Assess all responses under each sub criteria.</p>
+                {% for criteria in state.criterias %}
+                    {% set name_classes = "govuk-heading-m govuk-!-margin-bottom-2" %}
+                    {% if loop.index > 0 %}
+                        {% set name_classes = "govuk-heading-m govuk-!-margin-bottom-2 govuk-!-margin-top-8" %}
+                    {% endif %}
+                    {{ criteria_element(criteria, name_classes, application_id, max_possible_sub_criteria_score) }}
+                {% endfor %}
+            {% endif %}
         </div>
 
 </div>
