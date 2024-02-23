@@ -103,7 +103,7 @@ class TestRoutes:
                     access_controller=access_controller_mock,
                     export_href="/assess/assessor_export/TF/tr/ASSESSOR_EXPORT",
                     feedback_export_href="/assess/feedback_export/TF/tr",
-                    assessment_tracker_href="",
+                    assessment_tracker_href="/assess/tracker",
                     round_application_fields_download_available=download_available,
                     sorting_date="",
                     assessment_stats=Stats(
