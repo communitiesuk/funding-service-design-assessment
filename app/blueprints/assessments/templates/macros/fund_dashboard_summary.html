@@ -14,15 +14,17 @@
                 </br>
                 </br>
                 <a class="govuk-link" href="{{ feedback_export_href }}">
-                    Export applicants feedback information
+                    Export feedback survey responses
                 </a>
             {% endif %}
         {% endif %}
-        </br>
-        </br>
-        <a class="govuk-link" href="{{ assessment_tracker_href }}">
-            Assessment Tracker Export
-        </a>
+        {% if assessment_tracker_href %}
+            </br>
+            </br>
+            <a class="govuk-link" href="{{ assessment_tracker_href }}">
+                Assessment Tracker Export
+            </a>
+        {% endif %}
     {% endif %}
 {% endmacro %}
 

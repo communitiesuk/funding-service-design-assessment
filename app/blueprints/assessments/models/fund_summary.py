@@ -94,7 +94,7 @@ def create_round_summaries(fund: Fund, filters: LandingFilters) -> list[RoundSum
             fund_short_name=fund.short_name,
             round_short_name=round.short_name.lower(),
             report_type="OUTPUT_TRACKER",
-        )
+        ) if fund.short_name.upper() != "COF-EOI" else None
         feedback_export_href = (
             url_for(
                 "assessment_bp.feedback_export",
