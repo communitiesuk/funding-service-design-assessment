@@ -546,13 +546,16 @@ class TestJinjaMacros(object):
         assert expected_unique_id in rendered_html, "Unique ID not found"
 
     @pytest.mark.parametrize(
-        "fund_short_name, show_funding_amount_requested",
+        "fund_short_name, show_funding_amount_requested, project_name_caption,show_assessment_status",
         [
-            ("TFID", True),
-            ("DPIF", False),
+            ("TFID", True, "Project name:", True),
+            ("DPIF", False, "Project name:", True),
+            ("COF-EOI", False, "Organisation name:", False),
         ],
     )
-    def test_banner_summary_macro(self, request_ctx, fund_short_name, show_funding_amount_requested):
+    def test_banner_summary_macro(
+        self, request_ctx, fund_short_name, show_funding_amount_requested, project_name_caption, show_assessment_status
+    ):
         fund_name = "Test Fund"
         project_reference = "TEST123"
         project_name = "Test Project"
@@ -586,7 +589,7 @@ class TestJinjaMacros(object):
         assert soup.find(
             "p",
             class_="govuk-body-l fsd-banner-content fsd-banner-collapse-padding",
-            text="Project name: Test Project",
+            text=f"{project_name_caption}\xa0Test Project",
         ), "Project name not found"
 
         funding_amount_requested_element = soup.find(
@@ -599,11 +602,15 @@ class TestJinjaMacros(object):
         else:
             assert not funding_amount_requested_element, "Funding amount found"
 
-        assert soup.find(
+        assessment_status_element = soup.find(
             "strong",
             class_="govuk-tag",
             text="Submitted",
-        ), "Assessment status not found"
+        )
+        if show_assessment_status:
+            assert assessment_status_element, "Assessment status not found"
+        else:
+            assert not assessment_status_element, "Assessment status found when not expected"
         assert soup.find("p", class_="fsd-banner-content", text="Flagged"), "Flag status not found"
 
     def test_stopped_flag_macro(self, request_ctx):
