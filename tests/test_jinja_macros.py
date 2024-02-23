@@ -553,7 +553,9 @@ class TestJinjaMacros(object):
             ("COF-EOI", False, "Organisation name:", False),
         ],
     )
-    def test_banner_summary_macro(self, request_ctx, fund_short_name, show_funding_amount_requested, project_name_caption, show_assessment_status):
+    def test_banner_summary_macro(
+        self, request_ctx, fund_short_name, show_funding_amount_requested, project_name_caption, show_assessment_status
+    ):
         fund_name = "Test Fund"
         project_reference = "TEST123"
         project_name = "Test Project"
