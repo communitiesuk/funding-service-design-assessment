@@ -11,12 +11,12 @@ from app.blueprints.assessments.activity_trail import (
 )
 from app.blueprints.assessments.activity_trail import AssociatedTags
 from app.blueprints.assessments.activity_trail import CheckboxForm
-from app.blueprints.assessments.activity_trail import select_filters
 from app.blueprints.assessments.activity_trail import Comments
 from app.blueprints.assessments.activity_trail import filter_all_activities
 from app.blueprints.assessments.activity_trail import Flags
 from app.blueprints.assessments.activity_trail import Scores
 from app.blueprints.assessments.activity_trail import SearchForm
+from app.blueprints.assessments.activity_trail import select_filters
 from app.blueprints.assessments.forms.assessment_form import (
     AssessmentCompleteForm,
 )
