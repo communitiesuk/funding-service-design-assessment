@@ -200,7 +200,7 @@ def test_check_access_application_id_cant_access_application_when_no_country_rol
         },
     )
     monkeypatch.setattr(
-        "app.blueprints.authentication.validation.is_assessment_active",
+        "app.blueprints.authentication.validation.has_assessment_opened",
         lambda *args, **kwargs: True,
     )
     monkeypatch.setattr(
@@ -247,7 +247,7 @@ def test_check_access_application_id_can_access_application_when_has_country_rol
         },
     )
     monkeypatch.setattr(
-        "app.blueprints.authentication.validation.is_assessment_active",
+        "app.blueprints.authentication.validation.has_assessment_opened",
         lambda *args, **kwargs: True,
     )
     monkeypatch.setattr(
@@ -296,7 +296,7 @@ def test_check_access_application_id_can_access_application_when_fund_has_no_dev
         },
     )
     monkeypatch.setattr(
-        "app.blueprints.authentication.validation.is_assessment_active",
+        "app.blueprints.authentication.validation.has_assessment_opened",
         lambda *args, **kwargs: True,
     )
     monkeypatch.setattr(
@@ -335,7 +335,7 @@ def test_check_access_application_id_cant_access_application_when_no_relevant_fu
         },
     )
     monkeypatch.setattr(
-        "app.blueprints.authentication.validation.is_assessment_active",
+        "app.blueprints.authentication.validation.has_assessment_opened",
         lambda *args, **kwargs: True,
     )
     monkeypatch.setattr(
@@ -406,7 +406,7 @@ def test_check_access_fund_short_name_round_sn_can_access(monkeypatch, mock_get_
         lambda _: "cof",
     )
     monkeypatch.setattr(
-        "app.blueprints.authentication.validation.is_assessment_active",
+        "app.blueprints.authentication.validation.has_assessment_opened",
         lambda *args, **kwargs: True,
     )
     monkeypatch.setattr(
@@ -477,7 +477,7 @@ def test_check_access_application_id_decorator_returns_403_for_inactive_assessme
         return_value="test",
     )
     mocker.patch(
-        "app.blueprints.authentication.validation.is_assessment_active",
+        "app.blueprints.authentication.validation.has_assessment_opened",
         return_value=False,
     )
     mocker.patch(
