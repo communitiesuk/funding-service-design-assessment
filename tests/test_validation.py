@@ -19,11 +19,11 @@ from app.blueprints.authentication.validation import (
 from app.blueprints.authentication.validation import get_countries_from_roles
 from app.blueprints.authentication.validation import get_valid_country_roles
 from app.blueprints.authentication.validation import has_access_to_fund
+from app.blueprints.authentication.validation import has_assessment_opened
 from app.blueprints.authentication.validation import (
     has_devolved_authority_validation,
 )
 from app.blueprints.authentication.validation import has_relevant_country_role
-from app.blueprints.authentication.validation import is_assessment_active
 from app.blueprints.services.models.fund import Fund
 from werkzeug.exceptions import HTTPException
 
@@ -424,14 +424,32 @@ def test__get_roles_by_fund_short_name():
     ]
 
 
+IN_THE_PAST = "2004-01-01T12:00:00"
+IN_THE_FUTURE = "2124-01-01T12:00:00"
+
+
 @pytest.mark.parametrize(
-    "datetime_offset, show_live_rounds_flag,truthy_result",
-    [(1, True, True), (1, False, False), (-1, True, True), (-1, False, True)],
+    "deadline, assessment_start,show_live_rounds_flag,truthy_result",
+    [
+        (IN_THE_FUTURE, None, True, True),
+        (IN_THE_FUTURE, None, False, False),
+        (IN_THE_PAST, None, True, True),
+        (IN_THE_PAST, None, False, True),
+        (IN_THE_PAST, IN_THE_FUTURE, True, True),
+        (IN_THE_PAST, IN_THE_FUTURE, False, False),
+        (IN_THE_PAST, IN_THE_PAST, True, True),
+        (IN_THE_PAST, IN_THE_PAST, False, True),
+        (IN_THE_FUTURE, IN_THE_FUTURE, True, True),
+        (IN_THE_FUTURE, IN_THE_FUTURE, False, False),
+        (IN_THE_FUTURE, IN_THE_PAST, True, True),
+        (IN_THE_FUTURE, IN_THE_PAST, False, True),
+    ],
 )
 def test_is_assessment_active_validation(
     mocker,
     flask_test_client,
-    datetime_offset,
+    deadline,
+    assessment_start,
     show_live_rounds_flag,
     truthy_result,
 ):
@@ -443,12 +461,10 @@ def test_is_assessment_active_validation(
     )
     mocker.patch(
         "app.blueprints.authentication.validation.get_round",
-        return_value=MagicMock(
-            deadline=(datetime.now() + timedelta(days=datetime_offset)).strftime("%Y-%m-%dT%H:%M:%S")
-        ),
+        return_value=MagicMock(deadline=deadline, assessment_start=assessment_start),
     )
 
-    result = is_assessment_active("test_fund_id", "test_round_id")
+    result = has_assessment_opened("test_fund_id", "test_round_id")
     assert result == truthy_result
 
 
@@ -459,6 +475,10 @@ def test_check_access_application_id_decorator_returns_403_for_inactive_assessme
     mocker.patch(
         "app.blueprints.authentication.validation.get_value_from_request",
         return_value="test",
+    )
+    mocker.patch(
+        "app.blueprints.authentication.validation.is_assessment_active",
+        return_value=False,
     )
     mocker.patch(
         "app.blueprints.authentication.validation.Config.FORCE_OPEN_ALL_LIVE_ASSESSMENT_ROUNDS",

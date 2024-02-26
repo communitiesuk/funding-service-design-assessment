@@ -103,11 +103,21 @@ def is_assessment_active(fund_id, round_id):
         ttl_hash=get_ttl_hash(Config.LRU_CACHE_TIME),
     )
 
-    deadline = datetime.strptime(round_information.deadline, "%Y-%m-%dT%H:%M:%S")
-    if datetime.now() > deadline or Config.FORCE_OPEN_ALL_LIVE_ASSESSMENT_ROUNDS:
+    # Used in test envs to access open rounds
+    if Config.FORCE_OPEN_ALL_LIVE_ASSESSMENT_ROUNDS:
         return True
+
+    deadline = datetime.strptime(round_information.deadline, "%Y-%m-%dT%H:%M:%S")
+    assessment_start = (
+        datetime.strptime(round_information.assessment_start, "%Y-%m-%dT%H:%M:%S")
+        if round_information.assessment_start
+        else None
+    )
+
+    if assessment_start:
+        return datetime.now() > assessment_start
     else:
-        return False
+        return datetime.now() > deadline
 
 
 def check_access_application_id(func: Callable = None, roles_required: List[str] = []) -> Callable:
