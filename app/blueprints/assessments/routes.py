@@ -16,6 +16,7 @@ from app.blueprints.assessments.activity_trail import filter_all_activities
 from app.blueprints.assessments.activity_trail import Flags
 from app.blueprints.assessments.activity_trail import Scores
 from app.blueprints.assessments.activity_trail import SearchForm
+from app.blueprints.assessments.activity_trail import select_filters
 from app.blueprints.assessments.forms.assessment_form import (
     AssessmentCompleteForm,
 )
@@ -691,7 +692,7 @@ def activity_trail(application_id: str):
     all_tags = AssociatedTags.from_associated_tags_list(tags)
 
     # Add search box and checkbox filters
-    available_filters = ["All activity", "Comments", "Score", "Flags", "Tags"]
+    available_filters = select_filters(state.fund_short_name)
     search_form = SearchForm(request.form)
     checkbox_form = CheckboxForm(request.form)
 

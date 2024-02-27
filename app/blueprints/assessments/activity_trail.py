@@ -264,3 +264,10 @@ def filter_all_activities(all_activities: list, search_keyword: str = "", filter
 
     else:
         return all_activities
+
+
+def select_filters(short_fund_name):
+    if short_fund_name in ("COF-EOI",):
+        return ["All activity", "Comments", "Flags", "Tags"]
+    else:
+        return ["All activity", "Comments", "Score", "Flags", "Tags"]
