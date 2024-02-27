@@ -4,9 +4,8 @@ from dataclasses import dataclass
 import pytz
 from app.blueprints.authentication.validation import AssessmentAccessController
 from app.blueprints.authentication.validation import get_countries_from_roles
-from app.blueprints.authentication.validation import (
-    has_devolved_authority_validation,
-)
+from app.blueprints.authentication.validation import has_assessment_opened
+from app.blueprints.authentication.validation import has_devolved_authority_validation
 from app.blueprints.services.data_services import get_application_stats
 from app.blueprints.services.data_services import get_assessments_stats
 from app.blueprints.services.data_services import get_rounds
@@ -109,13 +108,14 @@ def create_round_summaries(fund: Fund, filters: LandingFilters) -> list[RoundSum
             else ""
         )
 
+        assessment_active = has_assessment_opened(round=round)
+        application_stats = None  # populated later, with a bulk request
+
         if _round_not_yet_open := current_datetime_before_given_iso_string(round.opens):  # noqa
             current_app.logger.info(
                 f"Round {fund.short_name} - {round.short_name} is not yet open (opens: {round.opens})"
             )
-            application_stats = None
             sorting_date = round.assessment_deadline
-            assessment_active = False
             round_open = False
             not_yet_open = True
 
@@ -137,9 +137,7 @@ def create_round_summaries(fund: Fund, filters: LandingFilters) -> list[RoundSum
                 f" open (opens: {round.opens}, closes: {round.deadline})"
             )
             live_rounds.append(round)
-            application_stats = None
             sorting_date = round.deadline
-            assessment_active = False
             round_open = True
             not_yet_open = False
         else:
@@ -162,7 +160,6 @@ def create_round_summaries(fund: Fund, filters: LandingFilters) -> list[RoundSum
             not_yet_open = False
             round_ids_to_fetch_assessment_stats.add(round.id)
             sorting_date = round.assessment_deadline
-            application_stats = None  # populated later, with a bulk request
 
         summary = RoundSummary(
             is_assessment_active_status=assessment_active,

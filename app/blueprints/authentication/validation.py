@@ -93,21 +93,46 @@ def has_access_to_fund(short_name: str) -> bool:
     return any(role in all_roles for role in access_roles)
 
 
-def is_assessment_active(fund_id, round_id):
+def has_assessment_opened(fund_id=None, round_id=None, round=None) -> bool:
+    """Determines whether assessment has opened in the past. Overriden by
+    `Config.FORCE_OPEN_ALL_LIVE_ASSESSMENT_ROUNDS` in test envs.
+
+    Does not use `assessment_end_date`. If there is an `assessment_starts` present, uses that, otherwise
+    uses the `deadline` for applications in this round.
+
+    Args:
+        fund_id (_type_, optional): ID of the fund for the round to determine the status for. Defaults to None.
+        round_id (_type_, optional): ID of the round to determine the status for. Defaults to None.
+        round (_type_, optional): A round object - can be provided instead of IDs if already retrieved.
+            Defaults to None.
+
+    Returns:
+        bool: Whether or not this assessment round has opened.
+    """
     from datetime import datetime
 
-    # Check if the application is in a live round
-    round_information = get_round(
-        fund_id,
-        round_id,
-        ttl_hash=get_ttl_hash(Config.LRU_CACHE_TIME),
+    if not round:
+        round = get_round(
+            fund_id,
+            round_id,
+            ttl_hash=get_ttl_hash(Config.LRU_CACHE_TIME),
+        )
+
+    # Used in test envs to access open rounds
+    if Config.FORCE_OPEN_ALL_LIVE_ASSESSMENT_ROUNDS:
+        return True
+
+    deadline = datetime.strptime(round.deadline, "%Y-%m-%dT%H:%M:%S")
+    assessment_start = (
+        datetime.strptime(round.assessment_start, "%Y-%m-%dT%H:%M:%S") if round.assessment_start else None
     )
 
-    deadline = datetime.strptime(round_information.deadline, "%Y-%m-%dT%H:%M:%S")
-    if datetime.now() > deadline or Config.FORCE_OPEN_ALL_LIVE_ASSESSMENT_ROUNDS:
-        return True
+    # Not all rounds have an assessment_start specified. If they do not, use the application closing date instead
+
+    if assessment_start:
+        return datetime.now() > assessment_start
     else:
-        return False
+        return datetime.now() > deadline
 
 
 def check_access_application_id(func: Callable = None, roles_required: List[str] = []) -> Callable:
@@ -132,7 +157,7 @@ def check_access_application_id(func: Callable = None, roles_required: List[str]
             ttl_hash=get_ttl_hash(Config.LRU_CACHE_TIME),
         ).short_name
 
-        assessment_open = is_assessment_active(application_metadata["fund_id"], application_metadata["round_id"])
+        assessment_open = has_assessment_opened(application_metadata["fund_id"], application_metadata["round_id"])
         if not assessment_open:
             abort(403, "This assessment is not yet live.")
 
@@ -184,7 +209,7 @@ def _check_access_fund_common(
         )
 
         round_details = get_round(fund_value, round_value, using_short_name)
-        assessment_open = is_assessment_active(round_details.fund_id, round_details.id)
+        assessment_open = has_assessment_opened(round_details.fund_id, round_details.id)
         if not assessment_open:
             abort(403, "This assessment is not yet live.")
 
