@@ -78,41 +78,45 @@
 </div>
 
 {% if g.access_controller.has_any_assessor_role %}
-<div class="govuk-grid-row">
 
+    <!--Flag history is diabled for EOI fund types -->
+    {% if state.fund_short_name.upper() not in ("COF-EOI",) %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-one-half">
 
-
-<div class="govuk-grid-row">
-    <div class="govuk-grid-column-one-half">
-        {{ flag_tabs(state, application_id, teams_flag_stats, flags_list, accounts_list) }}
+            {{ flag_tabs(state, application_id, teams_flag_stats, flags_list, accounts_list) }}
+        </div>
     </div>
+    {% endif %}
 
-    <div class="govuk-grid-column-one-quarter gov-uk-table__cell--align-right left-margin govuk-!-padding-top-1">
-        <p class="govuk-body"> <a href="{{ url_for('assessment_bp.activity_trail', application_id=application_id) }}">View activity trail</a></p>
-      </div>
-
-    <div class="gov-uk-table__cell--align-right">
-    <span class="left govuk-!-padding-right-4">
-        {% if is_flaggable and g.access_controller.has_any_assessor_role %}
-        {{ flag_application_button(application_id) }}
-        {% endif %}
-    </span>
-    <span class="right">
-        {% if g.access_controller.is_lead_assessor and state.workflow_status=="COMPLETED" and (not is_qa_complete) and flag_status not in ["Stopped", "Flagged", "Multiple flags to resolve"] and "Flagged" not in flag_status and state.fund_short_name.upper() != "COF-EOI" %} <!--TODO: temp solution, we will need to come up with a better mechanism when more eoi funds get onbaorded -->
-        {{ mark_qa_complete_button(application_id) }}
-        {% endif %}
-    </span>
-    </div>
-
-    <div class="gov-uk-table__cell--align-right">
+    <div class="govuk-grid-row">
+        <div class="gov-uk-table__cell--align-right">
         <span class="left govuk-!-padding-right-4">
-        {% if g.access_controller.is_lead_assessor and state.fund_short_name|upper =="COF-EOI" %}
-        {{ link_to_download_contract_docs(csrf_token, application_id) }}
-        {% endif %}
+            <div class="govuk-grid-row govuk-!-text-align-right">
+                <div class="govuk-grid-column-full govuk-!-margin-bottom-4">
+                    <a class="govuk-body govuk-link--no-visited-state" href="{{ url_for('assessment_bp.activity_trail', application_id=application_id) }}">View activity trail</a>
+                </div>
+            </div>
         </span>
+
+        <span class="left govuk-!-padding-right-4">
+            {% if is_flaggable and g.access_controller.has_any_assessor_role %}
+            {{ flag_application_button(application_id) }}
+            {% endif %}
+        </span>
+        <span class="right">
+            {% if g.access_controller.is_lead_assessor and state.fund_short_name|upper in ("COF-EOI",) %}
+                <div class="govuk-grid-row govuk-!-text-align-right">
+                    <div class="govuk-grid-column-full govuk-!-margin-bottom-4">
+                        {{ link_to_download_contract_docs(csrf_token, application_id) }}
+                    </div>
+                </div>
+            {% elif g.access_controller.is_lead_assessor and state.workflow_status=="COMPLETED" and (not is_qa_complete) and flag_status not in ["Stopped", "Flagged", "Multiple flags to resolve"] and "Flagged" not in flag_status %}
+                {{ mark_qa_complete_button(application_id) }}
+            {% endif %}
+        </span>
+        </div>
     </div>
-</div>
-</div>
 {% endif %}
 
 {# Display multiple flag banner #}
