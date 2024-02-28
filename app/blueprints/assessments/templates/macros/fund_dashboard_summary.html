@@ -53,6 +53,7 @@
                 class="govuk-tag {% if not summary.is_assessment_active_status and not summary.is_round_open_status %}govuk-tag--grey{% endif %} govuk-!-margin-bottom-2 govuk-summary-card__title ">
                 {% if summary.is_assessment_active_status %}
                     ASSESSMENT ACTIVE
+                    {{summary.round_name}}
                 {% elif summary.is_round_open_status %}
                     APPLICATION LIVE
                 {% elif summary.is_not_yet_open_status %}
@@ -63,6 +64,18 @@
             </strong>
         </div>
         {% if summary.live_round_stats %}
+        <!-- TODO: Temp solution for a quick fix. Perhaps we should have a varibale within the summary? -->
+            {% if "Expression of interest" in summary.round_name %}
+                {{ govukTable({
+                "caption": "",
+                "firstCellIsHeader": false,
+                "rows": [
+                    [{'html': '<strong>Applications received</strong>'},
+                    {'text': summary.live_round_stats.submitted if summary.live_round_stats.submitted is not none else 'Unavailable'}],
+                    ],
+                })
+            }}
+            {%else%}
             {{ govukTable({
                 "caption": "",
                 "firstCellIsHeader": false,
@@ -80,6 +93,7 @@
                     ],
                 })
             }}
+            {%endif%}
             {% if force_open_all_live_assessment_rounds %}
                 <a class="govuk-link" data-qa="dashboard_summary" href="{{ summary.assessments_href }}">
                     View all submitted applications
