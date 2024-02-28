@@ -106,11 +106,10 @@
 
     <div class="gov-uk-table__cell--align-right">
         <span class="left govuk-!-padding-right-4">
-            {% if g.access_controller.is_lead_assessor and state.fund_short_name|upper =="COF-EOI" %}
-            {{ link_to_download_contract_docs(csrf_token, application_id) }}
+        {% if g.access_controller.is_lead_assessor and state.fund_short_name|upper =="COF-EOI" %}
+        {{ link_to_download_contract_docs(csrf_token, application_id) }}
         {% endif %}
         </span>
-
         </div>
 </div>
 </div>
