@@ -53,7 +53,6 @@
                 class="govuk-tag {% if not summary.is_assessment_active_status and not summary.is_round_open_status %}govuk-tag--grey{% endif %} govuk-!-margin-bottom-2 govuk-summary-card__title ">
                 {% if summary.is_assessment_active_status %}
                     ASSESSMENT ACTIVE
-                    {{summary.round_name}}
                 {% elif summary.is_round_open_status %}
                     APPLICATION LIVE
                 {% elif summary.is_not_yet_open_status %}
