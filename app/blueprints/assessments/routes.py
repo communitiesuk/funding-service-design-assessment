@@ -295,6 +295,8 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
             "tags": lambda x: len(tags_in_application_map.get(x["application_id"]) or []),
             "team_in_place": lambda x: x["team_in_place"],
             "datasets": lambda x: x["datasets"],
+            "date_submitted": lambda x: x["date_submitted"],
+            "lead_contact_email": lambda x: x["lead_contact_email"],
             "publish_datasets": lambda x: x["publish_datasets"]
             if x["publish_datasets"]
             else str(x["publish_datasets"]),
