@@ -100,7 +100,7 @@
         </span>
 
         <span class="left govuk-!-padding-right-4">
-            {% if is_flaggable and g.access_controller.has_any_assessor_role %}
+            {% if is_flaggable %}
             {{ flag_application_button(application_id) }}
             {% endif %}
         </span>
