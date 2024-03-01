@@ -27,7 +27,8 @@ class ApplicationFileRepresentationArgs(NamedTuple):
 
 
 def _generate_text_of_application(args: ApplicationFileRepresentationArgs):
-    text = generate_text_of_application(args.question_to_answer, args.fund.name)
+    fund_round_name = f"{args.fund.name} {args.round.title}"
+    text = generate_text_of_application(args.question_to_answer, fund_round_name)
     return download_file(text, "text/plain", f"{args.short_id}_answers.txt")
 
 
