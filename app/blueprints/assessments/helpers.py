@@ -14,6 +14,7 @@ from app.blueprints.services.models.flag import FlagType
 from app.blueprints.services.models.fund import Fund
 from app.blueprints.shared.helpers import determine_display_status
 from app.blueprints.tagging.models.tag import AssociatedTag
+from bs4 import BeautifulSoup
 from config import Config
 from config.display_value_mappings import assessment_statuses
 from flask import Response
@@ -162,7 +163,9 @@ def generate_csv_of_application(q_and_a: dict, fund: Fund, application_json):
 
 def generate_assessment_info_csv(data: dict):
     output = StringIO()
-    headers = list(OrderedDict.fromkeys(key for d in data for key in d.keys()))
+    headers = list(
+        OrderedDict.fromkeys(key for d in data for key in d.keys() if key not in exclude_header(["COF-EOI"]))
+    )
     csv_writer = csv.writer(output)
 
     if len(data) == 0:
@@ -228,3 +231,38 @@ def get_files_for_application_upload_fields(application_id: str, short_id: str, 
     files = [(file.filename, generate_url(file, short_id)) for file in client_side_upload_files]
 
     return legacy_files + files
+
+
+def convert_bool_value(value):
+    if value:
+        return "Yes"
+    if not value:
+        return "No"
+    if value is None:
+        return "Not sure"
+
+
+def strip_tags(text):
+    if text == ["none"]:
+        return "Not sure"
+    soup = BeautifulSoup(text, "html.parser")
+    return soup.get_text()
+
+
+def sanitise_export_data(data):
+    if isinstance(data, dict):
+        for key, value in data.items():
+            data[key] = sanitise_export_data(value)
+    if isinstance(data, list):
+        data = [sanitise_export_data(d) for d in data]
+
+    if isinstance(data, bool):
+        data = convert_bool_value(data)
+    if isinstance(data, str):
+        data = strip_tags(data)
+    return data
+
+
+def exclude_header(fund_names: list):
+    if "COF-EOI" in fund_names:
+        return ["Help with insolvency", "Help with organisation type", "Help with public authority"]
