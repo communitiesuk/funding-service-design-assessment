@@ -12,6 +12,7 @@ from urllib.parse import quote
 from app.blueprints.services.aws import list_files_in_folder
 from app.blueprints.shared.filters import format_address
 from app.blueprints.shared.filters import format_date
+from app.blueprints.shared.filters import remove_dashes_capitalize_keep_uppercase
 from app.blueprints.shared.filters import remove_dashes_underscores_capitalize
 from bs4 import BeautifulSoup
 from flask import current_app
@@ -312,7 +313,7 @@ def _ui_component_from_factory(item: dict, application_id: str):
 
     elif presentation_type in ("text", "list", "free_text"):
         if field_type in ("radiosField") and item.get("answer"):
-            item["answer"] = item["answer"].replace("-", " ").capitalize()
+            item["answer"] = remove_dashes_capitalize_keep_uppercase(item["answer"])
         if field_type in ("multilineTextField",):
             return AboveQuestionAnswerPair.from_dict(item)
         elif field_type in ("websiteField",):

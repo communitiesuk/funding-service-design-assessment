@@ -60,6 +60,17 @@ def remove_dashes_underscores_capitalize_keep_uppercase(s: str) -> str:
     return " ".join(lowercase_words)
 
 
+def remove_dashes_capitalize_keep_uppercase(s: str) -> str:
+    # Convert all words to lowercase except for originally uppercase words(Abbrevations are preserved)
+    words = s.replace("-", " ").split(" ")
+    lowercase_words = [word.lower() if word.islower() else word for word in words]
+
+    # Capitalize the first word
+    lowercase_words[0] = lowercase_words[0].capitalize()
+
+    return " ".join(lowercase_words)
+
+
 def format_address(address: str) -> list[str]:
     address_parts = address.split(", ")
     address_parts = [part for part in address_parts if part != "null"]
