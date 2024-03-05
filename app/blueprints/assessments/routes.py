@@ -33,6 +33,7 @@ from app.blueprints.assessments.helpers import (
 )
 from app.blueprints.assessments.helpers import get_tag_map_and_tag_options
 from app.blueprints.assessments.helpers import get_team_flag_stats
+from app.blueprints.assessments.helpers import sanitise_export_data
 from app.blueprints.assessments.helpers import (
     set_application_status_in_overview,
 )
@@ -740,7 +741,7 @@ def assessor_export(fund_short_name: str, round_short_name: str, report_type: st
         ttl_hash=get_ttl_hash(Config.LRU_CACHE_TIME),
     )
     export = get_applicant_export(_round.fund_id, _round.id, report_type)
-
+    export = sanitise_export_data(export)
     en_export_data = generate_assessment_info_csv(export["en_list"])
     cy_export_data = generate_assessment_info_csv(export["cy_list"])
 
