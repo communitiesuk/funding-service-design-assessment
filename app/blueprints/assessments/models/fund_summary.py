@@ -123,7 +123,13 @@ def create_round_summaries(fund: Fund, filters: LandingFilters) -> list[RoundSum
             [
                 current_datetime_after_given_iso_string(round.opens),
                 current_datetime_before_given_iso_string(round.deadline),
-                current_datetime_before_given_iso_string(round.assessment_start) if round.assessment_start else True,
+                (
+                    True
+                    if round.opens == round.assessment_start  # for EOI type funds
+                    else current_datetime_before_given_iso_string(round.assessment_start)
+                )
+                if round.assessment_start
+                else True,
             ]
         ):
             if filters.filter_status not in (ALL_VALUE, "live"):
