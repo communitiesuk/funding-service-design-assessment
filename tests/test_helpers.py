@@ -129,6 +129,7 @@ def test_generate_csv_of_application():
         description="Test Fund Description",
         short_name="Test Short Name",
     )
+    fund_round_name = "Test Fund R4W1"
 
     application = {
         "application_id": "application-uuid",
@@ -136,7 +137,7 @@ def test_generate_csv_of_application():
     }
 
     expected_output = (
-        "Fund,Test Fund,fund-uuid\r\n"
+        "Fund,Test Fund R4W1,fund-uuid\r\n"
         "Application,applcation-short-reference,application-uuid\r\n"
         "Section,Question,Answer\r\n"
         "Section1,question1,'- answer1\r\n"
@@ -147,7 +148,7 @@ def test_generate_csv_of_application():
         "Section3,question6,Not provided\r\n"
     )
 
-    result = generate_csv_of_application(q_and_a, fund, application)
+    result = generate_csv_of_application(q_and_a, fund, application, fund_round_name)
 
     assert result == expected_output
 
