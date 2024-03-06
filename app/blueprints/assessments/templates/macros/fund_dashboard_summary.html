@@ -93,7 +93,7 @@
                 })
             }}
             {%endif%}
-            {% if force_open_all_live_assessment_rounds %}
+            {% if force_open_all_live_assessment_rounds or "Expression of interest" in summary.round_name %}
                 <a class="govuk-link" data-qa="dashboard_summary" href="{{ summary.assessments_href }}">
                     View all submitted applications
                 </a>
