@@ -33,7 +33,8 @@ def _generate_text_of_application(args: ApplicationFileRepresentationArgs):
 
 
 def _generate_csv_of_application(args: ApplicationFileRepresentationArgs):
-    csv = generate_csv_of_application(args.question_to_answer, args.fund, args.application_json)
+    fund_round_name = f"{args.fund.name} {args.round.title}"
+    csv = generate_csv_of_application(args.question_to_answer, args.fund, args.application_json, fund_round_name)
     return download_file(csv, "text/csv", f"{args.short_id}_answers.csv")
 
 

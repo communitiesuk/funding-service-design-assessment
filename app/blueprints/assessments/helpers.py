@@ -135,10 +135,10 @@ def get_tag_map_and_tag_options(fund_round_tags, post_processed_overviews):
     return tags_in_application_map, tag_option_groups
 
 
-def generate_csv_of_application(q_and_a: dict, fund: Fund, application_json):
+def generate_csv_of_application(q_and_a: dict, fund: Fund, application_json, fund_round_name=None):
     output = StringIO()
     writer = csv.writer(output)
-    writer.writerow(["Fund", fund.name, fund.id])
+    writer.writerow(["Fund", fund_round_name, fund.id])
     writer.writerow(
         [
             "Application",
