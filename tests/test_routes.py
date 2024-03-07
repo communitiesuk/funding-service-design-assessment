@@ -93,7 +93,9 @@ class TestRoutes:
             return_value=[
                 RoundSummary(
                     has_assessment_opened=True,
-                    is_round_open_status=False,
+                    has_assessment_closed=False,
+                    is_assessment_active=True,
+                    is_round_open=False,
                     is_round_not_yet_open=False,
                     fund_id="111",
                     round_id="222",
