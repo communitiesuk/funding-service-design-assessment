@@ -1,0 +1,236 @@
+import datetime
+from dataclasses import dataclass
+
+import pytz
+from app.blueprints.authentication.validation import AssessmentAccessController
+from app.blueprints.authentication.validation import get_countries_from_roles
+from app.blueprints.authentication.validation import has_assessment_opened
+from app.blueprints.authentication.validation import has_devolved_authority_validation
+from app.blueprints.services.data_services import get_application_stats
+from app.blueprints.services.data_services import get_assessments_stats
+from app.blueprints.services.data_services import get_rounds
+from app.blueprints.services.models.fund import Fund
+from app.blueprints.shared.helpers import get_ttl_hash
+from config import Config
+from config.display_value_mappings import ALL_VALUE
+from config.display_value_mappings import LandingFilters
+from flask import current_app
+from flask import url_for
+from fsd_utils.simple_utils.date_utils import (
+    current_datetime_after_given_iso_string,
+)
+from fsd_utils.simple_utils.date_utils import (
+    current_datetime_before_given_iso_string,
+)
+
+
+@dataclass
+class Stats:
+    date: str
+    total_received: int
+    completed: int
+    started: int
+    qa_complete: int
+    stopped: int
+
+
+@dataclass
+class LiveRoundStats:
+    closing_date: str
+    not_started: int | None
+    in_progress: int | None
+    completed: int | None
+    submitted: int | None
+
+
+@dataclass
+class RoundSummary:
+    has_assessment_opened: bool
+    has_assessment_closed: bool
+    is_assessment_active: bool
+    is_round_open: bool
+    is_round_not_yet_open: bool
+    fund_id: str
+    round_id: str
+    fund_name: str
+    round_name: str
+    assessments_href: str
+    access_controller: AssessmentAccessController
+    export_href: str
+    feedback_export_href: str
+    assessment_tracker_href: str
+    round_application_fields_download_available: bool
+    sorting_date: str
+    assessment_stats: Stats | None = None
+    live_round_stats: LiveRoundStats = None
+
+
+def create_round_summaries(fund: Fund, filters: LandingFilters) -> list[RoundSummary]:
+    """Get all the round stats in a fund."""
+    access_controller = AssessmentAccessController(fund.short_name)
+
+    search_params = {}
+    if has_devolved_authority_validation(fund_id=fund.id):
+        countries = get_countries_from_roles(fund.short_name)
+        search_params = {"countries": ",".join(countries)}
+
+    summaries = []
+    live_rounds = []
+    round_id_to_summary_map = {}
+    round_ids_to_fetch_assessment_stats = set()
+    for round in get_rounds(fund.id, ttl_hash=get_ttl_hash(Config.LRU_CACHE_TIME)):
+        assessments_href = url_for(
+            "assessment_bp.fund_dashboard",
+            fund_short_name=fund.short_name,
+            round_short_name=round.short_name.lower(),
+        )
+        export_href = url_for(
+            "assessment_bp.assessor_export",
+            fund_short_name=fund.short_name,
+            round_short_name=round.short_name.lower(),
+            report_type="ASSESSOR_EXPORT",
+        )
+        assessment_tracker_href = (
+            url_for(
+                "assessment_bp.assessor_export",
+                fund_short_name=fund.short_name,
+                round_short_name=round.short_name.lower(),
+                report_type="OUTPUT_TRACKER",
+            )
+            if fund.short_name.upper() != "COF-EOI"
+            else None
+        )
+        feedback_export_href = (
+            url_for(
+                "assessment_bp.feedback_export",
+                fund_short_name=fund.short_name,
+                round_short_name=round.short_name.lower(),
+            )
+            if (round.feedback_survey_config.has_feedback_survey or round.feedback_survey_config.has_section_feedback)
+            else ""
+        )
+
+        assessment_opened = has_assessment_opened(round=round)
+        assessment_closed = current_datetime_after_given_iso_string(round.assessment_deadline)
+        assessment_active = assessment_opened and not assessment_closed
+        round_not_yet_open = current_datetime_before_given_iso_string(round.opens)
+        round_is_open = Config.FORCE_OPEN_ALL_LIVE_ASSESSMENT_ROUNDS or (
+            current_datetime_after_given_iso_string(round.opens)
+            and current_datetime_before_given_iso_string(round.deadline)
+        )
+
+        application_stats = None  # populated later, with a bulk request
+
+        if round_is_open:
+            current_app.logger.info(
+                f"Round {fund.short_name} - {round.short_name} is currently open for applications open (opens:"
+                f" {round.opens}, closes: {round.deadline}) (Force open for testing:"
+                f" {Config.FORCE_OPEN_ALL_LIVE_ASSESSMENT_ROUNDS})"
+            )
+            live_rounds.append(round)
+            sorting_date = round.deadline
+
+        if round_not_yet_open:
+            sorting_date = round.assessment_deadline
+            current_app.logger.info(
+                f"Round {fund.short_name} - {round.short_name} is not yet open for applications (opens: {round.opens})"
+            )
+
+        if assessment_opened:
+            current_app.logger.info(
+                f"Round {fund.short_name} - {round.short_name} is currently open for assessment"
+                f" (start: {round.assessment_start}, end: {round.assessment_deadline})"
+            )
+
+            round_ids_to_fetch_assessment_stats.add(round.id)
+            sorting_date = round.assessment_deadline
+
+        else:
+            current_app.logger.info(
+                f"Round {fund.short_name} - {round.short_name} is not currently open for assessment"
+                f" (start: {round.assessment_start}, end: {round.assessment_deadline})"
+            )
+            if filters.filter_status not in (ALL_VALUE, "live"):
+                continue
+
+            if not access_controller.has_any_assessor_role:
+                continue
+
+            sorting_date = round.deadline
+
+        summary = RoundSummary(
+            has_assessment_opened=assessment_opened,
+            has_assessment_closed=assessment_closed,
+            is_assessment_active=assessment_active,
+            is_round_open=round_is_open,
+            is_round_not_yet_open=round_not_yet_open,
+            fund_id=fund.id,
+            round_id=round.id,
+            fund_name=fund.name,
+            round_name=round.title,
+            assessment_stats=application_stats,
+            assessments_href=assessments_href,
+            access_controller=access_controller,
+            export_href=export_href,
+            feedback_export_href=feedback_export_href,
+            assessment_tracker_href=assessment_tracker_href,
+            round_application_fields_download_available=round.application_fields_download_available,
+            sorting_date=sorting_date,
+        )
+        round_id_to_summary_map[round.id] = summary
+        summaries.append(summary)
+
+    round_id_to_round_stats = get_assessments_stats(fund.id, round_ids_to_fetch_assessment_stats, search_params)
+    for round_id, round_stats in round_id_to_round_stats.items():
+        summary = round_id_to_summary_map[round_id]
+        summary.assessment_stats = Stats(
+            date=summary.sorting_date,  # which is same as round.assessment_deadline
+            total_received=round_stats["total"],
+            completed=round_stats["completed"],
+            started=round_stats["assessing"],
+            qa_complete=round_stats["qa_completed"],
+            stopped=round_stats["stopped"],
+        )
+
+    if live_rounds:
+        live_rounds_map = {r.id: r for r in live_rounds}
+        round_stats = get_application_stats([fund.id], [r.id for r in live_rounds])
+        if not round_stats:
+            current_app.logger.warn("Error retrieving round stats, application-store may be down.")
+            for live_round_id in live_rounds_map:
+                live_round = live_rounds_map[live_round_id]
+                round_id_to_summary_map[live_round_id].live_round_stats = LiveRoundStats(
+                    closing_date=live_round.deadline,
+                    not_started=None,
+                    in_progress=None,
+                    completed=None,
+                    submitted=None,
+                )
+        else:
+            this_fund_stats = next(f for f in round_stats["metrics"] if f["fund_id"] == fund.id)
+            for this_round_stats in this_fund_stats["rounds"]:
+                current_round_id = this_round_stats["round_id"]
+                if current_round_id not in live_rounds_map:
+                    continue
+
+                statuses = this_round_stats["application_statuses"]
+                live_round = live_rounds_map[current_round_id]
+                round_id_to_summary_map[current_round_id].live_round_stats = LiveRoundStats(
+                    closing_date=live_round.deadline,
+                    not_started=statuses["NOT_STARTED"],
+                    in_progress=statuses["IN_PROGRESS"],
+                    completed=statuses["COMPLETED"],
+                    submitted=statuses["SUBMITTED"],
+                )
+
+    return sorted(summaries, key=lambda s: s.sorting_date, reverse=True)
+
+
+def is_after_today(date_str: str):
+    """Check if the provided datetime string has passed the current datetime"""
+    uk_tz = pytz.timezone("Europe/London")
+    date_format = "%Y-%m-%dT%H:%M:%S"
+    dt = datetime.datetime.strptime(date_str, date_format)
+    dt_uk = uk_tz.localize(dt)
+    now_uk = datetime.datetime.now(tz=uk_tz)
+    return dt_uk > now_uk
