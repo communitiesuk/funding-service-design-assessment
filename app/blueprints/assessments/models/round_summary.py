@@ -45,9 +45,11 @@ class LiveRoundStats:
 
 @dataclass
 class RoundSummary:
-    is_assessment_active_status: bool
-    is_round_open_status: bool
-    is_not_yet_open_status: bool
+    has_assessment_opened: bool
+    has_assessment_closed: bool
+    is_assessment_active: bool
+    is_round_open: bool
+    is_round_not_yet_open: bool
     fund_id: str
     round_id: str
     fund_name: str
@@ -108,69 +110,60 @@ def create_round_summaries(fund: Fund, filters: LandingFilters) -> list[RoundSum
             else ""
         )
 
-        assessment_active = has_assessment_opened(round=round)
+        assessment_opened = has_assessment_opened(round=round)
+        assessment_closed = current_datetime_after_given_iso_string(round.assessment_deadline)
+        assessment_active = assessment_opened and not assessment_closed
+        round_not_yet_open = current_datetime_before_given_iso_string(round.opens)
+        round_is_open = Config.FORCE_OPEN_ALL_LIVE_ASSESSMENT_ROUNDS or (
+            current_datetime_after_given_iso_string(round.opens)
+            and current_datetime_before_given_iso_string(round.deadline)
+        )
+
         application_stats = None  # populated later, with a bulk request
 
-        if _round_not_yet_open := current_datetime_before_given_iso_string(round.opens):  # noqa
+        if round_is_open:
             current_app.logger.info(
-                f"Round {fund.short_name} - {round.short_name} is not yet open (opens: {round.opens})"
+                f"Round {fund.short_name} - {round.short_name} is currently open for applications open (opens:"
+                f" {round.opens}, closes: {round.deadline}) (Force open for testing:"
+                f" {Config.FORCE_OPEN_ALL_LIVE_ASSESSMENT_ROUNDS})"
             )
-            sorting_date = round.assessment_deadline
-            round_open = False
-            not_yet_open = True
+            live_rounds.append(round)
+            sorting_date = round.deadline
 
-        elif application_open_but_assessment_not_yet_open := all(  # noqa
-            [
-                current_datetime_after_given_iso_string(round.opens),
-                current_datetime_before_given_iso_string(round.deadline),
-                (
-                    True
-                    if round.opens == round.assessment_start  # for EOI type funds
-                    else current_datetime_before_given_iso_string(round.assessment_start)
-                )
-                if round.assessment_start
-                else True,
-            ]
-        ):
+        if round_not_yet_open:
+            sorting_date = round.assessment_deadline
+            current_app.logger.info(
+                f"Round {fund.short_name} - {round.short_name} is not yet open for applications (opens: {round.opens})"
+            )
+
+        if assessment_opened:
+            current_app.logger.info(
+                f"Round {fund.short_name} - {round.short_name} is currently open for assessment"
+                f" (start: {round.assessment_start}, end: {round.assessment_deadline})"
+            )
+
+            round_ids_to_fetch_assessment_stats.add(round.id)
+            sorting_date = round.assessment_deadline
+
+        else:
+            current_app.logger.info(
+                f"Round {fund.short_name} - {round.short_name} is not currently open for assessment"
+                f" (start: {round.assessment_start}, end: {round.assessment_deadline})"
+            )
             if filters.filter_status not in (ALL_VALUE, "live"):
                 continue
 
             if not access_controller.has_any_assessor_role:
                 continue
 
-            current_app.logger.info(
-                f"Round {fund.short_name} - {round.short_name} is currently"
-                f" open (opens: {round.opens}, closes: {round.deadline})"
-            )
-            live_rounds.append(round)
             sorting_date = round.deadline
-            round_open = True
-            not_yet_open = False
-        else:
-            if current_datetime_before_given_iso_string(round.assessment_deadline):  # assessment is active
-                if filters.filter_status not in (ALL_VALUE, "active"):
-                    continue
-                current_app.logger.info(
-                    f"Round {fund.short_name} - {round.short_name} is active"
-                    f" in assessment (opens: {round.opens}, closes:"
-                    f" {round.deadline}, asesssment deadline:"
-                    f" {round.assessment_deadline})"
-                )
-                assessment_active = True
-            else:
-                if filters.filter_status not in (ALL_VALUE, "closed"):
-                    continue
-                assessment_active = False
-
-            round_open = False
-            not_yet_open = False
-            round_ids_to_fetch_assessment_stats.add(round.id)
-            sorting_date = round.assessment_deadline
 
         summary = RoundSummary(
-            is_assessment_active_status=assessment_active,
-            is_round_open_status=round_open,
-            is_not_yet_open_status=not_yet_open,
+            has_assessment_opened=assessment_opened,
+            has_assessment_closed=assessment_closed,
+            is_assessment_active=assessment_active,
+            is_round_open=round_is_open,
+            is_round_not_yet_open=round_not_yet_open,
             fund_id=fund.id,
             round_id=round.id,
             fund_name=fund.name,
