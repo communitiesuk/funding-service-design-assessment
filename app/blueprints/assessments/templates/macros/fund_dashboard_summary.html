@@ -1,20 +1,19 @@
 {%- from "govuk_frontend_jinja/components/table/macro.html" import govukTable -%}
 
-{% macro assessment_status(is_assessment_active, has_assessment_opened, is_assessment_closed, is_round_open,
-is_round_not_yet_open) %}
+{% macro assessment_status(round_status) %}
 
 {%set display_class %}
-{%if is_round_not_yet_open or is_assessment_closed%}
+{%if round_status.is_application_not_yet_open or round_status.has_assessment_closed%}
 govuk-tag--grey
 {% endif %}
 {%endset%}
 <div class="govuk-tag govuk-!-margin-bottom-2 govuk-summary-card__title {{display_class}}">
     <strong>
-        {% if is_assessment_active %}
+        {% if round_status.is_assessment_active %}
         ASSESSMENT ACTIVE
-        {% elif is_round_open %}
+        {% elif round_status.is_application_open %}
         APPLICATION LIVE
-        {% elif is_round_not_yet_open %}
+        {% elif round_status.is_application_not_yet_open %}
         APPLICATION NOT YET OPEN
         {% else %}
         ASSESSMENT CLOSED
@@ -78,8 +77,7 @@ assessment_tracker_href, is_assessment_active, assessment_has_opened) %}
 
     <div class="template-answer--dashboard-container bg-white govuk-!-padding-bottom-5">
 
-        {{assessment_status(summary.is_assessment_active, summary.has_assessment_opened, summary.has_assessment_closed,
-        summary.is_round_open, summary.is_round_not_yet_open)}}
+        {{assessment_status(summary.status)}}
 
         <!-- TODO: Temp solution for a quick fix. Perhaps we should have a varibale within the summary? -->
         {% if "Expression of interest" in summary.round_name %}
@@ -94,7 +92,7 @@ assessment_tracker_href, is_assessment_active, assessment_has_opened) %}
                 })
             }}
 
-        {% elif summary.is_round_open %}
+        {% elif summary.status.is_application_open %}
             {{ govukTable({
                 "caption": "",
                 "firstCellIsHeader": false,
@@ -117,7 +115,7 @@ assessment_tracker_href, is_assessment_active, assessment_has_opened) %}
                 })
             }}
 
-        {% elif summary.is_assessment_active or summary.has_assessment_closed %}
+        {% elif summary.status.has_assessment_opened %}
 
             {{ govukTable({
                 "caption": "",
@@ -140,7 +138,7 @@ assessment_tracker_href, is_assessment_active, assessment_has_opened) %}
             }}
 
         {% endif %}
-        {% if not summary.is_round_not_yet_open %}
+        {% if not summary.status.is_application_not_yet_open %}
             {{ round_links(summary.access_controller, summary.assessments_href,
                 summary.round_application_fields_download_available,
                 summary.export_href, summary.feedback_export_href, summary.assessment_tracker_href,
