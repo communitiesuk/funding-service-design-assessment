@@ -40,6 +40,8 @@ class Fund:
             return {ALL_VALUE, "competitive"}
         elif self.short_name == "DPIF":
             return {ALL_VALUE, "competitive"}
+        elif self.short_name == "COF-EOI":
+            return {ALL_VALUE, "allocative"}
         return {ALL_VALUE}
 
     def add_round(self, fund_round: Round):
