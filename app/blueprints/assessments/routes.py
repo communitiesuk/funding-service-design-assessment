@@ -190,7 +190,6 @@ def landing():
         has_any_assessor_role=any(
             rs.access_controller.has_any_assessor_role for rsl in round_summaries.values() for rs in rsl
         ),
-        force_open_all_live_assessment_rounds=Config.FORCE_OPEN_ALL_LIVE_ASSESSMENT_ROUNDS,
         migration_banner_enabled=Config.MIGRATION_BANNER_ENABLED,
     )
 

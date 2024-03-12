@@ -67,7 +67,7 @@
                                 {% for chunk in summaries|batch(chunk_size) %}
                                     <div class="govuk-grid-row">
                                         {% for summary in chunk %}
-                                            {{ fund_summary(summary, force_open_all_live_assessment_rounds) }}
+                                            {{ fund_summary(summary) }}
                                         {% endfor %}
                                     </div>
                                 {% endfor %}

@@ -244,6 +244,9 @@ mock_api_results = {
         "name": "Funding Service Design Unit Test Fund",
         "short_name": "TF",
         "description": "unit testing fund",
+        # "assessment_start": None,
+        # "assessment_deadline": "2124-01-01 12:00:00",
+        # "deadline": "2024-01-01 12:00:00"
     },
     "fund_store/funds/NSTF": {
         "id": "NSTF",
