@@ -879,11 +879,20 @@ def test_create_ui_components_retains_order(monkeypatch):
             "field_type": "clientSideFileUploadField",
         },
         {
+            "field_id": "field_12",
+            "form_name": "mock_form_name",
+            "path": ["mock_path_1", "mock_path_2"],
+            "question": "Twelfth",
+            "answer": None,  # we dynamically grab the state of the bucket
+            "presentation_type": "s3bucketPath",
+            "field_type": "clientSideFileUploadField",
+        },
+        {
             "field_id": "NdFwgy",
             "form_name": "funding-required",
             "field_type": "multiInputField",
             "presentation_type": "table",
-            "question": "Twelve",
+            "question": "Thirteenth",
             "answer": [
                 ["Description", ["first", "second"], "text"],
                 ["Amount", [100, 50.25], "currency"],
@@ -894,7 +903,7 @@ def test_create_ui_components_retains_order(monkeypatch):
     monkeypatch.setattr(
         app.blueprints.assessments.models.applicants_response,
         "list_files_in_folder",
-        lambda x: ["form_name/path/name/filename.png"],
+        lambda x: [x + "/filename.png"],
     )
 
     with test_app.app_context():
@@ -902,7 +911,7 @@ def test_create_ui_components_retains_order(monkeypatch):
 
     assert all(isinstance(ui_component, ApplicantResponseComponent) for ui_component in ui_components)
 
-    assert len(ui_components) == 13
+    assert len(ui_components) == 14
 
     assert isinstance(ui_components[0], BesideQuestionAnswerPair)
     assert ui_components[0].question == "First"
@@ -944,19 +953,32 @@ def test_create_ui_components_retains_order(monkeypatch):
     assert ui_components[11].question == "Eleventh"
     assert isinstance(ui_components[11].key_to_url_dict, dict)
     assert ui_components[11].key_to_url_dict == {
-        "form_name/path/name/filename.png": (
+        "app_123/mock_form_name/mock_path/field_11/filename.png": (
             "http://example.org:5000/assess/application/app_123/export/"
-            "form_name%252Fpath%252Fname%252Ffilename.png?quoted=True"
+            "app_123%252Fmock_form_name%252Fmock_path%252Ffield_11%252Ffilename.png?quoted=True"
         )
     }
 
-    assert isinstance(ui_components[12], NewAddAnotherTable)
-    assert ui_components[12].caption == "Twelve"
-    assert ui_components[12].head == [
+    assert isinstance(ui_components[12], QuestionAboveHrefAnswerList)
+    assert ui_components[12].question == "Twelfth"
+    assert isinstance(ui_components[12].key_to_url_dict, dict)
+    assert ui_components[12].key_to_url_dict == {
+        "app_123/mock_form_name/mock_path_1/field_12/filename.png": (
+            "http://example.org:5000/assess/application/app_123/export/"
+            "app_123%252Fmock_form_name%252Fmock_path_1%252Ffield_12%252Ffilename.png?quoted=True"
+        ),
+        "app_123/mock_form_name/mock_path_2/field_12/filename.png": (
+            "http://example.org:5000/assess/application/app_123/export/"
+            "app_123%252Fmock_form_name%252Fmock_path_2%252Ffield_12%252Ffilename.png?quoted=True"
+        ),
+    }
+    assert isinstance(ui_components[13], NewAddAnotherTable)
+    assert ui_components[13].caption == "Thirteenth"
+    assert ui_components[13].head == [
         {"text": "Description", "format": ""},
         {"text": "Amount", "format": "numeric"},
     ]
-    assert ui_components[12].rows == [
+    assert ui_components[13].rows == [
         [
             {"text": "first", "format": ""},
             {"text": "£100.00", "format": "numeric"},
