@@ -339,15 +339,8 @@ def _ui_component_from_factory(item: dict, application_id: str):
         return AboveQuestionAnswerPairHref.from_dict(item, href=presigned_url)
 
     elif presentation_type == "s3bucketPath":
-        if isinstance(item["path"], list):
-            file_keys = []
-            for i_path in item["path"]:
-                file_keys = file_keys + list_files_in_folder(
-                    f"{application_id}/{item['form_name']}/{i_path}/{item['field_id']}"
-                )
-        else:
-            folder_path = f"{application_id}/{item['form_name']}/{item['path']}/{item['field_id']}"
-            file_keys = list_files_in_folder(folder_path)
+        folder_path = f"{application_id}/{item['form_name']}/{item['path']}/{item['field_id']}"
+        file_keys = list_files_in_folder(folder_path) if answer else []
         key_to_url_dict = {
             key: url_for(
                 "assessment_bp.get_file",
