@@ -2,31 +2,31 @@
 
 {% macro assessment_status(round_status) %}
 
-{%set display_class %}
-{%if round_status.is_application_not_yet_open or round_status.has_assessment_closed%}
-govuk-tag--grey
-{% endif %}
-{%endset%}
-<div class="govuk-tag govuk-!-margin-bottom-2 govuk-summary-card__title {{display_class}}">
-    <strong>
-        {% if round_status.is_assessment_active %}
-        ASSESSMENT ACTIVE
-        {% elif round_status.is_application_open %}
-        APPLICATION LIVE
-        {% elif round_status.is_application_not_yet_open %}
-        APPLICATION NOT YET OPEN
-        {% else %}
-        ASSESSMENT CLOSED
+    {%set display_class %}
+        {%if round_status.is_application_not_yet_open or round_status.has_assessment_closed%}
+            govuk-tag--grey
         {% endif %}
-    </strong>
-</div>
+    {%endset%}
+    <div class="govuk-tag govuk-!-margin-bottom-2 govuk-summary-card__title {{display_class}}">
+        <strong>
+            {% if round_status.is_assessment_active %}
+            ASSESSMENT ACTIVE
+            {% elif round_status.is_application_open %}
+            APPLICATION LIVE
+            {% elif round_status.is_application_not_yet_open %}
+            APPLICATION NOT YET OPEN
+            {% else %}
+            ASSESSMENT CLOSED
+            {% endif %}
+        </strong>
+    </div>
 {% endmacro %}
 
 {% macro round_links(access_controller, assessments_href, download_available, export_href, feedback_export_href,
-assessment_tracker_href, is_assessment_active, assessment_has_opened) %}
-    {% if assessment_has_opened %}
+assessment_tracker_href, round_status) %}
+    {% if round_status.has_assessment_opened %}
         <a class="govuk-link" data-qa="dashboard_summary" href="{{ assessments_href }}">
-            View all {% if is_assessment_active %}active{% else %}
+            View all {% if round_status.is_assessment_active %}active{% else %}
             closed{% endif %} assessments
         </a>
         </br>
@@ -57,7 +57,7 @@ assessment_tracker_href, is_assessment_active, assessment_has_opened) %}
     {% endif %}
 {% endmacro %}
 
-{% macro fund_summary(summary, force_open_all_live_assessment_rounds) %}
+{% macro fund_summary(summary) %}
 <div
     class="govuk-!-padding-0 govuk-!-padding-right-2 govuk-!-padding-bottom-3 govuk-!-margin-bottom-6 govuk-grid-column-one-third content-container">
 
@@ -142,7 +142,7 @@ assessment_tracker_href, is_assessment_active, assessment_has_opened) %}
             {{ round_links(summary.access_controller, summary.assessments_href,
                 summary.round_application_fields_download_available,
                 summary.export_href, summary.feedback_export_href, summary.assessment_tracker_href,
-                summary.is_assessment_active, summary.has_assessment_opened)
+                summary.status)
             }}
         {% endif %}
 

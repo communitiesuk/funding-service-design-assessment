@@ -6,6 +6,7 @@ from unittest import mock
 
 import jwt as jwt
 import pytest
+from app.blueprints.assessments.models.round_status import RoundStatus
 from app.blueprints.services.models.assessor_task_list import AssessorTaskList
 from app.blueprints.shared.helpers import get_ttl_hash
 from app.blueprints.tagging.models.tag import AssociatedTag
@@ -312,6 +313,11 @@ def mock_get_fund(mocker):
 
     for mock_func in mock_funcs:
         mocker.patch(mock_func, return_value=mock_fund_info),
+
+    mocker.patch(
+        "app.blueprints.authentication.validation.determine_round_status",
+        return_value=RoundStatus(False, False, True, True, True, False),
+    )
 
     yield
 

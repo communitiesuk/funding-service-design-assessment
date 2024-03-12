@@ -92,11 +92,7 @@ class TestRoutes:
             "app.blueprints.assessments.routes.create_round_summaries",
             return_value=[
                 RoundSummary(
-                    has_assessment_opened=True,
-                    has_assessment_closed=False,
-                    is_assessment_active=True,
-                    is_round_open=False,
-                    is_round_not_yet_open=False,
+                    status=RoundStatus(False, False, True, True, True, False),
                     fund_id="111",
                     round_id="222",
                     fund_name="test fund",

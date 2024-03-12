@@ -56,7 +56,7 @@ class RoundSummary:
     live_round_stats: LiveRoundStats = None
 
 
-def populate_round_links(summary, fund_short_name, round):
+def add_links_to_summary(summary, fund_short_name, round) -> RoundSummary:
     summary.assessments_href = url_for(
         "assessment_bp.fund_dashboard",
         fund_short_name=fund_short_name,
@@ -171,8 +171,7 @@ def create_round_summaries(fund: Fund, filters: LandingFilters) -> list[RoundSum
             round_application_fields_download_available=round.application_fields_download_available,
             sorting_date=sorting_date,
         )
-        populate_round_links(summary, fund.short_name, round)
-        round_id_to_summary_map[round.id] = summary
+        round_id_to_summary_map[round.id] = add_links_to_summary(summary, fund.short_name, round)
         summaries.append(summary)
 
     round_id_to_round_stats = get_assessments_stats(fund.id, round_ids_to_fetch_assessment_stats, search_params)
