@@ -26,8 +26,7 @@
 assessment_tracker_href, round_status) %}
     {% if round_status.has_assessment_opened %}
         <a class="govuk-link" data-qa="dashboard_summary" href="{{ assessments_href }}">
-            View all {% if round_status.is_assessment_active %}active{% else %}
-            closed{% endif %} assessments
+            View all {% if round_status.is_assessment_active %}active{% else %}closed{% endif %} assessments
         </a>
         </br>
         </br>
