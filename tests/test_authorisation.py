@@ -101,9 +101,9 @@ class TestAuthorisation:
     @pytest.mark.mock_parameters(
         {
             "get_assessment_stats_path": [
-                "app.blueprints.assessments.models.fund_summary.get_assessments_stats",
+                "app.blueprints.assessments.models.round_summary.get_assessments_stats",
             ],
-            "get_rounds_path": ["app.blueprints.assessments.models.fund_summary.get_rounds"],
+            "get_rounds_path": ["app.blueprints.assessments.models.round_summary.get_rounds"],
             "fund_id": "test-fund",
             "round_id": "test-round",
         }
