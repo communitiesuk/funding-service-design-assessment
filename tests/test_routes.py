@@ -1,6 +1,7 @@
 from unittest import mock
 
 import pytest
+from app.blueprints.assessments.models.round_status import RoundStatus
 from app.blueprints.assessments.models.round_summary import RoundSummary
 from app.blueprints.assessments.models.round_summary import Stats
 from app.blueprints.services.models.flag import Flag
