@@ -13,7 +13,6 @@ from app.blueprints.services.data_services import get_rounds
 from app.blueprints.services.models.fund import Fund
 from app.blueprints.shared.helpers import get_ttl_hash
 from config import Config
-from config.display_value_mappings import ALL_VALUE
 from config.display_value_mappings import LandingFilters
 from flask import current_app
 from flask import url_for
@@ -56,7 +55,7 @@ class RoundSummary:
     live_round_stats: LiveRoundStats = None
 
 
-def add_links_to_summary(summary, fund_short_name, round) -> RoundSummary:
+def _add_links_to_summary(summary, fund_short_name, round) -> RoundSummary:
     summary.assessments_href = url_for(
         "assessment_bp.fund_dashboard",
         fund_short_name=fund_short_name,
@@ -90,7 +89,24 @@ def add_links_to_summary(summary, fund_short_name, round) -> RoundSummary:
     return summary
 
 
-def populate_live_round_stats(round_id_to_summary_map, live_rounds, fund):
+def _populate_assessment_stats(
+    fund_id, round_ids_to_fetch_assessment_stats, search_params, round_id_to_summary_map
+) -> dict:
+    round_id_to_round_stats = get_assessments_stats(fund_id, round_ids_to_fetch_assessment_stats, search_params)
+    for round_id, round_stats in round_id_to_round_stats.items():
+        summary = round_id_to_summary_map[round_id]
+        summary.assessment_stats = Stats(
+            date=summary.sorting_date,  # which is same as round.assessment_deadline
+            total_received=round_stats["total"],
+            completed=round_stats["completed"],
+            started=round_stats["assessing"],
+            qa_complete=round_stats["qa_completed"],
+            stopped=round_stats["stopped"],
+        )
+    return round_id_to_summary_map
+
+
+def _populate_live_round_stats(round_id_to_summary_map, live_rounds, fund) -> dict:
     live_rounds_map = {r.id: r for r in live_rounds}
     round_stats = get_application_stats([fund.id], [r.id for r in live_rounds])
     if not round_stats:
@@ -120,6 +136,7 @@ def populate_live_round_stats(round_id_to_summary_map, live_rounds, fund):
                 completed=statuses["COMPLETED"],
                 submitted=statuses["SUBMITTED"],
             )
+    return round_id_to_summary_map
 
 
 def create_round_summaries(fund: Fund, filters: LandingFilters) -> list[RoundSummary]:
@@ -139,11 +156,26 @@ def create_round_summaries(fund: Fund, filters: LandingFilters) -> list[RoundSum
 
         round_status: RoundStatus = determine_round_status(round=round)
 
-        application_stats = None  # populated later, with a bulk request
+        # Filter for closed assessments
+        if filters.filter_status == "closed" and not round_status.has_assessment_closed:
+            continue
+
+        # Filter for active assessments
+        if filters.filter_status == "active" and not round_status.is_assessment_active:
+            continue
+
+        # Filter for live application windows
+        if filters.filter_status == "live" and not round_status.is_application_open:
+            continue
+
+        # Commenters can't see rounds that haven't started assessment yet
+        if not round_status.has_assessment_opened and not access_controller.has_any_assessor_role:
+            continue
+
+        sorting_date = round.deadline
 
         if round_status.is_application_open:
             live_rounds.append(round)
-            sorting_date = round.deadline
 
         if round_status.is_application_not_yet_open:
             sorting_date = round.assessment_deadline
@@ -151,14 +183,6 @@ def create_round_summaries(fund: Fund, filters: LandingFilters) -> list[RoundSum
         if round_status.has_assessment_opened:
             round_ids_to_fetch_assessment_stats.add(round.id)
             sorting_date = round.assessment_deadline
-        else:
-            if filters.filter_status not in (ALL_VALUE, "live"):
-                continue
-
-            if not access_controller.has_any_assessor_role:
-                continue
-
-            sorting_date = round.deadline
 
         summary = RoundSummary(
             status=round_status,
@@ -166,28 +190,24 @@ def create_round_summaries(fund: Fund, filters: LandingFilters) -> list[RoundSum
             round_id=round.id,
             fund_name=fund.name,
             round_name=round.title,
-            assessment_stats=application_stats,
+            assessment_stats=None,  # populated later, with a bulk request,
             access_controller=access_controller,
             round_application_fields_download_available=round.application_fields_download_available,
             sorting_date=sorting_date,
         )
-        round_id_to_summary_map[round.id] = add_links_to_summary(summary, fund.short_name, round)
+        round_id_to_summary_map[round.id] = _add_links_to_summary(summary, fund.short_name, round)
         summaries.append(summary)
 
-    round_id_to_round_stats = get_assessments_stats(fund.id, round_ids_to_fetch_assessment_stats, search_params)
-    for round_id, round_stats in round_id_to_round_stats.items():
-        summary = round_id_to_summary_map[round_id]
-        summary.assessment_stats = Stats(
-            date=summary.sorting_date,  # which is same as round.assessment_deadline
-            total_received=round_stats["total"],
-            completed=round_stats["completed"],
-            started=round_stats["assessing"],
-            qa_complete=round_stats["qa_completed"],
-            stopped=round_stats["stopped"],
+    if round_ids_to_fetch_assessment_stats:
+        round_id_to_summary_map = _populate_assessment_stats(
+            fund_id=fund.id,
+            round_ids_to_fetch_assessment_stats=round_ids_to_fetch_assessment_stats,
+            search_params=search_params,
+            round_id_to_summary_map=round_id_to_summary_map,
         )
 
     if live_rounds:
-        populate_live_round_stats(round_id_to_summary_map, live_rounds, fund)
+        round_id_to_summary_map = _populate_live_round_stats(round_id_to_summary_map, live_rounds, fund)
 
     return sorted(summaries, key=lambda s: s.sorting_date, reverse=True)
 
