@@ -1,8 +1,8 @@
 from unittest import mock
 
 import pytest
-from app.blueprints.assessments.models.fund_summary import RoundSummary
-from app.blueprints.assessments.models.fund_summary import Stats
+from app.blueprints.assessments.models.round_summary import RoundSummary
+from app.blueprints.assessments.models.round_summary import Stats
 from app.blueprints.services.models.flag import Flag
 from bs4 import BeautifulSoup
 from flask import session
@@ -16,10 +16,10 @@ class TestRoutes:
     @pytest.mark.mock_parameters(
         {
             "get_assessment_stats_path": [
-                "app.blueprints.assessments.models.fund_summary.get_assessments_stats",
+                "app.blueprints.assessments.models.round_summary.get_assessments_stats",
             ],
             "get_rounds_path": [
-                "app.blueprints.assessments.models.fund_summary.get_rounds",
+                "app.blueprints.assessments.models.round_summary.get_rounds",
             ],
             "fund_id": "test-fund",
             "round_id": "test-round",
@@ -64,10 +64,10 @@ class TestRoutes:
     @pytest.mark.mock_parameters(
         {
             "get_assessment_stats_path": [
-                "app.blueprints.assessments.models.fund_summary.get_assessments_stats",
+                "app.blueprints.assessments.models.round_summary.get_assessments_stats",
             ],
             "get_rounds_path": [
-                "app.blueprints.assessments.models.fund_summary.get_rounds",
+                "app.blueprints.assessments.models.round_summary.get_rounds",
             ],
             "fund_id": "test-fund",
             "round_id": "test-round",

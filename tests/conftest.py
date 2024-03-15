@@ -396,7 +396,7 @@ def mock_get_rounds(request, mocker):
 
     marker = request.node.get_closest_marker("mock_parameters")
     func_calls = [
-        "app.blueprints.assessments.models.fund_summary.get_rounds",
+        "app.blueprints.assessments.models.round_summary.get_rounds",
     ]
     if marker:
         params = marker.args[0]
@@ -483,7 +483,7 @@ def mock_get_assessment_stats(request, mocker):
     mock_funcs = params.get(
         "get_assessment_stats_path",
         [
-            "app.blueprints.assessments.models.fund_summary.get_assessments_stats",
+            "app.blueprints.assessments.models.round_summary.get_assessments_stats",
         ],
     )
     # fund_id = params.get("fund_id", "test-fund")
