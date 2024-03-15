@@ -21,7 +21,7 @@ def test_determine_round_status_open():
     result: RoundStatus = determine_round_status(r)
     assert result.has_assessment_closed is False
     assert result.has_assessment_opened is False
-    assert result.is_application_closed is False
+    assert result.has_application_closed is False
     assert result.is_application_open is True
     assert result.is_application_not_yet_open is False
     assert result.is_assessment_active is False
@@ -160,7 +160,7 @@ def test_determine_round_status_is_app_closed(deadline_delta, opens_delta, exp_a
         short_name="",
     )
     result: RoundStatus = determine_round_status(r)
-    assert result.is_application_closed is exp_app_closed
+    assert result.has_application_closed is exp_app_closed
 
 
 @pytest.mark.parametrize(

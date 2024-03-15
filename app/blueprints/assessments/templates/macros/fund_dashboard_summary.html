@@ -33,7 +33,7 @@ assessment_tracker_href, round_status) %}
     {% endif %}
     {% if access_controller.is_lead_assessor %}
         {% if download_available %}
-            {% if export_href %}
+            {% if export_href  and round_status.has_application_closed%}
                 <a class="govuk-link" href="{{ export_href }}">
                     Export applicant information
                 </a>
@@ -48,7 +48,7 @@ assessment_tracker_href, round_status) %}
                 </br>
             {% endif %}
         {% endif %}
-        {% if assessment_tracker_href %}
+        {% if assessment_tracker_href  and round_status.has_application_closed %}
             <a class="govuk-link" href="{{ assessment_tracker_href }}">
                 Assessment Tracker Export
             </a>
