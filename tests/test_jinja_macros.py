@@ -1,4 +1,5 @@
 import re
+from unittest.mock import MagicMock
 
 import pytest
 from app.blueprints.assessments.forms.comments_form import CommentsForm
@@ -32,6 +33,7 @@ from app.blueprints.assessments.models.applicants_response import (
 from app.blueprints.assessments.models.applicants_response import (
     QuestionHeading,
 )
+from app.blueprints.assessments.models.round_status import RoundStatus
 from app.blueprints.authentication.validation import AssessmentAccessController
 from app.blueprints.scoring.forms.rescore_form import RescoreForm
 from app.blueprints.scoring.forms.scores_and_justifications import (
@@ -841,3 +843,198 @@ class TestJinjaMacros(object):
         soup = BeautifulSoup(rendered_html, "html.parser")
 
         assert soup.find("h2", class_="govuk-heading-l scoring-heading").string == expected_heading
+
+    @pytest.mark.parametrize(
+        "application_not_yet_open, application_open, is_assessment_active, has_assessment_closed, exp_colour_class,"
+        " exp_text",
+        [
+            (True, False, False, False, " govuk-tag--grey", "APPLICATION NOT YET OPEN"),
+            (False, True, False, False, None, "APPLICATION LIVE"),
+            (False, False, True, False, None, "ASSESSMENT ACTIVE"),
+            (False, True, True, False, None, "ASSESSMENT ACTIVE"),
+            (False, False, False, True, " govuk-tag--grey", "ASSESSMENT CLOSED"),
+        ],
+    )
+    def test_dashboard_summary_assessment_status(
+        self,
+        request_ctx,
+        application_not_yet_open,
+        application_open,
+        is_assessment_active,
+        has_assessment_closed,
+        exp_colour_class,
+        exp_text,
+    ):
+        rendered_html = render_template_string(
+            "{{assessment_status(round_status)}}",
+            assessment_status=get_template_attribute("macros/fund_dashboard_summary.html", "assessment_status"),
+            round_status=RoundStatus(
+                application_not_yet_open, application_open, False, is_assessment_active, False, has_assessment_closed
+            ),
+        )
+
+        soup = BeautifulSoup(rendered_html, "html.parser")
+        assert (
+            soup.find(
+                "div", class_=f"govuk-tag govuk-!-margin-bottom-2 govuk-summary-card__title{exp_colour_class or ''}"
+            ).text.strip()
+            == exp_text
+        )
+
+    @pytest.mark.parametrize(
+        "is_lead_assessor, download_available, export_href, feedback_export_href,assessment_tracker_href,"
+        " is_assessment_active, has_assessment_opened, has_application_closed, exp_links_text",
+        [
+            (
+                True,
+                True,
+                "export",
+                "feedback",
+                "tracker",
+                True,
+                True,
+                True,
+                [
+                    "View all active assessments",
+                    "Export applicant information",
+                    "Export feedback survey responses",
+                    "Assessment Tracker Export",
+                ],
+            ),
+            (
+                True,
+                True,
+                "export",
+                "feedback",
+                "tracker",
+                False,
+                False,
+                False,
+                [
+                    "Export feedback survey responses",
+                ],
+            ),
+            (
+                True,
+                True,
+                "export",
+                "feedback",
+                "tracker",
+                True,
+                True,
+                False,
+                [
+                    "View all active assessments",
+                    "Export applicant information",
+                    "Export feedback survey responses",
+                ],
+            ),
+            (
+                False,
+                True,
+                "export",
+                "feedback",
+                "tracker",
+                True,
+                True,
+                True,
+                [
+                    "View all active assessments",
+                ],
+            ),
+            (
+                True,
+                True,
+                "export",
+                "feedback",
+                "tracker",
+                False,
+                True,
+                True,
+                [
+                    "View all closed assessments",
+                    "Export applicant information",
+                    "Export feedback survey responses",
+                    "Assessment Tracker Export",
+                ],
+            ),
+            (
+                True,
+                True,
+                "export",
+                None,
+                "tracker",
+                False,
+                True,
+                True,
+                [
+                    "View all closed assessments",
+                    "Export applicant information",
+                    "Assessment Tracker Export",
+                ],
+            ),
+            (
+                True,
+                True,
+                "",
+                "feedback",
+                "",
+                False,
+                True,
+                True,
+                [
+                    "View all closed assessments",
+                    "Export feedback survey responses",
+                ],
+            ),
+            (
+                True,
+                False,
+                "export",
+                "feedback",
+                "tracker",
+                True,
+                True,
+                True,
+                [
+                    "View all active assessments",
+                    "Assessment Tracker Export",
+                ],
+            ),
+        ],
+    )
+    def test_dashboard_summary_round_links(
+        self,
+        request_ctx,
+        is_lead_assessor,
+        download_available,
+        export_href,
+        feedback_export_href,
+        assessment_tracker_href,
+        is_assessment_active,
+        has_assessment_opened,
+        has_application_closed,
+        exp_links_text,
+    ):
+        mock_access_controller = MagicMock()
+        mock_access_controller.is_lead_assessor = is_lead_assessor
+        rendered_html = render_template_string(
+            "{{round_links(access_controller, assessments_href, download_available, export_href,"
+            " feedback_export_href,assessment_tracker_href, round_status)}}",
+            round_links=get_template_attribute("macros/fund_dashboard_summary.html", "round_links"),
+            access_controller=mock_access_controller,
+            assessments_href="assessments_href",
+            download_available=download_available,
+            export_href=export_href,
+            feedback_export_href=feedback_export_href,
+            assessment_tracker_href=assessment_tracker_href,
+            round_status=RoundStatus(
+                False, False, has_application_closed, is_assessment_active, has_assessment_opened, False
+            ),
+        )
+
+        soup = BeautifulSoup(rendered_html, "html.parser")
+        found_links = soup.find_all("a", class_="govuk-link")
+        assert len(found_links) == len(exp_links_text)
+        for text in exp_links_text:
+            assert soup.find("a", class_="govuk-link", string=lambda str: text in str)

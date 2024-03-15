@@ -4,6 +4,7 @@ from unittest.mock import MagicMock
 
 import pytest
 import werkzeug
+from app.blueprints.assessments.models.round_status import RoundStatus
 from app.blueprints.authentication.validation import _get_all_country_roles
 from app.blueprints.authentication.validation import _get_all_users_roles
 from app.blueprints.authentication.validation import (
@@ -19,7 +20,6 @@ from app.blueprints.authentication.validation import (
 from app.blueprints.authentication.validation import get_countries_from_roles
 from app.blueprints.authentication.validation import get_valid_country_roles
 from app.blueprints.authentication.validation import has_access_to_fund
-from app.blueprints.authentication.validation import has_assessment_opened
 from app.blueprints.authentication.validation import (
     has_devolved_authority_validation,
 )
@@ -200,8 +200,8 @@ def test_check_access_application_id_cant_access_application_when_no_country_rol
         },
     )
     monkeypatch.setattr(
-        "app.blueprints.authentication.validation.has_assessment_opened",
-        lambda *args, **kwargs: True,
+        "app.blueprints.authentication.validation.determine_round_status",
+        lambda *args, **kwargs: RoundStatus(False, False, False, False, True, False),
     )
     monkeypatch.setattr(
         "app.blueprints.authentication.validation.get_fund",
@@ -247,8 +247,8 @@ def test_check_access_application_id_can_access_application_when_has_country_rol
         },
     )
     monkeypatch.setattr(
-        "app.blueprints.authentication.validation.has_assessment_opened",
-        lambda *args, **kwargs: True,
+        "app.blueprints.authentication.validation.determine_round_status",
+        lambda *args, **kwargs: RoundStatus(False, False, False, False, True, False),
     )
     monkeypatch.setattr(
         "app.blueprints.authentication.validation.get_fund",
@@ -296,8 +296,8 @@ def test_check_access_application_id_can_access_application_when_fund_has_no_dev
         },
     )
     monkeypatch.setattr(
-        "app.blueprints.authentication.validation.has_assessment_opened",
-        lambda *args, **kwargs: True,
+        "app.blueprints.authentication.validation.determine_round_status",
+        lambda *args, **kwargs: RoundStatus(False, False, False, False, True, False),
     )
     monkeypatch.setattr(
         "app.blueprints.authentication.validation.get_fund",
@@ -335,8 +335,8 @@ def test_check_access_application_id_cant_access_application_when_no_relevant_fu
         },
     )
     monkeypatch.setattr(
-        "app.blueprints.authentication.validation.has_assessment_opened",
-        lambda *args, **kwargs: True,
+        "app.blueprints.authentication.validation.determine_round_status",
+        lambda *args, **kwargs: RoundStatus(False, False, False, False, True, False),
     )
     monkeypatch.setattr(
         "app.blueprints.authentication.validation.get_fund",
@@ -406,8 +406,8 @@ def test_check_access_fund_short_name_round_sn_can_access(monkeypatch, mock_get_
         lambda _: "cof",
     )
     monkeypatch.setattr(
-        "app.blueprints.authentication.validation.has_assessment_opened",
-        lambda *args, **kwargs: True,
+        "app.blueprints.authentication.validation.determine_round_status",
+        lambda *args, **kwargs: RoundStatus(False, False, False, False, True, False),
     )
     monkeypatch.setattr(
         "app.blueprints.authentication.validation.g",
@@ -424,50 +424,6 @@ def test__get_roles_by_fund_short_name():
     ]
 
 
-IN_THE_PAST = "2004-01-01T12:00:00"
-IN_THE_FUTURE = "2124-01-01T12:00:00"
-
-
-@pytest.mark.parametrize(
-    "deadline, assessment_start,show_live_rounds_flag,truthy_result",
-    [
-        (IN_THE_FUTURE, None, True, True),
-        (IN_THE_FUTURE, None, False, False),
-        (IN_THE_PAST, None, True, True),
-        (IN_THE_PAST, None, False, True),
-        (IN_THE_PAST, IN_THE_FUTURE, True, True),
-        (IN_THE_PAST, IN_THE_FUTURE, False, False),
-        (IN_THE_PAST, IN_THE_PAST, True, True),
-        (IN_THE_PAST, IN_THE_PAST, False, True),
-        (IN_THE_FUTURE, IN_THE_FUTURE, True, True),
-        (IN_THE_FUTURE, IN_THE_FUTURE, False, False),
-        (IN_THE_FUTURE, IN_THE_PAST, True, True),
-        (IN_THE_FUTURE, IN_THE_PAST, False, True),
-    ],
-)
-def test_is_assessment_active_validation(
-    mocker,
-    flask_test_client,
-    deadline,
-    assessment_start,
-    show_live_rounds_flag,
-    truthy_result,
-):
-    # Make sure the check is_assessment_active function is returning correctly
-    # positive datetime_offset sets the deadline to a future datetime
-    mocker.patch(
-        "app.blueprints.authentication.validation.Config.FORCE_OPEN_ALL_LIVE_ASSESSMENT_ROUNDS",
-        new=show_live_rounds_flag,
-    )
-    mocker.patch(
-        "app.blueprints.authentication.validation.get_round",
-        return_value=MagicMock(deadline=deadline, assessment_start=assessment_start),
-    )
-
-    result = has_assessment_opened("test_fund_id", "test_round_id")
-    assert result == truthy_result
-
-
 def test_check_access_application_id_decorator_returns_403_for_inactive_assessment(
     mocker, flask_test_client, mock_get_fund, mock_get_application_metadata
 ):
@@ -477,12 +433,8 @@ def test_check_access_application_id_decorator_returns_403_for_inactive_assessme
         return_value="test",
     )
     mocker.patch(
-        "app.blueprints.authentication.validation.has_assessment_opened",
-        return_value=False,
-    )
-    mocker.patch(
-        "app.blueprints.authentication.validation.Config.FORCE_OPEN_ALL_LIVE_ASSESSMENT_ROUNDS",
-        new=False,
+        "app.blueprints.authentication.validation.determine_round_status",
+        lambda *args, **kwargs: RoundStatus(False, False, False, False, False, False),
     )
     mocker.patch(
         "app.blueprints.authentication.validation.get_round",

@@ -1,6 +1,7 @@
 from unittest import mock
 
 import pytest
+from app.blueprints.assessments.models.round_status import RoundStatus
 from app.blueprints.assessments.models.round_summary import RoundSummary
 from app.blueprints.assessments.models.round_summary import Stats
 from app.blueprints.services.models.flag import Flag
@@ -92,9 +93,7 @@ class TestRoutes:
             "app.blueprints.assessments.routes.create_round_summaries",
             return_value=[
                 RoundSummary(
-                    is_assessment_active_status=True,
-                    is_round_open_status=False,
-                    is_not_yet_open_status=False,
+                    status=RoundStatus(False, False, True, True, True, False),
                     fund_id="111",
                     round_id="222",
                     fund_name="test fund",
