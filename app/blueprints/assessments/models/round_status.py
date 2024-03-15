@@ -16,7 +16,7 @@ from fsd_utils.simple_utils.date_utils import (
 class RoundStatus:
     is_application_not_yet_open: bool
     is_application_open: bool
-    is_application_closed: bool
+    has_application_closed: bool
     is_assessment_active: bool
     has_assessment_opened: bool
     has_assessment_closed: bool
@@ -39,7 +39,7 @@ def determine_round_status(round: Round = None, fund_id: str = None, round_id: s
         is_application_not_yet_open=current_datetime_before_given_iso_string(round.opens),
         is_application_open=current_datetime_after_given_iso_string(round.opens)
         and current_datetime_before_given_iso_string(round.deadline),
-        is_application_closed=current_datetime_after_given_iso_string(round.deadline),
+        has_application_closed=current_datetime_after_given_iso_string(round.deadline),
         has_assessment_opened=has_assessment_opened,
         has_assessment_closed=has_assessment_closed,
         is_assessment_active=has_assessment_opened and not has_assessment_closed,

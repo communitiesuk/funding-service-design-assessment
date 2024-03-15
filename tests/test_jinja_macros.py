@@ -883,7 +883,7 @@ class TestJinjaMacros(object):
 
     @pytest.mark.parametrize(
         "is_lead_assessor, download_available, export_href, feedback_export_href,assessment_tracker_href,"
-        " is_assessment_active, has_assessment_opened, exp_links_text",
+        " is_assessment_active, has_assessment_opened, has_application_closed, exp_links_text",
         [
             (
                 True,
@@ -891,6 +891,7 @@ class TestJinjaMacros(object):
                 "export",
                 "feedback",
                 "tracker",
+                True,
                 True,
                 True,
                 [
@@ -901,11 +902,39 @@ class TestJinjaMacros(object):
                 ],
             ),
             (
+                True,
+                True,
+                "export",
+                "feedback",
+                "tracker",
+                False,
+                False,
+                False,
+                [
+                    "Export feedback survey responses",
+                ],
+            ),
+            (
+                True,
+                True,
+                "export",
+                "feedback",
+                "tracker",
+                True,
+                True,
+                False,
+                [
+                    "View all active assessments",
+                    "Export feedback survey responses",
+                ],
+            ),
+            (
                 False,
                 True,
                 "export",
                 "feedback",
                 "tracker",
+                True,
                 True,
                 True,
                 [
@@ -919,6 +948,7 @@ class TestJinjaMacros(object):
                 "feedback",
                 "tracker",
                 False,
+                True,
                 True,
                 [
                     "View all closed assessments",
@@ -935,6 +965,7 @@ class TestJinjaMacros(object):
                 "tracker",
                 False,
                 True,
+                True,
                 [
                     "View all closed assessments",
                     "Export applicant information",
@@ -949,6 +980,7 @@ class TestJinjaMacros(object):
                 "",
                 False,
                 True,
+                True,
                 [
                     "View all closed assessments",
                     "Export feedback survey responses",
@@ -960,6 +992,7 @@ class TestJinjaMacros(object):
                 "export",
                 "feedback",
                 "tracker",
+                True,
                 True,
                 True,
                 [
@@ -979,6 +1012,7 @@ class TestJinjaMacros(object):
         assessment_tracker_href,
         is_assessment_active,
         has_assessment_opened,
+        has_application_closed,
         exp_links_text,
     ):
         mock_access_controller = MagicMock()
@@ -993,7 +1027,9 @@ class TestJinjaMacros(object):
             export_href=export_href,
             feedback_export_href=feedback_export_href,
             assessment_tracker_href=assessment_tracker_href,
-            round_status=RoundStatus(False, False, False, is_assessment_active, has_assessment_opened, False),
+            round_status=RoundStatus(
+                False, False, has_application_closed, is_assessment_active, has_assessment_opened, False
+            ),
         )
 
         soup = BeautifulSoup(rendered_html, "html.parser")
