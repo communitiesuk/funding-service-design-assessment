@@ -925,6 +925,7 @@ class TestJinjaMacros(object):
                 False,
                 [
                     "View all active assessments",
+                    "Export applicant information",
                     "Export feedback survey responses",
                 ],
             ),
