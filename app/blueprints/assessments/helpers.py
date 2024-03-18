@@ -265,4 +265,10 @@ def sanitise_export_data(data):
 
 def exclude_header(fund_names: list):
     if "COF-EOI" in fund_names:
-        return ["Help with insolvency", "Help with organisation type", "Help with public authority"]
+        return [
+            "Help with insolvency",
+            "Help with organisation type",
+            "Help with public authority",
+            "Help gydag awdurdod cyhoeddus",
+            "Help gyda'r math o sefydliad",
+        ]
