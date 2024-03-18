@@ -70,8 +70,7 @@ class TestAuthorisation:
         assert (
             b'<a href="https://authenticator/sso/login" role="button"'
             b' draggable="false" class="govuk-button"'
-            b' data-module="govuk-button">'
-            in response.data
+            b' data-module="govuk-button">' in response.data
         )
 
     def test_roleless_user_redirected_to_roles_error(self, flask_test_client, mock_get_funds):

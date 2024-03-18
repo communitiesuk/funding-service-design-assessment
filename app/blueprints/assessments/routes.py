@@ -297,9 +297,9 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
             "datasets": lambda x: x["datasets"],
             "date_submitted": lambda x: x["date_submitted"],
             "lead_contact_email": lambda x: x["lead_contact_email"],
-            "publish_datasets": lambda x: x["publish_datasets"]
-            if x["publish_datasets"]
-            else str(x["publish_datasets"]),
+            "publish_datasets": lambda x: (
+                x["publish_datasets"] if x["publish_datasets"] else str(x["publish_datasets"])
+            ),
         }
 
         # Define the sorting function based on the specified column

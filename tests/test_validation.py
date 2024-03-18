@@ -169,8 +169,7 @@ def test_has_access_to_fund(monkeypatch, short_name, roles, expected):
 
 
 @check_access_application_id
-def _dummy_function_check_access_application_id():
-    ...
+def _dummy_function_check_access_application_id(): ...
 
 
 def test_check_access_application_id_throws_404_when_no_application_id(
@@ -359,8 +358,7 @@ def test_check_access_application_id_cant_access_application_when_no_relevant_fu
 
 
 @check_access_fund_short_name_round_sn
-def _dummy_function_check_access_fund_short_name_round_sn():
-    ...
+def _dummy_function_check_access_fund_short_name_round_sn(): ...
 
 
 def test_check_access_fund_short_name_round_sn_throws_404_when_no_fund_short_name(

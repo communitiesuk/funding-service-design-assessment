@@ -70,9 +70,9 @@ class FullApplicationPdfContext:
             ),
             organisation_name=args.fund.owner_organisation_name,
             organisation_shortname=args.fund.owner_organisation_shortname,
-            organisation_logo_uri=args.fund.owner_organisation_logo_uri
-            if args.round.display_logo_on_pdf_exports
-            else None,
+            organisation_logo_uri=(
+                args.fund.owner_organisation_logo_uri if args.round.display_logo_on_pdf_exports else None
+            ),
             sections=sections,
         )
 

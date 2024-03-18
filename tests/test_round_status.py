@@ -43,9 +43,11 @@ def test_determine_round_status_is_assessment_active(
 ):
     r = Round(
         id="",
-        assessment_start=(datetime.now() + timedelta(days=assessment_start_delta)).strftime("%Y-%m-%d %H:%M:%S")
-        if assessment_start_delta
-        else None,
+        assessment_start=(
+            (datetime.now() + timedelta(days=assessment_start_delta)).strftime("%Y-%m-%d %H:%M:%S")
+            if assessment_start_delta
+            else None
+        ),
         assessment_deadline=(datetime.now() + timedelta(days=assessment_deadline_delta)).strftime("%Y-%m-%d %H:%M:%S"),
         deadline=(datetime.now() + timedelta(days=deadline_delta)).strftime("%Y-%m-%d %H:%M:%S"),
         opens=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
@@ -73,9 +75,11 @@ def test_determine_round_status_has_assessment_opened(
 ):
     r = Round(
         id="",
-        assessment_start=(datetime.now() + timedelta(days=assessment_start_delta)).strftime("%Y-%m-%d %H:%M:%S")
-        if assessment_start_delta
-        else None,
+        assessment_start=(
+            (datetime.now() + timedelta(days=assessment_start_delta)).strftime("%Y-%m-%d %H:%M:%S")
+            if assessment_start_delta
+            else None
+        ),
         assessment_deadline=(datetime.now() + timedelta(days=assessment_deadline_delta)).strftime("%Y-%m-%d %H:%M:%S"),
         deadline=(datetime.now() + timedelta(days=deadline_delta)).strftime("%Y-%m-%d %H:%M:%S"),
         opens=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
@@ -103,9 +107,11 @@ def test_determine_round_status_has_assessment_closed(
 ):
     r = Round(
         id="",
-        assessment_start=(datetime.now() + timedelta(days=assessment_start_delta)).strftime("%Y-%m-%d %H:%M:%S")
-        if assessment_start_delta
-        else None,
+        assessment_start=(
+            (datetime.now() + timedelta(days=assessment_start_delta)).strftime("%Y-%m-%d %H:%M:%S")
+            if assessment_start_delta
+            else None
+        ),
         assessment_deadline=(datetime.now() + timedelta(days=assessment_deadline_delta)).strftime("%Y-%m-%d %H:%M:%S"),
         deadline=(datetime.now() + timedelta(days=deadline_delta)).strftime("%Y-%m-%d %H:%M:%S"),
         opens=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),

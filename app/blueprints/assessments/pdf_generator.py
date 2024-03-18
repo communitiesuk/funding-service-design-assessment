@@ -11,8 +11,7 @@ def _render_template(template_path: str, context) -> str:
     return template.render(context)
 
 
-class PDFCreationException(Exception):
-    ...
+class PDFCreationException(Exception): ...
 
 
 def _convert_html_to_pdf(html_content: str, pdf_file: BytesIO) -> bool:

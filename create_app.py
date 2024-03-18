@@ -96,9 +96,9 @@ def create_app() -> Flask:
         flask_app.jinja_env.filters["datetime_format_24hr"] = datetime_format_24hr
         flask_app.jinja_env.filters["format_project_ref"] = format_project_ref
         flask_app.jinja_env.filters["remove_dashes_underscores_capitalize"] = remove_dashes_underscores_capitalize
-        flask_app.jinja_env.filters[
-            "remove_dashes_underscores_capitalize_keep_uppercase"
-        ] = remove_dashes_underscores_capitalize_keep_uppercase
+        flask_app.jinja_env.filters["remove_dashes_underscores_capitalize_keep_uppercase"] = (
+            remove_dashes_underscores_capitalize_keep_uppercase
+        )
         flask_app.jinja_env.filters["format_address"] = format_address
         flask_app.jinja_env.add_extension("jinja2.ext.i18n")
         flask_app.jinja_env.globals["ngettext"] = ngettext
@@ -125,9 +125,9 @@ def create_app() -> Flask:
                 service_meta_author="DLUHC",
                 sso_logout_url=flask_app.config.get("SSO_LOGOUT_URL"),
                 g=g,
-                toggle_dict={feature.name: feature.is_enabled() for feature in toggle_client.list()}
-                if toggle_client
-                else {},
+                toggle_dict=(
+                    {feature.name: feature.is_enabled() for feature in toggle_client.list()} if toggle_client else {}
+                ),
             )
 
         # Bundle and compile assets
