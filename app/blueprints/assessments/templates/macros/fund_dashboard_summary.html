@@ -48,7 +48,7 @@ assessment_tracker_href, round_status) %}
                 </br>
             {% endif %}
         {% endif %}
-        {% if assessment_tracker_href  and round_status.has_application_closed %}
+        {% if assessment_tracker_href  and round_status.has_assessment_opened %}
             <a class="govuk-link" href="{{ assessment_tracker_href }}">
                 Assessment Tracker Export
             </a>
