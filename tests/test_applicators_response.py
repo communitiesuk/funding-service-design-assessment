@@ -517,7 +517,8 @@ class TestConvertHeadingDescriptionAmountToGroupedFields:
             _convert_heading_description_amount(response)
 
         assert (
-            str(exc_info.value) == "Could not find item with presentation_type: description at"
+            str(exc_info.value)
+            == "Could not find item with presentation_type: description at"
             " index: 1\nThis probably means there is an uneven number of"
             " 'heading', 'description' and 'amount' items\nThere should be"
             " an equal number of each of these items"
