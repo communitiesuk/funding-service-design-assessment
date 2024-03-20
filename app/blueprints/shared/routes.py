@@ -1,7 +1,8 @@
-from app.blueprints.services.data_services import get_default_round_data
-from config import Config
 from flask import Blueprint
 from flask import render_template
+
+from app.blueprints.services.data_services import get_default_round_data
+from config import Config
 
 shared_bp = Blueprint("shared_bp", __name__, template_folder="templates")
 

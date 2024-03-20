@@ -2,8 +2,9 @@ from io import BytesIO
 from unittest.mock import patch
 
 import pytest
-from app.blueprints.assessments.pdf_generator import generate_pdf
+
 from app.blueprints.assessments.pdf_generator import PDFCreationException
+from app.blueprints.assessments.pdf_generator import generate_pdf
 
 
 @pytest.fixture
@@ -26,7 +27,9 @@ def mock_convert_html_to_pdf_success():
         yield mock
 
 
-def test_generate_pdf_successful(mock_render_template, mock_convert_html_to_pdf_success):
+def test_generate_pdf_successful(
+    mock_render_template, mock_convert_html_to_pdf_success
+):
     template_path = "path/to/valid/template.html"
     context = {"key": "value"}
 

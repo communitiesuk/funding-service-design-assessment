@@ -1,5 +1,6 @@
-from config.envs.default import DefaultConfig
 from fsd_utils import configclass
+
+from config.envs.default import DefaultConfig
 
 
 @configclass

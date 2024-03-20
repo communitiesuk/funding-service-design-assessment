@@ -8,25 +8,15 @@ if not FLASK_ENV:
 
 match FLASK_ENV:
     case "unit_test":
-        from config.envs.unit_test import (
-            UnitTestConfig as Config,
-        )
+        from config.envs.unit_test import UnitTestConfig as Config
     case "development":
-        from config.envs.development import (
-            DevelopmentConfig as Config,
-        )
+        from config.envs.development import DevelopmentConfig as Config
     case "dev":
-        from config.envs.dev import (
-            DevConfig as Config,
-        )
+        from config.envs.dev import DevConfig as Config
     case "test":
-        from config.envs.test import (
-            TestConfig as Config,
-        )
+        from config.envs.test import TestConfig as Config
     case "uat" | "production":
-        from config.envs.production import (
-            ProductionConfig as Config,
-        )
+        from config.envs.production import ProductionConfig as Config
     case _:
         from config.envs.default import DefaultConfig as Config
 

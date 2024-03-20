@@ -18,8 +18,14 @@ class LocationData:
     @classmethod
     def from_json_blob(cls, json_blob):
 
-        locations = [location["location_json_blob"] for location in json_blob if location is not None]
-        local_authorities = [item["local_authority"] for item in json_blob if item is not None]
+        locations = [
+            location["location_json_blob"]
+            for location in json_blob
+            if location is not None
+        ]
+        local_authorities = [
+            item["local_authority"] for item in json_blob if item is not None
+        ]
         return cls(locations, local_authorities)
 
     def _create_ordered_dict(self, key):
@@ -32,9 +38,13 @@ class LocationData:
             return item if key == "local_authority" else item[key]
 
         def _data(key):
-            return self.local_authorities if key == "local_authority" else self.locations
+            return (
+                self.local_authorities if key == "local_authority" else self.locations
+            )
 
-        sorted_items = sorted([(_item(item), _item(item)) for item in _data(key) if item is not None])
+        sorted_items = sorted(
+            [(_item(item), _item(item)) for item in _data(key) if item is not None]
+        )
 
         return OrderedDict({"ALL": "All", **dict(sorted_items)})
 
