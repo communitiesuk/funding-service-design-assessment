@@ -1,9 +1,10 @@
-from config import Config
 from flask_wtf import FlaskForm
 from wtforms import RadioField
 from wtforms import TextAreaField
 from wtforms.validators import InputRequired
 from wtforms.validators import length
+
+from config import Config
 
 
 class ResolveFlagForm(FlaskForm):

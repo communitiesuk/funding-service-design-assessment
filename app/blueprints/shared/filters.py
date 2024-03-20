@@ -12,7 +12,10 @@ def slash_separated_day_month_year(value: str):
 def datetime_format(value, format):
     am_pm_format = "%p"
     formatted_time = datetime.strptime(value, "%Y-%m-%dT%H:%M:%S").strftime(format)
-    formatted_time = formatted_time + datetime.strptime(value, "%Y-%m-%dT%H:%M:%S").strftime(am_pm_format).lower()
+    formatted_time = (
+        formatted_time
+        + datetime.strptime(value, "%Y-%m-%dT%H:%M:%S").strftime(am_pm_format).lower()
+    )
     return formatted_time
 
 

@@ -1,15 +1,12 @@
 from dataclasses import dataclass
 
+from fsd_utils.simple_utils.date_utils import current_datetime_after_given_iso_string
+from fsd_utils.simple_utils.date_utils import current_datetime_before_given_iso_string
+
 from app.blueprints.services.data_services import get_round
 from app.blueprints.services.models.round import Round
 from app.blueprints.shared.helpers import get_ttl_hash
 from config import Config
-from fsd_utils.simple_utils.date_utils import (
-    current_datetime_after_given_iso_string,
-)
-from fsd_utils.simple_utils.date_utils import (
-    current_datetime_before_given_iso_string,
-)
 
 
 @dataclass
@@ -22,7 +19,9 @@ class RoundStatus:
     has_assessment_closed: bool
 
 
-def determine_round_status(round: Round = None, fund_id: str = None, round_id: str = None) -> RoundStatus:
+def determine_round_status(
+    round: Round = None, fund_id: str = None, round_id: str = None
+) -> RoundStatus:
     if not round:
         round = get_round(
             fund_id,
@@ -34,9 +33,13 @@ def determine_round_status(round: Round = None, fund_id: str = None, round_id: s
         if round.assessment_start
         else current_datetime_after_given_iso_string(round.deadline)
     )
-    has_assessment_closed = current_datetime_after_given_iso_string(round.assessment_deadline)
+    has_assessment_closed = current_datetime_after_given_iso_string(
+        round.assessment_deadline
+    )
     result = RoundStatus(
-        is_application_not_yet_open=current_datetime_before_given_iso_string(round.opens),
+        is_application_not_yet_open=current_datetime_before_given_iso_string(
+            round.opens
+        ),
         is_application_open=current_datetime_after_given_iso_string(round.opens)
         and current_datetime_before_given_iso_string(round.deadline),
         has_application_closed=current_datetime_after_given_iso_string(round.deadline),

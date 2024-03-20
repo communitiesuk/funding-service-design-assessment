@@ -2,6 +2,7 @@ from unittest.mock import MagicMock
 from unittest.mock import patch
 
 import pytest
+
 from app.blueprints.assessments.models.round_status import RoundStatus
 from app.blueprints.assessments.models.round_summary import create_round_summaries
 from app.blueprints.services.models.round import Round
@@ -15,7 +16,8 @@ def mock_summaries_helpers(mocker):
         return_value=lambda summaries, fsn, r: summaries,
     )
     mocker.patch(
-        "app.blueprints.assessments.models.round_summary.has_devolved_authority_validation", return_value=False
+        "app.blueprints.assessments.models.round_summary.has_devolved_authority_validation",
+        return_value=False,
     )
 
 
@@ -43,19 +45,27 @@ def mock_get_round(mocker):
         "app.blueprints.assessments.models.round_summary.get_rounds",
         return_value=[
             Round.from_dict(
-                {"assessment_deadline": ASSESSMENT_DEADLINE, "deadline": APPLICATION_DEADLINE, **default_round}
+                {
+                    "assessment_deadline": ASSESSMENT_DEADLINE,
+                    "deadline": APPLICATION_DEADLINE,
+                    **default_round,
+                }
             )
         ],
     )
 
 
-def test_create_round_summaries_no_rounds(mocker, mock_live_stats, mock_assessment_stats):
+def test_create_round_summaries_no_rounds(
+    mocker, mock_live_stats, mock_assessment_stats
+):
 
     mocker.patch(
         "app.blueprints.assessments.models.round_summary.determine_round_status",
         return_value=RoundStatus(False, False, False, False, False, False),
     )
-    mocker.patch("app.blueprints.assessments.models.round_summary.get_rounds", return_value=[])
+    mocker.patch(
+        "app.blueprints.assessments.models.round_summary.get_rounds", return_value=[]
+    )
 
     mock_fund = MagicMock()
     results = create_round_summaries(mock_fund, [])
@@ -64,7 +74,14 @@ def test_create_round_summaries_no_rounds(mocker, mock_live_stats, mock_assessme
 
 ASSESSMENT_DEADLINE = "2124-01-01 12:00:00"
 APPLICATION_DEADLINE = "2324-01-01 12:00:00"
-default_round = {"id": "", "assessment_start": "", "fund_id": "", "opens": "", "title": "", "short_name": ""}
+default_round = {
+    "id": "",
+    "assessment_start": "",
+    "fund_id": "",
+    "opens": "",
+    "title": "",
+    "short_name": "",
+}
 
 
 @pytest.mark.parametrize("filter_status", [(ALL_VALUE), "closed"])
@@ -78,7 +95,9 @@ def test_create_round_summaries_assessment_closed(
     mock_fund = MagicMock()
     mock_landing_filters = MagicMock()
     mock_landing_filters.filter_status = filter_status
-    with patch("app.blueprints.assessments.models.round_summary.AssessmentAccessController") as mock:
+    with patch(
+        "app.blueprints.assessments.models.round_summary.AssessmentAccessController"
+    ) as mock:
         instance = mock.return_value
         instance.has_any_assessor_role = True
         results = create_round_summaries(mock_fund, mock_landing_filters)
@@ -100,7 +119,9 @@ def test_create_round_summaries_live_round(
     mock_fund = MagicMock()
     mock_landing_filters = MagicMock()
     mock_landing_filters.filter_status = filter_status
-    with patch("app.blueprints.assessments.models.round_summary.AssessmentAccessController") as mock:
+    with patch(
+        "app.blueprints.assessments.models.round_summary.AssessmentAccessController"
+    ) as mock:
         instance = mock.return_value
         instance.has_any_assessor_role = True
         results = create_round_summaries(mock_fund, mock_landing_filters)
@@ -122,7 +143,9 @@ def test_create_round_summaries_assess_active_and_round_live(
     mock_fund = MagicMock()
     mock_landing_filters = MagicMock()
     mock_landing_filters.filter_status = filter_status
-    with patch("app.blueprints.assessments.models.round_summary.AssessmentAccessController") as mock:
+    with patch(
+        "app.blueprints.assessments.models.round_summary.AssessmentAccessController"
+    ) as mock:
         instance = mock.return_value
         instance.has_any_assessor_role = True
         results = create_round_summaries(mock_fund, mock_landing_filters)
@@ -155,12 +178,21 @@ def test_create_round_summaries_no_results(
 ):
     mocker.patch(
         "app.blueprints.assessments.models.round_summary.determine_round_status",
-        return_value=RoundStatus(False, is_application_open, False, is_assessment_active, has_assessment_opened, False),
+        return_value=RoundStatus(
+            False,
+            is_application_open,
+            False,
+            is_assessment_active,
+            has_assessment_opened,
+            False,
+        ),
     )
     mock_fund = MagicMock()
     mock_landing_filters = MagicMock()
     mock_landing_filters.filter_status = filter_value
-    with patch("app.blueprints.assessments.models.round_summary.AssessmentAccessController") as mock:
+    with patch(
+        "app.blueprints.assessments.models.round_summary.AssessmentAccessController"
+    ) as mock:
         instance = mock.return_value
         instance.has_any_assessor_role = has_assessor_roles
         results = create_round_summaries(mock_fund, mock_landing_filters)

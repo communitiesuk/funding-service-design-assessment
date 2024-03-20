@@ -1,5 +1,6 @@
 import pytest
 from bs4 import BeautifulSoup
+
 from tests.conftest import create_valid_token
 from tests.conftest import fund_specific_claim_map
 
@@ -39,7 +40,8 @@ def test_route_landing_maintenance_mode_enabled(
     assert 503 == response.status_code, "Wrong status code on response"
     soup = BeautifulSoup(response.data, "html.parser")
     assert (
-        soup.title.string == "Sorry, this service is unavailable – Assessment Hub – GOV.UK"
+        soup.title.string
+        == "Sorry, this service is unavailable – Assessment Hub – GOV.UK"
     ), "Response does not contain expected heading"
 
 
@@ -89,7 +91,9 @@ def test_route_fund_dashboard_maintenance_mode_disabled(
     )
     assert 200 == response.status_code, "Wrong status code on response"
     soup = BeautifulSoup(response.data, "html.parser")
-    assert soup.title.string == "Team dashboard – Assessment Hub – GOV.UK", "Response does not contain expected heading"
+    assert (
+        soup.title.string == "Team dashboard – Assessment Hub – GOV.UK"
+    ), "Response does not contain expected heading"
 
 
 @pytest.mark.mock_parameters(
@@ -122,5 +126,6 @@ def test_route_fund_dashboard_maintenance_mode_enabled(
     assert 503 == response.status_code, "Wrong status code on response"
     soup = BeautifulSoup(response.data, "html.parser")
     assert (
-        soup.title.string == "Sorry, this service is unavailable – Assessment Hub – GOV.UK"
+        soup.title.string
+        == "Sorry, this service is unavailable – Assessment Hub – GOV.UK"
     ), "Response does not contain expected heading"

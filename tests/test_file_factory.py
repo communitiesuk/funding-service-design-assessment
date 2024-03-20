@@ -1,13 +1,12 @@
 from unittest.mock import MagicMock
 
 import pytest
+from werkzeug.exceptions import NotFound
+
 from app.blueprints.assessments.models.file_factory import (
     ApplicationFileRepresentationArgs,
 )
-from app.blueprints.assessments.models.file_factory import (
-    generate_file_content,
-)
-from werkzeug.exceptions import NotFound
+from app.blueprints.assessments.models.file_factory import generate_file_content
 
 
 @pytest.fixture
@@ -41,7 +40,9 @@ def application_args(mock_fund, mock_round):
         ("pdf", "generate_full_application_pdf"),
     ],
 )
-def test_generate_file_content_supported_types(file_type, expected_function, application_args, mocker, request_ctx):
+def test_generate_file_content_supported_types(
+    file_type, expected_function, application_args, mocker, request_ctx
+):
     mocked_response = MagicMock()
     mocked_response.seek = lambda _: None
     mocker.patch(

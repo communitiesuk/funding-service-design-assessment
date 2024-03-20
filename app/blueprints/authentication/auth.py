@@ -1,10 +1,11 @@
-from app.blueprints.services.data_services import get_funds
-from app.blueprints.shared.helpers import get_ttl_hash
-from config import Config
 from flask import g
 from flask import redirect
 from flask import request
 from fsd_utils.authentication.models import User
+
+from app.blueprints.services.data_services import get_funds
+from app.blueprints.shared.helpers import get_ttl_hash
+from config import Config
 
 
 def auth_protect(minimum_roles_required: list, unprotected_routes: list):
@@ -38,7 +39,11 @@ def auth_protect(minimum_roles_required: list, unprotected_routes: list):
         for role in minimum_roles_required
     ]
 
-    if not g.is_authenticated and Config.FLASK_ENV == "development" and Config.DEBUG_USER_ON:
+    if (
+        not g.is_authenticated
+        and Config.FLASK_ENV == "development"
+        and Config.DEBUG_USER_ON
+    ):
         g.is_authenticated = True
         g.account_id = Config.DEBUG_USER_ACCOUNT_ID
         g.user = User(**Config.DEBUG_USER)
@@ -53,11 +58,16 @@ def auth_protect(minimum_roles_required: list, unprotected_routes: list):
             role_required in g.user.roles for role_required in minimum_roles_required
         ):
             return redirect(
-                Config.AUTHENTICATOR_HOST + "/service/user" + "?roles_required=" + "|".join(minimum_roles_required)
+                Config.AUTHENTICATOR_HOST
+                + "/service/user"
+                + "?roles_required="
+                + "|".join(minimum_roles_required)
             )
         elif request.path in ["", "/"]:
             return redirect(Config.DASHBOARD_ROUTE)
-    elif request.path not in unprotected_routes and not request.path.startswith("/static/"):  # noqa
+    elif request.path not in unprotected_routes and not request.path.startswith(
+        "/static/"
+    ):  # noqa
         # Redirect unauthenticated users to
         # login on the home page
         return redirect("/")

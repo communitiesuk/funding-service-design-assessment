@@ -2,6 +2,13 @@ import re
 from unittest.mock import MagicMock
 
 import pytest
+from bs4 import BeautifulSoup
+from flask import g
+from flask import get_template_attribute
+from flask import render_template_string
+from flask_wtf.csrf import generate_csrf
+from fsd_utils.authentication.models import User
+
 from app.blueprints.assessments.forms.comments_form import CommentsForm
 from app.blueprints.assessments.models.applicants_response import (
     AboveQuestionAnswerPair,
@@ -21,39 +28,21 @@ from app.blueprints.assessments.models.applicants_response import (
 from app.blueprints.assessments.models.applicants_response import (
     FormattedBesideQuestionAnswerPair,
 )
-from app.blueprints.assessments.models.applicants_response import (
-    MonetaryKeyValues,
-)
-from app.blueprints.assessments.models.applicants_response import (
-    NewAddAnotherTable,
-)
+from app.blueprints.assessments.models.applicants_response import MonetaryKeyValues
+from app.blueprints.assessments.models.applicants_response import NewAddAnotherTable
 from app.blueprints.assessments.models.applicants_response import (
     QuestionAboveHrefAnswerList,
 )
-from app.blueprints.assessments.models.applicants_response import (
-    QuestionHeading,
-)
+from app.blueprints.assessments.models.applicants_response import QuestionHeading
 from app.blueprints.assessments.models.round_status import RoundStatus
 from app.blueprints.authentication.validation import AssessmentAccessController
 from app.blueprints.scoring.forms.rescore_form import RescoreForm
-from app.blueprints.scoring.forms.scores_and_justifications import (
-    OneToFiveScoreForm,
-)
-from app.blueprints.scoring.forms.scores_and_justifications import (
-    ZeroToThreeScoreForm,
-)
+from app.blueprints.scoring.forms.scores_and_justifications import OneToFiveScoreForm
+from app.blueprints.scoring.forms.scores_and_justifications import ZeroToThreeScoreForm
 from app.blueprints.services.models.assessor_task_list import _Criteria
-from app.blueprints.services.models.assessor_task_list import (
-    _CriteriaSubCriteria,
-)
+from app.blueprints.services.models.assessor_task_list import _CriteriaSubCriteria
 from app.blueprints.services.models.assessor_task_list import _SubCriteria
 from app.blueprints.shared.filters import format_address
-from bs4 import BeautifulSoup
-from flask import g
-from flask import get_template_attribute
-from flask import render_template_string
-from flask_wtf.csrf import generate_csrf
-from fsd_utils.authentication.models import User
 
 
 def default_flask_g():
@@ -71,7 +60,9 @@ class TestJinjaMacros(object):
     def test_criteria_macro_lead_assessor(self, request_ctx):
         rendered_html = render_template_string(
             "{{criteria_element(criteria, name_classes, application_id, max_possible_sub_criteria_score)}}",
-            criteria_element=get_template_attribute("macros/criteria_element.html", "criteria_element"),
+            criteria_element=get_template_attribute(
+                "macros/criteria_element.html", "criteria_element"
+            ),
             criteria=_Criteria(
                 name="Example title",
                 total_criteria_score=2,
@@ -102,10 +93,13 @@ class TestJinjaMacros(object):
 
         soup = BeautifulSoup(rendered_html, "html.parser")
 
-        assert soup.find("h3", class_="example-class").text == "Example title", "Title not found"
+        assert (
+            soup.find("h3", class_="example-class").text == "Example title"
+        ), "Title not found"
 
         assert (
-            soup.find("p", class_="govuk-body govuk-!-margin-bottom-2").text.strip() == "50% of overall score."
+            soup.find("p", class_="govuk-body govuk-!-margin-bottom-2").text.strip()
+            == "50% of overall score."
         ), "Weighting not found"
 
         table = soup.find(
@@ -120,11 +114,21 @@ class TestJinjaMacros(object):
         assert len(table.find_all("tbody")) == 1, "Should have 1 table body"
         assert len(table.find_all("tr")) == 4, "Should have 4 table rows"
 
-        assert table.find("strong", text="Total criteria score") is not None, "Should have Total criteria score"
-        assert table.find("th", text="Score out of 4") is not None, "Should have Score out of 4 column"
-        assert soup.find_all("td", class_="govuk-table__cell--numeric")[0].text == "0", "Should have 0 score"
-        assert soup.find_all("td", class_="govuk-table__cell--numeric")[2].text == "2", "Should have 2 score"
-        assert soup.find_all("td", class_="govuk-table__cell--numeric")[4].text == "2 of 8", "Should have 2 of 8 score"
+        assert (
+            table.find("strong", text="Total criteria score") is not None
+        ), "Should have Total criteria score"
+        assert (
+            table.find("th", text="Score out of 4") is not None
+        ), "Should have Score out of 4 column"
+        assert (
+            soup.find_all("td", class_="govuk-table__cell--numeric")[0].text == "0"
+        ), "Should have 0 score"
+        assert (
+            soup.find_all("td", class_="govuk-table__cell--numeric")[2].text == "2"
+        ), "Should have 2 score"
+        assert (
+            soup.find_all("td", class_="govuk-table__cell--numeric")[4].text == "2 of 8"
+        ), "Should have 2 of 8 score"
 
     def test_criteria_macro_commenter(self, request_ctx):
         g.user = User(
@@ -136,7 +140,9 @@ class TestJinjaMacros(object):
         g.access_controller = AssessmentAccessController("COF")
         rendered_html = render_template_string(
             "{{criteria_element(criteria, name_classes, application_id)}}",
-            criteria_element=get_template_attribute("macros/criteria_element.html", "criteria_element"),
+            criteria_element=get_template_attribute(
+                "macros/criteria_element.html", "criteria_element"
+            ),
             criteria=_Criteria(
                 name="Example title",
                 total_criteria_score=0,
@@ -168,14 +174,20 @@ class TestJinjaMacros(object):
 
         assert len(soup.select("tr")) == 3, "Should have 3 table rows"
 
-        assert not soup.find("strong", text="Total criteria score"), "Should not have Total criteria score"
+        assert not soup.find(
+            "strong", text="Total criteria score"
+        ), "Should not have Total criteria score"
 
-        assert not soup.find("th", text="Score out of 5"), "Should not have Score out of 5 column"
+        assert not soup.find(
+            "th", text="Score out of 5"
+        ), "Should not have Score out of 5 column"
 
     def test_section_macro(self, request_ctx):
         rendered_html = render_template_string(
             "{{section_element(name, sub_criterias, application_id)}}",
-            section_element=get_template_attribute("macros/section_element.html", "section_element"),
+            section_element=get_template_attribute(
+                "macros/section_element.html", "section_element"
+            ),
             name="Example title",
             sub_criterias=[
                 _SubCriteria(
@@ -220,11 +232,14 @@ class TestJinjaMacros(object):
         soup = BeautifulSoup(rendered_html, "html.parser")
 
         assert (
-            soup.find("legend", {"class": "govuk-body"}).text.strip() == "You can rescore at any point."
+            soup.find("legend", {"class": "govuk-body"}).text.strip()
+            == "You can rescore at any point."
         ), "Title not found"
 
         radios = soup.find_all("div", {"class": "govuk-radios__item"})
-        assert len(radios) == expected_score_option_count, f"Should have {expected_score_option_count} radios"
+        assert (
+            len(radios) == expected_score_option_count
+        ), f"Should have {expected_score_option_count} radios"
 
         score_spans = soup.find_all("span", {"class": "govuk-!-font-weight-bold"})
         assert (
@@ -232,14 +247,19 @@ class TestJinjaMacros(object):
         ), f"Should have {expected_score_option_count} score values for radios"
 
         if error_present:
-            assert soup.find("p", {"class": "govuk-error-message"}).text.strip() == "Error: Select a score"
+            assert (
+                soup.find("p", {"class": "govuk-error-message"}).text.strip()
+                == "Error: Select a score"
+            )
         else:
             assert soup.find("p", {"class": "govuk-error-message"}) == None  # noqa
 
     def test_comment_macro(self, request_ctx):
         rendered_html = render_template_string(
             "{{comment_box(comment_form)}}",
-            comment_box=get_template_attribute("macros/comments_box.html", "comment_box"),
+            comment_box=get_template_attribute(
+                "macros/comments_box.html", "comment_box"
+            ),
             comment_form=CommentsForm(),
         )
 
@@ -258,7 +278,9 @@ class TestJinjaMacros(object):
         form.justification.errors = True
         rendered_html = render_template_string(
             "{{justification(form)}}",
-            justification=get_template_attribute("macros/justification.html", "justification"),
+            justification=get_template_attribute(
+                "macros/justification.html", "justification"
+            ),
             form=form,
         )
 
@@ -269,7 +291,10 @@ class TestJinjaMacros(object):
         assert title_label is not None, "Title not found"
 
         error_message = soup.find("p", class_="govuk-error-message")
-        assert error_message.text.strip() == "Error: Please provide rationale for this score"
+        assert (
+            error_message.text.strip()
+            == "Error: Please provide rationale for this score"
+        )
         assert error_message is not None, "Intentional error not found"
 
     def test_monetary_key_values(self, request_ctx):
@@ -356,12 +381,18 @@ class TestJinjaMacros(object):
             ),
         ],
     )
-    def test_question_above_answer(self, request_ctx, clazz, macro_name, answer, expected):
+    def test_question_above_answer(
+        self, request_ctx, clazz, macro_name, answer, expected
+    ):
         meta = clazz.from_dict({"question": "Test Question", "answer": answer})
 
         rendered_html = render_template_string(
             f"{{{{ {macro_name}(meta) }}}}",
-            **{macro_name: get_template_attribute(f"macros/theme/{macro_name}.jinja2", macro_name)},
+            **{
+                macro_name: get_template_attribute(
+                    f"macros/theme/{macro_name}.jinja2", macro_name
+                )
+            },
             meta=meta,
         )
 
@@ -388,7 +419,9 @@ class TestJinjaMacros(object):
         soup = BeautifulSoup(rendered_html, "html.parser")
 
         assert soup.find("p", text="This is") is not None, "<p> tag text not found"
-        assert soup.find("strong", text="free text answer") is not None, "<strong> tag text not found"
+        assert (
+            soup.find("strong", text="free text answer") is not None
+        ), "<strong> tag text not found"
 
     @pytest.mark.parametrize(
         "clazz, macro_name",
@@ -405,7 +438,11 @@ class TestJinjaMacros(object):
 
         rendered_html = render_template_string(
             f"{{{{ {macro_name}(meta) }}}}",
-            **{macro_name: get_template_attribute(f"macros/theme/{macro_name}.jinja2", macro_name)},
+            **{
+                macro_name: get_template_attribute(
+                    f"macros/theme/{macro_name}.jinja2", macro_name
+                )
+            },
             meta=meta,
         )
 
@@ -434,8 +471,12 @@ class TestJinjaMacros(object):
         soup = BeautifulSoup(rendered_html, "html.parser")
 
         assert "Test Question" in rendered_html, "Question not found"
-        assert soup.find("a", href="http://example.com/file1.pdf").text == "File 1", "File 1 not found"
-        assert soup.find("a", href="http://example.com/file2.pdf").text == "File 2", "File 2 not found"
+        assert (
+            soup.find("a", href="http://example.com/file1.pdf").text == "File 1"
+        ), "File 1 not found"
+        assert (
+            soup.find("a", href="http://example.com/file2.pdf").text == "File 2"
+        ), "File 2 not found"
         assert not soup.find(text="Not provided."), "Unexpected 'Not provided."
 
     def test_question_beside_with_formatted_answer_multiline(self, request_ctx):
@@ -458,7 +499,9 @@ class TestJinjaMacros(object):
 
         assert "Test Question" in rendered_html, "Answer not found"
         assert "Test Address<br>" in rendered_html, "First line of address not found"
-        assert "Test Town Or City<br>" in rendered_html, "Second line of address not found"
+        assert (
+            "Test Town Or City<br>" in rendered_html
+        ), "Second line of address not found"
         assert "QQ12 7QQ" in rendered_html, "Third line of address not found"
 
     @pytest.mark.parametrize(
@@ -536,7 +579,9 @@ class TestJinjaMacros(object):
             ),
         ],
     )
-    def test_theme_mapping_works_based_on_meta_key(self, request_ctx, clazz, arguments, expected_unique_id):
+    def test_theme_mapping_works_based_on_meta_key(
+        self, request_ctx, clazz, arguments, expected_unique_id
+    ):
         meta = clazz.from_dict(**arguments)
 
         rendered_html = render_template_string(
@@ -556,7 +601,12 @@ class TestJinjaMacros(object):
         ],
     )
     def test_banner_summary_macro(
-        self, request_ctx, fund_short_name, show_funding_amount_requested, project_name_caption, show_assessment_status
+        self,
+        request_ctx,
+        fund_short_name,
+        show_funding_amount_requested,
+        project_name_caption,
+        show_assessment_status,
     ):
         fund_name = "Test Fund"
         project_reference = "TEST123"
@@ -569,7 +619,9 @@ class TestJinjaMacros(object):
             "{{ banner_summary(fund_name, fund_short_name, project_reference,"
             " project_name, funding_amount_requested, assessment_status,"
             " flag_status) }}",
-            banner_summary=get_template_attribute("macros/banner_summary.html", "banner_summary"),
+            banner_summary=get_template_attribute(
+                "macros/banner_summary.html", "banner_summary"
+            ),
             fund_name=fund_name,
             fund_short_name=fund_short_name,
             project_reference=project_reference,
@@ -583,10 +635,12 @@ class TestJinjaMacros(object):
         soup = BeautifulSoup(rendered_html, "html.parser")
 
         assert (
-            soup.find("p", class_="govuk-heading-xl fsd-banner-content").text.strip() == "Fund: Test Fund"
+            soup.find("p", class_="govuk-heading-xl fsd-banner-content").text.strip()
+            == "Fund: Test Fund"
         ), "Fund name not found"
         assert (
-            soup.find("p", class_="govuk-heading-l fsd-banner-content").text.strip() == "Project reference: TEST123"
+            soup.find("p", class_="govuk-heading-l fsd-banner-content").text.strip()
+            == "Project reference: TEST123"
         ), "Project reference not found"
         assert soup.find(
             "p",
@@ -612,8 +666,12 @@ class TestJinjaMacros(object):
         if show_assessment_status:
             assert assessment_status_element, "Assessment status not found"
         else:
-            assert not assessment_status_element, "Assessment status found when not expected"
-        assert soup.find("p", class_="fsd-banner-content", text="Flagged"), "Flag status not found"
+            assert (
+                not assessment_status_element
+            ), "Assessment status found when not expected"
+        assert soup.find(
+            "p", class_="fsd-banner-content", text="Flagged"
+        ), "Flag status not found"
 
     def test_stopped_flag_macro(self, request_ctx):
         fund_name = "Test Fund"
@@ -628,7 +686,9 @@ class TestJinjaMacros(object):
             "{{ banner_summary(fund_name, fund_short_name, project_reference,"
             " project_name, funding_amount_requested, assessment_status,"
             " flag_status) }}",
-            banner_summary=get_template_attribute("macros/banner_summary.html", "banner_summary"),
+            banner_summary=get_template_attribute(
+                "macros/banner_summary.html", "banner_summary"
+            ),
             fund_name=fund_name,
             fund_short_name=fund_short_name,
             project_reference=project_reference,
@@ -652,7 +712,9 @@ class TestJinjaMacros(object):
 
         soup = BeautifulSoup(rendered_html, "html.parser")
 
-        flag_container = soup.find("div", {"class": "govuk-grid-row govuk-!-text-align-right"})
+        flag_container = soup.find(
+            "div", {"class": "govuk-grid-row govuk-!-text-align-right"}
+        )
         assert flag_container is not None, "Flag application button container not found"
 
         flag_link = flag_container.find(
@@ -664,7 +726,9 @@ class TestJinjaMacros(object):
             },
         )
         assert flag_link is not None, "Flag application button not found"
-        assert flag_link.text.strip() == "Flag application", "Flag application button text does not match"
+        assert (
+            flag_link.text.strip() == "Flag application"
+        ), "Flag application button text does not match"
 
     def test_mark_qa_complete_button(self, request_ctx):
         rendered_html = render_template_string(
@@ -677,8 +741,12 @@ class TestJinjaMacros(object):
 
         soup = BeautifulSoup(rendered_html, "html.parser")
 
-        button_container = soup.find("div", class_="govuk-grid-row govuk-!-text-align-right")
-        assert button_container is not None, "Mark QA complete button container not found"
+        button_container = soup.find(
+            "div", class_="govuk-grid-row govuk-!-text-align-right"
+        )
+        assert (
+            button_container is not None
+        ), "Mark QA complete button container not found"
 
         button_element = button_container.find("a", href="/assess/qa_complete/12345")
         assert button_element is not None, "Mark QA complete button not found"
@@ -686,7 +754,9 @@ class TestJinjaMacros(object):
     def test_stopped_assessment_flag(self, request_ctx):
         rendered_html = render_template_string(
             "{{assessment_stopped(flag, user_info)}}",
-            assessment_stopped=get_template_attribute("macros/assessment_flag.html", "assessment_stopped"),
+            assessment_stopped=get_template_attribute(
+                "macros/assessment_flag.html", "assessment_stopped"
+            ),
             flag={
                 "latest_status": {"name": "STOPPED"},
                 "latest_allocation": "Team A",
@@ -712,13 +782,19 @@ class TestJinjaMacros(object):
         alert_div = soup.find("div", class_="assessment-alert")
 
         assert (
-            alert_div.find("h1", class_="assessment-alert__heading govuk-heading-l").text.strip()
+            alert_div.find(
+                "h1", class_="assessment-alert__heading govuk-heading-l"
+            ).text.strip()
             == "Flagged for Team A - Assessment stopped"
         ), "Flag type not found"
 
-        assert alert_div.find("h2", class_="govuk-heading-m").text == "Reason", "Reason heading not found"
+        assert (
+            alert_div.find("h2", class_="govuk-heading-m").text == "Reason"
+        ), "Reason heading not found"
 
-        assert alert_div.find("p", class_="govuk-body").text == "Test justification", "Justification not found"
+        assert (
+            alert_div.find("p", class_="govuk-body").text == "Test justification"
+        ), "Justification not found"
 
         user_paragraph = alert_div.find("p", class_="govuk-body-s")
         assert "test@example.com" in user_paragraph.text, "User email not found"
@@ -737,7 +813,9 @@ class TestJinjaMacros(object):
 
         rendered_html = render_template_string(
             "{{assessment_flagged(state, flag, user_info, state)}}",
-            assessment_flagged=get_template_attribute("macros/assessment_flag.html", "assessment_flagged"),
+            assessment_flagged=get_template_attribute(
+                "macros/assessment_flag.html", "assessment_flagged"
+            ),
             state=type(
                 "State",
                 (),
@@ -771,24 +849,33 @@ class TestJinjaMacros(object):
         justification = reason_heading.find_next_sibling(
             "p",
         )
-        assert justification is not None and justification.text == "Test justification", "Justification not found"
+        assert (
+            justification is not None and justification.text == "Test justification"
+        ), "Justification not found"
 
         section_heading = alert_div.find("h2", text="Section(s) flagged")
         assert section_heading is not None, "Section(s) flagged heading not found"
         section = section_heading.find_next_sibling("p")
         assert (
-            section is not None and section.text == "Test section (Parent Test section) (Opens in new tab) "
+            section is not None
+            and section.text == "Test section (Parent Test section) (Opens in new tab) "
         ), "Section not found"
 
         notification_heading = alert_div.find("h2", text="Notification sent")
         assert notification_heading is not None, "Notification sent heading not found"
         notification = notification_heading.find_next_sibling("p")
-        assert notification is not None and notification.text == "No", "Notification not found"
+        assert (
+            notification is not None and notification.text == "No"
+        ), "Notification not found"
 
         user_info = alert_div.find_all("p", class_="govuk-body-s")
-        assert any("test@example.com" in info.text for info in user_info), "User info not found"
+        assert any(
+            "test@example.com" in info.text for info in user_info
+        ), "User info not found"
 
-        date_created = alert_div.find("p", class_="govuk-body-s").find_next_sibling("p", class_="govuk-body-s")
+        date_created = alert_div.find("p", class_="govuk-body-s").find_next_sibling(
+            "p", class_="govuk-body-s"
+        )
         assert date_created is not None and re.match(
             r"\d{2}/\d{2}/\d{4} at \d{2}:\d{2}", date_created.text
         ), "Date created not found"
@@ -796,7 +883,9 @@ class TestJinjaMacros(object):
     def test_assessment_completion_state_completed(self, request_ctx):
         rendered_html = render_template_string(
             "{{assessment_complete(state, csrf_token, application_id)}}",
-            assessment_complete=get_template_attribute("macros/assessment_completion.html", "assessment_complete"),
+            assessment_complete=get_template_attribute(
+                "macros/assessment_completion.html", "assessment_complete"
+            ),
             state=type("State", (), {"workflow_status": "COMPLETED"})(),
             csrf_token=generate_csrf(),
             application_id=1,
@@ -805,14 +894,22 @@ class TestJinjaMacros(object):
 
         soup = BeautifulSoup(rendered_html, "html.parser")
 
-        assert soup.find("h2", class_="assessment-alert__heading").string == "Assessment complete"
+        assert (
+            soup.find("h2", class_="assessment-alert__heading").string
+            == "Assessment complete"
+        )
 
-        assert soup.find("p", class_="govuk-body").string == "You have marked this assessment as complete."
+        assert (
+            soup.find("p", class_="govuk-body").string
+            == "You have marked this assessment as complete."
+        )
 
     def test_assessment_completion_flagged(self, request_ctx):
         rendered_html = render_template_string(
             "{{assessment_complete(state, srf_token, application_id)}}",
-            assessment_complete=get_template_attribute("macros/assessment_completion.html", "assessment_complete"),
+            assessment_complete=get_template_attribute(
+                "macros/assessment_completion.html", "assessment_complete"
+            ),
             state=type("State", (), {"workflow_status": "IN_PROGRESS"})(),
             csrf_token=generate_csrf(),
             application_id=1,
@@ -821,7 +918,10 @@ class TestJinjaMacros(object):
 
         soup = BeautifulSoup(rendered_html, "html.parser")
 
-        assert soup.find("h2", class_="assessment-alert__heading").string == "All sections assessed"
+        assert (
+            soup.find("h2", class_="assessment-alert__heading").string
+            == "All sections assessed"
+        )
 
     @pytest.mark.parametrize(
         "sub_criteria, expected_heading, has_forms",
@@ -831,10 +931,14 @@ class TestJinjaMacros(object):
             # Add more test cases as needed
         ],
     )
-    def test_sub_criteria_heading(self, request_ctx, sub_criteria, expected_heading, has_forms):
+    def test_sub_criteria_heading(
+        self, request_ctx, sub_criteria, expected_heading, has_forms
+    ):
         rendered_html = render_template_string(
             "{{sub_criteria_heading(sub_criteria, score_form, rescore_form)}}",
-            sub_criteria_heading=get_template_attribute("macros/sub_criteria_heading.html", "sub_criteria_heading"),
+            sub_criteria_heading=get_template_attribute(
+                "macros/sub_criteria_heading.html", "sub_criteria_heading"
+            ),
             score_form=OneToFiveScoreForm() if has_forms else None,
             rescore_form=RescoreForm() if has_forms else None,
             sub_criteria=sub_criteria,
@@ -842,7 +946,10 @@ class TestJinjaMacros(object):
 
         soup = BeautifulSoup(rendered_html, "html.parser")
 
-        assert soup.find("h2", class_="govuk-heading-l scoring-heading").string == expected_heading
+        assert (
+            soup.find("h2", class_="govuk-heading-l scoring-heading").string
+            == expected_heading
+        )
 
     @pytest.mark.parametrize(
         "application_not_yet_open, application_open, is_assessment_active, has_assessment_closed, exp_colour_class,"
@@ -867,16 +974,24 @@ class TestJinjaMacros(object):
     ):
         rendered_html = render_template_string(
             "{{assessment_status(round_status)}}",
-            assessment_status=get_template_attribute("macros/fund_dashboard_summary.html", "assessment_status"),
+            assessment_status=get_template_attribute(
+                "macros/fund_dashboard_summary.html", "assessment_status"
+            ),
             round_status=RoundStatus(
-                application_not_yet_open, application_open, False, is_assessment_active, False, has_assessment_closed
+                application_not_yet_open,
+                application_open,
+                False,
+                is_assessment_active,
+                False,
+                has_assessment_closed,
             ),
         )
 
         soup = BeautifulSoup(rendered_html, "html.parser")
         assert (
             soup.find(
-                "div", class_=f"govuk-tag govuk-!-margin-bottom-2 govuk-summary-card__title{exp_colour_class or ''}"
+                "div",
+                class_=f"govuk-tag govuk-!-margin-bottom-2 govuk-summary-card__title{exp_colour_class or ''}",
             ).text.strip()
             == exp_text
         )
@@ -1022,7 +1137,9 @@ class TestJinjaMacros(object):
         rendered_html = render_template_string(
             "{{round_links(access_controller, assessments_href, download_available, export_href,"
             " feedback_export_href,assessment_tracker_href, round_status)}}",
-            round_links=get_template_attribute("macros/fund_dashboard_summary.html", "round_links"),
+            round_links=get_template_attribute(
+                "macros/fund_dashboard_summary.html", "round_links"
+            ),
             access_controller=mock_access_controller,
             assessments_href="assessments_href",
             download_available=download_available,
@@ -1030,7 +1147,12 @@ class TestJinjaMacros(object):
             feedback_export_href=feedback_export_href,
             assessment_tracker_href=assessment_tracker_href,
             round_status=RoundStatus(
-                False, False, has_application_closed, is_assessment_active, has_assessment_opened, False
+                False,
+                False,
+                has_application_closed,
+                is_assessment_active,
+                has_assessment_opened,
+                False,
             ),
         )
 

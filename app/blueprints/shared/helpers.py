@@ -2,12 +2,13 @@ import time
 from typing import Dict
 from typing import List
 
+from flask import request
+
 from app.blueprints.services.models.flag import Flag
 from app.blueprints.services.models.flag import FlagType
 from app.blueprints.services.models.fund import Fund
-from config.display_value_mappings import assessment_statuses
 from config.display_value_mappings import LandingFilters
-from flask import request
+from config.display_value_mappings import assessment_statuses
 
 
 def process_assessments_stats(application_overviews) -> Dict:
@@ -67,7 +68,9 @@ def is_flaggable(flag_status: str):
     return flag_status != "Stopped"
 
 
-def determine_display_status(workflow_status: str, Flags: List[Flag], is_qa_complete: bool) -> str:
+def determine_display_status(
+    workflow_status: str, Flags: List[Flag], is_qa_complete: bool
+) -> str:
     flag_status = determine_flag_status(Flags)
     if flag_status:
         display_status = flag_status
@@ -81,7 +84,11 @@ def determine_display_status(workflow_status: str, Flags: List[Flag], is_qa_comp
 
 def determine_flag_status(Flags: List[Flag]) -> str:
     flag_status = ""
-    flags_list = [(Flag.from_dict(flag) if isinstance(flag, dict) else flag) for flag in Flags] if Flags else []
+    flags_list = (
+        [(Flag.from_dict(flag) if isinstance(flag, dict) else flag) for flag in Flags]
+        if Flags
+        else []
+    )
     all_latest_status = [flag.latest_status for flag in flags_list]
 
     if FlagType.STOPPED in all_latest_status:
@@ -91,15 +98,27 @@ def determine_flag_status(Flags: List[Flag]) -> str:
     elif all_latest_status.count(FlagType.RAISED) == 1:
         for flag in flags_list:
             if flag.latest_status == FlagType.RAISED:
-                flag_status = ("Flagged for " + flag.latest_allocation) if flag.latest_allocation else "Flagged"
+                flag_status = (
+                    ("Flagged for " + flag.latest_allocation)
+                    if flag.latest_allocation
+                    else "Flagged"
+                )
     return flag_status
 
 
 def match_search_params(search_params, request_args):
     show_clear_filters = False
     if "clear_filters" not in request_args:
-        search_params.update({k: v for k, v in request_args.items() if k in search_params and k != "countries"})
-        show_clear_filters = any(k in request_args for k in search_params if k != "countries")
+        search_params.update(
+            {
+                k: v
+                for k, v in request_args.items()
+                if k in search_params and k != "countries"
+            }
+        )
+        show_clear_filters = any(
+            k in request_args for k in search_params if k != "countries"
+        )
     return search_params, show_clear_filters
 
 
@@ -122,7 +141,9 @@ def get_ttl_hash(seconds=3600) -> int:
 
 def get_value_from_request(parameter_names) -> str | None:
     for parameter_name in parameter_names:
-        value = request.view_args.get(parameter_name) or request.args.get(parameter_name)
+        value = request.view_args.get(parameter_name) or request.args.get(
+            parameter_name
+        )
         if value:
             return value
 

@@ -1,5 +1,6 @@
-from config import Config
 from flask import Blueprint
+
+from config import Config
 
 comment_bp = Blueprint(
     "comment_bp",

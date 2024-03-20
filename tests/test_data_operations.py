@@ -1,8 +1,9 @@
+from flask import Flask
+
 from app.blueprints.services.data_services import get_application_overviews
 from app.blueprints.services.data_services import get_comments
 from app.blueprints.services.data_services import get_fund
 from app.blueprints.services.data_services import get_round
-from flask import Flask
 from tests.api_data.test_data import mock_api_results
 
 
@@ -24,7 +25,9 @@ class TestDataOperations:
         assert arg in get_data_mock.call_args.args[0]
 
     def test_get_round(self, mocker):
-        mock_round_result = mock_api_results["fund_store/funds/{fund_id}/rounds/{round_id}"]
+        mock_round_result = mock_api_results[
+            "fund_store/funds/{fund_id}/rounds/{round_id}"
+        ]
         get_data_mock = mocker.patch(
             "app.blueprints.services.data_services.get_data",
             return_value=mock_round_result,
@@ -37,7 +40,9 @@ class TestDataOperations:
         assert all(arg in get_data_mock.call_args.args[0] for arg in args)
 
     def test_get_application_overviews(self, mocker):
-        mock_fund_result = mock_api_results["assessment_store/application_overviews/{fund_id}/{round_id}?"]
+        mock_fund_result = mock_api_results[
+            "assessment_store/application_overviews/{fund_id}/{round_id}?"
+        ]
         get_data_mock = mocker.patch(
             "app.blueprints.services.data_services.get_data",
             return_value=mock_fund_result,

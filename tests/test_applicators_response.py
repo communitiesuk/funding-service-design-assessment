@@ -1,33 +1,17 @@
 import json  # noqa
 
-import app
 import pytest  # noqa
+from flask import Flask
+
+import app
 from app.blueprints.assessments.models.applicants_response import (
-    _convert_checkbox_items,
-)
-from app.blueprints.assessments.models.applicants_response import (
-    _convert_heading_description_amount,
-)
-from app.blueprints.assessments.models.applicants_response import (
-    _convert_non_number_grouped_fields,
-)
-from app.blueprints.assessments.models.applicants_response import (
-    _flatten_field_ids,
-)
-from app.blueprints.assessments.models.applicants_response import (
-    _make_field_ids_hashable,
-)
-from app.blueprints.assessments.models.applicants_response import (
-    _ui_component_from_factory,
+    ANSWER_NOT_PROVIDED_DEFAULT,
 )
 from app.blueprints.assessments.models.applicants_response import (
     AboveQuestionAnswerPair,
 )
 from app.blueprints.assessments.models.applicants_response import (
     AboveQuestionAnswerPairHref,
-)
-from app.blueprints.assessments.models.applicants_response import (
-    ANSWER_NOT_PROVIDED_DEFAULT,
 )
 from app.blueprints.assessments.models.applicants_response import (
     ApplicantResponseComponent,
@@ -39,27 +23,34 @@ from app.blueprints.assessments.models.applicants_response import (
     BesideQuestionAnswerPairHref,
 )
 from app.blueprints.assessments.models.applicants_response import (
-    create_ui_components,
-)
-from app.blueprints.assessments.models.applicants_response import (
     FormattedBesideQuestionAnswerPair,
 )
-from app.blueprints.assessments.models.applicants_response import (
-    MonetaryKeyValues,
-)
-from app.blueprints.assessments.models.applicants_response import (
-    NewAddAnotherTable,
-)
+from app.blueprints.assessments.models.applicants_response import MonetaryKeyValues
+from app.blueprints.assessments.models.applicants_response import NewAddAnotherTable
 from app.blueprints.assessments.models.applicants_response import (
     QuestionAboveHrefAnswerList,
 )
+from app.blueprints.assessments.models.applicants_response import QuestionHeading
 from app.blueprints.assessments.models.applicants_response import (
-    QuestionHeading,
+    _convert_checkbox_items,
 )
+from app.blueprints.assessments.models.applicants_response import (
+    _convert_heading_description_amount,
+)
+from app.blueprints.assessments.models.applicants_response import (
+    _convert_non_number_grouped_fields,
+)
+from app.blueprints.assessments.models.applicants_response import _flatten_field_ids
+from app.blueprints.assessments.models.applicants_response import (
+    _make_field_ids_hashable,
+)
+from app.blueprints.assessments.models.applicants_response import (
+    _ui_component_from_factory,
+)
+from app.blueprints.assessments.models.applicants_response import create_ui_components
 from app.blueprints.assessments.models.applicants_response import sanitise_html
 from app.blueprints.assessments.routes import assessment_bp
 from app.blueprints.shared.filters import format_address
-from flask import Flask
 from tests.api_data.test_data import TestSanitiseData
 
 
@@ -242,7 +233,9 @@ class TestApplicantResponseComponentConcreteSubclasses:
             "Burgers": "https://burgers.com",
             "Tacos": "https://tacos.com",
         }
-        question_answer_list = QuestionAboveHrefAnswerList.from_dict(data, key_to_url_dict)
+        question_answer_list = QuestionAboveHrefAnswerList.from_dict(
+            data, key_to_url_dict
+        )
         assert question_answer_list.question == "What are your favorite foods?"
         assert question_answer_list.key_to_url_dict == key_to_url_dict
         assert question_answer_list.should_render is True
@@ -485,7 +478,9 @@ class TestConvertHeadingDescriptionAmountToGroupedFields:
             ),
         ],
     )
-    def test__convert_heading_description_amount(self, response, expected_grouped_fields_items, expected_field_ids):
+    def test__convert_heading_description_amount(
+        self, response, expected_grouped_fields_items, expected_field_ids
+    ):
         result, field_ids = _convert_heading_description_amount(response)
         assert result == expected_grouped_fields_items
         assert field_ids == expected_field_ids
@@ -648,7 +643,9 @@ class TestConvertCheckboxItems:
             ),
         ],
     )
-    def test__convert_checkbox_items(self, response, expected_text_items, expected_field_ids):
+    def test__convert_checkbox_items(
+        self, response, expected_text_items, expected_field_ids
+    ):
         result, field_ids = _convert_checkbox_items(response)
         assert result == expected_text_items
         assert field_ids == expected_field_ids
@@ -764,7 +761,9 @@ class TestConvertNonNumberGroupedFields:
             ),
         ],
     )
-    def test__convert_non_number_grouped_fields(self, response, expected_text_items, expected_field_ids):
+    def test__convert_non_number_grouped_fields(
+        self, response, expected_text_items, expected_field_ids
+    ):
         result, field_ids = _convert_non_number_grouped_fields(response)
         assert result == expected_text_items
         assert field_ids == expected_field_ids
@@ -900,7 +899,10 @@ def test_create_ui_components_retains_order(monkeypatch):
     with test_app.app_context():
         ui_components = create_ui_components(response_with_unhashable_fields, "app_123")
 
-    assert all(isinstance(ui_component, ApplicantResponseComponent) for ui_component in ui_components)
+    assert all(
+        isinstance(ui_component, ApplicantResponseComponent)
+        for ui_component in ui_components
+    )
 
     assert len(ui_components) == 13
 

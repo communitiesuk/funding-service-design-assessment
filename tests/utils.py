@@ -1,10 +1,12 @@
 """
 Utility functions for running tests and generating reports
 """
+
 import os
 
-from config import Config
 from flask import url_for
+
+from config import Config
 
 
 def get_service_html_filepath(root_dir: str, service_dict: dict, route_rel: str):

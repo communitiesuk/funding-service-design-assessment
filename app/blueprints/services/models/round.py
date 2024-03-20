@@ -16,7 +16,11 @@ class FeedbackSurveyConfig:
     def from_json(d: dict):
         # Filter unknown fields from JSON dictionary
         return FeedbackSurveyConfig(
-            **{k: v for k, v in d.items() if k in inspect.signature(FeedbackSurveyConfig).parameters}
+            **{
+                k: v
+                for k, v in d.items()
+                if k in inspect.signature(FeedbackSurveyConfig).parameters
+            }
         )
 
 
@@ -39,14 +43,18 @@ class Round:
 
     def __post_init__(self):
         if isinstance(self.feedback_survey_config, dict):
-            self.feedback_survey_config = FeedbackSurveyConfig.from_json(self.feedback_survey_config)
+            self.feedback_survey_config = FeedbackSurveyConfig.from_json(
+                self.feedback_survey_config
+            )
         elif self.feedback_survey_config is None:
             self.feedback_survey_config = FeedbackSurveyConfig()
 
     @classmethod
     def from_dict(cls, d: dict):
         # Filter unknown fields from JSON dictionary
-        return cls(**{k: v for k, v in d.items() if k in inspect.signature(cls).parameters})
+        return cls(
+            **{k: v for k, v in d.items() if k in inspect.signature(cls).parameters}
+        )
 
     @staticmethod
     def from_json(data: dict):
@@ -59,8 +67,16 @@ class Round:
             opens=data.get("opens"),
             deadline=data.get("deadline"),
             guidance_url=data.get("guidance_url"),
-            all_uploaded_documents_section_available=data.get("all_uploaded_documents_section_available") or False,
-            application_fields_download_available=data.get("application_fields_download_available") or False,
-            display_logo_on_pdf_exports=data.get("display_logo_on_pdf_exports") or False,
-            feedback_survey_config=data.get("feedback_survey_config") or FeedbackSurveyConfig(),
+            all_uploaded_documents_section_available=data.get(
+                "all_uploaded_documents_section_available"
+            )
+            or False,
+            application_fields_download_available=data.get(
+                "application_fields_download_available"
+            )
+            or False,
+            display_logo_on_pdf_exports=data.get("display_logo_on_pdf_exports")
+            or False,
+            feedback_survey_config=data.get("feedback_survey_config")
+            or FeedbackSurveyConfig(),
         )

@@ -4,28 +4,23 @@ from unittest.mock import MagicMock
 
 import pytest
 import werkzeug
+from werkzeug.exceptions import HTTPException
+
 from app.blueprints.assessments.models.round_status import RoundStatus
 from app.blueprints.authentication.validation import _get_all_country_roles
 from app.blueprints.authentication.validation import _get_all_users_roles
-from app.blueprints.authentication.validation import (
-    _get_roles_by_fund_short_name,
-)
+from app.blueprints.authentication.validation import _get_roles_by_fund_short_name
 from app.blueprints.authentication.validation import _normalise_country
-from app.blueprints.authentication.validation import (
-    check_access_application_id,
-)
+from app.blueprints.authentication.validation import check_access_application_id
 from app.blueprints.authentication.validation import (
     check_access_fund_short_name_round_sn,
 )
 from app.blueprints.authentication.validation import get_countries_from_roles
 from app.blueprints.authentication.validation import get_valid_country_roles
 from app.blueprints.authentication.validation import has_access_to_fund
-from app.blueprints.authentication.validation import (
-    has_devolved_authority_validation,
-)
+from app.blueprints.authentication.validation import has_devolved_authority_validation
 from app.blueprints.authentication.validation import has_relevant_country_role
 from app.blueprints.services.models.fund import Fund
-from werkzeug.exceptions import HTTPException
 
 
 class _MockUser:
@@ -114,7 +109,9 @@ def test_get_valid_country_roles(monkeypatch):
     ],
 )
 def test_get_countries_from_roles(monkeypatch, roles, expected):
-    monkeypatch.setattr("app.blueprints.authentication.validation.g", _MockGlobal(roles=roles))
+    monkeypatch.setattr(
+        "app.blueprints.authentication.validation.g", _MockGlobal(roles=roles)
+    )
     countries = get_countries_from_roles("COF")
     assert countries == expected
 
@@ -169,8 +166,7 @@ def test_has_access_to_fund(monkeypatch, short_name, roles, expected):
 
 
 @check_access_application_id
-def _dummy_function_check_access_application_id():
-    ...
+def _dummy_function_check_access_application_id(): ...
 
 
 def test_check_access_application_id_throws_404_when_no_application_id(
@@ -183,7 +179,9 @@ def test_check_access_application_id_throws_404_when_no_application_id(
         _dummy_function_check_access_application_id()
 
 
-def test_check_access_application_id_cant_access_application_when_no_country_role(request_ctx, monkeypatch):
+def test_check_access_application_id_cant_access_application_when_no_country_role(
+    request_ctx, monkeypatch
+):
     # GIVEN an English COF application/assessment record
     # WHEN the user has no COF_ENGLAND role
     # THEN the user cannot access the application
@@ -223,7 +221,9 @@ def test_check_access_application_id_cant_access_application_when_no_country_rol
         _dummy_function_check_access_application_id()
 
 
-def test_check_access_application_id_can_access_application_when_has_country_role(request_ctx, monkeypatch):
+def test_check_access_application_id_can_access_application_when_has_country_role(
+    request_ctx, monkeypatch
+):
     # GIVEN an English COF application/assessment record
     # WHEN the user has the COF_ENGLAND role
     # THEN the user can access the application
@@ -318,7 +318,9 @@ def test_check_access_application_id_can_access_application_when_fund_has_no_dev
     _dummy_function_check_access_application_id()  # no fail means pass
 
 
-def test_check_access_application_id_cant_access_application_when_no_relevant_fund_role(request_ctx, monkeypatch):
+def test_check_access_application_id_cant_access_application_when_no_relevant_fund_role(
+    request_ctx, monkeypatch
+):
     # GIVEN an COF application/assessment record
     # WHEN the user has no COF role
     # THEN the user cannot access the application
@@ -359,8 +361,7 @@ def test_check_access_application_id_cant_access_application_when_no_relevant_fu
 
 
 @check_access_fund_short_name_round_sn
-def _dummy_function_check_access_fund_short_name_round_sn():
-    ...
+def _dummy_function_check_access_fund_short_name_round_sn(): ...
 
 
 def test_check_access_fund_short_name_round_sn_throws_404_when_no_fund_short_name(
@@ -438,7 +439,9 @@ def test_check_access_application_id_decorator_returns_403_for_inactive_assessme
     )
     mocker.patch(
         "app.blueprints.authentication.validation.get_round",
-        return_value=MagicMock(deadline=(datetime.now() + timedelta(days=1)).strftime("%Y-%m-%dT%H:%M:%S")),
+        return_value=MagicMock(
+            deadline=(datetime.now() + timedelta(days=1)).strftime("%Y-%m-%dT%H:%M:%S")
+        ),
     )
 
     @check_access_application_id

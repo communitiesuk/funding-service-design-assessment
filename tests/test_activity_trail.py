@@ -1,9 +1,10 @@
 import pytest
-from app.blueprints.assessments.activity_trail import add_user_info
+from flask import Flask
+
 from app.blueprints.assessments.activity_trail import AssociatedTags
 from app.blueprints.assessments.activity_trail import BaseModel
+from app.blueprints.assessments.activity_trail import add_user_info
 from app.blueprints.assessments.activity_trail import get_user_info
-from flask import Flask
 
 
 class TestActivityTrail:

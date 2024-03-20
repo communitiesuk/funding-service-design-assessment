@@ -2,16 +2,21 @@ from datetime import datetime
 from datetime import timedelta
 
 import pytest
-from app.blueprints.assessments.models.round_status import determine_round_status
+
 from app.blueprints.assessments.models.round_status import RoundStatus
+from app.blueprints.assessments.models.round_status import determine_round_status
 from app.blueprints.services.models.round import Round
 
 
 def test_determine_round_status_open():
     r = Round(
         id="",
-        assessment_start=(datetime.now() + timedelta(days=5)).strftime("%Y-%m-%d %H:%M:%S"),
-        assessment_deadline=(datetime.now() + timedelta(days=10)).strftime("%Y-%m-%d %H:%M:%S"),
+        assessment_start=(datetime.now() + timedelta(days=5)).strftime(
+            "%Y-%m-%d %H:%M:%S"
+        ),
+        assessment_deadline=(datetime.now() + timedelta(days=10)).strftime(
+            "%Y-%m-%d %H:%M:%S"
+        ),
         deadline=(datetime.now() + timedelta(days=4)).strftime("%Y-%m-%d %H:%M:%S"),
         opens=(datetime.now() - timedelta(days=5)).strftime("%Y-%m-%d %H:%M:%S"),
         fund_id="",
@@ -39,15 +44,26 @@ def test_determine_round_status_open():
     ],
 )
 def test_determine_round_status_is_assessment_active(
-    deadline_delta, assessment_start_delta, assessment_deadline_delta, exp_assessment_active: bool
+    deadline_delta,
+    assessment_start_delta,
+    assessment_deadline_delta,
+    exp_assessment_active: bool,
 ):
     r = Round(
         id="",
-        assessment_start=(datetime.now() + timedelta(days=assessment_start_delta)).strftime("%Y-%m-%d %H:%M:%S")
-        if assessment_start_delta
-        else None,
-        assessment_deadline=(datetime.now() + timedelta(days=assessment_deadline_delta)).strftime("%Y-%m-%d %H:%M:%S"),
-        deadline=(datetime.now() + timedelta(days=deadline_delta)).strftime("%Y-%m-%d %H:%M:%S"),
+        assessment_start=(
+            (datetime.now() + timedelta(days=assessment_start_delta)).strftime(
+                "%Y-%m-%d %H:%M:%S"
+            )
+            if assessment_start_delta
+            else None
+        ),
+        assessment_deadline=(
+            datetime.now() + timedelta(days=assessment_deadline_delta)
+        ).strftime("%Y-%m-%d %H:%M:%S"),
+        deadline=(datetime.now() + timedelta(days=deadline_delta)).strftime(
+            "%Y-%m-%d %H:%M:%S"
+        ),
         opens=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         fund_id="",
         title="",
@@ -69,15 +85,26 @@ def test_determine_round_status_is_assessment_active(
     ],
 )
 def test_determine_round_status_has_assessment_opened(
-    deadline_delta, assessment_start_delta, assessment_deadline_delta, exp_assessment_opened: bool
+    deadline_delta,
+    assessment_start_delta,
+    assessment_deadline_delta,
+    exp_assessment_opened: bool,
 ):
     r = Round(
         id="",
-        assessment_start=(datetime.now() + timedelta(days=assessment_start_delta)).strftime("%Y-%m-%d %H:%M:%S")
-        if assessment_start_delta
-        else None,
-        assessment_deadline=(datetime.now() + timedelta(days=assessment_deadline_delta)).strftime("%Y-%m-%d %H:%M:%S"),
-        deadline=(datetime.now() + timedelta(days=deadline_delta)).strftime("%Y-%m-%d %H:%M:%S"),
+        assessment_start=(
+            (datetime.now() + timedelta(days=assessment_start_delta)).strftime(
+                "%Y-%m-%d %H:%M:%S"
+            )
+            if assessment_start_delta
+            else None
+        ),
+        assessment_deadline=(
+            datetime.now() + timedelta(days=assessment_deadline_delta)
+        ).strftime("%Y-%m-%d %H:%M:%S"),
+        deadline=(datetime.now() + timedelta(days=deadline_delta)).strftime(
+            "%Y-%m-%d %H:%M:%S"
+        ),
         opens=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         fund_id="",
         title="",
@@ -99,15 +126,26 @@ def test_determine_round_status_has_assessment_opened(
     ],
 )
 def test_determine_round_status_has_assessment_closed(
-    deadline_delta, assessment_start_delta, assessment_deadline_delta, exp_assessment_closed: bool
+    deadline_delta,
+    assessment_start_delta,
+    assessment_deadline_delta,
+    exp_assessment_closed: bool,
 ):
     r = Round(
         id="",
-        assessment_start=(datetime.now() + timedelta(days=assessment_start_delta)).strftime("%Y-%m-%d %H:%M:%S")
-        if assessment_start_delta
-        else None,
-        assessment_deadline=(datetime.now() + timedelta(days=assessment_deadline_delta)).strftime("%Y-%m-%d %H:%M:%S"),
-        deadline=(datetime.now() + timedelta(days=deadline_delta)).strftime("%Y-%m-%d %H:%M:%S"),
+        assessment_start=(
+            (datetime.now() + timedelta(days=assessment_start_delta)).strftime(
+                "%Y-%m-%d %H:%M:%S"
+            )
+            if assessment_start_delta
+            else None
+        ),
+        assessment_deadline=(
+            datetime.now() + timedelta(days=assessment_deadline_delta)
+        ).strftime("%Y-%m-%d %H:%M:%S"),
+        deadline=(datetime.now() + timedelta(days=deadline_delta)).strftime(
+            "%Y-%m-%d %H:%M:%S"
+        ),
         opens=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         fund_id="",
         title="",
@@ -125,13 +163,19 @@ def test_determine_round_status_has_assessment_closed(
         (-5, -1, False),
     ],
 )
-def test_determine_round_status_is_app_open(deadline_delta, opens_delta, exp_app_open: bool):
+def test_determine_round_status_is_app_open(
+    deadline_delta, opens_delta, exp_app_open: bool
+):
     r = Round(
         id="",
         assessment_start=None,
         assessment_deadline=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-        deadline=(datetime.now() + timedelta(days=deadline_delta)).strftime("%Y-%m-%d %H:%M:%S"),
-        opens=(datetime.now() + timedelta(days=opens_delta)).strftime("%Y-%m-%d %H:%M:%S"),
+        deadline=(datetime.now() + timedelta(days=deadline_delta)).strftime(
+            "%Y-%m-%d %H:%M:%S"
+        ),
+        opens=(datetime.now() + timedelta(days=opens_delta)).strftime(
+            "%Y-%m-%d %H:%M:%S"
+        ),
         fund_id="",
         title="",
         short_name="",
@@ -148,13 +192,19 @@ def test_determine_round_status_is_app_open(deadline_delta, opens_delta, exp_app
         (-5, -1, True),
     ],
 )
-def test_determine_round_status_is_app_closed(deadline_delta, opens_delta, exp_app_closed: bool):
+def test_determine_round_status_is_app_closed(
+    deadline_delta, opens_delta, exp_app_closed: bool
+):
     r = Round(
         id="",
         assessment_start=None,
         assessment_deadline=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-        deadline=(datetime.now() + timedelta(days=deadline_delta)).strftime("%Y-%m-%d %H:%M:%S"),
-        opens=(datetime.now() + timedelta(days=opens_delta)).strftime("%Y-%m-%d %H:%M:%S"),
+        deadline=(datetime.now() + timedelta(days=deadline_delta)).strftime(
+            "%Y-%m-%d %H:%M:%S"
+        ),
+        opens=(datetime.now() + timedelta(days=opens_delta)).strftime(
+            "%Y-%m-%d %H:%M:%S"
+        ),
         fund_id="",
         title="",
         short_name="",
@@ -171,13 +221,19 @@ def test_determine_round_status_is_app_closed(deadline_delta, opens_delta, exp_a
         (-5, -1, False),
     ],
 )
-def test_determine_round_status_is_app_not_yet_open(deadline_delta, opens_delta, exp_app_not_yet_open: bool):
+def test_determine_round_status_is_app_not_yet_open(
+    deadline_delta, opens_delta, exp_app_not_yet_open: bool
+):
     r = Round(
         id="",
         assessment_start=None,
         assessment_deadline=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-        deadline=(datetime.now() + timedelta(days=deadline_delta)).strftime("%Y-%m-%d %H:%M:%S"),
-        opens=(datetime.now() + timedelta(days=opens_delta)).strftime("%Y-%m-%d %H:%M:%S"),
+        deadline=(datetime.now() + timedelta(days=deadline_delta)).strftime(
+            "%Y-%m-%d %H:%M:%S"
+        ),
+        opens=(datetime.now() + timedelta(days=opens_delta)).strftime(
+            "%Y-%m-%d %H:%M:%S"
+        ),
         fund_id="",
         title="",
         short_name="",
