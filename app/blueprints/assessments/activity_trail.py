@@ -11,7 +11,8 @@ from wtforms import StringField
 
 from app.blueprints.services.data_services import get_bulk_accounts_dict
 from app.blueprints.services.models.assessor_task_list import AssessorTaskList
-from app.blueprints.services.models.flag import FlagType, Flag
+from app.blueprints.services.models.flag import Flag
+from app.blueprints.services.models.flag import FlagType
 from app.blueprints.tagging.models.tag import AssociatedTag
 
 

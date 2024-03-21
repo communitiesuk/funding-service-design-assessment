@@ -177,14 +177,12 @@ _EXCLUDED_HEADERS = (
     "Help gyda'r math o sefydliad",
 )
 
+
 def generate_assessment_info_csv(data: dict):
     output = StringIO()
     headers = list(
         OrderedDict.fromkeys(
-            key
-            for d in data
-            for key in d.keys()
-            if key not in _EXCLUDED_HEADERS
+            key for d in data for key in d.keys() if key not in _EXCLUDED_HEADERS
         )
     )
     csv_writer = csv.writer(output)
@@ -287,4 +285,3 @@ def sanitise_export_data(data):
     if isinstance(data, str):
         data = strip_tags(data)
     return data
-
