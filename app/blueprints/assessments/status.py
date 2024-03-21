@@ -1,6 +1,7 @@
 import requests
-from config import Config
 from flask import current_app
+
+from config import Config
 
 
 def get_status(questions):
@@ -15,11 +16,19 @@ def get_status(questions):
     """
     status = {}
     if questions:
-        status["NOT STARTED"] = sum(value == "NOT STARTED" for value in questions.values())
-        status["IN PROGRESS"] = sum(value == "IN PROGRESS" for value in questions.values())
+        status["NOT STARTED"] = sum(
+            value == "NOT STARTED" for value in questions.values()
+        )
+        status["IN PROGRESS"] = sum(
+            value == "IN PROGRESS" for value in questions.values()
+        )
         status["COMPLETED"] = sum(value == "COMPLETED" for value in questions.values())
         status["TOTAL"] = sum(
-            ((value == "NOT STARTED") + (value == "IN PROGRESS") + (value == "COMPLETED"))
+            (
+                (value == "NOT STARTED")
+                + (value == "IN PROGRESS")
+                + (value == "COMPLETED")
+            )
             for value in questions.values()
         )
     return status
@@ -38,7 +47,9 @@ def all_status_completed(criteria_list):
 def update_ar_status_to_completed(application_id):
     """Function makes a call to assessment store to update the
     status of given application_id to COMPLETED"""
-    response = requests.post(Config.ASSESSMENT_UPDATE_STATUS.format(application_id=application_id))
+    response = requests.post(
+        Config.ASSESSMENT_UPDATE_STATUS.format(application_id=application_id)
+    )
     if response.status_code == 204:
         current_app.logger.info("The application status has been updated to COMPLETE")
         return response
@@ -49,9 +60,17 @@ def update_ar_status_to_completed(application_id):
 def update_ar_status_to_qa_completed(application_id, user_id):
     """Function makes a call to assessment store to update the
     status of given application_id to COMPLETED"""
-    response = requests.post(Config.ASSESSMENT_UPDATE_QA_STATUS.format(application_id=application_id, user_id=user_id))
+    response = requests.post(
+        Config.ASSESSMENT_UPDATE_QA_STATUS.format(
+            application_id=application_id, user_id=user_id
+        )
+    )
     if response.status_code == 200:
-        current_app.logger.info("The application status has been updated to QA_COMPLETE")
+        current_app.logger.info(
+            "The application status has been updated to QA_COMPLETE"
+        )
         return response
     else:
-        current_app.logger.error(f"Could not create qa_complete record for application {application_id}")
+        current_app.logger.error(
+            f"Could not create qa_complete record for application {application_id}"
+        )

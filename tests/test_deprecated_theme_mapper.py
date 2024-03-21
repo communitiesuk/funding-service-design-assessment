@@ -1,8 +1,13 @@
 from unittest.mock import Mock
 
 import pytest
-from app.blueprints.themes.deprecated_theme_mapper import deprecated_sort_add_another_component_contents
-from app.blueprints.themes.deprecated_theme_mapper import format_add_another_component_contents
+
+from app.blueprints.themes.deprecated_theme_mapper import (
+    deprecated_sort_add_another_component_contents,
+)
+from app.blueprints.themes.deprecated_theme_mapper import (
+    format_add_another_component_contents,
+)
 
 
 @pytest.mark.parametrize(
@@ -188,7 +193,9 @@ def test_deprecated_sort_add_another_component_contents_log_when_no_answer(
     monkeypatch,
 ):
     current_app = Mock()
-    monkeypatch.setattr("app.blueprints.themes.deprecated_theme_mapper.current_app", current_app)
+    monkeypatch.setattr(
+        "app.blueprints.themes.deprecated_theme_mapper.current_app", current_app
+    )
 
     themes_answers = [
         {

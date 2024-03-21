@@ -9,14 +9,17 @@ from typing import List
 from typing import Tuple
 from urllib.parse import quote
 
+from bs4 import BeautifulSoup
+from flask import current_app
+from flask import url_for
+
 from app.blueprints.services.aws import list_files_in_folder
 from app.blueprints.shared.filters import format_address
 from app.blueprints.shared.filters import format_date
 from app.blueprints.shared.filters import remove_dashes_underscores_capitalize
-from app.blueprints.shared.filters import remove_dashes_underscores_capitalize_keep_uppercase
-from bs4 import BeautifulSoup
-from flask import current_app
-from flask import url_for
+from app.blueprints.shared.filters import (
+    remove_dashes_underscores_capitalize_keep_uppercase,
+)
 
 ANSWER_NOT_PROVIDED_DEFAULT = "<p>Not provided.</p>"
 
@@ -106,7 +109,11 @@ class FormattedBesideQuestionAnswerPair(QuestionAnswerPair):
     def from_dict(cls, data: dict, formatter: callable):  # noqa
         return cls(
             question=data["question"],
-            answer=data.get("answer") if data.get("answer") else ANSWER_NOT_PROVIDED_DEFAULT,
+            answer=(
+                data.get("answer")
+                if data.get("answer")
+                else ANSWER_NOT_PROVIDED_DEFAULT
+            ),
             formatter=formatter if data.get("answer") else lambda x: x,
         )
 
@@ -176,7 +183,9 @@ class NewAddAnotherTable(ApplicantResponseComponent):
             headings.append({"text": column_name, "format": column_format})
 
         rows = []
-        num_columns = len(answer[0][1])  # Assuming all rows have the same number of values
+        num_columns = len(
+            answer[0][1]
+        )  # Assuming all rows have the same number of values
         for j in range(num_columns):
             columns = []
             for i, (_, values, fmt) in enumerate(answer):
@@ -313,7 +322,9 @@ def _ui_component_from_factory(item: dict, application_id: str):
 
     elif presentation_type in ("text", "list", "free_text"):
         if field_type in ("radiosField") and item.get("answer"):
-            item["answer"] = remove_dashes_underscores_capitalize_keep_uppercase(item["answer"])
+            item["answer"] = remove_dashes_underscores_capitalize_keep_uppercase(
+                item["answer"]
+            )
         if field_type in ("multilineTextField",):
             return AboveQuestionAnswerPair.from_dict(item)
         elif field_type in ("websiteField",):
@@ -339,7 +350,9 @@ def _ui_component_from_factory(item: dict, application_id: str):
         return AboveQuestionAnswerPairHref.from_dict(item, href=presigned_url)
 
     elif presentation_type == "s3bucketPath":
-        folder_path = f"{application_id}/{item['form_name']}/{item['path']}/{item['field_id']}"
+        folder_path = (
+            f"{application_id}/{item['form_name']}/{item['path']}/{item['field_id']}"
+        )
         file_keys = list_files_in_folder(folder_path) if answer else []
         key_to_url_dict = {
             key: url_for(
@@ -358,7 +371,9 @@ def _ui_component_from_factory(item: dict, application_id: str):
     # Note that types "amount", "description" and "heading" are not used
     # here because they are grouped together in the "grouped_fields" type
     # in a pre-processing step
-    raise NotImplementedError(f"Unknown presentation type: {presentation_type} for item: {item}")
+    raise NotImplementedError(
+        f"Unknown presentation type: {presentation_type} for item: {item}"
+    )
 
 
 def _convert_heading_description_amount(
@@ -385,7 +400,9 @@ def _convert_heading_description_amount(
         # "heading", "description" and "amount", if a field is missing we
         # raise an exception noting the incorrect configuration
         heading = _get_item_by_presentation_type_index(response, "heading", index)
-        description = _get_item_by_presentation_type_index(response, "description", index)
+        description = _get_item_by_presentation_type_index(
+            response, "description", index
+        )
         amount = _get_item_by_presentation_type_index(response, "amount", index)
 
         # if we dont have an answer, we add a default text element which
@@ -427,7 +444,9 @@ def _build_item(
     }
 
 
-def _get_item_by_presentation_type_index(response: list[dict], presentation_type: str, index: int) -> dict:
+def _get_item_by_presentation_type_index(
+    response: list[dict], presentation_type: str, index: int
+) -> dict:
     """Gets an item from a response dictionary based on its presentation type
     and index.
 
@@ -443,7 +462,13 @@ def _get_item_by_presentation_type_index(response: list[dict], presentation_type
     try:
         return next(
             item
-            for idx, item in enumerate((item for item in response if item["presentation_type"] == presentation_type))
+            for idx, item in enumerate(
+                (
+                    item
+                    for item in response
+                    if item["presentation_type"] == presentation_type
+                )
+            )
             if idx == index
         )
     except StopIteration:
@@ -474,7 +499,9 @@ def _convert_checkbox_items(
     :return (tuple[list[dict], set[str]]): A tuple of a list of dictionary items
     and a set of field IDs.
     """
-    checkbox_field_ids = {item["field_id"] for item in response if item["field_type"] == "checkboxesField"}
+    checkbox_field_ids = {
+        item["field_id"] for item in response if item["field_type"] == "checkboxesField"
+    }
     checkbox_items = (i for i in response if i["field_id"] in checkbox_field_ids)
 
     text_items = []
@@ -496,9 +523,11 @@ def _convert_checkbox_items(
             {
                 # The if in this statement has been added because the answer value for ChXWIQ is different than the display value.
                 # We should change the form in future versions
-                "question": remove_dashes_underscores_capitalize(answer)
-                if (item["field_id"] != "ChXWIQ" and answer != "none")
-                else "None of these",
+                "question": (
+                    remove_dashes_underscores_capitalize(answer)
+                    if (item["field_id"] != "ChXWIQ" and answer != "none")
+                    else "None of these"
+                ),
                 "field_type": item.get("field_type"),
                 "field_id": item["field_id"],
                 "answer": "Yes",
@@ -564,7 +593,8 @@ def _convert_non_number_grouped_fields(
     items_to_process = [
         item
         for item in response
-        if item["presentation_type"] == "grouped_fields" and item["field_type"] != "numberField"
+        if item["presentation_type"] == "grouped_fields"
+        and item["field_type"] != "numberField"
         # we ignore number fields as they are handled separately # noqa
     ]
 
@@ -629,9 +659,14 @@ def create_ui_components(
     ) = _convert_non_number_grouped_fields(response)
 
     processed_field_ids = gfi_field_ids | tifc_field_ids | tifgf_field_ids
-    unprocessed_items = [i for i in response if i["field_id"] not in processed_field_ids]
+    unprocessed_items = [
+        i for i in response if i["field_id"] not in processed_field_ids
+    ]
     post_processed_items = (
-        grouped_fields_items + text_items_from_checkbox + text_items_from_grouped_fields + unprocessed_items
+        grouped_fields_items
+        + text_items_from_checkbox
+        + text_items_from_grouped_fields
+        + unprocessed_items
     )
 
     field_ids_in_order = []
@@ -642,7 +677,10 @@ def create_ui_components(
     # so we re-sort it here
     post_processed_items.sort(key=lambda x: field_ids_in_order.index(x["field_id"]))
 
-    return [_ui_component_from_factory(item, application_id) for item in post_processed_items]
+    return [
+        _ui_component_from_factory(item, application_id)
+        for item in post_processed_items
+    ]
 
 
 def sanitise_html(data):
@@ -668,7 +706,9 @@ def sanitise_html(data):
                 tag["class"] = "govuk-body"
             if tag.name == "ul" or tag.name == "ol":
                 if style_type := tag.get("style"):
-                    style_type = style_type.replace("list-style-type:", "").strip(";").strip()
+                    style_type = (
+                        style_type.replace("list-style-type:", "").strip(";").strip()
+                    )
                     tag["class"] = f"list-type-{style_type}"
                 else:
                     if tag.name == "ul":

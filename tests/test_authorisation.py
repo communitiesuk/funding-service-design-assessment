@@ -1,7 +1,8 @@
 import pytest
 from bs4 import BeautifulSoup
-from config import Config
 from flask import g
+
+from config import Config
 from tests.conftest import create_invalid_token
 from tests.conftest import create_valid_token
 from tests.conftest import test_assessor_claims
@@ -11,7 +12,9 @@ from tests.conftest import test_roleless_user_claims
 
 
 class TestAuthorisation:
-    def test_any_unauthorised_route_redirects_to_home(self, flask_test_client, mock_get_funds):
+    def test_any_unauthorised_route_redirects_to_home(
+        self, flask_test_client, mock_get_funds
+    ):
         """
         GIVEN an unauthorised user
         WHEN the user tries to access any route
@@ -29,7 +32,9 @@ class TestAuthorisation:
         assert response.status_code == 302
         assert response.location == "/"
 
-    def test_any_invalid_token_route_redirects_to_home(self, flask_test_client, mock_get_funds):
+    def test_any_invalid_token_route_redirects_to_home(
+        self, flask_test_client, mock_get_funds
+    ):
         """
         GIVEN an unauthorised user
         WHEN the user tries to access any route
@@ -51,7 +56,9 @@ class TestAuthorisation:
         assert response.status_code == 302
         assert response.location == "/"
 
-    def test_any_unauthorised_visit_to_route_prompts_user_to_sign_in(self, flask_test_client, mock_get_funds):
+    def test_any_unauthorised_visit_to_route_prompts_user_to_sign_in(
+        self, flask_test_client, mock_get_funds
+    ):
         """
         GIVEN an unauthorised user
         WHEN the user visits the homepage "/"
@@ -70,11 +77,12 @@ class TestAuthorisation:
         assert (
             b'<a href="https://authenticator/sso/login" role="button"'
             b' draggable="false" class="govuk-button"'
-            b' data-module="govuk-button">'
-            in response.data
+            b' data-module="govuk-button">' in response.data
         )
 
-    def test_roleless_user_redirected_to_roles_error(self, flask_test_client, mock_get_funds):
+    def test_roleless_user_redirected_to_roles_error(
+        self, flask_test_client, mock_get_funds
+    ):
         """
         GIVEN an authorised user with no roles
         WHEN the user tries to access any route
@@ -103,7 +111,9 @@ class TestAuthorisation:
             "get_assessment_stats_path": [
                 "app.blueprints.assessments.models.round_summary.get_assessments_stats",
             ],
-            "get_rounds_path": ["app.blueprints.assessments.models.round_summary.get_rounds"],
+            "get_rounds_path": [
+                "app.blueprints.assessments.models.round_summary.get_rounds"
+            ],
             "fund_id": "test-fund",
             "round_id": "test-round",
         }
@@ -199,11 +209,13 @@ class TestAuthorisation:
         )
         if ability_to_score:
             assert (
-                b"score-subcriteria-link" in response.data and b"Score the subcriteria" in response.data
+                b"score-subcriteria-link" in response.data
+                and b"Score the subcriteria" in response.data
             ), f"Sidebar should contain score subcriteria link or link to score subcriteria: {response.data}"
         else:
             assert (
-                b"score-subcriteria-link" not in response.data and b"Score the subcriteria" not in response.data
+                b"score-subcriteria-link" not in response.data
+                and b"Score the subcriteria" not in response.data
             ), f"Sidebar should not contain score subcriteria link or link to score subcriteria: {response.data}"
 
     @pytest.mark.parametrize(
@@ -548,7 +560,9 @@ class TestAuthorisation:
                     follow_redirects=True,
                 )
             # Tries to redirect to authenticator
-            assert str(exec_info.value) == "Following external redirects is not supported."
+            assert (
+                str(exec_info.value) == "Following external redirects is not supported."
+            )
         else:
             response = flask_test_client.get(
                 f"assess/flag/{application_id}",
@@ -606,7 +620,9 @@ class TestAuthorisation:
                     follow_redirects=True,
                 )
             # Tries to redirect to authenticator
-            assert str(exec_info.value) == "Following external redirects is not supported."
+            assert (
+                str(exec_info.value) == "Following external redirects is not supported."
+            )
         else:
             response = flask_test_client.get(
                 f"assess/resolve_flag/{application_id}?flag_id={flag_id}",

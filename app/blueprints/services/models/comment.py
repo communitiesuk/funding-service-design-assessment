@@ -19,7 +19,9 @@ class Comment:
 
     def __post_init__(self):
         for item in self.updates:
-            item["date_created"] = datetime.fromisoformat(item["date_created"]).strftime("%Y-%m-%d %X")
+            item["date_created"] = datetime.fromisoformat(
+                item["date_created"]
+            ).strftime("%Y-%m-%d %X")
 
         # sort the updates in the order they are created
         if self.updates:
@@ -28,15 +30,23 @@ class Comment:
     @classmethod
     def from_dict(cls, d: dict):
         # Filter unknown fields from JSON dictionary
-        return cls(**{k: v for k, v in d.items() if k in inspect.signature(cls).parameters})
+        return cls(
+            **{k: v for k, v in d.items() if k in inspect.signature(cls).parameters}
+        )
 
     @property
     def from_lead_assessor(self):
-        return f"{self.fund_short_name}_{self.highest_role}" == f"{self.fund_short_name}_LEAD_ASSESSOR"
+        return (
+            f"{self.fund_short_name}_{self.highest_role}"
+            == f"{self.fund_short_name}_LEAD_ASSESSOR"
+        )
 
     @property
     def from_assessor(self):
-        return f"{self.fund_short_name}_{self.highest_role}" == f"{self.fund_short_name}_ASSESSOR"
+        return (
+            f"{self.fund_short_name}_{self.highest_role}"
+            == f"{self.fund_short_name}_ASSESSOR"
+        )
 
     @property
     def from_any_assessor(self):

@@ -1,7 +1,6 @@
 import pytest
-from app.blueprints.assessments.models.full_application import (
-    FullApplicationPdfContext,
-)
+
+from app.blueprints.assessments.models.full_application import FullApplicationPdfContext
 
 
 @pytest.fixture

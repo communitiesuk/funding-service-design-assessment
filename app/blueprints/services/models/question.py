@@ -32,7 +32,9 @@ class Question:
             answer = question_field.answer
             try:
                 if type(ast.literal_eval(answer)) == list:
-                    answers_per_question_field[question_field.title] = ast.literal_eval(answer)
+                    answers_per_question_field[question_field.title] = ast.literal_eval(
+                        answer
+                    )
                     continue
             except (ValueError, SyntaxError):
                 # literal_eval cannot parse string values

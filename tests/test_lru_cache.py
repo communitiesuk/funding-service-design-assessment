@@ -29,7 +29,9 @@ def test_get_fund_lru_cache(mocker):
         return_value=fund_args,
     )
     fund = get_fund(fid="222", ttl_hash=get_ttl_hash(seconds=2))
-    assert fund.name == "Testing Fund"  # observe that fund name is still equal to cached title
+    assert (
+        fund.name == "Testing Fund"
+    )  # observe that fund name is still equal to cached title
 
     # Sleep for 2 seconds to reset the cache & make a fresh call to `get_fund`
     time.sleep(2)
