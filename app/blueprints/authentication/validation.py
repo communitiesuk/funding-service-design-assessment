@@ -6,14 +6,18 @@ from typing import List
 from typing import Mapping
 from typing import Sequence
 
-from app.blueprints.services.data_services import get_application_metadata
-from app.blueprints.services.data_services import get_fund
-from app.blueprints.shared.helpers import get_ttl_hash
-from app.blueprints.shared.helpers import get_value_from_request
-from config import Config
 from flask import abort
 from flask import g
 from fsd_utils.authentication.decorators import login_required
+
+from app.blueprints.assessments.models.round_status import RoundStatus
+from app.blueprints.assessments.models.round_status import determine_round_status
+from app.blueprints.services.data_services import get_application_metadata
+from app.blueprints.services.data_services import get_fund
+from app.blueprints.services.data_services import get_round
+from app.blueprints.shared.helpers import get_ttl_hash
+from app.blueprints.shared.helpers import get_value_from_request
+from config import Config
 
 _UK_COUNTRIES: list[str] = [
     "ENGLAND",
@@ -66,9 +70,7 @@ def get_valid_country_roles(short_name: str) -> frozenset[str]:
 
 def get_countries_from_roles(short_name: str) -> frozenset[str]:
     valid_country_roles = get_valid_country_roles(short_name)
-    partitioned_country_roles = (
-        vcr.partition("_") for vcr in valid_country_roles
-    )
+    partitioned_country_roles = (vcr.partition("_") for vcr in valid_country_roles)
     return frozenset(country for _, _, country in partitioned_country_roles)
 
 
@@ -76,9 +78,7 @@ def has_relevant_country_role(country: str, short_name: str) -> bool:
     return f"{short_name}_{country}".casefold() in _get_all_users_roles()
 
 
-def _get_roles_by_fund_short_name(
-    short_name: str, roles: Sequence[str]
-) -> list[str]:
+def _get_roles_by_fund_short_name(short_name: str, roles: Sequence[str]) -> list[str]:
     return [f"{short_name.upper()}_{role.upper()}" for role in roles]
 
 
@@ -123,22 +123,26 @@ def check_access_application_id(
             application_metadata["fund_id"],
             ttl_hash=get_ttl_hash(Config.LRU_CACHE_TIME),
         ).short_name
+
+        round_status: RoundStatus = determine_round_status(
+            fund_id=application_metadata["fund_id"],
+            round_id=application_metadata["round_id"],
+        )
+        if not round_status.has_assessment_opened:
+            abort(403, "This assessment is not yet live.")
+
         if not has_access_to_fund(short_name):
             abort(403)
 
-        fund_roles_required = _get_roles_by_fund_short_name(
-            short_name, roles_required
-        )
+        fund_roles_required = _get_roles_by_fund_short_name(short_name, roles_required)
         login_required_function = login_required(
             func, roles_required=fund_roles_required
         )
 
-        if has_devolved_authority_validation(
-            fund_id=application_metadata["fund_id"]
-        ):
-            if country := application_metadata.get(
-                "location_json_blob", {}
-            ).get("country"):
+        if has_devolved_authority_validation(fund_id=application_metadata["fund_id"]):
+            if country := application_metadata.get("location_json_blob", {}).get(
+                "country"
+            ):
                 if not has_relevant_country_role(
                     _normalise_country(country), short_name
                 ):
@@ -154,29 +158,40 @@ def _check_access_fund_common(
     func: Callable = None,
     roles_required: List[str] = [],
     fund_key: str = "fund_short_name",
+    round_key: str = "round_short_name",
 ) -> Callable:
 
-    if func is None:
+    if func is None:  # if used as a partial function
         return lambda f: _check_access_fund_common(
-            func=f, roles_required=roles_required, fund_key=fund_key
+            func=f,
+            roles_required=roles_required,
+            fund_key=fund_key,
+            round_key=round_key,
         )
 
     @wraps(func)
     def decorated_function(*args, **kwargs):
         fund_value = get_value_from_request((fund_key,))
+        round_value = get_value_from_request((round_key,))
         if not fund_value:
             abort(404)
 
+        using_short_name = fund_key == "fund_short_name"
+
         short_name = (
             fund_value
-            if fund_key == "fund_short_name"
+            if using_short_name
             else get_fund(
                 fund_value, ttl_hash=get_ttl_hash(Config.LRU_CACHE_TIME)
             ).short_name
         )
-        fund_roles_required = _get_roles_by_fund_short_name(
-            short_name, roles_required
-        )
+
+        round_details = get_round(fund_value, round_value, using_short_name)
+        round_status: RoundStatus = determine_round_status(round=round_details)
+        if not round_status.has_assessment_opened:
+            abort(403, "This assessment is not yet live.")
+
+        fund_roles_required = _get_roles_by_fund_short_name(short_name, roles_required)
         login_required_function = login_required(
             func, roles_required=fund_roles_required
         )
@@ -190,11 +205,13 @@ def _check_access_fund_common(
     return decorated_function
 
 
-check_access_fund_short_name = functools.partial(
-    _check_access_fund_common, fund_key="fund_short_name"
+check_access_fund_id_round_id = functools.partial(
+    _check_access_fund_common, fund_key="fund_id", round_key="round_id"
 )
-check_access_fund_id = functools.partial(
-    _check_access_fund_common, fund_key="fund_id"
+check_access_fund_short_name_round_sn = functools.partial(
+    _check_access_fund_common,
+    fund_key="fund_short_name",
+    round_key="round_short_name",
 )
 
 

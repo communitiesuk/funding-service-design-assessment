@@ -1,6 +1,7 @@
 import requests
-from config import Config
 from flask import current_app
+
+from config import Config
 
 
 def get_status(questions):
@@ -21,9 +22,7 @@ def get_status(questions):
         status["IN PROGRESS"] = sum(
             value == "IN PROGRESS" for value in questions.values()
         )
-        status["COMPLETED"] = sum(
-            value == "COMPLETED" for value in questions.values()
-        )
+        status["COMPLETED"] = sum(value == "COMPLETED" for value in questions.values())
         status["TOTAL"] = sum(
             (
                 (value == "NOT STARTED")
@@ -52,9 +51,7 @@ def update_ar_status_to_completed(application_id):
         Config.ASSESSMENT_UPDATE_STATUS.format(application_id=application_id)
     )
     if response.status_code == 204:
-        current_app.logger.info(
-            "The application status has been updated to COMPLETE"
-        )
+        current_app.logger.info("The application status has been updated to COMPLETE")
         return response
     else:
         current_app.logger.error("Not Found: application_id not found")
@@ -75,6 +72,5 @@ def update_ar_status_to_qa_completed(application_id, user_id):
         return response
     else:
         current_app.logger.error(
-            "Could not create qa_complete record for application"
-            f" {application_id}"
+            f"Could not create qa_complete record for application {application_id}"
         )

@@ -1,33 +1,17 @@
 import json  # noqa
 
-import app
 import pytest  # noqa
+from flask import Flask
+
+import app
 from app.blueprints.assessments.models.applicants_response import (
-    _convert_checkbox_items,
-)
-from app.blueprints.assessments.models.applicants_response import (
-    _convert_heading_description_amount,
-)
-from app.blueprints.assessments.models.applicants_response import (
-    _convert_non_number_grouped_fields,
-)
-from app.blueprints.assessments.models.applicants_response import (
-    _flatten_field_ids,
-)
-from app.blueprints.assessments.models.applicants_response import (
-    _make_field_ids_hashable,
-)
-from app.blueprints.assessments.models.applicants_response import (
-    _ui_component_from_factory,
+    ANSWER_NOT_PROVIDED_DEFAULT,
 )
 from app.blueprints.assessments.models.applicants_response import (
     AboveQuestionAnswerPair,
 )
 from app.blueprints.assessments.models.applicants_response import (
     AboveQuestionAnswerPairHref,
-)
-from app.blueprints.assessments.models.applicants_response import (
-    ANSWER_NOT_PROVIDED_DEFAULT,
 )
 from app.blueprints.assessments.models.applicants_response import (
     ApplicantResponseComponent,
@@ -39,27 +23,34 @@ from app.blueprints.assessments.models.applicants_response import (
     BesideQuestionAnswerPairHref,
 )
 from app.blueprints.assessments.models.applicants_response import (
-    create_ui_components,
-)
-from app.blueprints.assessments.models.applicants_response import (
     FormattedBesideQuestionAnswerPair,
 )
-from app.blueprints.assessments.models.applicants_response import (
-    MonetaryKeyValues,
-)
-from app.blueprints.assessments.models.applicants_response import (
-    NewAddAnotherTable,
-)
+from app.blueprints.assessments.models.applicants_response import MonetaryKeyValues
+from app.blueprints.assessments.models.applicants_response import NewAddAnotherTable
 from app.blueprints.assessments.models.applicants_response import (
     QuestionAboveHrefAnswerList,
 )
+from app.blueprints.assessments.models.applicants_response import QuestionHeading
 from app.blueprints.assessments.models.applicants_response import (
-    QuestionHeading,
+    _convert_checkbox_items,
 )
+from app.blueprints.assessments.models.applicants_response import (
+    _convert_heading_description_amount,
+)
+from app.blueprints.assessments.models.applicants_response import (
+    _convert_non_number_grouped_fields,
+)
+from app.blueprints.assessments.models.applicants_response import _flatten_field_ids
+from app.blueprints.assessments.models.applicants_response import (
+    _make_field_ids_hashable,
+)
+from app.blueprints.assessments.models.applicants_response import (
+    _ui_component_from_factory,
+)
+from app.blueprints.assessments.models.applicants_response import create_ui_components
 from app.blueprints.assessments.models.applicants_response import sanitise_html
 from app.blueprints.assessments.routes import assessment_bp
 from app.blueprints.shared.filters import format_address
-from flask import Flask
 from tests.api_data.test_data import TestSanitiseData
 
 
@@ -89,9 +80,7 @@ class TestApplicantResponseComponentConcreteSubclasses:
             {"question": ("Test caption", "Test question")},
         ],
     )
-    def test_monetary_key_values_should_default_to_not_provided(
-        self, mkv_data
-    ):
+    def test_monetary_key_values_should_default_to_not_provided(self, mkv_data):
         above_qa_pair = MonetaryKeyValues.from_dict(mkv_data)
 
         assert isinstance(above_qa_pair, AboveQuestionAnswerPair)
@@ -123,9 +112,7 @@ class TestApplicantResponseComponentConcreteSubclasses:
         ],
     )
     def test_new_add_another_table_should_render(self, new_add_another_data):
-        new_add_another_table = NewAddAnotherTable.from_dict(
-            new_add_another_data
-        )
+        new_add_another_table = NewAddAnotherTable.from_dict(new_add_another_data)
 
         assert isinstance(new_add_another_table, NewAddAnotherTable)
         assert new_add_another_table.caption == "Test caption"
@@ -233,9 +220,7 @@ class TestApplicantResponseComponentConcreteSubclasses:
             ),
         ],
     )
-    def test_question_answer_pair_href_should_render_default(
-        self, clazz, data
-    ):
+    def test_question_answer_pair_href_should_render_default(self, clazz, data):
         qa_pair = clazz.from_dict(data, "https://example.com")
         assert qa_pair.question == "What is your name?"
         assert qa_pair.answer == ANSWER_NOT_PROVIDED_DEFAULT
@@ -362,10 +347,8 @@ class TestApplicatorsResponseComponentFactory:
                     "form_name": "funding-required-ns",
                     "presentation_type": "grouped_fields",
                     "question": [
-                        "How much revenue are you applying for? 1 April 2023"
-                        " to 31 March 2024",
-                        "How much revenue are you applying for? 1 April 2023"
-                        " to 31 March 2024",
+                        "How much revenue are you applying for? 1 April 2023 to 31 March 2024",
+                        "How much revenue are you applying for? 1 April 2023 to 31 March 2024",
                     ],
                 },
                 BesideQuestionAnswerPair,
@@ -890,7 +873,7 @@ def test_create_ui_components_retains_order(monkeypatch):
             "form_name": "mock_form_name",
             "path": "mock_path",
             "question": "Eleventh",
-            "answer": None,  # we dynamically grab the state of the bucket
+            "answer": "filename.png",  # we dynamically grab the state of the bucket
             "presentation_type": "s3bucketPath",
             "field_type": "clientSideFileUploadField",
         },
@@ -914,9 +897,7 @@ def test_create_ui_components_retains_order(monkeypatch):
     )
 
     with test_app.app_context():
-        ui_components = create_ui_components(
-            response_with_unhashable_fields, "app_123"
-        )
+        ui_components = create_ui_components(response_with_unhashable_fields, "app_123")
 
     assert all(
         isinstance(ui_component, ApplicantResponseComponent)

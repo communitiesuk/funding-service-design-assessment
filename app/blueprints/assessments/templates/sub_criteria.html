@@ -4,7 +4,10 @@
 {% from "macros/banner_summary.html" import banner_summary %}
 {% from "macros/flag_application_button.html" import flag_application_button %}
 {% from "macros/comments.html" import comment %}
+{% from "macros/comments_edit_box.html" import edit_comment_box %}
 {% from "macros/comments_box.html" import comment_box %}
+{% from "macros/sub_criteria_heading.html" import sub_criteria_heading %}
+{% from "macros/migration_banner.html" import migration_banner %}
 
 {% set pageHeading -%}
 {% if comment_form.comment.errors %}
@@ -42,11 +45,12 @@ Error:
 {% if is_flaggable and g.access_controller.has_any_assessor_role %}
     {{ flag_application_button(application_id) }}
 {% endif %}
-<div class="govuk-grid-row">
-    <div class="govuk-grid-column-one-third">
-        <h2 class="govuk-heading-l scoring-heading">{{ sub_criteria.name }}</h2>
-    </div>
-</div>
+
+{% if migration_banner_enabled %}
+    {{ migration_banner() }}
+{% endif %}
+
+{{ sub_criteria_heading(sub_criteria)}}
 
 <div class="govuk-grid-row">
         <div class="govuk-grid-column-one-third">
@@ -55,7 +59,7 @@ Error:
         <div class="theme govuk-grid-column-two-thirds">
             {{ theme(answers_meta)}}
             {{ comment(comments)}}
-            {% if display_comment_box != True %}
+            {% if display_comment_box != True and not display_comment_edit_box %}
                 <a
                     id="comment"
                     class="govuk-button secondary-button govuk-!-margin-top-2 govuk-!-margin-bottom-6"
@@ -78,6 +82,9 @@ Error:
 
                 {% if display_comment_box == True %}
                     {{ comment_box(comment_form) }}
+                {% endif %}
+                {% if display_comment_edit_box %}
+                    {{ edit_comment_box(comments, comment_id, comment_form)}}
                 {% endif %}
         </div>
 </div>

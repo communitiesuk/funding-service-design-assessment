@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% from "macros/tag_header.html" import tag_header %}
+{% from "macros/migration_banner.html" import migration_banner %}
 {% set pageHeading = "Manage tags" %}
 
 {% block header %}
@@ -7,7 +8,9 @@
 {% endblock header %}
 
 {% block content %}
-
+{% if migration_banner_enabled %}
+    {{migration_banner()}}
+{% endif %}
     <div class="govuk-grid-column-two-thirds">
                 <h1 class="govuk-heading-xl govuk-!-margin-bottom-4">{{pageHeading}}</h1>
                 <div id="contact-hint" class="govuk-hint govuk-!-margin-bottom-6">

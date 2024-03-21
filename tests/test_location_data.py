@@ -1,6 +1,7 @@
 from collections import OrderedDict
 
 import pytest
+
 from app.blueprints.assessments.models.location_data import LocationData
 
 # Given data

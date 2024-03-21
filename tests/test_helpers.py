@@ -1,22 +1,19 @@
 from collections import OrderedDict
 
 import pytest
+from werkzeug.exceptions import HTTPException
+
 from app.blueprints.assessments.helpers import generate_assessment_info_csv
 from app.blueprints.assessments.helpers import generate_csv_of_application
 from app.blueprints.assessments.helpers import generate_maps_from_form_names
-from app.blueprints.scoring.forms.scores_and_justifications import (
-    OneToFiveScoreForm,
-)
-from app.blueprints.scoring.forms.scores_and_justifications import (
-    ZeroToThreeScoreForm,
-)
+from app.blueprints.scoring.forms.scores_and_justifications import OneToFiveScoreForm
+from app.blueprints.scoring.forms.scores_and_justifications import ZeroToThreeScoreForm
 from app.blueprints.scoring.helpers import get_scoring_class
 from app.blueprints.services.models.flag import Flag
 from app.blueprints.services.models.fund import Fund
 from app.blueprints.shared.helpers import determine_display_status
 from app.blueprints.shared.helpers import is_flaggable
 from app.blueprints.shared.helpers import process_assessments_stats
-from werkzeug.exceptions import HTTPException
 
 RAISED_FLAG = [
     Flag.from_dict(
@@ -134,6 +131,7 @@ def test_generate_csv_of_application():
         description="Test Fund Description",
         short_name="Test Short Name",
     )
+    fund_round_name = "Test Fund R4W1"
 
     application = {
         "application_id": "application-uuid",
@@ -141,7 +139,7 @@ def test_generate_csv_of_application():
     }
 
     expected_output = (
-        "Fund,Test Fund,fund-uuid\r\n"
+        "Fund,Test Fund R4W1,fund-uuid\r\n"
         "Application,applcation-short-reference,application-uuid\r\n"
         "Section,Question,Answer\r\n"
         "Section1,question1,'- answer1\r\n"
@@ -152,7 +150,7 @@ def test_generate_csv_of_application():
         "Section3,question6,Not provided\r\n"
     )
 
-    result = generate_csv_of_application(q_and_a, fund, application)
+    result = generate_csv_of_application(q_and_a, fund, application, fund_round_name)
 
     assert result == expected_output
 
@@ -173,6 +171,10 @@ def test_generate_csv_for_fields():
             "Project name": "Save the humble pub in Bangor",
             "Doc Name": "sample1.doc",
         },
+        {
+            "AppId": "de36ae35-9ef6-4dc5-a2bf-de9ee481c8af",
+            "Charity number ": "Test missing keys",
+        },
     ]
 
     expected_result = (
@@ -181,7 +183,9 @@ def test_generate_csv_for_fields():
         " Name\r\n9a8b6c00-e461-466c-acb3-2519621b3a38,Test,False,Save the"
         " humble pub in"
         " Bangor,sample1.doc\r\nde36ae35-9ef6-4dc5-a2bf-de9ee481c8af,Test,False,Save"
-        " the humble pub in Bangor,sample1.doc\r\n"
+        " the humble pub in"
+        " Bangor,sample1.doc\r\nde36ae35-9ef6-4dc5-a2bf-de9ee481c8af,Test"
+        " missing keys,,,\r\n"
     )
 
     result = generate_assessment_info_csv(test_data)

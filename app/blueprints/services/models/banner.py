@@ -14,9 +14,5 @@ class Banner:
     def from_filtered_dict(cls, d: dict):
         # Filter unknown fields from JSON dictionary
         return cls(
-            **{
-                k: v
-                for k, v in d.items()
-                if k in inspect.signature(cls).parameters
-            }
+            **{k: v for k, v in d.items() if k in inspect.signature(cls).parameters}
         )

@@ -1,13 +1,12 @@
 from unittest.mock import MagicMock
 
 import pytest
+from werkzeug.exceptions import NotFound
+
 from app.blueprints.assessments.models.file_factory import (
     ApplicationFileRepresentationArgs,
 )
-from app.blueprints.assessments.models.file_factory import (
-    generate_file_content,
-)
-from werkzeug.exceptions import NotFound
+from app.blueprints.assessments.models.file_factory import generate_file_content
 
 
 @pytest.fixture

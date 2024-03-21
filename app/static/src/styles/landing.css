@@ -29,6 +29,16 @@
     width: 16em;
 }
 
+.left-margin {
+    margin-left: 80px;
+
+}
+
+button.left-margin-negative {
+    margin-left: -100px;
+
+}
+
 .search-bar-flex-container {
     float: none;
     display: flex;

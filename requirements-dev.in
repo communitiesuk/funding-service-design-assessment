@@ -1,5 +1,4 @@
 -r requirements.txt
-bandit
 deepdiff
 invoke
 pip-tools>=6.13.0
@@ -15,3 +14,4 @@ boto3
 beautifulsoup4==4.12.2
 black
 debugpy
+Flake8-pyproject

@@ -73,15 +73,39 @@ search_params_cyp = {
     "filter_by_tag": ALL_VALUE,
     "country": ALL_VALUE,
     "region": ALL_VALUE,
-    "local_authority": ALL_VALUE,
 }
 
 search_params_dpif = {
     "search_term": "",
-    "search_in": "value",
+    "search_in": "organisation_name,short_id",
     "status": ALL_VALUE,
     "filter_by_tag": ALL_VALUE,
+    "publish_datasets": ALL_VALUE,
+    "datasets": ALL_VALUE,
+    "team_in_place": ALL_VALUE,
 }
+
+dpi_filters = [
+    {
+        "name": "team_in_place",
+        "values": ["ALL", "Yes", "No"],
+    },
+    {
+        "name": "datasets",
+        "values": ["ALL", "Yes", "No"],
+    },
+    {
+        "name": "publish_datasets",
+        "values": [
+            "ALL",
+            "None",
+            "0-to-3-months",
+            "4-to-7-months",
+            "8-to-11-months",
+            "longer-than-11-months",
+        ],
+    },
+]
 
 search_params_tag = {
     "search_term": "",
@@ -90,6 +114,11 @@ search_params_tag = {
     "tag_status": True,
 }
 
+search_params_cof_eoi = {
+    "search_term": "",
+    "search_in": "short_id",
+    "filter_by_tag": ALL_VALUE,
+}
 LandingFilters = namedtuple(
     "LandingFilters", ["filter_status", "filter_fund_type", "filter_fund_name"]
 )

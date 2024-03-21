@@ -12,7 +12,7 @@ def _render_template(template_path: str, context) -> str:
 
 
 class PDFCreationException(Exception):
-    ...
+    pass
 
 
 def _convert_html_to_pdf(html_content: str, pdf_file: BytesIO) -> bool:

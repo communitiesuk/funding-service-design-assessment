@@ -5,9 +5,9 @@ from dataclasses import dataclass
 
 test_fund_id = "test-fund"
 test_round_id = "test-round"
-test_user_id_lead_assessor = "test_user_lead_assessor"
-test_user_id_assessor = "test_user_assessor"
-test_user_id_commenter = "test_user_commenter"
+test_user_id_lead_assessor = "lead"
+test_user_id_assessor = "assessor"
+test_user_id_commenter = "commenter"
 test_funding_requested = 5000.0
 
 # application specific config
@@ -244,6 +244,9 @@ mock_api_results = {
         "name": "Funding Service Design Unit Test Fund",
         "short_name": "TF",
         "description": "unit testing fund",
+        # "assessment_start": None,
+        # "assessment_deadline": "2124-01-01 12:00:00",
+        # "deadline": "2024-01-01 12:00:00"
     },
     "fund_store/funds/NSTF": {
         "id": "NSTF",
@@ -263,6 +266,12 @@ mock_api_results = {
         "short_name": "COF",
         "description": "unit testing fund",
     },
+    "fund_store/funds/DPIF": {
+        "id": "DPIF",
+        "name": "Digital Planning Innovation Fund",
+        "short_name": "DPIF",
+        "description": "unit testing fund",
+    },
     "fund_store/funds/{fund_id}/rounds/{round_id}": {
         "id": test_round_id,
         "fund_id": test_fund_id,
@@ -272,6 +281,7 @@ mock_api_results = {
             {"id": "crit1", "name": "Test criteria", "value": 1.0}
         ],
         "assessment_deadline": "2023-03-01T12:00:00",
+        "assessment_start": None,
         "deadline": "2022-12-01T12:00:00",
         "opens": "2022-10-01T12:00:00",
         "all_uploaded_documents_section_available": True,
@@ -381,14 +391,16 @@ mock_api_results = {
             "workflow_status": stopped_app["workflow_status"],
         }
     ],
-    "assessment_store/assessments/get-stats/{fund_id}/{round_id}": {
-        "completed": 1,
-        "assessing": 1,
-        "not_started": 1,
-        "qa_completed": 1,
-        "stopped": 1,
-        "flagged": 1,
-        "total": 3,
+    "assessment_store/assessments/get-stats/{fund_id}": {
+        test_round_id: {
+            "completed": 1,
+            "assessing": 1,
+            "not_started": 1,
+            "qa_completed": 1,
+            "stopped": 1,
+            "flagged": 1,
+            "total": 3,
+        }
     },
     "assessment_store/progress": [],
     "assessment_store/application_overviews/stopped_app": {
@@ -516,9 +528,7 @@ mock_api_results = {
         "fund_id": test_fund_id,
     },
     "assessment_store/flag_data?flag_id=flagged_app": flagged_app["flags"][-1],
-    "assessment_store/flag_data?flag_id=resolved_app": resolved_app["flags"][
-        -1
-    ],
+    "assessment_store/flag_data?flag_id=resolved_app": resolved_app["flags"][-1],
     "assessment_store/flag_data?flag_id=stopped_app": stopped_app["flags"][-1],
     "assessment_store/flag_data?flag_id=flagged_qa_completed_app": flagged_qa_completed_app[
         "flags"
@@ -526,9 +536,7 @@ mock_api_results = {
         -1
     ],
     "assessment_store/flags?application_id=flagged_app": flagged_app["flags"],
-    "assessment_store/flags?application_id=resolved_app": resolved_app[
-        "flags"
-    ],
+    "assessment_store/flags?application_id=resolved_app": resolved_app["flags"],
     "assessment_store/flags?application_id=stopped_app": stopped_app["flags"],
     "assessment_store/flags?application_id=flagged_qa_completed_app": flagged_qa_completed_app[
         "flags"
@@ -538,9 +546,7 @@ mock_api_results = {
     "assessment_store/qa_complete/stopped_app": {},
     "assessment_store/qa_complete/flagged_qa_completed_app": flagged_qa_completed_app[
         "qa_complete"
-    ][
-        0
-    ],
+    ][0],
     "account_store/bulk-accounts": {
         test_user_id_lead_assessor: {
             "user_id": test_user_id_lead_assessor,
@@ -583,34 +589,79 @@ mock_api_results = {
     ],
     "assessment_store/comment?": [
         {
-            "comment": "This is a comment",
+            "id": "test_id_1",
             "user_id": test_user_id_lead_assessor,
             "date_created": "2022-12-08T08:00:01.748170",
             "theme_id": resolved_app["theme_id"],
+            "sub_criteria_id": "test_sub_criteria_id",
+            "application_id": resolved_app["id"],
+            "updates": [
+                {
+                    "comment": "This is a comment",
+                    "comment_id": "test_id_1",
+                    "date_created": "2022-12-08T08:00:01.748170",
+                }
+            ],
         },
         {
-            "comment": "You're missing some details",
+            "id": "test_id_2",
             "user_id": test_user_id_lead_assessor,
             "date_created": "2022-10-27T08:00:02.748170",
             "theme_id": resolved_app["theme_id"],
+            "sub_criteria_id": "test_sub_criteria_id",
+            "application_id": resolved_app["id"],
+            "updates": [
+                {
+                    "comment": "You're missing some details",
+                    "comment_id": "test_id_2",
+                    "date_created": "2022-10-27T08:00:02.748170",
+                }
+            ],
         },
         {
-            "comment": "Im a lead assessor",
+            "id": "test_id_3",
             "user_id": test_user_id_lead_assessor,
             "date_created": "2022-10-27T08:00:03.748170",
             "theme_id": resolved_app["theme_id"],
+            "sub_criteria_id": "test_sub_criteria_id",
+            "application_id": resolved_app["id"],
+            "updates": [
+                {
+                    "comment": "You're missing some details",
+                    "comment_id": "test_id_3",
+                    "date_created": "2022-10-27T08:00:03.748170",
+                }
+            ],
         },
         {
-            "comment": "Im an assessor",
+            "id": "test_id_4",
             "user_id": test_user_id_assessor,
             "date_created": "2022-10-27T08:00:04.748170",
             "theme_id": resolved_app["theme_id"],
+            "sub_criteria_id": "test_sub_criteria_id",
+            "application_id": resolved_app["id"],
+            "updates": [
+                {
+                    "comment": "Im an assessor",
+                    "comment_id": "test_id_4",
+                    "date_created": "2022-10-27T08:00:04.748170",
+                }
+            ],
         },
         {
-            "comment": "Im a commenter",
+            "id": "test_id_5",
             "user_id": test_user_id_commenter,
             "date_created": "2022-10-27T08:00:05.748170",
             "theme_id": resolved_app["theme_id"],
+            "sub_criteria_id": "test_sub_criteria_id",
+            "application_id": resolved_app["id"],
+            "updates": [
+                {
+                    "comment": "Im a commenter",
+                    "comment_id": "test_id_5",
+                    "date_created": "2022-10-27T08:00:05.748170",
+                }
+            ],
         },
     ],
     "assessment_store/score?": [
@@ -635,6 +686,7 @@ mock_api_results = {
     ],
     "assessment_store/applications/{application_id}": {
         "fund_id": "TF",
+        "round_id": "TR",
     },
     "/application/stopped_app/metadata": {
         "fund_id": test_fund_id,
@@ -680,10 +732,7 @@ class TestSanitiseData:
             }
         else:
             return {
-                "answer": (
-                    f"<{self.tag}>Example text"
-                    f" <li>One</li>\n<li>Two</li></{self.tag}>"
-                )
+                "answer": f"<{self.tag}>Example text <li>One</li>\n<li>Two</li></{self.tag}>"
             }
 
     @property
@@ -700,10 +749,7 @@ class TestSanitiseData:
         else:
             if self.tag == "p":
                 return {
-                    "answer": (
-                        f"<{self.tag} class='govuk-body'>Example text"
-                        f" <li>One</li>\n<li>Two</li></{self.tag}>"
-                    )
+                    "answer": f"<{self.tag} class='govuk-body'>Example text <li>One</li>\n<li>Two</li></{self.tag}>"
                 }
             if self.tag == "ul":
                 return {

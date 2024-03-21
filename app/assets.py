@@ -1,4 +1,5 @@
 """Compile static assets."""
+
 import time
 
 from flask_assets import Bundle

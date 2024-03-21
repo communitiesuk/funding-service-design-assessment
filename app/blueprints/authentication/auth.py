@@ -1,10 +1,11 @@
-from app.blueprints.services.data_services import get_funds
-from app.blueprints.shared.helpers import get_ttl_hash
-from config import Config
 from flask import g
 from flask import redirect
 from flask import request
 from fsd_utils.authentication.models import User
+
+from app.blueprints.services.data_services import get_funds
+from app.blueprints.shared.helpers import get_ttl_hash
+from config import Config
 
 
 def auth_protect(minimum_roles_required: list, unprotected_routes: list):
@@ -54,8 +55,7 @@ def auth_protect(minimum_roles_required: list, unprotected_routes: list):
         # Ensure that authenticated users have
         # all minimum required roles
         if not g.user.roles or not any(  # any of the minimum roles are present
-            role_required in g.user.roles
-            for role_required in minimum_roles_required
+            role_required in g.user.roles for role_required in minimum_roles_required
         ):
             return redirect(
                 Config.AUTHENTICATOR_HOST
@@ -65,9 +65,8 @@ def auth_protect(minimum_roles_required: list, unprotected_routes: list):
             )
         elif request.path in ["", "/"]:
             return redirect(Config.DASHBOARD_ROUTE)
-    elif (
-        request.path not in unprotected_routes
-        and not request.path.startswith("/static/")
+    elif request.path not in unprotected_routes and not request.path.startswith(
+        "/static/"
     ):  # noqa
         # Redirect unauthenticated users to
         # login on the home page

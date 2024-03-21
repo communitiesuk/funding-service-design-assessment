@@ -9,13 +9,17 @@ from typing import List
 from typing import Tuple
 from urllib.parse import quote
 
+from bs4 import BeautifulSoup
+from flask import current_app
+from flask import url_for
+
 from app.blueprints.services.aws import list_files_in_folder
 from app.blueprints.shared.filters import format_address
 from app.blueprints.shared.filters import format_date
 from app.blueprints.shared.filters import remove_dashes_underscores_capitalize
-from bs4 import BeautifulSoup
-from flask import current_app
-from flask import url_for
+from app.blueprints.shared.filters import (
+    remove_dashes_underscores_capitalize_keep_uppercase,
+)
 
 ANSWER_NOT_PROVIDED_DEFAULT = "<p>Not provided.</p>"
 
@@ -25,9 +29,7 @@ class ApplicantResponseComponent(ABC):
     @property
     @abstractmethod
     def key(self):
-        raise NotImplementedError(
-            f"key not implemented for {self.__class__.__name__}"
-        )
+        raise NotImplementedError(f"key not implemented for {self.__class__.__name__}")
 
     @property
     def should_render(self):
@@ -107,9 +109,11 @@ class FormattedBesideQuestionAnswerPair(QuestionAnswerPair):
     def from_dict(cls, data: dict, formatter: callable):  # noqa
         return cls(
             question=data["question"],
-            answer=data.get("answer")
-            if data.get("answer")
-            else ANSWER_NOT_PROVIDED_DEFAULT,
+            answer=(
+                data.get("answer")
+                if data.get("answer")
+                else ANSWER_NOT_PROVIDED_DEFAULT
+            ),
             formatter=formatter if data.get("answer") else lambda x: x,
         )
 
@@ -136,9 +140,7 @@ class MonetaryKeyValues(ApplicantResponseComponent):
         return cls(
             caption=caption,  # sometimes not present
             column_description=question,
-            question_answer_pairs=[
-                (desc, float(amt)) for desc, amt in data["answer"]
-            ],
+            question_answer_pairs=[(desc, float(amt)) for desc, amt in data["answer"]],
             total=sum([float(amt) for _, amt in data["answer"]]),
         )
 
@@ -262,11 +264,7 @@ def _ui_component_from_factory(item: dict, application_id: str):
 
     # TODO : Handle "monthYearField" field convertion in a better way if exists in "multiInputField"
     # Convert input date string from MM-YYYY/YYYY-MM to Month Year format (eg., 2023-06 to June 2023)
-    if (
-        answer
-        and field_type == "monthYearField"
-        and presentation_type == "text"
-    ) or (
+    if (answer and field_type == "monthYearField" and presentation_type == "text") or (
         answer and field_type == "multiInputField" and isinstance(answer, list)
     ):
         if isinstance(answer, list):
@@ -275,9 +273,7 @@ def _ui_component_from_factory(item: dict, application_id: str):
                     if ans[2] == "monthYearField":
                         for j, val in enumerate(ans[1]):
                             input_date = val
-                            item["answer"][i][1][j] = _convert_to_month_year(
-                                input_date
-                            )
+                            item["answer"][i][1][j] = _convert_to_month_year(input_date)
             except IndexError:
                 pass
         else:
@@ -326,7 +322,9 @@ def _ui_component_from_factory(item: dict, application_id: str):
 
     elif presentation_type in ("text", "list", "free_text"):
         if field_type in ("radiosField") and item.get("answer"):
-            item["answer"] = item["answer"].replace("-", " ").capitalize()
+            item["answer"] = remove_dashes_underscores_capitalize_keep_uppercase(
+                item["answer"]
+            )
         if field_type in ("multilineTextField",):
             return AboveQuestionAnswerPair.from_dict(item)
         elif field_type in ("websiteField",):
@@ -334,18 +332,12 @@ def _ui_component_from_factory(item: dict, application_id: str):
         elif field_type in ("datePartsField",):
             return FormattedBesideQuestionAnswerPair.from_dict(
                 item,
-                formatter=lambda x: format_date(
-                    x, from_="%Y-%m-%d", to_="%d %B %Y"
-                ),
+                formatter=lambda x: format_date(x, from_="%Y-%m-%d", to_="%d %B %Y"),
             )
         elif field_type in ("emailAddressField",):
-            return BesideQuestionAnswerPairHref.from_dict(
-                item, href=f"mailto:{answer}"
-            )
+            return BesideQuestionAnswerPairHref.from_dict(item, href=f"mailto:{answer}")
         elif field_type in ("telephoneNumberField",):
-            return BesideQuestionAnswerPairHref.from_dict(
-                item, href=f"tel:{answer}"
-            )
+            return BesideQuestionAnswerPairHref.from_dict(item, href=f"tel:{answer}")
         else:
             return BesideQuestionAnswerPair.from_dict(item)
 
@@ -359,10 +351,9 @@ def _ui_component_from_factory(item: dict, application_id: str):
 
     elif presentation_type == "s3bucketPath":
         folder_path = (
-            f"{application_id}/{item['form_name']}"
-            f"/{item['path']}/{item['field_id']}"
+            f"{application_id}/{item['form_name']}/{item['path']}/{item['field_id']}"
         )
-        file_keys = list_files_in_folder(folder_path)
+        file_keys = list_files_in_folder(folder_path) if answer else []
         key_to_url_dict = {
             key: url_for(
                 "assessment_bp.get_file",
@@ -375,9 +366,7 @@ def _ui_component_from_factory(item: dict, application_id: str):
         return QuestionAboveHrefAnswerList.from_dict(item, key_to_url_dict)
 
     elif presentation_type == "address":
-        return FormattedBesideQuestionAnswerPair.from_dict(
-            item, format_address
-        )
+        return FormattedBesideQuestionAnswerPair.from_dict(item, format_address)
 
     # Note that types "amount", "description" and "heading" are not used
     # here because they are grouped together in the "grouped_fields" type
@@ -402,9 +391,7 @@ def _convert_heading_description_amount(
       of field IDs.
     """
     field_ids = [
-        item["field_id"]
-        for item in response
-        if item["presentation_type"] == "heading"
+        item["field_id"] for item in response if item["presentation_type"] == "heading"
     ]  # gather field ids for headings with a presentation type of "heading"
 
     items = []
@@ -412,15 +399,11 @@ def _convert_heading_description_amount(
         # gather all items with the same field id, we expect one of each type
         # "heading", "description" and "amount", if a field is missing we
         # raise an exception noting the incorrect configuration
-        heading = _get_item_by_presentation_type_index(
-            response, "heading", index
-        )
+        heading = _get_item_by_presentation_type_index(response, "heading", index)
         description = _get_item_by_presentation_type_index(
             response, "description", index
         )
-        amount = _get_item_by_presentation_type_index(
-            response, "amount", index
-        )
+        amount = _get_item_by_presentation_type_index(response, "amount", index)
 
         # if we dont have an answer, we add a default text element which
         # will eventually show "not provided" on the user interface
@@ -517,13 +500,9 @@ def _convert_checkbox_items(
     and a set of field IDs.
     """
     checkbox_field_ids = {
-        item["field_id"]
-        for item in response
-        if item["field_type"] == "checkboxesField"
+        item["field_id"] for item in response if item["field_type"] == "checkboxesField"
     }
-    checkbox_items = (
-        i for i in response if i["field_id"] in checkbox_field_ids
-    )
+    checkbox_items = (i for i in response if i["field_id"] in checkbox_field_ids)
 
     text_items = []
     for item in checkbox_items:
@@ -544,9 +523,11 @@ def _convert_checkbox_items(
             {
                 # The if in this statement has been added because the answer value for ChXWIQ is different than the display value.
                 # We should change the form in future versions
-                "question": remove_dashes_underscores_capitalize(answer)
-                if (item["field_id"] != "ChXWIQ" and answer != "none")
-                else "None of these",
+                "question": (
+                    remove_dashes_underscores_capitalize(answer)
+                    if (item["field_id"] != "ChXWIQ" and answer != "none")
+                    else "None of these"
+                ),
                 "field_type": item.get("field_type"),
                 "field_id": item["field_id"],
                 "answer": "Yes",
@@ -620,14 +601,10 @@ def _convert_non_number_grouped_fields(
     text_items = []
     for item in items_to_process:
         if "answer" not in item or len(item.get("answer", [])) == 0:
-            text_items.append(
-                _build_item(item["question"][0], item["field_id"])
-            )
+            text_items.append(_build_item(item["question"][0], item["field_id"]))
             continue
 
-        for question_answer_tuple, field_id in zip(
-            item["answer"], item["field_id"]
-        ):
+        for question_answer_tuple, field_id in zip(item["answer"], item["field_id"]):
             question, answer = question_answer_tuple
             text_items.append(
                 {
@@ -672,16 +649,10 @@ def create_ui_components(
 
     :return (list[ApplicantResponseComponent]): A list of ApplicantResponseComponent objects
     """
-    response = list(
-        map(_make_field_ids_hashable, response_with_some_unhashable_fields)
-    )
+    response = list(map(_make_field_ids_hashable, response_with_some_unhashable_fields))
 
-    grouped_fields_items, gfi_field_ids = _convert_heading_description_amount(
-        response
-    )
-    text_items_from_checkbox, tifc_field_ids = _convert_checkbox_items(
-        response
-    )
+    grouped_fields_items, gfi_field_ids = _convert_heading_description_amount(response)
+    text_items_from_checkbox, tifc_field_ids = _convert_checkbox_items(response)
     (
         text_items_from_grouped_fields,
         tifgf_field_ids,
@@ -704,9 +675,7 @@ def create_ui_components(
 
     # we need to preserve the order of the fields from the back-end,
     # so we re-sort it here
-    post_processed_items.sort(
-        key=lambda x: field_ids_in_order.index(x["field_id"])
-    )
+    post_processed_items.sort(key=lambda x: field_ids_in_order.index(x["field_id"]))
 
     return [
         _ui_component_from_factory(item, application_id)
@@ -738,9 +707,7 @@ def sanitise_html(data):
             if tag.name == "ul" or tag.name == "ol":
                 if style_type := tag.get("style"):
                     style_type = (
-                        style_type.replace("list-style-type:", "")
-                        .strip(";")
-                        .strip()
+                        style_type.replace("list-style-type:", "").strip(";").strip()
                     )
                     tag["class"] = f"list-type-{style_type}"
                 else:

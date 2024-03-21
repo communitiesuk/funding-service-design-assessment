@@ -11,14 +11,10 @@ def slash_separated_day_month_year(value: str):
 
 def datetime_format(value, format):
     am_pm_format = "%p"
-    formatted_time = datetime.strptime(value, "%Y-%m-%dT%H:%M:%S").strftime(
-        format
-    )
+    formatted_time = datetime.strptime(value, "%Y-%m-%dT%H:%M:%S").strftime(format)
     formatted_time = (
         formatted_time
-        + datetime.strptime(value, "%Y-%m-%dT%H:%M:%S")
-        .strftime(am_pm_format)
-        .lower()
+        + datetime.strptime(value, "%Y-%m-%dT%H:%M:%S").strftime(am_pm_format).lower()
     )
     return formatted_time
 
@@ -29,6 +25,7 @@ def utc_to_bst(value, tz="Europe/London"):
         "%Y-%m-%d %H:%M:%S.%f",
         "%Y-%m-%d %H:%M:%S",
         "%Y-%m-%dT%H:%M:%S",
+        "%Y-%m-%d %H:%M:%S.%f%z",
     ]
     for dt_format in dt_formats:
         try:
@@ -53,6 +50,17 @@ def datetime_format_24hr(value):
 
 def remove_dashes_underscores_capitalize(s: str) -> str:
     return s.replace("-", " ").replace("_", " ").capitalize()
+
+
+def remove_dashes_underscores_capitalize_keep_uppercase(s: str) -> str:
+    # Convert all words to lowercase except for originally uppercase words(Abbrevations are preserved)
+    words = s.replace("-", " ").replace("_", " ").split(" ")
+    lowercase_words = [word.lower() if word.islower() else word for word in words]
+
+    # Capitalize the first word
+    lowercase_words[0] = lowercase_words[0].capitalize()
+
+    return " ".join(lowercase_words)
 
 
 def format_address(address: str) -> list[str]:

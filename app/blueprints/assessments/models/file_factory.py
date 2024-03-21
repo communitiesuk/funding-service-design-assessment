@@ -1,19 +1,18 @@
 from dataclasses import asdict
 from typing import NamedTuple
 
+from flask import abort
+from flask import send_file
+from fsd_utils import generate_text_of_application
+
 from app.blueprints.assessments.helpers import download_file
 from app.blueprints.assessments.helpers import generate_csv_of_application
-from app.blueprints.assessments.models.full_application import (
-    FullApplicationPdfContext,
-)
+from app.blueprints.assessments.models.full_application import FullApplicationPdfContext
 from app.blueprints.assessments.models.full_application import (
     generate_full_application_pdf,
 )
 from app.blueprints.services.models.fund import Fund
 from app.blueprints.services.models.round import Round
-from flask import abort
-from flask import send_file
-from fsd_utils import generate_text_of_application
 
 
 class ApplicationFileRepresentationArgs(NamedTuple):
@@ -27,15 +26,15 @@ class ApplicationFileRepresentationArgs(NamedTuple):
 
 
 def _generate_text_of_application(args: ApplicationFileRepresentationArgs):
-    text = generate_text_of_application(
-        args.question_to_answer, args.fund.name
-    )
+    fund_round_name = f"{args.fund.name} {args.round.title}"
+    text = generate_text_of_application(args.question_to_answer, fund_round_name)
     return download_file(text, "text/plain", f"{args.short_id}_answers.txt")
 
 
 def _generate_csv_of_application(args: ApplicationFileRepresentationArgs):
+    fund_round_name = f"{args.fund.name} {args.round.title}"
     csv = generate_csv_of_application(
-        args.question_to_answer, args.fund, args.application_json
+        args.question_to_answer, args.fund, args.application_json, fund_round_name
     )
     return download_file(csv, "text/csv", f"{args.short_id}_answers.csv")
 
@@ -58,9 +57,7 @@ FILE_GENERATORS = {
 }
 
 
-def generate_file_content(
-    args: ApplicationFileRepresentationArgs, file_type: str
-):
+def generate_file_content(args: ApplicationFileRepresentationArgs, file_type: str):
     """
     Generate the content of an application file based on the provided file type.
 

@@ -21,9 +21,7 @@ class Application:
     def from_json(data: dict):
         date_submitted = data.get("date_submitted")
         if date_submitted and date_submitted != "null":
-            submitted = datetime.fromisoformat(
-                data.get("date_submitted", "1970-01-01")
-            )
+            submitted = datetime.fromisoformat(data.get("date_submitted", "1970-01-01"))
         else:
             submitted = None
         application = Application(

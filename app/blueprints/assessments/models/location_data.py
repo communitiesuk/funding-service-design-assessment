@@ -39,17 +39,11 @@ class LocationData:
 
         def _data(key):
             return (
-                self.local_authorities
-                if key == "local_authority"
-                else self.locations
+                self.local_authorities if key == "local_authority" else self.locations
             )
 
         sorted_items = sorted(
-            [
-                (_item(item), _item(item))
-                for item in _data(key)
-                if item is not None
-            ]
+            [(_item(item), _item(item)) for item in _data(key) if item is not None]
         )
 
         return OrderedDict({"ALL": "All", **dict(sorted_items)})

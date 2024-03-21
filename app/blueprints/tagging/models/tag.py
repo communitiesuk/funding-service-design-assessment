@@ -15,11 +15,7 @@ class Tag:
     @classmethod
     def from_dict(cls, d: dict):
         return cls(
-            **{
-                k: v
-                for k, v in d.items()
-                if k in inspect.signature(cls).parameters
-            }
+            **{k: v for k, v in d.items() if k in inspect.signature(cls).parameters}
         )
 
 
@@ -32,11 +28,7 @@ class TagType:
     @classmethod
     def from_dict(cls, d: dict):
         return cls(
-            **{
-                k: v
-                for k, v in d.items()
-                if k in inspect.signature(cls).parameters
-            }
+            **{k: v for k, v in d.items() if k in inspect.signature(cls).parameters}
         )
 
 
@@ -48,13 +40,10 @@ class AssociatedTag:
     user_id: str
     associated: bool
     purpose: str
+    created_at: str = ""
 
     @classmethod
     def from_dict(cls, d: dict):
         return cls(
-            **{
-                k: v
-                for k, v in d.items()
-                if k in inspect.signature(cls).parameters
-            }
+            **{k: v for k, v in d.items() if k in inspect.signature(cls).parameters}
         )

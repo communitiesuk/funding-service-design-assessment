@@ -1,9 +1,10 @@
 from dataclasses import dataclass
 from functools import partial
 
+from fsd_utils.mapping.application.application_utils import format_answer
+
 from app.blueprints.assessments.pdf_generator import generate_pdf
 from app.blueprints.shared.filters import format_date
-from fsd_utils.mapping.application.application_utils import format_answer
 
 
 @dataclass
@@ -73,9 +74,11 @@ class FullApplicationPdfContext:
             ),
             organisation_name=args.fund.owner_organisation_name,
             organisation_shortname=args.fund.owner_organisation_shortname,
-            organisation_logo_uri=args.fund.owner_organisation_logo_uri
-            if args.round.display_logo_on_pdf_exports
-            else None,
+            organisation_logo_uri=(
+                args.fund.owner_organisation_logo_uri
+                if args.round.display_logo_on_pdf_exports
+                else None
+            ),
             sections=sections,
         )
 
