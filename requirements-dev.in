@@ -8,8 +8,6 @@ pytest-env
 pytest-flask
 pytest-mock
 pip-tools
-selenium
-webdriver-manager
 boto3
 beautifulsoup4==4.12.2
 black
