@@ -80,7 +80,7 @@
 {% if g.access_controller.has_any_assessor_role %}
 
     <!--Flag history is diabled for EOI fund types -->
-    {% if state.fund_short_name.upper() not in ("COF-EOI",) %}
+    {% if not is_expression_of_interest %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-one-half">
 
@@ -105,7 +105,7 @@
             {% endif %}
         </span>
         <span class="right">
-            {% if g.access_controller.is_lead_assessor and state.fund_short_name|upper in ("COF-EOI",) %}
+            {% if g.access_controller.is_lead_assessor and is_expression_of_interest %}
                 <div class="govuk-grid-row govuk-!-text-align-right">
                     <div class="govuk-grid-column-full govuk-!-margin-bottom-4">
                         {{ link_to_download_contract_docs(csrf_token, application_id) }}
@@ -137,7 +137,7 @@
         {% endif %}
     {% endfor %}
 
-    {% if sub_criteria_status_completed and g.access_controller.has_any_assessor_role and (not is_qa_complete) and (not flag_status) and state.fund_short_name.upper() != "COF-EOI"%}
+    {% if sub_criteria_status_completed and g.access_controller.has_any_assessor_role and (not is_qa_complete) and (not flag_status) and not is_expression_of_interest %}
         {{ assessment_complete(state, form.csrf_token, application_id)}}
     {% endif %}
 </div>
@@ -156,7 +156,7 @@
 
             {% if state.criterias|length > 0 %}<h2 class="govuk-heading-l govuk-!-margin-top-8">Unscored</h2>{% endif %}
             {% for section in state.sections %}
-                {{ section_element(section.name, section.sub_criterias, application_id, show_caption=(state.fund_short_name.upper() != "COF-EOI")) }}
+                {{ section_element(section.name, section.sub_criterias, application_id, show_caption=(not is_expression_of_interest)) }}
             {% endfor %}
             {% if state.criterias|length > 0 %}
                 <h2 class="govuk-heading-l govuk-!-margin-top-8">Scored</h2>
