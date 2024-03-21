@@ -217,7 +217,6 @@ python-dateutil==2.8.2
 python-dotenv==0.20.0
     # via
     #   funding-service-design-utils
-    #   webdriver-manager
 python-json-logger==2.0.7
     # via funding-service-design-utils
 pytz==2022.7.1
@@ -255,7 +254,6 @@ requests==2.31.0
     #   pyhanko
     #   pyhanko-certvalidator
     #   python-consul
-    #   webdriver-manager
 rfc3339-validator==0.1.4
     # via openapi-schema-validator
 rich==12.6.0
@@ -298,8 +296,6 @@ tinycss2==1.2.1
     # via
     #   cssselect2
     #   svglib
-tqdm==4.64.1
-    # via webdriver-manager
 typing-extensions==4.5.0
     # via
     #   alembic
@@ -316,8 +312,6 @@ urllib3==1.26.18
     #   sentry-sdk
 webassets==2.0
     # via flask-assets
-webdriver-manager @ git+https://github.com/SergeyPirogov/webdriver_manager@dc73f4a27e8f40cd81dc4718a3f26c22ede29586
-    # via -r requirements.in
 webencodings==0.5.1
     # via
     #   cssselect2
