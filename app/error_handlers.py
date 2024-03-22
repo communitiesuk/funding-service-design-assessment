@@ -1,13 +1,14 @@
 import traceback
 
+from flask import current_app
+from flask import render_template
+from flask import request
+
 from app.blueprints.assessments.routes import assessment_bp
 from app.blueprints.flagging.routes import flagging_bp
 from app.blueprints.scoring.routes import scoring_bp
 from app.blueprints.shared.routes import shared_bp
 from app.blueprints.tagging.routes import tagging_bp
-from flask import current_app
-from flask import render_template
-from flask import request
 
 
 def not_found(error):
@@ -31,6 +32,10 @@ def forbidden(error):
         render_template("403.html", error_description=error.description),
         403,
     )
+
+
+def error_503(error):
+    return render_template("maintenance.html"), 503
 
 
 @assessment_bp.errorhandler(500)

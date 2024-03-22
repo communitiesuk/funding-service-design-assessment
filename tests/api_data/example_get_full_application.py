@@ -182,10 +182,7 @@ mock_full_application_json = {
                             {
                                 "answer": True,
                                 "key": "gScdbf",
-                                "title": (
-                                    "Have you been given funding through the"
-                                    " Community Ownership Fund before?"
-                                ),
+                                "title": "Have you been given funding through the Community Ownership Fund before?",
                                 "type": "list",
                             }
                         ],
@@ -637,10 +634,7 @@ mock_full_application_json = {
                                     " lectus cursus integer suscipit congue."
                                 ),
                                 "key": "GCjCse",
-                                "title": (
-                                    "Give a brief summary of your project,"
-                                    " including what you hope to achieve"
-                                ),
+                                "title": "Give a brief summary of your project, including what you hope to achieve",
                                 "type": "text",
                             },
                         ],
@@ -658,18 +652,13 @@ mock_full_application_json = {
                             {
                                 "answer": "TEST",
                                 "key": "iTeLGU",
-                                "title": (
-                                    "In which constituency is your asset?"
-                                ),
+                                "title": "In which constituency is your asset?",
                                 "type": "text",
                             },
                             {
                                 "answer": "TEST",
                                 "key": "MGRlEi",
-                                "title": (
-                                    "In which local council area is your"
-                                    " asset?"
-                                ),
+                                "title": "In which local council area is your asset?",
                                 "type": "text",
                             },
                         ],
@@ -711,18 +700,13 @@ mock_full_application_json = {
                             {
                                 "answer": "buy-the-asset",
                                 "key": "VWkLlk",
-                                "title": (
-                                    "What do you intend to do with the asset?"
-                                ),
+                                "title": "What do you intend to do with the asset?",
                                 "type": "list",
                             },
                             {
                                 "answer": True,
                                 "key": "IRfSZp",
-                                "title": (
-                                    "Do you know who currently owns your"
-                                    " asset?"
-                                ),
+                                "title": "Do you know who currently owns your asset?",
                                 "type": "list",
                             },
                         ],
@@ -746,10 +730,7 @@ mock_full_application_json = {
                             {
                                 "answer": True,
                                 "key": "gkulUE",
-                                "title": (
-                                    "Have you already completed the purchase"
-                                    " or lease?"
-                                ),
+                                "title": "Have you already completed the purchase or lease?",
                                 "type": "list",
                             }
                         ],
@@ -861,9 +842,7 @@ mock_full_application_json = {
                                 ),
                                 "key": "uBXptf",
                                 "title": (
-                                    "Describe the sale process, or the terms"
-                                    " of your lease if you have rented the"
-                                    " asset"
+                                    "Describe the sale process, or the terms of your lease if you have rented the asset"
                                 ),
                                 "type": "text",
                             }
@@ -876,9 +855,7 @@ mock_full_application_json = {
                             {
                                 "answer": True,
                                 "key": "Wyesgy",
-                                "title": (
-                                    "Is your asset currently publicly owned?"
-                                ),
+                                "title": "Is your asset currently publicly owned?",
                                 "type": "list",
                             }
                         ],
@@ -947,10 +924,7 @@ mock_full_application_json = {
                             {
                                 "answer": True,
                                 "key": "hvzzWB",
-                                "title": (
-                                    "Is this a registered Asset of Community"
-                                    " Value (ACV)?"
-                                ),
+                                "title": "Is this a registered Asset of Community Value (ACV)?",
                                 "type": "list",
                             }
                         ],
@@ -962,10 +936,7 @@ mock_full_application_json = {
                             {
                                 "answer": True,
                                 "key": "MLwpjP",
-                                "title": (
-                                    "Will you purchase the asset within the"
-                                    " appropriate time frame?"
-                                ),
+                                "title": "Will you purchase the asset within the appropriate time frame?",
                                 "type": "list",
                             }
                         ],
@@ -977,10 +948,7 @@ mock_full_application_json = {
                             {
                                 "answer": True,
                                 "key": "VwxiGn",
-                                "title": (
-                                    "Is the asset listed for disposal, or part"
-                                    " of a Community Asset Transfer?"
-                                ),
+                                "title": "Is the asset listed for disposal, or part of a Community Asset Transfer?",
                                 "type": "list",
                             }
                         ],
@@ -996,9 +964,7 @@ mock_full_application_json = {
                                 "type": "date",
                             },
                             {
-                                "answer": (
-                                    "http://www.dummytextgenerator.com/#jump"
-                                ),
+                                "answer": "http://www.dummytextgenerator.com/#jump",
                                 "key": "kBCjwC",
                                 "title": "Provide a link to the listing",
                                 "type": "text",
@@ -1105,10 +1071,7 @@ mock_full_application_json = {
                                     " lectus cursus integer suscipit congue."
                                 ),
                                 "key": "vKSMwi",
-                                "title": (
-                                    "Describe the current status of the"
-                                    " Community Asset Transfer"
-                                ),
+                                "title": "Describe the current status of the Community Asset Transfer",
                                 "type": "text",
                             },
                         ],
@@ -1125,9 +1088,7 @@ mock_full_application_json = {
                                     "current-ownership-not-tenable",
                                 ],
                                 "key": "UDTxqC",
-                                "title": (
-                                    "Why is the asset at risk of closure?"
-                                ),
+                                "title": "Why is the asset at risk of closure?",
                                 "type": "list",
                             }
                         ],
@@ -1274,19 +1235,13 @@ mock_full_application_json = {
                                     " lectus cursus integer suscipit congue."
                                 ),
                                 "key": "ieRCkI",
-                                "title": (
-                                    "Tell us about the feasibility studies you"
-                                    " have carried out for your project"
-                                ),
+                                "title": "Tell us about the feasibility studies you have carried out for your project",
                                 "type": "text",
                             },
                             {
                                 "answer": True,
                                 "key": "aAeszH",
-                                "title": (
-                                    "Do you need to do any further feasibility"
-                                    " work?"
-                                ),
+                                "title": "Do you need to do any further feasibility work?",
                                 "type": "list",
                             },
                         ],
@@ -1414,10 +1369,7 @@ mock_full_application_json = {
                             {
                                 "answer": True,
                                 "key": "JCACTy",
-                                "title": (
-                                    "Have you done any fundraising in the"
-                                    " community?"
-                                ),
+                                "title": "Have you done any fundraising in the community?",
                                 "type": "list",
                             },
                         ],
@@ -1528,9 +1480,7 @@ mock_full_application_json = {
                                     " lectus cursus integer suscipit congue."
                                 ),
                                 "key": "dpLyQh",
-                                "title": (
-                                    "Describe your fundraising activities"
-                                ),
+                                "title": "Describe your fundraising activities",
                                 "type": "text",
                             }
                         ],
@@ -1641,10 +1591,7 @@ mock_full_application_json = {
                                     " lectus cursus integer suscipit congue."
                                 ),
                                 "key": "NZKHOp",
-                                "title": (
-                                    "Tell us how your project supports any"
-                                    " wider local plans"
-                                ),
+                                "title": "Tell us how your project supports any wider local plans",
                                 "type": "text",
                             }
                         ],
@@ -1662,10 +1609,7 @@ mock_full_application_json = {
                             {
                                 "answer": True,
                                 "key": "KqoaJL",
-                                "title": (
-                                    "Are you confident there is local support"
-                                    " for your project?"
-                                ),
+                                "title": "Are you confident there is local support for your project?",
                                 "type": "list",
                             }
                         ],
@@ -1776,10 +1720,7 @@ mock_full_application_json = {
                                     " lectus cursus integer suscipit congue."
                                 ),
                                 "key": "BFbzux",
-                                "title": (
-                                    "Tell us more about the local support for"
-                                    " your project"
-                                ),
+                                "title": "Tell us more about the local support for your project",
                                 "type": "text",
                             },
                             {
@@ -1809,10 +1750,7 @@ mock_full_application_json = {
                                     "fight-climate-change",
                                 ],
                                 "key": "CDwTrG",
-                                "title": (
-                                    "What policy aims will your project"
-                                    " deliver against?"
-                                ),
+                                "title": "What policy aims will your project deliver against?",
                                 "type": "list",
                             },
                             {
@@ -2135,10 +2073,7 @@ mock_full_application_json = {
                                     " lectus cursus integer suscipit congue."
                                 ),
                                 "key": "qsZLjZ",
-                                "title": (
-                                    "Why will the asset be lost without"
-                                    " community intervention?"
-                                ),
+                                "title": "Why will the asset be lost without community intervention?",
                                 "type": "text",
                             },
                         ],
@@ -2255,10 +2190,7 @@ mock_full_application_json = {
                                     " lectus cursus integer suscipit congue."
                                 ),
                                 "key": "oOPUXI",
-                                "title": (
-                                    "Tell us about your local community as a"
-                                    " whole"
-                                ),
+                                "title": "Tell us about your local community as a whole",
                                 "type": "text",
                             },
                             {
@@ -2403,9 +2335,7 @@ mock_full_application_json = {
                             {
                                 "answer": "sample1.csv",
                                 "key": "ozgwXq",
-                                "title": (
-                                    "Risks to your project (document upload)"
-                                ),
+                                "title": "Risks to your project (document upload)",
                                 "type": "file",
                             }
                         ],
@@ -2523,9 +2453,7 @@ mock_full_application_json = {
                                 ),
                                 "key": "CvVZJv",
                                 "title": (
-                                    "Tell us how you have considered the"
-                                    " environmental sustainability of your"
-                                    " project"
+                                    "Tell us how you have considered the environmental sustainability of your project"
                                 ),
                                 "type": "text",
                             }
@@ -2748,10 +2676,7 @@ mock_full_application_json = {
                                     " lectus cursus integer suscipit congue."
                                 ),
                                 "key": "yMCivI",
-                                "title": (
-                                    "Tell us about your governance and"
-                                    " membership structures"
-                                ),
+                                "title": "Tell us about your governance and membership structures",
                                 "type": "text",
                             },
                             {
@@ -2857,9 +2782,7 @@ mock_full_application_json = {
                                 ),
                                 "key": "NUZOvS",
                                 "title": (
-                                    "Explain how you'll consider the views of"
-                                    " the community in the running of the"
-                                    " asset"
+                                    "Explain how you'll consider the views of the community in the running of the asset"
                                 ),
                                 "type": "text",
                             },
@@ -2977,19 +2900,13 @@ mock_full_application_json = {
                                     " lectus cursus integer suscipit congue."
                                 ),
                                 "key": "WDDkVB",
-                                "title": (
-                                    "Summarise your cash flow for the running"
-                                    " of the asset"
-                                ),
+                                "title": "Summarise your cash flow for the running of the asset",
                                 "type": "text",
                             },
                             {
                                 "answer": True,
                                 "key": "oaIntA",
-                                "title": (
-                                    "If successful, will you use your funding"
-                                    " in the next 12 months?"
-                                ),
+                                "title": "If successful, will you use your funding in the next 12 months?",
                                 "type": "list",
                             },
                         ],
@@ -3131,9 +3048,7 @@ mock_full_application_json = {
                                 ),
                                 "key": "SrtVAs",
                                 "title": (
-                                    "Describe the planned activities or"
-                                    " services that will take place at the"
-                                    " asset"
+                                    "Describe the planned activities or services that will take place at the asset"
                                 ),
                                 "type": "text",
                             },
@@ -3458,9 +3373,7 @@ mock_full_application_json = {
                                 ),
                                 "key": "bkJsiO",
                                 "title": (
-                                    "Describe how the project will bring"
-                                    " people together from all over the"
-                                    " community"
+                                    "Describe how the project will bring people together from all over the community"
                                 ),
                                 "type": "text",
                             },
@@ -3491,10 +3404,7 @@ mock_full_application_json = {
                             {
                                 "answer": True,
                                 "key": "NWTKzQ",
-                                "title": (
-                                    "Do you need to add revenue costs?"
-                                    " (optional)"
-                                ),
+                                "title": "Do you need to add revenue costs? (optional)",
                                 "type": "list",
                             }
                         ],
@@ -3518,9 +3428,7 @@ mock_full_application_json = {
                             {
                                 "answer": True,
                                 "key": "DIZZOC",
-                                "title": (
-                                    "Have you secured any match funding yet?"
-                                ),
+                                "title": "Have you secured any match funding yet?",
                                 "type": "list",
                             }
                         ],
@@ -3544,10 +3452,7 @@ mock_full_application_json = {
                             {
                                 "answer": True,
                                 "key": "RvbwSX",
-                                "title": (
-                                    "Do you have any match funding identified"
-                                    " but not yet secured?"
-                                ),
+                                "title": "Do you have any match funding identified but not yet secured?",
                                 "type": "list",
                             }
                         ],
@@ -3589,10 +3494,7 @@ mock_full_application_json = {
                             {
                                 "answer": True,
                                 "key": "CBIWnt",
-                                "title": (
-                                    "Do you have experience of managing a"
-                                    " community asset?"
-                                ),
+                                "title": "Do you have experience of managing a community asset?",
                                 "type": "list",
                             }
                         ],
@@ -3703,10 +3605,7 @@ mock_full_application_json = {
                                     " lectus cursus integer suscipit congue."
                                 ),
                                 "key": "QWveYc",
-                                "title": (
-                                    "Describe any experience you have with"
-                                    " community assets similar to this"
-                                ),
+                                "title": "Describe any experience you have with community assets similar to this",
                                 "type": "text",
                             }
                         ],
@@ -3718,10 +3617,7 @@ mock_full_application_json = {
                             {
                                 "answer": True,
                                 "key": "vKnMPG",
-                                "title": (
-                                    "Do you have any plans to recruit people"
-                                    " to help you manage the asset?"
-                                ),
+                                "title": "Do you have any plans to recruit people to help you manage the asset?",
                                 "type": "list",
                             }
                         ],
@@ -3832,9 +3728,7 @@ mock_full_application_json = {
                                     " lectus cursus integer suscipit congue."
                                 ),
                                 "key": "VNjRgZ",
-                                "title": (
-                                    "Tells us about the roles you'll recruit"
-                                ),
+                                "title": "Tells us about the roles you'll recruit",
                                 "type": "text",
                             }
                         ],
@@ -3913,10 +3807,7 @@ mock_full_application_json = {
                                     "delivering-positive",
                                 ],
                                 "key": "QjJtbs",
-                                "title": (
-                                    "What community benefits do you expect to"
-                                    " deliver with this project? "
-                                ),
+                                "title": "What community benefits do you expect to deliver with this project? ",
                                 "type": "list",
                             },
                             {
@@ -4131,9 +4022,7 @@ mock_full_application_json = {
                                 ),
                                 "key": "kYjJFy",
                                 "title": (
-                                    "Explain how you plan to sustain, and"
-                                    " potentially expand, these benefits over"
-                                    " time"
+                                    "Explain how you plan to sustain, and potentially expand, these benefits over time"
                                 ),
                                 "type": "text",
                             },
@@ -4239,10 +4128,7 @@ mock_full_application_json = {
                                     " lectus cursus integer suscipit congue."
                                 ),
                                 "key": "UbjYqE",
-                                "title": (
-                                    "Tell us how you'll make sure the whole"
-                                    " community benefits from the asset"
-                                ),
+                                "title": "Tell us how you'll make sure the whole community benefits from the asset",
                                 "type": "text",
                             },
                         ],
@@ -4260,10 +4146,7 @@ mock_full_application_json = {
                             {
                                 "answer": True,
                                 "key": "HvxXPI",
-                                "title": (
-                                    "Does your project meet the definition of"
-                                    " a subsidy?"
-                                ),
+                                "title": "Does your project meet the definition of a subsidy?",
                                 "type": "list",
                             }
                         ],
@@ -4384,10 +4267,7 @@ mock_full_application_json = {
                             {
                                 "answer": True,
                                 "key": "UPmQrD",
-                                "title": (
-                                    "Is your project based in Northern"
-                                    " Ireland?"
-                                ),
+                                "title": "Is your project based in Northern Ireland?",
                                 "type": "list",
                             },
                         ],
@@ -4498,10 +4378,7 @@ mock_full_application_json = {
                                     " lectus cursus integer suscipit congue."
                                 ),
                                 "key": "xPkdRX",
-                                "title": (
-                                    "Explain how your project will comply with"
-                                    " state aid rules"
-                                ),
+                                "title": "Explain how your project will comply with state aid rules",
                                 "type": "text",
                             }
                         ],
@@ -4531,10 +4408,7 @@ mock_full_application_json = {
                             {
                                 "answer": True,
                                 "key": "iBCGxY",
-                                "title": (
-                                    "Does your organisation use any other"
-                                    " names?"
-                                ),
+                                "title": "Does your organisation use any other names?",
                                 "type": "list",
                             },
                         ],
@@ -4546,27 +4420,19 @@ mock_full_application_json = {
                             {
                                 "answer": "test",
                                 "key": "PHFkCs",
-                                "title": (
-                                    "Alternative names of your organisation"
-                                ),
+                                "title": "Alternative names of your organisation",
                                 "type": "text",
                             },
                             {
                                 "answer": "test",
                                 "key": "QgNhXX",
-                                "title": (
-                                    "Alternative names of your organisation -"
-                                    " Alternative name 2 "
-                                ),
+                                "title": "Alternative names of your organisation - Alternative name 2 ",
                                 "type": "text",
                             },
                             {
                                 "answer": "test",
                                 "key": "XCcqae",
-                                "title": (
-                                    "Alternative names of your organisation -"
-                                    " Alternative name 3 "
-                                ),
+                                "title": "Alternative names of your organisation - Alternative name 3 ",
                                 "type": "text",
                             },
                         ],
@@ -4677,9 +4543,7 @@ mock_full_application_json = {
                                     " lectus cursus integer suscipit congue."
                                 ),
                                 "key": "emVGxS",
-                                "title": (
-                                    "What is your organisation's main purpose?"
-                                ),
+                                "title": "What is your organisation's main purpose?",
                                 "type": "text",
                             },
                             {
@@ -4784,10 +4648,7 @@ mock_full_application_json = {
                                     " lectus cursus integer suscipit congue."
                                 ),
                                 "key": "btTtIb",
-                                "title": (
-                                    "Tell us about your organisation's main"
-                                    " activities"
-                                ),
+                                "title": "Tell us about your organisation's main activities",
                                 "type": "text",
                             },
                             {
@@ -4892,10 +4753,7 @@ mock_full_application_json = {
                                     " lectus cursus integer suscipit congue."
                                 ),
                                 "key": "SkocDi",
-                                "title": (
-                                    "Tell us about your organisation's main"
-                                    " activities - Activity 2 "
-                                ),
+                                "title": "Tell us about your organisation's main activities - Activity 2 ",
                                 "type": "text",
                             },
                             {
@@ -5000,19 +4858,13 @@ mock_full_application_json = {
                                     " lectus cursus integer suscipit congue."
                                 ),
                                 "key": "CNeeiC",
-                                "title": (
-                                    "Tell us about your organisation's main"
-                                    " activities - Activity 3 "
-                                ),
+                                "title": "Tell us about your organisation's main activities - Activity 3 ",
                                 "type": "text",
                             },
                             {
                                 "answer": True,
                                 "key": "BBlCko",
-                                "title": (
-                                    "Have you delivered projects like this"
-                                    " before?"
-                                ),
+                                "title": "Have you delivered projects like this before?",
                                 "type": "list",
                             },
                         ],
@@ -5228,10 +5080,7 @@ mock_full_application_json = {
                                     " lectus cursus integer suscipit congue."
                                 ),
                                 "key": "QJFQgi",
-                                "title": (
-                                    "Describe your previous projects -"
-                                    " Project 2 "
-                                ),
+                                "title": "Describe your previous projects - Project 2 ",
                                 "type": "text",
                             },
                             {
@@ -5336,10 +5185,7 @@ mock_full_application_json = {
                                     " lectus cursus integer suscipit congue."
                                 ),
                                 "key": "DGNWqE",
-                                "title": (
-                                    "Describe your previous projects -"
-                                    " Project 3 "
-                                ),
+                                "title": "Describe your previous projects - Project 3 ",
                                 "type": "text",
                             },
                         ],
@@ -5375,10 +5221,7 @@ mock_full_application_json = {
                             {
                                 "answer": "House",
                                 "key": "GvPSna",
-                                "title": (
-                                    "Which regulatory body is your company"
-                                    " registered with?"
-                                ),
+                                "title": "Which regulatory body is your company registered with?",
                                 "type": "list",
                             }
                         ],
@@ -5390,10 +5233,7 @@ mock_full_application_json = {
                             {
                                 "answer": True,
                                 "key": "DwfHtk",
-                                "title": (
-                                    "Is your organisation a trading subsidiary"
-                                    " of a parent company?"
-                                ),
+                                "title": "Is your organisation a trading subsidiary of a parent company?",
                                 "type": "list",
                             }
                         ],
@@ -5411,9 +5251,7 @@ mock_full_application_json = {
                             {
                                 "answer": "2022-03-23",
                                 "key": "MyiYMw",
-                                "title": (
-                                    "Date parent organisation was established"
-                                ),
+                                "title": "Date parent organisation was established",
                                 "type": "date",
                             },
                         ],
@@ -5431,40 +5269,25 @@ mock_full_application_json = {
                             {
                                 "answer": True,
                                 "key": "zsoLdf",
-                                "title": (
-                                    "Is your correspondence address different"
-                                    " to the organisation address?"
-                                ),
+                                "title": "Is your correspondence address different to the organisation address?",
                                 "type": "list",
                             },
                             {
-                                "answer": (
-                                    "http://www.dummytextgenerator.com/#jump"
-                                ),
+                                "answer": "http://www.dummytextgenerator.com/#jump",
                                 "key": "FhbaEy",
                                 "title": "Website and social media ",
                                 "type": "text",
                             },
                             {
-                                "answer": (
-                                    "http://www.dummytextgenerator.com/#jump"
-                                ),
+                                "answer": "http://www.dummytextgenerator.com/#jump",
                                 "key": "FcdKlB",
-                                "title": (
-                                    "Website and social media - Link or"
-                                    " username 2"
-                                ),
+                                "title": "Website and social media - Link or username 2",
                                 "type": "text",
                             },
                             {
-                                "answer": (
-                                    "http://www.dummytextgenerator.com/#jump"
-                                ),
+                                "answer": "http://www.dummytextgenerator.com/#jump",
                                 "key": "BzxgDA",
-                                "title": (
-                                    "Website and social media - Link or"
-                                    " username 3"
-                                ),
+                                "title": "Website and social media - Link or username 3",
                                 "type": "text",
                             },
                         ],
@@ -5488,10 +5311,7 @@ mock_full_application_json = {
                             {
                                 "answer": True,
                                 "key": "hnLurH",
-                                "title": (
-                                    "Is your application a joint bid in"
-                                    " partnership with other organisations?"
-                                ),
+                                "title": "Is your application a joint bid in partnership with other organisations?",
                                 "type": "list",
                             }
                         ],
@@ -5614,10 +5434,7 @@ mock_full_application_json = {
                                     " lectus cursus integer suscipit congue."
                                 ),
                                 "key": "IkmvEt",
-                                "title": (
-                                    "Tell us about your partnership and how"
-                                    " you plan to work together"
-                                ),
+                                "title": "Tell us about your partnership and how you plan to work together",
                                 "type": "text",
                             },
                         ],

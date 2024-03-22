@@ -2,6 +2,7 @@
 {%- from "govuk_frontend_jinja/components/table/macro.html" import govukTable -%}
 {%- from 'govuk_frontend_jinja/components/textarea/macro.html' import govukTextarea -%}
 {% from "macros/banner_summary.html" import banner_summary %}
+{% from "macros/migration_banner.html" import migration_banner %}
 {% set pageHeading = "Mark QA as complete" %}
 
 {% block header %}
@@ -11,6 +12,9 @@
 {% block content %}
 <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
+            {% if migration_banner_enabled %}
+                {{migration_banner()}}
+            {% endif %}
             <form method="post">
                 {{ form.csrf_token }}
                 <h1 class="govuk-heading govuk-heading-l">{{pageHeading}}</h1>

@@ -1,9 +1,10 @@
 from dataclasses import dataclass
 from typing import List
 
+from num2words import num2words
+
 from app.blueprints.services.models.flag import Flag
 from app.blueprints.services.models.flag import FlagType
-from num2words import num2words
 
 # TODO : Check if there is better way to do it?
 
@@ -32,9 +33,7 @@ class TeamsFlagData:
 
         if not teams_list:
             teams_list = [flag.latest_allocation for flag in flags_list]
-            teams_list = list(
-                set(teams_list) - set([None])
-            )  # filter for unique teams
+            teams_list = list(set(teams_list) - set([None]))  # filter for unique teams
 
         for team in teams_list:
             team_flags = [f for f in flags_list if f.latest_allocation == team]

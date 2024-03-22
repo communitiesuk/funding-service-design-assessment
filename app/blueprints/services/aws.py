@@ -4,9 +4,10 @@ from urllib.parse import quote
 
 from boto3 import client
 from botocore.exceptions import ClientError
-from config import Config
 from flask import current_app
 from flask import url_for
+
+from config import Config
 
 if hasattr(Config, "VCAP_SERVICES"):
     _S3_CLIENT = client(
@@ -40,9 +41,7 @@ def get_file_for_download_from_aws(file_name: str, application_id: str):
     prefixed_file_name = application_id + "/" + file_name
 
     try:
-        current_app.logger.info(
-            f"Retrieving file {prefixed_file_name} from AWS"
-        )
+        current_app.logger.info(f"Retrieving file {prefixed_file_name} from AWS")
         obj = _S3_CLIENT.get_object(
             Bucket=Config.AWS_BUCKET_NAME, Key=prefixed_file_name
         )
@@ -57,9 +56,7 @@ def get_file_for_download_from_aws(file_name: str, application_id: str):
 
 
 def list_files_in_folder(prefix):
-    response = _S3_CLIENT.list_objects_v2(
-        Bucket=Config.AWS_BUCKET_NAME, Prefix=prefix
-    )
+    response = _S3_CLIENT.list_objects_v2(Bucket=Config.AWS_BUCKET_NAME, Prefix=prefix)
     keys = []
     for obj in response.get("Contents") or []:
         # we cut off the application id.

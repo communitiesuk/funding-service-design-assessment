@@ -4,14 +4,15 @@ from dataclasses import dataclass
 from dataclasses import field
 from datetime import datetime
 
-from app.blueprints.services.data_services import get_bulk_accounts_dict
-from app.blueprints.services.models.assessor_task_list import AssessorTaskList
-from app.blueprints.services.models.flag import FlagType
-from app.blueprints.tagging.models.tag import AssociatedTag
 from flask import current_app
 from flask_wtf import FlaskForm
 from wtforms import BooleanField
 from wtforms import StringField
+
+from app.blueprints.services.data_services import get_bulk_accounts_dict
+from app.blueprints.services.models.assessor_task_list import AssessorTaskList
+from app.blueprints.services.models.flag import FlagType
+from app.blueprints.tagging.models.tag import AssociatedTag
 
 
 @dataclass
@@ -23,8 +24,7 @@ class BaseModel:
                 **{
                     k: v
                     for k, v in d.items()
-                    if k in inspect.signature(cls).parameters
-                    and k != "date_created"
+                    if k in inspect.signature(cls).parameters and k != "date_created"
                 },
                 date_created=cls._format_date(d.get("date_created")),
             )
@@ -34,9 +34,7 @@ class BaseModel:
     @staticmethod
     def _format_date(date_str):
         if date_str:
-            return datetime.fromisoformat(date_str).strftime(
-                "%Y-%m-%d %H:%M:%S"
-            )
+            return datetime.fromisoformat(date_str).strftime("%Y-%m-%d %H:%M:%S")
         return date_str
 
 
@@ -288,3 +286,10 @@ def filter_all_activities(
 
     else:
         return all_activities
+
+
+def select_filters(short_fund_name):
+    if short_fund_name in ("COF-EOI",):
+        return ["All activity", "Comments", "Flags", "Tags"]
+    else:
+        return ["All activity", "Comments", "Score", "Flags", "Tags"]

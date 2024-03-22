@@ -1,11 +1,15 @@
 import multiprocessing
 import platform
 from collections import OrderedDict
+from distutils.util import strtobool
 from pathlib import Path
 from unittest import mock
 
 import jwt as jwt
 import pytest
+from flask import template_rendered
+
+from app.blueprints.assessments.models.round_status import RoundStatus
 from app.blueprints.services.models.assessor_task_list import AssessorTaskList
 from app.blueprints.shared.helpers import get_ttl_hash
 from app.blueprints.tagging.models.tag import AssociatedTag
@@ -13,19 +17,12 @@ from app.blueprints.tagging.models.tag import Tag
 from app.blueprints.tagging.models.tag import TagType
 from config import Config
 from create_app import create_app
-from flask import template_rendered
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.chrome.service import Service
-from tests.api_data.example_get_full_application import (
-    mock_full_application_json,
-)
+from tests.api_data.example_get_full_application import mock_full_application_json
 from tests.api_data.test_data import mock_api_results
 from tests.test_tags import associated_tag
 from tests.test_tags import test_get_tag
 from tests.test_tags import test_tags_active
 from tests.test_tags import test_tags_inactive
-from webdriver_manager.chrome import ChromeDriverManager
 
 if platform.system() == "Darwin":
     multiprocessing.set_start_method("fork")  # Required on macOSX
@@ -143,9 +140,7 @@ test_roleless_user_claims = {
 
 
 def create_valid_token(payload=test_assessor_claims):
-    _test_private_key_path = (
-        str(Path(__file__).parent) + "/keys/rsa256/private.pem"
-    )
+    _test_private_key_path = str(Path(__file__).parent) + "/keys/rsa256/private.pem"
     with open(_test_private_key_path, mode="rb") as private_key_file:
         rsa256_private_key = private_key_file.read()
 
@@ -159,9 +154,7 @@ def create_invalid_token():
     with open(_test_private_key_path, mode="rb") as private_key_file:
         rsa256_private_key = private_key_file.read()
 
-        return jwt.encode(
-            test_assessor_claims, rsa256_private_key, algorithm="RS256"
-        )
+        return jwt.encode(test_assessor_claims, rsa256_private_key, algorithm="RS256")
 
 
 def post_driver(driver, path, params):
@@ -236,27 +229,24 @@ def flask_test_client(app, user_token=None):
         yield test_client
 
 
-@pytest.fixture(scope="class")
-def selenium_chrome_driver(request, live_server):
+@pytest.fixture(scope="function")
+def flask_test_maintenance_client(request, user_token=None):
     """
-    Returns a Selenium Chrome driver as a fixture for testing.
-    using an installed Chromedriver from the .venv chromedriver_py package
-    install location. Accessible with the
-    @pytest.mark.uses_fixture('selenium_chrome_driver')
-    :return: A selenium chrome driver.
+    Creates the test maintenance client we will be using to test the responses
+    from our app, this is a test fixture.
+    :return: A flask test client.
     """
-
-    service_object = Service(ChromeDriverManager().install())
-    chrome_options = Options()
-    chrome_options.add_argument("--headless")
-    # TODO: set chrome_options.binary_location = ...
-    #  (if setting to run in container or on GitHub)
-    chrome_driver = webdriver.Chrome(
-        service=service_object, options=chrome_options
-    )
-    request.cls.driver = chrome_driver
-    yield
-    request.cls.driver.close()
+    marker = request.node.get_closest_marker("maintenance_mode")
+    maintenance_mode = marker.args[0]
+    app = create_app()
+    app.config.update({"MAINTENANCE_MODE": strtobool(maintenance_mode)})
+    with app.test_client() as test_client:
+        test_client.set_cookie(
+            "localhost",
+            "fsd_user_token",
+            user_token or create_valid_token(),
+        )
+        yield test_client
 
 
 @pytest.fixture(scope="function")
@@ -268,8 +258,7 @@ def mock_get_sub_criteria_banner_state(request):
 
     mock_banner_info = Banner.from_filtered_dict(
         mock_api_results[
-            "assessment_store/sub_criteria_overview/"
-            f"banner_state/{application_id}"
+            f"assessment_store/sub_criteria_overview/banner_state/{application_id}"
         ]
     )
 
@@ -290,9 +279,7 @@ def mock_get_sub_criteria_banner_state(request):
 def mock_get_fund(mocker):
     from app.blueprints.services.models.fund import Fund
 
-    mock_fund_info = Fund.from_json(
-        mock_api_results["fund_store/funds/{fund_id}"]
-    )
+    mock_fund_info = Fund.from_json(mock_api_results["fund_store/funds/{fund_id}"])
 
     mock_funcs = [
         "app.blueprints.assessments.routes.get_fund",
@@ -304,6 +291,11 @@ def mock_get_fund(mocker):
 
     for mock_func in mock_funcs:
         mocker.patch(mock_func, return_value=mock_fund_info),
+
+    mocker.patch(
+        "app.blueprints.authentication.validation.determine_round_status",
+        return_value=RoundStatus(False, False, True, True, True, False),
+    )
 
     yield
 
@@ -337,9 +329,7 @@ def mock_get_funds():
 def mock_get_application_metadata(mocker):
     mocker.patch(
         "app.blueprints.authentication.validation.get_application_metadata",
-        return_value=mock_api_results[
-            "assessment_store/applications/{application_id}"
-        ],
+        return_value=mock_api_results["assessment_store/applications/{application_id}"],
     )
     yield
 
@@ -392,7 +382,7 @@ def mock_get_rounds(request, mocker):
 
     marker = request.node.get_closest_marker("mock_parameters")
     func_calls = [
-        "app.blueprints.assessments.models.fund_summary.get_rounds",
+        "app.blueprints.assessments.models.round_summary.get_rounds",
     ]
     if marker:
         params = marker.args[0]
@@ -489,15 +479,13 @@ def mock_get_assessment_stats(request, mocker):
     mock_funcs = params.get(
         "get_assessment_stats_path",
         [
-            "app.blueprints.assessments.models.fund_summary.get_assessments_stats",
+            "app.blueprints.assessments.models.round_summary.get_assessments_stats",
         ],
     )
     # fund_id = params.get("fund_id", "test-fund")
     # round_id = params.get("round_id", "test-round")
 
-    mock_stats = mock_api_results[
-        "assessment_store/assessments/get-stats/{fund_id}/{round_id}"
-    ]
+    mock_stats = mock_api_results["assessment_store/assessments/get-stats/{fund_id}"]
 
     mocked_get_stats = []
     for mock_func in mock_funcs:
@@ -545,9 +533,7 @@ def mock_get_flags(request, mocker):
     application_id = marker.args[0]
 
     mock_flag_info = Flag.from_list(
-        mock_api_results[
-            f"assessment_store/flags?application_id={application_id}"
-        ]
+        mock_api_results[f"assessment_store/flags?application_id={application_id}"]
     )
 
     mock_funcs = [
@@ -559,21 +545,16 @@ def mock_get_flags(request, mocker):
 
     mocked_flags = []
     for mock_func in mock_funcs:
-        mocked_flags.append(
-            mocker.patch(mock_func, return_value=mock_flag_info)
-        )
+        mocked_flags.append(mocker.patch(mock_func, return_value=mock_flag_info))
     yield mocked_flags
 
 
 @pytest.fixture(scope="function")
 def mock_submit_flag(request, mocker):
     all_submit_flag_funcs = [
-        "app.blueprints.flagging.helpers.submit_flag"
-        "app.blueprints.flagging.routes.submit_flag"
+        "app.blueprints.flagging.helpers.submit_flagapp.blueprints.flagging.routes.submit_flag"
     ]
-    marker_submit_flag_paths = request.node.get_closest_marker(
-        "submit_flag_paths"
-    )
+    marker_submit_flag_paths = request.node.get_closest_marker("submit_flag_paths")
     submit_flag_paths = (
         marker_submit_flag_paths.args[0]
         if marker_submit_flag_paths
@@ -608,9 +589,7 @@ def mock_get_qa_complete(request, mocker):
     marker = request.node.get_closest_marker("application_id")
     application_id = marker.args[0]
 
-    mock_qa_info = mock_api_results[
-        f"assessment_store/qa_complete/{application_id}"
-    ]
+    mock_qa_info = mock_api_results[f"assessment_store/qa_complete/{application_id}"]
     mocker.patch(
         "app.blueprints.assessments.routes.get_qa_complete",
         return_value=mock_qa_info,
@@ -633,9 +612,7 @@ def mock_get_flag(request, mocker):
 
     get_flag_mocks = []
     for mock_func in mock_funcs:
-        get_flag_mocks.append(
-            mocker.patch(mock_func, return_value=mock_flag_info)
-        )
+        get_flag_mocks.append(mocker.patch(mock_func, return_value=mock_flag_info))
 
     yield get_flag_mocks
 
@@ -667,9 +644,7 @@ def mock_get_bulk_accounts(request, mocker):
 @pytest.fixture(scope="function")
 def mock_get_sub_criteria(request, mocker):
     application_id = request.node.get_closest_marker("application_id").args[0]
-    sub_criteria_id = request.node.get_closest_marker("sub_criteria_id").args[
-        0
-    ]
+    sub_criteria_id = request.node.get_closest_marker("sub_criteria_id").args[0]
     from app.blueprints.services.models.sub_criteria import SubCriteria
 
     mock_funcs = [
@@ -678,15 +653,12 @@ def mock_get_sub_criteria(request, mocker):
     ]
     mock_sub_crit = SubCriteria.from_filtered_dict(
         mock_api_results[
-            "assessment_store/sub_criteria_overview/"
-            f"{application_id}/{sub_criteria_id}"
+            f"assessment_store/sub_criteria_overview/{application_id}/{sub_criteria_id}"
         ]
     )
     mocked_sub_crits = []
     for mock_func in mock_funcs:
-        mocked_sub_crits.append(
-            mocker.patch(mock_func, return_value=mock_sub_crit)
-        )
+        mocked_sub_crits.append(mocker.patch(mock_func, return_value=mock_sub_crit))
 
     yield mocked_sub_crits
 
@@ -698,7 +670,7 @@ def mock_get_sub_criteria_theme(request, mocker):
         f"assessment_store/sub_criteria_themes/{application_id}/test_theme_id"
     ]
     mocker.patch(
-        "app.blueprints.assessments.routes.get_sub_criteria_theme_answers",
+        "app.blueprints.assessments.routes.get_sub_criteria_theme_answers_all",
         return_value=mock_theme,
     )
     yield
@@ -857,9 +829,7 @@ def mock_get_tag_types(mocker):
 
 @pytest.fixture(scope="function")
 def mock_update_tags(mocker, request):
-    tag_updated_bool = request.node.get_closest_marker(
-        "tag_updated_bool"
-    ).args[0]
+    tag_updated_bool = request.node.get_closest_marker("tag_updated_bool").args[0]
     mocker.patch(
         "app.blueprints.tagging.routes.update_tags",
         return_value=tag_updated_bool,

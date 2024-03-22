@@ -55,6 +55,7 @@ variables:
     from_cfn: ${COPILOT_APPLICATION_NAME}-${COPILOT_ENVIRONMENT_NAME}-FormUploadsBucket
   REDIS_INSTANCE_URI:
     from_cfn: ${COPILOT_APPLICATION_NAME}-${COPILOT_ENVIRONMENT_NAME}-MagicLinksRedisInstanceURI
+  MAINTENANCE_MODE: false
 
 secrets:
   RSA256_PUBLIC_KEY_BASE64: /copilot/${COPILOT_APPLICATION_NAME}/${COPILOT_ENVIRONMENT_NAME}/secrets/RSA256_PUBLIC_KEY_BASE64
@@ -63,15 +64,12 @@ secrets:
 # You can override any of the values defined above by environment.
 environments:
   dev:
-    variables:
-      FORCE_OPEN_ALL_LIVE_ASSESSMENT_ROUNDS: "True"
   test:
     deployment:
       rolling: 'recreate'
-    variables:
-      FORCE_OPEN_ALL_LIVE_ASSESSMENT_ROUNDS: "True"
   uat:
-    alias: ["assessment.${COPILOT_ENVIRONMENT_NAME}.access-funding.test.levellingup.gov.uk", "assessmentuat.access-funding.test.levellingup.gov.uk"]
+    http:
+      alias: "assessment.${COPILOT_ENVIRONMENT_NAME}.access-funding.test.levellingup.gov.uk"
     count:
       range: 2-4
       cooldown:
@@ -83,9 +81,10 @@ environments:
         value: 80
       requests: 30
       response_time: 2s
-  production:
-    alias: assessment.production.access-funding.levellingup.gov.uk
-    # alias: ["assessment.production.access-funding.levellingup.gov.uk", "assessment.access-funding.levellingup.gov.uk"] # For go live
+  prod:
+    http:
+      alias: ["assessment.prod.access-funding.levellingup.gov.uk", "assessment.access-funding.levellingup.gov.uk"]
+      hosted_zone: Z0686469NF3ZJTU9I02M
     count:
       range: 2-4
       cooldown:
@@ -96,3 +95,5 @@ environments:
       memory_percentage:
         value: 80
       requests: 30
+    variables:
+      FLASK_ENV: production

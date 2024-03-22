@@ -394,6 +394,11 @@ body .govuk-button--warning:hover {
 
 a.govuk-link.deactivate {
     color: #d4351c;
+    background-color: #ffffff;
+}
+
+.govuk-notification-banner__content > p {
+    max-width: none;
 }
 
 /* .govuk-summary-list:first-of-type {

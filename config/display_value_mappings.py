@@ -114,6 +114,11 @@ search_params_tag = {
     "tag_status": True,
 }
 
+search_params_cof_eoi = {
+    "search_term": "",
+    "search_in": "short_id",
+    "filter_by_tag": ALL_VALUE,
+}
 LandingFilters = namedtuple(
     "LandingFilters", ["filter_status", "filter_fund_type", "filter_fund_name"]
 )

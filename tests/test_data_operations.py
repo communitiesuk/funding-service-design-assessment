@@ -1,8 +1,9 @@
+from flask import Flask
+
 from app.blueprints.services.data_services import get_application_overviews
 from app.blueprints.services.data_services import get_comments
 from app.blueprints.services.data_services import get_fund
 from app.blueprints.services.data_services import get_round
-from flask import Flask
 from tests.api_data.test_data import mock_api_results
 
 
@@ -20,9 +21,7 @@ class TestDataOperations:
         with self.test_app.app_context():
             fund = get_fund(arg)
         assert fund, "No fund returned"
-        assert (
-            "Funding Service Design Unit Test Fund" == fund.name
-        ), "Wrong fund title"
+        assert "Funding Service Design Unit Test Fund" == fund.name, "Wrong fund title"
         assert arg in get_data_mock.call_args.args[0]
 
     def test_get_round(self, mocker):

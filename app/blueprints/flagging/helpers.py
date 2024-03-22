@@ -1,3 +1,8 @@
+from flask import redirect
+from flask import render_template
+from flask import request
+from flask import url_for
+
 from app.blueprints.services.data_services import get_flags
 from app.blueprints.services.data_services import get_fund
 from app.blueprints.services.data_services import get_sub_criteria_banner_state
@@ -6,10 +11,6 @@ from app.blueprints.shared.helpers import determine_assessment_status
 from app.blueprints.shared.helpers import determine_flag_status
 from app.blueprints.shared.helpers import get_ttl_hash
 from config import Config
-from flask import redirect
-from flask import render_template
-from flask import request
-from flask import url_for
 
 
 def resolve_application(
@@ -62,9 +63,7 @@ def resolve_application(
     sub_criteria_banner_state = get_sub_criteria_banner_state(application_id)
     flags_list = get_flags(application_id)
     assessment_status = determine_assessment_status(
-        state.workflow_status
-        if state
-        else sub_criteria_banner_state.workflow_status,
+        state.workflow_status if state else sub_criteria_banner_state.workflow_status,
         state.is_qa_complete,
     )
     flag_status = determine_flag_status(flags_list)
@@ -86,4 +85,5 @@ def resolve_application(
         sections_to_flag=section,
         reason_to_flag=reason_to_flag,
         allocated_team=allocated_team,
+        migration_banner_enabled=Config.MIGRATION_BANNER_ENABLED,
     )

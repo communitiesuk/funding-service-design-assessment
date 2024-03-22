@@ -2,12 +2,13 @@ import time
 from typing import Dict
 from typing import List
 
+from flask import request
+
 from app.blueprints.services.models.flag import Flag
 from app.blueprints.services.models.flag import FlagType
 from app.blueprints.services.models.fund import Fund
-from config.display_value_mappings import assessment_statuses
 from config.display_value_mappings import LandingFilters
-from flask import request
+from config.display_value_mappings import assessment_statuses
 
 
 def process_assessments_stats(application_overviews) -> Dict:
@@ -54,9 +55,7 @@ def process_assessments_stats(application_overviews) -> Dict:
     return stats
 
 
-def determine_assessment_status(
-    workflow_status: str, is_qa_complete: bool
-) -> str:
+def determine_assessment_status(workflow_status: str, is_qa_complete: bool) -> str:
     if is_qa_complete:
         assessment_status = "QA complete"
     else:
@@ -86,10 +85,7 @@ def determine_display_status(
 def determine_flag_status(Flags: List[Flag]) -> str:
     flag_status = ""
     flags_list = (
-        [
-            (Flag.from_dict(flag) if isinstance(flag, dict) else flag)
-            for flag in Flags
-        ]
+        [(Flag.from_dict(flag) if isinstance(flag, dict) else flag) for flag in Flags]
         if Flags
         else []
     )

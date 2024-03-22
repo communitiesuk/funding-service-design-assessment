@@ -41,9 +41,7 @@ class TestTeamsFlagData:
             self.create_flag(
                 "1", ["section1", "section2"], "RAISED", "TeamA", "AppA", []
             ),
-            self.create_flag(
-                "2", ["section3"], "RESOLVED", "TeamB", "AppB", []
-            ),
+            self.create_flag("2", ["section3"], "RESOLVED", "TeamB", "AppB", []),
             self.create_flag(
                 "3", ["section4", "section5"], "STOPPED", "TeamA", "AppC", []
             ),

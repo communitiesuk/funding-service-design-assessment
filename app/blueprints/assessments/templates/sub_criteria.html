@@ -7,6 +7,7 @@
 {% from "macros/comments_edit_box.html" import edit_comment_box %}
 {% from "macros/comments_box.html" import comment_box %}
 {% from "macros/sub_criteria_heading.html" import sub_criteria_heading %}
+{% from "macros/migration_banner.html" import migration_banner %}
 
 {% set pageHeading -%}
 {% if comment_form.comment.errors %}
@@ -43,6 +44,10 @@ Error:
 
 {% if is_flaggable and g.access_controller.has_any_assessor_role %}
     {{ flag_application_button(application_id) }}
+{% endif %}
+
+{% if migration_banner_enabled %}
+    {{ migration_banner() }}
 {% endif %}
 
 {{ sub_criteria_heading(sub_criteria)}}

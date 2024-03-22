@@ -1,6 +1,13 @@
-from app.blueprints.authentication.validation import (
-    check_access_application_id,
-)
+from flask import Blueprint
+from flask import abort
+from flask import current_app
+from flask import g
+from flask import redirect
+from flask import render_template
+from flask import request
+from flask import url_for
+
+from app.blueprints.authentication.validation import check_access_application_id
 from app.blueprints.flagging.forms.continue_application_form import (
     ContinueApplicationForm,
 )
@@ -13,21 +20,11 @@ from app.blueprints.services.data_services import get_flags
 from app.blueprints.services.data_services import get_sub_criteria_banner_state
 from app.blueprints.services.data_services import submit_flag
 from app.blueprints.services.models.flag import FlagType
-from app.blueprints.services.shared_data_helpers import (
-    get_state_for_tasklist_banner,
-)
+from app.blueprints.services.shared_data_helpers import get_state_for_tasklist_banner
 from app.blueprints.shared.helpers import determine_assessment_status
 from app.blueprints.shared.helpers import determine_flag_status
 from app.blueprints.shared.helpers import get_ttl_hash
 from config import Config
-from flask import abort
-from flask import Blueprint
-from flask import current_app
-from flask import g
-from flask import redirect
-from flask import render_template
-from flask import request
-from flask import url_for
 
 flagging_bp = Blueprint(
     "flagging_bp",
@@ -95,6 +92,7 @@ def flag(application_id):
         referrer=request.referrer,
         state=state,
         teams_available=teams_available,
+        migration_banner_enabled=Config.MIGRATION_BANNER_ENABLED,
     )
 
 
@@ -125,9 +123,7 @@ def resolve_flag(application_id):
     )
 
 
-@flagging_bp.route(
-    "/continue_assessment/<application_id>", methods=["GET", "POST"]
-)
+@flagging_bp.route("/continue_assessment/<application_id>", methods=["GET", "POST"])
 @check_access_application_id(roles_required=["LEAD_ASSESSOR"])
 def continue_assessment(application_id):
     form = ContinueApplicationForm()

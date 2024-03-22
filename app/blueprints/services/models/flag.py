@@ -29,16 +29,10 @@ class Flag:
 
         # sort the updates in the order they are created
         if self.updates:
-            self.updates = sorted(
-                self.updates, key=lambda x: x["date_created"]
-            )
+            self.updates = sorted(self.updates, key=lambda x: x["date_created"])
 
-        self.latest_user_id = (
-            self.updates[-1]["user_id"] if self.updates else ""
-        )
-        self.date_created = (
-            self.updates[0]["date_created"] if self.updates else ""
-        )
+        self.latest_user_id = self.updates[-1]["user_id"] if self.updates else ""
+        self.date_created = self.updates[0]["date_created"] if self.updates else ""
         self.sections_to_flag = (
             [] if not self.sections_to_flag else self.sections_to_flag
         )
@@ -54,22 +48,14 @@ class Flag:
     def from_dict(cls, d: dict):
         # Filter unknown fields from JSON dictionary
         return cls(
-            **{
-                k: v
-                for k, v in d.items()
-                if k in inspect.signature(cls).parameters
-            }
+            **{k: v for k, v in d.items() if k in inspect.signature(cls).parameters}
         )
 
     @classmethod
     def from_list(cls, lst: list):
         all_flags = [
             cls(
-                **{
-                    k: v
-                    for k, v in d.items()
-                    if k in inspect.signature(cls).parameters
-                }
+                **{k: v for k, v in d.items() if k in inspect.signature(cls).parameters}
             )
             for d in lst
         ]

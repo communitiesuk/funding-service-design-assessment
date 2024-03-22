@@ -1,10 +1,10 @@
 import base64
 import os
+from distutils.util import strtobool
 from os import environ
 from os import getenv
 from pathlib import Path
 
-from distutils.util import strtobool
 from fsd_utils import CommonConfig
 from fsd_utils import configclass
 from fsd_utils.toggles.vcap_services import VcapServices
@@ -21,6 +21,8 @@ class DefaultConfig:
     FLASK_ROOT = str(Path(__file__).parent.parent.parent)
     FLASK_ENV = CommonConfig.FLASK_ENV
     TEXT_AREA_INPUT_MAX_CHARACTERS = 10000
+    MAINTENANCE_MODE = strtobool(getenv("MAINTENANCE_MODE", "False"))
+    MAINTENANCE_END_TIME = getenv("MAINTENANCE_END_TIME", "18 December 2023 at 03:00pm")
 
     # Authentication
     FSD_USER_TOKEN_COOKIE_NAME = "fsd_user_token"
@@ -40,11 +42,6 @@ class DefaultConfig:
     LOCAL_SERVICE_NAME = "local_flask"
     ASSESSMENT_HUB_ROUTE = "/assess"
     DASHBOARD_ROUTE = "/assess/assessor_tool_dashboard"
-
-    # Assessement settings
-    FORCE_OPEN_ALL_LIVE_ASSESSMENT_ROUNDS = strtobool(
-        getenv("FORCE_OPEN_ALL_LIVE_ASSESSMENT_ROUNDS", "False")
-    )  # Set to True to show assessments on live rounds
 
     """
     Security
@@ -71,9 +68,7 @@ class DefaultConfig:
     """
     # Fund Store Endpoints
     FUNDS_ENDPOINT = CommonConfig.FUNDS_ENDPOINT
-    FUND_ENDPOINT = (
-        CommonConfig.FUND_ENDPOINT + "?use_short_name={use_short_name}"
-    )
+    FUND_ENDPOINT = CommonConfig.FUND_ENDPOINT + "?use_short_name={use_short_name}"
     GET_ROUND_DATA_FOR_FUND_ENDPOINT = (
         FUND_STORE_API_HOST + "/funds/{fund_id}/rounds/{round_id}"
     )
@@ -91,9 +86,7 @@ class DefaultConfig:
     # Round Store Endpoints
 
     ROUNDS_ENDPOINT = CommonConfig.ROUNDS_ENDPOINT
-    ROUND_ENDPOINT = (
-        CommonConfig.ROUND_ENDPOINT + "?use_short_name={use_short_name}"
-    )
+    ROUND_ENDPOINT = CommonConfig.ROUND_ENDPOINT + "?use_short_name={use_short_name}"
 
     # Application Store Endpoints
     APPLICATION_ENDPOINT = CommonConfig.APPLICATION_ENDPOINT
@@ -110,9 +103,7 @@ class DefaultConfig:
     )
 
     # Assessment store endpoints
-    ASSESSMENTS_STATS_ENDPOINT = (
-        "/assessments/get-stats/{fund_id}/{round_id}?{params}"
-    )
+    ASSESSMENTS_STATS_ENDPOINT = "/assessments/get-stats/{fund_id}?{params}"
 
     APPLICATION_OVERVIEW_ENDPOINT_FUND_ROUND_PARAMS = (
         "/application_overviews/{fund_id}/{round_id}?{params}"
@@ -135,9 +126,7 @@ class DefaultConfig:
         + "/application/{application_id}/all_uploaded_documents"
     )
 
-    SUB_CRITERIA_THEME_ANSWERS_ENDPOINT = (
-        "/sub_criteria_themes/{application_id}/{theme_id}"
-    )
+    SUB_CRITERIA_THEME_ANSWERS_ENDPOINT = "/sub_criteria_themes/{application_id}"
 
     SUB_CRITERIA_OVERVIEW_ENDPOINT = (
         "/sub_criteria_overview/{application_id}/{sub_criteria_id}"
@@ -149,8 +138,7 @@ class DefaultConfig:
 
     ASSESSMENT_SCORES_ENDPOINT = ASSESSMENT_STORE_API_HOST + "/score"
     ASSESSMENT_UPDATE_STATUS = (
-        ASSESSMENT_STORE_API_HOST
-        + "/application/{application_id}/status/complete"
+        ASSESSMENT_STORE_API_HOST + "/application/{application_id}/status/complete"
     )
     ASSESSMENT_UPDATE_QA_STATUS = (
         ASSESSMENT_STORE_API_HOST + "/qa_complete/{application_id}/{user_id}"
@@ -165,20 +153,16 @@ class DefaultConfig:
         ASSESSMENT_STORE_API_HOST + "/progress/{fund_id}/{round_id}"
     )
 
-    ASSESSMENT_FLAGS_ENDPOINT = (
-        ASSESSMENT_STORE_API_HOST + "/flags/{application_id}"
-    )
+    ASSESSMENT_FLAGS_ENDPOINT = ASSESSMENT_STORE_API_HOST + "/flags/{application_id}"
     ASSESSMENT_FLAGS_POST_ENDPOINT = ASSESSMENT_STORE_API_HOST + "/flags/"
     ASSESSMENT_FLAG_ENDPOINT = (
         ASSESSMENT_STORE_API_HOST + "/flag_data?flag_id={flag_id}"
     )
     ASSESSMENT_TAGS_ENDPOINT = (
-        ASSESSMENT_STORE_API_HOST
-        + "/funds/{fund_id}/rounds/{round_id}/tags?{params}"
+        ASSESSMENT_STORE_API_HOST + "/funds/{fund_id}/rounds/{round_id}/tags?{params}"
     )
     ASSESSMENT_TAG_ENDPOINT = (
-        ASSESSMENT_STORE_API_HOST
-        + "/funds/{fund_id}/rounds/{round_id}/tags/{tag_id}"
+        ASSESSMENT_STORE_API_HOST + "/funds/{fund_id}/rounds/{round_id}/tags/{tag_id}"
     )
     ASSESSMENT_UPDATE_TAGS_ENDPOINT = (
         ASSESSMENT_STORE_API_HOST + "/funds/{fund_id}/rounds/{round_id}/tags"
@@ -190,8 +174,7 @@ class DefaultConfig:
         ASSESSMENT_STORE_API_HOST + "/application/{application_id}/tags"
     )
     ASSESSMENT_GET_TAG_ENDPOINT = (
-        ASSESSMENT_STORE_API_HOST
-        + "/funds/{fund_id}/rounds/{round_id}/tags/{tag_id}"
+        ASSESSMENT_STORE_API_HOST + "/funds/{fund_id}/rounds/{round_id}/tags/{tag_id}"
     )
     ASSESSMENT_GET_TAG_USAGE_ENDPOINT = (
         ASSESSMENT_STORE_API_HOST
@@ -259,16 +242,14 @@ class DefaultConfig:
         AWS_REGION = environ.get("AWS_REGION")
         ASSETS_AUTO_BUILD = False
     elif "VCAP_SERVICES" in os.environ:
-        VCAP_SERVICES = VcapServices.from_env_json(
-            environ.get("VCAP_SERVICES")
-        )
+        VCAP_SERVICES = VcapServices.from_env_json(environ.get("VCAP_SERVICES"))
 
         if VCAP_SERVICES.does_service_exist(
             service_key="aws-s3-bucket"  # pragma: allowlist secret
         ):
-            s3_credentials = VCAP_SERVICES.services.get("aws-s3-bucket")[
-                0
-            ].get("credentials")
+            s3_credentials = VCAP_SERVICES.services.get("aws-s3-bucket")[0].get(
+                "credentials"
+            )
             AWS_REGION = s3_credentials["aws_region"]
             AWS_ACCESS_KEY_ID = s3_credentials["aws_access_key_id"]
             AWS_SECRET_ACCESS_KEY = s3_credentials["aws_secret_access_key"]
@@ -282,3 +263,5 @@ class DefaultConfig:
 
     # LRU cache settings
     LRU_CACHE_TIME = int(environ.get("LRU_CACHE_TIME", 3600))  # in seconds
+
+    MIGRATION_BANNER_ENABLED = getenv("MIGRATION_BANNER_ENABLED", False)

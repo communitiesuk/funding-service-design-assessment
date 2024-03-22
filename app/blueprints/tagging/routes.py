@@ -1,15 +1,18 @@
 import copy
 from typing import Dict
 
-from app.blueprints.authentication.validation import (
-    check_access_application_id,
-)
-from app.blueprints.authentication.validation import (
-    check_access_fund_id_round_id,
-)
-from app.blueprints.services.data_services import (
-    get_associated_tags_for_application,
-)
+from flask import Blueprint
+from flask import current_app
+from flask import flash
+from flask import g
+from flask import redirect
+from flask import render_template
+from flask import request
+from flask import url_for
+
+from app.blueprints.authentication.validation import check_access_application_id
+from app.blueprints.authentication.validation import check_access_fund_id_round_id
+from app.blueprints.services.data_services import get_associated_tags_for_application
 from app.blueprints.services.data_services import get_fund
 from app.blueprints.services.data_services import get_round
 from app.blueprints.services.data_services import get_tag
@@ -20,9 +23,7 @@ from app.blueprints.services.data_services import post_new_tag_for_fund_round
 from app.blueprints.services.data_services import update_associated_tags
 from app.blueprints.services.data_services import update_tag
 from app.blueprints.services.data_services import update_tags
-from app.blueprints.services.shared_data_helpers import (
-    get_state_for_tasklist_banner,
-)
+from app.blueprints.services.shared_data_helpers import get_state_for_tasklist_banner
 from app.blueprints.shared.helpers import determine_assessment_status
 from app.blueprints.shared.helpers import get_ttl_hash
 from app.blueprints.shared.helpers import match_search_params
@@ -34,14 +35,6 @@ from app.blueprints.tagging.forms.tags import TagAssociationForm
 from app.blueprints.tagging.models.tag import TagType
 from config import Config
 from config.display_value_mappings import search_params_tag
-from flask import Blueprint
-from flask import current_app
-from flask import flash
-from flask import g
-from flask import redirect
-from flask import render_template
-from flask import request
-from flask import url_for
 
 TAG_DEACTIVATE_ERROR_MESSAGE = "Tag not deactivated."
 TAG_REACTIVATE_ERROR_MESSAGE = "Tag not reactivated."
@@ -55,9 +48,7 @@ tagging_bp = Blueprint(
 )
 
 
-@tagging_bp.route(
-    "/application/<application_id>/tags", methods=["GET", "POST"]
-)
+@tagging_bp.route("/application/<application_id>/tags", methods=["GET", "POST"])
 @check_access_application_id(roles_required=["ASSESSOR"])
 def load_change_tags(application_id):
 
@@ -67,9 +58,7 @@ def load_change_tags(application_id):
         association_form_data = tag_association_form.tags.data
         updated_tags = []
 
-        if associated_tags and len(associated_tags) > len(
-            association_form_data
-        ):
+        if associated_tags and len(associated_tags) > len(association_form_data):
             # Create a list of dictionaries with tag_id and user_id
             updated_tags = [
                 {"tag_id": tag_id, "user_id": g.account_id}
@@ -118,6 +107,7 @@ def load_change_tags(application_id):
         tag_config=Config.TAGGING_PURPOSE_CONFIG,
         application_id=application_id,
         assessment_status=assessment_status,
+        migration_banner_enabled=Config.MIGRATION_BANNER_ENABLED,
     )
 
 
@@ -165,13 +155,11 @@ def load_fund_round_tags(fund_id, round_id):
         tag_types=tag_types,
         tag_status_configs=tag_status_configs,
         tag_config=Config.TAGGING_PURPOSE_CONFIG,
+        migration_banner_enabled=Config.MIGRATION_BANNER_ENABLED,
     )
 
 
-FLAG_ERROR_MESSAGE = (
-    "Tags must be unique, only contain apostrophes, hyphens, letters, digits,"
-    " and spaces."
-)
+FLAG_ERROR_MESSAGE = "Tags must be unique, only contain apostrophes, hyphens, letters, digits, and spaces."
 
 
 @tagging_bp.route("/tags/create/<fund_id>/<round_id>", methods=["GET", "POST"])
@@ -197,8 +185,7 @@ def create_tag(fund_id, round_id):
             if tag["value"] == tag_item.value:
                 errors = {
                     "value": [
-                        "Tag already exists for this round. Please ensure"
-                        " that the tag is unique."
+                        "Tag already exists for this round. Please ensure that the tag is unique."
                     ]
                 }
                 return render_template(
@@ -208,6 +195,7 @@ def create_tag(fund_id, round_id):
                     tag_config=Config.TAGGING_PURPOSE_CONFIG,
                     fund_round=fund_round,
                     errors=errors,
+                    migration_banner_enabled=Config.MIGRATION_BANNER_ENABLED,
                 )
 
         tag_created = post_new_tag_for_fund_round(fund_id, round_id, tag)
@@ -226,6 +214,7 @@ def create_tag(fund_id, round_id):
                 tag_config=Config.TAGGING_PURPOSE_CONFIG,
                 fund_round=fund_round,
                 errors=errors,
+                migration_banner_enabled=Config.MIGRATION_BANNER_ENABLED,
             )
         if go_back and tag_created:
             return redirect(
@@ -237,9 +226,7 @@ def create_tag(fund_id, round_id):
             )
 
         return redirect(
-            url_for(
-                "tagging_bp.create_tag", fund_id=fund_id, round_id=round_id
-            )
+            url_for("tagging_bp.create_tag", fund_id=fund_id, round_id=round_id)
         )
 
     elif request.method == "POST":
@@ -255,6 +242,7 @@ def create_tag(fund_id, round_id):
         tag_config=Config.TAGGING_PURPOSE_CONFIG,
         fund_round=fund_round,
         errors=errors,
+        migration_banner_enabled=Config.MIGRATION_BANNER_ENABLED,
     )
 
 
@@ -287,9 +275,7 @@ def deactivate_tag(fund_id, round_id, tag_id):
             f"Tag deactivation form validated, deactivating tag_id: {tag_id}."
         )
         tag_update_to_deactivate = [{"id": tag_id, "active": False}]
-        tag_deactivated = update_tags(
-            fund_id, round_id, tag_update_to_deactivate
-        )
+        tag_deactivated = update_tags(fund_id, round_id, tag_update_to_deactivate)
         if tag_deactivated:
             return redirect(
                 url_for(
@@ -302,8 +288,7 @@ def deactivate_tag(fund_id, round_id, tag_id):
 
     elif request.method == "POST":
         current_app.logger.info(
-            "Tag deactivation form failed validation:"
-            f" {deactivate_tag_form.errors}"
+            f"Tag deactivation form failed validation: {deactivate_tag_form.errors}"
         )
         flash(TAG_DEACTIVATE_ERROR_MESSAGE)
     return render_template(
@@ -312,6 +297,7 @@ def deactivate_tag(fund_id, round_id, tag_id):
         tag=tag_to_deactivate,
         tag_config=Config.TAGGING_PURPOSE_CONFIG,
         fund_round=fund_round,
+        migration_banner_enabled=Config.MIGRATION_BANNER_ENABLED,
     )
 
 
@@ -356,8 +342,7 @@ def reactivate_tag(fund_id, round_id, tag_id):
         flash(TAG_REACTIVATE_ERROR_MESSAGE)
     elif request.method == "POST":
         current_app.logger.info(
-            "Tag reactivation form failed validation:"
-            f" {reactivate_tag_form.errors}"
+            f"Tag reactivation form failed validation: {reactivate_tag_form.errors}"
         )
         flash(TAG_REACTIVATE_ERROR_MESSAGE)
     return render_template(
@@ -366,12 +351,11 @@ def reactivate_tag(fund_id, round_id, tag_id):
         tag=tag_to_reactivate,
         tag_config=Config.TAGGING_PURPOSE_CONFIG,
         fund_round=fund_round,
+        migration_banner_enabled=Config.MIGRATION_BANNER_ENABLED,
     )
 
 
-@tagging_bp.route(
-    "/tags/edit/<fund_id>/<round_id>/<tag_id>", methods=["GET", "POST"]
-)
+@tagging_bp.route("/tags/edit/<fund_id>/<round_id>/<tag_id>", methods=["GET", "POST"])
 @check_access_fund_id_round_id(roles_required=["ASSESSOR"])
 def edit_tag(fund_id, round_id, tag_id):
     edit_tag_form = EditTagForm()
@@ -395,8 +379,7 @@ def edit_tag(fund_id, round_id, tag_id):
                 )
             else:
                 flash(
-                    "An error occurred and your changes were not saved. Please"
-                    " try again later."
+                    "An error occurred and your changes were not saved. Please try again later."
                 )
         else:
             current_app.logger.info(
@@ -409,4 +392,5 @@ def edit_tag(fund_id, round_id, tag_id):
         form=edit_tag_form,
         fund_round=fund_round,
         tag=tag,
+        migration_banner_enabled=Config.MIGRATION_BANNER_ENABLED,
     )

@@ -5,6 +5,13 @@ from typing import Dict
 from typing import List
 from urllib.parse import quote_plus
 
+from bs4 import BeautifulSoup
+from flask import Response
+from flask import url_for
+from fsd_utils import NotifyConstants
+from fsd_utils.mapping.application.application_utils import format_answer
+from fsd_utils.mapping.application.application_utils import simplify_title
+
 from app.blueprints.assessments.models.common import Option
 from app.blueprints.assessments.models.common import OptionGroup
 from app.blueprints.services.aws import generate_url
@@ -16,11 +23,6 @@ from app.blueprints.shared.helpers import determine_display_status
 from app.blueprints.tagging.models.tag import AssociatedTag
 from config import Config
 from config.display_value_mappings import assessment_statuses
-from flask import Response
-from flask import url_for
-from fsd_utils import NotifyConstants
-from fsd_utils.mapping.application.application_utils import format_answer
-from fsd_utils.mapping.application.application_utils import simplify_title
 
 
 def get_team_flag_stats(application_overviews) -> List[Dict]:
@@ -39,9 +41,7 @@ def get_team_flag_stats(application_overviews) -> List[Dict]:
             latest_status = flag.get("latest_status")
             allocated_team = flag.get("latest_allocation")
 
-            if allocated_team not in [
-                team["team_name"] for team in team_flag_stats
-            ]:
+            if allocated_team not in [team["team_name"] for team in team_flag_stats]:
                 team_flag_stats.append(create_team_dict(allocated_team))
 
             for team in team_flag_stats:
@@ -141,10 +141,12 @@ def get_tag_map_and_tag_options(fund_round_tags, post_processed_overviews):
     return tags_in_application_map, tag_option_groups
 
 
-def generate_csv_of_application(q_and_a: dict, fund: Fund, application_json):
+def generate_csv_of_application(
+    q_and_a: dict, fund: Fund, application_json, fund_round_name=None
+):
     output = StringIO()
     writer = csv.writer(output)
-    writer.writerow(["Fund", fund.name, fund.id])
+    writer.writerow(["Fund", fund_round_name, fund.id])
     writer.writerow(
         [
             "Application",
@@ -157,11 +159,7 @@ def generate_csv_of_application(q_and_a: dict, fund: Fund, application_json):
         section_title = simplify_title(section_name, remove_text=["cof", "ns"])
         section_title = " ".join(section_title).capitalize()
         for questions, answers in values.items():
-            if (
-                answers
-                and isinstance(answers, str)
-                and answers.startswith("- ")
-            ):
+            if answers and isinstance(answers, str) and answers.startswith("- "):
                 answers = f"'{answers}"
 
             if not answers:
@@ -173,7 +171,14 @@ def generate_csv_of_application(q_and_a: dict, fund: Fund, application_json):
 
 def generate_assessment_info_csv(data: dict):
     output = StringIO()
-    headers = list(OrderedDict.fromkeys(key for d in data for key in d.keys()))
+    headers = list(
+        OrderedDict.fromkeys(
+            key
+            for d in data
+            for key in d.keys()
+            if key not in exclude_header(["COF-EOI"])
+        )
+    )
     csv_writer = csv.writer(output)
 
     if len(data) == 0:
@@ -192,11 +197,7 @@ def download_file(data, mimetype, file_name):
     return Response(
         data,
         mimetype=mimetype,
-        headers={
-            "Content-Disposition": (
-                f"attachment;filename={quote_plus(file_name)}"
-            )
-        },
+        headers={"Content-Disposition": f"attachment;filename={quote_plus(file_name)}"},
     )
 
 
@@ -248,3 +249,44 @@ def get_files_for_application_upload_fields(
     ]
 
     return legacy_files + files
+
+
+def convert_bool_value(value):
+    if value:
+        return "Yes"
+    if not value:
+        return "No"
+    if value is None:
+        return "Not sure"
+
+
+def strip_tags(text):
+    if text == ["none"]:
+        return "Not sure"
+    soup = BeautifulSoup(text, "html.parser")
+    return soup.get_text()
+
+
+def sanitise_export_data(data):
+    if isinstance(data, dict):
+        for key, value in data.items():
+            data[key] = sanitise_export_data(value)
+    if isinstance(data, list):
+        data = [sanitise_export_data(d) for d in data]
+
+    if isinstance(data, bool):
+        data = convert_bool_value(data)
+    if isinstance(data, str):
+        data = strip_tags(data)
+    return data
+
+
+def exclude_header(fund_names: list):
+    if "COF-EOI" in fund_names:
+        return [
+            "Help with insolvency",
+            "Help with organisation type",
+            "Help with public authority",
+            "Help gydag awdurdod cyhoeddus",
+            "Help gyda'r math o sefydliad",
+        ]

@@ -1,15 +1,14 @@
 from unittest import mock
 
 import pytest
-from app.blueprints.services.data_services import (
-    get_associated_tags_for_application,
-)
+from bs4 import BeautifulSoup
+
+from app.blueprints.services.data_services import get_associated_tags_for_application
 from app.blueprints.services.data_services import get_tags_for_fund_round
 from app.blueprints.services.data_services import post_new_tag_for_fund_round
 from app.blueprints.services.data_services import update_associated_tags
 from app.blueprints.tagging.models.tag import Tag
 from app.blueprints.tagging.routes import FLAG_ERROR_MESSAGE
-from bs4 import BeautifulSoup
 from tests.api_data.test_data import test_fund_id
 from tests.api_data.test_data import test_round_id
 
@@ -66,8 +65,7 @@ test_get_tag = {
     "created_at": "2023-07-25T09:10:39.073315+00:00",
     "creator_user_id": "00000000-0000-0000-0000-000000000000",
     "description": (
-        "Use these tags to assign assessments to team members. Note: you"
-        " cannot send notifications using tags"
+        "Use these tags to assign assessments to team members. Note: you cannot send notifications using tags"
     ),
     "fund_id": "47aef2f5-3fcb-4d45-acb5-f0152b5f03c4",
     "id": "a48f4951-b26b-4820-9301-9ca2c835b163",
@@ -95,11 +93,7 @@ def test_change_tags_route(
     soup = BeautifulSoup(response.data, "html.parser")
     assert soup.find("h1").text == "Change tags"
     assert soup.find("strong").text == "In progress"
-    assert (
-        table := soup.find(
-            "table", class_="govuk-table dluhc-table-checkboxes"
-        )
-    )
+    assert (table := soup.find("table", class_="govuk-table dluhc-table-checkboxes"))
     assert len(table.findAll("tr")) == 3
     assert table.findAll("tr")[0].findAll("th")[0].text.strip() == "Tag name"
     assert table.findAll("tr")[1].findAll("th")[0].text.strip() == "Val 1"
@@ -154,11 +148,7 @@ def test_change_tags_route_associated_tag_checked(
     assert soup.find("h1").text == "Change tags"
     assert soup.find("input", {"id": "123"}).attrs.get("checked") is not None
     assert soup.find("input", {"id": "432"}).attrs.get("checked") is None
-    assert (
-        table := soup.find(
-            "table", class_="govuk-table dluhc-table-checkboxes"
-        )
-    )
+    assert (table := soup.find("table", class_="govuk-table dluhc-table-checkboxes"))
     assert len(table.findAll("tr")) == 3
 
 
@@ -269,8 +259,7 @@ def test_create_tag_invalid_form_post(
     component_errors = soup.find_all("p", class_="govuk-error-message")
     assert response.status_code == 200
     assert all(
-        error_string in str(component_errors)
-        for error_string in expected_errors
+        error_string in str(component_errors) for error_string in expected_errors
     ), "Component errors not found"
     # It is unlikely we will encounter an incorrect radio button submission
     # which is not in the users direct control (although still possible)
@@ -306,8 +295,7 @@ def test_create_tag_invalid_character_post(
     component_errors = soup.find_all("p", class_="govuk-error-message")
     assert response.status_code == 200
     assert all(
-        error_string in str(component_errors)
-        for error_string in expected_errors
+        error_string in str(component_errors) for error_string in expected_errors
     ), "Component errors not found"
     # It is unlikely we will encounter an incorrect radio button submission
     # which is not in the users direct control (although still possible)
@@ -333,8 +321,7 @@ def test_create_duplicate_tag_fails(
     mock_get_active_tags_for_fund_round,
 ):
     expected_errors = [
-        "Tag already exists for this round. Please ensure that the tag is"
-        " unique."
+        "Tag already exists for this round. Please ensure that the tag is unique."
     ]
     response = client_with_valid_session.post(
         f"/assess/tags/create/{test_fund_id}/{test_round_id}",
@@ -349,8 +336,7 @@ def test_create_duplicate_tag_fails(
     component_errors = soup.find_all("p", class_="govuk-error-message")
     assert response.status_code == 200
     assert all(
-        error_string in str(component_errors)
-        for error_string in expected_errors
+        error_string in str(component_errors) for error_string in expected_errors
     ), "Component errors not found"
     # It is unlikely we will encounter an incorrect radio button submission
     # which is not in the users direct control (although still possible)
@@ -648,9 +634,7 @@ def test_get_available_inactive_tags(flask_test_client):
 
 
 def test_get_available_tags_no_tags(flask_test_client):
-    with mock.patch(
-        "app.blueprints.services.data_services.get_data", return_value=[]
-    ):
+    with mock.patch("app.blueprints.services.data_services.get_data", return_value=[]):
         result = get_tags_for_fund_round("test_fund", "test_round", "")
         assert len(result) == 0
 
@@ -733,9 +717,7 @@ def mock_get_tag_and_count(mocker):
         type_id="abcabc",
         tag_association_count=count,
     )
-    mocker.patch(
-        "app.blueprints.tagging.routes.get_tag", return_value=mock_tag
-    )
+    mocker.patch("app.blueprints.tagging.routes.get_tag", return_value=mock_tag)
     yield (tag_id, count)
 
 

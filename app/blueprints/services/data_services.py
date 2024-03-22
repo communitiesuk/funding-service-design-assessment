@@ -1,6 +1,7 @@
 import traceback
 from copy import deepcopy
 from functools import lru_cache
+from typing import Collection
 from typing import Dict
 from typing import List
 from typing import Optional
@@ -8,6 +9,10 @@ from typing import Union
 from urllib.parse import urlencode
 
 import requests
+from flask import abort
+from flask import current_app
+from fsd_utils.locale_selector.get_lang import get_lang
+
 from app.blueprints.scoring.models.score import Score
 from app.blueprints.services.models.application import Application
 from app.blueprints.services.models.banner import Banner
@@ -20,10 +25,10 @@ from app.blueprints.services.models.sub_criteria import SubCriteria
 from app.blueprints.tagging.models.tag import AssociatedTag
 from app.blueprints.tagging.models.tag import Tag
 from app.blueprints.tagging.models.tag import TagType
+from app.blueprints.themes.deprecated_theme_mapper import (
+    map_application_with_sub_criteria_themes_fields,
+)
 from config import Config
-from flask import abort
-from flask import current_app
-from fsd_utils.locale_selector.get_lang import get_lang
 
 
 def get_data(endpoint: str, payload: Dict = None):
@@ -43,13 +48,10 @@ def get_data(endpoint: str, payload: Dict = None):
                 return response.content
         elif response.status_code == 204:
             current_app.logger.warn(
-                "Request successful but no resources returned for endpoint"
-                f" '{endpoint}'."
+                f"Request successful but no resources returned for endpoint '{endpoint}'."
             )
         else:
-            current_app.logger.error(
-                f"Could not get data for endpoint '{endpoint}' "
-            )
+            current_app.logger.error(f"Could not get data for endpoint '{endpoint}' ")
     except requests.exceptions.RequestException as e:
         stack_trace = traceback.format_exc()
         current_app.logger.error(f"{e}\n{stack_trace}")
@@ -57,16 +59,13 @@ def get_data(endpoint: str, payload: Dict = None):
 
 def get_assessment_progress(application_metadata, fund_id, round_id):
     application_ids_list = {
-        "application_ids": [
-            x.get("application_id") for x in application_metadata
-        ]
+        "application_ids": [x.get("application_id") for x in application_metadata]
     }
     endpoint_url = Config.ASSESSMENT_PROGRESS_ENDPOINT.format(
         fund_id=fund_id, round_id=round_id
     )
     current_app.logger.info(
-        f"Fetching assessment progress from '{endpoint_url}', with json"
-        f" payload: {application_ids_list}."
+        f"Fetching assessment progress from '{endpoint_url}', with json payload: {application_ids_list}."
     )
     response = requests.post(endpoint_url, json=application_ids_list)
 
@@ -106,9 +105,7 @@ def get_application_overviews(fund_id, round_id, search_params):
     return overviews_response
 
 
-def get_tags_for_fund_round(
-    fund_id, round_id, search_params: dict = {}
-) -> List[Tag]:
+def get_tags_for_fund_round(fund_id, round_id, search_params: dict = {}) -> List[Tag]:
     endpoint = Config.ASSESSMENT_TAGS_ENDPOINT.format(
         fund_id=fund_id, round_id=round_id, params=urlencode(search_params)
     )
@@ -118,9 +115,7 @@ def get_tags_for_fund_round(
         result = [Tag.from_dict(item) for item in response]
         return result
     else:
-        current_app.logger.info(
-            f"No tags found for fund {fund_id}, round {round_id}."
-        )
+        current_app.logger.info(f"No tags found for fund {fund_id}, round {round_id}.")
         return []
 
 
@@ -135,8 +130,7 @@ def get_tag_for_fund_round(fund_id, round_id, tag_id) -> Tag:
         return result
     else:
         current_app.logger.info(
-            f"No tag found for fund {fund_id}, round {round_id}, tag_id"
-            f" {tag_id}."
+            f"No tag found for fund {fund_id}, round {round_id}, tag_id {tag_id}."
         )
         return None
 
@@ -154,9 +148,7 @@ def update_tags(fund_id, round_id, tags) -> bool:
         for tag in tags
     ]
 
-    current_app.logger.info(
-        f"Requesting update for of the following tags: {payload}"
-    )
+    current_app.logger.info(f"Requesting update for of the following tags: {payload}")
     response = requests.put(endpoint, json=payload)
 
     was_successful = response.ok
@@ -184,15 +176,12 @@ def post_new_tag_for_fund_round(fund_id, round_id, tag) -> bool:
         fund_id=fund_id, round_id=round_id, params=None
     )
     current_app.logger.info(
-        f"Posting the following tag: {tag}"
-        f"for fund {fund_id} and round {round_id}."
+        f"Posting the following tag: {tag}for fund {fund_id} and round {round_id}."
     )
     response = requests.post(endpoint, json=tag)
     tag_created = response.ok
     if not tag_created:
-        current_app.logger.error(
-            f"Post tag failed, code: {response.status_code}."
-        )
+        current_app.logger.error(f"Post tag failed, code: {response.status_code}.")
 
     return tag_created
 
@@ -236,13 +225,10 @@ def update_associated_tags(application_id, tags) -> bool:
     endpoint = Config.ASSESSMENT_ASSOCIATE_TAGS_ENDPOINT.format(
         application_id=application_id
     )
-    payload = [
-        {"id": tag["tag_id"], "user_id": tag["user_id"]} for tag in tags
-    ]
+    payload = [{"id": tag["tag_id"], "user_id": tag["user_id"]} for tag in tags]
 
     current_app.logger.info(
-        f"Requesting the following tags: {payload} associate with"
-        f" application_id '{application_id}'"
+        f"Requesting the following tags: {payload} associate with application_id '{application_id}'"
     )
     response = requests.put(endpoint, json=payload)
     was_successful = response.ok
@@ -348,9 +334,7 @@ def get_bulk_accounts_dict(account_ids: List, fund_short_name: str):
 
         for user_result in users_result.values():
             # we only need the highest role for the fund we are currently viewing
-            highest_role = user_result["highest_role_map"].get(
-                fund_short_name, ""
-            )
+            highest_role = user_result["highest_role_map"].get(fund_short_name, "")
             user_result["highest_role"] = highest_role
             del user_result["highest_role_map"]
 
@@ -371,14 +355,11 @@ def get_score_and_justification(
     }
     score_response = get_data(score_url, score_params)
     if score_response:
-        current_app.logger.info(
-            f"Response from Assessment Store: '{score_response}'."
-        )
+        current_app.logger.info(f"Response from Assessment Store: '{score_response}'.")
 
     else:
         current_app.logger.info(
-            f"No scores found for application: {application_id},"
-            f" sub_criteria_id: {sub_criteria_id}"
+            f"No scores found for application: {application_id}, sub_criteria_id: {sub_criteria_id}"
         )
     return score_response
 
@@ -393,15 +374,9 @@ def match_score_to_user_account(scores, fund_short_name):
         Score.from_dict(
             score
             | {
-                "user_full_name": bulk_accounts_dict[score["user_id"]][
-                    "full_name"
-                ],
-                "user_email": bulk_accounts_dict[score["user_id"]][
-                    "email_address"
-                ],
-                "highest_role": bulk_accounts_dict[score["user_id"]][
-                    "highest_role"
-                ],
+                "user_full_name": bulk_accounts_dict[score["user_id"]]["full_name"],
+                "user_email": bulk_accounts_dict[score["user_id"]]["email_address"],
+                "highest_role": bulk_accounts_dict[score["user_id"]]["highest_role"],
             }
         )
         for score in scores
@@ -421,9 +396,7 @@ def submit_score_and_justification(
     }
     url = Config.ASSESSMENT_SCORES_ENDPOINT
     response = requests.post(url, json=data_dict)
-    current_app.logger.info(
-        f"Response from Assessment Store: '{response.json()}'."
-    )
+    current_app.logger.info(f"Response from Assessment Store: '{response.json()}'.")
     return response.ok
 
 
@@ -446,15 +419,18 @@ def get_application_stats(fund_ids: List = None, round_ids: List = None):
 
 
 def get_assessments_stats(
-    fund_id: str, round_id: str, search_params: dict = {}
-) -> Dict | None:
+    fund_id: str, round_ids: Collection[str], search_params: dict = {}
+) -> dict | None:
     assessments_stats_endpoint = (
         Config.ASSESSMENT_STORE_API_HOST
     ) + Config.ASSESSMENTS_STATS_ENDPOINT.format(
-        fund_id=fund_id, round_id=round_id, params=urlencode(search_params)
+        fund_id=fund_id, params=urlencode(search_params)
     )
     current_app.logger.info(f"Endpoint '{assessments_stats_endpoint}'.")
-    return get_data(assessments_stats_endpoint)
+    response = requests.post(
+        assessments_stats_endpoint, json={"round_ids": list(round_ids)}
+    )
+    return response.json()
 
 
 def get_assessor_task_list_state(application_id: str) -> Union[dict, None]:
@@ -487,9 +463,7 @@ def get_questions(application_id):
     """
     status_endpoint = (
         Config.APPLICATION_STORE_API_HOST
-        + Config.APPLICATION_STATUS_ENDPOINT.format(
-            application_id=application_id
-        )
+        + Config.APPLICATION_STATUS_ENDPOINT.format(application_id=application_id)
     )
 
     questions = get_data(status_endpoint)
@@ -568,9 +542,7 @@ def get_flags(application_id: str) -> List[Flag]:
 
 def get_qa_complete(application_id: str) -> dict:
     qa_complete = get_data(
-        Config.ASSESSMENT_GET_QA_STATUS_ENDPOINT.format(
-            application_id=application_id
-        )
+        Config.ASSESSMENT_GET_QA_STATUS_ENDPOINT.format(application_id=application_id)
     )
     return qa_complete
 
@@ -625,43 +597,26 @@ def submit_flag(
 def get_all_uploaded_documents_theme_answers(
     application_id: str,
 ) -> Union[list, None]:
-    all_uploaded_documents_theme_answers_endpoint = (
-        Config.ALL_UPLOADED_DOCUMENTS_THEME_ANSWERS_ENDPOINT.format(
-            application_id=application_id
-        )
-    )
-    all_uploaded_documents_theme_answers_response = get_data(
-        all_uploaded_documents_theme_answers_endpoint
+    return get_sub_criteria_theme_answers_all(
+        application_id,
+        "all_uploaded_documents",
     )
 
-    if isinstance(all_uploaded_documents_theme_answers_response, list):
-        return all_uploaded_documents_theme_answers_response
-    else:
-        msg = (
-            f"all_uploaded_documents_theme_answers: '{application_id}' not"
-            " found."
-        )
-        current_app.logger.warn(msg)
-        abort(404, description=msg)
 
-
-def get_sub_criteria_theme_answers(
-    application_id: str, theme_id: str
+def get_sub_criteria_theme_answers_all(
+    application_id: str,
+    theme_id: str,
 ) -> Union[list, None]:
-    theme_answers_endpoint = (
-        Config.ASSESSMENT_STORE_API_HOST
-        + Config.SUB_CRITERIA_THEME_ANSWERS_ENDPOINT.format(
-            application_id=application_id, theme_id=theme_id
-        )
+    theme_mapping_data_url = (
+        f"{Config.ASSESSMENT_STORE_API_HOST}"
+        f"{Config.SUB_CRITERIA_THEME_ANSWERS_ENDPOINT.format(application_id=application_id)}"
     )
-    theme_answers_response = get_data(theme_answers_endpoint)
-
-    if theme_answers_response:
-        return theme_answers_response
-    else:
-        msg = f"theme_answers: '{theme_id}' not found."
-        current_app.logger.warn(msg)
-        abort(404, description=msg)
+    theme_mapping_data = get_data(theme_mapping_data_url)
+    return map_application_with_sub_criteria_themes_fields(
+        theme_mapping_data["application_json"],
+        theme_mapping_data["sub_criterias"],
+        theme_id,
+    )
 
 
 def get_comments(
@@ -685,19 +640,13 @@ def get_comments(
         "comment_id": comment_id,
     }
     # Strip theme_id from dict if None
-    query_params_strip_nones = {
-        k: v for k, v in query_params.items() if v is not None
-    }
-    comment_endpoint = (
-        f"{Config.ASSESSMENT_COMMENT_ENDPOINT}"
-        f"?{urlencode(query=query_params_strip_nones)}"
-    )
+    query_params_strip_nones = {k: v for k, v in query_params.items() if v is not None}
+    comment_endpoint = f"{Config.ASSESSMENT_COMMENT_ENDPOINT}?{urlencode(query=query_params_strip_nones)}"
     comment_response = get_data(comment_endpoint)
 
     if not comment_response or len(comment_response) == 0:
         current_app.logger.info(
-            f"No comments found for application: {application_id},"
-            f" sub_criteria_id: {sub_criteria_id}"
+            f"No comments found for application: {application_id}, sub_criteria_id: {sub_criteria_id}"
         )
         return None
     else:
@@ -723,24 +672,18 @@ def match_comment_to_theme(comment_response, themes, fund_short_name):
         Comment.from_dict(
             comment
             | {
-                "full_name": bulk_accounts_dict[comment["user_id"]][
-                    "full_name"
-                ],
+                "full_name": bulk_accounts_dict[comment["user_id"]]["full_name"],
                 "email_address": bulk_accounts_dict[comment["user_id"]][
                     "email_address"
                 ],
-                "highest_role": bulk_accounts_dict[comment["user_id"]][
-                    "highest_role"
-                ],
+                "highest_role": bulk_accounts_dict[comment["user_id"]]["highest_role"],
                 "fund_short_name": fund_short_name,
             }
         )
         for comment in comment_response
     ]
     theme_id_to_comments_list_map = {
-        theme.id: [
-            comment for comment in comments if comment.theme_id == theme.id
-        ]
+        theme.id: [comment for comment in comments if comment.theme_id == theme.id]
         for theme in themes
     }
     return theme_id_to_comments_list_map
@@ -773,16 +716,12 @@ def submit_comment(
         url = Config.ASSESSMENT_COMMENT_ENDPOINT
         response = requests.put(url, json=data_dict)
 
-    current_app.logger.info(
-        f"Response from Assessment Store: '{response.json()}'."
-    )
+    current_app.logger.info(f"Response from Assessment Store: '{response.json()}'.")
     return response.ok
 
 
 def get_application_json(application_id):
-    endpoint = Config.APPLICATION_JSON_ENDPOINT.format(
-        application_id=application_id
-    )
+    endpoint = Config.APPLICATION_JSON_ENDPOINT.format(application_id=application_id)
     response = requests.get(endpoint)
     return response.json()
 
@@ -796,9 +735,7 @@ def get_default_round_data():
     return round_response
 
 
-def get_application_sections_display_config(
-    fund_id: str, round_id: str, language: str
-):
+def get_application_sections_display_config(fund_id: str, round_id: str, language: str):
     application_display_request_url = (
         Config.GET_APPLICATION_DISPLAY_FOR_FUND_ENDPOINT.format(
             fund_id=fund_id, round_id=round_id, language=language

@@ -1,10 +1,11 @@
-from config import Config
 from flask_wtf import FlaskForm
 from wtforms import RadioField
 from wtforms import SelectMultipleField
 from wtforms import TextAreaField
 from wtforms.validators import InputRequired
 from wtforms.validators import length
+
+from config import Config
 
 
 class FlagApplicationForm(FlaskForm):
@@ -30,9 +31,7 @@ class FlagApplicationForm(FlaskForm):
         "teams_available",
         choices=None,
         validators=[
-            InputRequired(
-                message="Select which team the flag should be allocated to"
-            )
+            InputRequired(message="Select which team the flag should be allocated to")
         ],
     )
 

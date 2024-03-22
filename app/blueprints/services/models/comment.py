@@ -25,19 +25,13 @@ class Comment:
 
         # sort the updates in the order they are created
         if self.updates:
-            self.updates = sorted(
-                self.updates, key=lambda x: x["date_created"]
-            )
+            self.updates = sorted(self.updates, key=lambda x: x["date_created"])
 
     @classmethod
     def from_dict(cls, d: dict):
         # Filter unknown fields from JSON dictionary
         return cls(
-            **{
-                k: v
-                for k, v in d.items()
-                if k in inspect.signature(cls).parameters
-            }
+            **{k: v for k, v in d.items() if k in inspect.signature(cls).parameters}
         )
 
     @property

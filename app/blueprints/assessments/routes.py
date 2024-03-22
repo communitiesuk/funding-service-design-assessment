@@ -6,62 +6,58 @@ from datetime import datetime
 from urllib.parse import quote_plus
 from urllib.parse import unquote_plus
 
-from app.blueprints.assessments.activity_trail import (
-    add_user_info,
-)
+from flask import Blueprint
+from flask import Response
+from flask import abort
+from flask import current_app
+from flask import g
+from flask import redirect
+from flask import render_template
+from flask import request
+from flask import url_for
+from fsd_utils import extract_questions_and_answers
+
 from app.blueprints.assessments.activity_trail import AssociatedTags
 from app.blueprints.assessments.activity_trail import CheckboxForm
 from app.blueprints.assessments.activity_trail import Comments
-from app.blueprints.assessments.activity_trail import filter_all_activities
 from app.blueprints.assessments.activity_trail import Flags
 from app.blueprints.assessments.activity_trail import Scores
 from app.blueprints.assessments.activity_trail import SearchForm
-from app.blueprints.assessments.forms.assessment_form import (
-    AssessmentCompleteForm,
-)
+from app.blueprints.assessments.activity_trail import add_user_info
+from app.blueprints.assessments.activity_trail import filter_all_activities
+from app.blueprints.assessments.activity_trail import select_filters
+from app.blueprints.assessments.forms.assessment_form import AssessmentCompleteForm
 from app.blueprints.assessments.forms.comments_form import CommentsForm
-from app.blueprints.assessments.forms.mark_qa_complete_form import (
-    MarkQaCompleteForm,
-)
+from app.blueprints.assessments.forms.mark_qa_complete_form import MarkQaCompleteForm
+from app.blueprints.assessments.helpers import determine_display_status
 from app.blueprints.assessments.helpers import download_file
 from app.blueprints.assessments.helpers import generate_assessment_info_csv
 from app.blueprints.assessments.helpers import generate_maps_from_form_names
-from app.blueprints.assessments.helpers import (
-    get_files_for_application_upload_fields,
-)
+from app.blueprints.assessments.helpers import get_files_for_application_upload_fields
 from app.blueprints.assessments.helpers import get_tag_map_and_tag_options
 from app.blueprints.assessments.helpers import get_team_flag_stats
-from app.blueprints.assessments.helpers import (
-    set_application_status_in_overview,
-)
+from app.blueprints.assessments.helpers import sanitise_export_data
+from app.blueprints.assessments.helpers import set_application_status_in_overview
 from app.blueprints.assessments.models import applicants_response
+from app.blueprints.assessments.models.file_factory import FILE_GENERATORS
 from app.blueprints.assessments.models.file_factory import (
     ApplicationFileRepresentationArgs,
 )
-from app.blueprints.assessments.models.file_factory import FILE_GENERATORS
-from app.blueprints.assessments.models.file_factory import (
-    generate_file_content,
-)
+from app.blueprints.assessments.models.file_factory import generate_file_content
 from app.blueprints.assessments.models.flag_teams import TeamsFlagData
-from app.blueprints.assessments.models.fund_summary import (
-    create_round_summaries,
-)
-from app.blueprints.assessments.models.fund_summary import is_after_today
 from app.blueprints.assessments.models.location_data import LocationData
+from app.blueprints.assessments.models.round_summary import create_round_summaries
+from app.blueprints.assessments.models.round_summary import is_after_today
 from app.blueprints.assessments.status import all_status_completed
 from app.blueprints.assessments.status import update_ar_status_to_completed
 from app.blueprints.assessments.status import update_ar_status_to_qa_completed
-from app.blueprints.authentication.validation import (
-    check_access_application_id,
-)
+from app.blueprints.authentication.validation import check_access_application_id
 from app.blueprints.authentication.validation import (
     check_access_fund_short_name_round_sn,
 )
 from app.blueprints.authentication.validation import get_countries_from_roles
 from app.blueprints.authentication.validation import has_access_to_fund
-from app.blueprints.authentication.validation import (
-    has_devolved_authority_validation,
-)
+from app.blueprints.authentication.validation import has_devolved_authority_validation
 from app.blueprints.scoring.helpers import get_scoring_class
 from app.blueprints.services.aws import get_file_for_download_from_aws
 from app.blueprints.services.data_services import (
@@ -80,9 +76,7 @@ from app.blueprints.services.data_services import (
     get_application_sections_display_config,
 )
 from app.blueprints.services.data_services import get_assessment_progress
-from app.blueprints.services.data_services import (
-    get_associated_tags_for_application,
-)
+from app.blueprints.services.data_services import get_associated_tags_for_application
 from app.blueprints.services.data_services import get_bulk_accounts_dict
 from app.blueprints.services.data_services import get_comments
 from app.blueprints.services.data_services import get_flags
@@ -92,16 +86,12 @@ from app.blueprints.services.data_services import get_qa_complete
 from app.blueprints.services.data_services import get_round
 from app.blueprints.services.data_services import get_score_and_justification
 from app.blueprints.services.data_services import get_sub_criteria
-from app.blueprints.services.data_services import (
-    get_sub_criteria_theme_answers,
-)
+from app.blueprints.services.data_services import get_sub_criteria_theme_answers_all
 from app.blueprints.services.data_services import get_tags_for_fund_round
 from app.blueprints.services.data_services import match_comment_to_theme
 from app.blueprints.services.data_services import submit_comment
 from app.blueprints.services.models.theme import Theme
-from app.blueprints.services.shared_data_helpers import (
-    get_state_for_tasklist_banner,
-)
+from app.blueprints.services.shared_data_helpers import get_state_for_tasklist_banner
 from app.blueprints.shared.filters import utc_to_bst
 from app.blueprints.shared.helpers import determine_assessment_status
 from app.blueprints.shared.helpers import determine_flag_status
@@ -118,19 +108,10 @@ from config.display_value_mappings import dpi_filters
 from config.display_value_mappings import funding_types
 from config.display_value_mappings import landing_filters
 from config.display_value_mappings import search_params_cof
+from config.display_value_mappings import search_params_cof_eoi
 from config.display_value_mappings import search_params_cyp
 from config.display_value_mappings import search_params_dpif
 from config.display_value_mappings import search_params_nstf
-from flask import abort
-from flask import Blueprint
-from flask import current_app
-from flask import g
-from flask import redirect
-from flask import render_template
-from flask import request
-from flask import Response
-from flask import url_for
-from fsd_utils import extract_questions_and_answers
 
 assessment_bp = Blueprint(
     "assessment_bp",
@@ -144,9 +125,7 @@ def _handle_all_uploaded_documents(application_id):
     flags_list = get_flags(application_id)
     flag_status = determine_flag_status(flags_list)
 
-    theme_answers_response = get_all_uploaded_documents_theme_answers(
-        application_id
-    )
+    theme_answers_response = get_all_uploaded_documents_theme_answers(application_id)
     answers_meta = applicants_response.create_ui_components(
         theme_answers_response, application_id
     )
@@ -162,6 +141,7 @@ def _handle_all_uploaded_documents(application_id):
         is_flaggable=is_flaggable(flag_status),
         answers_meta=answers_meta,
         assessment_status=assessment_status,
+        migration_banner_enabled=Config.MIGRATION_BANNER_ENABLED,
     )
 
 
@@ -173,24 +153,17 @@ def old_landing():
 @assessment_bp.route("/assessor_tool_dashboard/", methods=["GET"])
 def landing():
     filters = landing_filters._replace(
-        **{
-            k: v
-            for k, v in request.args.items()
-            if k in landing_filters._fields
-        }
+        **{k: v for k, v in request.args.items() if k in landing_filters._fields}
     )  # noqa
     funds = [
         f
         for f in get_funds(get_ttl_hash(seconds=Config.LRU_CACHE_TIME))
-        if has_access_to_fund(f.short_name)
-        and fund_matches_filters(f, filters)
+        if has_access_to_fund(f.short_name) and fund_matches_filters(f, filters)
     ]
     sorted_funds_map = OrderedDict(
         (fund.id, fund) for fund in sorted(funds, key=lambda f: f.name)
     )
-    round_summaries = {
-        fund.id: create_round_summaries(fund, filters) for fund in funds
-    }
+    round_summaries = {fund.id: create_round_summaries(fund, filters) for fund in funds}
     return render_template(
         "assessor_tool_dashboard.html",
         fund_summaries=round_summaries,
@@ -202,7 +175,7 @@ def landing():
             for rsl in round_summaries.values()
             for rs in rsl
         ),
-        force_open_all_live_assessment_rounds=Config.FORCE_OPEN_ALL_LIVE_ASSESSMENT_ROUNDS,
+        migration_banner_enabled=Config.MIGRATION_BANNER_ENABLED,
     )
 
 
@@ -220,6 +193,8 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
         search_params = {**search_params_cyp}
     elif fund_short_name.upper() == "DPIF":
         search_params = {**search_params_dpif}
+    elif fund_short_name.upper() == "COF-EOI":
+        search_params = {**search_params_cof_eoi}
     else:
         search_params = {**search_params_cof}
 
@@ -252,9 +227,7 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
     # note, we are not sending search parameters here as we don't want to filter
     # the stats at all.  see https://dluhcdigital.atlassian.net/browse/FS-3249
     unfiltered_stats = process_assessments_stats(all_applications_metadata)
-    all_application_locations = LocationData.from_json_blob(
-        all_applications_metadata
-    )
+    all_application_locations = LocationData.from_json_blob(all_applications_metadata)
 
     search_params = {
         **search_params,
@@ -262,14 +235,10 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
     }
 
     # matches the query parameters provided in the search and filter form
-    search_params, show_clear_filters = match_search_params(
-        search_params, request.args
-    )
+    search_params, show_clear_filters = match_search_params(search_params, request.args)
 
     # request all the application overviews based on the search parameters
-    application_overviews = get_application_overviews(
-        fund_id, round_id, search_params
-    )
+    application_overviews = get_application_overviews(fund_id, round_id, search_params)
 
     teams_flag_stats = get_team_flag_stats(application_overviews)
 
@@ -304,9 +273,7 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
         active_fund_round_tags, post_processed_overviews
     )
 
-    def get_sorted_application_overviews(
-        application_overviews, column, reverse=False
-    ):
+    def get_sorted_application_overviews(application_overviews, column, reverse=False):
         """Sorts application_overviews list based on the specified column."""
 
         sort_field_to_lambda = {
@@ -323,9 +290,13 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
             ),
             "team_in_place": lambda x: x["team_in_place"],
             "datasets": lambda x: x["datasets"],
-            "publish_datasets": lambda x: x["publish_datasets"]
-            if x["publish_datasets"]
-            else str(x["publish_datasets"]),
+            "date_submitted": lambda x: x["date_submitted"],
+            "lead_contact_email": lambda x: x["lead_contact_email"],
+            "publish_datasets": lambda x: (
+                x["publish_datasets"]
+                if x["publish_datasets"]
+                else str(x["publish_datasets"])
+            ),
         }
 
         # Define the sorting function based on the specified column
@@ -366,6 +337,7 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
         countries=all_application_locations.countries,
         regions=all_application_locations.regions,
         local_authorities=all_application_locations._local_authorities,
+        migration_banner_enabled=Config.MIGRATION_BANNER_ENABLED,
         dpi_filters=dpi_filters,
     )
 
@@ -455,11 +427,13 @@ def display_sub_criteria(
                         application_id=application_id,
                         sub_criteria_id=sub_criteria_id,
                         theme_id=theme_id,
+                        migration_banner_enabled=Config.MIGRATION_BANNER_ENABLED,
                     ),
                     application_id=application_id,
                     state=state,
                     flag_status=flag_status,
                     assessment_status=assessment_status,
+                    migration_banner_enabled=Config.MIGRATION_BANNER_ENABLED,
                 )
 
     if edit_comment_argument and comment_form.validate_on_submit():
@@ -472,6 +446,7 @@ def display_sub_criteria(
                 application_id=application_id,
                 sub_criteria_id=sub_criteria_id,
                 theme_id=theme_id,
+                migration_banner_enabled=Config.MIGRATION_BANNER_ENABLED,
                 _anchor="comments",
             )
         )
@@ -490,7 +465,7 @@ def display_sub_criteria(
         "assessment_status": assessment_status,
     }
 
-    theme_answers_response = get_sub_criteria_theme_answers(
+    theme_answers_response = get_sub_criteria_theme_answers_all(
         application_id, theme_id
     )
 
@@ -502,6 +477,7 @@ def display_sub_criteria(
         "sub_criteria.html",
         answers_meta=answers_meta,
         state=state,
+        migration_banner_enabled=Config.MIGRATION_BANNER_ENABLED,
         **common_template_config,
     )
 
@@ -509,15 +485,10 @@ def display_sub_criteria(
 @assessment_bp.route("/application/<application_id>/export", methods=["GET"])
 @check_access_application_id(roles_required=["LEAD_ASSESSOR"])
 def generate_doc_list_for_download(application_id):
-    current_app.logger.info(
-        f"Generating docs for application id {application_id}"
-    )
+    current_app.logger.info(f"Generating docs for application id {application_id}")
     state = get_state_for_tasklist_banner(application_id)
     short_id = state.short_id[-6:]
     flags_list = get_flags(application_id)
-    assessment_status = determine_assessment_status(
-        state.workflow_status, flags_list
-    )
     flag_status = determine_flag_status(flags_list)
 
     application_json = get_application_json(application_id)
@@ -539,6 +510,9 @@ def generate_doc_list_for_download(application_id):
         )
         for file_type in FILE_GENERATORS.keys()
     ]
+    assessment_status = determine_assessment_status(
+        state.workflow_status, state.is_qa_complete
+    )
 
     return render_template(
         "contract_downloads.html",
@@ -548,6 +522,7 @@ def generate_doc_list_for_download(application_id):
         supporting_evidence=supporting_evidence,
         assessment_status=assessment_status,
         flag_status=flag_status,
+        migration_banner_enabled=Config.MIGRATION_BANNER_ENABLED,
     )
 
 
@@ -555,12 +530,9 @@ def generate_doc_list_for_download(application_id):
     "/application/<application_id>/export/<short_id>/answers.<file_type>"
 )
 @check_access_application_id(roles_required=["LEAD_ASSESSOR"])
-def download_application_answers(
-    application_id: str, short_id: str, file_type: str
-):
+def download_application_answers(application_id: str, short_id: str, file_type: str):
     current_app.logger.info(
-        "Generating application Q+A download for application"
-        f" {application_id} in {file_type} format"
+        f"Generating application Q+A download for application {application_id} in {file_type} format"
     )
     application_json = get_application_json(application_id)
     application_json_blob = application_json["jsonb_blob"]
@@ -577,10 +549,8 @@ def download_application_answers(
     )
 
     qanda_dict = extract_questions_and_answers(application_json_blob["forms"])
-    application_sections_display_config = (
-        get_application_sections_display_config(
-            fund.id, round_.id, application_json["language"]
-        )
+    application_sections_display_config = get_application_sections_display_config(
+        fund.id, round_.id, application_json["language"]
     )
 
     (
@@ -589,9 +559,7 @@ def download_application_answers(
     ) = generate_maps_from_form_names(application_sections_display_config)
 
     qanda_dict = {
-        key: qanda_dict[key]
-        for key in form_name_to_title_map
-        if key in qanda_dict
+        key: qanda_dict[key] for key in form_name_to_title_map if key in qanda_dict
     }
 
     all_uploaded_documents = []
@@ -643,9 +611,7 @@ def download_multiple_files(files, folder_name):
         zip_buffer.read(),
         mimetype="application/zip",
         headers={
-            "Content-Disposition": (
-                f"attachment;filename={quote_plus(f'{folder_name}.zip')}"
-            )
+            "Content-Disposition": f"attachment;filename={quote_plus(f'{folder_name}.zip')}"
         },
     )
 
@@ -719,6 +685,7 @@ def application(application_id):
         assessment_status=assessment_status,
         all_uploaded_documents_section_available=fund_round.all_uploaded_documents_section_available,
         max_possible_sub_criteria_score=scoring_form.max_score,
+        migration_banner_enabled=Config.MIGRATION_BANNER_ENABLED,
     )
 
 
@@ -750,7 +717,7 @@ def activity_trail(application_id: str):
     all_tags = AssociatedTags.from_associated_tags_list(tags)
 
     # Add search box and checkbox filters
-    available_filters = ["All activity", "Comments", "Score", "Flags", "Tags"]
+    available_filters = select_filters(state.fund_short_name)
     search_form = SearchForm(request.form)
     checkbox_form = CheckboxForm(request.form)
 
@@ -764,6 +731,12 @@ def activity_trail(application_id: str):
         update_user_info, search_keyword, checkbox_filters
     )
 
+    display_status = determine_display_status(
+        state.workflow_status,
+        flags_list,
+        state.is_qa_complete,
+    )
+
     return render_template(
         "activity_trail.html",
         application_id=application_id,
@@ -774,6 +747,8 @@ def activity_trail(application_id: str):
         available_filters=available_filters,
         search_keyword=search_keyword,
         checkbox_filters=checkbox_filters,
+        migration_banner_enabled=Config.MIGRATION_BANNER_ENABLED,
+        display_status=display_status,
     )
 
 
@@ -782,9 +757,7 @@ def activity_trail(application_id: str):
     methods=["GET"],
 )
 @check_access_fund_short_name_round_sn(roles_required=["LEAD_ASSESSOR"])
-def assessor_export(
-    fund_short_name: str, round_short_name: str, report_type: str
-):
+def assessor_export(fund_short_name: str, round_short_name: str, report_type: str):
     _round = get_round(
         fund_short_name,
         round_short_name,
@@ -792,7 +765,7 @@ def assessor_export(
         ttl_hash=get_ttl_hash(Config.LRU_CACHE_TIME),
     )
     export = get_applicant_export(_round.fund_id, _round.id, report_type)
-
+    export = sanitise_export_data(export)
     en_export_data = generate_assessment_info_csv(export["en_list"])
     cy_export_data = generate_assessment_info_csv(export["cy_list"])
 
@@ -821,9 +794,7 @@ def feedback_export(fund_short_name: str, round_short_name: str):
     round_id = _round.id
     status_only = "SUBMITTED"
 
-    content = get_applicant_feedback_and_survey_report(
-        fund_id, round_id, status_only
-    )
+    content = get_applicant_feedback_and_survey_report(fund_id, round_id, status_only)
     if content:
         short_name = (fund_short_name + "_" + round_short_name).lower()
         return download_file(
@@ -864,4 +835,5 @@ def qa_complete(application_id):
         form=form,
         referrer=request.referrer,
         assessment_status=assessment_statuses[state.workflow_status],
+        migration_banner_enabled=Config.MIGRATION_BANNER_ENABLED,
     )
