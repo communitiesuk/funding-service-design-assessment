@@ -265,7 +265,7 @@ mypy-extensions==1.0.0
     # via black
 nodeenv==1.7.0
     # via pre-commit
-num2words==0.5.12
+num2words==0.5.13
     # via -r requirements.txt
 openapi-schema-validator==0.6.2
     # via
