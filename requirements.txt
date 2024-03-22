@@ -168,7 +168,7 @@ markupsafe==2.1.2
     #   sentry-sdk
     #   werkzeug
     #   wtforms
-num2words==0.5.12
+num2words==0.5.13
     # via -r requirements.in
 openapi-schema-validator==0.6.2
     # via openapi-spec-validator
@@ -215,8 +215,7 @@ python-consul==1.1.0
 python-dateutil==2.8.2
     # via botocore
 python-dotenv==0.20.0
-    # via
-    #   funding-service-design-utils
+    # via funding-service-design-utils
 python-json-logger==2.0.7
     # via funding-service-design-utils
 pytz==2022.7.1
@@ -265,9 +264,7 @@ rpds-py==0.12.0
 s3transfer==0.7.0
     # via boto3
 sentry-sdk[flask]==1.31.0
-    # via
-    #   funding-service-design-utils
-    #   sentry-sdk
+    # via funding-service-design-utils
 six==1.16.0
     # via
     #   html5lib
