@@ -252,6 +252,7 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
         "fund_name": fund.name,
         "fund_short_name": fund_short_name,
         "round_short_name": round_short_name,
+        "is_expression_of_interest": _round.is_expression_of_interest,
     }
 
     is_active_status = is_after_today(_round.assessment_deadline)
@@ -686,6 +687,7 @@ def application(application_id):
         all_uploaded_documents_section_available=fund_round.all_uploaded_documents_section_available,
         max_possible_sub_criteria_score=scoring_form.max_score,
         migration_banner_enabled=Config.MIGRATION_BANNER_ENABLED,
+        is_expression_of_interest=fund_round.is_expression_of_interest,
     )
 
 
@@ -716,8 +718,10 @@ def activity_trail(application_id: str):
     tags = get_all_associated_tags_for_application(application_id)
     all_tags = AssociatedTags.from_associated_tags_list(tags)
 
+    round_data = get_round(fid=state.fund_id, rid=state.round_id)
+
     # Add search box and checkbox filters
-    available_filters = select_filters(state.fund_short_name)
+    available_filters = select_filters(round_data.is_expression_of_interest)
     search_form = SearchForm(request.form)
     checkbox_form = CheckboxForm(request.form)
 
@@ -749,6 +753,7 @@ def activity_trail(application_id: str):
         checkbox_filters=checkbox_filters,
         migration_banner_enabled=Config.MIGRATION_BANNER_ENABLED,
         display_status=display_status,
+        is_expression_of_interest=round_data.is_expression_of_interest,
     )
 
 

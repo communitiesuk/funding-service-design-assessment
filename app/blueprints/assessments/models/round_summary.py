@@ -54,6 +54,7 @@ class RoundSummary:
     assessment_tracker_href: str = None
     assessment_stats: Stats | None = None
     live_round_stats: LiveRoundStats = None
+    is_expression_of_interest: bool = False
 
 
 def _add_links_to_summary(summary, fund_short_name, round) -> RoundSummary:
@@ -75,7 +76,7 @@ def _add_links_to_summary(summary, fund_short_name, round) -> RoundSummary:
             round_short_name=round.short_name.lower(),
             report_type="OUTPUT_TRACKER",
         )
-        if fund_short_name.upper() != "COF-EOI"
+        if not round.is_expression_of_interest
         else None
     )
     summary.feedback_export_href = (
@@ -207,6 +208,7 @@ def create_round_summaries(fund: Fund, filters: LandingFilters) -> list[RoundSum
             access_controller=access_controller,
             round_application_fields_download_available=round.application_fields_download_available,
             sorting_date=sorting_date,
+            is_expression_of_interest=round.is_expression_of_interest,
         )
         round_id_to_summary_map[round.id] = _add_links_to_summary(
             summary, fund.short_name, round

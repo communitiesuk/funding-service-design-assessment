@@ -78,8 +78,7 @@ assessment_tracker_href, round_status) %}
 
         {{assessment_status(summary.status)}}
 
-        <!-- TODO: Temp solution for a quick fix. Perhaps we should have a varibale within the summary? -->
-        {% if "Expression of interest" in summary.round_name %}
+        {% if summary.is_expression_of_interest %}
             {{ govukTable({
                 "caption": "",
                 "firstCellIsHeader": false,

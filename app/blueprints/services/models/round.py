@@ -38,6 +38,7 @@ class Round:
     all_uploaded_documents_section_available: bool = False
     application_fields_download_available: bool = False
     display_logo_on_pdf_exports: bool = False
+    is_expression_of_interest: bool = False
     applications: List[Application] = None
     feedback_survey_config: FeedbackSurveyConfig = None
 
@@ -79,4 +80,5 @@ class Round:
             or False,
             feedback_survey_config=data.get("feedback_survey_config")
             or FeedbackSurveyConfig(),
+            is_expression_of_interest=data.get("is_expression_of_interest") or False,
         )
