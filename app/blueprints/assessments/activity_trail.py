@@ -11,6 +11,7 @@ from wtforms import StringField
 
 from app.blueprints.services.data_services import get_bulk_accounts_dict
 from app.blueprints.services.models.assessor_task_list import AssessorTaskList
+from app.blueprints.services.models.flag import Flag
 from app.blueprints.services.models.flag import FlagType
 from app.blueprints.tagging.models.tag import AssociatedTag
 
@@ -95,7 +96,7 @@ class Flags(BaseModel):
         return result
 
     @classmethod
-    def from_list(cls, flags_list: list[dict]):
+    def from_list(cls, flags_list: list[Flag]):
         if flags_list:
             flags = cls.process_flags(flags_list)
             return super().from_list(flags)
@@ -288,8 +289,8 @@ def filter_all_activities(
         return all_activities
 
 
-def select_filters(short_fund_name):
-    if short_fund_name in ("COF-EOI",):
+def select_filters(is_expression_of_interest):
+    if is_expression_of_interest:
         return ["All activity", "Comments", "Flags", "Tags"]
     else:
         return ["All activity", "Comments", "Score", "Flags", "Tags"]

@@ -169,14 +169,20 @@ def generate_csv_of_application(
     return output.getvalue()
 
 
+_EXCLUDED_HEADERS = (
+    "Help with insolvency",
+    "Help with organisation type",
+    "Help with public authority",
+    "Help gydag awdurdod cyhoeddus",
+    "Help gyda'r math o sefydliad",
+)
+
+
 def generate_assessment_info_csv(data: dict):
     output = StringIO()
     headers = list(
         OrderedDict.fromkeys(
-            key
-            for d in data
-            for key in d.keys()
-            if key not in exclude_header(["COF-EOI"])
+            key for d in data for key in d.keys() if key not in _EXCLUDED_HEADERS
         )
     )
     csv_writer = csv.writer(output)
@@ -279,14 +285,3 @@ def sanitise_export_data(data):
     if isinstance(data, str):
         data = strip_tags(data)
     return data
-
-
-def exclude_header(fund_names: list):
-    if "COF-EOI" in fund_names:
-        return [
-            "Help with insolvency",
-            "Help with organisation type",
-            "Help with public authority",
-            "Help gydag awdurdod cyhoeddus",
-            "Help gyda'r math o sefydliad",
-        ]

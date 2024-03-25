@@ -58,7 +58,7 @@
         <div>
             <div class="govuk-!-padding-left-3">
                 <h1 class="govuk-heading-l">Activity trail</h1>
-                {% if not  state.fund_short_name=="COF-EOI" %}
+                {% if not is_expression_of_interest %}
                 <p class="govuk-body">Current assessment status:
                 {% if display_status == "Stopped" %}
                     <span class="stopped-tag">
