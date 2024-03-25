@@ -292,7 +292,7 @@ pathable==0.4.3
     #   jsonschema-path
 pathspec==0.11.0
     # via black
-pillow==10.0.1
+pillow==10.2.0
     # via
     #   -r requirements.txt
     #   reportlab

@@ -180,7 +180,7 @@ packaging==23.0
     # via connexion
 pathable==0.4.3
     # via jsonschema-path
-pillow==10.0.1
+pillow==10.2.0
     # via
     #   reportlab
     #   xhtml2pdf
