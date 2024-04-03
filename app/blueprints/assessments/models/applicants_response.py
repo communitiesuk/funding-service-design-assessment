@@ -10,16 +10,13 @@ from typing import Tuple
 from urllib.parse import quote
 
 from bs4 import BeautifulSoup
-from flask import current_app
 from flask import url_for
 
+from app.blueprints.assessments.form_lists_translation_helper import map_form_json_list_value
 from app.blueprints.services.aws import list_files_in_folder
 from app.blueprints.shared.filters import format_address
 from app.blueprints.shared.filters import format_date
-from app.blueprints.shared.filters import remove_dashes_underscores_capitalize
-from app.blueprints.shared.filters import (
-    remove_dashes_underscores_capitalize_keep_uppercase,
-)
+
 
 ANSWER_NOT_PROVIDED_DEFAULT = "<p>Not provided.</p>"
 
@@ -322,7 +319,7 @@ def _ui_component_from_factory(item: dict, application_id: str):
 
     elif presentation_type in ("text", "list", "free_text"):
         if field_type in ("radiosField") and item.get("answer"):
-            item["answer"] = remove_dashes_underscores_capitalize_keep_uppercase(
+            item["answer"] = map_form_json_list_value(
                 item["answer"]
             )
         if field_type in ("multilineTextField",):
@@ -521,13 +518,7 @@ def _convert_checkbox_items(
         text_items.append(text_item)
         text_items.extend(
             {
-                # The if in this statement has been added because the answer value for ChXWIQ is different than the display value.
-                # We should change the form in future versions
-                "question": (
-                    remove_dashes_underscores_capitalize(answer)
-                    if (item["field_id"] != "ChXWIQ" and answer != "none")
-                    else "None of these"
-                ),
+                "question": map_form_json_list_value(answer),
                 "field_type": item.get("field_type"),
                 "field_id": item["field_id"],
                 "answer": "Yes",
