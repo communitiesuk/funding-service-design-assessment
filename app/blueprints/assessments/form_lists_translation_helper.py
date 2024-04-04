@@ -20,11 +20,11 @@ _LIST_TRANSLATIONS_GENERATED = {
     'CIO': 'CIO',
     'CLG': 'CLG',
     'COOP': 'COOP',
-    'Cael effaith gadarnhaol ar iechyd corfforol ac iechyd meddwl, a lleihau unigrwydd ac ynysigrwydd': 'delivering-positive',
+    'Cael effaith gadarnhaol ar iechyd corfforol ac iechyd meddwl, a lleihau unigrwydd ac ynysigrwydd': 'delivering-positive', # noqa
     'Cam cynnar': 'Early stage',
     'Cam hwyr': 'Late stage',
     'Camddeall neu wanllyd': 'Neglect or dereliction',
-    'Canlyniadau economaidd lleol, fel cyflogaeth a chyfleoedd i wirfoddoli, a  chyflogadwyedd a sgiliau': 'local-economic',
+    'Canlyniadau economaidd lleol, fel cyflogaeth a chyfleoedd i wirfoddoli, a  chyflogadwyedd a sgiliau': 'local-economic', # noqa
     'Canolfan gymunedol': 'Community centre',
     'Cau': 'Closure',
     'Closure': 'Closure',
