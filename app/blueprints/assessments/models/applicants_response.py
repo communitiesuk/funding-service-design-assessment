@@ -12,11 +12,12 @@ from urllib.parse import quote
 from bs4 import BeautifulSoup
 from flask import url_for
 
-from app.blueprints.assessments.form_lists_translation_helper import map_form_json_list_value
+from app.blueprints.assessments.form_lists_translation_helper import (
+    map_form_json_list_value,
+)
 from app.blueprints.services.aws import list_files_in_folder
 from app.blueprints.shared.filters import format_address
 from app.blueprints.shared.filters import format_date
-
 
 ANSWER_NOT_PROVIDED_DEFAULT = "<p>Not provided.</p>"
 
@@ -319,9 +320,7 @@ def _ui_component_from_factory(item: dict, application_id: str):
 
     elif presentation_type in ("text", "list", "free_text"):
         if field_type in ("radiosField") and item.get("answer"):
-            item["answer"] = map_form_json_list_value(
-                item["answer"]
-            )
+            item["answer"] = map_form_json_list_value(item["answer"])
         if field_type in ("multilineTextField",):
             return AboveQuestionAnswerPair.from_dict(item)
         elif field_type in ("websiteField",):
