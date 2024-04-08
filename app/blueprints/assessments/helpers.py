@@ -257,11 +257,11 @@ def get_files_for_application_upload_fields(
     return legacy_files + files
 
 
-def convert_bool_value(value):
+def convert_bool_value(value, language=None):
     if value:
-        return "Yes"
+        return "Oes" if language == "cy" else "Yes"
     if not value:
-        return "No"
+        return "Nac Oes" if language == "cy" else "No"
     if value is None:
         return "Not sure"
 
@@ -273,15 +273,30 @@ def strip_tags(text):
     return soup.get_text()
 
 
-def sanitise_export_data(data):
+def _sanitise_data(data, language=None):
+
     if isinstance(data, dict):
         for key, value in data.items():
-            data[key] = sanitise_export_data(value)
+            data[key] = _sanitise_data(value, language)
+
     if isinstance(data, list):
-        data = [sanitise_export_data(d) for d in data]
+        data = [_sanitise_data(d, language) for d in data]
 
     if isinstance(data, bool):
-        data = convert_bool_value(data)
+
+        data = convert_bool_value(data, language)
     if isinstance(data, str):
         data = strip_tags(data)
+    return data
+
+
+def sanitise_export_data(data, language=None):
+
+    if "cy_list" in data and data["cy_list"]:
+        language = "cy"
+        data["cy_list"] = _sanitise_data(data["cy_list"], language)
+
+    if "en_list" in data and data["en_list"]:
+        language = "en"
+        data["en_list"] = _sanitise_data(data["en_list"], language)
     return data
