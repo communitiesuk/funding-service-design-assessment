@@ -19,13 +19,14 @@ def datetime_format(value, format):
     return formatted_time
 
 
-def utc_to_bst(value, tz="Europe/London"):
+def utc_to_bst(value, tz="Europe/London", export_format=False):
     dt_formats = [
         "%Y-%m-%dT%H:%M:%S.%f",
         "%Y-%m-%d %H:%M:%S.%f",
         "%Y-%m-%d %H:%M:%S",
         "%Y-%m-%dT%H:%M:%S",
         "%Y-%m-%d %H:%M:%S.%f%z",
+        "%d/%m/%Y %H:%M:%S",
     ]
     for dt_format in dt_formats:
         try:
@@ -37,7 +38,11 @@ def utc_to_bst(value, tz="Europe/London"):
         raise ValueError("Invalid datetime format")
 
     uk_time = utc_time.astimezone(timezone(tz))
-    return uk_time.strftime("%d/%m/%Y at %H:%M")
+
+    if export_format:
+        return uk_time.strftime("%d/%m/%Y %H:%M:%S")
+    else:
+        return uk_time.strftime("%d/%m/%Y at %H:%M")
 
 
 def format_date(value, from_, to_):
