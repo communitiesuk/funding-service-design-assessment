@@ -180,7 +180,7 @@ packaging==23.0
     # via connexion
 pathable==0.4.3
     # via jsonschema-path
-pillow==10.2.0
+pillow==10.3.0
     # via
     #   reportlab
     #   xhtml2pdf
@@ -197,7 +197,9 @@ pyhanko-certvalidator==0.23.0
     #   pyhanko
     #   xhtml2pdf
 pyjwt[crypto]==2.6.0
-    # via funding-service-design-utils
+    # via
+    #   funding-service-design-utils
+    #   pyjwt
 pyopenssl==23.1.1
     # via -r requirements.in
 pypdf==3.17.0
