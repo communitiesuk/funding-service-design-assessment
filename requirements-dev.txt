@@ -108,7 +108,7 @@ cssselect2==0.7.0
     # via
     #   -r requirements.txt
     #   svglib
-debugpy==1.6.7
+debugpy==1.8.1
     # via -r requirements-dev.in
 deepdiff==6.7.0
     # via -r requirements-dev.in
