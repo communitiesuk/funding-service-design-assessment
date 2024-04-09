@@ -55,8 +55,8 @@ _LIST_TRANSLATIONS_GENERATED = {
     "Balchder cymunedol a chanfyddiadau o'r ardal leol fel lle i fyw ynddo": "community-pride",
     "Ymddiriedaeth gymdeithasol, cydlyniant ac ymdeimlad o berthyn": "social-trust",
     "Cyfranogi mewn bywyd cymunedol, y celfyddydau a diwylliant, neu chwaraeon": "participation",
-    "Canlyniadau economaidd lleol, fel cyflogaeth a chyfleoedd i wirfoddoli, a  chyflogadwyedd a sgiliau": "local-economic", # noqa
-    "Cael effaith gadarnhaol ar iechyd corfforol ac iechyd meddwl, a lleihau unigrwydd ac ynysigrwydd": "delivering-positive", # noqa
+    "Canlyniadau economaidd lleol, fel cyflogaeth a chyfleoedd i wirfoddoli, a  chyflogadwyedd a sgiliau": "local-economic",  # noqa
+    "Cael effaith gadarnhaol ar iechyd corfforol ac iechyd meddwl, a lleihau unigrwydd ac ynysigrwydd": "delivering-positive",  # noqa
     "community-pride": "community-pride",
     "social-trust": "social-trust",
     "participation": "participation",

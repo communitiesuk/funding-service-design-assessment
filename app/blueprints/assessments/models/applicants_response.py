@@ -12,9 +12,7 @@ from urllib.parse import quote
 from bs4 import BeautifulSoup
 from flask import url_for
 
-from app.blueprints.assessments.form_lists_helper import (
-    map_form_json_list_value,
-)
+from app.blueprints.assessments.form_lists_helper import map_form_json_list_value
 from app.blueprints.services.aws import list_files_in_folder
 from app.blueprints.shared.filters import format_address
 from app.blueprints.shared.filters import format_date

@@ -72,16 +72,18 @@ if __name__ == "__main__":
         print("Duplicates found:", duplicates)
 
     content = f"""_LIST_TRANSLATIONS_GENERATED = {json.dumps(
-        translation_dict, 
-        indent=4, 
+        translation_dict,
+        indent=4,
         ensure_ascii=False,
     )}"""
 
-    lines = content.split('\n')
-    processed_lines = [line + " # noqa" if len(line) > 118 else line for line in lines]  # for long lines we noqa
+    lines = content.split("\n")
+    processed_lines = [
+        line + " # noqa" if len(line) > 118 else line for line in lines
+    ]  # for long lines we noqa
     processed_lines[-2] += ","  # add trailing comma to avoid pre-commit failures
-    content = '\n'.join(processed_lines)
+    content = "\n".join(processed_lines)
 
-    with open('form_lists_generated_translations.py', 'w', encoding='utf-8') as f:
+    with open("form_lists_generated_translations.py", "w", encoding="utf-8") as f:
         f.write(content)
     pprint(translation_dict)
