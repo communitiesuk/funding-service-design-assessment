@@ -19,6 +19,7 @@ from app.blueprints.services.aws import list_files_by_prefix
 from app.blueprints.services.data_services import get_tag_types
 from app.blueprints.services.models.flag import FlagType
 from app.blueprints.services.models.fund import Fund
+from app.blueprints.shared.filters import utc_to_bst
 from app.blueprints.shared.helpers import determine_display_status
 from app.blueprints.tagging.models.tag import AssociatedTag
 from config import Config
@@ -299,4 +300,16 @@ def sanitise_export_data(data, language=None):
     if "en_list" in data and data["en_list"]:
         language = "en"
         data["en_list"] = _sanitise_data(data["en_list"], language)
+    return data
+
+
+def convert_datetime_to_bst(data):
+
+    for _data in data.values():
+        for _date in _data:
+            date_submitted = _date.get("Date Submitted")
+            if date_submitted:
+                _date["Date Submitted"] = utc_to_bst(
+                    value=date_submitted, export_format=True
+                )
     return data

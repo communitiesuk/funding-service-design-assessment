@@ -29,6 +29,7 @@ from app.blueprints.assessments.activity_trail import select_filters
 from app.blueprints.assessments.forms.assessment_form import AssessmentCompleteForm
 from app.blueprints.assessments.forms.comments_form import CommentsForm
 from app.blueprints.assessments.forms.mark_qa_complete_form import MarkQaCompleteForm
+from app.blueprints.assessments.helpers import convert_datetime_to_bst
 from app.blueprints.assessments.helpers import determine_display_status
 from app.blueprints.assessments.helpers import download_file
 from app.blueprints.assessments.helpers import generate_assessment_info_csv
@@ -163,7 +164,10 @@ def landing():
     sorted_funds_map = OrderedDict(
         (fund.id, fund) for fund in sorted(funds, key=lambda f: f.name)
     )
+
     round_summaries = {fund.id: create_round_summaries(fund, filters) for fund in funds}
+
+    # print(f"fund summaries:=>  {round_summaries}")
     return render_template(
         "assessor_tool_dashboard.html",
         fund_summaries=round_summaries,
@@ -770,6 +774,7 @@ def assessor_export(fund_short_name: str, round_short_name: str, report_type: st
         ttl_hash=get_ttl_hash(Config.LRU_CACHE_TIME),
     )
     export = get_applicant_export(_round.fund_id, _round.id, report_type)
+    export = convert_datetime_to_bst(export)
     export = sanitise_export_data(export)
     en_export_data = generate_assessment_info_csv(export["en_list"])
     cy_export_data = generate_assessment_info_csv(export["cy_list"])
