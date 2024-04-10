@@ -4,7 +4,7 @@ from functools import partial
 from fsd_utils.mapping.application.application_utils import format_answer
 
 from app.blueprints.assessments.pdf_generator import generate_pdf
-from app.blueprints.shared.filters import format_date
+from app.blueprints.shared.filters import utc_to_bst
 
 
 @dataclass
@@ -67,11 +67,7 @@ class FullApplicationPdfContext:
             title=args.fund.name,
             response_id=args.short_id,
             submission_to=f"{args.fund.name} {args.round.title}",
-            submitted_on=format_date(
-                args.application_json["date_submitted"],
-                "%Y-%m-%dT%H:%M:%S.%f",
-                "%d/%m/%Y at %H:%M",
-            ),
+            submitted_on=utc_to_bst(args.application_json["date_submitted"]),
             organisation_name=args.fund.owner_organisation_name,
             organisation_shortname=args.fund.owner_organisation_shortname,
             organisation_logo_uri=(
