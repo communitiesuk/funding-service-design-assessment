@@ -46,9 +46,7 @@ if (showTagsElement) {
     });
 }
 
-// This is a temporary fix to ensure tab changing works for flag history.
-// Updating to `4.7.0` for govuk css broke this functionality. (v0.0.252)
-// Upgrading `govuk-frontend-jinja==2.7.0` (the equivalent 4.7.0 version) does not fix it.
+
 const tabs = document.querySelectorAll('[id^="tab"]');
 const tabAnchors = document.querySelectorAll('.govuk-tabs__tab');
 Array.from(tabAnchors).forEach(tabAnchor => {
