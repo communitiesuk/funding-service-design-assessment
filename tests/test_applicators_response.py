@@ -535,7 +535,7 @@ class TestConvertCheckboxItems:
                         "question": "Foo",
                         "field_type": "checkboxesField",
                         "field_id": "foo",
-                        "answer": ["lorem-de", "ipsum_do"],
+                        "answer": ["Lorem de", "Ipsum do"],
                     }
                 ],
                 [
@@ -588,13 +588,13 @@ class TestConvertCheckboxItems:
                         "question": "Foo",
                         "field_type": "checkboxesField",
                         "field_id": "foo",
-                        "answer": ["lorem", "ipsum"],
+                        "answer": ["Lorem", "Ipsum"],
                     },
                     {
                         "question": "Bar",
                         "field_type": "checkboxesField",
                         "field_id": "bar",
-                        "answer": ["dolor", "sit"],
+                        "answer": ["Dolor", "Sit"],
                     },
                 ],
                 [

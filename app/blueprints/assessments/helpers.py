@@ -19,6 +19,7 @@ from app.blueprints.services.aws import list_files_by_prefix
 from app.blueprints.services.data_services import get_tag_types
 from app.blueprints.services.models.flag import FlagType
 from app.blueprints.services.models.fund import Fund
+from app.blueprints.shared.filters import utc_to_bst
 from app.blueprints.shared.helpers import determine_display_status
 from app.blueprints.tagging.models.tag import AssociatedTag
 from config import Config
@@ -257,11 +258,11 @@ def get_files_for_application_upload_fields(
     return legacy_files + files
 
 
-def convert_bool_value(value):
+def convert_bool_value(value, language=None):
     if value:
-        return "Yes"
+        return "Oes" if language == "cy" else "Yes"
     if not value:
-        return "No"
+        return "Nac Oes" if language == "cy" else "No"
     if value is None:
         return "Not sure"
 
@@ -273,15 +274,39 @@ def strip_tags(text):
     return soup.get_text()
 
 
-def sanitise_export_data(data):
+def _sanitise_data(data, language=None):
     if isinstance(data, dict):
         for key, value in data.items():
-            data[key] = sanitise_export_data(value)
+            data[key] = _sanitise_data(value, language)
+
     if isinstance(data, list):
-        data = [sanitise_export_data(d) for d in data]
+        data = [_sanitise_data(d, language) for d in data]
 
     if isinstance(data, bool):
-        data = convert_bool_value(data)
+
+        data = convert_bool_value(data, language)
     if isinstance(data, str):
         data = strip_tags(data)
+    return data
+
+
+def sanitise_export_data(data, language=None):
+    if "cy_list" in data and data["cy_list"]:
+        language = "cy"
+        data["cy_list"] = _sanitise_data(data["cy_list"], language)
+
+    if "en_list" in data and data["en_list"]:
+        language = "en"
+        data["en_list"] = _sanitise_data(data["en_list"], language)
+    return data
+
+
+def convert_datetime_to_bst(data):
+    for _data in data.values():
+        for _date in _data:
+            date_submitted = _date.get("Date Submitted")
+            if date_submitted:
+                _date["Date Submitted"] = utc_to_bst(
+                    value=date_submitted, export_format=True
+                )
     return data
