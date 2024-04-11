@@ -275,7 +275,6 @@ def strip_tags(text):
 
 
 def _sanitise_data(data, language=None):
-
     if isinstance(data, dict):
         for key, value in data.items():
             data[key] = _sanitise_data(value, language)
@@ -292,7 +291,6 @@ def _sanitise_data(data, language=None):
 
 
 def sanitise_export_data(data, language=None):
-
     if "cy_list" in data and data["cy_list"]:
         language = "cy"
         data["cy_list"] = _sanitise_data(data["cy_list"], language)
@@ -304,7 +302,6 @@ def sanitise_export_data(data, language=None):
 
 
 def convert_datetime_to_bst(data):
-
     for _data in data.values():
         for _date in _data:
             date_submitted = _date.get("Date Submitted")
