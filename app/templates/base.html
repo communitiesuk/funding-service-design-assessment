@@ -9,7 +9,9 @@
 {% endblock head %}
 
 {% block header %}
-  {{ govukHeader({}) }}
+  {{ govukHeader({
+    'useTudorCrown': 'yes'
+  }) }}
 {% endblock header %}
 
 {% block main %}
