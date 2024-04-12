@@ -70,7 +70,7 @@ cssmin==0.2.0
     # via -r requirements.in
 cssselect2==0.7.0
     # via svglib
-dnspython==2.3.0
+dnspython==2.6.1
     # via email-validator
 docopt==0.6.2
     # via num2words
@@ -197,7 +197,9 @@ pyhanko-certvalidator==0.23.0
     #   pyhanko
     #   xhtml2pdf
 pyjwt[crypto]==2.6.0
-    # via funding-service-design-utils
+    # via
+    #   funding-service-design-utils
+    #   pyjwt
 pyopenssl==23.1.1
     # via -r requirements.in
 pypdf==3.17.0
