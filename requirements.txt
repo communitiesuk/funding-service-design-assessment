@@ -121,7 +121,7 @@ gunicorn==20.1.0
     # via funding-service-design-utils
 html5lib==1.1
     # via xhtml2pdf
-idna==3.4
+idna==3.7
     # via
     #   email-validator
     #   requests
@@ -197,7 +197,9 @@ pyhanko-certvalidator==0.23.0
     #   pyhanko
     #   xhtml2pdf
 pyjwt[crypto]==2.6.0
-    # via funding-service-design-utils
+    # via
+    #   funding-service-design-utils
+    #   pyjwt
 pyopenssl==23.1.1
     # via -r requirements.in
 pypdf==3.17.0
