@@ -707,3 +707,14 @@ def sanitise_html(data):
 
         data["answer"] = str(soup)
     return data
+
+
+def create_ui_componenets_for_list_data(
+    application_id: str, mapped_appli_with_sub_cri: list
+):
+    answers_mapped = []
+    for data in mapped_appli_with_sub_cri:
+        answers_meta = create_ui_components(data, application_id)
+        answers_mapped.append(answers_meta)
+
+    return answers_mapped

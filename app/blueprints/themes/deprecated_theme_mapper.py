@@ -12,7 +12,7 @@ from flask import current_app
 def map_application_with_sub_criteria_themes_fields(
     application_json,
     sub_criterias,
-    theme_id,
+    theme_id: str,
 ):
     questions = [
         questions
@@ -40,6 +40,21 @@ def map_application_with_sub_criteria_themes_fields(
     deprecated_sort_add_another_component_contents(themes_fields)
 
     return format_add_another_component_contents(themes_fields)
+
+
+def map_application_with_sub_criteria_themes_list(
+    application_json,
+    sub_criterias,
+    theme_ids: list,
+):
+    mapped_appli_with_sub_cri = []
+    for theme_id in theme_ids:
+        map_data = map_application_with_sub_criteria_themes_fields(
+            application_json, sub_criterias, theme_id
+        )
+        mapped_appli_with_sub_cri.append(map_data)
+
+    return mapped_appli_with_sub_cri
 
 
 def get_themes_fields(sub_criterias, theme_id) -> str | Any:

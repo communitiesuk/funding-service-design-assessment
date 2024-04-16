@@ -302,3 +302,8 @@ button.left-margin-negative {
     padding: inherit !important;
     margin: inherit !important;
 }
+
+.section_break_blue {
+    border-bottom: 4px solid #1d70b8;
+    margin: 20px 0;
+}
