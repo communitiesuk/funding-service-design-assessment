@@ -6,7 +6,7 @@ from config.envs.default import DefaultConfig
 @configclass
 class DevConfig(DefaultConfig):
     # Redis Feature Toggle Configuration
-    REDIS_INSTANCE_NAME = "funding-service-magic-links-dev"
+    REDIS_INSTANCE_NAME = "pre-award-redis-dev"
 
     if not hasattr(DefaultConfig, "VCAP_SERVICES"):
         REDIS_INSTANCE_URI = DefaultConfig.REDIS_INSTANCE_URI
