@@ -879,8 +879,6 @@ def view_entire_application(application_id):
 
     # TODO: order data as expected by subcriteria/theme
 
-    # TODO: Add title on each subcriteria/theme questions, asnwers section
-
     return render_template(
         "view_entire_application.html",
         state=state,

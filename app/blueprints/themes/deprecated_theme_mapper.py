@@ -49,12 +49,34 @@ def map_application_with_sub_criteria_themes_list(
 ):
     mapped_appli_with_sub_cri = []
     for theme_id in theme_ids:
+        _sub_cri_with_theme_id = map_sub_cri_with_theme_id(sub_criterias, theme_id)
+
         map_data = map_application_with_sub_criteria_themes_fields(
             application_json, sub_criterias, theme_id
         )
-        mapped_appli_with_sub_cri.append(map_data)
+
+        sub_and_theme = {**_sub_cri_with_theme_id}
+
+        _map_data = map_data + [sub_and_theme]
+        mapped_appli_with_sub_cri.append(_map_data)
 
     return mapped_appli_with_sub_cri
+
+
+def map_sub_cri_with_theme_id(sub_criterias, theme_id):
+    """Function returns mapped theme_id with sub criterua including
+    entire application config display_id"""
+    for sub_criteria in sub_criterias:
+        for theme in sub_criteria["themes"]:
+            if theme_id == theme.get("id"):
+                _theme_id = theme["id"].replace("_", " ").replace("-", " ").capitalize()
+
+                entire_application_config = {
+                    "display_id": "entire_application",
+                    "sub_criteria": sub_criteria["name"],
+                    "theme_id": _theme_id,
+                }
+                return entire_application_config
 
 
 def get_themes_fields(sub_criterias, theme_id) -> str | Any:

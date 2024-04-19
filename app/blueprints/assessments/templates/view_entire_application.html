@@ -12,29 +12,36 @@
     <nav class="govuk-width-container govuk-header__navigation">
         <div class="govuk-phase-banner flex-parent-element">
             <p class="govuk-!-text-align-left flex-parent-element flexed-element-margins-collapse">
-                {{ govukBackLink({'href': url_for("assessment_bp.application", application_id=application_id), 'html': 'Back to <b>assessment task list</b>', 'attributes': {'data-qa': 'back-to-assessment-task-list'} }) }}
+                {{ govukBackLink({'href': url_for("assessment_bp.application", application_id=application_id), 'html':
+                'Back to <b>assessment task list</b>', 'attributes': {'data-qa': 'back-to-assessment-task-list'} }) }}
             </p>
             {{ logout_partial(sso_logout_url) }}
         </div>
     </nav>
 
     {{ banner_summary(
-        state.fund_name,
-        state.fund_short_name,
-        state.short_id,
-        state.project_name,
-        state.funding_amount_requested,
-        display_status=False
+    state.fund_name,
+    state.fund_short_name,
+    state.short_id,
+    state.project_name,
+    state.funding_amount_requested,
+    display_status=False
     ) }}
 </header>
 {% endblock header %}
 
 {% block content %}
-
-<h3 class="govuk-heading-l govuk-!-padding-bottom-3">Applicant's response</h3>
+<h3 class="govuk-heading-l govuk-!-padding-bottom-2">Applicant's response</h3>
 {% for answers in mapped_answers %}
-{{theme(answers)}}
-<hr class="govuk-section-break govuk-section-break--m govuk-section-break">
-{% endfor %}
 
+    {% for answer in answers %}
+        {% if answer.__class__.__name__ == "DisplaySubcriteriaTheme" %}
+           <h3 class="govuk-heading-m govuk-!-padding-bottom-2"> {{answer.sub_criteria}} - {{ answer.theme_id }} </h3>
+        {% endif %}
+    {% endfor %}
+
+    {{theme(answers)}}
+    <hr class="govuk-section-break govuk-section-break--m govuk-section-break">
+
+{% endfor %}
 {% endblock content %}

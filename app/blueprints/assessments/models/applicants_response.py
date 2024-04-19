@@ -714,7 +714,32 @@ def create_ui_componenets_for_list_data(
 ):
     answers_mapped = []
     for data in mapped_appli_with_sub_cri:
-        answers_meta = create_ui_components(data, application_id)
-        answers_mapped.append(answers_meta)
+        _data = []
+        entire_application_config = {}
+        for d in data:
+            if "display_id" in d and d.get("display_id") == "entire_application":
+                entire_application_config.update(d)
+                continue
+            else:
+                _data.append(d)
+
+        answers_meta = create_ui_components(_data, application_id)
+        sub_and_theme = DisplaySubcriteriaTheme(**entire_application_config)
+
+        # combine two classes
+        answers_mapped.append(answers_meta + [sub_and_theme])
 
     return answers_mapped
+
+
+class DisplaySubcriteriaTheme:
+    def __init__(self, **kwargs):
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
+    def __repr__(self):
+        attributes = ", ".join(
+            [f"{key}={value!r}" for key, value in self.__dict__.items()]
+        )
+
+        return f"{type(self).__name__}({attributes})"
