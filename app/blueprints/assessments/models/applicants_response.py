@@ -724,7 +724,7 @@ def create_ui_componenets_for_list_data(
                 _data.append(d)
 
         answers_meta = create_ui_components(_data, application_id)
-        sub_and_theme = DisplaySubcriteriaTheme(**entire_application_config)
+        sub_and_theme = ConvertDictToClass(**entire_application_config)
 
         # combine two classes
         answers_mapped.append(answers_meta + [sub_and_theme])
@@ -732,7 +732,7 @@ def create_ui_componenets_for_list_data(
     return answers_mapped
 
 
-class DisplaySubcriteriaTheme:
+class ConvertDictToClass:
     def __init__(self, **kwargs):
         for key, value in kwargs.items():
             setattr(self, key, value)

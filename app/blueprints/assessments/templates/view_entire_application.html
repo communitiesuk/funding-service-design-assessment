@@ -35,7 +35,7 @@
 {% for answers in mapped_answers %}
 
     {% for answer in answers %}
-        {% if answer.__class__.__name__ == "DisplaySubcriteriaTheme" %}
+        {% if answer.__class__.__name__ == "ConvertDictToClass" %}
            <h3 class="govuk-heading-m govuk-!-padding-bottom-2"> {{answer.sub_criteria}} - {{ answer.theme_id }} </h3>
         {% endif %}
     {% endfor %}
