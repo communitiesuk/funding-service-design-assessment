@@ -107,6 +107,9 @@ from app.blueprints.shared.helpers import process_assessments_stats
 from app.blueprints.themes.deprecated_theme_mapper import (
     map_application_with_sub_criteria_themes_list,
 )
+from app.blueprints.themes.deprecated_theme_mapper import (
+    order_entire_application_by_themes,
+)
 from config import Config
 from config.display_value_mappings import assessment_statuses
 from config.display_value_mappings import asset_types
@@ -859,6 +862,8 @@ def qa_complete(application_id):
 @check_access_application_id(roles_required=["LEAD_ASSESSOR", "ASSESSOR"])
 def view_entire_application(application_id):
     state = get_state_for_tasklist_banner(application_id)
+    fund_round_name = state.fund_short_name + state.round_short_name
+
     _data = get_all_sub_criterias_with_application_json(application_id)
     application_json = _data["application_json"]
     sub_criterias = _data["sub_criterias"]
@@ -873,11 +878,12 @@ def view_entire_application(application_id):
         application_json, sub_criterias, theme_ids
     )
 
-    mapped_answers = applicants_response.create_ui_componenets_for_list_data(
-        application_id, mapped_appli_with_sub_cri
+    order_sub = order_entire_application_by_themes(
+        fund_round_name, mapped_appli_with_sub_cri
     )
-
-    # TODO: order data as expected by subcriteria/theme
+    mapped_answers = applicants_response.create_ui_componenets_for_list_data(
+        application_id, order_sub
+    )
 
     return render_template(
         "view_entire_application.html",

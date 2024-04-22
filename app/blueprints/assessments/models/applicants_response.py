@@ -715,19 +715,19 @@ def create_ui_componenets_for_list_data(
     answers_mapped = []
     for data in mapped_appli_with_sub_cri:
         _data = []
-        entire_application_config = {}
+        view_entire_appli_config = {}
         for d in data:
-            if "display_id" in d and d.get("display_id") == "entire_application":
-                entire_application_config.update(d)
+            if "display_id" in d and d.get("display_id") == "view_entire_application":
+                view_entire_appli_config.update(d)
                 continue
             else:
                 _data.append(d)
 
         answers_meta = create_ui_components(_data, application_id)
-        sub_and_theme = ConvertDictToClass(**entire_application_config)
+        subcri_and_theme = ConvertDictToClass(**view_entire_appli_config)
 
         # combine two classes
-        answers_mapped.append(answers_meta + [sub_and_theme])
+        answers_mapped.append(answers_meta + [subcri_and_theme])
 
     return answers_mapped
 

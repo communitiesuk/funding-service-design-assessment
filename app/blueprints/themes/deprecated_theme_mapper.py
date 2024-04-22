@@ -3,6 +3,8 @@ from typing import Any
 
 from flask import current_app
 
+from config.display_value_mappings import ordered_themes
+
 
 # This code was copied directly from the assessments store in an attempt to consolidate all the transformation logic
 # in one place. The goal of putting all the transformation logic in one place is so that we can eventually refactor
@@ -64,19 +66,19 @@ def map_application_with_sub_criteria_themes_list(
 
 
 def map_sub_cri_with_theme_id(sub_criterias, theme_id):
-    """Function returns mapped theme_id with sub criterua including
-    entire application config display_id"""
+    """Function returns mapped theme_id with sub criteria including
+    view_entire_application config display_id"""
     for sub_criteria in sub_criterias:
         for theme in sub_criteria["themes"]:
             if theme_id == theme.get("id"):
                 _theme_id = theme["id"].replace("_", " ").replace("-", " ").capitalize()
 
-                entire_application_config = {
-                    "display_id": "entire_application",
+                view_entire_application_config = {
+                    "display_id": "view_entire_application",
                     "sub_criteria": sub_criteria["name"],
                     "theme_id": _theme_id,
                 }
-                return entire_application_config
+                return view_entire_application_config
 
 
 def get_themes_fields(sub_criterias, theme_id) -> str | Any:
@@ -277,3 +279,22 @@ _MULTI_INPUT_FRE_FRONTEND_FORMATTERS = {
     "RadioField": lambda x: x.capitalize(),
     "yesNoField": lambda x: "Yes" if bool(x) else "No",
 }
+
+
+def order_entire_application_by_themes(fund_round_name, sub_criteria):
+    _ordered_themes = []
+    ordered_theme = ordered_themes(fund_round_name)
+
+    for ordered_theme_id in ordered_theme:
+        for sub in sub_criteria:
+            for theme_id in sub:
+                if theme_id.get("theme_id"):
+                    _theme_id = theme_id["theme_id"]
+                    if _theme_id == "Risk loss impact":
+                        theme_id["theme_id"] = "Risk and impact of loss"
+                    if _theme_id == "Community use":
+                        theme_id["theme_id"] = "Community use/significance"
+                    if _theme_id == ordered_theme_id:
+                        _ordered_themes.append(sub)
+                        break
+    return _ordered_themes

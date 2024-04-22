@@ -125,3 +125,37 @@ LandingFilters = namedtuple(
 landing_filters = LandingFilters(
     filter_status=ALL_VALUE, filter_fund_type=ALL_VALUE, filter_fund_name=""
 )
+
+
+def ordered_themes(fund_round_short_name):
+    if fund_round_short_name == "COFR4W1":
+        return [
+            "General information",
+            "Activities",
+            "Partnerships",
+            "Contact information",
+            "Previous funding",
+            "Project summary",
+            "Asset ownership",
+            "Asset evidence",
+            "Asset background",
+            "Asset location",
+            "Business plan",
+            "Declarations",
+            "Community use/significance",
+            "Risk and impact of loss",
+            "Engaging the community",
+            "Local support",
+            "Delivering and sustaining benefits",
+            "Benefitting the whole community",
+            "Environmental considerations",
+            "Funding requested",
+            "Feasiblilty",
+            "Risk",
+            "Income & running costs",
+            "Previous experience",
+            "Governance and structures",
+            "Recruitment",
+            "Representing community views",
+            "Accessibility and inclusivity",
+        ]
