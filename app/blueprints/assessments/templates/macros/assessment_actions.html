@@ -1,0 +1,7 @@
+{% macro assessment_actions(application_id) %}
+
+    <h3 class="govuk-heading-m">Assessment actions</h3>
+    <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible section_break_blue">
+    <p class="govuk-body">   <a href="{{ url_for('assessment_bp.view_entire_application', application_id=application_id) }}" target="_blank">View entire application (opens in new tab)</a></p>
+
+{% endmacro %}
