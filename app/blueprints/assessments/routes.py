@@ -861,6 +861,9 @@ def qa_complete(application_id):
 @assessment_bp.route("/entire_application/<application_id>", methods=["GET", "POST"])
 @check_access_application_id(roles_required=["LEAD_ASSESSOR", "ASSESSOR"])
 def view_entire_application(application_id):
+    """The entire application renders all the questions and answers ordered by
+    themes as per the application sub_criteria/themes.
+    """
     state = get_state_for_tasklist_banner(application_id)
     fund_round_name = state.fund_short_name + state.round_short_name
 
@@ -878,6 +881,8 @@ def view_entire_application(application_id):
         application_json, sub_criterias, theme_ids
     )
 
+    # add ordered themes config along with the fund_round_name to file
+    # display_value_mapping.py, function: ordered_themes
     order_application_by_themes = order_entire_application_by_themes(
         fund_round_name, map_appli_with_sub_cris_and_themes
     )

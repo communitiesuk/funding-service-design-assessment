@@ -3,7 +3,7 @@ from typing import Any
 
 from flask import current_app
 
-from config.display_value_mappings import ordered_themes
+from config.themes_mapping import ordered_themes
 
 
 # This code was copied directly from the assessments store in an attempt to consolidate all the transformation logic
@@ -284,18 +284,36 @@ _MULTI_INPUT_FRE_FRONTEND_FORMATTERS = {
 
 def order_entire_application_by_themes(fund_round_name, sub_criteria):
     _ordered_themes = []
+
+    # Consider relocating the theme ordering logic to a utility function in 'utils'
     ordered_theme = ordered_themes(fund_round_name)
 
     for ordered_theme_id in ordered_theme:
-        for sub in sub_criteria:
-            for theme_id in sub:
-                if theme_id.get("theme_id"):
-                    _theme_id = theme_id["theme_id"]
-                    if _theme_id == "Risk loss impact":
-                        theme_id["theme_id"] = "Risk and impact of loss"
-                    if _theme_id == "Community use":
-                        theme_id["theme_id"] = "Community use/significance"
-                    if _theme_id == ordered_theme_id:
-                        _ordered_themes.append(sub)
-                        break
+        if ordered_theme_id:
+            ordered_theme_id = (
+                ordered_theme_id.replace("-", " ").replace("_", " ").capitalize()
+            )
+            for sub in sub_criteria:
+                for theme_id in sub:
+                    if theme_id.get("theme_id"):
+                        _theme_id = theme_id["theme_id"]
+
+                        if fund_round_name in [
+                            "COFR4W1",
+                            "COFR3W2",
+                            "COFR3W3",
+                            "COFR2W3",
+                            "COFR2W2",
+                        ]:
+                            if _theme_id == "Risk loss impact":
+                                theme_id["theme_id"] = "Risk and impact of loss"
+                            if _theme_id == "General info":
+                                theme_id["theme_id"] = "General information"
+                        if fund_round_name in ["COFR4W1"]:
+                            if _theme_id == "Community use":
+                                theme_id["theme_id"] = "Community use/significance"
+
+                        if _theme_id == ordered_theme_id:
+                            _ordered_themes.append(sub)
+                            break
     return _ordered_themes
