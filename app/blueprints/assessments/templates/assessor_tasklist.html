@@ -103,13 +103,13 @@
             <div class="gov-uk-table__cell--align-right">
             <span class="left govuk-!-padding-right-4">
                 <div class="govuk-grid-row govuk-!-text-align-right">
-                    <div class="govuk-grid-column-full govuk-!-margin-bottom-6">
+                    <div class="govuk-grid-column-full govuk-!-margin-bottom-7">
                         <a class="govuk-body govuk-link--no-visited-state" href="{{ url_for('assessment_bp.activity_trail', application_id=application_id) }}">View activity trail</a>
                     </div>
                 </div>
             </span>
 
-            <span class="left govuk-!-padding-right-4">
+            <span class="left govuk-!-padding-right-4 govuk-!-margin-bottom-2">
                 {% if is_flaggable %}
                 {{ flag_application_button(application_id) }}
                 {% endif %}
