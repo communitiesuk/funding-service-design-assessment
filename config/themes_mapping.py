@@ -1,7 +1,6 @@
 def ordered_themes(fund_round_short_name):
 
     if fund_round_short_name == "COF-EOIR1":
-
         return [
             "organisation-details",
             "about-your-asset",
