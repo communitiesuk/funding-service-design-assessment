@@ -1,69 +1,89 @@
 {% macro comment(comments) %}
-<div class="govuk-!-margin-top-7" id="comments">
-    <h2 class="govuk-heading-m govuk-!-margin-bottom-2">Comments</h2>
-    <div id="more-detail-hint" class="govuk-hint">
-      <p class="govuk-hint govuk-!-margin-top-0">Summarise any thoughts you have on the information provided.</p>
-    </div>
-    {% if comments == None %}
-    <div class="govuk-body govuk-!-margin-top-6">
-        No comments have been left yet.
-        </div>
-    {% else %}
-    {% for comment_list in comments.values() %}
-        {% for comment in comment_list %}
-        {% if not g.access_controller.has_any_assessor_role and comment.from_any_assessor %}
-            <div class="comment-group">
-             <p class="govuk-body">Permission required to see comment.</p>
+        <div class="govuk-!-margin-top-7" id="comments">
+            <h2 class="govuk-heading-m govuk-!-margin-bottom-2">Comments</h2>
+            <div id="more-detail-hint" class="govuk-hint">
+                <p class="govuk-body govuk-!-margin-top-2">Summarise any thoughts you have on the assessment.</p>
             </div>
-        {% else %}
-            <div class="comment-group">
-                <p class="govuk-body">{{ comment.updates[-1]['comment'] }}</p>
-                <p class="govuk-body-s">{{ comment.full_name }} ({{ comment.highest_role|all_caps_to_human }}) {{ comment.email_address }}</p>
-                <p class="govuk-body-s">{{ comment.updates[-1].date_created|utc_to_bst }}</p>
-                {% if g.account_id == comment.user_id or comment.updates|length > 1 %}
-                    <div class="govuk-button-group">
-                        {% if g.account_id == comment.user_id %}
-                            <a class="govuk-link" href="{{ url_for(
-                                "assessment_bp.display_sub_criteria",
-                                application_id=comment.application_id,
-                                sub_criteria_id=comment.sub_criteria_id,
-                                theme_id=comment.theme_id,
-                                edit_comment="1",
-                                comment_id=comment.id
-                            ) }}" >Edit comment</a>
-                        {% endif %}
-                        {% if comment.updates|length > 1 %}
-                            <a class="govuk-link" href="{{  url_for(
-                            "assessment_bp.display_sub_criteria",
-                            application_id=comment.application_id,
-                            sub_criteria_id=comment.sub_criteria_id,
-                            theme_id=comment.theme_id,
-                            show_comment_history="1",
-                            comment_id=comment.id) }}">See history</a>
+            {% if comments == None %}
+            <div class="govuk-body govuk-!-margin-top-6">
+                No comments have been left yet.
+                </div>
+            {% else %}
+            {% if '' in comments %}
+            <div class="scrollable-comments">
+            {% endif %}
+            {% for comment_list in comments.values() %}
+                {% for comment in comment_list %}
+                {% if not g.access_controller.has_any_assessor_role and comment.from_any_assessor %}
+                    <div class="comment-group">
+                    <p class="govuk-body">Permission required to see comment.</p>
+                    </div>
+                {% else %}
+                    <div class="comment-group">
+                        <p class="govuk-body">{{ comment.updates[-1]['comment'] }}</p>
+                        <p class="govuk-body-s">{{ comment.full_name }} ({{ comment.highest_role|all_caps_to_human }}) {{ comment.email_address }}</p>
+                        <p class="govuk-body-s">{{ comment.updates[-1].date_created|utc_to_bst }}</p>
+                        {% if g.account_id == comment.user_id or comment.updates|length > 1 %}
+                            <div class="govuk-button-group">
+                                {% if g.account_id == comment.user_id %}
+                                    {% if comment.comment_type == "COMMENT" %}
+                                        <a class="govuk-link" href="{{ url_for(
+                                            "assessment_bp.display_sub_criteria",
+                                            application_id=comment.application_id,
+                                            sub_criteria_id=comment.sub_criteria_id,
+                                            theme_id=comment.theme_id,
+                                            edit_comment="1",
+                                            comment_id=comment.id
+                                        ) }}" >Edit comment</a>
+                                    {% elif comment.comment_type == "WHOLE_APPLICATION" %}
+                                        <a class="govuk-link" href="{{ url_for(
+                                            "assessment_bp.application",
+                                            application_id=comment.application_id,
+                                            edit_comment="1",
+                                            comment_id=comment.id
+                                        ) }}" >Edit comment</a>
+                                    {% endif %}
+                                {% endif %}
+                                {% if comment.updates|length > 1 %}
+                                    {% if comment.comment_type == "COMMENT" and comment.updates|length > 1 %}
+                                        <a class="govuk-link" href="{{  url_for(
+                                        "assessment_bp.display_sub_criteria",
+                                        application_id=comment.application_id,
+                                        sub_criteria_id=comment.sub_criteria_id,
+                                        theme_id=comment.theme_id,
+                                        show_comment_history="1",
+                                        comment_id=comment.id) }}">See history</a>
+                                    {% elif comment.comment_type == "WHOLE_APPLICATION" %}
+                                        <a class="govuk-link" href="{{  url_for(
+                                        "assessment_bp.application",
+                                        application_id=comment.application_id,
+                                        show_comment_history="1",
+                                        comment_id=comment.id) }}">See history</a>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
                         {% endif %}
                     </div>
                 {% endif %}
+                {% endfor %}
+            {% endfor %}
+            {% endif %}
+        </div>
+        {% endmacro %}
+
+        {# This macro is only being used in the activity_trail.html #}
+        {% macro comments(comment, application_id) %}
+
+        <div id="comments">
+            <p class="govuk-!-static-padding-top-1"><span
+                class="govuk-body govuk-!-font-weight-bold">Comment</span> on <a
+                href="{{ url_for('assessment_bp.display_sub_criteria',application_id=application_id ,sub_criteria_id=comment.sub_criteria_id)}}?theme_id={{comment.theme_id}}" target="_blank">{{comment.theme_id|remove_dashes_underscores_capitalize_keep_uppercase}}</a></p>
+
+            <div class="comment-group">
+                <p class="govuk-body">{{ comment.comment }}</p>
+                <p class="govuk-body-s">{{ comment.full_name }} ({{ comment.highest_role|all_caps_to_human }}) {{ comment.email_address }}</p>
+                <p class="govuk-body-s">{{ comment.date_created|utc_to_bst }}</p>
             </div>
-        {% endif %}
-        {% endfor %}
-    {% endfor %}
-    {% endif %}
-</div>
-{% endmacro %}
 
-{# This macro is only being used in the activity_trail.html #}
-{% macro comments(comment, application_id) %}
-
-<div id="comments">
-    <p class="govuk-!-static-padding-top-1"><span
-        class="govuk-body govuk-!-font-weight-bold">Comment</span> on <a
-        href="{{ url_for('assessment_bp.display_sub_criteria',application_id=application_id ,sub_criteria_id=comment.sub_criteria_id)}}?theme_id={{comment.theme_id}}" target="_blank">{{comment.theme_id|remove_dashes_underscores_capitalize_keep_uppercase}}</a></p>
-
-    <div class="comment-group">
-        <p class="govuk-body">{{ comment.comment }}</p>
-        <p class="govuk-body-s">{{ comment.full_name }} ({{ comment.highest_role|all_caps_to_human }}) {{ comment.email_address }}</p>
-        <p class="govuk-body-s">{{ comment.date_created|utc_to_bst }}</p>
-    </div>
-
-</div>
+        </div>
 {% endmacro %}

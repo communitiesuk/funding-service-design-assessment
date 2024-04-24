@@ -17,6 +17,7 @@ from app.blueprints.scoring.models.score import Score
 from app.blueprints.services.models.application import Application
 from app.blueprints.services.models.banner import Banner
 from app.blueprints.services.models.comment import Comment
+from app.blueprints.services.models.comment import CommentType
 from app.blueprints.services.models.flag import Flag
 from app.blueprints.services.models.flag import FlagType
 from app.blueprints.services.models.fund import Fund
@@ -624,6 +625,7 @@ def get_comments(
     sub_criteria_id: str = None,
     theme_id: str = None,
     comment_id: str = None,
+    comment_type: CommentType = None,
 ):
     """_summary_: Get comments from the assessment store
     Args:
@@ -638,6 +640,7 @@ def get_comments(
         "sub_criteria_id": sub_criteria_id,
         "theme_id": theme_id,
         "comment_id": comment_id,
+        "comment_type": comment_type,
     }
     # Strip theme_id from dict if None
     query_params_strip_nones = {k: v for k, v in query_params.items() if v is not None}
@@ -682,10 +685,17 @@ def match_comment_to_theme(comment_response, themes, fund_short_name):
         )
         for comment in comment_response
     ]
-    theme_id_to_comments_list_map = {
-        theme.id: [comment for comment in comments if comment.theme_id == theme.id]
-        for theme in themes
-    }
+
+    if themes == "":
+        theme_id_to_comments_list_map = {
+            "": [comment for comment in comments if comment.theme_id == ""]
+        }
+    else:
+        theme_id_to_comments_list_map = {
+            theme.id: [comment for comment in comments if comment.theme_id == theme.id]
+            for theme in themes
+        }
+
     return theme_id_to_comments_list_map
 
 
@@ -696,6 +706,7 @@ def submit_comment(
     user_id=None,
     theme_id=None,
     comment_id=None,
+    comment_type=None,
 ):
     if not comment_id:
         data_dict = {
@@ -703,7 +714,7 @@ def submit_comment(
             "user_id": user_id,
             "application_id": application_id,
             "sub_criteria_id": sub_criteria_id,
-            "comment_type": "COMMENT",
+            "comment_type": comment_type,
             "theme_id": theme_id,
         }
         url = Config.ASSESSMENT_COMMENT_ENDPOINT

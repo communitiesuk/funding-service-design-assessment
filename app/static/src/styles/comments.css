@@ -2,6 +2,7 @@
     background-color: #ffffff;
     padding: 25px 25px 5px;
     margin-top: 15px;
+    margin-right: 15px;
     border: 2px #1d70b8 solid;
 }
 
@@ -12,4 +13,9 @@
 .comment-group .govuk-body-s {
     color: #505a5f;
     margin-top: -10px;
+}
+
+.scrollable-comments {
+    max-height: 580px;
+    overflow-y: overlay;
 }

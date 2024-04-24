@@ -365,6 +365,7 @@ class TestAuthorisation:
                     "theme_id": "test_theme_id",
                     "sub_criteria_id": sub_criteria_id,
                     "application_id": application_id,
+                    "comment_type": "WHOLE_APPLICATION",
                     "updates": [
                         {
                             "comment": "This is old comment",
@@ -385,6 +386,7 @@ class TestAuthorisation:
                     "theme_id": "test_theme_id",
                     "sub_criteria_id": sub_criteria_id,
                     "application_id": application_id,
+                    "comment_type": "WHOLE_APPLICATION",
                     "updates": [
                         {
                             "comment": "This is comment has no history",
