@@ -882,7 +882,7 @@ def view_entire_application(application_id):
     )
 
     # add ordered themes config along with the fund_round_name to file
-    # display_value_mapping.py, function: ordered_themes
+    # themes_mapping.py, function: ordered_themes
     order_application_by_themes = order_entire_application_by_themes(
         fund_round_name, map_appli_with_sub_cris_and_themes
     )
