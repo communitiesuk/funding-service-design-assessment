@@ -105,7 +105,7 @@ from app.blueprints.shared.helpers import is_flaggable
 from app.blueprints.shared.helpers import match_search_params
 from app.blueprints.shared.helpers import process_assessments_stats
 from app.blueprints.themes.deprecated_theme_mapper import (
-    map_application_with_sub_criteria_themes_list,
+    map_application_with_sub_criterias_and_themes,
 )
 from app.blueprints.themes.deprecated_theme_mapper import (
     order_entire_application_by_themes,
@@ -874,20 +874,20 @@ def view_entire_application(application_id):
             if isinstance(theme, dict):
                 theme_ids.extend(theme_id["id"] for theme_id in theme["themes"])
 
-    mapped_appli_with_sub_cri = map_application_with_sub_criteria_themes_list(
+    map_appli_with_sub_cris_and_themes = map_application_with_sub_criterias_and_themes(
         application_json, sub_criterias, theme_ids
     )
 
-    order_sub = order_entire_application_by_themes(
-        fund_round_name, mapped_appli_with_sub_cri
+    order_application_by_themes = order_entire_application_by_themes(
+        fund_round_name, map_appli_with_sub_cris_and_themes
     )
-    mapped_answers = applicants_response.create_ui_componenets_for_list_data(
-        application_id, order_sub
+    map_answers = applicants_response.create_ui_componenets_for_list_data(
+        application_id, order_application_by_themes
     )
 
     return render_template(
         "view_entire_application.html",
         state=state,
         application_id=application_id,
-        mapped_answers=mapped_answers,
+        mapped_answers=map_answers,
     )

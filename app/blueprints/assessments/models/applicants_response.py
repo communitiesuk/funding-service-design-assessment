@@ -726,7 +726,7 @@ def create_ui_componenets_for_list_data(
         answers_meta = create_ui_components(_data, application_id)
         subcri_and_theme = ConvertDictToClass(**view_entire_appli_config)
 
-        # combine two classes
+        # combine class of view entire application config
         answers_mapped.append(answers_meta + [subcri_and_theme])
 
     return answers_mapped

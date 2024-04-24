@@ -44,7 +44,7 @@ def map_application_with_sub_criteria_themes_fields(
     return format_add_another_component_contents(themes_fields)
 
 
-def map_application_with_sub_criteria_themes_list(
+def map_application_with_sub_criterias_and_themes(
     application_json,
     sub_criterias,
     theme_ids: list,
@@ -59,6 +59,7 @@ def map_application_with_sub_criteria_themes_list(
 
         sub_and_theme = {**_sub_cri_with_theme_id}
 
+        # add sub criteria and theme id to the current data
         _map_data = map_data + [sub_and_theme]
         mapped_appli_with_sub_cri.append(_map_data)
 
