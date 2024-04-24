@@ -895,7 +895,7 @@ def feedback_export(fund_short_name: str, round_short_name: str):
         return download_file(
             content,
             "application/vnd.ms-excel",
-            f"fsd_feedback_{short_name}_{str(int(time.time())) }.xlsx",
+            f"fsd_feedback_{short_name}_{str(int(time.time()))}.xlsx",
         )
     else:
         abort(404)
