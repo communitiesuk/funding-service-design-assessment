@@ -8,8 +8,6 @@ def ordered_themes(fund_round_short_name):
             "development-support-provider",
         ]
 
-    if fund_round_short_name == "COFR3W3":
-        pass
     if fund_round_short_name in [
         "COFR3W2",
         "COFR3W1",
@@ -98,8 +96,6 @@ def ordered_themes(fund_round_short_name):
             ),
         ]
 
-    if fund_round_short_name == "EOY":
-        pass
     if fund_round_short_name == "DPIFR2":
         return [
             "about_your_organisation",
@@ -111,6 +107,7 @@ def ordered_themes(fund_round_short_name):
             "engaging_the_organisation",
             "dataset_information",
         ]
+
     if fund_round_short_name == "NSTFR2":
         return [
             "organisation_information",
@@ -135,6 +132,7 @@ def ordered_themes(fund_round_short_name):
             "building_works",
             "match_funding",
         ]
+
     if fund_round_short_name == "CYPR1":
         return [
             "organisation-name-and-address",
