@@ -159,3 +159,10 @@ def ordered_themes(fund_round_short_name):
             "Representing community views",
             "Accessibility and inclusivity",
         ]
+    if fund_round_short_name == "COF-EOIR1":
+        return [
+            "Organisation details",
+            "About your asset",
+            "Your funding request",
+            "Development support provider",
+        ]
