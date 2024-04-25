@@ -689,6 +689,7 @@ def application(application_id):
 
     if add_comment_argument and comment_form.validate_on_submit():
         comment = comment_form.comment.data
+        # No sub_criteria_id and theme_id indicates it belongs to the entire application.
         submit_comment(
             comment=comment,
             application_id=application_id,
@@ -709,6 +710,7 @@ def application(application_id):
     state = get_state_for_tasklist_banner(application_id)
     flags_list = get_flags(application_id)
 
+    # No sub_criteria_id and theme_id indicates it belongs to the entire application.
     comment_response = get_comments(
         application_id=application_id,
         sub_criteria_id="",
@@ -718,7 +720,11 @@ def application(application_id):
 
     # TODO add test for this function in data_operations
     theme_matched_comments = (
-        match_comment_to_theme(comment_response, "", state.fund_short_name)
+        match_comment_to_theme(
+            comment_response=comment_response,
+            themes=None,
+            fund_short_name=state.fund_short_name,
+        )
         if comment_response
         else None
     )

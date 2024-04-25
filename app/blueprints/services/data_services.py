@@ -695,7 +695,7 @@ def match_comment_to_theme(comment_response, themes, fund_short_name):
         for comment in comment_response
     ]
 
-    if themes == "":
+    if not themes:
         theme_id_to_comments_list_map = {
             "": [comment for comment in comments if comment.theme_id == ""]
         }

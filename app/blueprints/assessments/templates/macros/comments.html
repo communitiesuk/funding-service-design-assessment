@@ -9,6 +9,7 @@
                 No comments have been left yet.
                 </div>
             {% else %}
+            <!-- empty key in comments means we are on full application page hence showing scrollable comments section -->
             {% if '' in comments %}
             <div class="scrollable-comments">
             {% endif %}
