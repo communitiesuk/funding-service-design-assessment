@@ -620,6 +620,15 @@ def get_sub_criteria_theme_answers_all(
     )
 
 
+def get_all_sub_criterias_with_application_json(application_id: str):
+    theme_mapping_data_url = (
+        f"{Config.ASSESSMENT_STORE_API_HOST}"
+        f"{Config.SUB_CRITERIA_THEME_ANSWERS_ENDPOINT.format(application_id=application_id)}"
+    )
+    theme_mapping_data = get_data(theme_mapping_data_url)
+    return theme_mapping_data
+
+
 def get_comments(
     application_id: str = None,
     sub_criteria_id: str = None,

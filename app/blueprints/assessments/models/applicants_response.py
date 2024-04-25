@@ -707,3 +707,39 @@ def sanitise_html(data):
 
         data["answer"] = str(soup)
     return data
+
+
+def create_ui_componenets_for_list_data(
+    application_id: str, mapped_appli_with_sub_cri: list
+):
+    answers_mapped = []
+    for data in mapped_appli_with_sub_cri:
+        _data = []
+        view_entire_appli_config = {}
+        for d in data:
+            if "display_id" in d and d.get("display_id") == "view_entire_application":
+                view_entire_appli_config.update(d)
+                continue
+            else:
+                _data.append(d)
+
+        answers_meta = create_ui_components(_data, application_id)
+        subcri_and_theme = ConvertDictToClass(**view_entire_appli_config)
+
+        # combine class of view entire application config
+        answers_mapped.append(answers_meta + [subcri_and_theme])
+
+    return answers_mapped
+
+
+class ConvertDictToClass:
+    def __init__(self, **kwargs):
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
+    def __repr__(self):
+        attributes = ", ".join(
+            [f"{key}={value!r}" for key, value in self.__dict__.items()]
+        )
+
+        return f"{type(self).__name__}({attributes})"

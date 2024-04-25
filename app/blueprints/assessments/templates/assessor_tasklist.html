@@ -18,6 +18,7 @@
 {% from "macros/assessment_completion.html" import assessment_complete %}
 {% from "macros/migration_banner.html" import migration_banner %}
 {% from "macros/link_to_download_contract_docs.html" import link_to_download_contract_docs %}
+{% from "macros/assessment_actions.html" import assessment_actions %}
 
 {% set pageHeading = state.project_name %}
 
@@ -45,100 +46,109 @@
 {% endblock header %}
 
 {% block content %}
-<div class="govuk-grid-row">
-    {% if migration_banner_enabled %}
-        {{ migration_banner() }}
-    {% endif %}
-{% if toggle_dict.get("TAGGING") %}
-    {% if g.access_controller.is_assessor %}
-        <div class="govuk-grid-column-full">
-            {% if tags %}
-                {% for t in tags %}
-                    <strong class="govuk-tag govuk-tag--{{ tag_config[t.purpose]['colour'].lower() }} govuk-!-margin-right-4 govuk-!-margin-top-2 dluhc-tag"
-                            style="display: inline-block;">
-                        {{ t.value }}
-                    </strong>
-                {% endfor %}
-            {% else %}
-                <span class="govuk-body govuk-!-margin-top-2 govuk-!-margin-right-4"
-                   style="display: inline-block;">
-                    There are no tags on this assessment
-                </span>
-            {% endif %}
-                <span class="govuk-body-s govuk-!-margin-top-2">
-                    <a class="govuk-link"
-                        data-qa="add-change-tags"
-                        href="{{ url_for('tagging_bp.load_change_tags', application_id=application_id) }}">
-                        {{ "Change" if tags else "Add" }} tags
-                    </a>
-                </span>
+
+{% if g.access_controller.is_assessor %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-one-quarter">
+            {{assessment_actions(application_id)}}
         </div>
-        <div class="govuk-grid-column-full govuk-!-margin-top-4">
-            <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible govuk-!-margin-top-0">
-        </div>
-    {% endif %}
+    <div class="govuk-grid-column-three-quarters">
+{% else %}
+    <div class="govuk-grid-row govuk-grid-column-full">
+
 {% endif %}
-</div>
+<div class="govuk-grid-row">
 
-{% if g.access_controller.has_any_assessor_role %}
-
-    <!--Flag history is diabled for EOI fund types -->
-    {% if not is_expression_of_interest %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-one-half">
-
-            {{ flag_tabs(state, application_id, teams_flag_stats, flags_list, accounts_list) }}
-        </div>
-    </div>
-    {% endif %}
-
-    <div class="govuk-grid-row">
-        <div class="gov-uk-table__cell--align-right">
-        <span class="left govuk-!-padding-right-4">
-            <div class="govuk-grid-row govuk-!-text-align-right">
-                <div class="govuk-grid-column-full govuk-!-margin-bottom-4">
-                    <a class="govuk-body govuk-link--no-visited-state" href="{{ url_for('assessment_bp.activity_trail', application_id=application_id) }}">View activity trail</a>
-                </div>
+        {% if migration_banner_enabled %}
+            {{ migration_banner() }}
+        {% endif %}
+    {% if toggle_dict.get("TAGGING") %}
+        {% if g.access_controller.is_assessor %}
+            <div class="govuk-grid-column-full govuk-!-margin-top-1">
+                {% if tags %}
+                    {% for t in tags %}
+                        <strong class="govuk-tag govuk-tag--{{ tag_config[t.purpose]['colour'].lower() }} govuk-!-margin-right-4 govuk-!-margin-top-2 dluhc-tag"
+                                style="display: inline-block;">
+                            {{ t.value }}
+                        </strong>
+                    {% endfor %}
+                {% else %}
+                    <span class="govuk-body govuk-!-margin-top-2 govuk-!-margin-right-4"
+                    style="display: inline-block;">
+                        There are no tags on this assessment
+                    </span>
+                {% endif %}
+                    <span class="govuk-body-s govuk-!-margin-top-2">
+                        <a class="govuk-link"
+                            data-qa="add-change-tags"
+                            href="{{ url_for('tagging_bp.load_change_tags', application_id=application_id) }}">
+                            {{ "Change" if tags else "Add" }} tags
+                        </a>
+                    </span>
             </div>
-        </span>
+            <div class="govuk-grid-column-full govuk-!-margin-top-4">
+                <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible govuk-!-margin-top-0">
+            </div>
+        {% endif %}
+    {% endif %}
+    </div>
 
-        <span class="left govuk-!-padding-right-4">
-            {% if is_flaggable %}
-            {{ flag_application_button(application_id) }}
+    {% if g.access_controller.has_any_assessor_role %}
+
+        <div class="govuk-grid-row">
+            <!--Flag history is diabled for EOI fund types -->
+            {% if not is_expression_of_interest %}
+                <div class="govuk-grid-column-one-half">
+                    {{ flag_tabs(state, application_id, teams_flag_stats, flags_list, accounts_list) }}
+                </div>
             {% endif %}
-        </span>
-        <span class="right">
-            {% if g.access_controller.is_lead_assessor and is_expression_of_interest %}
+
+            <div class="gov-uk-table__cell--align-right">
+            <span class="left govuk-!-padding-right-4">
                 <div class="govuk-grid-row govuk-!-text-align-right">
-                    <div class="govuk-grid-column-full govuk-!-margin-bottom-4">
-                        {{ link_to_download_contract_docs(csrf_token, application_id) }}
+                    <div class="govuk-grid-column-full govuk-!-margin-bottom-7">
+                        <a class="govuk-body govuk-link--no-visited-state" href="{{ url_for('assessment_bp.activity_trail', application_id=application_id) }}">View activity trail</a>
                     </div>
                 </div>
-            {% elif g.access_controller.is_lead_assessor and state.workflow_status=="COMPLETED" and (not is_qa_complete) and flag_status not in ["Stopped", "Flagged", "Multiple flags to resolve"] and "Flagged" not in flag_status %}
-                {{ mark_qa_complete_button(application_id) }}
-            {% endif %}
-        </span>
-        </div>
-    </div>
-{% endif %}
+            </span>
 
-{# Display multiple flag banner #}
-<div class="govuk-grid-row">
-<div class="govuk-grid-column-full">
-    {% if g.access_controller.has_any_assessor_role and is_qa_complete %}
-        {{ qa_complete_flag(qa_complete["date_created"], accounts_list[qa_complete["user_id"]], form.csrf_token, application_id) }}
+            <span class="left govuk-!-padding-right-4 govuk-!-margin-bottom-2">
+                {% if is_flaggable %}
+                {{ flag_application_button(application_id) }}
+                {% endif %}
+            </span>
+            <span class="right">
+                {% if g.access_controller.is_lead_assessor and is_expression_of_interest %}
+                    <div class="govuk-grid-row govuk-!-text-align-right">
+                        <div class="govuk-grid-column-full govuk-!-margin-bottom-6">
+                            {{ link_to_download_contract_docs(csrf_token, application_id) }}
+                        </div>
+                    </div>
+                {% elif g.access_controller.is_lead_assessor and state.workflow_status=="COMPLETED" and (not is_qa_complete) and flag_status not in ["Stopped", "Flagged", "Multiple flags to resolve"] and "Flagged" not in flag_status %}
+                    {{ mark_qa_complete_button(application_id) }}
+                {% endif %}
+            </span>
+            </div>
+        </div>
     {% endif %}
 
-    {# only show stopped banner, if flag_status=="Stopped" and hide all other banners #}
-    {% for flag in flags_list %}
-        {% if g.access_controller.has_any_assessor_role and (flag_status != "Stopped") and (flag.latest_status.name == "RESOLVED") %}
-            {{ assessment_resolved(flag, accounts_list[flag.latest_user_id], application_id) }}
-        {% elif g.access_controller.has_any_assessor_role and (flag_status != "Stopped") and (flag.latest_status.name == "RAISED") %}
-            {{ assessment_flagged(state, flag, accounts_list[flag.latest_user_id], application_id) }}
-        {% elif g.access_controller.has_any_assessor_role and flag_status == "Stopped" and (flag.latest_status.name == "STOPPED")%}
-            {{ assessment_stopped(flag, accounts_list[flag.latest_user_id], application_id) }}
+    {# Display multiple flag banner #}
+    <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+        {% if g.access_controller.has_any_assessor_role and is_qa_complete %}
+            {{ qa_complete_flag(qa_complete["date_created"], accounts_list[qa_complete["user_id"]], form.csrf_token, application_id) }}
         {% endif %}
-    {% endfor %}
+
+        {# only show stopped banner, if flag_status=="Stopped" and hide all other banners #}
+        {% for flag in flags_list %}
+            {% if g.access_controller.has_any_assessor_role and (flag_status != "Stopped") and (flag.latest_status.name == "RESOLVED") %}
+                {{ assessment_resolved(flag, accounts_list[flag.latest_user_id], application_id) }}
+            {% elif g.access_controller.has_any_assessor_role and (flag_status != "Stopped") and (flag.latest_status.name == "RAISED") %}
+                {{ assessment_flagged(state, flag, accounts_list[flag.latest_user_id], application_id) }}
+            {% elif g.access_controller.has_any_assessor_role and flag_status == "Stopped" and (flag.latest_status.name == "STOPPED")%}
+                {{ assessment_stopped(flag, accounts_list[flag.latest_user_id], application_id) }}
+            {% endif %}
+        {% endfor %}
 
     {% if sub_criteria_status_completed and g.access_controller.has_any_assessor_role and (not is_qa_complete) and (not flag_status) and not is_expression_of_interest %}
         {{ assessment_complete(state, form.csrf_token, application_id)}}
@@ -204,4 +214,7 @@
     </div>
 
 </div>
+{% if g.access_controller.is_assessor %}
+   </div>
+{% endif %}
 {% endblock content %}

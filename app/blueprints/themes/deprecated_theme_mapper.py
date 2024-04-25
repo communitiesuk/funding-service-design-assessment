@@ -3,6 +3,8 @@ from typing import Any
 
 from flask import current_app
 
+from config.themes_mapping import ordered_themes
+
 
 # This code was copied directly from the assessments store in an attempt to consolidate all the transformation logic
 # in one place. The goal of putting all the transformation logic in one place is so that we can eventually refactor
@@ -12,7 +14,7 @@ from flask import current_app
 def map_application_with_sub_criteria_themes_fields(
     application_json,
     sub_criterias,
-    theme_id,
+    theme_id: str,
 ):
     questions = [
         questions
@@ -40,6 +42,44 @@ def map_application_with_sub_criteria_themes_fields(
     deprecated_sort_add_another_component_contents(themes_fields)
 
     return format_add_another_component_contents(themes_fields)
+
+
+def map_application_with_sub_criterias_and_themes(
+    application_json,
+    sub_criterias,
+    theme_ids: list,
+):
+    mapped_appli_with_sub_cri = []
+    for theme_id in theme_ids:
+        _sub_cri_with_theme_id = map_sub_cri_with_theme_id(sub_criterias, theme_id)
+
+        map_data = map_application_with_sub_criteria_themes_fields(
+            application_json, sub_criterias, theme_id
+        )
+
+        sub_and_theme = {**_sub_cri_with_theme_id}
+
+        # add sub criteria and theme id to the current data
+        _map_data = map_data + [sub_and_theme]
+        mapped_appli_with_sub_cri.append(_map_data)
+
+    return mapped_appli_with_sub_cri
+
+
+def map_sub_cri_with_theme_id(sub_criterias, theme_id):
+    """Function returns mapped theme_id with sub criteria including
+    view_entire_application config display_id"""
+    for sub_criteria in sub_criterias:
+        for theme in sub_criteria["themes"]:
+            if theme_id == theme.get("id"):
+                _theme_id = theme["id"].replace("_", " ").replace("-", " ").capitalize()
+
+                view_entire_application_config = {
+                    "display_id": "view_entire_application",
+                    "sub_criteria": sub_criteria["name"],
+                    "theme_id": _theme_id,
+                }
+                return view_entire_application_config
 
 
 def get_themes_fields(sub_criterias, theme_id) -> str | Any:
@@ -240,3 +280,40 @@ _MULTI_INPUT_FRE_FRONTEND_FORMATTERS = {
     "RadioField": lambda x: x.capitalize(),
     "yesNoField": lambda x: "Yes" if bool(x) else "No",
 }
+
+
+def order_entire_application_by_themes(fund_round_name, sub_criteria):
+    _ordered_themes = []
+
+    # Consider relocating the theme ordering logic to a utility function in 'utils'
+    ordered_theme = ordered_themes(fund_round_name)
+
+    for ordered_theme_id in ordered_theme:
+        if ordered_theme_id:
+            ordered_theme_id = (
+                ordered_theme_id.replace("-", " ").replace("_", " ").capitalize()
+            )
+            for sub in sub_criteria:
+                for theme_id in sub:
+                    if theme_id.get("theme_id"):
+                        _theme_id = theme_id["theme_id"]
+
+                        if fund_round_name in [
+                            "COFR4W1",
+                            "COFR3W2",
+                            "COFR3W3",
+                            "COFR2W3",
+                            "COFR2W2",
+                        ]:
+                            if _theme_id == "Risk loss impact":
+                                theme_id["theme_id"] = "Risk and impact of loss"
+                            if _theme_id == "General info":
+                                theme_id["theme_id"] = "General information"
+                        if fund_round_name in ["COFR4W1"]:
+                            if _theme_id == "Community use":
+                                theme_id["theme_id"] = "Community use/significance"
+
+                        if _theme_id == ordered_theme_id:
+                            _ordered_themes.append(sub)
+                            break
+    return _ordered_themes
