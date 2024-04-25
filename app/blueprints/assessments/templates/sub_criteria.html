@@ -57,6 +57,7 @@ Error:
             {{ navbar(application_id, sub_criteria, current_theme.id) }}
         </div>
         <div class="theme govuk-grid-column-two-thirds">
+            <h3 class="govuk-heading-m response-title">Applicant's response</h3>
             {{ theme(answers_meta)}}
             {{ comment(comments)}}
             {% if display_comment_box != True and not display_comment_edit_box %}

@@ -65,6 +65,9 @@ from app.blueprints.services.data_services import (
     get_all_associated_tags_for_application,
 )
 from app.blueprints.services.data_services import (
+    get_all_sub_criterias_with_application_json,
+)
+from app.blueprints.services.data_services import (
     get_all_uploaded_documents_theme_answers,
 )
 from app.blueprints.services.data_services import get_applicant_export
@@ -101,6 +104,12 @@ from app.blueprints.shared.helpers import get_ttl_hash
 from app.blueprints.shared.helpers import is_flaggable
 from app.blueprints.shared.helpers import match_search_params
 from app.blueprints.shared.helpers import process_assessments_stats
+from app.blueprints.themes.deprecated_theme_mapper import (
+    map_application_with_sub_criterias_and_themes,
+)
+from app.blueprints.themes.deprecated_theme_mapper import (
+    order_entire_application_by_themes,
+)
 from config import Config
 from config.display_value_mappings import assessment_statuses
 from config.display_value_mappings import asset_types
@@ -810,7 +819,7 @@ def feedback_export(fund_short_name: str, round_short_name: str):
         return download_file(
             content,
             "application/vnd.ms-excel",
-            f"fsd_feedback_{short_name}_{str(int(time.time())) }.xlsx",
+            f"fsd_feedback_{short_name}_{str(int(time.time()))}.xlsx",
         )
     else:
         abort(404)
@@ -846,4 +855,44 @@ def qa_complete(application_id):
         referrer=request.referrer,
         assessment_status=assessment_statuses[state.workflow_status],
         migration_banner_enabled=Config.MIGRATION_BANNER_ENABLED,
+    )
+
+
+@assessment_bp.route("/entire_application/<application_id>", methods=["GET", "POST"])
+@check_access_application_id(roles_required=["LEAD_ASSESSOR", "ASSESSOR"])
+def view_entire_application(application_id):
+    """The entire application renders all the questions and answers ordered by
+    themes as per the application sub_criteria/themes.
+    """
+    state = get_state_for_tasklist_banner(application_id)
+    fund_round_name = state.fund_short_name + state.round_short_name
+
+    _data = get_all_sub_criterias_with_application_json(application_id)
+    application_json = _data["application_json"]
+    sub_criterias = _data["sub_criterias"]
+
+    theme_ids = []
+    for themes in _data.values():
+        for theme in themes:
+            if isinstance(theme, dict):
+                theme_ids.extend(theme_id["id"] for theme_id in theme["themes"])
+
+    map_appli_with_sub_cris_and_themes = map_application_with_sub_criterias_and_themes(
+        application_json, sub_criterias, theme_ids
+    )
+
+    # add ordered themes config along with the fund_round_name to file
+    # themes_mapping.py, function: ordered_themes
+    order_application_by_themes = order_entire_application_by_themes(
+        fund_round_name, map_appli_with_sub_cris_and_themes
+    )
+    map_answers = applicants_response.create_ui_componenets_for_list_data(
+        application_id, order_application_by_themes
+    )
+
+    return render_template(
+        "view_entire_application.html",
+        state=state,
+        application_id=application_id,
+        mapped_answers=map_answers,
     )
