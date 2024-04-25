@@ -694,10 +694,17 @@ def match_comment_to_theme(comment_response, themes, fund_short_name):
         )
         for comment in comment_response
     ]
-    theme_id_to_comments_list_map = {
-        theme.id: [comment for comment in comments if comment.theme_id == theme.id]
-        for theme in themes
-    }
+
+    if not themes:
+        theme_id_to_comments_list_map = {
+            "": [comment for comment in comments if comment.theme_id == ""]
+        }
+    else:
+        theme_id_to_comments_list_map = {
+            theme.id: [comment for comment in comments if comment.theme_id == theme.id]
+            for theme in themes
+        }
+
     return theme_id_to_comments_list_map
 
 

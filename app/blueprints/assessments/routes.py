@@ -710,7 +710,6 @@ def application(application_id):
     state = get_state_for_tasklist_banner(application_id)
     flags_list = get_flags(application_id)
 
-    # No sub_criteria_id and theme_id indicates it belongs to the entire application.
     comment_response = get_comments(
         application_id=application_id,
         sub_criteria_id="",
