@@ -51,6 +51,9 @@ class DevelopmentConfig(DefaultConfig):
             "COF-EOI_LEAD_ASSESSOR",
             "COF-EOI_ASSESSOR",
             "COF-EOI_COMMENTER",
+            "HSRA_LEAD_ASSESSOR",
+            "HSRA_ASSESSOR",
+            "HSRA_COMMENTER",
         ],
         "highest_role_map": {
             "COF": DEBUG_USER_ROLE,
@@ -58,6 +61,7 @@ class DevelopmentConfig(DefaultConfig):
             "CYP": DEBUG_USER_ROLE,
             "DPIF": DEBUG_USER_ROLE,
             "COF-EOI": DEBUG_USER_ROLE,
+            "HSRA": DEBUG_USER_ROLE,
         },
     }
     DEBUG_USER_ACCOUNT_ID = "00000000-0000-0000-0000-000000000000"
