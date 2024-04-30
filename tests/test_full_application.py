@@ -59,7 +59,7 @@ def test_from_data(
     assert context.response_id == "12345"
     assert context.submission_to == "Fund Name Round Title"
     assert (
-        context.submitted_on == "06/06/2023 at 13:38"
+        context.submitted_on == "06/06/2023 at 14:38"
     )  # Timestamp is converted to bst
     assert context.organisation_name == "Organisation Name"
     assert context.organisation_shortname == "Short Name"
