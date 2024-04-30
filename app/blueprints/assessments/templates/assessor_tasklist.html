@@ -165,17 +165,6 @@
 </div>
 </div>
 <div class="govuk-grid-row">
-    <div class="govuk-grid-column-one-third">
-        {{ comment(comments, True) }}
-
-        {% if display_comment_box %}
-            {{ comment_box(comment_form) }}
-        {% endif %}
-        {% if display_comment_edit_box %}
-            {{ edit_comment_box(comments, comment_id, comment_form)}}
-        {% endif %}
-    </div>
-
     <div class="govuk-grid-column-two-thirds">
         {% if all_uploaded_documents_section_available %}
         <h2 class="govuk-heading-l govuk-!-margin-top-8">All uploaded documents</h2>
