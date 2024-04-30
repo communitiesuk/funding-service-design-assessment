@@ -94,6 +94,7 @@ from app.blueprints.services.data_services import get_sub_criteria_theme_answers
 from app.blueprints.services.data_services import get_tags_for_fund_round
 from app.blueprints.services.data_services import match_comment_to_theme
 from app.blueprints.services.data_services import submit_comment
+from app.blueprints.services.models.comment import CommentType
 from app.blueprints.services.models.theme import Theme
 from app.blueprints.services.shared_data_helpers import get_state_for_tasklist_banner
 from app.blueprints.shared.filters import utc_to_bst
@@ -391,6 +392,7 @@ def display_sub_criteria(
             sub_criteria_id=sub_criteria_id,
             user_id=g.account_id,
             theme_id=theme_id,
+            comment_type=CommentType.COMMENT.name,
         )
 
         return redirect(
@@ -410,6 +412,7 @@ def display_sub_criteria(
         application_id=application_id,
         sub_criteria_id=sub_criteria_id,
         theme_id=theme_id,
+        comment_type=CommentType.COMMENT.name,
     )
 
     # TODO add test for this function in data_operations
@@ -680,6 +683,88 @@ def application(application_id):
     sub_criteria_status_completed = all_status_completed(state)
     form = AssessmentCompleteForm()
     associated_tags = get_associated_tags_for_application(application_id)
+    add_comment_argument = request.args.get("add_comment") == "1"
+    edit_comment_argument = request.args.get("edit_comment") == "1"
+    comment_form = CommentsForm()
+
+    if add_comment_argument and comment_form.validate_on_submit():
+        comment = comment_form.comment.data
+        # No sub_criteria_id and theme_id indicates it belongs to the entire application.
+        submit_comment(
+            comment=comment,
+            application_id=application_id,
+            sub_criteria_id="",
+            user_id=g.account_id,
+            theme_id="",
+            comment_type=CommentType.WHOLE_APPLICATION.name,
+        )
+
+        return redirect(
+            url_for(
+                "assessment_bp.application",
+                application_id=application_id,
+                _anchor="comments",
+            )
+        )
+
+    state = get_state_for_tasklist_banner(application_id)
+    flags_list = get_flags(application_id)
+
+    comment_response = get_comments(
+        application_id=application_id,
+        sub_criteria_id="",
+        theme_id="",
+        comment_type=CommentType.WHOLE_APPLICATION.name,
+    )
+
+    # TODO add test for this function in data_operations
+    theme_matched_comments = (
+        match_comment_to_theme(
+            comment_response=comment_response,
+            themes=None,
+            fund_short_name=state.fund_short_name,
+        )
+        if comment_response
+        else None
+    )
+
+    assessment_status = ""
+    flag_status = determine_flag_status(flags_list)
+
+    edit_comment_argument = request.args.get("edit_comment")
+    comment_id = request.args.get("comment_id")
+    show_comment_history = request.args.get("show_comment_history")
+
+    if comment_id and show_comment_history:
+        for comment_data in theme_matched_comments[""]:
+            if comment_data.id == comment_id:
+                return render_template(
+                    "comments_history.html",
+                    comment_data=comment_data,
+                    back_href=url_for(
+                        "assessment_bp.application",
+                        application_id=application_id,
+                        migration_banner_enabled=Config.MIGRATION_BANNER_ENABLED,
+                    ),
+                    application_id=application_id,
+                    state=state,
+                    flag_status=flag_status,
+                    assessment_status=assessment_status,
+                    migration_banner_enabled=Config.MIGRATION_BANNER_ENABLED,
+                )
+
+    if edit_comment_argument and comment_form.validate_on_submit():
+        comment = comment_form.comment.data
+        submit_comment(comment=comment, comment_id=comment_id)
+
+        return redirect(
+            url_for(
+                "assessment_bp.application",
+                application_id=application_id,
+                migration_banner_enabled=Config.MIGRATION_BANNER_ENABLED,
+                _anchor="comments",
+            )
+        )
 
     return render_template(
         "assessor_tasklist.html",
@@ -701,6 +786,11 @@ def application(application_id):
         max_possible_sub_criteria_score=scoring_form.max_score,
         migration_banner_enabled=Config.MIGRATION_BANNER_ENABLED,
         is_expression_of_interest=fund_round.is_expression_of_interest,
+        display_comment_box=add_comment_argument,
+        display_comment_edit_box=edit_comment_argument,
+        comment_id=comment_id,
+        comment_form=comment_form,
+        comments=theme_matched_comments,
     )
 
 
