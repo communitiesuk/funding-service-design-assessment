@@ -728,7 +728,6 @@ def application(application_id):
         else None
     )
 
-    assessment_status = ""
     flag_status = determine_flag_status(flags_list)
 
     edit_comment_argument = request.args.get("edit_comment")
