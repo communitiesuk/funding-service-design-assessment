@@ -152,3 +152,13 @@ def ordered_themes(fund_round_short_name):
             "risk-and-deliverability",
             "value-for-money",
         ]
+    if fund_round_short_name == "HSRA":
+        return [
+            "total_expected_cost",
+            "refurbishment_costs",
+            "auction_costs",
+            "other_costs",
+            "vacant_property_details",
+            "designated_area_details",
+            "milestones",
+        ]
