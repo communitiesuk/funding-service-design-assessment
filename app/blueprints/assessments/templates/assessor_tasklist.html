@@ -8,6 +8,9 @@
 {% from "macros/flag_application_button.html" import flag_application_button %}
 {% from "macros/mark_qa_complete_button.html" import mark_qa_complete_button %}
 {% from "macros/assessment_flag.html" import assessment_flagged %}
+{% from "macros/comments.html" import comment %}
+{% from "macros/comments_edit_box.html" import edit_comment_box %}
+{% from "macros/comments_box.html" import comment_box %}
 {% from "macros/assessment_flag.html" import assessment_stopped %}
 {% from "macros/assessment_flag.html" import assessment_resolved %}
 {% from "macros/logout_partial.html" import logout_partial %}
@@ -48,6 +51,15 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-one-quarter">
             {{assessment_actions(application_id)}}
+
+            {{ comment(comments, application_id, True) }}
+
+            {% if display_comment_box %}
+                {{ comment_box(comment_form) }}
+            {% endif %}
+            {% if display_comment_edit_box %}
+                {{ edit_comment_box(comments, comment_id, comment_form)}}
+            {% endif %}
         </div>
     <div class="govuk-grid-column-three-quarters">
 {% else %}
@@ -147,41 +159,40 @@
             {% endif %}
         {% endfor %}
 
-        {% if sub_criteria_status_completed and g.access_controller.has_any_assessor_role and (not is_qa_complete) and (not flag_status) and not is_expression_of_interest %}
-            {{ assessment_complete(state, form.csrf_token, application_id)}}
+    {% if sub_criteria_status_completed and g.access_controller.has_any_assessor_role and (not is_qa_complete) and (not flag_status) and not is_expression_of_interest %}
+        {{ assessment_complete(state, form.csrf_token, application_id)}}
+    {% endif %}
+</div>
+</div>
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        {% if all_uploaded_documents_section_available %}
+        <h2 class="govuk-heading-l govuk-!-margin-top-8">All uploaded documents</h2>
+        {{ section_element(
+            "",
+            [{'id': 'all_uploaded_documents', 'name': 'All uploaded documents'}],
+            application_id,
+            show_caption=False,
+        ) }}
+        {% endif %}
+
+        {% if state.criterias|length > 0 %}<h2 class="govuk-heading-l govuk-!-margin-top-8">Unscored</h2>{% endif %}
+        {% for section in state.sections %}
+            {{ section_element(section.name, section.sub_criterias, application_id, show_caption=(not is_expression_of_interest)) }}
+        {% endfor %}
+        {% if state.criterias|length > 0 %}
+            <h2 class="govuk-heading-l govuk-!-margin-top-8">Scored</h2>
+            <p class="govuk-body">Assess all responses under each sub criteria.</p>
+            {% for criteria in state.criterias %}
+                {% set name_classes = "govuk-heading-m govuk-!-margin-bottom-2" %}
+                {% if loop.index > 0 %}
+                    {% set name_classes = "govuk-heading-m govuk-!-margin-bottom-2 govuk-!-margin-top-8" %}
+                {% endif %}
+                {{ criteria_element(criteria, name_classes, application_id, max_possible_sub_criteria_score) }}
+            {% endfor %}
         {% endif %}
     </div>
-    </div>
-    <div class="govuk-grid-row">
-            <div class="govuk-grid-column-two-thirds">
-                {% if all_uploaded_documents_section_available %}
-                <h2 class="govuk-heading-l govuk-!-margin-top-8">All uploaded documents</h2>
-                {{ section_element(
-                    "",
-                    [{'id': 'all_uploaded_documents', 'name': 'All uploaded documents'}],
-                    application_id,
-                    show_caption=False,
-                ) }}
-                {% endif %}
 
-                {% if state.criterias|length > 0 %}<h2 class="govuk-heading-l govuk-!-margin-top-8">Unscored</h2>{% endif %}
-                {% for section in state.sections %}
-                    {{ section_element(section.name, section.sub_criterias, application_id, show_caption=(not is_expression_of_interest)) }}
-                {% endfor %}
-                {% if state.criterias|length > 0 %}
-                    <h2 class="govuk-heading-l govuk-!-margin-top-8">Scored</h2>
-                    <p class="govuk-body">Assess all responses under each sub criteria.</p>
-                    {% for criteria in state.criterias %}
-                        {% set name_classes = "govuk-heading-m govuk-!-margin-bottom-2" %}
-                        {% if loop.index > 0 %}
-                            {% set name_classes = "govuk-heading-m govuk-!-margin-bottom-2 govuk-!-margin-top-8" %}
-                        {% endif %}
-                        {{ criteria_element(criteria, name_classes, application_id, max_possible_sub_criteria_score) }}
-                    {% endfor %}
-                {% endif %}
-                </div>
-        </div>
-    </div>
 </div>
 {% if g.access_controller.is_assessor %}
    </div>

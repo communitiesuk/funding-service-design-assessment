@@ -1,6 +1,15 @@
 import inspect
 from dataclasses import dataclass
 from datetime import datetime
+from enum import Enum
+from enum import auto
+
+
+class CommentType(Enum):
+
+    COMMENT = auto()
+
+    WHOLE_APPLICATION = auto()
 
 
 @dataclass
@@ -16,6 +25,7 @@ class Comment:
     updates: list
     application_id: str
     sub_criteria_id: str
+    comment_type: CommentType
 
     def __post_init__(self):
         for item in self.updates:
