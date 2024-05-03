@@ -1,7 +1,7 @@
 {%- from 'govuk_frontend_jinja/components/textarea/macro.html' import govukTextarea -%}
 {%- from "govuk_frontend_jinja/components/button/macro.html" import govukButton -%}
 
-{% macro comment_box(comment_form, html_text, placeholder) %}
+{% macro comment_box(comment_form, html_text, placeholder, application_id) %}
 
 <form method="post">
 <div class="govuk-grid-row">
@@ -29,6 +29,12 @@
     "classes": "primary-button govuk-!-margin-bottom-9",
     "data-qa": "save-comment-button"
   }) }}
+
+  {% if application_id %}
+    <a class="govuk-link govuk-!-padding-top-2 govuk-!-display-inline-block" href="{{  url_for(
+    "assessment_bp.application",
+    application_id=application_id) }}">Cancel</a>
+  {% endif %}
 
     </div>
 </div>

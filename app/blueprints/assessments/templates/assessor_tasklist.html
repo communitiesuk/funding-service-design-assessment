@@ -52,10 +52,10 @@
         <div class="govuk-grid-column-one-quarter">
             {{assessment_actions(application_id)}}
 
-            {{ comment(comments, application_id, True) }}
+            {{ comment(comments, application_id, True, display_comment_box, display_comment_edit_box) }}
 
             {% if display_comment_box %}
-                {{ comment_box(comment_form) }}
+                {{ comment_box(comment_form = comment_form, application_id = application_id) }}
             {% endif %}
             {% if display_comment_edit_box %}
                 {{ edit_comment_box(comments, comment_id, comment_form)}}
