@@ -15,6 +15,7 @@ def ordered_themes(fund_round_short_name):
         "COFR2W3",
         "COFR2W2",
         "COFR4W1",
+        "COFR4W2",
     ]:
         return [
             (
@@ -40,12 +41,12 @@ def ordered_themes(fund_round_short_name):
             ),
             (
                 None
-                if fund_round_short_name in ["COFR4W1"]
+                if fund_round_short_name in ["COFR4W1", "COFR4W2"]
                 else "subsidy_control_and_state_aid"
             ),
             (
                 "community_use/significance"
-                if fund_round_short_name in ["COFR4W1"]
+                if fund_round_short_name in ["COFR4W1", "COFR4W2"]
                 else "community_use"
             ),
             "risk_and_impact_of_loss",
