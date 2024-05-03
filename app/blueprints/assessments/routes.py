@@ -122,6 +122,7 @@ from config.display_value_mappings import search_params_cof
 from config.display_value_mappings import search_params_cof_eoi
 from config.display_value_mappings import search_params_cyp
 from config.display_value_mappings import search_params_dpif
+from config.display_value_mappings import search_params_hsra
 from config.display_value_mappings import search_params_nstf
 
 assessment_bp = Blueprint(
@@ -209,6 +210,8 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
         search_params = {**search_params_dpif}
     elif fund_short_name.upper() == "COF-EOI":
         search_params = {**search_params_cof_eoi}
+    elif fund_short_name.upper() == "HSRA":
+        search_params = {**search_params_hsra}
     else:
         search_params = {**search_params_cof}
 

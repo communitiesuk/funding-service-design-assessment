@@ -598,6 +598,7 @@ class TestJinjaMacros(object):
             ("TFID", True, "Project name:", True),
             ("DPIF", False, "Project name:", True),
             ("COF-EOI", False, "Organisation name:", False),
+            ("HSRA", False, "Project name:", True),
         ],
     )
     def test_banner_summary_macro(

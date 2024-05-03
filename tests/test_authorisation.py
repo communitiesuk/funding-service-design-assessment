@@ -103,7 +103,7 @@ class TestAuthorisation:
         assert response.status_code == 302
         assert response.location == (
             "https://authenticator/service/user?roles_required=TF_COMMENTER|NSTF_COMMENTER"
-            + "|CYP_COMMENTER|COF_COMMENTER|DPIF_COMMENTER"
+            + "|CYP_COMMENTER|COF_COMMENTER|DPIF_COMMENTER|HSRA_COMMENTER"
         )
 
     @pytest.mark.mock_parameters(
