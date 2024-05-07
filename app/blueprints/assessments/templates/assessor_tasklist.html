@@ -47,26 +47,23 @@
 
 {% block content %}
 
-{% if g.access_controller.is_assessor %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-one-quarter">
-            {{assessment_actions(application_id)}}
-
-            {{ comment(comments, application_id, True, display_comment_box, display_comment_edit_box) }}
-
-            {% if display_comment_box %}
-                {{ comment_box(comment_form = comment_form, application_id = application_id) }}
-            {% endif %}
-            {% if display_comment_edit_box %}
-                {{ edit_comment_box(comments, comment_id, comment_form)}}
-            {% endif %}
-        </div>
-    <div class="govuk-grid-column-three-quarters">
-{% else %}
-    <div class="govuk-grid-row govuk-grid-column-full">
-
-{% endif %}
 <div class="govuk-grid-row">
+    <div class="govuk-grid-column-one-quarter">
+        {% if g.access_controller.is_assessor %}
+            {{ assessment_actions(application_id) }}
+        {% endif %}
+
+        {{ comment(comments, application_id, True, display_comment_box, display_comment_edit_box) }}
+
+        {% if display_comment_box %}
+            {{ comment_box(comment_form = comment_form, application_id = application_id) }}
+        {% endif %}
+        {% if display_comment_edit_box %}
+            {{ edit_comment_box(comments, comment_id, comment_form)}}
+        {% endif %}
+    </div>
+<div class="govuk-grid-column-three-quarters">
+    <div class="govuk-grid-row">
 
         {% if migration_banner_enabled %}
             {{ migration_banner() }}
