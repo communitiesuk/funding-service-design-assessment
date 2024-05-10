@@ -299,6 +299,7 @@ def order_entire_application_by_themes(fund_round_name, sub_criteria):
                         _theme_id = theme_id["theme_id"]
 
                         if fund_round_name in [
+                            "COFR4W2",
                             "COFR4W1",
                             "COFR3W2",
                             "COFR3W3",
@@ -309,7 +310,7 @@ def order_entire_application_by_themes(fund_round_name, sub_criteria):
                                 theme_id["theme_id"] = "Risk and impact of loss"
                             if _theme_id == "General info":
                                 theme_id["theme_id"] = "General information"
-                        if fund_round_name in ["COFR4W1"]:
+                        if fund_round_name in ["COFR4W1", "COFR4W2"]:
                             if _theme_id == "Community use":
                                 theme_id["theme_id"] = "Community use/significance"
 
