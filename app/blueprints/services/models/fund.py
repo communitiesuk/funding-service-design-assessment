@@ -32,7 +32,7 @@ class Fund:
     # TODO: Move this config to database
     @property
     def fund_types(self) -> set[str]:
-        if self.short_name in ("COF", "NSTF", "CYP", "DPIF", "COF-EOI"):
+        if self.short_name in ("COF", "NSTF", "CYP", "DPIF", "COF-EOI", "HSRA"):
             return {ALL_VALUE, "competitive"}
         return {ALL_VALUE}
 
