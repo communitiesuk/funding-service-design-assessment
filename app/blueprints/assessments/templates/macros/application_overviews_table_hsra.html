@@ -1,6 +1,6 @@
 {% from "govuk_frontend_jinja/components/input/macro.html" import govukInput %}
 {% from "macros/sortable_table_header.html" import sortable_table_header %}
-{% from "macros/filter_options.html" import filter_options %}
+{% from "macros/filter_options_hsra.html" import filter_options %}
 {% from "macros/application_status_column.html" import application_status_column %}
 {% from "macros/tags_table.html" import tags_table %}
 
@@ -11,7 +11,7 @@
 {%- endmacro %}
 
 {% macro render(application_overviews, round_details, query_params, asset_types,
-   assessment_statuses,countries, regions, local_authorities, show_clear_filters,
+   assessment_statuses,joint_application_options, countries, regions, local_authorities, show_clear_filters,
     sort_column, sort_order, tag_option_groups, tags, tagging_purpose_config) -%}
 <nav class="search-bar-flex-container">
   <form method="get" class="govuk-!-width-full">
@@ -21,6 +21,7 @@
       'asset_type',
       'Search reference or project name',
       assessment_statuses,
+      joint_application_options,
       countries,
       regions,
       local_authorities,
@@ -50,11 +51,10 @@
           Reference
       </th>
 
-      {{ sortable_table_header('project_name', 'Project name', sort_order, sort_column, round_details, query_params) }}
-      {{ sortable_table_header('asset_type', 'Asset type', sort_order, sort_column, round_details, query_params) }}
-
-      {{ sortable_table_header('funding_requested', 'Funding requested', sort_order, sort_column, round_details, query_params) }}
-      {{ sortable_table_header('location', 'Location', sort_order, sort_column, round_details, query_params) }}
+      {{ sortable_table_header('application_name', 'Application name', sort_order, sort_column, round_details, query_params) }}
+      {{ sortable_table_header('local_authority', 'Local authority name', sort_order, sort_column, round_details, query_params) }}
+      {{ sortable_table_header('joint_application', 'Joint application', sort_order, sort_column, round_details, query_params) }}
+      {{ sortable_table_header('total_expected_cost', 'Total expected cost', sort_order, sort_column, round_details, query_params) }}
 
       {{ sortable_table_header('tags', 'Tags', sort_order, sort_column, round_details, query_params) }}
 
@@ -69,10 +69,10 @@
             <tr class="govuk-table__row">
 
                 <td class="govuk-table__cell">{{ overview.short_id[-6:] }}</td>
-                <td class="govuk-table__cell"><a class="govuk-link" data-qa="project_name" href="{{ url_for('assessment_bp.application',application_id=overview.application_id) }}">{{ overview.project_name }}</a></td>
-                <td class="govuk-table__cell">{{ asset_types[overview.asset_type] }}</td>
-                <td class="govuk-table__cell">£{{ "{:,.2f}".format(overview.funding_amount_requested|int|round) }}</td>
-                <td class="govuk-table__cell">{{ overview.location_json_blob.get('country') or "Not found" }}</td>
+                <td class="govuk-table__cell"><a class="govuk-link" data-qa="project_name" href="{{ url_for('assessment_bp.application',application_id=overview.application_id) }}">{{ overview.application_name }}</a></td>
+                <td class="govuk-table__cell">{{ overview.local_authority }}</td>
+                <td class="govuk-table__cell">{{ 'Yes' if overview.joint_application else 'No' }}</td>
+                <td class="govuk-table__cell">£{{ "{:,.2f}".format(overview.total_expected_cost|int|round) }}</td>
 
                 {{ tags_table(tags[overview.application_id], tagging_purpose_config, query_params.show_tags == "ON") }}
 

@@ -117,6 +117,7 @@ from config.display_value_mappings import asset_types
 from config.display_value_mappings import cohort
 from config.display_value_mappings import dpi_filters
 from config.display_value_mappings import funding_types
+from config.display_value_mappings import joint_application_options
 from config.display_value_mappings import landing_filters
 from config.display_value_mappings import search_params_cof
 from config.display_value_mappings import search_params_cof_eoi
@@ -343,6 +344,7 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
         funding_types=funding_types,
         cohort=cohort,
         assessment_statuses=assessment_statuses,
+        joint_application_options=joint_application_options,
         show_clear_filters=show_clear_filters,
         stats=unfiltered_stats,
         team_flag_stats=teams_flag_stats,

@@ -91,6 +91,14 @@ search_params_hsra = {
     "search_in": "organisation_name,short_id",
     "status": ALL_VALUE,
     "filter_by_tag": ALL_VALUE,
+    "local_authority": ALL_VALUE,
+    "joint_application": ALL_VALUE,
+}
+
+joint_application_options = {
+    ALL_VALUE: "All",
+    "true": "Yes",
+    "false": "No",
 }
 
 dpi_filters = [
