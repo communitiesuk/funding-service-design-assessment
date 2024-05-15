@@ -129,6 +129,26 @@ fund_specific_claim_map = {
             "roles": ["DPIF_COMMENTER"],
         },
     },
+    "HSRA": {
+        "LEAD_ASSESSOR": {
+            "accountId": "hsra-lead-assessor",
+            "email": "hsra-lead-assessor@test.com",
+            "fullName": "Test User",
+            "roles": ["HSRA_LEAD_ASSESSOR", "HSRA_ASSESSOR", "HSRA_COMMENTER"],
+        },
+        "ASSESSOR": {
+            "accountId": "hsra-assessor",
+            "email": "hsra-assessor@test.com",
+            "fullName": "Test User",
+            "roles": ["HSRA_ASSESSOR", "HSRA_COMMENTER"],
+        },
+        "COMMENTER": {
+            "accountId": "hsra-commenter",
+            "email": "hsra-commenter@test.com",
+            "fullName": "Test User",
+            "roles": ["HSRA_COMMENTER"],
+        },
+    },
 }
 
 test_roleless_user_claims = {

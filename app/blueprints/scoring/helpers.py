@@ -2,6 +2,7 @@ from flask import abort
 from flask import current_app
 
 from app.blueprints.scoring.forms.scores_and_justifications import OneToFiveScoreForm
+from app.blueprints.scoring.forms.scores_and_justifications import ZeroToOneScoreForm
 from app.blueprints.scoring.forms.scores_and_justifications import ZeroToThreeScoreForm
 from app.blueprints.services.data_services import get_scoring_system  # noqa
 
@@ -13,6 +14,7 @@ def get_scoring_class(round_id):
         class_mapping = {
             "ZeroToThree": ZeroToThreeScoreForm,
             "OneToFive": OneToFiveScoreForm,
+            "ZeroToOne": ZeroToOneScoreForm,
         }
         scoring_form_class = class_mapping[scoring_system]
     except KeyError:
