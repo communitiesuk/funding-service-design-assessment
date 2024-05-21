@@ -197,7 +197,9 @@ pyhanko-certvalidator==0.23.0
     #   pyhanko
     #   xhtml2pdf
 pyjwt[crypto]==2.6.0
-    # via funding-service-design-utils
+    # via
+    #   funding-service-design-utils
+    #   pyjwt
 pyopenssl==23.1.1
     # via -r requirements.in
 pypdf==3.17.0
@@ -242,7 +244,7 @@ reportlab==3.6.13
     # via
     #   svglib
     #   xhtml2pdf
-requests==2.31.0
+requests==2.32.0
     # via
     #   -r requirements.in
     #   connexion
