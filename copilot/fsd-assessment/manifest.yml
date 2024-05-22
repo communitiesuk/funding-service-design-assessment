@@ -70,7 +70,7 @@ environments:
     deployment:
       rolling: 'recreate'
     count: 
-      spot: 1
+      spot: 2
   uat:
     http:
       alias: "assessment.${COPILOT_ENVIRONMENT_NAME}.access-funding.test.levellingup.gov.uk"
