@@ -69,7 +69,7 @@ environments:
   test:
     deployment:
       rolling: 'recreate'
-    count: 
+    count:
       spot: 2
   uat:
     http:
