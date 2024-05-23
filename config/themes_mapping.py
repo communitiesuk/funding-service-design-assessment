@@ -156,7 +156,6 @@ def ordered_themes(fund_round_short_name):
         return [
             "total_expected_cost",
             "refurbishment_costs",
-            "auction_costs",
             "other_costs",
             "vacant_property_details",
             "designated_area_details",
