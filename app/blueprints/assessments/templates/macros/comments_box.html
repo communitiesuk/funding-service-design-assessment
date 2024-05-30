@@ -31,8 +31,8 @@
   }) }}
 
   {% if application_id %}
-    <a class="govuk-link govuk-!-padding-top-2 govuk-!-display-inline-block" href="{{  url_for(
-    "assessment_bp.application",
+    <a class="govuk-link govuk-!-padding-top-2 govuk-!-display-inline-block" href="{{ url_for(
+    'assessment_bp.application',
     application_id=application_id) }}">Cancel</a>
   {% endif %}
 

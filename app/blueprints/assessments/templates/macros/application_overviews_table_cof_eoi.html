@@ -58,7 +58,6 @@
                 <td class="govuk-table__cell">{{ overview.date_submitted|slash_separated_day_month_year }}</td>
                 {{ tags_table(tags[overview.application_id], tagging_purpose_config, query_params.show_tags == "ON") }}
 
-
             </tr>
         {% endfor %}
   </tbody>

@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="{{ title }}">
+    <meta name="keywords" content="{{ title }}">
     <title>{{ title }}</title>
     <style>
         body {
@@ -46,7 +48,7 @@
 <body>
     <div class="header">
         {% if False %}
-        <img src="{{ organisation_logo_uri }}" alt="Organisation Logo" class="header-logo">
+        <img src="{{ organisation_logo_uri }}" alt="Organisation Logo" class="header-logo" width="36" height="32">
         {% endif %}
         <div>
             <p><strong>{{ organisation_name }}</strong> ({{ organisation_shortname }})</p>

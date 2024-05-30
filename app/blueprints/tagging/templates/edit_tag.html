@@ -3,7 +3,7 @@
 {% from "macros/migration_banner.html" import migration_banner %}
 
 {% set pageHeading -%}
-{{ "Error: " if form.errors }}Edit {{tag.value}} tag
+{{ "Error: " if form.errors }}Edit {{ tag.value }} tag
 {% endset %}
 
 {% block header %}
@@ -12,21 +12,21 @@
 
 {% block content %}
 {% if migration_banner_enabled %}
-  {{migration_banner()}}
+  {{ migration_banner()}}
 {% endif %}
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds content-container">
         <h1 class="govuk-heading-xl govuk-!-margin-bottom-4">Edit tag "{{ tag.value }}"
         </h1>
         <div id="contact-hint" class="govuk-hint govuk-!-margin-bottom-6">
-            Tags will be available to use across all applications for {{fund_round["fund_name"]}} {{fund_round["round_name"]}}.
+            Tags will be available to use across all applications for {{ fund_round["fund_name"] }} {{ fund_round["round_name"] }}.
         </div>
         <div class="govuk-warning-text">
             <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
             <strong class="govuk-warning-text__text">
               <span class="govuk-warning-text__assistive">Warning</span>
               Editing or deactivating this tag will change it on
-              {% trans count=tag.tag_association_count%}
+              {% trans count=tag.tag_association_count %}
                 {{ count }} tagged assessment.
               {% pluralize %}
                 {{ count }} tagged assessments.
@@ -48,11 +48,11 @@
                 {% endfor %}
 
                 <h1 class="govuk-label-wrapper">
-                  <label class="govuk-label govuk-label--s" for="{{form.value.id}}">
+                  <label class="govuk-label govuk-label--s" for="{{ form.value.id }}">
                     Tag name
                   </label>
                 </h1>
-                <input class="govuk-input govuk-!-width-two-thirds" id="{{form.value.id}}" name="{{form.value.id}}" type="text" value="{{ tag.value }}">
+                <input class="govuk-input govuk-!-width-two-thirds" id="{{ form.value.id }}" name="{{ form.value.id }}" type="text" value="{{ tag.value }}">
               </div>
 
             <div class="govuk-button-group">
@@ -75,4 +75,4 @@
     </div>
 </div>
 
-{% endblock %}
+{% endblock content %}

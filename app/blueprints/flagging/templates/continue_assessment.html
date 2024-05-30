@@ -14,7 +14,7 @@
 
 {% block content %}
 {% if migration_banner_enabled %}
-    {{migration_banner()}}
+    {{ migration_banner() }}
 {% endif %}
 {% if form.errors.get("reason") %}
 <div class="govuk-error-summary" data-module="govuk-error-summary">

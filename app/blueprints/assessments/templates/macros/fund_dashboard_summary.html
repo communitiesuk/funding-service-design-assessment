@@ -2,12 +2,12 @@
 
 {% macro assessment_status(round_status) %}
 
-    {%set display_class %}
-        {%if round_status.is_application_not_yet_open or round_status.has_assessment_closed%}
+    {% set display_class %}
+        {% if round_status.is_application_not_yet_open or round_status.has_assessment_closed %}
             govuk-tag--grey
         {% endif %}
-    {%endset%}
-    <div class="govuk-tag govuk-!-margin-bottom-2 govuk-summary-card__title {{display_class}}">
+    {% endset %}
+    <div class="govuk-tag govuk-!-margin-bottom-2 govuk-summary-card__title {{ display_class }}">
         <strong>
             {% if round_status.is_assessment_active %}
             ASSESSMENT ACTIVE
@@ -33,7 +33,7 @@ assessment_tracker_href, round_status) %}
     {% endif %}
     {% if access_controller.is_lead_assessor %}
         {% if download_available %}
-            {% if export_href  and round_status.has_assessment_opened%}
+            {% if export_href and round_status.has_assessment_opened %}
                 <a class="govuk-link" href="{{ export_href }}">
                     Export applicant information
                 </a>
@@ -48,7 +48,7 @@ assessment_tracker_href, round_status) %}
                 </br>
             {% endif %}
         {% endif %}
-        {% if assessment_tracker_href  and round_status.has_assessment_opened %}
+        {% if assessment_tracker_href and round_status.has_assessment_opened %}
             <a class="govuk-link" href="{{ assessment_tracker_href }}">
                 Assessment Tracker Export
             </a>
@@ -61,7 +61,7 @@ assessment_tracker_href, round_status) %}
     class="govuk-!-padding-0 govuk-!-padding-right-2 govuk-!-padding-bottom-3 govuk-!-margin-bottom-6 govuk-grid-column-one-third content-container">
 
     <div class="govuk-summary-card__title-wrapper">
-        <h3 class="govuk-body govuk_summary-card__title govuk-!-font-size-24">{{summary.round_name}}</h3>
+        <h3 class="govuk-body govuk_summary-card__title govuk-!-font-size-24">{{ summary.round_name }}</h3>
         {% if summary.access_controller.has_any_assessor_role %}
         <ul class="govuk-summary-card__actions">
             <li class="govuk-summary-card__action">
@@ -76,7 +76,7 @@ assessment_tracker_href, round_status) %}
 
     <div class="template-answer--dashboard-container bg-white govuk-!-padding-bottom-5">
 
-        {{assessment_status(summary.status)}}
+        {{ assessment_status(summary.status) }}
 
         {% if summary.is_expression_of_interest %}
             {{ govukTable({
@@ -143,7 +143,6 @@ assessment_tracker_href, round_status) %}
                 summary.status)
             }}
         {% endif %}
-
 
     </div>
 </div>

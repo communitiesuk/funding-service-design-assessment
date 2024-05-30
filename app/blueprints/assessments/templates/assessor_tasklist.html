@@ -47,7 +47,9 @@
 
 {% block content %}
 
+{# djlint:off #}
 <div class="govuk-grid-row">
+{# djlint:on #}
     <div class="govuk-grid-column-one-quarter">
         {% if g.access_controller.is_assessor %}
             {{ assessment_actions(application_id) }}
@@ -73,14 +75,12 @@
             <div class="govuk-grid-column-full govuk-!-margin-top-1">
                 {% if tags %}
                     {% for t in tags %}
-                        <strong class="govuk-tag govuk-tag--{{ tag_config[t.purpose]['colour'].lower() }} govuk-!-margin-right-4 govuk-!-margin-top-2 dluhc-tag"
-                                style="display: inline-block;">
+                        <strong class="govuk-tag govuk-tag--{{ tag_config[t.purpose]['colour'].lower() }} govuk-!-margin-right-4 govuk-!-margin-top-2 dluhc-tag inline-block">
                             {{ t.value }}
                         </strong>
                     {% endfor %}
                 {% else %}
-                    <span class="govuk-body govuk-!-margin-top-2 govuk-!-margin-right-4"
-                    style="display: inline-block;">
+                    <span class="govuk-body govuk-!-margin-top-2 govuk-!-margin-right-4 inline-block">
                         There are no tags on this assessment
                     </span>
                 {% endif %}
