@@ -42,7 +42,7 @@ Score – {{ sub_criteria.name }} – {{ sub_criteria.project_name }}
 {% endif %}
 
 {% if migration_banner_enabled %}
-    {{migration_banner()}}
+    {{ migration_banner()}}
 {% endif %}
 
 {% if is_flaggable and g.access_controller.has_any_assessor_role %}

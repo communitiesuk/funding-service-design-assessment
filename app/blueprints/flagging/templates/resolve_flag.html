@@ -16,7 +16,7 @@
 {% block content %}
 
 {% if migration_banner_enabled %}
-  {{migration_banner()}}
+  {{ migration_banner()}}
 {% endif %}
 
 {% if form.errors.get(form.resolution_flag.id) or form.errors.get("justification") %}

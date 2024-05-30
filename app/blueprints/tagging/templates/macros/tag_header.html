@@ -1,7 +1,7 @@
 {%- from 'govuk_frontend_jinja/components/back-link/macro.html' import govukBackLink -%}
 {% from "macros/logout_partial.html" import logout_partial %}
 {% macro tag_header(backLinkTitle, backLinkHref, fund_round, sso_logout_url) %}
-    <header role="banner" data-module="govuk-header"></header>
+    <header role="banner" data-module="govuk-header">
         <nav class="govuk-width-container govuk-header__navigation">
             <div class="govuk-phase-banner flex-parent-element">
                 <p class="govuk-!-text-align-left govuk-!-margin-left-3 flex-parent-element flexed-element-margins-collapse">

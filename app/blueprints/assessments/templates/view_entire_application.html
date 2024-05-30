@@ -36,11 +36,11 @@
 
     {% for answer in answers %}
         {% if answer.__class__.__name__ == "ConvertDictToClass" %}
-           <h3 class="govuk-heading-m govuk-!-padding-bottom-2"> {{answer.sub_criteria}} - {{ answer.theme_id }} </h3>
+           <h3 class="govuk-heading-m govuk-!-padding-bottom-2"> {{ answer.sub_criteria }} - {{ answer.theme_id }} </h3>
         {% endif %}
     {% endfor %}
 
-    {{theme(answers)}}
+    {{ theme(answers) }}
     <hr class="govuk-section-break govuk-section-break--m govuk-section-break">
 
 {% endfor %}

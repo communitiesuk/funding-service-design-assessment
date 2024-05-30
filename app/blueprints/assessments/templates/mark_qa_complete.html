@@ -13,11 +13,11 @@
 <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             {% if migration_banner_enabled %}
-                {{migration_banner()}}
+                {{ migration_banner()}}
             {% endif %}
             <form method="post">
                 {{ form.csrf_token }}
-                <h1 class="govuk-heading govuk-heading-l">{{pageHeading}}</h1>
+                <h1 class="govuk-heading govuk-heading-l">{{ pageHeading }}</h1>
 
                 <p class="govuk-body">This will confirm you've completed quality assurance (QA) on this application.</p>
                 <p class="govuk-body">It may be selected for moderation after you've done this.</p>

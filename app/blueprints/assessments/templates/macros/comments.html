@@ -46,7 +46,7 @@
                                 {% endif %}
                                 {% if comment.updates|length > 1 %}
                                     {% if comment.comment_type == "COMMENT" and comment.updates|length > 1 %}
-                                        <a class="govuk-link" href="{{  url_for(
+                                        <a class="govuk-link" href="{{ url_for(
                                         "assessment_bp.display_sub_criteria",
                                         application_id=comment.application_id,
                                         sub_criteria_id=comment.sub_criteria_id,
@@ -54,7 +54,7 @@
                                         show_comment_history="1",
                                         comment_id=comment.id) }}">See history</a>
                                     {% elif comment.comment_type == "WHOLE_APPLICATION" %}
-                                        <a class="govuk-link" href="{{  url_for(
+                                        <a class="govuk-link" href="{{ url_for(
                                         "assessment_bp.application",
                                         application_id=comment.application_id,
                                         show_comment_history="1",
@@ -73,7 +73,7 @@
             </div>
             {% endif %}
 
-        {% if not display_comment_box and not display_comment_edit_box and scroll_comments%}
+        {% if not display_comment_box and not display_comment_edit_box and scroll_comments %}
             <a
                 id="comment"
                 class="govuk-button secondary-button govuk-!-margin-top-2 govuk-!-margin-bottom-6"
@@ -99,7 +99,7 @@
         <div id="comments">
             <p class="govuk-!-static-padding-top-1"><span
                 class="govuk-body govuk-!-font-weight-bold">Comment</span> on <a
-                href="{{ url_for('assessment_bp.display_sub_criteria',application_id=application_id ,sub_criteria_id=comment.sub_criteria_id)}}?theme_id={{comment.theme_id}}" target="_blank">{{comment.theme_id|remove_dashes_underscores_capitalize_keep_uppercase}}</a></p>
+                href="{{ url_for('assessment_bp.display_sub_criteria',application_id=application_id ,sub_criteria_id=comment.sub_criteria_id) }}?theme_id={{ comment.theme_id }}" target="_blank">{{ comment.theme_id|remove_dashes_underscores_capitalize_keep_uppercase }}</a></p>
 
             <div class="comment-group">
                 <p class="govuk-body">{{ comment.comment }}</p>

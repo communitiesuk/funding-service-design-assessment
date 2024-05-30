@@ -12,13 +12,13 @@ round_id=fund_round["round_id"]), fund_round, sso_logout_url) }}
 
 {% block content %}
 {% if migration_banner_enabled %}
-  {{migration_banner()}}
+  {{ migration_banner() }}
 {% endif %}
 
 <div class="govuk-grid-column-two-thirds">
   <h1 class="govuk-heading-xl govuk-!-margin-bottom-4">Create a new tag</h1>
   <div id="contact-hint" class="govuk-hint govuk-!-margin-bottom-6">
-    General and lead assessors can use new tags you create to tag any {{fund_round["fund_name"]}} assessments.
+    General and lead assessors can use new tags you create to tag any {{ fund_round["fund_name"] }} assessments.
   </div>
 
   <form method="post">
@@ -34,7 +34,7 @@ round_id=fund_round["round_id"]), fund_round, sso_logout_url) }}
         <div class="govuk-error-summary__body">
           <ul class="govuk-list govuk-error-summary__list">
             <li>
-              <a href="#{{input}}">{{error[0]}}</a>
+              <a href="#{{ input }}">{{ error[0] }}</a>
             </li>
           </ul>
         </div>
@@ -43,38 +43,36 @@ round_id=fund_round["round_id"]), fund_round, sso_logout_url) }}
     </div>
     {% endif %}
 
-
     {% if errors != None and form.value.id in errors.keys() %}
     <div class="govuk-form-group govuk-form-group--error">
-      <label class="govuk-label govuk-label--s" for="{{form.value.id}}">
+      <label class="govuk-label govuk-label--s" for="{{ form.value.id }}">
         Tag name
       </label>
       <div id="tag-value-hint" class="govuk-hint govuk-visually-hidden">
         The name of the new tag.
       </div>
       <p id="tag-value-error" class="govuk-error-message">
-        <span class="govuk-visually-hidden">Error:</span> {{errors[form.value.id][0]}}
+        <span class="govuk-visually-hidden">Error:</span> {{ errors[form.value.id][0] }}
       </p>
-      <input class="govuk-input govuk-input--error" id="{{form.value.id}}" name="{{form.value.id}}" type="text" value="{{form.value.data or ''}}"
+      <input class="govuk-input govuk-input--error" id="{{ form.value.id }}" name="{{ form.value.id }}" type="text" value="{{ form.value.data or '' }}"
         aria-describedby="tag-value-hint tag-value-error">
     </div>
     {% else %}
     <div class="govuk-form-group">
-      <label class="govuk-label govuk-label--s" for="{{form.value.id}}">
+      <label class="govuk-label govuk-label--s" for="{{ form.value.id }}">
         Tag name
       </label>
       <div id="tag-value-hint" class="govuk-hint govuk-visually-hidden">
         The name of the new tag.
       </div>
-      <input class="govuk-input" id="{{form.value.id}}" name="{{form.value.id}}" type="text" value="{{form.value.data or ''}}"
+      <input class="govuk-input" id="{{ form.value.id }}" name="{{ form.value.id }}" type="text" value="{{ form.value.data or '' }}"
         aria-describedby="tag-value-hint">
     </div>
     {% endif %}
 
-
     <div
-      class="govuk-form-group {% if errors != None and form.type.id in errors.keys() %}govuk-form-group--error{%endif%}">
-      <fieldset id="{{form.type.id}}" class="govuk-fieldset" aria-describedby="tag-purpose-hint tag-purpose-error">
+      class="govuk-form-group {% if errors != None and form.type.id in errors.keys() %}govuk-form-group--error{% endif %}">
+      <fieldset id="{{ form.type.id }}" class="govuk-fieldset" aria-describedby="tag-purpose-hint tag-purpose-error">
         <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
           <h1 class="govuk-fieldset__heading">
             Tag purpose
@@ -85,23 +83,23 @@ round_id=fund_round["round_id"]), fund_round, sso_logout_url) }}
         </div>
         {% if errors != None and form.type.id in errors.keys() %}
         <p id="tag-purpose-error" class="govuk-error-message">
-          <span class="govuk-visually-hidden">Error:</span> {{errors[form.type.id][0]}}
+          <span class="govuk-visually-hidden">Error:</span> {{ errors[form.type.id][0] }}
         </p>
         {% endif %}
         {% for tag_type in tag_types %}
         <div class="govuk-radios__item">
-          <input class="govuk-radios__input" id="{{form.type.id}}-{{tag_type['purpose']}}" name="{{form.type.id}}"
-            type="radio" value="{{tag_type['id']}}" {% if tag_type['id']==form.type.data %} checked {% endif
+          <input class="govuk-radios__input" id="{{ form.type.id }}-{{ tag_type['purpose'] }}" name="{{ form.type.id }}"
+            type="radio" value="{{ tag_type['id'] }}" {% if tag_type['id']==form.type.data %} checked {% endif
             %}aria-describedby="tag-item-hint">
-          <label class="govuk-label govuk-radios__label" for="{{form.type.id}}-{{tag_type['purpose']}}">
-            {{tag_type['purpose'].title()}}
+          <label class="govuk-label govuk-radios__label" for="{{ form.type.id }}-{{ tag_type['purpose'] }}">
+            {{ tag_type['purpose'].title() }}
             <strong
               class="govuk-tag govuk-!-margin-left-2 govuk-tag--{{ tag_config[tag_type['purpose']]['colour'] }} dluhc-tag">{{
               tag_config[tag_type['purpose']]['colour'].title() if tag_config[tag_type['purpose']]['colour'].lower() !=
               "grey" else "White" }}</strong>
           </label>
-          <div id="tag-item-hint-{{tag_type['purpose']}}" class="govuk-hint govuk-radios__hint">
-            {{tag_type['description']}}
+          <div id="tag-item-hint-{{ tag_type['purpose'] }}" class="govuk-hint govuk-radios__hint">
+            {{ tag_type['description'] }}
           </div>
         </div>
         {% endfor %}
@@ -124,4 +122,4 @@ round_id=fund_round["round_id"]), fund_round, sso_logout_url) }}
     </div>
   </form>
 </div>
-{% endblock %}
+{% endblock content %}

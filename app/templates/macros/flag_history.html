@@ -81,7 +81,7 @@
                 {# <p>items: {{ flag_table(state, application_id, flag_item, accounts_list) }}</p> #}
         {% endfor %}
 
-        {%  if items|length > 0 %}
+        {% if items|length > 0 %}
             {{ govukTabs({
             'items': items
             }) }}

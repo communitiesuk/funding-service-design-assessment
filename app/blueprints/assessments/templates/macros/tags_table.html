@@ -32,15 +32,15 @@
 
 {% if tag.associated %}
 <div class="govuk-!-static-padding-top-5 govuk-!-static-padding-bottom-4">
-    <p class="govuk-body"> <span class="govuk-body govuk-!-font-weight-bold">Tag</span> <strong class="govuk-tag govuk-tag--{{colour}}">{{tag.value}} </strong> added to assessment</p>
-    <p class="govuk-body">Added by <span class="govuk-body govuk-!-font-weight-bold">{{tag.full_name }}</span> ({{ tag.email_address}}) on {{tag.date_created|utc_to_bst}}
+    <p class="govuk-body"> <span class="govuk-body govuk-!-font-weight-bold">Tag</span> <strong class="govuk-tag govuk-tag--{{ colour }}">{{ tag.value }} </strong> added to assessment</p>
+    <p class="govuk-body">Added by <span class="govuk-body govuk-!-font-weight-bold">{{ tag.full_name }}</span> ({{ tag.email_address }}) on {{ tag.date_created|utc_to_bst }}
     </p>
 </div>
 
 {% else %}
 <div class="govuk-!-static-padding-top-5 govuk-!-static-padding-bottom-4">
-    <p class="govuk-body"> <span class="govuk-body govuk-!-font-weight-bold">Tag</span> <strong class="govuk-tag govuk-tag--{{colour}}">{{tag.value}} </strong> removed from assessment</p>
-    <p class="govuk-body">Removed by <span class="govuk-body govuk-!-font-weight-bold">{{tag.full_name }}</span> ({{ tag.email_address}}) on {{tag.date_created|utc_to_bst}}
+    <p class="govuk-body"> <span class="govuk-body govuk-!-font-weight-bold">Tag</span> <strong class="govuk-tag govuk-tag--{{ colour }}">{{ tag.value }} </strong> removed from assessment</p>
+    <p class="govuk-body">Removed by <span class="govuk-body govuk-!-font-weight-bold">{{ tag.full_name }}</span> ({{ tag.email_address }}) on {{ tag.date_created|utc_to_bst }}
     </p>
 </div>
 {% endif %}
