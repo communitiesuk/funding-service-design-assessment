@@ -832,7 +832,7 @@ def mock_get_tag_for_fund_round(mocker):
 def mock_get_tag_types(mocker):
     for function_module_path in [
         "app.blueprints.tagging.routes.get_tag_types",
-        "app.blueprints.assessments.helpers.get_tag_types",
+        "app.blueprints.services.data_services.get_tag_types",
     ]:
         mocker.patch(
             function_module_path,
