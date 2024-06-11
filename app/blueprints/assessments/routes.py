@@ -1,3 +1,5 @@
+import concurrent.futures
+import contextvars
 import io
 import time
 import zipfile
@@ -91,6 +93,7 @@ from app.blueprints.services.data_services import get_round
 from app.blueprints.services.data_services import get_score_and_justification
 from app.blueprints.services.data_services import get_sub_criteria
 from app.blueprints.services.data_services import get_sub_criteria_theme_answers_all
+from app.blueprints.services.data_services import get_tag_types
 from app.blueprints.services.data_services import get_tags_for_fund_round
 from app.blueprints.services.data_services import match_comment_to_theme
 from app.blueprints.services.data_services import submit_comment
@@ -132,6 +135,21 @@ assessment_bp = Blueprint(
     url_prefix=Config.ASSESSMENT_HUB_ROUTE,
     template_folder="templates",
 )
+
+
+def run_with_context(func, *args, **kwargs):
+    with current_app.app_context():
+        return func(*args, **kwargs)
+
+
+class ContextThreadPoolExecutor(concurrent.futures.ThreadPoolExecutor):
+    def __init__(self, *args, **kwargs):
+        self.context = contextvars.copy_context()
+        super().__init__(*args, **kwargs, initializer=self._set_child_context)
+
+    def _set_child_context(self):
+        for var, value in self.context.items():
+            var.set(value)
 
 
 def _handle_all_uploaded_documents(application_id):
@@ -237,16 +255,6 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
     if has_devolved_authority_validation(fund_id=fund_id):
         countries = get_countries_from_roles(fund.short_name)
 
-    # This call is to get the location data such as country, region and local_authority
-    # from all the existing applications.
-    all_applications_metadata = get_application_overviews(
-        fund_id, round_id, search_params=""
-    )
-    # note, we are not sending search parameters here as we don't want to filter
-    # the stats at all.  see https://dluhcdigital.atlassian.net/browse/FS-3249
-    unfiltered_stats = process_assessments_stats(all_applications_metadata)
-    all_application_locations = LocationData.from_json_blob(all_applications_metadata)
-
     search_params = {
         **search_params,
         "countries": ",".join(countries),
@@ -255,8 +263,37 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
     # matches the query parameters provided in the search and filter form
     search_params, show_clear_filters = match_search_params(search_params, request.args)
 
-    # request all the application overviews based on the search parameters
-    application_overviews = get_application_overviews(fund_id, round_id, search_params)
+    with ContextThreadPoolExecutor(max_workers=4) as executor:
+        # The first call is to get the location data such as country, region and local_authority
+        # from all the existing applications (i.e withou search parameters as we don't want to filter
+        # the stats at all).  see https://dluhcdigital.atlassian.net/browse/FS-3249
+        future_all_applications_metadata = executor.submit(
+            run_with_context, get_application_overviews, fund_id, round_id, ""
+        )
+        # The second call is with the search parameters
+        future_application_overviews = executor.submit(
+            run_with_context,
+            get_application_overviews,
+            fund_id,
+            round_id,
+            search_params,
+        )
+        future_active_fund_round_tags = executor.submit(
+            run_with_context,
+            get_tags_for_fund_round,
+            fund_id,
+            round_id,
+            {"tag_status": "True"},
+        )
+        future_tag_types = executor.submit(run_with_context, get_tag_types)
+
+        all_applications_metadata = future_all_applications_metadata.result()
+        application_overviews = future_application_overviews.result()
+        active_fund_round_tags = future_active_fund_round_tags.result()
+        tag_types = future_tag_types.result()
+
+    unfiltered_stats = process_assessments_stats(all_applications_metadata)
+    all_application_locations = LocationData.from_json_blob(all_applications_metadata)
 
     teams_flag_stats = get_team_flag_stats(application_overviews)
 
@@ -285,11 +322,8 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
         post_processed_overviews
     )
 
-    active_fund_round_tags = get_tags_for_fund_round(
-        fund_id, round_id, {"tag_status": "True"}
-    )
     tags_in_application_map, tag_option_groups = get_tag_map_and_tag_options(
-        active_fund_round_tags, post_processed_overviews
+        tag_types, active_fund_round_tags, post_processed_overviews
     )
 
     def get_sorted_application_overviews(application_overviews, column, reverse=False):

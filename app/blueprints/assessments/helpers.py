@@ -16,7 +16,6 @@ from app.blueprints.assessments.models.common import Option
 from app.blueprints.assessments.models.common import OptionGroup
 from app.blueprints.services.aws import generate_url
 from app.blueprints.services.aws import list_files_by_prefix
-from app.blueprints.services.data_services import get_tag_types
 from app.blueprints.services.models.flag import FlagType
 from app.blueprints.services.models.fund import Fund
 from app.blueprints.shared.filters import utc_to_bst
@@ -99,8 +98,7 @@ def set_application_status_in_overview(application_overviews):
     return application_overviews
 
 
-def get_tag_map_and_tag_options(fund_round_tags, post_processed_overviews):
-    tag_types = get_tag_types()
+def get_tag_map_and_tag_options(tag_types, fund_round_tags, post_processed_overviews):
     tag_option_groups = [
         OptionGroup(
             label=", ".join(p.capitalize() for p in purposes),
