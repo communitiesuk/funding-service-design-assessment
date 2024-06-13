@@ -42,7 +42,7 @@ on:
 
 jobs:
   setup:
-    uses: communitiesuk/funding-service-design-workflows/.github/workflows/determine-jobs.yml@bau-fix-error
+    uses: communitiesuk/funding-service-design-workflows/.github/workflows/determine-jobs.yml@main
     with:
       environment: ${{ inputs.environment }}
 
