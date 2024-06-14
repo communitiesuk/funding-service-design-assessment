@@ -164,7 +164,9 @@ def generate_csv_of_application(
             if not answers:
                 answers = "Not provided"
 
-            writer.writerow([section_title, questions, format_answer(answers)])
+            writer.writerow(
+                [section_title, questions, format_answer(answer=answers, language="en")]
+            )
     return output.getvalue()
 
 
