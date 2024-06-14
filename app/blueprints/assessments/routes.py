@@ -18,6 +18,7 @@ from flask import render_template
 from flask import request
 from flask import url_for
 from fsd_utils import extract_questions_and_answers
+from fsd_utils.sqs_scheduler.context_aware_executor import ContextAwareExecutor
 
 from app.blueprints.assessments.activity_trail import AssociatedTags
 from app.blueprints.assessments.activity_trail import CheckboxForm
@@ -263,34 +264,40 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
     # matches the query parameters provided in the search and filter form
     search_params, show_clear_filters = match_search_params(search_params, request.args)
 
-    with ContextThreadPoolExecutor(max_workers=4) as executor:
-        # The first call is to get the location data such as country, region and local_authority
-        # from all the existing applications (i.e withou search parameters as we don't want to filter
-        # the stats at all).  see https://dluhcdigital.atlassian.net/browse/FS-3249
-        future_all_applications_metadata = executor.submit(
-            run_with_context, get_application_overviews, fund_id, round_id, ""
-        )
-        # The second call is with the search parameters
-        future_application_overviews = executor.submit(
-            run_with_context,
-            get_application_overviews,
-            fund_id,
-            round_id,
-            search_params,
-        )
-        future_active_fund_round_tags = executor.submit(
-            run_with_context,
-            get_tags_for_fund_round,
-            fund_id,
-            round_id,
-            {"tag_status": "True"},
-        )
-        future_tag_types = executor.submit(run_with_context, get_tag_types)
+    thread_executor = ContextAwareExecutor(
+        max_workers=4,
+        thread_name_prefix="fund-dashboard-request",
+        flask_app=current_app,
+    )
 
-        all_applications_metadata = future_all_applications_metadata.result()
-        application_overviews = future_application_overviews.result()
-        active_fund_round_tags = future_active_fund_round_tags.result()
-        tag_types = future_tag_types.result()
+    # The first call is to get the location data such as country, region and local_authority
+    # from all the existing applications (i.e withou search parameters as we don't want to filter
+    # the stats at all).  see https://dluhcdigital.atlassian.net/browse/FS-3249
+    future_all_applications_metadata = thread_executor.submit(
+        get_application_overviews, fund_id, round_id, ""
+    )
+
+    # The second call is with the search parameters
+    future_application_overviews = thread_executor.submit(
+        get_application_overviews,
+        fund_id,
+        round_id,
+        search_params,
+    )
+
+    future_active_fund_round_tags = thread_executor.submit(
+        get_tags_for_fund_round,
+        fund_id,
+        round_id,
+        {"tag_status": "True"},
+    )
+
+    future_tag_types = thread_executor.submit(get_tag_types)
+
+    all_applications_metadata = future_all_applications_metadata.result()
+    application_overviews = future_application_overviews.result()
+    active_fund_round_tags = future_active_fund_round_tags.result()
+    tag_types = future_tag_types.result()
 
     unfiltered_stats = process_assessments_stats(all_applications_metadata)
     all_application_locations = LocationData.from_json_blob(all_applications_metadata)
