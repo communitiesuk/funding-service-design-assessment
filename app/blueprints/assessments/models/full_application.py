@@ -55,7 +55,7 @@ class FullApplicationPdfContext:
                     questions_and_answers=[
                         QuestionAndAnswer(
                             question=i["question"],
-                            answer=format_answer(i.get("answer")),
+                            answer=format_answer(i.get("answer"), language="en"),
                             number="",
                         )
                         for i in args.all_uploaded_documents
