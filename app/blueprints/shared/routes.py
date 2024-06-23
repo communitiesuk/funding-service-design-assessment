@@ -1,4 +1,5 @@
 from flask import Blueprint
+from flask import current_app
 from flask import render_template
 
 from app.blueprints.services.data_services import get_default_round_data
@@ -14,6 +15,15 @@ def index():
         login_url=Config.SSO_LOGIN_URL,
         logout_url=Config.SSO_LOGOUT_URL,
         assessment_url=Config.ASSESSMENT_HUB_ROUTE + "/assessor_dashboard/",
+    )
+
+
+@shared_bp.route("/cookie_policy", methods=["GET"])
+def cookie_policy():
+    current_app.logger.info("Cookie policy page loaded.")
+    return render_template(
+        "cookie_policy.html",
+        migration_banner_enabled=Config.MIGRATION_BANNER_ENABLED,
     )
 
 

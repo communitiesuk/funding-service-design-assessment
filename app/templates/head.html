@@ -13,24 +13,89 @@
     <script nonce="{{ csp_nonce() }}" type="text/javascript" src="{{ ASSET_URL }}" defer></script>
 {% endassets %}
 
-<script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments)}
+{% block bodyStart %}
+<div class="govuk-cookie-banner" data-nosnippet role="region" aria-label="Cookies on Access Funding"
+    id="cookie-banner" hidden>
+    <div class="govuk-cookie-banner__message govuk-width-container" id="cookies-choice-msg">
+        <div class="govuk-grid-row govuk-width-container-original">
+            <div class="govuk-grid-column-two-thirds">
+                <h2 class="govuk-cookie-banner__heading govuk-heading-m">Cookies on Access Funding</h2>
+                <div class="govuk-cookie-banner__content">
+                    <p class="govuk-body">We use some essential cookies to make this service work.</p>
+                    <p class="govuk-body">We'd also like to use analytics cookies so we can understand how you use the service and make improvements.</p>
+                </div>
+            </div>
+        </div>
+        <div class="govuk-button-group">
+            <button type="button" class="govuk-button" data-module="govuk-button" id="accept_cookies_btn">
+                Accept analytics cookies
+            </button>
+            <button type="button" class="govuk-button" data-module="govuk-button" id="deny_cookies_btn">
+                Reject analytics cookies
+            </button>
+            <a class="govuk-link" href="{{ url_for('shared_bp.cookie_policy') }}">View cookies</a>
+        </div>
+    </div>
+    <div class="govuk-cookie-banner__message govuk-width-container" role="alert" id="cookies-accepted-msg" hidden>
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <div class="govuk-cookie-banner__content">
+                    <p class="govuk-body">You've accepted analytics cookies. You can <a class="govuk-link"
+                            href="{{ url_for('shared_bp.cookie_policy') }}">change your cookie settings</a> at any time.</p>
+                </div>
+            </div>
+        </div>
+        <div class="govuk-button-group">
+            <button type="button" class="govuk-button" data-module="govuk-button" name="cookies-hide-btn">
+                Hide cookie message
+            </button>
+        </div>
+    </div>
+    <div class="govuk-cookie-banner__message govuk-width-container" role="alert" id="cookies-rejected-msg" hidden>
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <div class="govuk-cookie-banner__content">
+                    <p class="govuk-body">You've rejected analytics cookies. You can <a class="govuk-link"
+                            href="{{ url_for('shared_bp.cookie_policy') }}">change your cookie settings</a> at any time.</p>
+                </div>
+            </div>
+        </div>
+        <div class="govuk-button-group">
+            <button type="button" class="govuk-button" data-module="govuk-button" name="cookies-hide-btn">
+                Hide cookie message
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock bodyStart %}
 
-    if(localStorage.getItem('consentMode') === null) {
-        gtag('consent', 'default', {
-            'ad_storage': 'denied',
-            'analytics_storage': 'denied',
-            'personalisation_storage': 'denied',
-            'functionality_storage': 'denied',
-            'security_storage': 'denied',
+<script nonce="{{ csp_nonce() }}" type="text/javascript" src="{{ url_for('static', filename='js/fsd_cookies.js') }}"></script>
+<script nonce="{{ csp_nonce() }}">
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments) }
+
+    function initCookieState() {
+        const localConsentMode = readConsentCookie();
+
+        if (!localConsentMode) {
+            gtag('consent', 'default', DEFAULT_CONSENT);
+            unhideCookiesMessage();
+        } else {
+            gtag('consent', 'default', readConsentCookie());
+        }
+
+        document.getElementById("accept_cookies_btn").addEventListener("click", acceptCookies);
+        document.getElementById("deny_cookies_btn").addEventListener("click", denyCookies);
+        document.getElementsByName("cookies-hide-btn").forEach(element => {
+            element.addEventListener("click", hideCookiesMessage);
         });
-    } else {
-        gtag('consent', 'default', JSON.parse(localStorage.getItem('consentMode')));
     }
+
+    initCookieState();
 </script>
+
 <!-- Google Tag Manager -->
-<script>(function (w, d, s, l, i) {
+<script nonce="{{ csp_nonce() }}">(function (w, d, s, l, i) {
     w[l] = w[l] || [];
     w[l].push({
         'gtm.start':
