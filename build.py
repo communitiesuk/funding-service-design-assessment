@@ -86,6 +86,12 @@ def build_govuk_assets(static_dist_root="app/static/dist"):
         "./app/static/dist/styles/comments.css",
     )
 
+    # Copy over JS source
+    os.makedirs("./app/static/dist/js")
+    shutil.copyfile(
+        "app/static/src/js/fsd_cookies.js", "./app/static/dist/js/fsd_cookies.js"
+    )
+
     # Delete temp files
     print("Deleting " + ASSETS_PATH)
     shutil.rmtree(ASSETS_PATH)

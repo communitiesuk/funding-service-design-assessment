@@ -105,7 +105,7 @@ flask-sqlalchemy==3.0.3
     # via
     #   flask-migrate
     #   funding-service-design-utils
-flask-talisman==1.0.0
+flask-talisman==1.1.0
     # via -r requirements.in
 flask-wtf==1.1.1
     # via -r requirements.in

@@ -363,7 +363,6 @@ list-style-type: upper-roman;
     margin: auto;
 }
 
-
 .govuk-link__white_font {
     color: white !important;
 }
@@ -404,3 +403,13 @@ a.govuk-link.deactivate {
 /* .govuk-summary-list:first-of-type {
     border-top: 1px solid #b1b4b6;
 } */
+
+#accept_cookies_btn, #deny_cookies_btn, #cookies-accepted-msg > div.govuk-button-group > button {
+    background-color: #00703c;
+}
+
+.govuk-main-wrapper-cookies-page {
+    display: block;
+    padding-top: 20px;
+    padding-bottom: 20px
+}
