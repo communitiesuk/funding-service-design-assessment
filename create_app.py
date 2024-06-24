@@ -50,7 +50,7 @@ from config import Config
 
 
 def create_app() -> Flask:
-    flask_app = Flask("Assessment Frontend", static_url_path="/assets")
+    flask_app = Flask("Assessment Frontend")
     with flask_app.app_context():
 
         init_sentry()
