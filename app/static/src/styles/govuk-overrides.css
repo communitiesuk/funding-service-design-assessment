@@ -363,12 +363,6 @@ list-style-type: upper-roman;
     margin: auto;
 }
 
-.govuk-width-container-original {
-    max-width: 960px;
-    margin-right: 15px;
-    margin-left: 15px;
-}
-
 .govuk-link__white_font {
     color: white !important;
 }
