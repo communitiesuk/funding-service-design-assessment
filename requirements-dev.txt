@@ -73,6 +73,10 @@ cffi==1.15.1
     #   cryptography
 cfgv==3.3.1
     # via pre-commit
+chardet==5.2.0
+    # via
+    #   -r requirements.txt
+    #   reportlab
 charset-normalizer==3.0.1
     # via
     #   -r requirements.txt
@@ -179,6 +183,10 @@ funding-service-design-utils==2.0.52
     # via -r requirements.txt
 govuk-frontend-jinja==2.8.0
     # via -r requirements.txt
+greenlet==3.0.3
+    # via
+    #   -r requirements.txt
+    #   sqlalchemy
 gunicorn==20.1.0
     # via
     #   -r requirements.txt
@@ -409,7 +417,7 @@ referencing==0.30.2
     #   jsonschema
     #   jsonschema-path
     #   jsonschema-specifications
-reportlab==3.6.13
+reportlab==4.2.2
     # via
     #   -r requirements.txt
     #   svglib
@@ -488,6 +496,7 @@ tomli==2.0.1
     #   black
     #   build
     #   flake8-pyproject
+    #   pyproject-hooks
     #   pytest
     #   pytest-env
 typing-extensions==4.5.0
@@ -535,7 +544,7 @@ wtforms==3.0.1
     # via
     #   -r requirements.txt
     #   flask-wtf
-xhtml2pdf==0.2.11
+xhtml2pdf==0.2.16
     # via -r requirements.txt
 
 # The following packages are considered to be unsafe in a requirements file:
