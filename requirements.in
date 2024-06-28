@@ -1,7 +1,8 @@
 #-----------------------------------
 #   FSD Utils
 #-----------------------------------
-funding-service-design-utils>=2.0.27,<2.1.0
+# funding-service-design-utils>=2.0.27,<2.1.0
+funding-service-design-utils @ git+https://github.com/communitiesuk/funding-service-design-utils.git@update-software-versions#egg=funding-service-design-utils
 
 
 requests
@@ -9,48 +10,48 @@ requests
 #-----------------------------------
 #   Flask Version
 #-----------------------------------
-Flask
-Babel
-flask-babel
+Flask==3.0.3
+Babel==2.15.0
+flask-babel==4.0.0
 
 #-----------------------------------
 #   Security
 #-----------------------------------
-flask-talisman
+flask-talisman==1.1.0
 
 #-----------------------------------
 #   Static Assets
 #-----------------------------------
-Flask-Assets
-Flask-Compress
+Flask-Assets==2.1.0
+Flask-Compress==1.15
 cssmin
 pyScss
 jsmin
-govuk-frontend-jinja
+govuk-frontend-jinja==3.1.0
 
 #-----------------------------------
 #   Forms
 #-----------------------------------
-Flask-WTF
-email-validator
+Flask-WTF==1.2.1
+email-validator==2.2.0
 
 #-----------------------------------
 #   Connexion APIs
 #-----------------------------------
-connexion
-swagger-ui-bundle
+connexion[flask,swagger-ui,uvcorn]
+swagger-ui-bundle==1.1.0
 openapi-spec-validator
 
 #-----------------------------------
 #   Beautiful soup
 #-----------------------------------
-beautifulsoup4==4.12.2
+beautifulsoup4==4.12.3
 
 #-----------------------------------
 #   AWS
 #-----------------------------------
-boto3
-pyOpenSSL
+boto3==1.34.135
+pyOpenSSL==24.1.0
 
-num2words
-xhtml2pdf
+num2words==0.5.13
+xhtml2pdf==0.2.16
