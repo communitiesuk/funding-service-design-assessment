@@ -11,7 +11,7 @@
     {% for comment in comment_list %}
         {% if comment.id == comment_id %}
           {% set comment_text.str = comment.updates[-1]['comment'] %}
-          {% set comment_author.str =  comment.full_name + " (" + comment.highest_role|all_caps_to_human + ") "+ comment.email_address %}
+          {% set comment_author.str = comment.full_name + " (" + comment.highest_role|all_caps_to_human + ") "+ comment.email_address %}
           {% set comment_date.str = comment.date_created|utc_to_bst %}
       {% endif %}
     {% endfor %}

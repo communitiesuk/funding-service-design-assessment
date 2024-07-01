@@ -129,6 +129,26 @@ fund_specific_claim_map = {
             "roles": ["DPIF_COMMENTER"],
         },
     },
+    "HSRA": {
+        "LEAD_ASSESSOR": {
+            "accountId": "hsra-lead-assessor",
+            "email": "hsra-lead-assessor@test.com",
+            "fullName": "Test User",
+            "roles": ["HSRA_LEAD_ASSESSOR", "HSRA_ASSESSOR", "HSRA_COMMENTER"],
+        },
+        "ASSESSOR": {
+            "accountId": "hsra-assessor",
+            "email": "hsra-assessor@test.com",
+            "fullName": "Test User",
+            "roles": ["HSRA_ASSESSOR", "HSRA_COMMENTER"],
+        },
+        "COMMENTER": {
+            "accountId": "hsra-commenter",
+            "email": "hsra-commenter@test.com",
+            "fullName": "Test User",
+            "roles": ["HSRA_COMMENTER"],
+        },
+    },
 }
 
 test_roleless_user_claims = {
@@ -222,7 +242,6 @@ def flask_test_client(app, user_token=None):
     """
     with app.test_client() as test_client:
         test_client.set_cookie(
-            "localhost",
             "fsd_user_token",
             user_token or create_valid_token(),
         )
@@ -242,7 +261,6 @@ def flask_test_maintenance_client(request, user_token=None):
     app.config.update({"MAINTENANCE_MODE": strtobool(maintenance_mode)})
     with app.test_client() as test_client:
         test_client.set_cookie(
-            "localhost",
             "fsd_user_token",
             user_token or create_valid_token(),
         )
@@ -755,7 +773,7 @@ def mock_get_tasklist_state_for_banner(mocker):
 @pytest.fixture(scope="function")
 def client_with_valid_session(flask_test_client):
     token = create_valid_token(test_lead_assessor_claims)
-    flask_test_client.set_cookie("localhost", "fsd_user_token", token)
+    flask_test_client.set_cookie("fsd_user_token", token)
     yield flask_test_client
 
 
@@ -812,7 +830,7 @@ def mock_get_tag_for_fund_round(mocker):
 def mock_get_tag_types(mocker):
     for function_module_path in [
         "app.blueprints.tagging.routes.get_tag_types",
-        "app.blueprints.assessments.helpers.get_tag_types",
+        "app.blueprints.services.data_services.get_tag_types",
     ]:
         mocker.patch(
             function_module_path,

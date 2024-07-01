@@ -49,7 +49,6 @@
     </div>
 {% endmacro %}
 
-
 {% macro assessment_stopped(flag, user_info, application_id) %}
     <div class="assessment-alert assessment-alert--stopped" role="alert">
         <h1 class="assessment-alert__heading govuk-heading-l">
@@ -69,7 +68,6 @@
         {% endif %}
     </div>
 {% endmacro %}
-
 
  {# NOTE: Below macro is only being used activity_trail #}
 {% macro assessment_flag(state, flag, application_id) %}
@@ -92,7 +90,6 @@
 
     </div>
 {% endmacro %}
-
 
  {# NOTE: Below macro is only being used activity_trail #}
 {% macro assessment_resolve(flag,  application_id) %}
@@ -121,7 +118,6 @@
         <p class="govuk-body-s">{{ flag.date_created|utc_to_bst }}</p>
     </div>
 {% endmacro %}
-
 
  {# NOTE: Below macro is only being used activity_trail #}
 {% macro assessment_stop(flag, user_info, application_id) %}

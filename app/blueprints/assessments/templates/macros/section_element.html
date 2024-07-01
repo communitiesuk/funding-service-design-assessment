@@ -4,7 +4,7 @@
         <h2 class="govuk-heading-l govuk-!-margin-top-4">{{ name }}</h2>
     {% endif %}
 
-    {% set caption = "Review against legal and policy requirements." if name == "Declarations" else
+    {% set caption = "Review against legal and policy requirements." if name in ["Declarations", "Declaration"] else
                  ("Use for due diligence checks." if show_caption else "") %}
     <p class="govuk-body govuk-!-text-align-left govuk-!-font-weight-regular govuk-!-margin-bottom-4">
         {{ caption }}

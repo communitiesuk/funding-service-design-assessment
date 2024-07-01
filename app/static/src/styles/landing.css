@@ -307,3 +307,16 @@ button.left-margin-negative {
     border-bottom: 4px solid #1d70b8;
     margin: 20px 0;
 }
+
+.filter-style {
+    margin: 0;
+    padding: 0;
+}
+
+.inline-block {
+    display: inline-block;
+}
+
+.display-none {
+    display: none;
+}

@@ -75,7 +75,6 @@ def test_route_fund_dashboard_maintenance_mode_disabled(
     mock_get_tag_types,
 ):
     flask_test_maintenance_client.set_cookie(
-        "localhost",
         "fsd_user_token",
         create_valid_token(fund_specific_claim_map["COF"]["ASSESSOR"]),
     )
@@ -109,7 +108,6 @@ def test_route_fund_dashboard_maintenance_mode_enabled(
     flask_test_maintenance_client,
 ):
     flask_test_maintenance_client.set_cookie(
-        "localhost",
         "fsd_user_token",
         create_valid_token(fund_specific_claim_map["COF"]["ASSESSOR"]),
     )

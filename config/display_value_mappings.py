@@ -85,6 +85,22 @@ search_params_dpif = {
     "team_in_place": ALL_VALUE,
 }
 
+# TODO Add HSRA filtering options
+search_params_hsra = {
+    "search_term": "",
+    "search_in": "organisation_name,short_id",
+    "status": ALL_VALUE,
+    "filter_by_tag": ALL_VALUE,
+    "local_authority": ALL_VALUE,
+    "joint_application": ALL_VALUE,
+}
+
+joint_application_options = {
+    ALL_VALUE: "All",
+    "true": "Yes",
+    "false": "No",
+}
+
 dpi_filters = [
     {
         "name": "team_in_place",

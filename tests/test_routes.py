@@ -1,4 +1,5 @@
 from unittest import mock
+import urllib
 
 import pytest
 from bs4 import BeautifulSoup
@@ -119,7 +120,7 @@ class TestRoutes:
             ],
         )
         token = create_valid_token(test_lead_assessor_claims)
-        flask_test_client.set_cookie("localhost", "fsd_user_token", token)
+        flask_test_client.set_cookie("fsd_user_token", token)
         response = flask_test_client.get("/assess/assessor_tool_dashboard/")
         assert 200 == response.status_code, "Wrong status code on response"
         soup = BeautifulSoup(response.data, "html.parser")
@@ -163,7 +164,6 @@ class TestRoutes:
         mock_get_tag_types,
     ):
         flask_test_client.set_cookie(
-            "localhost",
             "fsd_user_token",
             create_valid_token(fund_specific_claim_map["CYP"]["ASSESSOR"]),
         )
@@ -221,7 +221,6 @@ class TestRoutes:
         mock_get_tag_types,
     ):
         flask_test_client.set_cookie(
-            "localhost",
             "fsd_user_token",
             create_valid_token(fund_specific_claim_map["NSTF"]["ASSESSOR"]),
         )
@@ -278,7 +277,6 @@ class TestRoutes:
         mock_get_tag_types,
     ):
         flask_test_client.set_cookie(
-            "localhost",
             "fsd_user_token",
             create_valid_token(fund_specific_claim_map["COF"]["ASSESSOR"]),
         )
@@ -346,7 +344,6 @@ class TestRoutes:
         mock_get_tag_types,
     ):
         flask_test_client.set_cookie(
-            "localhost",
             "fsd_user_token",
             create_valid_token(fund_specific_claim_map["DPIF"]["ASSESSOR"]),
         )
@@ -612,7 +609,6 @@ class TestRoutes:
         mock_get_tag_types,
     ):
         flask_test_client.set_cookie(
-            "localhost",
             "fsd_user_token",
             create_valid_token(fund_specific_claim_map["COF"]["ASSESSOR"]),
         )
@@ -711,7 +707,7 @@ class TestRoutes:
         # Use unittest.mock to create a mock object for get_scores_and_justification # noqa
 
         token = create_valid_token(test_lead_assessor_claims)
-        flask_test_client.set_cookie("localhost", "fsd_user_token", token)
+        flask_test_client.set_cookie("fsd_user_token", token)
 
         # Send a request to the route you want to test
         response = flask_test_client.get(
@@ -740,7 +736,7 @@ class TestRoutes:
     ):
         # Mocking fsd-user-token cookie
         token = create_valid_token(test_commenter_claims)
-        flask_test_client.set_cookie("localhost", "fsd_user_token", token)
+        flask_test_client.set_cookie( "fsd_user_token", token)
 
         # Send a request to the route you want to test
         response = flask_test_client.get(
@@ -751,14 +747,18 @@ class TestRoutes:
         assert (
             302 == response.status_code
         ), "Commenter should receive a 302 to authenticator when trying to access the sub criteria scoring page"
+        params = {
+            "roles_required" : "TF_LEAD_ASSESSOR|TF_ASSESSOR"
+        }
+        encoded_params = urllib.parse.urlencode(params)
         assert (
             response.location
-            == "https://authenticator/service/user?roles_required=TF_LEAD_ASSESSOR|TF_ASSESSOR"  # noqa
+            == f"https://authenticator/service/user?{encoded_params}"  # noqa
         )
 
     def test_homepage_route_accessible(self, flask_test_client, mock_get_funds):
         # Remove fsd-user-token cookie
-        flask_test_client.set_cookie("localhost", "fsd_user_token", "")
+        flask_test_client.set_cookie("fsd_user_token", "")
 
         # Send a request to the homepage "/" route
         response = flask_test_client.get("/")
@@ -774,7 +774,7 @@ class TestRoutes:
 
     def test_healthcheck_route_accessible(self, flask_test_client, mock_get_funds):
         # Remove fsd-user-token cookie
-        flask_test_client.set_cookie("localhost", "fsd_user_token", "")
+        flask_test_client.set_cookie("fsd_user_token", "")
 
         # Send a request to the /healthcheck route
         response = flask_test_client.get("/healthcheck")  # noqa
@@ -798,7 +798,7 @@ class TestRoutes:
     ):
         application_id = request.node.get_closest_marker("application_id").args[0]
         token = create_valid_token(test_lead_assessor_claims)
-        flask_test_client.set_cookie("localhost", "fsd_user_token", token)
+        flask_test_client.set_cookie("fsd_user_token", token)
 
         response = flask_test_client.get(f"assess/flag/{application_id}")
 
@@ -823,7 +823,7 @@ class TestRoutes:
         marker = request.node.get_closest_marker("application_id")
         application_id = marker.args[0]
         token = create_valid_token(test_lead_assessor_claims)
-        flask_test_client.set_cookie("localhost", "fsd_user_token", token)
+        flask_test_client.set_cookie("fsd_user_token", token)
 
         response = flask_test_client.get(f"assess/flag/{application_id}")
 
@@ -849,7 +849,7 @@ class TestRoutes:
         marker = request.node.get_closest_marker("application_id")
         application_id = marker.args[0]
         token = create_valid_token(test_lead_assessor_claims)
-        flask_test_client.set_cookie("localhost", "fsd_user_token", token)
+        flask_test_client.set_cookie("fsd_user_token", token)
 
         response = flask_test_client.get(f"assess/application/{application_id}")
 
@@ -882,7 +882,7 @@ class TestRoutes:
         marker = request.node.get_closest_marker("application_id")
         application_id = marker.args[0]
         token = create_valid_token(test_lead_assessor_claims)
-        flask_test_client.set_cookie("localhost", "fsd_user_token", token)
+        flask_test_client.set_cookie("fsd_user_token", token)
 
         response = flask_test_client.get(f"assess/application/{application_id}")
 
@@ -905,12 +905,10 @@ class TestRoutes:
         mock_submit_flag,
         mock_get_application_metadata,
         mock_get_sub_criteria_banner_state,
-        request_ctx,
     ):
         token = create_valid_token(test_lead_assessor_claims)
-        flask_test_client.set_cookie("localhost", "fsd_user_token", token)
+        flask_test_client.set_cookie("fsd_user_token", token)
         session["csrf_token"] = "test"
-
         response = flask_test_client.post(
             "assess/flag/resolved_app",
             data={
@@ -939,7 +937,7 @@ class TestRoutes:
         mock_get_application_metadata,
     ):
         token = create_valid_token(test_lead_assessor_claims)
-        flask_test_client.set_cookie("localhost", "fsd_user_token", token)
+        flask_test_client.set_cookie("fsd_user_token", token)
         application_id = request.node.get_closest_marker("application_id").args[0]
         flag_id = request.node.get_closest_marker("flag_id").args[0]
         response = flask_test_client.get(
@@ -995,7 +993,7 @@ class TestRoutes:
         mock_submit_flag,
     ):
         token = create_valid_token(test_lead_assessor_claims)
-        flask_test_client.set_cookie("localhost", "fsd_user_token", token)
+        flask_test_client.set_cookie("fsd_user_token", token)
         application_id = request.node.get_closest_marker("application_id").args[0]
         flag_id = request.node.get_closest_marker("flag_id").args[0]
 
@@ -1028,7 +1026,7 @@ class TestRoutes:
         application_id = request.node.get_closest_marker("application_id").args[0]
         flag_id = request.node.get_closest_marker("flag_id").args[0]
         token = create_valid_token(test_lead_assessor_claims)
-        flask_test_client.set_cookie("localhost", "fsd_user_token", token)
+        flask_test_client.set_cookie("fsd_user_token", token)
 
         response = flask_test_client.get(
             f"/assess/continue_assessment/{application_id}?flag_id={flag_id}",
@@ -1080,7 +1078,7 @@ class TestRoutes:
     ):
         flag_id = request.node.get_closest_marker("flag_id").args[0]
         token = create_valid_token(test_lead_assessor_claims)
-        flask_test_client.set_cookie("localhost", "fsd_user_token", token)
+        flask_test_client.set_cookie("fsd_user_token", token)
 
         response = flask_test_client.post(
             f"assess/continue_assessment/stopped_app?flag_id={flag_id}",
@@ -1111,7 +1109,7 @@ class TestRoutes:
         mock_get_scoring_system,
     ):
         token = create_valid_token(test_lead_assessor_claims)
-        flask_test_client.set_cookie("localhost", "fsd_user_token", token)
+        flask_test_client.set_cookie("fsd_user_token", token)
         application_id = request.node.get_closest_marker("application_id").args[0]
         response = flask_test_client.get(
             f"assess/application/{application_id}",
@@ -1139,7 +1137,7 @@ class TestRoutes:
         mock_get_scoring_system,
     ):
         token = create_valid_token(test_lead_assessor_claims)
-        flask_test_client.set_cookie("localhost", "fsd_user_token", token)
+        flask_test_client.set_cookie("fsd_user_token", token)
 
         marker = request.node.get_closest_marker("application_id")
         application_id = marker.args[0]
@@ -1184,7 +1182,6 @@ class TestRoutes:
         mock_get_tag_types,
     ):
         flask_test_client.set_cookie(
-            "localhost",
             "fsd_user_token",
             create_valid_token(fund_specific_claim_map["COF"]["ASSESSOR"]),
         )
@@ -1232,7 +1229,7 @@ class TestRoutes:
     ):
         # Mocking fsd-user-token cookie
         token = create_valid_token(test_commenter_claims)
-        flask_test_client.set_cookie("localhost", "fsd_user_token", token)
+        flask_test_client.set_cookie("fsd_user_token", token)
 
         application_id = request.node.get_closest_marker("application_id").args[0]
         sub_criteria_id = request.node.get_closest_marker("sub_criteria_id").args[0]
@@ -1265,7 +1262,7 @@ class TestRoutes:
         application_id = marker.args[0]
 
         token = create_valid_token(test_lead_assessor_claims)
-        flask_test_client.set_cookie("localhost", "fsd_user_token", token)
+        flask_test_client.set_cookie("fsd_user_token", token)
         mocker.patch(
             "app.blueprints.assessments.routes.get_application_json",
             return_value={"jsonb_blob": "mock"},
@@ -1299,7 +1296,7 @@ class TestRoutes:
         mocks_for_file_export_download,
     ):
         token = create_valid_token(test_lead_assessor_claims)
-        flask_test_client.set_cookie("localhost", "fsd_user_token", token)
+        flask_test_client.set_cookie("fsd_user_token", token)
         response = flask_test_client.get(
             "/assess/application/test_app_id/export/test_short_id/answers.txt"
         )
@@ -1318,7 +1315,7 @@ class TestRoutes:
         mock_get_application_metadata,
     ):
         token = create_valid_token(test_lead_assessor_claims)
-        flask_test_client.set_cookie("localhost", "fsd_user_token", token)
+        flask_test_client.set_cookie("fsd_user_token", token)
         mocker.patch(
             "app.blueprints.assessments.routes.get_file_for_download_from_aws",
             return_value=("some file contents", "mock_mimetype"),
@@ -1344,7 +1341,7 @@ class TestRoutes:
         mock_get_application_metadata,
     ):
         token = create_valid_token(test_lead_assessor_claims)
-        flask_test_client.set_cookie("localhost", "fsd_user_token", token)
+        flask_test_client.set_cookie("fsd_user_token", token)
         mocker.patch(
             "app.blueprints.assessments.routes.get_file_for_download_from_aws",
             return_value=("some file contents", "mock_mimetype"),
@@ -1386,7 +1383,7 @@ def test_download_application_answers(
     mocks_for_file_export_download,
 ):
     token = create_valid_token(test_lead_assessor_claims)
-    flask_test_client.set_cookie("localhost", "fsd_user_token", token)
+    flask_test_client.set_cookie("fsd_user_token", token)
     url = f"/assess/application/123/export/456/answers.{file_extension}"
     response = flask_test_client.get(url)
 
@@ -1409,7 +1406,7 @@ def test_download_application_answers_invalid_file_type(
     mocks_for_file_export_download,
 ):
     token = create_valid_token(test_lead_assessor_claims)
-    flask_test_client.set_cookie("localhost", "fsd_user_token", token)
+    flask_test_client.set_cookie("fsd_user_token", token)
     response = flask_test_client.get(
         "/assess/application/123/export/456/answers.invalid"
     )

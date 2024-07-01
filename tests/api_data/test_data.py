@@ -595,6 +595,7 @@ mock_api_results = {
             "theme_id": resolved_app["theme_id"],
             "sub_criteria_id": "test_sub_criteria_id",
             "application_id": resolved_app["id"],
+            "comment_type": "WHOLE_APPLICATION",
             "updates": [
                 {
                     "comment": "This is a comment",
@@ -610,6 +611,7 @@ mock_api_results = {
             "theme_id": resolved_app["theme_id"],
             "sub_criteria_id": "test_sub_criteria_id",
             "application_id": resolved_app["id"],
+            "comment_type": "WHOLE_APPLICATION",
             "updates": [
                 {
                     "comment": "You're missing some details",
@@ -625,6 +627,7 @@ mock_api_results = {
             "theme_id": resolved_app["theme_id"],
             "sub_criteria_id": "test_sub_criteria_id",
             "application_id": resolved_app["id"],
+            "comment_type": "WHOLE_APPLICATION",
             "updates": [
                 {
                     "comment": "You're missing some details",
@@ -640,6 +643,7 @@ mock_api_results = {
             "theme_id": resolved_app["theme_id"],
             "sub_criteria_id": "test_sub_criteria_id",
             "application_id": resolved_app["id"],
+            "comment_type": "WHOLE_APPLICATION",
             "updates": [
                 {
                     "comment": "Im an assessor",
@@ -655,6 +659,7 @@ mock_api_results = {
             "theme_id": resolved_app["theme_id"],
             "sub_criteria_id": "test_sub_criteria_id",
             "application_id": resolved_app["id"],
+            "comment_type": "WHOLE_APPLICATION",
             "updates": [
                 {
                     "comment": "Im a commenter",

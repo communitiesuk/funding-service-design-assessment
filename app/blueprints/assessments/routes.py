@@ -1,3 +1,5 @@
+import concurrent.futures
+import contextvars
 import io
 import time
 import zipfile
@@ -16,6 +18,7 @@ from flask import render_template
 from flask import request
 from flask import url_for
 from fsd_utils import extract_questions_and_answers
+from fsd_utils.sqs_scheduler.context_aware_executor import ContextAwareExecutor
 
 from app.blueprints.assessments.activity_trail import AssociatedTags
 from app.blueprints.assessments.activity_trail import CheckboxForm
@@ -91,9 +94,11 @@ from app.blueprints.services.data_services import get_round
 from app.blueprints.services.data_services import get_score_and_justification
 from app.blueprints.services.data_services import get_sub_criteria
 from app.blueprints.services.data_services import get_sub_criteria_theme_answers_all
+from app.blueprints.services.data_services import get_tag_types
 from app.blueprints.services.data_services import get_tags_for_fund_round
 from app.blueprints.services.data_services import match_comment_to_theme
 from app.blueprints.services.data_services import submit_comment
+from app.blueprints.services.models.comment import CommentType
 from app.blueprints.services.models.theme import Theme
 from app.blueprints.services.shared_data_helpers import get_state_for_tasklist_banner
 from app.blueprints.shared.filters import utc_to_bst
@@ -116,11 +121,13 @@ from config.display_value_mappings import asset_types
 from config.display_value_mappings import cohort
 from config.display_value_mappings import dpi_filters
 from config.display_value_mappings import funding_types
+from config.display_value_mappings import joint_application_options
 from config.display_value_mappings import landing_filters
 from config.display_value_mappings import search_params_cof
 from config.display_value_mappings import search_params_cof_eoi
 from config.display_value_mappings import search_params_cyp
 from config.display_value_mappings import search_params_dpif
+from config.display_value_mappings import search_params_hsra
 from config.display_value_mappings import search_params_nstf
 
 assessment_bp = Blueprint(
@@ -129,6 +136,21 @@ assessment_bp = Blueprint(
     url_prefix=Config.ASSESSMENT_HUB_ROUTE,
     template_folder="templates",
 )
+
+
+def run_with_context(func, *args, **kwargs):
+    with current_app.app_context():
+        return func(*args, **kwargs)
+
+
+class ContextThreadPoolExecutor(concurrent.futures.ThreadPoolExecutor):
+    def __init__(self, *args, **kwargs):
+        self.context = contextvars.copy_context()
+        super().__init__(*args, **kwargs, initializer=self._set_child_context)
+
+    def _set_child_context(self):
+        for var, value in self.context.items():
+            var.set(value)
 
 
 def _handle_all_uploaded_documents(application_id):
@@ -208,6 +230,8 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
         search_params = {**search_params_dpif}
     elif fund_short_name.upper() == "COF-EOI":
         search_params = {**search_params_cof_eoi}
+    elif fund_short_name.upper() == "HSRA":
+        search_params = {**search_params_hsra}
     else:
         search_params = {**search_params_cof}
 
@@ -232,16 +256,6 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
     if has_devolved_authority_validation(fund_id=fund_id):
         countries = get_countries_from_roles(fund.short_name)
 
-    # This call is to get the location data such as country, region and local_authority
-    # from all the existing applications.
-    all_applications_metadata = get_application_overviews(
-        fund_id, round_id, search_params=""
-    )
-    # note, we are not sending search parameters here as we don't want to filter
-    # the stats at all.  see https://dluhcdigital.atlassian.net/browse/FS-3249
-    unfiltered_stats = process_assessments_stats(all_applications_metadata)
-    all_application_locations = LocationData.from_json_blob(all_applications_metadata)
-
     search_params = {
         **search_params,
         "countries": ",".join(countries),
@@ -250,8 +264,43 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
     # matches the query parameters provided in the search and filter form
     search_params, show_clear_filters = match_search_params(search_params, request.args)
 
-    # request all the application overviews based on the search parameters
-    application_overviews = get_application_overviews(fund_id, round_id, search_params)
+    thread_executor = ContextAwareExecutor(
+        max_workers=4,
+        thread_name_prefix="fund-dashboard-request",
+        flask_app=current_app,
+    )
+
+    # The first call is to get the location data such as country, region and local_authority
+    # from all the existing applications (i.e withou search parameters as we don't want to filter
+    # the stats at all).  see https://dluhcdigital.atlassian.net/browse/FS-3249
+    future_all_applications_metadata = thread_executor.submit(
+        get_application_overviews, fund_id, round_id, ""
+    )
+
+    # The second call is with the search parameters
+    future_application_overviews = thread_executor.submit(
+        get_application_overviews,
+        fund_id,
+        round_id,
+        search_params,
+    )
+
+    future_active_fund_round_tags = thread_executor.submit(
+        get_tags_for_fund_round,
+        fund_id,
+        round_id,
+        {"tag_status": "True"},
+    )
+
+    future_tag_types = thread_executor.submit(get_tag_types)
+
+    all_applications_metadata = future_all_applications_metadata.result()
+    application_overviews = future_application_overviews.result()
+    active_fund_round_tags = future_active_fund_round_tags.result()
+    tag_types = future_tag_types.result()
+
+    unfiltered_stats = process_assessments_stats(all_applications_metadata)
+    all_application_locations = LocationData.from_json_blob(all_applications_metadata)
 
     teams_flag_stats = get_team_flag_stats(application_overviews)
 
@@ -280,11 +329,8 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
         post_processed_overviews
     )
 
-    active_fund_round_tags = get_tags_for_fund_round(
-        fund_id, round_id, {"tag_status": "True"}
-    )
     tags_in_application_map, tag_option_groups = get_tag_map_and_tag_options(
-        active_fund_round_tags, post_processed_overviews
+        tag_types, active_fund_round_tags, post_processed_overviews
     )
 
     def get_sorted_application_overviews(application_overviews, column, reverse=False):
@@ -339,6 +385,7 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
         funding_types=funding_types,
         cohort=cohort,
         assessment_statuses=assessment_statuses,
+        joint_application_options=joint_application_options,
         show_clear_filters=show_clear_filters,
         stats=unfiltered_stats,
         team_flag_stats=teams_flag_stats,
@@ -391,6 +438,7 @@ def display_sub_criteria(
             sub_criteria_id=sub_criteria_id,
             user_id=g.account_id,
             theme_id=theme_id,
+            comment_type=CommentType.COMMENT.name,
         )
 
         return redirect(
@@ -410,6 +458,7 @@ def display_sub_criteria(
         application_id=application_id,
         sub_criteria_id=sub_criteria_id,
         theme_id=theme_id,
+        comment_type=CommentType.COMMENT.name,
     )
 
     # TODO add test for this function in data_operations
@@ -680,6 +729,87 @@ def application(application_id):
     sub_criteria_status_completed = all_status_completed(state)
     form = AssessmentCompleteForm()
     associated_tags = get_associated_tags_for_application(application_id)
+    add_comment_argument = request.args.get("add_comment") == "1"
+    edit_comment_argument = request.args.get("edit_comment") == "1"
+    comment_form = CommentsForm()
+
+    if add_comment_argument and comment_form.validate_on_submit():
+        comment = comment_form.comment.data
+        # No sub_criteria_id and theme_id indicates it belongs to the entire application.
+        submit_comment(
+            comment=comment,
+            application_id=application_id,
+            sub_criteria_id="",
+            user_id=g.account_id,
+            theme_id="",
+            comment_type=CommentType.WHOLE_APPLICATION.name,
+        )
+
+        return redirect(
+            url_for(
+                "assessment_bp.application",
+                application_id=application_id,
+                _anchor="comments",
+            )
+        )
+
+    state = get_state_for_tasklist_banner(application_id)
+    flags_list = get_flags(application_id)
+
+    comment_response = get_comments(
+        application_id=application_id,
+        sub_criteria_id="",
+        theme_id="",
+        comment_type=CommentType.WHOLE_APPLICATION.name,
+    )
+
+    # TODO add test for this function in data_operations
+    theme_matched_comments = (
+        match_comment_to_theme(
+            comment_response=comment_response,
+            themes=None,
+            fund_short_name=state.fund_short_name,
+        )
+        if comment_response
+        else None
+    )
+
+    flag_status = determine_flag_status(flags_list)
+
+    edit_comment_argument = request.args.get("edit_comment")
+    comment_id = request.args.get("comment_id")
+    show_comment_history = request.args.get("show_comment_history")
+
+    if comment_id and show_comment_history:
+        for comment_data in theme_matched_comments[""]:
+            if comment_data.id == comment_id:
+                return render_template(
+                    "comments_history.html",
+                    comment_data=comment_data,
+                    back_href=url_for(
+                        "assessment_bp.application",
+                        application_id=application_id,
+                        migration_banner_enabled=Config.MIGRATION_BANNER_ENABLED,
+                    ),
+                    application_id=application_id,
+                    state=state,
+                    flag_status=flag_status,
+                    assessment_status=assessment_status,
+                    migration_banner_enabled=Config.MIGRATION_BANNER_ENABLED,
+                )
+
+    if edit_comment_argument and comment_form.validate_on_submit():
+        comment = comment_form.comment.data
+        submit_comment(comment=comment, comment_id=comment_id)
+
+        return redirect(
+            url_for(
+                "assessment_bp.application",
+                application_id=application_id,
+                migration_banner_enabled=Config.MIGRATION_BANNER_ENABLED,
+                _anchor="comments",
+            )
+        )
 
     return render_template(
         "assessor_tasklist.html",
@@ -701,6 +831,11 @@ def application(application_id):
         max_possible_sub_criteria_score=scoring_form.max_score,
         migration_banner_enabled=Config.MIGRATION_BANNER_ENABLED,
         is_expression_of_interest=fund_round.is_expression_of_interest,
+        display_comment_box=add_comment_argument,
+        display_comment_edit_box=edit_comment_argument,
+        comment_id=comment_id,
+        comment_form=comment_form,
+        comments=theme_matched_comments,
     )
 
 

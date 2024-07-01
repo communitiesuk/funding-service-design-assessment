@@ -1,4 +1,4 @@
-{% macro filter_options(query_params, item_types, item_type, search_label, assessment_statuses, countries, regions, local_authorities, round_details, show_clear_filters, tag_option_groups) %}
+{% macro filter_options(query_params, item_types, item_type, search_label, assessment_statuses, joint_application_options, countries, regions, local_authorities, round_details, show_clear_filters, tag_option_groups) %}
 
     <fieldset class="govuk-fieldset">
         <div class="govuk-grid-row">
@@ -19,13 +19,13 @@
                 <div class="govuk-grid-column-three-quarters dluhc-column-auto">
                     <div>
                     <div class="govuk-form-group govuk-!-display-inline-block govuk-!-margin-bottom-0 govuk-!-margin-right-2">
-                        <label class="govuk-label" for="filter_{{ item_type }}">
-                            Filter by {{ item_type | replace("_", " ") }}
+                        <label class="govuk-label" for="filter_local_authority">
+                            Filter by local authority
                         </label>
-                        <select class="govuk-select" id="filter_{{ item_type }}" name="{{ item_type }}">
-                            {% for item in item_types %}
-                                <option value='{{ item }}' {% if query_params[item_type] == item %}
-                                        selected=""{% endif %}>{{ item_types[item] }}</option>
+                        <select class="govuk-select" name="local_authority" id="filter_local_authority">
+                            {% for item in local_authorities %}
+                                <option value='{{ item }}' {% if query_params.local_authority == item %}
+                                        selected=""{% endif %}>{{ local_authorities[item] }}</option>
                             {% endfor %}
                         </select>
                     </div>
@@ -76,35 +76,13 @@
 
                 <div>
                     <div class="govuk-form-group govuk-!-display-inline-block govuk-!-margin-bottom-0 govuk-!-margin-right-2">
-                        <label class="govuk-label" for="filter_country">
-                            Filter by country
+                        <label class="govuk-label" for="filter_joint_application">
+                            Filter by joint application
                         </label>
-                        <select class="govuk-select" name="country" id="filter_country">
-                            {% for item in countries %}
-                                <option value='{{ item }}' {% if query_params.country == item %}
-                                        selected=""{% endif %}>{{ countries[item] }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="govuk-form-group govuk-!-display-inline-block govuk-!-margin-bottom-0 govuk-!-margin-right-2">
-                        <label class="govuk-label" for="filter_region">
-                            Filter by region
-                        </label>
-                        <select class="govuk-select" name="region" id="filter_region">
-                            {% for item in regions %}
-                                <option value='{{ item }}' {% if query_params.region == item %}
-                                        selected=""{% endif %}>{{ regions[item] }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="govuk-form-group govuk-!-display-inline-block govuk-!-margin-bottom-0 govuk-!-margin-right-2">
-                        <label class="govuk-label" for="filter_local_authority">
-                            Filter by local authority
-                        </label>
-                        <select class="govuk-select" name="local_authority" id="filter_local_authority">
-                            {% for item in local_authorities %}
-                                <option value='{{ item }}' {% if query_params.local_authority == item %}
-                                        selected=""{% endif %}>{{ local_authorities[item] }}</option>
+                        <select class="govuk-select" name="joint_application" id="filter_joint_application">
+                            {% for item in joint_application_options %}
+                                <option value={{ item }} {% if query_params.joint_application == item %}
+                                        selected=""{% endif %}>{{ joint_application_options[item] }}</option>
                             {% endfor %}
                         </select>
                     </div>

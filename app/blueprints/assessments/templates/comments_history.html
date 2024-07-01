@@ -10,11 +10,11 @@
 {% block content %}
 <div class="govuk-grid-row">
     {% if migration_banner_enabled %}
-        {{migration_banner()}}
+        {{ migration_banner()}}
     {% endif %}
     <div class="govuk-width-content-container">
         <div class="govuk-grid-column-two-thirds">
-            <div class="">
+            <div>
                 <div class="govuk-button-group">
                 <a class="govuk-link" href="{{ back_href }}">Back to assessment</a>
                 </div>
@@ -41,7 +41,6 @@
                     </div>
                 {% endif %}
             {% endfor %}
-            </div>
         </div>
     </div>
 </div>

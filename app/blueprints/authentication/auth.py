@@ -1,3 +1,5 @@
+import urllib.parse
+
 from flask import g
 from flask import redirect
 from flask import request
@@ -57,12 +59,11 @@ def auth_protect(minimum_roles_required: list, unprotected_routes: list):
         if not g.user.roles or not any(  # any of the minimum roles are present
             role_required in g.user.roles for role_required in minimum_roles_required
         ):
-            return redirect(
-                Config.AUTHENTICATOR_HOST
-                + "/service/user"
-                + "?roles_required="
-                + "|".join(minimum_roles_required)
-            )
+            params = {
+                "roles_required": "|".join(minimum_roles_required)
+            }
+            url = Config.AUTHENTICATOR_HOST + "/service/user" + "?" + urllib.parse.urlencode(params)
+            return redirect(url)
         elif request.path in ["", "/"]:
             return redirect(Config.DASHBOARD_ROUTE)
     elif request.path not in unprotected_routes and not request.path.startswith(

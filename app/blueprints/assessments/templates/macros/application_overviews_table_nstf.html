@@ -73,7 +73,7 @@
                 {{ tags_table(tags[overview.application_id], tagging_purpose_config, query_params.show_tags == "ON") }}
 
                 {% if g.access_controller.has_any_assessor_role %}
-                  {{  application_status_column(overview.application_status, overview.get("progress", ""), assessment_statuses) }}
+                  {{ application_status_column(overview.application_status, overview.get("progress", ""), assessment_statuses) }}
                 {% endif %}
             </tr>
         {% endfor %}

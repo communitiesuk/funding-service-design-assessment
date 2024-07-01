@@ -4,7 +4,6 @@
 {% from "macros/application_status_column.html" import application_status_column %}
 {% from "macros/tags_table.html" import tags_table %}
 
-
 {% macro render(application_overviews, round_details, query_params, cohort,
    assessment_statuses, countries, regions, local_authorities, show_clear_filters,
     sort_column, sort_order, tag_option_groups, tags, tagging_purpose_config) -%}
@@ -71,18 +70,18 @@
                 {% set cohort_display_list = [] %}
                 {% set cohort_list = overview.get("cohort", "[]") | ast_literal_eval %}
                 {% for cohrt in cohort_list %}
-                  {% set _ = cohort_display_list.append(cohort.get(cohrt))  %}
+                  {% set _ = cohort_display_list.append(cohort.get(cohrt)) %}
                 {% endfor %}
 
                 <td class="govuk-table__cell">{{ cohort_display_list | join(' ') }}</td>
 
                 <td class="govuk-table__cell">£{{ "{:,.2f}".format(overview.funding_amount_requested|int|round) }}</td>
-                <td class="govuk-table__cell">{{ "Regional" if overview.get("is_project_regional") else "National"}}</td>
+                <td class="govuk-table__cell">{{ "Regional" if overview.get("is_project_regional") else "National" }}</td>
 
                 {{ tags_table(tags[overview.application_id], tagging_purpose_config, query_params.show_tags == "ON") }}
 
                 {% if g.access_controller.has_any_assessor_role %}
-                  {{  application_status_column(overview.application_status, overview.get("progress", ""), assessment_statuses) }}
+                  {{ application_status_column(overview.application_status, overview.get("progress", ""), assessment_statuses) }}
                 {% endif %}
             </tr>
         {% endfor %}

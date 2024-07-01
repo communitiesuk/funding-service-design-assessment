@@ -1,7 +1,7 @@
 {%- from 'govuk_frontend_jinja/components/radios/macro.html' import govukRadios -%}
 
 {% macro scores(form) %}
-<fieldset class = "govuk-body custom-fieldset">
+<fieldset class="govuk-body custom-fieldset">
 <legend class="govuk-body">You can rescore at any point.&nbsp;</legend>
 <div class="govuk-form-group {% if form.errors.get('score') %}govuk-form-group--error{% endif %}" name="score-div" id="score-div">
     {% if form.errors.get("score") %}

@@ -9,10 +9,10 @@
 
 {% block content %}
 {% if migration_banner_enabled %}
-    {{migration_banner()}}
+    {{ migration_banner() }}
 {% endif %}
-    <div class="govuk-grid-column-two-thirds">
-                <h1 class="govuk-heading-xl govuk-!-margin-bottom-4">{{pageHeading}}</h1>
+{# djlint:off #}<div class="govuk-grid-column-two-thirds">{# djlint:on #}
+                <h1 class="govuk-heading-xl govuk-!-margin-bottom-4">{{ pageHeading }}</h1>
                 <div id="contact-hint" class="govuk-hint govuk-!-margin-bottom-6">
                     <p>View and edit the existing tags for this assessment round, create new ones, or deactivate and
                         reactivate tags.</p>
@@ -37,7 +37,7 @@
                                         <label for="application_search" class="govuk-label">Search by tag name</label>
                                         <input class="govuk-input" type="text" spellcheck="false"
                                             aria-label="Search by tag name" id="tag_search" name="search_term" ,=""
-                                            value={{search_params['search_term']}}>
+                                            value={{ search_params['search_term'] }}>
                                     </div>
                                 </div>
                             </div>
@@ -48,12 +48,12 @@
                                         <label class="govuk-label" for="tag_purpose">
                                             Filter by tag purpose
                                         </label>
-                                        {{query_params}}
+                                        {{ query_params }}
                                         <select class="govuk-select" name="tag_purpose" id="tag_purpose">
                                             {% for tag_type in tag_types %}
                                             <option value={{ tag_type.purpose }} {% if
                                                 search_params['tag_purpose']==tag_type.purpose %} selected{% endif %}>
-                                                {{tag_type.purpose.title()}}
+                                                {{ tag_type.purpose.title() }}
                                             </option>
                                             {% endfor %}
                                         </select>
@@ -66,10 +66,13 @@
                                         </label>
                                         <select class="govuk-select" name="tag_status" id="tag_status">
                                             {% for tag_status_config in tag_status_configs %}
-                                            <option value={{ tag_status_config['value'] }} {% if
-                                                search_params['tag_status']==tag_status_config['value'] %} selected{%
-                                                endif %}>
-                                                {{tag_status_config["text"] }}</option>
+                                        {# djlint:off #}
+                                        <option value={{ tag_status_config['value'] }} {% if
+                                            search_params['tag_status']==tag_status_config['value'] %} selected{%
+                                            endif %}>
+                                            {{ tag_status_config["text"] }}
+                                        </option>
+                                        {# djlint:on #}
                                             {% endfor %}
                                         </select>
                                     </div>
@@ -111,21 +114,21 @@
                                     {% for tag in tags %}
                                     <tr class="govuk-table__row">
                                         <td class="govuk-table__cell">
-                                            {{tag.value}}
+                                            {{ tag.value }}
                                         </td>
                                         <td class="govuk-table__cell">
                                             <strong
-                                                class="govuk-tag--{{ tag_config[tag.purpose]['colour'] }} govuk-tag dluhc-tag">{{tag.value}}</strong>
+                                                class="govuk-tag--{{ tag_config[tag.purpose]['colour'] }} govuk-tag dluhc-tag">{{ tag.value }}</strong>
                                         </td>
                                         <td class="govuk-table__cell">
-                                            {{tag.purpose.capitalize()}}
+                                            {{ tag.purpose.capitalize() }}
                                         </td>
                                         {% if tag.active %}
                                             <td class="govuk-table__cell">
                                                 <a class="govuk-link" data-qa="edit-tag" href="{{ url_for ('tagging_bp.edit_tag',
                                                 fund_id = fund_round['fund_id'],
                                                 round_id = fund_round['round_id'],
-                                                tag_id=tag.id)}}">
+                                                tag_id=tag.id) }}">
                                                     Edit
                                                 </a>
                                             </td>
@@ -151,5 +154,5 @@
                         </p>
                         {% endif %}
                     </div>
-                </div>
+            </div>
         {% endblock content %}
