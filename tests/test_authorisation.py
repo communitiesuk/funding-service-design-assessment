@@ -1,5 +1,6 @@
-import pytest
 import urllib
+
+import pytest
 from bs4 import BeautifulSoup
 from flask import g
 
@@ -101,7 +102,7 @@ class TestAuthorisation:
 
         assert response.status_code == 302
         parms = {
-            "roles_required":"TF_COMMENTER|NSTF_COMMENTER|CYP_COMMENTER|COF_COMMENTER|DPIF_COMMENTER"
+            "roles_required": "TF_COMMENTER|NSTF_COMMENTER|CYP_COMMENTER|COF_COMMENTER|DPIF_COMMENTER"
         }
         assert response.location == (
             f"https://authenticator/service/user?{urllib.parse.urlencode(parms)}"

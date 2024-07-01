@@ -128,7 +128,8 @@ class TestJinjaMacros(object):
                 soup.find_all("td", class_="govuk-table__cell--numeric")[2].text == "2"
             ), "Should have 2 score"
             assert (
-                soup.find_all("td", class_="govuk-table__cell--numeric")[4].text == "2 of 8"
+                soup.find_all("td", class_="govuk-table__cell--numeric")[4].text
+                == "2 of 8"
             ), "Should have 2 of 8 score"
 
     def test_criteria_macro_commenter(self, app):
@@ -324,7 +325,9 @@ class TestJinjaMacros(object):
             soup = BeautifulSoup(rendered_html, "html.parser")
 
             assert soup.find("caption", text="Test Caption"), "Caption not found"
-            assert soup.find("th", text="Test Description"), "Column description not found"
+            assert soup.find(
+                "th", text="Test Description"
+            ), "Column description not found"
             assert soup.find("td", text="£50.00"), "First answer not found"
             assert soup.find("td", text="£100.00"), "Second answer not found"
             assert soup.find("td", text="Total"), "Total header not found"
@@ -389,9 +392,7 @@ class TestJinjaMacros(object):
             ),
         ],
     )
-    def test_question_above_answer(
-        self, app, clazz, macro_name, answer, expected
-    ):
+    def test_question_above_answer(self, app, clazz, macro_name, answer, expected):
         with app.test_request_context():
             meta = clazz.from_dict({"question": "Test Question", "answer": answer})
 
@@ -511,7 +512,9 @@ class TestJinjaMacros(object):
             )
 
             assert "Test Question" in rendered_html, "Answer not found"
-            assert "Test Address<br>" in rendered_html, "First line of address not found"
+            assert (
+                "Test Address<br>" in rendered_html
+            ), "First line of address not found"
             assert (
                 "Test Town Or City<br>" in rendered_html
             ), "Second line of address not found"
@@ -650,7 +653,9 @@ class TestJinjaMacros(object):
             soup = BeautifulSoup(rendered_html, "html.parser")
 
             assert (
-                soup.find("p", class_="govuk-heading-xl fsd-banner-content").text.strip()
+                soup.find(
+                    "p", class_="govuk-heading-xl fsd-banner-content"
+                ).text.strip()
                 == "Fund: Test Fund"
             ), "Fund name not found"
             assert (
@@ -731,7 +736,9 @@ class TestJinjaMacros(object):
             flag_container = soup.find(
                 "div", {"class": "govuk-grid-row govuk-!-text-align-right"}
             )
-            assert flag_container is not None, "Flag application button container not found"
+            assert (
+                flag_container is not None
+            ), "Flag application button container not found"
 
             flag_link = flag_container.find(
                 "a",
@@ -765,7 +772,9 @@ class TestJinjaMacros(object):
                 button_container is not None
             ), "Mark QA complete button container not found"
 
-            button_element = button_container.find("a", href="/assess/qa_complete/12345")
+            button_element = button_container.find(
+                "a", href="/assess/qa_complete/12345"
+            )
             assert button_element is not None, "Mark QA complete button not found"
 
     def test_stopped_assessment_flag(self, app):
@@ -820,7 +829,9 @@ class TestJinjaMacros(object):
             assert "Test role" in user_paragraph.text, "User role not found"
 
             date_created_paragraph = alert_div.find("p", class_="govuk-body-s")
-            assert date_created_paragraph is not None, "Date created paragraph not found"
+            assert (
+                date_created_paragraph is not None
+            ), "Date created paragraph not found"
 
     def test_assessment_flag(self, app):
         def get_section_from_sub_criteria_id(self, sub_criteria_id):
@@ -838,7 +849,9 @@ class TestJinjaMacros(object):
                 state=type(
                     "State",
                     (),
-                    {"get_section_from_sub_criteria_id": get_section_from_sub_criteria_id},
+                    {
+                        "get_section_from_sub_criteria_id": get_section_from_sub_criteria_id
+                    },
                 )(),
                 flag={
                     "latest_status": {"name": "RAISED"},
@@ -877,11 +890,14 @@ class TestJinjaMacros(object):
             section = section_heading.find_next_sibling("p")
             assert (
                 section is not None
-                and section.text == "Test section (Parent Test section) (Opens in new tab) "
+                and section.text
+                == "Test section (Parent Test section) (Opens in new tab) "
             ), "Section not found"
 
             notification_heading = alert_div.find("h2", text="Notification sent")
-            assert notification_heading is not None, "Notification sent heading not found"
+            assert (
+                notification_heading is not None
+            ), "Notification sent heading not found"
             notification = notification_heading.find_next_sibling("p")
             assert (
                 notification is not None and notification.text == "No"
@@ -952,9 +968,7 @@ class TestJinjaMacros(object):
             # Add more test cases as needed
         ],
     )
-    def test_sub_criteria_heading(
-        self, app, sub_criteria, expected_heading, has_forms
-    ):
+    def test_sub_criteria_heading(self, app, sub_criteria, expected_heading, has_forms):
         with app.test_request_context():
             rendered_html = render_template_string(
                 "{{sub_criteria_heading(sub_criteria, score_form, rescore_form)}}",
@@ -1184,4 +1198,6 @@ class TestJinjaMacros(object):
             found_links = soup.find_all("a", class_="govuk-link")
             assert len(found_links) == len(exp_links_text)
             for text in exp_links_text:
-                assert soup.find("a", class_="govuk-link", string=lambda str: text in str)
+                assert soup.find(
+                    "a", class_="govuk-link", string=lambda str: text in str
+                )

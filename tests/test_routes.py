@@ -1,5 +1,5 @@
-from unittest import mock
 import urllib
+from unittest import mock
 
 import pytest
 from bs4 import BeautifulSoup
@@ -736,7 +736,7 @@ class TestRoutes:
     ):
         # Mocking fsd-user-token cookie
         token = create_valid_token(test_commenter_claims)
-        flask_test_client.set_cookie( "fsd_user_token", token)
+        flask_test_client.set_cookie("fsd_user_token", token)
 
         # Send a request to the route you want to test
         response = flask_test_client.get(
@@ -747,9 +747,7 @@ class TestRoutes:
         assert (
             302 == response.status_code
         ), "Commenter should receive a 302 to authenticator when trying to access the sub criteria scoring page"
-        params = {
-            "roles_required" : "TF_LEAD_ASSESSOR|TF_ASSESSOR"
-        }
+        params = {"roles_required": "TF_LEAD_ASSESSOR|TF_ASSESSOR"}
         encoded_params = urllib.parse.urlencode(params)
         assert (
             response.location

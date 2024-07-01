@@ -49,7 +49,7 @@ def test_from_data(
     display_logo,
     expected_len_sections,
     expected_logo_uri,
-    app
+    app,
 ):
     mock_args.round.all_uploaded_documents_section_available = all_docs_available
     mock_args.round.display_logo_on_pdf_exports = display_logo
