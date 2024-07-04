@@ -45,6 +45,13 @@ cohort = {
     "afghan-citizens-resettlement-scheme": "Afghanistan",
 }
 
+search_params_default = {
+    "search_term": "",
+    "search_in": "project_name,short_id",
+    "asset_type": ALL_VALUE,
+    "status": ALL_VALUE,
+    "filter_by_tag": ALL_VALUE,
+}
 search_params_cof = {
     "search_term": "",
     "search_in": "project_name,short_id",
