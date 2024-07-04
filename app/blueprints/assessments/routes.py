@@ -59,12 +59,12 @@ from app.blueprints.authentication.validation import check_access_application_id
 from app.blueprints.authentication.validation import (
     check_access_fund_short_name_round_sn,
 )
-from app.blueprints.authentication.validation import (
+from app.blueprints.authentication.validation import has_access_to_fund
+from app.blueprints.scoring.helpers import get_scoring_class
+from app.blueprints.services.aws import get_file_for_download_from_aws
+from app.blueprints.services.data_services import (
     get_all_associated_tags_for_application,
 )
-from app.blueprints.authentication.validation import get_file_for_download_from_aws
-from app.blueprints.authentication.validation import get_scoring_class
-from app.blueprints.authentication.validation import has_access_to_fund
 from app.blueprints.services.data_services import (
     get_all_sub_criterias_with_application_json,
 )
@@ -243,7 +243,7 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
     )
 
     # The first call is to get the location data such as country, region and local_authority
-    # from all the existing applications (i.e withou search parameters as we don't want to filter
+    # from all the existing applications (i.e without search parameters as we don't want to filter
     # the stats at all).  see https://dluhcdigital.atlassian.net/browse/FS-3249
     future_all_applications_metadata = thread_executor.submit(
         get_application_overviews, fund_id, round_id, ""

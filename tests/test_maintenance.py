@@ -55,9 +55,6 @@ def test_route_landing_maintenance_mode_enabled(
             "asset_type": "ALL",
             "status": "ALL",
             "filter_by_tag": "ALL",
-            "local_authority": "ALL",
-            "country": "ALL",
-            "region": "ALL",
         },
     }
 )
