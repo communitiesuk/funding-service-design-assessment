@@ -14,7 +14,7 @@ def index():
         "index.html",
         login_url=Config.SSO_LOGIN_URL,
         logout_url=Config.SSO_LOGOUT_URL,
-        assessment_url=Config.ASSESSMENT_HUB_ROUTE + "/assessor_dashboard/",
+        assessment_url=Config.ASSESSMENT_HUB_ROUTE + "/fund_dashboard/",
     )
 
 

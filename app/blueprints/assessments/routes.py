@@ -170,7 +170,7 @@ def _handle_all_uploaded_documents(application_id):
     )
 
 
-@assessment_bp.route("/assessor_dashboard/", methods=["GET"])
+@assessment_bp.route("/fund_dashboard/", methods=["GET"])
 def old_landing():
     return redirect("/assess/assessor_tool_dashboard/")
 
@@ -208,7 +208,7 @@ def landing():
 
 
 @assessment_bp.route(
-    "/assessor_dashboard/<fund_short_name>/<round_short_name>/",
+    "/fund_dashboard/<fund_short_name>/<round_short_name>/",
     methods=["GET"],
 )
 @check_access_fund_short_name_round_sn
@@ -347,9 +347,20 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
             sort_column,
             reverse=sort_order != "asc",
         )
+    # Reporting to me application overviews
+    # reporting to you application overviews
+    # get all application id that report to user
+    reporting_to_you_application_ids = [""]
+    # Filter from above here
+    reporting_to_you_overviews = [
+        overview
+        for overview in post_processed_overviews
+        if overview["application_id"] in reporting_to_you_application_ids
+    ]
 
+    # end TODO
     return render_template(
-        "assessor_dashboard.html",
+        "fund_dashboard.html",
         user=g.user,
         application_overviews=post_processed_overviews,
         round_details=round_details,
@@ -374,6 +385,7 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
         migration_banner_enabled=Config.MIGRATION_BANNER_ENABLED,
         dpi_filters=dpi_filters,
         users=["All"],  # TODO: Add users api call
+        reporting_to_you_overviews=reporting_to_you_overviews,
     )
 
 
