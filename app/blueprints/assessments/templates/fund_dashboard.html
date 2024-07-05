@@ -77,7 +77,7 @@
     {{ migration_banner() }}
     {% endif %}
     <section id="application-overview" class="govuk-width-container govuk-grid-column-full">
-        {% set applicationsOverviewHtml %}
+        {% set ApplicationsOverviewHtmlBase %}
         <header class="govuk-body ">
                     <!--
             TODO: Add later
@@ -94,6 +94,10 @@
             -->
             <h1 class="govuk-heading-l">All applications</h1>
         </header>
+        {% endset -%}
+
+        {% set allApplicationsOverviewHtml %}
+        {{ ApplicationsOverviewHtmlBase }}
         {{ application_overviews_table.render(
         application_overviews,
         round_details,
@@ -116,7 +120,7 @@
         "label": "All applications",
         "id": "all-applications",
         "panel": {
-        "html": applicationsOverviewHtml
+        "html": allApplicationsOverviewHtml
         }
         },
         ]

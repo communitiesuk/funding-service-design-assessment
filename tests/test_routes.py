@@ -161,7 +161,7 @@ class TestRoutes:
         )
 
         response = flask_test_client.get(
-            f"/assess/assessor_dashboard/{fund_short_name}/{round_short_name}",
+            f"/assess/fund_dashboard/{fund_short_name}/{round_short_name}",
             follow_redirects=True,
         )
         assert 200 == response.status_code, "Wrong status code on response"
@@ -246,7 +246,7 @@ class TestRoutes:
         round_short_name = params["round_short_name"]
 
         response = flask_test_client.get(
-            f"/assess/assessor_dashboard/{fund_short_name}/{round_short_name}",
+            f"/assess/fund_dashboard/{fund_short_name}/{round_short_name}",
             follow_redirects=True,
             query_string={"status": "QA_COMPLETE"},
         )
@@ -287,7 +287,7 @@ class TestRoutes:
         round_short_name = params["round_short_name"]
 
         response = flask_test_client.get(
-            f"/assess/assessor_dashboard/{fund_short_name}/{round_short_name}",
+            f"/assess/fund_dashboard/{fund_short_name}/{round_short_name}",
             follow_redirects=True,
             query_string={"asset_type": "pub"},
         )
@@ -328,7 +328,7 @@ class TestRoutes:
         round_short_name = params["round_short_name"]
 
         response = flask_test_client.get(
-            f"/assess/assessor_dashboard/{fund_short_name}/{round_short_name}",
+            f"/assess/fund_dashboard/{fund_short_name}/{round_short_name}",
             follow_redirects=True,
             query_string={"search_term": "hello"},
         )
@@ -370,7 +370,7 @@ class TestRoutes:
         round_short_name = params["round_short_name"]
 
         response = flask_test_client.get(
-            f"/assess/assessor_dashboard/{fund_short_name}/{round_short_name}",
+            f"/assess/fund_dashboard/{fund_short_name}/{round_short_name}",
             follow_redirects=True,
             query_string={
                 "clear_filters": "",
@@ -436,7 +436,7 @@ class TestRoutes:
         round_short_name = params["round_short_name"]
 
         response = flask_test_client.get(
-            f"/assess/assessor_dashboard/{fund_short_name}/{round_short_name}",
+            f"/assess/fund_dashboard/{fund_short_name}/{round_short_name}",
             follow_redirects=True,
             query_string={
                 "sort_column": sort_column,
@@ -1004,7 +1004,7 @@ class TestRoutes:
         fund_short_name = params["fund_short_name"]
         round_short_name = params["round_short_name"]
         response = flask_test_client.get(
-            f"/assess/assessor_dashboard/{fund_short_name}/{round_short_name}",
+            f"/assess/fund_dashboard/{fund_short_name}/{round_short_name}",
             follow_redirects=True,
         )
 
