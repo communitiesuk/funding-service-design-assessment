@@ -59,9 +59,7 @@ from app.blueprints.authentication.validation import check_access_application_id
 from app.blueprints.authentication.validation import (
     check_access_fund_short_name_round_sn,
 )
-from app.blueprints.authentication.validation import get_countries_from_roles
 from app.blueprints.authentication.validation import has_access_to_fund
-from app.blueprints.authentication.validation import has_devolved_authority_validation
 from app.blueprints.scoring.helpers import get_scoring_class
 from app.blueprints.services.aws import get_file_for_download_from_aws
 from app.blueprints.services.data_services import (
@@ -123,12 +121,7 @@ from config.display_value_mappings import dpi_filters
 from config.display_value_mappings import funding_types
 from config.display_value_mappings import joint_application_options
 from config.display_value_mappings import landing_filters
-from config.display_value_mappings import search_params_cof
-from config.display_value_mappings import search_params_cof_eoi
-from config.display_value_mappings import search_params_cyp
-from config.display_value_mappings import search_params_dpif
-from config.display_value_mappings import search_params_hsra
-from config.display_value_mappings import search_params_nstf
+from config.display_value_mappings import search_params_default
 
 assessment_bp = Blueprint(
     "assessment_bp",
@@ -220,20 +213,8 @@ def landing():
 )
 @check_access_fund_short_name_round_sn
 def fund_dashboard(fund_short_name: str, round_short_name: str):
-    if fund_short_name.upper() == "NSTF":
-        search_params = {**search_params_nstf}
-    elif fund_short_name.upper() == "COF":
-        search_params = {**search_params_cof}
-    elif fund_short_name.upper() == "CYP":
-        search_params = {**search_params_cyp}
-    elif fund_short_name.upper() == "DPIF":
-        search_params = {**search_params_dpif}
-    elif fund_short_name.upper() == "COF-EOI":
-        search_params = {**search_params_cof_eoi}
-    elif fund_short_name.upper() == "HSRA":
-        search_params = {**search_params_hsra}
-    else:
-        search_params = {**search_params_cof}
+
+    search_params = {**search_params_default}
 
     fund = get_fund(
         fund_short_name,
@@ -252,15 +233,6 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
         return redirect("/assess/assessor_tool_dashboard/")
     fund_id, round_id = fund.id, _round.id
 
-    countries = {"ALL"}
-    if has_devolved_authority_validation(fund_id=fund_id):
-        countries = get_countries_from_roles(fund.short_name)
-
-    search_params = {
-        **search_params,
-        "countries": ",".join(countries),
-    }
-
     # matches the query parameters provided in the search and filter form
     search_params, show_clear_filters = match_search_params(search_params, request.args)
 
@@ -271,7 +243,7 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
     )
 
     # The first call is to get the location data such as country, region and local_authority
-    # from all the existing applications (i.e withou search parameters as we don't want to filter
+    # from all the existing applications (i.e without search parameters as we don't want to filter
     # the stats at all).  see https://dluhcdigital.atlassian.net/browse/FS-3249
     future_all_applications_metadata = thread_executor.submit(
         get_application_overviews, fund_id, round_id, ""
@@ -306,7 +278,8 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
 
     # this is only used for querying applications, so remove it from the search params,
     # so it's not reflected on the user interface
-    del search_params["countries"]
+    if "countries" in search_params:
+        del search_params["countries"]
 
     round_details = {
         "assessment_deadline": _round.assessment_deadline,
@@ -400,6 +373,7 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
         local_authorities=all_application_locations._local_authorities,
         migration_banner_enabled=Config.MIGRATION_BANNER_ENABLED,
         dpi_filters=dpi_filters,
+        users=["All"],  # TODO: Add users api call
     )
 
 

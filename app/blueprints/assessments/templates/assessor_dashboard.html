@@ -2,12 +2,8 @@
 {%- from 'govuk_frontend_jinja/components/inset-text/macro.html' import govukInsetText -%}
 {%- from "govuk_frontend_jinja/components/button/macro.html" import govukButton -%}
 {%- from 'govuk_frontend_jinja/components/back-link/macro.html' import govukBackLink -%}
-{% import "macros/application_overviews_table_cyp.html" as application_overviews_table_cyp -%}
-{% import "macros/application_overviews_table_nstf.html" as application_overviews_table_nstf -%}
-{% import "macros/application_overviews_table_cof.html" as application_overviews_table_cof -%}
-{% import "macros/application_overviews_table_cof_eoi.html" as application_overviews_table_cof_eoi -%}
-{% import "macros/application_overviews_table_dpif.html" as application_overviews_table_dpif -%}
-{% import "macros/application_overviews_table_hsra.html" as application_overviews_table_hsra -%}
+{%- from 'govuk_frontend_jinja/components/tabs/macro.html' import govukTabs -%}
+{% import "macros/application_overviews_table_all.html" as application_overviews_table -%}
 {% from "macros/banner_summary.html" import banner_summary %}
 {% from "macros/logout_partial.html" import logout_partial %}
 {% from "macros/migration_banner.html" import migration_banner %}
@@ -75,116 +71,79 @@
 {% block content %}
 {# CLOSE THE GOVUK-WIDTH-CONTAINER AND OPEN A WIDER CONTAINER FOR THE TABLE VIEW #}
 
+
 <div class="govuk-grid-row">
     {% if migration_banner_enabled %}
     {{ migration_banner() }}
     {% endif %}
-    <section class="govuk-width-container govuk-grid-column-full">
-        {% if round_details.fund_short_name.upper() == 'CYP' %}
-        {{ application_overviews_table_cyp.render(
-        application_overviews,
-        round_details,
-        query_params,
-        cohort,
-        assessment_statuses,
-        countries,
-        regions,
-        local_authorities,
-        show_clear_filters,
-        sort_column,
-        sort_order,
-        tag_option_groups,
-        tags,
-        tagging_purpose_config
-        ) }}
-        {% elif round_details.fund_short_name.upper() == 'NSTF' %}
-        {{ application_overviews_table_nstf.render(
-        application_overviews,
-        round_details,
-        query_params,
-        funding_types,
-        assessment_statuses,
-        countries,
-        regions,
-        local_authorities,
-        show_clear_filters,
-        sort_column,
-        sort_order,
-        tag_option_groups,
-        tags,
-        tagging_purpose_config
-        ) }}
-        {% elif round_details.fund_short_name.upper() == "COF" %}
-        {{ application_overviews_table_cof.render(
+    <section id="application-overview" class="govuk-width-container govuk-grid-column-full">
+        {% set applicationsOverviewHtml %}
+        <header class="govuk-body ">
+                    <!--
+            TODO: Add later
+                <section class="govuk-phase-banner govuk-grid-row">
+                    <span id="empty-positioning-child" class="govuk-grid-column-two-thirds empty-positioning-child">&nbsp;</span>
+                    <span class="govuk-grid-column-one-third">
+                        <a href="." class="govuk-link govuk-!-margin-right-4">
+                            Edit table columns</a>
+                        <a href="." class="govuk-link">
+                            Assign assessments
+                        </a>
+                    </span>
+                </section>
+            -->
+            <h1 class="govuk-heading-l">All applications</h1>
+        </header>
+        {{ application_overviews_table.render(
         application_overviews,
         round_details,
         query_params,
         asset_types,
         assessment_statuses,
-        countries,
-        regions,
-        local_authorities,
-        show_clear_filters,
-        sort_column,
-        sort_order,
-        tag_option_groups,
-        tags,
-        tagging_purpose_config
-        ) }}
-        {% elif round_details.fund_short_name.upper() == "DPIF" %}
-        {{ application_overviews_table_dpif.render(
-        application_overviews,
-        round_details,
-        query_params,
-        asset_types,
-        assessment_statuses,
-        countries,
-        regions,
-        local_authorities,
         show_clear_filters,
         sort_column,
         sort_order,
         tag_option_groups,
         tags,
         tagging_purpose_config,
-        dpi_filters
+        users
         ) }}
-        {% elif round_details.fund_short_name.upper() == "COF-EOI" %}
-        {{ application_overviews_table_cof_eoi.render(
-        application_overviews,
-        round_details,
-        query_params,
-        asset_types,
-        assessment_statuses,
-        countries,
-        regions,
-        local_authorities,
-        show_clear_filters,
-        sort_column,
-        sort_order,
-        tag_option_groups,
-        tags,
-        tagging_purpose_config
-        ) }}
-         {% elif round_details.fund_short_name.upper() == "HSRA" %}
-        {{ application_overviews_table_hsra.render(
-        application_overviews,
-        round_details,
-        query_params,
-        asset_types,
-        assessment_statuses,
-        joint_application_options,
-        countries,
-        regions,
-        local_authorities,
-        show_clear_filters,
-        sort_column,
-        sort_order,
-        tag_option_groups,
-        tags,
-        tagging_purpose_config
-        ) }}
-        {% endif %}
+        {% endset -%}
+
+        {{ govukTabs({
+        "items": [
+        {
+        "label": "All applications",
+        "id": "all-applications",
+        "panel": {
+        "html": applicationsOverviewHtml
+        }
+        },
+        ]
+        }) }}
+        <!--
+        TODO: Add to tabs later
+        [{
+            "label": "Reporting to you",
+            "id": "reporting-to-you",
+            "panel": {
+            "html": "TBC"
+            }
+            },
+            {
+            "label": "Assigned to you",
+            "id": "past-week",
+            "panel": {
+            "html": "TBC"
+            }
+            },
+            {
+            "label": "Scoring",
+            "id": "scoring",
+            "panel": {
+            "html": "TBC"
+            }
+        }] -->
     </section>
 </div>
 {% endblock content %}

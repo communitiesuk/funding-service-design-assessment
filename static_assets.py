@@ -24,8 +24,8 @@ def init_assets(app=None, auto_build=False, static_folder="app/static/dist"):
             "./js/namespaces.js",
             "./js/helpers.js",
             "./js/all.js",
-            "./js/fsd_cookies.js",
             "./js/components/*/*.js",
+            "./js/init.js",
             filters="jsmin",
             output="js/main.min.js",
         )

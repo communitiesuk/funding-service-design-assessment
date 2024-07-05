@@ -29,14 +29,8 @@
 
 {% block bodyEnd %}
   <!--[if gt IE 8]><!-->
-    <script nonce="{{ csp_nonce() }}" src="{{ url_for('static', filename='govuk-frontend/govuk-frontend-4.7.0.min.js') }}"> </script>
-    <script nonce="{{ csp_nonce() }}">
-
-      window.addEventListener('load', (event) => {
-
-          window.GOVUKFrontend.initAll();
-      });
-    </script>
+    <script nonce="{{ csp_nonce() }}" src="{{ url_for('static', filename='govuk-frontend/govuk-frontend-4.7.0.min.js') }}"></script>
+    <script nonce="{{ csp_nonce() }}" src="{{ url_for('static', filename='js/main.min.js') }}"></script>
   <!--<![endif]-->
     <!-- Google Tag Manager (noscript) -->
     {# djlint:off #}
