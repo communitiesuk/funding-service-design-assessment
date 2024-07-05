@@ -7,7 +7,6 @@ from pathlib import Path
 
 from fsd_utils import CommonConfig
 from fsd_utils import configclass
-from fsd_utils.toggles.vcap_services import VcapServices
 
 
 @configclass
@@ -264,11 +263,7 @@ class DefaultConfig:
     SAMEORIGIN = "SAMEORIGIN"
     ALLOW_FROM = "ALLOW-FROM"
     ONE_YEAR_IN_SECS = 31556926
-
-    if environ.get("VCAP_SERVICES"):
-        FORCE_HTTPS = True
-    else:
-        FORCE_HTTPS = False
+    FORCE_HTTPS = False
 
     TALISMAN_SETTINGS = {
         "feature_policy": FSD_FEATURE_POLICY,
@@ -311,19 +306,6 @@ class DefaultConfig:
         AWS_BUCKET_NAME = environ.get("COPILOT_AWS_BUCKET_NAME")
         AWS_REGION = environ.get("AWS_REGION")
         ASSETS_AUTO_BUILD = False
-    elif "VCAP_SERVICES" in os.environ:
-        VCAP_SERVICES = VcapServices.from_env_json(environ.get("VCAP_SERVICES"))
-
-        if VCAP_SERVICES.does_service_exist(
-            service_key="aws-s3-bucket"  # pragma: allowlist secret
-        ):
-            s3_credentials = VCAP_SERVICES.services.get("aws-s3-bucket")[0].get(
-                "credentials"
-            )
-            AWS_REGION = s3_credentials["aws_region"]
-            AWS_ACCESS_KEY_ID = s3_credentials["aws_access_key_id"]
-            AWS_SECRET_ACCESS_KEY = s3_credentials["aws_secret_access_key"]
-            AWS_BUCKET_NAME = s3_credentials["bucket_name"]
 
     # Redis Feature Toggle Configuration
     REDIS_INSTANCE_URI = getenv("REDIS_INSTANCE_URI", "redis://localhost:6379")
