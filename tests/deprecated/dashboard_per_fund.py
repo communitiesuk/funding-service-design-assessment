@@ -40,7 +40,7 @@
 #     round_short_name = params["round_short_name"]
 
 #     response = flask_test_client.get(
-#         f"/assess/assessor_dashboard/{fund_short_name}/{round_short_name}",
+#         f"/assess/fund_dashboard/{fund_short_name}/{round_short_name}",
 #         follow_redirects=True,
 #     )
 #     assert 200 == response.status_code, "Wrong status code on response"
@@ -97,7 +97,7 @@
 #     round_short_name = params["round_short_name"]
 
 #     response = flask_test_client.get(
-#         f"/assess/assessor_dashboard/{fund_short_name}/{round_short_name}",
+#         f"/assess/fund_dashboard/{fund_short_name}/{round_short_name}",
 #         follow_redirects=True,
 #     )
 #     assert 200 == response.status_code, "Wrong status code on response"
@@ -165,7 +165,7 @@
 #     round_short_name = params["round_short_name"]
 
 #     response = flask_test_client.get(
-#         f"/assess/assessor_dashboard/{fund_short_name}/{round_short_name}",
+#         f"/assess/fund_dashboard/{fund_short_name}/{round_short_name}",
 #         follow_redirects=True,
 #     )
 #     assert 200 == response.status_code, "Wrong status code on response"

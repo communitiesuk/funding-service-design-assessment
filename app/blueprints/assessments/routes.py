@@ -170,7 +170,7 @@ def _handle_all_uploaded_documents(application_id):
     )
 
 
-@assessment_bp.route("/assessor_dashboard/", methods=["GET"])
+@assessment_bp.route("/fund_dashboard/", methods=["GET"])
 def old_landing():
     return redirect("/assess/assessor_tool_dashboard/")
 
@@ -208,7 +208,7 @@ def landing():
 
 
 @assessment_bp.route(
-    "/assessor_dashboard/<fund_short_name>/<round_short_name>/",
+    "/fund_dashboard/<fund_short_name>/<round_short_name>/",
     methods=["GET"],
 )
 @check_access_fund_short_name_round_sn
@@ -349,7 +349,7 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
         )
 
     return render_template(
-        "assessor_dashboard.html",
+        "fund_dashboard.html",
         user=g.user,
         application_overviews=post_processed_overviews,
         round_details=round_details,

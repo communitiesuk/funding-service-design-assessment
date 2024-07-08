@@ -26,7 +26,7 @@ The assessment app protects different parts of functionality by interrogating th
 * You must be running with `FLASK_ENV=development` (the default for `flask run` or the docker runner)
 * Update [DevelopmentConfig](../config/envs/development.py) so that `DEBUG_USER_ON=True`
 * Supply the desired role for the debug user using environment variable `DEBUG_USER_ROLE`. eg. `DEBUG_USER_ROLE=ASSESSOR`
-* Run the app and navigate to /assess/assessor_dashboard/, you will see the logged in view and be able to comment, score, flag etc.
+* Run the app and navigate to /assess/fund_dashboard/, you will see the logged in view and be able to comment, score, flag etc.
 * When running locally with the debug user enabled, you will also see a yellow box in the top right hand corner of all pages to state which user you are using and their role.
 
 ## Troubleshooting
