@@ -80,6 +80,7 @@ from app.blueprints.services.data_services import get_application_overviews
 from app.blueprints.services.data_services import (
     get_application_sections_display_config,
 )
+from app.blueprints.services.data_services import get_applications_for_user
 from app.blueprints.services.data_services import get_assessment_progress
 from app.blueprints.services.data_services import get_associated_tags_for_application
 from app.blueprints.services.data_services import get_bulk_accounts_dict
@@ -257,6 +258,11 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
         search_params,
     )
 
+    future_applications_assigned_to_user = thread_executor.submit(
+        get_applications_for_user,
+        g.account_id,
+    )
+
     future_active_fund_round_tags = thread_executor.submit(
         get_tags_for_fund_round,
         fund_id,
@@ -267,9 +273,14 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
     future_tag_types = thread_executor.submit(get_tag_types)
 
     all_applications_metadata = future_all_applications_metadata.result()
+    applications_assigned_to_user = future_applications_assigned_to_user.result()
     application_overviews = future_application_overviews.result()
     active_fund_round_tags = future_active_fund_round_tags.result()
     tag_types = future_tag_types.result()
+
+    app_ids_assigned_to_user = set(
+        application["application_id"] for application in applications_assigned_to_user
+    )
 
     unfiltered_stats = process_assessments_stats(all_applications_metadata)
     all_application_locations = LocationData.from_json_blob(all_applications_metadata)
@@ -347,11 +358,17 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
             sort_column,
             reverse=sort_order != "asc",
         )
+    assigned_applications = [
+        application
+        for application in post_processed_overviews
+        if application["application_id"] in app_ids_assigned_to_user
+    ]
 
     return render_template(
         "fund_dashboard.html",
         user=g.user,
         application_overviews=post_processed_overviews,
+        assigned_applications=assigned_applications,
         round_details=round_details,
         query_params=search_params,
         asset_types=asset_types,

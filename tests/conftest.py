@@ -431,6 +431,27 @@ def mock_get_rounds(request, mocker):
 
 
 @pytest.fixture(scope="function")
+def mock_get_applications_for_user(request, mocker):
+    marker = request.node.get_closest_marker("mock_parameters")
+    func_path = "app.blueprints.assessments.routes.get_applications_for_user"
+    if marker:
+        params = marker.args[0]
+        path = params.get(
+            "application_for_user_path",
+            func_path,
+        )
+    else:
+        path = func_path
+
+    mocked_assigned_apps = mocker.patch(
+        path,
+        return_value=mock_api_results["assessment_store/user/{user_id}/applications"],
+    )
+
+    yield mocked_assigned_apps
+
+
+@pytest.fixture(scope="function")
 def mock_get_application_overviews(request, mocker):
     marker = request.node.get_closest_marker("mock_parameters")
     func_path = "app.blueprints.assessments.routes.get_application_overviews"
@@ -461,7 +482,6 @@ def mock_get_application_overviews(request, mocker):
             "assessment_store/application_overviews/{fund_id}/{round_id}?"
         ],
     )
-
     yield mocked_apps_overview
 
     mocked_apps_overview.assert_called_with(fund_id, round_id, search_params)

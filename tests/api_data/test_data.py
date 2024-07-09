@@ -183,6 +183,20 @@ stopped_app = {
     "is_qa_complete": False,
 }
 
+assigned_app_id = "assigned_app"
+assigned_app = {
+    "id": assigned_app_id,
+    "workflow_status": "IN_PROGRESS",
+    "project_name": "Project In prog and assigned",
+    "short_id": "ASAP",
+    "asset_type": "gallery",
+    "local_authority": "wokefield",
+    "qa_complete": [],
+    "tag_associations": [],
+    "flags": [],
+    "is_qa_complete": False,
+}
+
 flagged_qa_completed_app_id = "flagged_qa_completed_app"
 flagged_qa_completed_app = {
     "id": flagged_qa_completed_app_id,
@@ -287,6 +301,16 @@ mock_api_results = {
         "all_uploaded_documents_section_available": True,
         "application_fields_download_available": True,
     },
+    "assessment_store/user/{user_id}/applications": [
+        {
+            "assigner_id": test_user_id_lead_assessor,
+            "user_id": test_user_id_assessor,
+            "log": "{'2024-06-21T11:13:51.964291+00:00': 'activated'}",
+            "application_id": assigned_app_id,
+            "active": "true",
+            "created_at": "2024-06-21T11:13:52.011951+00:00",
+        }
+    ],
     "assessment_store/application_overviews/{fund_id}/{round_id}?": [
         {
             "fund_id": test_fund_id,
@@ -312,6 +336,31 @@ mock_api_results = {
             "short_id": flagged_qa_completed_app["short_id"],
             "type_of_application": "COF",
             "workflow_status": flagged_qa_completed_app["workflow_status"],
+        },
+        {
+            "fund_id": test_fund_id,
+            "round_id": test_round_id,
+            "application_id": assigned_app_id,
+            "asset_type": "gallery",
+            "local_authority": "wokefield",
+            "tag_associations": assigned_app["tag_associations"],
+            "flags": assigned_app["flags"],
+            "qa_complete": assigned_app["qa_complete"],
+            "funding_amount_requested": test_funding_requested + 8000,
+            "is_qa_complete": True,
+            "language": "en",
+            "location_json_blob": {
+                "constituency": "test-constituency",
+                "country": "England",
+                "county": "test-county",
+                "error": False,
+                "postcode": "QQ12QQ",
+                "region": "England",
+            },
+            "project_name": assigned_app["project_name"],
+            "short_id": assigned_app["short_id"],
+            "type_of_application": "COF",
+            "workflow_status": assigned_app["workflow_status"],
         },
         {
             "fund_id": test_fund_id,
