@@ -59,7 +59,7 @@ class TestDataOperations:
             args = ("test-fund", "test-round")
             result = get_application_overviews(*args, params)
         assert result, "No result returned"
-        assert 3 == len(result), "wrong number of application overviews"
+        assert 4 == len(result), "wrong number of application overviews"
         assert all(arg in get_data_mock.call_args.args[0] for arg in args)
 
     def test_get_application_overviews_search_with_params(self, mocker):
