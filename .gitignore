@@ -146,3 +146,6 @@ axe_reports
 # Build output
 html
 app/static/.webassets.manifest
+
+# Custom vscode settings
+.vscode/settings.json

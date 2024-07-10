@@ -280,9 +280,6 @@ class TestRoutes:
         )
 
         assert 200 == response.status_code, "Wrong status code on response"
-        mock_get_applications_for_user.assert_called_with(
-            fund_specific_claim_map[fund_short_name]["LEAD_ASSESSOR"]["accountId"]
-        )
         soup = BeautifulSoup(response.data, "html.parser")
 
         all_table_headings = str(soup.find_all("th", class_="govuk-table__header"))
@@ -397,7 +394,6 @@ class TestRoutes:
         mock_get_round,
         mock_get_application_overviews,
         mock_get_users_for_fund,
-        mock_get_applications_for_user,
         mock_get_applications_reporting_to_user,
         mock_get_assessment_progress,
         mock_get_active_tags_for_fund_round,
@@ -441,7 +437,6 @@ class TestRoutes:
         mock_get_round,
         mock_get_application_overviews,
         mock_get_users_for_fund,
-        mock_get_applications_for_user,
         mock_get_applications_reporting_to_user,
         mock_get_assessment_progress,
         mock_get_active_tags_for_fund_round,
@@ -528,7 +523,6 @@ class TestRoutes:
         mock_get_round,
         mock_get_application_overviews,
         mock_get_users_for_fund,
-        mock_get_applications_for_user,
         mock_get_applications_reporting_to_user,
         mock_get_assessment_progress,
         mock_get_active_tags_for_fund_round,
@@ -587,7 +581,6 @@ class TestRoutes:
         mock_get_round,
         mock_get_application_overviews,
         mock_get_users_for_fund,
-        mock_get_applications_for_user,
         mock_get_applications_reporting_to_user,
         mock_get_assessment_progress,
         mock_get_application_metadata,
@@ -1163,7 +1156,6 @@ class TestRoutes:
         mock_get_round,
         mock_get_application_overviews,
         mock_get_users_for_fund,
-        mock_get_applications_for_user,
         mock_get_applications_reporting_to_user,
         mock_get_assessment_progress,
         mock_get_active_tags_for_fund_round,
