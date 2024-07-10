@@ -137,6 +137,10 @@ class DefaultConfig:
         "/sub_criteria_overview/banner_state/{application_id}"
     )
 
+    USER_APPLICATIONS_ENDPOINT = "/user/{user_id}/applications"
+
+    USER_ASSIGNEES_ENDPOINT = "/user/{assigner_id}/assignees"
+
     ASSESSMENT_SCORES_ENDPOINT = ASSESSMENT_STORE_API_HOST + "/score"
     ASSESSMENT_UPDATE_STATUS = (
         ASSESSMENT_STORE_API_HOST + "/application/{application_id}/status/complete"

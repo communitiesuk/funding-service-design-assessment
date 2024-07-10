@@ -81,6 +81,7 @@ from app.blueprints.services.data_services import get_application_overviews
 from app.blueprints.services.data_services import (
     get_application_sections_display_config,
 )
+from app.blueprints.services.data_services import get_applications_reporting_to_user
 from app.blueprints.services.data_services import get_assessment_progress
 from app.blueprints.services.data_services import get_associated_tags_for_application
 from app.blueprints.services.data_services import get_bulk_accounts_dict
@@ -265,6 +266,11 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
         fund_short_name,
     )
 
+    future_applications_reporting_to_user = thread_executor.submit(
+        get_applications_reporting_to_user,
+        g.account_id,
+    )
+
     future_active_fund_round_tags = thread_executor.submit(
         get_tags_for_fund_round,
         fund_id,
@@ -276,9 +282,19 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
 
     all_applications_metadata = future_all_applications_metadata.result()
     users_for_fund = future_users_for_fund.result()
+    applications_reporting_to_user = future_applications_reporting_to_user.result()
     application_overviews = future_application_overviews.result()
     active_fund_round_tags = future_active_fund_round_tags.result()
     tag_types = future_tag_types.result()
+
+    app_ids_reporting_to_user = (
+        set(
+            application["application_id"]
+            for application in applications_reporting_to_user
+        )
+        if applications_reporting_to_user
+        else set()
+    )
 
     unfiltered_stats = process_assessments_stats(all_applications_metadata)
     all_application_locations = LocationData.from_json_blob(all_applications_metadata)
@@ -371,11 +387,18 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
         if g.account_id in application["assigned_to_ids"]
     ]
 
+    reporting_to_user_applications = [
+        overview
+        for overview in post_processed_overviews
+        if overview["application_id"] in app_ids_reporting_to_user
+    ]
+
     return render_template(
         "fund_dashboard.html",
         user=g.user,
         application_overviews=post_processed_overviews,
         assigned_applications=assigned_applications,
+        reporting_to_user_applications=reporting_to_user_applications,
         round_details=round_details,
         query_params=search_params,
         asset_types=asset_types,

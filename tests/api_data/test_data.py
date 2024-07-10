@@ -372,6 +372,24 @@ flagged_qa_completed_app = {
 
 # mock api call results
 mock_api_results = {
+    "assessment_store/user/{assigner_id}/assignees": [
+        {
+            "active": True,
+            "assigner_id": test_user_id_lead_assessor,
+            "user_id": test_user_id_assessor,
+            "application_id": resolved_app_id,
+            "created_at": "2024-07-05T15:23:16.022902+00:00",
+            "log": "{}",
+        },
+        {
+            "active": False,
+            "assigner_id": test_user_id_lead_assessor,
+            "user_id": test_user_id_commenter,
+            "application_id": resolved_app_id,
+            "created_at": "2024-07-05T15:23:16.022902+00:00",
+            "log": "{}",
+        },
+    ],
     "fund_store/funds/{fund_id}": {
         "id": test_fund_id,
         "name": "Funding Service Design Unit Test Fund",
