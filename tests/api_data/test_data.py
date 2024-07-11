@@ -9,6 +9,114 @@ test_user_id_lead_assessor = "lead"
 test_user_id_assessor = "assessor"
 test_user_id_commenter = "commenter"
 test_funding_requested = 5000.0
+fund_specific_claim_map = {
+    "CYP": {
+        "LEAD_ASSESSOR": {
+            "accountId": "cyp-lead-assessor",
+            "email": "cyp-lead-assessor@test.com",
+            "fullName": "Test User",
+            "roles": ["CYP_LEAD_ASSESSOR", "CYP_ASSESSOR", "CYP_COMMENTER"],
+        },
+        "ASSESSOR": {
+            "accountId": "cyp-assessor",
+            "email": "cyp-assessor@test.com",
+            "fullName": "Test User",
+            "roles": ["CYP_ASSESSOR", "CYP_COMMENTER"],
+        },
+        "COMMENTER": {
+            "accountId": "cyp-commenter",
+            "email": "cyp-commenter@test.com",
+            "fullName": "Test User",
+            "roles": ["CYP_COMMENTER"],
+        },
+    },
+    "NSTF": {
+        "LEAD_ASSESSOR": {
+            "accountId": "nstf-lead-assessor",
+            "email": "nstf-lead-assessor@test.com",
+            "fullName": "Test User",
+            "roles": ["NSTF_LEAD_ASSESSOR", "NSTF_ASSESSOR", "NSTF_COMMENTER"],
+        },
+        "ASSESSOR": {
+            "accountId": "nstf-assessor",
+            "email": "nstf-assessor@test.com",
+            "fullName": "Test User",
+            "roles": ["NSTF_ASSESSOR", "NSTF_COMMENTER"],
+        },
+        "COMMENTER": {
+            "accountId": "nstf-commenter",
+            "email": "nstf-commenter@test.com",
+            "fullName": "Test User",
+            "roles": ["NSTF_COMMENTER"],
+        },
+    },
+    "COF": {
+        "LEAD_ASSESSOR": {
+            "accountId": "cof-lead-assessor",
+            "email": "cof-lead-assessor@test.com",
+            "fullName": "Test User",
+            "roles": ["COF_LEAD_ASSESSOR", "COF_ASSESSOR", "COF_COMMENTER"],
+        },
+        "ASSESSOR": {
+            "accountId": "cof-assessor",
+            "email": "cof-assessor@test.com",
+            "fullName": "Test User",
+            "roles": ["COF_ASSESSOR", "COF_COMMENTER"],
+        },
+        "COMMENTER": {
+            "accountId": "cof-commenter",
+            "email": "cof-commenter@test.com",
+            "fullName": "Test User",
+            "roles": ["COF_COMMENTER"],
+        },
+    },
+    "DPIF": {
+        "LEAD_ASSESSOR": {
+            "accountId": "dpif-lead-assessor",
+            "email": "dpif-lead-assessor@test.com",
+            "fullName": "Test User",
+            "roles": ["DPIF_LEAD_ASSESSOR", "DPIF_ASSESSOR", "DPIF_COMMENTER"],
+        },
+        "ASSESSOR": {
+            "accountId": "dpif-assessor",
+            "email": "dpif-assessor@test.com",
+            "fullName": "Test User",
+            "roles": ["DPIF_ASSESSOR", "DPIF_COMMENTER"],
+        },
+        "COMMENTER": {
+            "accountId": "dpif-commenter",
+            "email": "dpif-commenter@test.com",
+            "fullName": "Test User",
+            "roles": ["DPIF_COMMENTER"],
+        },
+    },
+    "HSRA": {
+        "LEAD_ASSESSOR": {
+            "accountId": "hsra-lead-assessor",
+            "email": "hsra-lead-assessor@test.com",
+            "fullName": "Test User",
+            "roles": ["HSRA_LEAD_ASSESSOR", "HSRA_ASSESSOR", "HSRA_COMMENTER"],
+        },
+        "ASSESSOR": {
+            "accountId": "hsra-assessor",
+            "email": "hsra-assessor@test.com",
+            "fullName": "Test User",
+            "roles": ["HSRA_ASSESSOR", "HSRA_COMMENTER"],
+        },
+        "COMMENTER": {
+            "accountId": "hsra-commenter",
+            "email": "hsra-commenter@test.com",
+            "fullName": "Test User",
+            "roles": ["HSRA_COMMENTER"],
+        },
+    },
+}
+
+all_fund_user_ids = [
+    user_info["accountId"]
+    for fund in fund_specific_claim_map.values()
+    for user_info in fund.values()
+]
 
 # application specific config
 flagged_app_id = "flagged_app"
@@ -193,6 +301,17 @@ assigned_app = {
     "local_authority": "wokefield",
     "qa_complete": [],
     "tag_associations": [],
+    "user_associations": [
+        {
+            "user_id": user_id,
+            "log": "{'2024-06-21T15:00:50.978297+00:00': 'activated'}",
+            "assigner_id": "7267f445-d01a-46ba-88a0-13b8fd86b547",
+            "created_at": "2024-06-21T15:00:50.990591+00:00",
+            "application_id": assigned_app_id,
+            "active": True,
+        }
+        for user_id in all_fund_user_ids
+    ],
     "flags": [],
     "is_qa_complete": False,
 }
@@ -319,6 +438,7 @@ mock_api_results = {
             "asset_type": "gallery",
             "local_authority": "wokefield",
             "tag_associations": flagged_qa_completed_app["tag_associations"],
+            "user_associations": [],
             "flags": flagged_qa_completed_app["flags"],
             "qa_complete": flagged_qa_completed_app["qa_complete"],
             "funding_amount_requested": test_funding_requested + 2000,
@@ -344,6 +464,7 @@ mock_api_results = {
             "asset_type": "gallery",
             "local_authority": "wokefield",
             "tag_associations": assigned_app["tag_associations"],
+            "user_associations": assigned_app["user_associations"],
             "flags": assigned_app["flags"],
             "qa_complete": assigned_app["qa_complete"],
             "funding_amount_requested": test_funding_requested + 8000,
@@ -369,6 +490,7 @@ mock_api_results = {
             "asset_type": stopped_app["asset_type"],
             "local_authority": stopped_app["local_authority"],
             "tag_associations": stopped_app["tag_associations"],
+            "user_associations": [],
             "flags": stopped_app["flags"],
             "qa_complete": stopped_app["qa_complete"],
             "funding_amount_requested": test_funding_requested + 1000,
@@ -394,6 +516,7 @@ mock_api_results = {
             "asset_type": "gallery",
             "local_authority": "wokefield",
             "tag_associations": resolved_app["tag_associations"],
+            "user_associations": [],
             "flags": resolved_app["flags"],
             "qa_complete": resolved_app["qa_complete"],
             "funding_amount_requested": test_funding_requested,

@@ -18,6 +18,7 @@ from app.blueprints.tagging.models.tag import TagType
 from config import Config
 from create_app import create_app
 from tests.api_data.example_get_full_application import mock_full_application_json
+from tests.api_data.test_data import fund_specific_claim_map
 from tests.api_data.test_data import mock_api_results
 from tests.test_tags import associated_tag
 from tests.test_tags import test_get_tag
@@ -46,109 +47,6 @@ test_commenter_claims = {
     "email": "commenter@test.com",
     "fullName": "Test User",
     "roles": ["TF_COMMENTER"],
-}
-
-fund_specific_claim_map = {
-    "CYP": {
-        "LEAD_ASSESSOR": {
-            "accountId": "cyp-lead-assessor",
-            "email": "cyp-lead-assessor@test.com",
-            "fullName": "Test User",
-            "roles": ["CYP_LEAD_ASSESSOR", "CYP_ASSESSOR", "CYP_COMMENTER"],
-        },
-        "ASSESSOR": {
-            "accountId": "cyp-assessor",
-            "email": "cyp-assessor@test.com",
-            "fullName": "Test User",
-            "roles": ["CYP_ASSESSOR", "CYP_COMMENTER"],
-        },
-        "COMMENTER": {
-            "accountId": "cyp-commenter",
-            "email": "cyp-commenter@test.com",
-            "fullName": "Test User",
-            "roles": ["CYP_COMMENTER"],
-        },
-    },
-    "NSTF": {
-        "LEAD_ASSESSOR": {
-            "accountId": "nstf-lead-assessor",
-            "email": "nstf-lead-assessor@test.com",
-            "fullName": "Test User",
-            "roles": ["NSTF_LEAD_ASSESSOR", "NSTF_ASSESSOR", "NSTF_COMMENTER"],
-        },
-        "ASSESSOR": {
-            "accountId": "nstf-assessor",
-            "email": "nstf-assessor@test.com",
-            "fullName": "Test User",
-            "roles": ["NSTF_ASSESSOR", "NSTF_COMMENTER"],
-        },
-        "COMMENTER": {
-            "accountId": "nstf-commenter",
-            "email": "nstf-commenter@test.com",
-            "fullName": "Test User",
-            "roles": ["NSTF_COMMENTER"],
-        },
-    },
-    "COF": {
-        "LEAD_ASSESSOR": {
-            "accountId": "cof-lead-assessor",
-            "email": "cof-lead-assessor@test.com",
-            "fullName": "Test User",
-            "roles": ["COF_LEAD_ASSESSOR", "COF_ASSESSOR", "COF_COMMENTER"],
-        },
-        "ASSESSOR": {
-            "accountId": "cof-assessor",
-            "email": "cof-assessor@test.com",
-            "fullName": "Test User",
-            "roles": ["COF_ASSESSOR", "COF_COMMENTER"],
-        },
-        "COMMENTER": {
-            "accountId": "cof-commenter",
-            "email": "cof-commenter@test.com",
-            "fullName": "Test User",
-            "roles": ["COF_COMMENTER"],
-        },
-    },
-    "DPIF": {
-        "LEAD_ASSESSOR": {
-            "accountId": "dpif-lead-assessor",
-            "email": "dpif-lead-assessor@test.com",
-            "fullName": "Test User",
-            "roles": ["DPIF_LEAD_ASSESSOR", "DPIF_ASSESSOR", "DPIF_COMMENTER"],
-        },
-        "ASSESSOR": {
-            "accountId": "dpif-assessor",
-            "email": "dpif-assessor@test.com",
-            "fullName": "Test User",
-            "roles": ["DPIF_ASSESSOR", "DPIF_COMMENTER"],
-        },
-        "COMMENTER": {
-            "accountId": "dpif-commenter",
-            "email": "dpif-commenter@test.com",
-            "fullName": "Test User",
-            "roles": ["DPIF_COMMENTER"],
-        },
-    },
-    "HSRA": {
-        "LEAD_ASSESSOR": {
-            "accountId": "hsra-lead-assessor",
-            "email": "hsra-lead-assessor@test.com",
-            "fullName": "Test User",
-            "roles": ["HSRA_LEAD_ASSESSOR", "HSRA_ASSESSOR", "HSRA_COMMENTER"],
-        },
-        "ASSESSOR": {
-            "accountId": "hsra-assessor",
-            "email": "hsra-assessor@test.com",
-            "fullName": "Test User",
-            "roles": ["HSRA_ASSESSOR", "HSRA_COMMENTER"],
-        },
-        "COMMENTER": {
-            "accountId": "hsra-commenter",
-            "email": "hsra-commenter@test.com",
-            "fullName": "Test User",
-            "roles": ["HSRA_COMMENTER"],
-        },
-    },
 }
 
 test_roleless_user_claims = {
@@ -431,21 +329,59 @@ def mock_get_rounds(request, mocker):
 
 
 @pytest.fixture(scope="function")
-def mock_get_applications_for_user(request, mocker):
+def mock_get_users_for_fund(request, mocker):
     marker = request.node.get_closest_marker("mock_parameters")
-    func_path = "app.blueprints.assessments.routes.get_applications_for_user"
-    if marker:
+    try:
+        param_fund_short_name = request.getfixturevalue("fund_short_name")
+    except pytest.FixtureLookupError:
+        param_fund_short_name = None
+    func_path = "app.blueprints.assessments.routes.get_users_for_fund"
+    if param_fund_short_name:
+        fund_short_name = param_fund_short_name
+        path = func_path
+    elif marker:
         params = marker.args[0]
+        fund_short_name = params.get("fund_short_name", None)
         path = params.get(
-            "application_for_user_path",
+            "users_for_fund_path",
             func_path,
         )
     else:
+        fund_short_name = None
         path = func_path
+
+    if fund_short_name and fund_short_name != "TF":
+        return_value = []
+        for _, account in fund_specific_claim_map[fund_short_name].items():
+            return_value.append(
+                {
+                    **account,
+                    "account_id": account["accountId"],
+                    "full_name": account["fullName"],
+                }
+            )
+    else:
+        return_value = [
+            {
+                **test_assessor_claims,
+                "account_id": test_assessor_claims["accountId"],
+                "full_name": test_assessor_claims["fullName"],
+            },
+            {
+                **test_commenter_claims,
+                "account_id": test_commenter_claims["accountId"],
+                "full_name": test_commenter_claims["fullName"],
+            },
+            {
+                **test_lead_assessor_claims,
+                "account_id": test_lead_assessor_claims["accountId"],
+                "full_name": test_lead_assessor_claims["fullName"],
+            },
+        ]
 
     mocked_assigned_apps = mocker.patch(
         path,
-        return_value=mock_api_results["assessment_store/user/{user_id}/applications"],
+        return_value=return_value,
     )
 
     yield mocked_assigned_apps

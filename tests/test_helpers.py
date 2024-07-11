@@ -6,6 +6,7 @@ from werkzeug.exceptions import HTTPException
 from app.blueprints.assessments.helpers import generate_assessment_info_csv
 from app.blueprints.assessments.helpers import generate_csv_of_application
 from app.blueprints.assessments.helpers import generate_maps_from_form_names
+from app.blueprints.assessments.helpers import set_assigned_info_in_overview
 from app.blueprints.scoring.forms.scores_and_justifications import OneToFiveScoreForm
 from app.blueprints.scoring.forms.scores_and_justifications import ZeroToThreeScoreForm
 from app.blueprints.scoring.helpers import get_scoring_class
@@ -300,3 +301,109 @@ def test_get_scoring_class(
     else:
         response = get_scoring_class("test_round_id")
         assert response == scoring_class
+
+
+def test_set_assigned_info_in_overview_users_found():
+    application_overviews = [
+        {
+            "user_associations": [
+                {"user_id": 1, "active": True},
+                {"user_id": 2, "active": True},
+            ]
+        }
+    ]
+    users_for_fund = [
+        {"account_id": 1, "full_name": "Alice"},
+        {"account_id": 2, "full_name": "Bob"},
+    ]
+    expected_output = [
+        {
+            "user_associations": [
+                {"user_id": 1, "active": True},
+                {"user_id": 2, "active": True},
+            ],
+            "assigned_to_names": ["Alice", "Bob"],
+            "assigned_to_ids": [1, 2],
+        }
+    ]
+    expected_users_not_found = []
+
+    result, users_not_found = set_assigned_info_in_overview(
+        application_overviews, users_for_fund
+    )
+    assert result == expected_output
+    assert users_not_found == expected_users_not_found
+
+
+def test_set_assigned_info_in_overview_users_not_found():
+    application_overviews = [
+        {
+            "user_associations": [
+                {"user_id": 1, "active": True},
+                {"user_id": 3, "active": True},
+            ]
+        }
+    ]
+    users_for_fund = [
+        {"account_id": 1, "full_name": "Alice"},
+        {"account_id": 2, "full_name": "Bob"},
+    ]
+    expected_output = [
+        {
+            "user_associations": [
+                {"user_id": 1, "active": True},
+                {"user_id": 3, "active": True},
+            ],
+            "assigned_to_names": ["Alice"],
+            "assigned_to_ids": [1, 3],
+        }
+    ]
+    expected_users_not_found = [3]
+
+    result, users_not_found = set_assigned_info_in_overview(
+        application_overviews, users_for_fund
+    )
+    assert result == expected_output
+    assert users_not_found == expected_users_not_found
+
+
+def test_set_assigned_info_in_overview_no_users():
+    application_overviews = [
+        {
+            "user_associations": [
+                {"user_id": 1, "active": True},
+                {"user_id": 2, "active": False},
+            ]
+        }
+    ]
+    users_for_fund = []
+    expected_output = [
+        {
+            "user_associations": [
+                {"user_id": 1, "active": True},
+                {"user_id": 2, "active": False},
+            ],
+            "assigned_to_names": [],
+            "assigned_to_ids": [1],
+        }
+    ]
+    expected_users_not_found = [1]
+
+    result, users_not_found = set_assigned_info_in_overview(
+        application_overviews, users_for_fund
+    )
+    assert result == expected_output
+    assert users_not_found == expected_users_not_found
+
+
+def test_set_assigned_info_in_overview_empty_input():
+    application_overviews = []
+    users_for_fund = []
+    expected_output = []
+    expected_users_not_found = []
+
+    result, users_not_found = set_assigned_info_in_overview(
+        application_overviews, users_for_fund
+    )
+    assert result == expected_output
+    assert users_not_found == expected_users_not_found

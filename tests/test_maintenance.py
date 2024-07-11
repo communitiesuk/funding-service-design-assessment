@@ -1,8 +1,8 @@
 import pytest
 from bs4 import BeautifulSoup
 
+from tests.api_data.test_data import fund_specific_claim_map
 from tests.conftest import create_valid_token
-from tests.conftest import fund_specific_claim_map
 
 
 @pytest.mark.mock_parameters(
@@ -67,7 +67,7 @@ def test_route_fund_dashboard_maintenance_mode_disabled(
     mock_get_funds,
     mock_get_round,
     mock_get_application_overviews,
-    mock_get_applications_for_user,
+    mock_get_users_for_fund,
     mock_get_assessment_progress,
     mock_get_active_tags_for_fund_round,
     mock_get_tag_types,

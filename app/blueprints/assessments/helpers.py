@@ -98,6 +98,29 @@ def set_application_status_in_overview(application_overviews):
     return application_overviews
 
 
+def set_assigned_info_in_overview(application_overviews, users_for_fund):
+    users_for_fund_dict = {user["account_id"]: user for user in users_for_fund}
+    users_not_found = []
+    for overview in application_overviews:
+        overview["assigned_to_names"] = []
+        overview["assigned_to_ids"] = []
+        for user_assocation in overview["user_associations"]:
+            user_id = user_assocation["user_id"]
+            if user_assocation["active"]:
+                overview["assigned_to_ids"].append(user_id)
+                try:
+                    user_details = users_for_fund_dict[user_id]
+                    overview["assigned_to_names"].append(
+                        user_details["full_name"]
+                        if user_details["full_name"]
+                        else user_details["email_address"]
+                    )
+                except KeyError:
+                    users_not_found.append(user_id)
+
+    return application_overviews, users_not_found
+
+
 def get_tag_map_and_tag_options(tag_types, fund_round_tags, post_processed_overviews):
     tag_option_groups = [
         OptionGroup(

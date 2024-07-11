@@ -8,8 +8,8 @@ from app.blueprints.assessments.models.round_status import RoundStatus
 from app.blueprints.assessments.models.round_summary import RoundSummary
 from app.blueprints.assessments.models.round_summary import Stats
 from app.blueprints.services.models.flag import Flag
+from tests.api_data.test_data import fund_specific_claim_map
 from tests.conftest import create_valid_token
-from tests.conftest import fund_specific_claim_map
 from tests.conftest import test_commenter_claims
 from tests.conftest import test_lead_assessor_claims
 
@@ -146,7 +146,7 @@ class TestRoutes:
         mock_get_round,
         mock_get_fund,
         mock_get_application_overviews,
-        mock_get_applications_for_user,
+        mock_get_users_for_fund,
         mock_get_assessment_progress,
         mock_get_application_metadata,
         mock_get_active_tags_for_fund_round,
@@ -160,15 +160,14 @@ class TestRoutes:
             "fsd_user_token",
             create_valid_token(fund_specific_claim_map[fund_short_name]["ASSESSOR"]),
         )
+
         response = flask_test_client.get(
             f"/assess/fund_dashboard/{fund_short_name}/{round_short_name}",
             follow_redirects=True,
         )
 
         assert 200 == response.status_code, "Wrong status code on response"
-        mock_get_applications_for_user.assert_called_with(
-            fund_specific_claim_map[fund_short_name]["ASSESSOR"]["accountId"]
-        )
+        mock_get_users_for_fund.assert_called_with(fund_short_name)
         soup = BeautifulSoup(response.data, "html.parser")
 
         all_table_headings = str(soup.find_all("th", class_="govuk-table__header"))
@@ -264,7 +263,7 @@ class TestRoutes:
         mock_get_funds,
         mock_get_round,
         mock_get_application_overviews,
-        mock_get_applications_for_user,
+        mock_get_users_for_fund,
         mock_get_assessment_progress,
         mock_get_active_tags_for_fund_round,
         mock_get_tag_types,
@@ -306,7 +305,7 @@ class TestRoutes:
         mock_get_funds,
         mock_get_round,
         mock_get_application_overviews,
-        mock_get_applications_for_user,
+        mock_get_users_for_fund,
         mock_get_assessment_progress,
         mock_get_active_tags_for_fund_round,
         mock_get_tag_types,
@@ -348,7 +347,7 @@ class TestRoutes:
         mock_get_funds,
         mock_get_round,
         mock_get_application_overviews,
-        mock_get_applications_for_user,
+        mock_get_users_for_fund,
         mock_get_assessment_progress,
         mock_get_active_tags_for_fund_round,
         mock_get_tag_types,
@@ -391,7 +390,7 @@ class TestRoutes:
         mock_get_funds,
         mock_get_round,
         mock_get_application_overviews,
-        mock_get_applications_for_user,
+        mock_get_users_for_fund,
         mock_get_assessment_progress,
         mock_get_active_tags_for_fund_round,
         mock_get_tag_types,
@@ -448,7 +447,7 @@ class TestRoutes:
         mock_get_funds,
         mock_get_round,
         mock_get_application_overviews,
-        mock_get_applications_for_user,
+        mock_get_users_for_fund,
         mock_get_assessment_progress,
         mock_get_application_metadata,
         sort_column,
@@ -1022,7 +1021,7 @@ class TestRoutes:
         mock_get_fund,
         mock_get_round,
         mock_get_application_overviews,
-        mock_get_applications_for_user,
+        mock_get_users_for_fund,
         mock_get_assessment_progress,
         mock_get_active_tags_for_fund_round,
         mock_get_tag_types,
