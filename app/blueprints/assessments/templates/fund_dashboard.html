@@ -112,12 +112,29 @@
         users
         ) }}
         {% endset -%}
-        </section>
-        <section id="assigned-applications" class="govuk-width-container govuk-grid-column-full">
+
         {% set assignedApplicationsHtml %}
         {{ ApplicationsOverviewHtmlBase("Assigned to you") }}
         {{ application_overviews_table.render(
         assigned_applications,
+        round_details,
+        query_params,
+        asset_types,
+        assessment_statuses,
+        show_clear_filters,
+        sort_column,
+        sort_order,
+        tag_option_groups,
+        tags,
+        tagging_purpose_config,
+        users
+        ) }}
+        {% endset -%}
+
+        {% set reportingToYouApplicationsOverviewHtml %}
+        {{ ApplicationsOverviewHtmlBase("Reporting to you") }}
+        {{ application_overviews_table.render(
+        reporting_to_user_applications,
         round_details,
         query_params,
         asset_types,
@@ -148,17 +165,18 @@
             "html": assignedApplicationsHtml
             }
         },
+        {
+            "label": "Reporting to you (" ~ reporting_to_user_applications | length ~ ")",
+            "id": "reporting-to-you",
+            "panel": {
+            "html": reportingToYouApplicationsOverviewHtml
+            }
+        },
         ]
         }) }}
         <!--
         TODO: Add to tabs later
-        [{
-            "label": "Reporting to you",
-            "id": "reporting-to-you",
-            "panel": {
-            "html": "TBC"
-            }
-            },
+        [
             {
             "label": "Scoring",
             "id": "scoring",

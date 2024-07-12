@@ -1,8 +1,10 @@
 {
   "workbench.colorCustomizations": {
-    "activityBar.background": "#065826",
-    "titleBar.activeBackground": "#065826",
-    "titleBar.activeForeground": "#ffffff"
+    "activityBar.background": "#b0a756",
+    "titleBar.activeBackground": "#46de80",
+    "titleBar.activeForeground": "#ffffff",
+    "tab.activeBackground": "#038c25",
+    "tab.inactiveBackground": "#01508d"
   },
   "editor.formatOnSave": false,
   "python.testing.pytestArgs": [

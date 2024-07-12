@@ -371,11 +371,21 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
         if g.account_id in application["assigned_to_ids"]
     ]
 
+    reporting_to_user_applications = [
+        overview
+        for overview in post_processed_overviews
+        if any(
+            assoc["assigner_id"] == g.account_id and assoc["active"]
+            for assoc in overview["user_associations"]
+        )
+    ]
+
     return render_template(
         "fund_dashboard.html",
         user=g.user,
         application_overviews=post_processed_overviews,
         assigned_applications=assigned_applications,
+        reporting_to_user_applications=reporting_to_user_applications,
         round_details=round_details,
         query_params=search_params,
         asset_types=asset_types,
