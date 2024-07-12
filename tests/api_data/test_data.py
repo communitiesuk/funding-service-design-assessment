@@ -227,6 +227,17 @@ resolved_app = {
             },
         }
     ],
+    "user_associations": [
+        {
+            "user_id": user_id,
+            "log": "{'2024-06-21T15:00:50.978297+00:00': 'activated'}",
+            "assigner_id": "7267f445-d01a-46ba-88a0-13b8fd86b547",
+            "created_at": "2024-06-21T15:00:50.990591+00:00",
+            "application_id": resolved_app_id,
+            "active": True,
+        }
+        for user_id in all_fund_user_ids
+    ],
     "qa_complete": [],
     "is_qa_complete": False,
     "criteria_sub_criteria_name": "test_sub_criteria",
@@ -534,7 +545,7 @@ mock_api_results = {
             "asset_type": "gallery",
             "local_authority": "wokefield",
             "tag_associations": resolved_app["tag_associations"],
-            "user_associations": [],
+            "user_associations": resolved_app["user_associations"],
             "flags": resolved_app["flags"],
             "qa_complete": resolved_app["qa_complete"],
             "funding_amount_requested": test_funding_requested,

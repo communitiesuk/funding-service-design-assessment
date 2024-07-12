@@ -256,6 +256,7 @@ class TestRoutes:
         mock_get_round,
         mock_get_fund,
         mock_get_application_overviews,
+        mock_get_users_for_fund,
         mock_get_applications_reporting_to_user,
         mock_get_assessment_progress,
         mock_get_application_metadata,
@@ -347,6 +348,7 @@ class TestRoutes:
             "£13,000.00",
             "Gallery",
             "England",
+            fund_specific_claim_map[fund_short_name]["LEAD_ASSESSOR"]["fullName"],
         ]
 
         assigned_application_values = str(assigned_to_you_table.find_all("tr"))
@@ -365,6 +367,7 @@ class TestRoutes:
             "£5,000.00",
             "Gallery",
             "Scotland",
+            fund_specific_claim_map[fund_short_name]["ASSESSOR"]["fullName"],
         ]
 
         reporting_to_you_values = str(reporting_to_you_table.find_all("tr"))
