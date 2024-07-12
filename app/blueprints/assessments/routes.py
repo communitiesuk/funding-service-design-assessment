@@ -64,7 +64,7 @@ from app.blueprints.authentication.validation import has_access_to_fund
 from app.blueprints.scoring.helpers import get_scoring_class
 from app.blueprints.services.aws import get_file_for_download_from_aws
 
-# from app.blueprints.services.data_services import get_users_for_fund
+from app.blueprints.services.data_services import get_users_for_fund
 from app.blueprints.services.data_services import (
     get_all_associated_tags_for_application,
 )
