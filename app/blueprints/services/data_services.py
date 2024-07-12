@@ -117,16 +117,6 @@ def get_users_for_fund(fund_short_name):
     return users_for_fund_response
 
 
-def get_applications_reporting_to_user(user_id):
-    assignee_ids = (
-        Config.ASSESSMENT_STORE_API_HOST
-    ) + Config.USER_ASSIGNEES_ENDPOINT.format(assigner_id=user_id)
-    current_app.logger.info(f"Endpoint '{assignee_ids}'.")
-    overviews_response = get_data(assignee_ids)
-
-    return overviews_response
-
-
 def get_tags_for_fund_round(fund_id, round_id, search_params: dict = {}) -> List[Tag]:
     endpoint = Config.ASSESSMENT_TAGS_ENDPOINT.format(
         fund_id=fund_id, round_id=round_id, params=urlencode(search_params)

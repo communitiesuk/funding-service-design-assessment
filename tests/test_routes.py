@@ -147,7 +147,6 @@ class TestRoutes:
         mock_get_fund,
         mock_get_application_overviews,
         mock_get_users_for_fund,
-        mock_get_applications_reporting_to_user,
         mock_get_assessment_progress,
         mock_get_application_metadata,
         mock_get_active_tags_for_fund_round,
@@ -257,7 +256,6 @@ class TestRoutes:
         mock_get_fund,
         mock_get_application_overviews,
         mock_get_users_for_fund,
-        mock_get_applications_reporting_to_user,
         mock_get_assessment_progress,
         mock_get_application_metadata,
         mock_get_active_tags_for_fund_round,
@@ -362,12 +360,12 @@ class TestRoutes:
         )
 
         expected_values = [
-            "INP",
-            "Project In prog and Res",
-            "£5,000.00",
+            "ASAP",
+            "Project In prog and assigned",
+            "£13,000.00",
             "Gallery",
-            "Scotland",
-            fund_specific_claim_map[fund_short_name]["ASSESSOR"]["fullName"],
+            "England",
+            fund_specific_claim_map[fund_short_name]["LEAD_ASSESSOR"]["fullName"],
         ]
 
         reporting_to_you_values = str(reporting_to_you_table.find_all("tr"))
@@ -395,7 +393,6 @@ class TestRoutes:
         mock_get_round,
         mock_get_application_overviews,
         mock_get_users_for_fund,
-        mock_get_applications_reporting_to_user,
         mock_get_assessment_progress,
         mock_get_active_tags_for_fund_round,
         mock_get_tag_types,
@@ -438,7 +435,6 @@ class TestRoutes:
         mock_get_round,
         mock_get_application_overviews,
         mock_get_users_for_fund,
-        mock_get_applications_reporting_to_user,
         mock_get_assessment_progress,
         mock_get_active_tags_for_fund_round,
         mock_get_tag_types,
@@ -524,7 +520,6 @@ class TestRoutes:
         mock_get_round,
         mock_get_application_overviews,
         mock_get_users_for_fund,
-        mock_get_applications_reporting_to_user,
         mock_get_assessment_progress,
         mock_get_active_tags_for_fund_round,
         mock_get_tag_types,
@@ -582,7 +577,6 @@ class TestRoutes:
         mock_get_round,
         mock_get_application_overviews,
         mock_get_users_for_fund,
-        mock_get_applications_reporting_to_user,
         mock_get_assessment_progress,
         mock_get_application_metadata,
         sort_column,
@@ -1157,7 +1151,6 @@ class TestRoutes:
         mock_get_round,
         mock_get_application_overviews,
         mock_get_users_for_fund,
-        mock_get_applications_reporting_to_user,
         mock_get_assessment_progress,
         mock_get_active_tags_for_fund_round,
         mock_get_tag_types,

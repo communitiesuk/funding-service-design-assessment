@@ -388,30 +388,6 @@ def mock_get_users_for_fund(request, mocker):
 
 
 @pytest.fixture(scope="function")
-def mock_get_applications_reporting_to_user(request, mocker):
-    marker = request.node.get_closest_marker("mock_parameters")
-    func_path = "app.blueprints.assessments.routes.get_applications_reporting_to_user"
-    if marker:
-        params = marker.args[0]
-        path = params.get(
-            "application_reporting_to_user_path",
-            func_path,
-        )
-    else:
-        path = func_path
-    from config import Config
-
-    mocked_assigned_apps = mocker.patch(
-        path,
-        return_value=mock_api_results[
-            f"assessment_store{Config.USER_ASSIGNEES_ENDPOINT}"
-        ],
-    )
-
-    yield mocked_assigned_apps
-
-
-@pytest.fixture(scope="function")
 def mock_get_application_overviews(request, mocker):
     marker = request.node.get_closest_marker("mock_parameters")
     func_path = "app.blueprints.assessments.routes.get_application_overviews"
