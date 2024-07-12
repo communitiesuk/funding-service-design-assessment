@@ -99,7 +99,9 @@ def set_application_status_in_overview(application_overviews):
 
 
 def set_assigned_info_in_overview(application_overviews, users_for_fund):
-    users_for_fund_dict = {user["account_id"]: user for user in users_for_fund}
+    users_for_fund_dict = (
+        {user["account_id"]: user for user in users_for_fund} if users_for_fund else {}
+    )
     users_not_found = []
     for overview in application_overviews:
         overview["assigned_to_names"] = []

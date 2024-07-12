@@ -237,8 +237,8 @@ class TestRoutes:
             "£13,000.00",
             "Gallery",
             "England",
+            fund_specific_claim_map[fund_short_name]["ASSESSOR"]["fullName"],
         ]
-
         assigned_application_values = str(assigned_to_you_table.find_all("tr"))
         assert all(value in assigned_application_values for value in expected_values)
 
