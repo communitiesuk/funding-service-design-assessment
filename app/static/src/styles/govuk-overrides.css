@@ -152,6 +152,17 @@
     text-transform: capitalize;
 }
 
+.assigned-to {
+    background-color: rgb(239, 239, 239);
+    color: #0b0c0c;
+    -moz-osx-font-smoothing: grayscale;
+    line-height: 1.1;
+    font-weight: 400;
+    font-size: 19px;
+    padding: 2px 4px;
+    letter-spacing: normal;
+}
+
 .primary-button {
     margin-bottom: 0;
     background-color: #1d70b8;

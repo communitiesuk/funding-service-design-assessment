@@ -70,7 +70,14 @@ sort_column, sort_order, tag_option_groups, tags, tagging_purpose_config, users)
       {{ application_status_column(overview.application_status, overview.get("progress", ""), assessment_statuses) }}
       {% endif %}
       <!-- TODO: requires 'assigned to' API -->
-      <td class="govuk-table__cell">-</td>
+      <td class="govuk-table__cell">
+        {% if overview.assigned_to_names %}
+        {% for name in overview.assigned_to_names %}
+          <span class="assigned-to">{{ name }}</span><br>
+        {% endfor %}
+      {% else %}
+        -
+      {% endif %}</td>
       <td class="govuk-table__cell">-</td>
       <td class="govuk-table__cell">-</td>
     </tr>

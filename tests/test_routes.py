@@ -8,8 +8,8 @@ from app.blueprints.assessments.models.round_status import RoundStatus
 from app.blueprints.assessments.models.round_summary import RoundSummary
 from app.blueprints.assessments.models.round_summary import Stats
 from app.blueprints.services.models.flag import Flag
+from tests.api_data.test_data import fund_specific_claim_map
 from tests.conftest import create_valid_token
-from tests.conftest import fund_specific_claim_map
 from tests.conftest import test_commenter_claims
 from tests.conftest import test_lead_assessor_claims
 
@@ -146,6 +146,7 @@ class TestRoutes:
         mock_get_round,
         mock_get_fund,
         mock_get_application_overviews,
+        mock_get_users_for_fund,
         mock_get_assessment_progress,
         mock_get_application_metadata,
         mock_get_active_tags_for_fund_round,
@@ -164,7 +165,9 @@ class TestRoutes:
             f"/assess/fund_dashboard/{fund_short_name}/{round_short_name}",
             follow_redirects=True,
         )
+
         assert 200 == response.status_code, "Wrong status code on response"
+        mock_get_users_for_fund.assert_called_with(fund_short_name)
         soup = BeautifulSoup(response.data, "html.parser")
 
         all_table_headings = str(soup.find_all("th", class_="govuk-table__header"))
@@ -180,6 +183,11 @@ class TestRoutes:
             "Time since last action",
         ]
         assert all(title in all_table_headings for title in expected_titles)
+
+        all_tab_names = str(soup.find_all("a", class_="govuk-tabs__tab"))
+        expected_tabs = ["All applications", "Assigned to you"]
+
+        assert all(tab_name in all_tab_names for tab_name in expected_tabs)
 
         # Find the first row in the table body
         first_row = soup.find("tbody").find("tr")
@@ -216,6 +224,24 @@ class TestRoutes:
         ]
         assert all(label in all_filter_labels for label in expected_filter_labels)
 
+        # Check the 'assigned to you' tab
+        assigned_to_you_table = (
+            soup.find("div", id="assigned-to-you")
+            .find("table", id="application_overviews_table")
+            .find("tbody")
+        )
+
+        expected_values = [
+            "ASAP",
+            "Project In prog and assigned",
+            "£13,000.00",
+            "Gallery",
+            "England",
+            fund_specific_claim_map[fund_short_name]["ASSESSOR"]["fullName"],
+        ]
+        assigned_application_values = str(assigned_to_you_table.find_all("tr"))
+        assert all(value in assigned_application_values for value in expected_values)
+
     @pytest.mark.mock_parameters(
         {
             "fund_short_name": "TF",
@@ -237,6 +263,7 @@ class TestRoutes:
         mock_get_funds,
         mock_get_round,
         mock_get_application_overviews,
+        mock_get_users_for_fund,
         mock_get_assessment_progress,
         mock_get_active_tags_for_fund_round,
         mock_get_tag_types,
@@ -278,6 +305,7 @@ class TestRoutes:
         mock_get_funds,
         mock_get_round,
         mock_get_application_overviews,
+        mock_get_users_for_fund,
         mock_get_assessment_progress,
         mock_get_active_tags_for_fund_round,
         mock_get_tag_types,
@@ -319,6 +347,7 @@ class TestRoutes:
         mock_get_funds,
         mock_get_round,
         mock_get_application_overviews,
+        mock_get_users_for_fund,
         mock_get_assessment_progress,
         mock_get_active_tags_for_fund_round,
         mock_get_tag_types,
@@ -361,6 +390,7 @@ class TestRoutes:
         mock_get_funds,
         mock_get_round,
         mock_get_application_overviews,
+        mock_get_users_for_fund,
         mock_get_assessment_progress,
         mock_get_active_tags_for_fund_round,
         mock_get_tag_types,
@@ -417,6 +447,7 @@ class TestRoutes:
         mock_get_funds,
         mock_get_round,
         mock_get_application_overviews,
+        mock_get_users_for_fund,
         mock_get_assessment_progress,
         mock_get_application_metadata,
         sort_column,
@@ -990,6 +1021,7 @@ class TestRoutes:
         mock_get_fund,
         mock_get_round,
         mock_get_application_overviews,
+        mock_get_users_for_fund,
         mock_get_assessment_progress,
         mock_get_active_tags_for_fund_round,
         mock_get_tag_types,

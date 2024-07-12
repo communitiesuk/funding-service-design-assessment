@@ -106,6 +106,27 @@ def get_application_overviews(fund_id, round_id, search_params):
     return overviews_response
 
 
+def get_applications_for_user(user_id):
+    user_applications = (
+        Config.ASSESSMENT_STORE_API_HOST
+    ) + Config.USER_APPLICATIONS_ENDPOINT.format(user_id=user_id)
+    current_app.logger.info(f"Endpoint '{user_applications}'.")
+    overviews_response = get_data(user_applications)
+
+    return overviews_response
+
+
+def get_users_for_fund(fund_short_name):
+    users_for_fund = (Config.ACCOUNT_STORE_API_HOST) + Config.USER_FUND_ENDPOINT.format(
+        fund_short_name=fund_short_name
+    )
+
+    current_app.logger.info(f"Endpoint '{users_for_fund}'.")
+    users_for_fund_response = get_data(users_for_fund)
+
+    return users_for_fund_response
+
+
 def get_tags_for_fund_round(fund_id, round_id, search_params: dict = {}) -> List[Tag]:
     endpoint = Config.ASSESSMENT_TAGS_ENDPOINT.format(
         fund_id=fund_id, round_id=round_id, params=urlencode(search_params)

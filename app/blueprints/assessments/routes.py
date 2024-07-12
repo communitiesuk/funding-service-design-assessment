@@ -42,6 +42,7 @@ from app.blueprints.assessments.helpers import get_tag_map_and_tag_options
 from app.blueprints.assessments.helpers import get_team_flag_stats
 from app.blueprints.assessments.helpers import sanitise_export_data
 from app.blueprints.assessments.helpers import set_application_status_in_overview
+from app.blueprints.assessments.helpers import set_assigned_info_in_overview
 from app.blueprints.assessments.models import applicants_response
 from app.blueprints.assessments.models.file_factory import FILE_GENERATORS
 from app.blueprints.assessments.models.file_factory import (
@@ -94,6 +95,7 @@ from app.blueprints.services.data_services import get_sub_criteria
 from app.blueprints.services.data_services import get_sub_criteria_theme_answers_all
 from app.blueprints.services.data_services import get_tag_types
 from app.blueprints.services.data_services import get_tags_for_fund_round
+from app.blueprints.services.data_services import get_users_for_fund
 from app.blueprints.services.data_services import match_comment_to_theme
 from app.blueprints.services.data_services import submit_comment
 from app.blueprints.services.models.comment import CommentType
@@ -257,6 +259,12 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
         search_params,
     )
 
+    # Get all the users for the fund
+    future_users_for_fund = thread_executor.submit(
+        get_users_for_fund,
+        fund_short_name,
+    )
+
     future_active_fund_round_tags = thread_executor.submit(
         get_tags_for_fund_round,
         fund_id,
@@ -267,6 +275,7 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
     future_tag_types = thread_executor.submit(get_tag_types)
 
     all_applications_metadata = future_all_applications_metadata.result()
+    users_for_fund = future_users_for_fund.result()
     application_overviews = future_application_overviews.result()
     active_fund_round_tags = future_active_fund_round_tags.result()
     tag_types = future_tag_types.result()
@@ -301,6 +310,15 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
     post_processed_overviews = set_application_status_in_overview(
         post_processed_overviews
     )
+    post_processed_overviews, users_not_mapped = set_assigned_info_in_overview(
+        post_processed_overviews, users_for_fund
+    )
+
+    if users_not_mapped:
+        current_app.logger.warning(
+            "The following users were assigned applications but could not be"
+            f"found in the account store: {users_not_mapped}"
+        )
 
     tags_in_application_map, tag_option_groups = get_tag_map_and_tag_options(
         tag_types, active_fund_round_tags, post_processed_overviews
@@ -347,11 +365,17 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
             sort_column,
             reverse=sort_order != "asc",
         )
+    assigned_applications = [
+        application
+        for application in post_processed_overviews
+        if g.account_id in application["assigned_to_ids"]
+    ]
 
     return render_template(
         "fund_dashboard.html",
         user=g.user,
         application_overviews=post_processed_overviews,
+        assigned_applications=assigned_applications,
         round_details=round_details,
         query_params=search_params,
         asset_types=asset_types,

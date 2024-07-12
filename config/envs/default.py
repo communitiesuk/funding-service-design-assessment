@@ -112,6 +112,8 @@ class DefaultConfig:
         "/application_overviews/{application_id}"
     )
 
+    USER_APPLICATIONS_ENDPOINT = "/user/{user_id}/applications"
+
     APPLICATION_JSON_ENDPOINT = (
         ASSESSMENT_STORE_API_HOST + "/application/{application_id}/json"
     )
@@ -214,8 +216,10 @@ class DefaultConfig:
     ASSESSMENT_SCORING_SYSTEM_ENDPOINT = (
         ASSESSMENT_STORE_API_HOST + "/scoring-system/{round_id}"
     )
+
     # Account store endpoints
     BULK_ACCOUNTS_ENDPOINT = ACCOUNT_STORE_API_HOST + "/bulk-accounts"
+    USER_FUND_ENDPOINT = "/accounts/fund/{fund_short_name}"
 
     """
     Assets

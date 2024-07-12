@@ -76,30 +76,48 @@
     {% if migration_banner_enabled %}
     {{ migration_banner() }}
     {% endif %}
+    {% macro ApplicationsOverviewHtmlBase(heading_text) %}
+    <header class="govuk-body ">
+                <!--
+        TODO: Add later
+            <section class="govuk-phase-banner govuk-grid-row">
+                <span id="empty-positioning-child" class="govuk-grid-column-two-thirds empty-positioning-child">&nbsp;</span>
+                <span class="govuk-grid-column-one-third">
+                    <a href="." class="govuk-link govuk-!-margin-right-4">
+                        Edit table columns</a>
+                    <a href="." class="govuk-link">
+                        Assign assessments
+                    </a>
+                </span>
+            </section>
+        -->
+        <h1 class="govuk-heading-l">{{ heading_text }}</h1>
+    </header>
+    {% endmacro -%}
     <section id="application-overview" class="govuk-width-container govuk-grid-column-full">
-        {% set ApplicationsOverviewHtmlBase %}
-        <header class="govuk-body ">
-                    <!--
-            TODO: Add later
-                <section class="govuk-phase-banner govuk-grid-row">
-                    <span id="empty-positioning-child" class="govuk-grid-column-two-thirds empty-positioning-child">&nbsp;</span>
-                    <span class="govuk-grid-column-one-third">
-                        <a href="." class="govuk-link govuk-!-margin-right-4">
-                            Edit table columns</a>
-                        <a href="." class="govuk-link">
-                            Assign assessments
-                        </a>
-                    </span>
-                </section>
-            -->
-            <h1 class="govuk-heading-l">All applications</h1>
-        </header>
-        {% endset -%}
-
         {% set allApplicationsOverviewHtml %}
-        {{ ApplicationsOverviewHtmlBase }}
+        {{ ApplicationsOverviewHtmlBase("All applications") }}
         {{ application_overviews_table.render(
         application_overviews,
+        round_details,
+        query_params,
+        asset_types,
+        assessment_statuses,
+        show_clear_filters,
+        sort_column,
+        sort_order,
+        tag_option_groups,
+        tags,
+        tagging_purpose_config,
+        users
+        ) }}
+        {% endset -%}
+        </section>
+        <section id="assigned-applications" class="govuk-width-container govuk-grid-column-full">
+        {% set assignedApplicationsHtml %}
+        {{ ApplicationsOverviewHtmlBase("Assigned to you") }}
+        {{ application_overviews_table.render(
+        assigned_applications,
         round_details,
         query_params,
         asset_types,
@@ -123,6 +141,13 @@
         "html": allApplicationsOverviewHtml
         }
         },
+        {
+            "label": "Assigned to you (" ~ assigned_applications | length ~ ")",
+            "id": "assigned-to-you",
+            "panel": {
+            "html": assignedApplicationsHtml
+            }
+        },
         ]
         }) }}
         <!--
@@ -130,13 +155,6 @@
         [{
             "label": "Reporting to you",
             "id": "reporting-to-you",
-            "panel": {
-            "html": "TBC"
-            }
-            },
-            {
-            "label": "Assigned to you",
-            "id": "past-week",
             "panel": {
             "html": "TBC"
             }
