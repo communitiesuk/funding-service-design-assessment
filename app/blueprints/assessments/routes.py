@@ -63,6 +63,8 @@ from app.blueprints.authentication.validation import (
 from app.blueprints.authentication.validation import has_access_to_fund
 from app.blueprints.scoring.helpers import get_scoring_class
 from app.blueprints.services.aws import get_file_for_download_from_aws
+
+# from app.blueprints.services.data_services import get_users_for_fund
 from app.blueprints.services.data_services import (
     get_all_associated_tags_for_application,
 )
@@ -96,7 +98,6 @@ from app.blueprints.services.data_services import get_sub_criteria
 from app.blueprints.services.data_services import get_sub_criteria_theme_answers_all
 from app.blueprints.services.data_services import get_tag_types
 from app.blueprints.services.data_services import get_tags_for_fund_round
-from app.blueprints.services.data_services import get_users_for_fund
 from app.blueprints.services.data_services import match_comment_to_theme
 from app.blueprints.services.data_services import submit_comment
 from app.blueprints.services.models.comment import CommentType
