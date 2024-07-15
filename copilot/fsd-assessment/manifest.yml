@@ -87,7 +87,7 @@ environments:
       response_time: 2s
   prod:
     http:
-      alias: ["assessment.prod.access-funding.levellingup.gov.uk", "assessment.access-funding.levellingup.gov.uk"]
+      alias: assessment.access-funding.levellingup.gov.uk
       hosted_zone: Z0686469NF3ZJTU9I02M
     count:
       range: 2-4
