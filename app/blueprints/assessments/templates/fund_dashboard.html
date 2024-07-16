@@ -109,7 +109,8 @@
         tag_option_groups,
         tags,
         tagging_purpose_config,
-        users
+        users,
+        display_headers=display_headers,
         ) }}
         {% endset -%}
 
@@ -127,7 +128,8 @@
         tag_option_groups,
         tags,
         tagging_purpose_config,
-        users
+        users,
+        display_headers=display_headers,
         ) }}
         {% endset -%}
 
@@ -145,17 +147,39 @@
         tag_option_groups,
         tags,
         tagging_purpose_config,
-        users
+        users,
+        display_headers=display_headers,
+        ) }}
+        {% endset -%}
+
+        {% set scoringApplicationsOverviewHtml %}
+        {{ ApplicationsOverviewHtmlBase("Reporting to you") }}
+        {% set unwanted_headers = ["assigned_to", "last_action", "time_since_last_action"] %}
+        {% set scoring_display_headers = display_headers | reject("in", unwanted_headers) | list + ["overall_score"] %}
+        {{ application_overviews_table.render(
+        reporting_to_user_applications,
+        round_details,
+        query_params,
+        asset_types,
+        assessment_statuses,
+        show_clear_filters,
+        sort_column,
+        sort_order,
+        tag_option_groups,
+        tags,
+        tagging_purpose_config,
+        users,
+        display_headers=scoring_display_headers ,
         ) }}
         {% endset -%}
 
         {{ govukTabs({
         "items": [
         {
-        "label": "All applications",
-        "id": "all-applications",
-        "panel": {
-        "html": allApplicationsOverviewHtml
+            "label": "All applications",
+            "id": "all-applications",
+            "panel": {
+            "html": allApplicationsOverviewHtml
         }
         },
         {
@@ -172,18 +196,15 @@
             "html": reportingToYouApplicationsOverviewHtml
             }
         },
-        ]
-        }) }}
-        <!--
-        TODO: Add to tabs later
-        [
-            {
+        {
             "label": "Scoring",
             "id": "scoring",
             "panel": {
-            "html": "TBC"
+            "html": scoringApplicationsOverviewHtml
             }
-        }] -->
+        }
+        ]
+        }) }}
     </section>
 </div>
 {% endblock content %}

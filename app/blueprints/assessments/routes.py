@@ -380,6 +380,19 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
         )
     ]
 
+    display_headers = {
+        "ref",
+        "project_name",
+        "funding_requested",
+        "asset_type",
+        "location",
+        "tags",
+        "status",
+        "assigned_to",
+        "last_action",
+        "time_since_last_action",
+    }
+
     return render_template(
         "fund_dashboard.html",
         user=g.user,
@@ -408,6 +421,7 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
         migration_banner_enabled=Config.MIGRATION_BANNER_ENABLED,
         dpi_filters=dpi_filters,
         users=["All"],  # TODO: Add users api call
+        display_headers=display_headers,
     )
 
 
