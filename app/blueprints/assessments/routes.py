@@ -374,7 +374,9 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
     reporting_to_user_applications = [
         overview
         for overview in post_processed_overviews
-        if any(
+        if "user_associations" in overview
+        and overview["user_associations"]
+        and any(
             assoc["assigner_id"] == g.account_id and assoc["active"]
             for assoc in overview["user_associations"]
         )
