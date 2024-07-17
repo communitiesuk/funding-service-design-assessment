@@ -30,7 +30,9 @@ def utc_to_bst(value, tz="Europe/London", export_format=False):
     ]
     for dt_format in dt_formats:
         try:
-            utc_time = datetime.strptime(value, dt_format)
+            utc_time = datetime.strptime(value, dt_format).replace(
+                tzinfo=timezone("UTC")
+            )
             break
         except ValueError:
             pass
