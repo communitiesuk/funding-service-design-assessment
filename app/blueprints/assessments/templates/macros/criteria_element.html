@@ -5,11 +5,12 @@
     {% for sub_criteria in criteria.sub_criterias %}
         {%  set prev_subcriteria = criteria.sub_criterias[loop.index0 - 1] if not loop.first else None %}
         {%  set next_subcriteria = criteria.sub_criterias[loop.index0 + 1] if not loop.last else None %}
+        {{ "\n" +" current" + sub_criteria.name }}
         {% if prev_subcriteria %}
-            {{ "prev:" + prev_subcriteria.name }}
+            {{ " prev:" + prev_subcriteria.name }}
         {% endif %}
         {% if next_subcriteria %}
-            {{ "next:"+ next_subcriteria.name }}
+            {{ " next:"+ next_subcriteria.name }}
         {% endif %}
         {% set _ = rows.append([
             {
