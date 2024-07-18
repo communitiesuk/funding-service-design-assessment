@@ -51,6 +51,7 @@ search_params_default = {
     "asset_type": ALL_VALUE,
     "status": ALL_VALUE,
     "filter_by_tag": ALL_VALUE,
+    "assigned_to": ALL_VALUE,
 }
 search_params_cof = {
     "search_term": "",

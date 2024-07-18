@@ -28,7 +28,7 @@
                 <label class="govuk-label" for="filter_assigned_to">
                     Filter by assigned to
                 </label>
-                <select class="govuk-select govuk-!-width-one-quarter" id="filter_assigned_to" name="assigned_to">
+                <select class="govuk-select govuk-!-width-one-quarter" id="filter_assigned_to" name="assigned_to" {% if users|length < 2 %} disabled {% endif %}>{{ user }}>
                     {% for user in users %}
                         <option value='{{ user }}' {% if query_params.assigned_to==user %} selected="" {% endif %}>{{ user }}</option>
                     {% endfor %}

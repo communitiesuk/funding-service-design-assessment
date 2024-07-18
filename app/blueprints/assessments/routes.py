@@ -371,6 +371,11 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
         if g.account_id in application["assigned_to_ids"]
     ]
 
+    fund_user_aliases = [
+        user["full_name"] if user["full_name"] else user["email_address"]
+        for user in users_for_fund
+    ]
+
     reporting_to_user_applications = [
         overview
         for overview in post_processed_overviews
@@ -381,6 +386,23 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
             for assoc in overview["user_associations"]
         )
     ]
+
+    # Filter by assigned to here as it's not a searchable parameter on assessment store
+    if "assigned_to" in search_params and post_processed_overviews:
+        if search_params["assigned_to"] == "ALL":
+            pass
+        elif search_params["assigned_to"] == "Not assigned":
+            post_processed_overviews = [
+                overview
+                for overview in post_processed_overviews
+                if len(overview["assigned_to_names"]) == 0
+            ]
+        else:
+            post_processed_overviews = [
+                overview
+                for overview in post_processed_overviews
+                if search_params["assigned_to"] in overview["assigned_to_names"]
+            ]
 
     return render_template(
         "fund_dashboard.html",
@@ -409,7 +431,7 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
         local_authorities=all_application_locations._local_authorities,
         migration_banner_enabled=Config.MIGRATION_BANNER_ENABLED,
         dpi_filters=dpi_filters,
-        users=["All"],  # TODO: Add users api call
+        users=["All", "Not assigned"] + fund_user_aliases,
     )
 
 
