@@ -5,8 +5,8 @@
     {% for sub_criteria in criteria.sub_criterias %}
         {%  set prev_subcriteria = criteria.sub_criterias[loop.index0 - 1] if not loop.first else None %}
         {%  set next_subcriteria = criteria.sub_criterias[loop.index0 + 1] if not loop.last else None %}
-        {% if prev_subcriteria is not None %} {{ prev_subcriteria }} {% endif %}
-        {% if next_subcriteria is not None %} {{ next_subcriteria }} {% endif %}
+        {% if prev_subcriteria %} {{ prev_subcriteria }} {% endif %}
+        {% if next_subcriteria %} {{ next_subcriteria }} {% endif %}
         {% set _ = rows.append([
             {
                 "html": '<a class="govuk-link" data-qa="sub_criteria_name" href="{}">{}</a>'.format(
