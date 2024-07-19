@@ -421,6 +421,8 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
 def display_sub_criteria(
     application_id,
     sub_criteria_id,
+    prev_sub_criteria_id=None,
+    next_sub_criteria_id=None,
 ):
     if sub_criteria_id == "all_uploaded_documents":
         return _handle_all_uploaded_documents(application_id)
@@ -430,6 +432,8 @@ def display_sub_criteria(
     """
     current_app.logger.info(f"Processing GET to {request.path}.")
     sub_criteria = get_sub_criteria(application_id, sub_criteria_id)
+    next_sub_criteria = get_sub_criteria(application_id, next_sub_criteria_id) if next_sub_criteria_id else None
+    prev_sub_criteria = get_sub_criteria(application_id, prev_sub_criteria_id) if prev_sub_criteria_id else None
     theme_id = request.args.get("theme_id", sub_criteria.themes[0].id)
     comment_form = CommentsForm()
     try:
@@ -536,6 +540,8 @@ def display_sub_criteria(
         "current_theme": current_theme,
         "flag_status": flag_status,
         "assessment_status": assessment_status,
+        "next": next_sub_criteria,
+        "previous": prev_sub_criteria,
     }
 
     theme_answers_response = get_sub_criteria_theme_answers_all(
