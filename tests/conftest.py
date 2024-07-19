@@ -405,6 +405,7 @@ def mock_get_application_overviews(request, mocker):
             "search_term": "",
             "search_in": "project_name,short_id",
             "asset_type": "ALL",
+            "assigned_to": "ALL",
             "status": "ALL",
             "filter_by_tag": "ALL",
         }

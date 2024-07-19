@@ -373,12 +373,88 @@ class TestRoutes:
 
     @pytest.mark.mock_parameters(
         {
+            "fund_short_name": "COF",
+            "round_short_name": "TR",
+            "expected_search_params": {
+                "search_term": "",
+                "search_in": "project_name,short_id",
+                "asset_type": "ALL",
+                "assigned_to": "Not assigned",
+                "status": "ALL",
+                "filter_by_tag": "ALL",
+            },
+        }
+    )
+    def test_route_fund_dashboard_filter_not_assigned(
+        self,
+        request,
+        flask_test_client,
+        mock_get_funds,
+        mock_get_round,
+        mock_get_fund,
+        mock_get_application_overviews,
+        mock_get_users_for_fund,
+        mock_get_assessment_progress,
+        mock_get_application_metadata,
+        mock_get_active_tags_for_fund_round,
+        mock_get_tag_types,
+    ):
+        params = request.node.get_closest_marker("mock_parameters").args[0]
+        fund_short_name = params["fund_short_name"]
+        round_short_name = params["round_short_name"]
+
+        flask_test_client.set_cookie(
+            "localhost",
+            "fsd_user_token",
+            create_valid_token(
+                fund_specific_claim_map[fund_short_name]["LEAD_ASSESSOR"]
+            ),
+        )
+
+        response = flask_test_client.get(
+            f"/assess/fund_dashboard/{fund_short_name}/{round_short_name}",
+            follow_redirects=True,
+            query_string={"assigned_to": "Not assigned"},
+        )
+
+        assert 200 == response.status_code, "Wrong status code on response"
+        soup = BeautifulSoup(response.data, "html.parser")
+
+        all_applications_section = soup.find(
+            "h1", class_="govuk-heading-l", string="All applications"
+        )
+        table = all_applications_section.find_next(
+            "table", {"id": "application_overviews_table"}
+        )
+        rows = table.find_all("tr", class_="govuk-table__row")
+
+        reference_values = []
+        for row in rows:
+            cells = row.find_all("td", class_="govuk-table__cell")
+            if cells:
+                reference_values.append(
+                    cells[0].text.strip()
+                )  # Assuming reference is the first column
+
+        expected_values = ["FQAC", "FS", "INP"]
+
+        # Check that each expected value appears exactly once in the reference column
+        for value in expected_values:
+            assert reference_values.count(value) == 1
+
+        for value in reference_values:
+            # Application with reference 'ASAP' is the assigned application
+            assert value != "ASAP"
+
+    @pytest.mark.mock_parameters(
+        {
             "fund_short_name": "TF",
             "round_short_name": "TR",
             "expected_search_params": {
                 "search_term": "",
                 "search_in": "project_name,short_id",
                 "asset_type": "ALL",
+                "assigned_to": "ALL",
                 "status": "QA_COMPLETE",
                 "filter_by_tag": "ALL",
             },
@@ -421,6 +497,7 @@ class TestRoutes:
                 "search_term": "",
                 "search_in": "project_name,short_id",
                 "asset_type": "pub",
+                "assigned_to": "ALL",
                 "status": "ALL",
                 "filter_by_tag": "ALL",
             },
@@ -462,6 +539,7 @@ class TestRoutes:
             "expected_search_params": {
                 "search_term": "hello",
                 "search_in": "project_name,short_id",
+                "assigned_to": "ALL",
                 "asset_type": "ALL",
                 "status": "ALL",
                 "filter_by_tag": "ALL",
@@ -506,6 +584,7 @@ class TestRoutes:
                 "search_term": "",
                 "search_in": "project_name,short_id",
                 "asset_type": "ALL",
+                "assigned_to": "ALL",
                 "status": "ALL",
                 "filter_by_tag": "ALL",
             },
@@ -534,6 +613,7 @@ class TestRoutes:
             query_string={
                 "clear_filters": "",
                 "search_term": "hello",
+                "assigned_to": "ALL",
                 "asset_type": "cinema",
                 "status": "in-progress",
             },
@@ -553,6 +633,7 @@ class TestRoutes:
                 "search_term": "",
                 "search_in": "project_name,short_id",
                 "asset_type": "ALL",
+                "assigned_to": "ALL",
                 "status": "ALL",
                 "filter_by_tag": "ALL",
             },
@@ -1136,6 +1217,7 @@ class TestRoutes:
             "expected_search_params": {
                 "search_term": "",
                 "search_in": "project_name,short_id",
+                "assigned_to": "ALL",
                 "asset_type": "ALL",
                 "status": "ALL",
                 "filter_by_tag": "ALL",
