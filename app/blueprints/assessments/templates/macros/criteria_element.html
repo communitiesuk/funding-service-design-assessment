@@ -1,10 +1,12 @@
 {%- from "govuk_frontend_jinja/components/table/macro.html" import govukTable -%}
-{% macro criteria_element(criteria, name_classes, application_id, max_possible_sub_criteria_score) %}
+{% macro criteria_element(criteria, name_classes, application_id, max_possible_sub_criteria_score, prev, next) %}
 
     {% set rows = [] %}
     {% for sub_criteria in criteria.sub_criterias %}
-        {%  set prev_subcriteria = criteria.sub_criterias[loop.index0 - 1] if not loop.first else None %}
-        {%  set next_subcriteria = criteria.sub_criterias[loop.index0 + 1] if not loop.last else None %}
+        {%  set prev_subcriteria = criteria.sub_criterias[loop.index0 - 1] if not loop.first else prev|last %}
+
+        {%  set next_subcriteria = criteria.sub_criterias[loop.index0 + 1] if not loop.last else next|first %}
+
         {{ "\n" +" current" + sub_criteria.name }}
         {% if prev_subcriteria %}
             {{ " prev:" + prev_subcriteria.name }}
@@ -12,6 +14,7 @@
         {% if next_subcriteria %}
             {{ " next:"+ next_subcriteria.name }}
         {% endif %}
+
         {% set _ = rows.append([
             {
                 "html": '<a class="govuk-link" data-qa="sub_criteria_name" href="{}">{}</a>'.format(
