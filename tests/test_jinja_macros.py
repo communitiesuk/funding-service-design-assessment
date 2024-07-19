@@ -59,7 +59,7 @@ def default_flask_g():
 class TestJinjaMacros(object):
     def test_criteria_macro_lead_assessor(self, request_ctx):
         rendered_html = render_template_string(
-            "{{criteria_element(criteria, name_classes, application_id, max_possible_sub_criteria_score,prev,next)}}",
+            "{{criteria_element(criteria, name_classes, application_id, max_possible_sub_criteria_score, prev ,next)}}",
             criteria_element=get_template_attribute(
                 "macros/criteria_element.html", "criteria_element"
             ),
@@ -88,9 +88,10 @@ class TestJinjaMacros(object):
             name_classes="example-class",
             application_id=1,
             max_possible_sub_criteria_score=4,
-            g=default_flask_g(),
             prev=None,
             next=None,
+            g=default_flask_g(),
+
         )
 
         soup = BeautifulSoup(rendered_html, "html.parser")
@@ -170,8 +171,6 @@ class TestJinjaMacros(object):
             name_classes="example-class",
             application_id=1,
             g=g,
-            prev=None,
-            next=None,
         )
 
         soup = BeautifulSoup(rendered_html, "html.parser")

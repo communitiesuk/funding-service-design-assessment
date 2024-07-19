@@ -1,11 +1,19 @@
 {%- from "govuk_frontend_jinja/components/table/macro.html" import govukTable -%}
-{% macro criteria_element(criteria, name_classes, application_id, max_possible_sub_criteria_score, prev, next) %}
+{% macro criteria_element(criteria, name_classes, application_id, max_possible_sub_criteria_score, prev=None, next=None) %}
 
     {% set rows = [] %}
     {% for sub_criteria in criteria.sub_criterias %}
-        {%  set prev_subcriteria = criteria.sub_criterias[loop.index0 - 1] if not loop.first else prev|last %}
+        {% if not loop.first %}
+            {%  set prev_subcriteria = criteria.sub_criterias[loop.index0 - 1] %}
+        {% elif loop.first %}
+             {%  set prev_subcriteria = prev | last if prev else None %}
+        {% endif %}
+        {% if not loop.last %}
+            {%  set next_subcriteria = criteria.sub_criterias[loop.index0 + 1] %}
+        {% elif loop.first %}
+             {%  set next_subcriteria = next | first if next else None %}
+        {% endif %}
 
-        {%  set next_subcriteria = criteria.sub_criterias[loop.index0 + 1] if not loop.last else next|first %}
 
         {{ "\n" +" current" + sub_criteria.name }}
         {% if prev_subcriteria %}
