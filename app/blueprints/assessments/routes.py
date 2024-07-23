@@ -371,11 +371,6 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
         if g.account_id in application["assigned_to_ids"]
     ]
 
-    fund_user_aliases = [
-        user["full_name"] if user["full_name"] else user["email_address"]
-        for user in users_for_fund
-    ]
-
     reporting_to_user_applications = [
         overview
         for overview in post_processed_overviews
@@ -386,23 +381,6 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
             for assoc in overview["user_associations"]
         )
     ]
-
-    # Filter by assigned to here as it's not a searchable parameter on assessment store
-    if "assigned_to" in search_params and post_processed_overviews:
-        if search_params["assigned_to"].upper() == "ALL":
-            pass
-        elif search_params["assigned_to"].upper() == "NOT ASSIGNED":
-            post_processed_overviews = [
-                overview
-                for overview in post_processed_overviews
-                if len(overview["assigned_to_names"]) == 0
-            ]
-        else:
-            post_processed_overviews = [
-                overview
-                for overview in post_processed_overviews
-                if search_params["assigned_to"] in overview["assigned_to_names"]
-            ]
 
     return render_template(
         "fund_dashboard.html",
@@ -431,7 +409,7 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
         local_authorities=all_application_locations._local_authorities,
         migration_banner_enabled=Config.MIGRATION_BANNER_ENABLED,
         dpi_filters=dpi_filters,
-        users=["All", "Not assigned"] + fund_user_aliases,
+        users=["All"],  # TODO: Add users api call
     )
 
 
@@ -452,6 +430,19 @@ def display_sub_criteria(
     """
     current_app.logger.info(f"Processing GET to {request.path}.")
     sub_criteria = get_sub_criteria(application_id, sub_criteria_id)
+    next_sub_criteria_id = request.args.get("next_sub_criteria_id", None)
+    prev_sub_criteria_id = request.args.get("prev_sub_criteria_id", None)
+    next_sub_criteria = (
+        get_sub_criteria(application_id, next_sub_criteria_id)
+        if next_sub_criteria_id
+        else None
+    )
+
+    prev_sub_criteria = (
+        get_sub_criteria(application_id, prev_sub_criteria_id)
+        if prev_sub_criteria_id
+        else None
+    )
     theme_id = request.args.get("theme_id", sub_criteria.themes[0].id)
     comment_form = CommentsForm()
     try:
@@ -558,6 +549,8 @@ def display_sub_criteria(
         "current_theme": current_theme,
         "flag_status": flag_status,
         "assessment_status": assessment_status,
+        "next": next_sub_criteria,
+        "previous": prev_sub_criteria,
     }
 
     theme_answers_response = get_sub_criteria_theme_answers_all(
