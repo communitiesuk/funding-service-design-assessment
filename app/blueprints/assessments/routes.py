@@ -389,9 +389,9 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
 
     # Filter by assigned to here as it's not a searchable parameter on assessment store
     if "assigned_to" in search_params and post_processed_overviews:
-        if search_params["assigned_to"] == "ALL":
+        if search_params["assigned_to"].upper() == "ALL":
             pass
-        elif search_params["assigned_to"] == "Not assigned":
+        elif search_params["assigned_to"].upper() == "NOT ASSIGNED":
             post_processed_overviews = [
                 overview
                 for overview in post_processed_overviews
