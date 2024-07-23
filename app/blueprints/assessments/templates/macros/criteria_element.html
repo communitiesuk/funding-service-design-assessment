@@ -1,15 +1,28 @@
 {%- from "govuk_frontend_jinja/components/table/macro.html" import govukTable -%}
-{% macro criteria_element(criteria, name_classes, application_id, max_possible_sub_criteria_score) %}
+{% macro criteria_element(criteria, name_classes, application_id, max_possible_sub_criteria_score, prev=None, next=None) %}
 
     {% set rows = [] %}
     {% for sub_criteria in criteria.sub_criterias %}
+            {%  set prev_subcriteria = criteria.sub_criterias[loop.index0 - 1] if not loop.first  else None %}
+            {%  set next_subcriteria = criteria.sub_criterias[loop.index0 + 1] if not loop.last  else None %}
+
+        {{ "\n" +" current" + sub_criteria.name }}
+        {% if prev_subcriteria %}
+            {{ " prev:" + prev_subcriteria.name }}
+        {% endif %}
+        {% if next_subcriteria %}
+            {{ " next:"+ next_subcriteria.name }}
+        {% endif %}
+
         {% set _ = rows.append([
             {
                 "html": '<a class="govuk-link" data-qa="sub_criteria_name" href="{}">{}</a>'.format(
                     url_for(
                         'assessment_bp.display_sub_criteria',
                          application_id=application_id,
-                         sub_criteria_id=sub_criteria.id
+                         sub_criteria_id=sub_criteria.id,
+                         prev_sub_criteria_id=prev_subcriteria.id if prev_subcriteria,
+                         next_sub_criteria_id=next_subcriteria.id if next_subcriteria
                     ),
                     sub_criteria.name
                 )
@@ -42,5 +55,12 @@
         "rows": rows,
         "classes": "govuk-!-margin-bottom-6 govuk-table-no-bottom-border"
     }) }}
+
+    {% if prev %}
+    <a class="govuk-link" href="{{ url_for('assessment_bp.display_sub_criteria', application_id=application_id, sub_criteria_id=prev.id) }}">← {{ prev.name }}</a>
+    {% endif %}
+    {% if next %}
+        <a class="govuk-link" href="{{ url_for('assessment_bp.display_sub_criteria', application_id=application_id, sub_criteria_id=next.id) }}">{{ next.name }} →</a>
+    {% endif %}
 
 {% endmacro %}
