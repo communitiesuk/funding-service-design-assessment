@@ -5,7 +5,7 @@
 {% from "macros/tags_table.html" import tags_table %}
 
 {% macro render(application_overviews, round_details, query_params, asset_types,
-assessment_statuses, show_clear_filters,
+assessment_statuses, clear_search_config,
 sort_column, sort_order, tag_option_groups, tags, tagging_purpose_config, users) -%}
 <nav class="search-bar-flex-container">
   <form method="get" class="govuk-!-width-full">
@@ -14,7 +14,7 @@ sort_column, sort_order, tag_option_groups, tags, tagging_purpose_config, users)
     'Search reference or project name',
     assessment_statuses,
     round_details,
-    show_clear_filters,
+    clear_search_config,
     tag_option_groups,
     users
     ) }}

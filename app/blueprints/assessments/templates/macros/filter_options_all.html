@@ -1,4 +1,4 @@
-{% macro filter_options(query_params, search_label, assessment_statuses, round_details, show_clear_filters, tag_option_groups, users) %}
+{% macro filter_options(query_params, search_label, assessment_statuses, round_details, clear_search_config, tag_option_groups, users) %}
 
 <fieldset class="govuk-fieldset">
     <div class="govuk-grid-row">
@@ -24,16 +24,18 @@
                 </select>
             </div>
             {% endif %}
+            {% if users|length > 0 %}
             <div class="govuk-form-group govuk-!-display-inline-block govuk-!-margin-bottom-0 govuk-!-margin-right-2">
                 <label class="govuk-label" for="filter_assigned_to">
                     Filter by assigned to
                 </label>
-                <select class="govuk-select govuk-!-width-one-quarter" id="filter_assigned_to" name="assigned_to">
+                <select class="govuk-select govuk-!-width-one-quarter" id="filter_assigned_to" name="assigned_to">{{ user }}>
                     {% for user in users %}
                         <option value='{{ user }}' {% if query_params.assigned_to==user %} selected="" {% endif %}>{{ user }}</option>
                     {% endfor %}
                 </select>
             </div>
+            {% endif %}
             <div class="govuk-form-group govuk-!-display-inline-block govuk-!-margin-bottom-0 govuk-!-margin-right-2">
                 <label class="govuk-label" for="filter_by_tag">
                     Filter by tag
@@ -57,12 +59,17 @@
                     type="submit">
                     Search
                 </button>
-                {% if show_clear_filters %}
+                {% if clear_search_config["show_clear_filters"] %}
                 <p>
+                    {# djlint:off #}
                     <a class="govuk-link govuk-link--no-visited-state" href="{{ url_for('assessment_bp.fund_dashboard',
-                                      fund_short_name=round_details.fund_short_name,
-                                      round_short_name=round_details.round_short_name,
-                                      clear_filters=true) }}" aria-label="Clear Filters">Clear search</a>
+                    fund_short_name=round_details.fund_short_name,
+                    round_short_name=round_details.round_short_name,
+                    clear_filters=true,
+                    _anchor=clear_search_config["tab_id"]) }}" aria-label="Clear Filters">
+                    Clear search
+                    </a>
+                    {# djlint:on #}
                 </p>
                 {% endif %}
             </div>

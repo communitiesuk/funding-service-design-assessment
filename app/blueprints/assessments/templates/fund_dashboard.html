@@ -103,7 +103,7 @@
         query_params,
         asset_types,
         assessment_statuses,
-        show_clear_filters,
+        {'show_clear_filters' : show_clear_filters, 'tab_id' : "all-applications"},
         sort_column,
         sort_order,
         tag_option_groups,
@@ -121,13 +121,13 @@
         query_params,
         asset_types,
         assessment_statuses,
-        show_clear_filters,
+        {'show_clear_filters' : show_clear_filters, 'tab_id' : "assigned-to-you"},
         sort_column,
         sort_order,
         tag_option_groups,
         tags,
         tagging_purpose_config,
-        users
+        []
         ) }}
         {% endset -%}
 
@@ -139,7 +139,7 @@
         query_params,
         asset_types,
         assessment_statuses,
-        show_clear_filters,
+        {'show_clear_filters' : show_clear_filters, 'tab_id' : "reporting-to-you"},
         sort_column,
         sort_order,
         tag_option_groups,

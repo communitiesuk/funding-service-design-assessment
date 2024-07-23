@@ -53,6 +53,7 @@ def test_route_landing_maintenance_mode_enabled(
             "search_term": "",
             "search_in": "project_name,short_id",
             "asset_type": "ALL",
+            "assigned_to": "ALL",
             "status": "ALL",
             "filter_by_tag": "ALL",
         },
