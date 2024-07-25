@@ -336,3 +336,49 @@ def convert_datetime_to_bst(data):
                     value=date_submitted, export_format=True
                 )
     return data
+
+
+def sort_assigned_column(first, second):
+    """
+    The ordering for the assigned column is as follows:
+        Single assignee with name
+        Single assignee with email
+        Multiple assignees with names
+        Multiple assignees with names and emails
+        Multiple emails
+        Unassigned
+    """
+
+    def get_hierachy_level(assignees):
+        level = None
+        # Check if project is unassigned. This is the highest lexicographic position
+        if len(assignees) == 0:
+            level = 6
+        # Check if project has been assigned to a single individual
+        elif len(assignees) == 1:
+            # Named user has a lower lexicographic position than an email alias
+            level = 2 if "@" in assignees[0] else 1
+        else:
+            # Otherwise multiple assignees. Named assignees come first
+            if all("@" not in assignee for assignee in assignees):
+                level = 3
+            else:
+                # Mixed named assignees and email aliases come next. Followed by email only aliases.
+                level = 5 if all("@" in assignee for assignee in assignees) else 4
+        return level
+
+    first_level = get_hierachy_level(first["assigned_to_names"])
+    second_level = get_hierachy_level(second["assigned_to_names"])
+
+    if first_level < second_level:
+        return -1
+    elif first_level > second_level:
+        return 1
+    else:
+        sorted_first = sorted(first["assigned_to_names"])
+        sorted_second = sorted(second["assigned_to_names"])
+        return (
+            -1
+            if sorted_first < sorted_second
+            else 1 if sorted_first > sorted_second else 0
+        )

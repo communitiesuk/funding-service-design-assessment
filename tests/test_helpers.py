@@ -7,6 +7,7 @@ from app.blueprints.assessments.helpers import generate_assessment_info_csv
 from app.blueprints.assessments.helpers import generate_csv_of_application
 from app.blueprints.assessments.helpers import generate_maps_from_form_names
 from app.blueprints.assessments.helpers import set_assigned_info_in_overview
+from app.blueprints.assessments.helpers import sort_assigned_column
 from app.blueprints.scoring.forms.scores_and_justifications import OneToFiveScoreForm
 from app.blueprints.scoring.forms.scores_and_justifications import ZeroToThreeScoreForm
 from app.blueprints.scoring.helpers import get_scoring_class
@@ -407,3 +408,141 @@ def test_set_assigned_info_in_overview_empty_input():
     )
     assert result == expected_output
     assert users_not_found == expected_users_not_found
+
+
+@pytest.mark.parametrize(
+    "first, second, expected",
+    [
+        (
+            {"assigned_to_names": ["John Doe"]},
+            {"assigned_to_names": ["Louis Smith"]},
+            -1,
+        ),
+        (
+            {"assigned_to_names": ["Louis Smith"]},
+            {"assigned_to_names": ["John Doe"]},
+            1,
+        ),
+        ({"assigned_to_names": ["John Doe"]}, {"assigned_to_names": ["John Doe"]}, 0),
+        (
+            {"assigned_to_names": ["john.doe@org.com"]},
+            {"assigned_to_names": ["louis.smith@org.com"]},
+            -1,
+        ),
+        (
+            {"assigned_to_names": ["louis.smith@org.com"]},
+            {"assigned_to_names": ["john.doe@org.com"]},
+            1,
+        ),
+        (
+            {"assigned_to_names": ["john.doe@org.com"]},
+            {"assigned_to_names": ["john.doe@org.com"]},
+            0,
+        ),
+        (
+            {"assigned_to_names": ["John Doe"]},
+            {"assigned_to_names": ["john.doe@org.com"]},
+            -1,
+        ),
+        (
+            {"assigned_to_names": ["john.doe@org.com"]},
+            {"assigned_to_names": ["John Doe"]},
+            1,
+        ),
+        (
+            {"assigned_to_names": ["John Doe", "Louis Smith"]},
+            {"assigned_to_names": ["Mary James", "Zack Brown"]},
+            -1,
+        ),
+        (
+            {"assigned_to_names": ["Mary James", "Zack Brown"]},
+            {"assigned_to_names": ["John Doe", "Louis Smith"]},
+            1,
+        ),
+        (
+            {"assigned_to_names": ["John Doe", "Louis Smith"]},
+            {"assigned_to_names": ["John Doe", "Louis Smith"]},
+            0,
+        ),
+        (
+            {"assigned_to_names": ["john.doe@org.com", "louis.smith@org.com"]},
+            {"assigned_to_names": ["mary.james@org.com", "zack.brown@org.com"]},
+            -1,
+        ),
+        (
+            {"assigned_to_names": ["mary.james@org.com", "zack.brown@org.com"]},
+            {"assigned_to_names": ["john.doe@org.com", "louis.smith@org.com"]},
+            1,
+        ),
+        (
+            {"assigned_to_names": ["john.doe@org.com", "louis.smith@org.com"]},
+            {"assigned_to_names": ["john.doe@org.com", "louis.smith@org.com"]},
+            0,
+        ),
+        (
+            {"assigned_to_names": ["John Doe", "louis.smith@org.com"]},
+            {"assigned_to_names": ["john.doe@org.com", "Louis Smith"]},
+            -1,
+        ),
+        (
+            {"assigned_to_names": ["john.doe@org.com", "Louis Smith"]},
+            {"assigned_to_names": ["John Doe", "louis.smith@org.com"]},
+            1,
+        ),
+        ({"assigned_to_names": []}, {"assigned_to_names": ["John Doe"]}, 1),
+        ({"assigned_to_names": ["John Doe"]}, {"assigned_to_names": []}, -1),
+        ({"assigned_to_names": []}, {"assigned_to_names": []}, 0),
+        (
+            {"assigned_to_names": ["John Doe"]},
+            {"assigned_to_names": ["John Doe", "Louis Smith"]},
+            -1,
+        ),
+        (
+            {"assigned_to_names": ["John Doe", "Louis Smith"]},
+            {"assigned_to_names": ["John Doe"]},
+            1,
+        ),
+        (
+            {"assigned_to_names": ["John Doe"]},
+            {"assigned_to_names": ["john.doe@org.com"]},
+            -1,
+        ),
+        (
+            {"assigned_to_names": ["john.doe@org.com"]},
+            {"assigned_to_names": ["John Doe"]},
+            1,
+        ),
+        (
+            {"assigned_to_names": ["john.doe@org.com"]},
+            {"assigned_to_names": ["john.doe@org.com", "louis.smith@org.com"]},
+            -1,
+        ),
+        (
+            {"assigned_to_names": ["john.doe@org.com", "louis.smith@org.com"]},
+            {"assigned_to_names": ["john.doe@org.com"]},
+            1,
+        ),
+        (
+            {"assigned_to_names": ["John Doe", "Louis Smith"]},
+            {"assigned_to_names": ["john.doe@org.com", "louis.smith@org.com"]},
+            -1,
+        ),
+        (
+            {"assigned_to_names": ["john.doe@org.com", "louis.smith@org.com"]},
+            {"assigned_to_names": ["John Doe", "Louis Smith"]},
+            1,
+        ),
+        (
+            {"assigned_to_names": ["John Doe", "louis.smith@org.com"]},
+            {"assigned_to_names": []},
+            -1,
+        ),
+        (
+            {"assigned_to_names": []},
+            {"assigned_to_names": ["John Doe", "louis.smith@org.com"]},
+            1,
+        ),
+    ],
+)
+def test_sort_assigned_column(first, second, expected):
+    assert sort_assigned_column(first, second) == expected

@@ -1,5 +1,6 @@
 import concurrent.futures
 import contextvars
+import functools
 import io
 import time
 import zipfile
@@ -43,6 +44,7 @@ from app.blueprints.assessments.helpers import get_team_flag_stats
 from app.blueprints.assessments.helpers import sanitise_export_data
 from app.blueprints.assessments.helpers import set_application_status_in_overview
 from app.blueprints.assessments.helpers import set_assigned_info_in_overview
+from app.blueprints.assessments.helpers import sort_assigned_column
 from app.blueprints.assessments.models import applicants_response
 from app.blueprints.assessments.models.file_factory import FILE_GENERATORS
 from app.blueprints.assessments.models.file_factory import (
@@ -348,6 +350,7 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
                 if x["publish_datasets"]
                 else str(x["publish_datasets"])
             ),
+            "assigned_to": functools.cmp_to_key(sort_assigned_column),
         }
 
         # Define the sorting function based on the specified column
