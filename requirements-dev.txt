@@ -179,6 +179,8 @@ funding-service-design-utils==2.0.52
     # via -r requirements.txt
 govuk-frontend-jinja==2.8.0
     # via -r requirements.txt
+greenlet==3.0.3
+    # via sqlalchemy
 gunicorn==20.1.0
     # via
     #   -r requirements.txt
@@ -303,7 +305,7 @@ platformdirs==3.0.0
     #   virtualenv
 pluggy==1.0.0
     # via pytest
-pre-commit==3.5.0
+pre-commit==3.8.0
     # via -r requirements-dev.in
 pycodestyle==2.11.1
     # via flake8
@@ -488,6 +490,7 @@ tomli==2.0.1
     #   black
     #   build
     #   flake8-pyproject
+    #   pyproject-hooks
     #   pytest
     #   pytest-env
 typing-extensions==4.5.0
