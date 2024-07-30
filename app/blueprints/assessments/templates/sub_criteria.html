@@ -49,8 +49,22 @@ Error:
 {% if migration_banner_enabled %}
     {{ migration_banner() }}
 {% endif %}
+{{ sub_criteria_heading(sub_criteria) }}
+{% for sub_criteria_loop in sub_criterias %}
 
-{{ sub_criteria_heading(sub_criteria)}}
+    {% if sub_criteria.name == sub_criteria_loop.name %}
+
+        {% set prev_subcriteria = sub_criterias[loop.index0 - 1] if not loop.index0==start_index-1 else None %}
+        {% set next_subcriteria = sub_criterias[(loop.index0 + 1)%total_sub_criterias] if not loop.index0==start_index-2  else None %}
+
+        <!-- {{ "\n" +" current: " + sub_criteria.name }}
+        {% if prev_subcriteria %}
+            {{ " prev:" + prev_subcriteria.name }}
+        {% endif %}
+        {% if next_subcriteria %}
+            {{ " next: "+ next_subcriteria.name }}
+        {% endif %} -->
+
 
 <div class="govuk-grid-row">
         <div class="govuk-grid-column-one-third">
@@ -59,6 +73,8 @@ Error:
         <div class="theme govuk-grid-column-two-thirds">
             <h3 class="govuk-heading-m response-title">Applicant's response</h3>
             {{ theme(answers_meta)}}
+            <!-- <a class="govuk-link" data-qa="sub_criteria_name" href="/assess/application_id/6f235496-49dc-43ae-ad3d-6c80a56a37a7/sub_criteria_id/engagement?prev_sub_criteria_id=community_use&amp;next_sub_criteria_id=benefits">Engagement</a> -->
+
             {{ comment(comments, False) }}
             {% if display_comment_box != True and not display_comment_edit_box %}
                 <a
@@ -87,6 +103,64 @@ Error:
                 {% if display_comment_edit_box %}
                     {{ edit_comment_box(comments, comment_id, comment_form)}}
                 {% endif %}
-        </div>
+                <div class="nav-links govuk-!-margin-top-6">
+                    {% if prev_subcriteria %}
+                    <div class="govuk-!-margin-top-6">
+                        <ul class="govuk-list">
+                            <li class="govuk-heading-m">
+                                ← <span class="govuk-tag--scored-criteria"> <b>Previous</b> </span>
+                            </li>
+                            <li>
+                                <span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
+                                <a class="govuk-link--no-visited-state" href="{{ url_for(
+                                    'assessment_bp.display_sub_criteria',
+                                    application_id=application_id,
+                                    sub_criteria_id=prev_subcriteria.id,
+                                    prev_sub_criteria_id=prev_subcriteria.id,
+                                    next_sub_criteria_id=sub_criteria.id
+                                ) }}">{{ prev_subcriteria.name }} </a>
+                            </li>
+                        </ul>
+                    </div>
+                    {% endif %}
+                    {% if next_subcriteria %}
+                    <div class="govuk-!-margin-top-6">
+                        <ul class="govuk-list">
+                            <li class="govuk-heading-m">
+
+                                →  <span class="govuk-tag--scored-criteria"> <b>Next</b> </span>
+                            </li>
+                            <li>
+                                <span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
+                                <a class="govuk-link--no-visited-state" href="{{ url_for(
+                                    'assessment_bp.display_sub_criteria',
+                                    application_id=application_id,
+                                    sub_criteria_id=next_subcriteria.id,
+                                    prev_sub_criteria_id=sub_criteria.id,
+                                    next_sub_criteria_id=next_subcriteria.id
+                                ) }}">{{ next_subcriteria.name }}</a>
+                            </li>
+                        </ul>
+                    </div>
+                    {% else %}
+                    <div>
+                        <ul class="govuk-list">
+                            <li class="govuk-heading-m ">
+                                →  <span class="govuk-tag--scored-criteria"> <b>Next</b> </span>
+                            </li>
+                            <li>
+                            <span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
+                            <a href="{{ url_for(
+                                'assessment_bp.application',
+                                application_id=application_id
+                            ) }}" class="govuk-link govuk-link--no-visited-state" data-qa="back-to-assessment-tasklist" >Back to assessment tasklist</a>
+                        </li>
+                        </ul>
+                    </div>
+                    {% endif %}
+                </div>
 </div>
+</div>
+{% endif %}
+{% endfor %}
 {% endblock content %}
