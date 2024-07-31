@@ -84,6 +84,7 @@ from app.blueprints.services.data_services import (
     get_application_sections_display_config,
 )
 from app.blueprints.services.data_services import get_assessment_progress
+from app.blueprints.services.data_services import get_assessor_task_list_state
 from app.blueprints.services.data_services import get_associated_tags_for_application
 from app.blueprints.services.data_services import get_bulk_accounts_dict
 from app.blueprints.services.data_services import get_comments
@@ -454,7 +455,34 @@ def display_sub_criteria(
     Page showing sub criteria and themes for an application
     """
     current_app.logger.info(f"Processing GET to {request.path}.")
+    _data = get_all_sub_criterias_with_application_json(application_id)
+    sub_criterias = _data["sub_criterias"]
+    subcriteris_data = get_assessor_task_list_state(application_id)
+
+    sections = subcriteris_data["sections"]
+    start_index = 0
+    unscored_subcriteria = 0
+    for section in sections:
+        if section["name"] == "Unscored":
+            unscored_subcriteria = len(section["sub_criterias"])
+
     sub_criteria = get_sub_criteria(application_id, sub_criteria_id)
+    start_index = len(sub_criterias) - unscored_subcriteria
+    total_sub_criterias = len(sub_criterias)
+    next_sub_criteria_id = request.args.get("next_sub_criteria_id", None)
+    prev_sub_criteria_id = request.args.get("prev_sub_criteria_id", None)
+    next_sub_criteria = (
+        get_sub_criteria(application_id, next_sub_criteria_id)
+        if next_sub_criteria_id
+        else None
+    )
+
+    prev_sub_criteria = (
+        get_sub_criteria(application_id, prev_sub_criteria_id)
+        if prev_sub_criteria_id
+        else None
+    )
+
     theme_id = request.args.get("theme_id", sub_criteria.themes[0].id)
     comment_form = CommentsForm()
     try:
@@ -561,6 +589,8 @@ def display_sub_criteria(
         "current_theme": current_theme,
         "flag_status": flag_status,
         "assessment_status": assessment_status,
+        "next": next_sub_criteria,
+        "previous": prev_sub_criteria,
     }
 
     theme_answers_response = get_sub_criteria_theme_answers_all(
@@ -577,6 +607,17 @@ def display_sub_criteria(
         state=state,
         migration_banner_enabled=Config.MIGRATION_BANNER_ENABLED,
         **common_template_config,
+        sub_criterias=sub_criterias,
+        start_index=start_index,
+        unscored_subcriteria=unscored_subcriteria,
+        total_sub_criterias=total_sub_criterias,
+        back_href=url_for(
+            "assessment_bp.display_sub_criteria",
+            application_id=application_id,
+            sub_criteria_id=sub_criteria_id,
+            theme_id=theme_id,
+            migration_banner_enabled=Config.MIGRATION_BANNER_ENABLED,
+        ),
     )
 
 
