@@ -9,7 +9,6 @@ pytest-flask
 pytest-mock
 pip-tools
 boto3
-beautifulsoup4==4.12.2
 black
 debugpy
 Flake8-pyproject

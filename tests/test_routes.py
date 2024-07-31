@@ -808,7 +808,7 @@ class TestRoutes:
         ), "Commenter should receive a 302 to authenticator when trying to access the sub criteria scoring page"
         assert (
             response.location
-            == "https://authenticator/service/user?roles_required=TF_LEAD_ASSESSOR|TF_ASSESSOR"  # noqa
+            == "https://authenticator/service/user?roles_required=TF_LEAD_ASSESSOR%7CTF_ASSESSOR"  # noqa
         )
 
     def test_homepage_route_accessible(self, flask_test_client, mock_get_funds):
