@@ -91,7 +91,6 @@ class TestJinjaMacros(object):
             prev=None,
             next=None,
             g=default_flask_g(),
-
         )
 
         soup = BeautifulSoup(rendered_html, "html.parser")
