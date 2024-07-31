@@ -101,6 +101,8 @@ from app.blueprints.services.data_services import get_users_for_fund
 from app.blueprints.services.data_services import match_comment_to_theme
 from app.blueprints.services.data_services import submit_comment
 from app.blueprints.services.models.comment import CommentType
+from app.blueprints.services.models.fund import Fund
+from app.blueprints.services.models.round import Round
 from app.blueprints.services.models.theme import Theme
 from app.blueprints.services.shared_data_helpers import get_state_for_tasklist_banner
 from app.blueprints.shared.filters import utc_to_bst
@@ -174,68 +176,10 @@ def _handle_all_uploaded_documents(application_id):
     )
 
 
-@assessment_bp.route("/fund_dashboard/", methods=["GET"])
-def old_landing():
-    return redirect("/assess/assessor_tool_dashboard/")
-
-
-@assessment_bp.route("/assessor_tool_dashboard/", methods=["GET"])
-def landing():
-    filters = landing_filters._replace(
-        **{k: v for k, v in request.args.items() if k in landing_filters._fields}
-    )  # noqa
-    funds = [
-        f
-        for f in get_funds(get_ttl_hash(seconds=Config.LRU_CACHE_TIME))
-        if has_access_to_fund(f.short_name) and fund_matches_filters(f, filters)
-    ]
-    sorted_funds_map = OrderedDict(
-        (fund.id, fund) for fund in sorted(funds, key=lambda f: f.name)
-    )
-
-    round_summaries = {fund.id: create_round_summaries(fund, filters) for fund in funds}
-
-    # print(f"fund summaries:=>  {round_summaries}")
-    return render_template(
-        "assessor_tool_dashboard.html",
-        fund_summaries=round_summaries,
-        funds=sorted_funds_map,
-        todays_date=utc_to_bst(datetime.now().strftime("%Y-%m-%dT%H:%M:%S")),
-        landing_filters=filters,
-        has_any_assessor_role=any(
-            rs.access_controller.has_any_assessor_role
-            for rsl in round_summaries.values()
-            for rs in rsl
-        ),
-        migration_banner_enabled=Config.MIGRATION_BANNER_ENABLED,
-    )
-
-
-@assessment_bp.route(
-    "/fund_dashboard/<fund_short_name>/<round_short_name>/",
-    methods=["GET"],
-)
-@check_access_fund_short_name_round_sn
-def fund_dashboard(fund_short_name: str, round_short_name: str):
-
+def _get_fund_dashboard_data(fund: Fund, round: Round, request):
     search_params = {**search_params_default}
 
-    fund = get_fund(
-        fund_short_name,
-        use_short_name=True,
-        ttl_hash=get_ttl_hash(Config.LRU_CACHE_TIME),
-    )
-    if not fund:
-        return redirect("/assess/assessor_tool_dashboard/")
-    _round = get_round(
-        fund_short_name,
-        round_short_name,
-        use_short_name=True,
-        ttl_hash=get_ttl_hash(Config.LRU_CACHE_TIME),
-    )
-    if not _round:
-        return redirect("/assess/assessor_tool_dashboard/")
-    fund_id, round_id = fund.id, _round.id
+    fund_id, round_id = fund.id, round.id
 
     # matches the query parameters provided in the search and filter form
     search_params, show_clear_filters = match_search_params(search_params, request.args)
@@ -264,7 +208,7 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
     # Get all the users for the fund
     future_users_for_fund = thread_executor.submit(
         get_users_for_fund,
-        fund_short_name,
+        fund.short_name,
     )
 
     future_active_fund_round_tags = thread_executor.submit(
@@ -293,15 +237,15 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
         del search_params["countries"]
 
     round_details = {
-        "assessment_deadline": _round.assessment_deadline,
-        "round_title": _round.title,
+        "assessment_deadline": round.assessment_deadline,
+        "round_title": round.title,
         "fund_name": fund.name,
-        "fund_short_name": fund_short_name,
-        "round_short_name": round_short_name,
-        "is_expression_of_interest": _round.is_expression_of_interest,
+        "fund_short_name": fund.short_name,
+        "round_short_name": round.short_name,
+        "is_expression_of_interest": round.is_expression_of_interest,
     }
 
-    is_active_status = is_after_today(_round.assessment_deadline)
+    is_active_status = is_after_today(round.assessment_deadline)
     post_processed_overviews = (
         get_assessment_progress(application_overviews, fund_id, round_id)
         if application_overviews
@@ -411,35 +355,257 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
                 if search_params["assigned_to"] in overview["assigned_to_names"]
             ]
 
-    return render_template(
-        "fund_dashboard.html",
-        user=g.user,
-        application_overviews=post_processed_overviews,
-        assigned_applications=assigned_applications,
-        reporting_to_user_applications=reporting_to_user_applications,
-        round_details=round_details,
-        query_params=search_params,
-        asset_types=asset_types,
-        funding_types=funding_types,
-        cohort=cohort,
-        assessment_statuses=assessment_statuses,
-        joint_application_options=joint_application_options,
-        show_clear_filters=show_clear_filters,
-        stats=unfiltered_stats,
-        team_flag_stats=teams_flag_stats,
-        is_active_status=is_active_status,
-        sort_column=sort_column,
-        sort_order=sort_order,
-        tag_option_groups=tag_option_groups,
-        tags=tags_in_application_map,
-        tagging_purpose_config=Config.TAGGING_PURPOSE_CONFIG,
-        countries=all_application_locations.countries,
-        regions=all_application_locations.regions,
-        local_authorities=all_application_locations._local_authorities,
-        migration_banner_enabled=Config.MIGRATION_BANNER_ENABLED,
-        dpi_filters=dpi_filters,
-        users=["All", "Not assigned"] + fund_user_aliases,
+    return {
+        # "user":g.user,
+        "application_overviews": post_processed_overviews,
+        "assigned_applications": assigned_applications,
+        "reporting_to_user_applications": reporting_to_user_applications,
+        "round_details": round_details,
+        "query_params": search_params,
+        "asset_types": asset_types,
+        "funding_types": funding_types,
+        "cohort": cohort,
+        "assessment_statuses": assessment_statuses,
+        "joint_application_options": joint_application_options,
+        "display_config": {"show_clear_filters": show_clear_filters},
+        "stats": unfiltered_stats,
+        "team_flag_stats": teams_flag_stats,
+        "is_active_status": is_active_status,
+        "sort_column": sort_column,
+        "sort_order": sort_order,
+        "tag_option_groups": tag_option_groups,
+        "tags": tags_in_application_map,
+        "tagging_purpose_config": Config.TAGGING_PURPOSE_CONFIG,
+        "countries": all_application_locations.countries,
+        "regions": all_application_locations.regions,
+        "local_authorities": all_application_locations._local_authorities,
+        "migration_banner_enabled": Config.MIGRATION_BANNER_ENABLED,
+        "dpi_filters": dpi_filters,
+        "users": ["All", "Not assigned"] + fund_user_aliases,
+    }
+
+
+@assessment_bp.route("/fund_dashboard/", methods=["GET"])
+def old_landing():
+    return redirect("/assess/assessor_tool_dashboard/")
+
+
+@assessment_bp.route("/assessor_tool_dashboard/", methods=["GET"])
+def landing():
+    filters = landing_filters._replace(
+        **{k: v for k, v in request.args.items() if k in landing_filters._fields}
+    )  # noqa
+    funds = [
+        f
+        for f in get_funds(get_ttl_hash(seconds=Config.LRU_CACHE_TIME))
+        if has_access_to_fund(f.short_name) and fund_matches_filters(f, filters)
+    ]
+    sorted_funds_map = OrderedDict(
+        (fund.id, fund) for fund in sorted(funds, key=lambda f: f.name)
     )
+
+    round_summaries = {fund.id: create_round_summaries(fund, filters) for fund in funds}
+
+    # print(f"fund summaries:=>  {round_summaries}")
+    return render_template(
+        "assessor_tool_dashboard.html",
+        fund_summaries=round_summaries,
+        funds=sorted_funds_map,
+        todays_date=utc_to_bst(datetime.now().strftime("%Y-%m-%dT%H:%M:%S")),
+        landing_filters=filters,
+        has_any_assessor_role=any(
+            rs.access_controller.has_any_assessor_role
+            for rsl in round_summaries.values()
+            for rs in rsl
+        ),
+        migration_banner_enabled=Config.MIGRATION_BANNER_ENABLED,
+    )
+
+
+@assessment_bp.route(
+    "/assign/<fund_short_name>/<round_short_name>/",
+    methods=["GET", "POST"],
+)
+@check_access_fund_short_name_round_sn
+def assign_assessments(fund_short_name: str, round_short_name: str):
+    fund = get_fund(
+        fund_short_name,
+        use_short_name=True,
+        ttl_hash=get_ttl_hash(Config.LRU_CACHE_TIME),
+    )
+    if not fund:
+        return redirect("/assess/assessor_tool_dashboard/")
+
+    round = get_round(
+        fund_short_name,
+        round_short_name,
+        use_short_name=True,
+        ttl_hash=get_ttl_hash(Config.LRU_CACHE_TIME),
+    )
+    if not round:
+        return redirect("/assess/assessor_tool_dashboard/")
+
+    dashboard_data = _get_fund_dashboard_data(fund, round, request)
+
+    return render_template("assign_assessments.html", user=g.user, **dashboard_data)
+
+
+@assessment_bp.route(
+    "/assign/<fund_short_name>/<round_short_name>/type",
+    methods=["POST"],
+)
+@check_access_fund_short_name_round_sn
+def assessor_type(fund_short_name: str, round_short_name: str):
+
+    selected_assessments = request.form.getlist("selected_assessments")
+
+    fund = get_fund(
+        fund_short_name,
+        use_short_name=True,
+        ttl_hash=get_ttl_hash(Config.LRU_CACHE_TIME),
+    )
+    if not fund:
+        return redirect("/assess/assessor_tool_dashboard/")
+
+    round = get_round(
+        fund_short_name,
+        round_short_name,
+        use_short_name=True,
+        ttl_hash=get_ttl_hash(Config.LRU_CACHE_TIME),
+    )
+
+    round_details = {
+        "assessment_deadline": round.assessment_deadline,
+        "round_title": round.title,
+        "fund_name": fund.name,
+        "fund_short_name": fund_short_name,
+        "round_short_name": round_short_name,
+        "is_expression_of_interest": round.is_expression_of_interest,
+    }
+
+    all_applications_metadata = get_application_overviews(fund.id, round.id, "")
+
+    unfiltered_stats = process_assessments_stats(all_applications_metadata)
+
+    return render_template(
+        "assessor_type.html",
+        selected_assessments=selected_assessments,
+        round_details=round_details,
+        stats=unfiltered_stats,
+    )
+
+
+@assessment_bp.route(
+    "/assign/<fund_short_name>/<round_short_name>/assessors",
+    methods=["POST"],
+)
+@check_access_fund_short_name_round_sn
+def assessor_type_list(fund_short_name: str, round_short_name: str):
+    selected_assessments = request.form.getlist("selected_assessments")
+    assessor_type = request.form.getlist("assessor_role")[0]
+
+    fund = get_fund(
+        fund_short_name,
+        use_short_name=True,
+        ttl_hash=get_ttl_hash(Config.LRU_CACHE_TIME),
+    )
+    if not fund:
+        return redirect("/assess/assessor_tool_dashboard/")
+
+    round = get_round(
+        fund_short_name,
+        round_short_name,
+        use_short_name=True,
+        ttl_hash=get_ttl_hash(Config.LRU_CACHE_TIME),
+    )
+
+    round_details = {
+        "assessment_deadline": round.assessment_deadline,
+        "round_title": round.title,
+        "fund_name": fund.name,
+        "fund_short_name": fund_short_name,
+        "round_short_name": round_short_name,
+        "is_expression_of_interest": round.is_expression_of_interest,
+    }
+
+    thread_executor = ContextAwareExecutor(
+        max_workers=4,
+        thread_name_prefix="fund-dashboard-request",
+        flask_app=current_app,
+    )
+
+    # The first call is to get the location data such as country, region and local_authority
+    # from all the existing applications (i.e without search parameters as we don't want to filter
+    # the stats at all).  see https://dluhcdigital.atlassian.net/browse/FS-3249
+    future_all_applications_metadata = thread_executor.submit(
+        get_application_overviews, fund.id, round.id, ""
+    )
+
+    # Get all the users for the fund
+    future_users_for_fund = thread_executor.submit(
+        get_users_for_fund,
+        fund.short_name,
+        None,  # round_short_name,
+        True,
+        False,
+    )
+
+    all_applications_metadata = future_all_applications_metadata.result()
+    users_for_fund = future_users_for_fund.result()
+
+    if assessor_type.lower() == "lead_assessor":
+        selectable_users = [
+            user
+            for user in users_for_fund
+            if any("LEAD_ASSESSOR" in role for role in user["roles"])
+        ]
+    else:
+        selectable_users = [
+            user
+            for user in users_for_fund
+            if any(
+                "ASSESSOR" in role and "LEAD_ASSESSOR" not in role
+                for role in user["roles"]
+            )
+        ]
+
+    unfiltered_stats = process_assessments_stats(all_applications_metadata)
+
+    return render_template(
+        "select_assessor.html",
+        selected_assessments=selected_assessments,
+        round_details=round_details,
+        stats=unfiltered_stats,
+        users=selectable_users,
+    )
+
+
+@assessment_bp.route(
+    "/fund_dashboard/<fund_short_name>/<round_short_name>/",
+    methods=["GET"],
+)
+@check_access_fund_short_name_round_sn
+def fund_dashboard(fund_short_name: str, round_short_name: str):
+
+    fund = get_fund(
+        fund_short_name,
+        use_short_name=True,
+        ttl_hash=get_ttl_hash(Config.LRU_CACHE_TIME),
+    )
+    if not fund:
+        return redirect("/assess/assessor_tool_dashboard/")
+    round = get_round(
+        fund_short_name,
+        round_short_name,
+        use_short_name=True,
+        ttl_hash=get_ttl_hash(Config.LRU_CACHE_TIME),
+    )
+    if not round:
+        return redirect("/assess/assessor_tool_dashboard/")
+
+    dashboard_data = _get_fund_dashboard_data(fund, round, request)
+
+    return render_template("fund_dashboard.html", user=g.user, **dashboard_data)
 
 
 @assessment_bp.route(
