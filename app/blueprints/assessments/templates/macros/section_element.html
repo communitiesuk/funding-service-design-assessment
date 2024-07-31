@@ -11,10 +11,14 @@
     </p>
     <dl class="govuk-summary-list">
         {% for sub_criteria in sub_criterias %}
+            {% set prev_subcriteria = sub_criterias[loop.index0 - 1] if prev else None %}
+            {% set next_subcriteria = sub_criterias[loop.index0 + 1] if next else None %}
             {% set sub_criteria_url = url_for(
                 'assessment_bp.display_sub_criteria',
                 application_id=application_id,
-                sub_criteria_id=sub_criteria.id
+                sub_criteria_id=sub_criteria.id,
+                prev_sub_criteria_id=prev_subcriteria.id if prev_subcriteria,
+                next_sub_criteria_id=next_subcriteria.id if next_subcriteria
             ) %}
 
             <div class="govuk-summary-list__row">

@@ -181,11 +181,13 @@
             <h2 class="govuk-heading-l govuk-!-margin-top-8">Scored</h2>
             <p class="govuk-body">Assess all responses under each sub criteria.</p>
             {% for criteria in state.criterias %}
+                {% set prev_criteria = state.criterias[loop.index0 - 1] if not loop.first else None %}
+                {% set next_criteria = state.criterias[loop.index0 + 1] if not loop.last else None %}
                 {% set name_classes = "govuk-heading-m govuk-!-margin-bottom-2" %}
                 {% if loop.index > 0 %}
                     {% set name_classes = "govuk-heading-m govuk-!-margin-bottom-2 govuk-!-margin-top-8" %}
                 {% endif %}
-                {{ criteria_element(criteria, name_classes, application_id, max_possible_sub_criteria_score) }}
+                {{ criteria_element(criteria, name_classes, application_id, max_possible_sub_criteria_score, prev=prev_criteria, next=next_criteria) }}
             {% endfor %}
         {% endif %}
     </div>
