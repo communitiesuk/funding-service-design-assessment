@@ -106,13 +106,28 @@ def get_application_overviews(fund_id, round_id, search_params):
     return overviews_response
 
 
-def get_users_for_fund(fund_short_name):
+def get_users_for_fund(
+    fund_short_name,
+    round_short_name=None,
+    include_assessors=None,
+    include_commenters=None,
+):
+    query_params = {}
+    if round_short_name:
+        query_params["round_short_name"] = round_short_name
+
+    if include_assessors:
+        query_params["include_assessors"] = include_assessors
+
+    if include_commenters:
+        query_params["include_commenters"] = include_commenters
+
     users_for_fund = (Config.ACCOUNT_STORE_API_HOST) + Config.USER_FUND_ENDPOINT.format(
         fund_short_name=fund_short_name
     )
 
     current_app.logger.info(f"Endpoint '{users_for_fund}'.")
-    users_for_fund_response = get_data(users_for_fund)
+    users_for_fund_response = get_data(users_for_fund, query_params)
 
     return users_for_fund_response
 

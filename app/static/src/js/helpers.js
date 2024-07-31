@@ -66,3 +66,24 @@ Array.from(tabAnchors).forEach(tabAnchor => {
         }
     });
 })
+
+
+const select_all_assessments = document.getElementById('select_all_for_assignment')
+if (select_all_assessments) {
+  select_all_assessments.addEventListener('change', function(e) {
+    var checkboxes = document.querySelectorAll('input[name="selected_assessments"]');
+    checkboxes.forEach(function(checkbox) {
+      checkbox.checked = e.target.checked;
+    });
+  });
+}
+
+const select_all_users = document.getElementById('select_all_users')
+if (select_all_users) {
+  select_all_users.addEventListener('change', function(e) {
+    var checkboxes = document.querySelectorAll('input[name="selected_users"]');
+    checkboxes.forEach(function(checkbox) {
+        checkbox.checked = e.target.checked;
+    });
+  });
+}
