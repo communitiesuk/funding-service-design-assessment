@@ -31,6 +31,10 @@ from app.blueprints.assessments.activity_trail import add_user_info
 from app.blueprints.assessments.activity_trail import filter_all_activities
 from app.blueprints.assessments.activity_trail import select_filters
 from app.blueprints.assessments.forms.assessment_form import AssessmentCompleteForm
+from app.blueprints.assessments.forms.assignment_forms import AssessmentAssignmentForm
+from app.blueprints.assessments.forms.assignment_forms import AssessorChoiceForm
+from app.blueprints.assessments.forms.assignment_forms import AssessorTypeForm
+from app.blueprints.assessments.forms.assignment_forms import AssignmentOverviewForm
 from app.blueprints.assessments.forms.comments_form import CommentsForm
 from app.blueprints.assessments.forms.mark_qa_complete_form import MarkQaCompleteForm
 from app.blueprints.assessments.helpers import convert_datetime_to_bst
@@ -428,6 +432,21 @@ def landing():
 )
 @check_access_fund_short_name_round_sn
 def assign_assessments(fund_short_name: str, round_short_name: str):
+
+    selected_assessments = request.form.getlist("selected_assessments")
+
+    form = AssessmentAssignmentForm()
+
+    if form.validate_on_submit():
+        return redirect(
+            url_for(
+                "assessment_bp.assessor_type",
+                fund_short_name=fund_short_name,
+                round_short_name=round_short_name,
+            ),
+            307,
+        )
+
     fund = get_fund(
         fund_short_name,
         use_short_name=True,
@@ -447,7 +466,13 @@ def assign_assessments(fund_short_name: str, round_short_name: str):
 
     dashboard_data = _get_fund_dashboard_data(fund, round, request)
 
-    return render_template("assign_assessments.html", user=g.user, **dashboard_data)
+    return render_template(
+        "assign_assessments.html",
+        user=g.user,
+        form=form,
+        selected_assessments=selected_assessments,
+        **dashboard_data,
+    )
 
 
 @assessment_bp.route(
@@ -458,6 +483,23 @@ def assign_assessments(fund_short_name: str, round_short_name: str):
 def assessor_type(fund_short_name: str, round_short_name: str):
 
     selected_assessments = request.form.getlist("selected_assessments")
+    selected_assessor_role = (
+        request.form.getlist("assessor_role")[0]
+        if request.form.getlist("assessor_role")
+        else ""
+    )
+
+    form = AssessorTypeForm()
+
+    if form.validate_on_submit():
+        return redirect(
+            url_for(
+                "assessment_bp.assessor_type_list",
+                fund_short_name=fund_short_name,
+                round_short_name=round_short_name,
+            ),
+            307,
+        )
 
     fund = get_fund(
         fund_short_name,
@@ -490,8 +532,10 @@ def assessor_type(fund_short_name: str, round_short_name: str):
     return render_template(
         "assessor_type.html",
         selected_assessments=selected_assessments,
+        selected_assessor_role=selected_assessor_role,
         round_details=round_details,
         stats=unfiltered_stats,
+        form=form,
     )
 
 
@@ -502,7 +546,20 @@ def assessor_type(fund_short_name: str, round_short_name: str):
 @check_access_fund_short_name_round_sn
 def assessor_type_list(fund_short_name: str, round_short_name: str):
     selected_assessments = request.form.getlist("selected_assessments")
-    assessor_type = request.form.getlist("assessor_role")[0]
+    assessor_role = request.form.getlist("assessor_role")[0]
+    selected_users = request.form.getlist("selected_users")
+
+    form = AssessorChoiceForm()
+
+    if form.validate_on_submit():
+        return redirect(
+            url_for(
+                "assessment_bp.assignment_overview",
+                fund_short_name=fund_short_name,
+                round_short_name=round_short_name,
+            ),
+            307,
+        )
 
     fund = get_fund(
         fund_short_name,
@@ -553,7 +610,7 @@ def assessor_type_list(fund_short_name: str, round_short_name: str):
     all_applications_metadata = future_all_applications_metadata.result()
     users_for_fund = future_users_for_fund.result()
 
-    if assessor_type.lower() == "lead_assessor":
+    if assessor_role.lower() == "lead_assessor":
         selectable_users = [
             user
             for user in users_for_fund
@@ -574,9 +631,138 @@ def assessor_type_list(fund_short_name: str, round_short_name: str):
     return render_template(
         "select_assessor.html",
         selected_assessments=selected_assessments,
+        assessor_role=assessor_role,
         round_details=round_details,
         stats=unfiltered_stats,
         users=selectable_users,
+        selected_users=selected_users,
+        form=form,
+    )
+
+
+@assessment_bp.route(
+    "/assign/<fund_short_name>/<round_short_name>/overview",
+    methods=["POST"],
+)
+@check_access_fund_short_name_round_sn
+def assignment_overview(fund_short_name: str, round_short_name: str):
+    if "change_users" in request.form:
+        return redirect(
+            url_for(
+                "assessment_bp.assessor_type_list",
+                fund_short_name=fund_short_name,
+                round_short_name=round_short_name,
+            ),
+            307,
+        )
+
+    if "change_roles" in request.form:
+        return redirect(
+            url_for(
+                "assessment_bp.assessor_type",
+                fund_short_name=fund_short_name,
+                round_short_name=round_short_name,
+            ),
+            307,
+        )
+
+    if "change_assessments" in request.form:
+        return redirect(
+            url_for(
+                "assessment_bp.assign_assessments",
+                fund_short_name=fund_short_name,
+                round_short_name=round_short_name,
+            ),
+            307,
+        )
+
+    form = AssignmentOverviewForm()
+
+    if form.validate_on_submit():
+        # Call to backend to store data
+        print("store data")
+        return redirect(
+            url_for(
+                "assessment_bp.fund_dashboard",
+                fund_short_name=fund_short_name,
+                round_short_name=round_short_name,
+            )
+        )
+
+    selected_assessments = request.form.getlist("selected_assessments")
+    assessor_role = request.form.getlist("assessor_role")[0]
+    selected_users = request.form.getlist("selected_users")
+
+    fund = get_fund(
+        fund_short_name,
+        use_short_name=True,
+        ttl_hash=get_ttl_hash(Config.LRU_CACHE_TIME),
+    )
+    if not fund:
+        return redirect("/assess/assessor_tool_dashboard/")
+
+    round = get_round(
+        fund_short_name,
+        round_short_name,
+        use_short_name=True,
+        ttl_hash=get_ttl_hash(Config.LRU_CACHE_TIME),
+    )
+
+    round_details = {
+        "assessment_deadline": round.assessment_deadline,
+        "round_title": round.title,
+        "fund_name": fund.name,
+        "fund_short_name": fund_short_name,
+        "round_short_name": round_short_name,
+        "is_expression_of_interest": round.is_expression_of_interest,
+    }
+
+    thread_executor = ContextAwareExecutor(
+        max_workers=4,
+        thread_name_prefix="fund-dashboard-request",
+        flask_app=current_app,
+    )
+
+    # The first call is to get the location data such as country, region and local_authority
+    # from all the existing applications (i.e without search parameters as we don't want to filter
+    # the stats at all).  see https://dluhcdigital.atlassian.net/browse/FS-3249
+    future_all_applications_metadata = thread_executor.submit(
+        get_application_overviews, fund.id, round.id, ""
+    )
+
+    all_applications_metadata = future_all_applications_metadata.result()
+    selected_assessment_overview = [
+        assessment
+        for assessment in all_applications_metadata
+        if assessment["application_id"] in selected_assessments
+    ]
+
+    post_processed_overviews = get_assessment_progress(
+        selected_assessment_overview, fund.id, round.id
+    )
+
+    # get and set application status
+    post_processed_overviews = set_application_status_in_overview(
+        post_processed_overviews
+    )
+    # post_processed_overviews, users_not_mapped = set_assigned_info_in_overview(
+    #     post_processed_overviews, users_for_fund
+    # )
+
+    unfiltered_stats = process_assessments_stats(all_applications_metadata)
+
+    return render_template(
+        "assignment_overview.html",
+        selected_assessments=selected_assessments,
+        selected_users=selected_users,
+        assessor_role=assessor_role,
+        round_details=round_details,
+        stats=unfiltered_stats,
+        remove_user="John Doe",
+        assign_user="Jane Doe",
+        assessment_count=0,
+        assessments=post_processed_overviews,
+        form=form,
     )
 
 
