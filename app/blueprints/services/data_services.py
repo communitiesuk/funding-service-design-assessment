@@ -47,7 +47,7 @@ def get_data(endpoint: str, payload: Dict = None):
                 return response.json()
             else:
                 return response.content
-        elif response.status_code == 204:
+        elif response.status_code in [204, 404]:
             current_app.logger.warn(
                 f"Request successful but no resources returned for endpoint '{endpoint}'."
             )

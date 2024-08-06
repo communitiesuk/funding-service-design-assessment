@@ -374,10 +374,14 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
         if g.account_id in application["assigned_to_ids"]
     ]
 
-    fund_user_aliases = [
-        user["full_name"] if user["full_name"] else user["email_address"]
-        for user in users_for_fund
-    ]
+    fund_user_aliases = (
+        [
+            user["full_name"] if user["full_name"] else user["email_address"]
+            for user in users_for_fund
+        ]
+        if users_for_fund
+        else []
+    )
 
     reporting_to_user_applications = [
         overview
