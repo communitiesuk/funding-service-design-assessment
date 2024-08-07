@@ -844,3 +844,30 @@ def get_scoring_system(round_id: str) -> List[Flag]:
     current_app.logger.info(f"Calling endpoint '{scoring_endpoint}'.")
     scoring_system = get_data(scoring_endpoint)["scoring_system"]
     return scoring_system
+
+
+def assign_user_to_assessment(
+    application_id: str, user_id: str, assigner_id: str, update: Optional[bool] = False
+):
+    """Creates a user association between a user and an application.
+    Internally, this is how we assign a user to an assessment.
+
+    :param application_id: The application to be assigned
+    :param user_id: The id of the user to be assigned
+    :param assigner_id: The id of the user who is creating the assignment
+    :param update: update assignment if it already exists
+    """
+    assignment_endpoint = Config.ASSESSMENT_ASSOCIATE_USER_ENDPOINT.format(
+        application_id=application_id, user_id=user_id
+    )
+    if update:
+        response = requests.put(assignment_endpoint, json={"active": "true"})
+    else:
+        response = requests.post(assignment_endpoint, json={"assigner_id": assigner_id})
+    if not response.ok:
+        current_app.logger.error(
+            f"Could not get assign user {user_id} to application {application_id}"
+        )
+        return None
+
+    return response.json()
