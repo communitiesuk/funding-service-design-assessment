@@ -2,6 +2,7 @@ import concurrent.futures
 import contextvars
 import functools
 import io
+import itertools
 import time
 import zipfile
 from collections import OrderedDict
@@ -69,6 +70,7 @@ from app.blueprints.authentication.validation import (
 from app.blueprints.authentication.validation import has_access_to_fund
 from app.blueprints.scoring.helpers import get_scoring_class
 from app.blueprints.services.aws import get_file_for_download_from_aws
+from app.blueprints.services.data_services import assign_user_to_assessment
 from app.blueprints.services.data_services import (
     get_all_associated_tags_for_application,
 )
@@ -91,6 +93,7 @@ from app.blueprints.services.data_services import get_assessment_progress
 from app.blueprints.services.data_services import get_associated_tags_for_application
 from app.blueprints.services.data_services import get_bulk_accounts_dict
 from app.blueprints.services.data_services import get_comments
+from app.blueprints.services.data_services import get_data
 from app.blueprints.services.data_services import get_flags
 from app.blueprints.services.data_services import get_fund
 from app.blueprints.services.data_services import get_funds
@@ -676,11 +679,60 @@ def assignment_overview(fund_short_name: str, round_short_name: str):
             307,
         )
 
+    selected_assessments = request.form.getlist("selected_assessments")
+    assessor_role = request.form.getlist("assessor_role")[0]
+    selected_user_ids = request.form.getlist("selected_users")
+
     form = AssignmentOverviewForm()
 
+    thread_executor = ContextAwareExecutor(
+        max_workers=4,
+        thread_name_prefix="fund-dashboard-request",
+        flask_app=current_app,
+    )
+
     if form.validate_on_submit():
-        # Call to backend to store data
-        print("store data")
+        # Check for existing assignments between user and application
+        future_to_app = {
+            thread_executor.submit(
+                get_data,
+                Config.ASSESSMENT_ASSIGNED_USERS_ENDPOINT.format(
+                    application_id=application_id
+                ),
+            ): application_id
+            for application_id in selected_assessments
+        }
+        existing_assignments = set()
+
+        for future in concurrent.futures.as_completed(future_to_app):
+            application_id = future_to_app[future]
+            data = future.result()
+            if data:
+                existing_assignments.update(
+                    assignment["user_id"] + "," + application_id for assignment in data
+                )
+
+        future_assignments = {}
+        for user_id, application_id in itertools.product(
+            selected_user_ids, selected_assessments
+        ):
+            key = user_id + "," + application_id
+            future = thread_executor.submit(
+                assign_user_to_assessment,
+                application_id,
+                user_id,
+                g.account_id,
+                True if key in existing_assignments else False,
+            )
+            future_assignments[future] = key
+
+        for future in concurrent.futures.as_completed(future_assignments):
+            if future.result() is None:
+                user_id, application_id = future_assignments[future].split(",")
+                current_app.logger.error(
+                    f"Could not create assignment for user {user_id} and application {application_id}"
+                )
+
         return redirect(
             url_for(
                 "assessment_bp.fund_dashboard",
@@ -688,10 +740,6 @@ def assignment_overview(fund_short_name: str, round_short_name: str):
                 round_short_name=round_short_name,
             )
         )
-
-    selected_assessments = request.form.getlist("selected_assessments")
-    assessor_role = request.form.getlist("assessor_role")[0]
-    selected_users = request.form.getlist("selected_users")
 
     fund = get_fund(
         fund_short_name,
@@ -717,12 +765,6 @@ def assignment_overview(fund_short_name: str, round_short_name: str):
         "is_expression_of_interest": round.is_expression_of_interest,
     }
 
-    thread_executor = ContextAwareExecutor(
-        max_workers=4,
-        thread_name_prefix="fund-dashboard-request",
-        flask_app=current_app,
-    )
-
     # The first call is to get the location data such as country, region and local_authority
     # from all the existing applications (i.e without search parameters as we don't want to filter
     # the stats at all).  see https://dluhcdigital.atlassian.net/browse/FS-3249
@@ -730,7 +772,28 @@ def assignment_overview(fund_short_name: str, round_short_name: str):
         get_application_overviews, fund.id, round.id, ""
     )
 
+    # Get all the users for the fund
+    future_users_for_fund = thread_executor.submit(
+        get_users_for_fund,
+        fund.short_name,
+        None,  # round_short_name,
+        True,
+        False,
+    )
+
     all_applications_metadata = future_all_applications_metadata.result()
+    users_for_fund = future_users_for_fund.result()
+
+    selected_user_names = (
+        [
+            user["full_name"] if user["full_name"] else user["email_address"]
+            for user in users_for_fund
+            if user["account_id"] in selected_user_ids
+        ]
+        if users_for_fund
+        else []
+    )
+
     selected_assessment_overview = [
         assessment
         for assessment in all_applications_metadata
@@ -745,22 +808,17 @@ def assignment_overview(fund_short_name: str, round_short_name: str):
     post_processed_overviews = set_application_status_in_overview(
         post_processed_overviews
     )
-    # post_processed_overviews, users_not_mapped = set_assigned_info_in_overview(
-    #     post_processed_overviews, users_for_fund
-    # )
 
     unfiltered_stats = process_assessments_stats(all_applications_metadata)
 
     return render_template(
         "assignment_overview.html",
         selected_assessments=selected_assessments,
-        selected_users=selected_users,
+        selected_user_names=selected_user_names,
+        selected_users=selected_user_ids,
         assessor_role=assessor_role,
         round_details=round_details,
         stats=unfiltered_stats,
-        remove_user="John Doe",
-        assign_user="Jane Doe",
-        assessment_count=0,
         assessments=post_processed_overviews,
         form=form,
     )

@@ -187,6 +187,14 @@ class DefaultConfig:
     )
     ASSESSMENT_TAG_TYPES_ENDPOINT = ASSESSMENT_STORE_API_HOST + "/tag_types"
 
+    ASSESSMENT_ASSOCIATE_USER_ENDPOINT = (
+        ASSESSMENT_STORE_API_HOST + "/application/{application_id}/user/{user_id}"
+    )
+
+    ASSESSMENT_ASSIGNED_USERS_ENDPOINT = (
+        ASSESSMENT_STORE_API_HOST + "/application/{application_id}/users"
+    )
+
     APPLICANT_EXPORT_ENDPOINT = (
         ASSESSMENT_STORE_API_HOST
         + "/application_fields_export/{fund_id}/{round_id}/{report_type}"
