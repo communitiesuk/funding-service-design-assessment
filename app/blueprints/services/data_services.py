@@ -94,6 +94,16 @@ def call_search_applications(params: dict | str):
     return applications_response
 
 
+def get_application_assignments(application_id):
+    application_assignments_endpoint = Config.ASSESSMENT_ASSIGNED_USERS_ENDPOINT.format(
+        application_id=application_id
+    )
+    current_app.logger.info(f"Endpoint '{application_assignments_endpoint}'.")
+    response = get_data(application_assignments_endpoint)
+
+    return response
+
+
 def get_application_overviews(fund_id, round_id, search_params):
     overviews_endpoint = (
         Config.ASSESSMENT_STORE_API_HOST

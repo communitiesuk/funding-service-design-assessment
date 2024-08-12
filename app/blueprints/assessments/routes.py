@@ -84,6 +84,7 @@ from app.blueprints.services.data_services import get_applicant_export
 from app.blueprints.services.data_services import (
     get_applicant_feedback_and_survey_report,
 )
+from app.blueprints.services.data_services import get_application_assignments
 from app.blueprints.services.data_services import get_application_json
 from app.blueprints.services.data_services import get_application_overviews
 from app.blueprints.services.data_services import (
@@ -93,7 +94,6 @@ from app.blueprints.services.data_services import get_assessment_progress
 from app.blueprints.services.data_services import get_associated_tags_for_application
 from app.blueprints.services.data_services import get_bulk_accounts_dict
 from app.blueprints.services.data_services import get_comments
-from app.blueprints.services.data_services import get_data
 from app.blueprints.services.data_services import get_flags
 from app.blueprints.services.data_services import get_fund
 from app.blueprints.services.data_services import get_funds
@@ -695,10 +695,8 @@ def assignment_overview(fund_short_name: str, round_short_name: str):
         # Check for existing assignments between user and application
         future_to_app = {
             thread_executor.submit(
-                get_data,
-                Config.ASSESSMENT_ASSIGNED_USERS_ENDPOINT.format(
-                    application_id=application_id
-                ),
+                get_application_assignments,
+                application_id,
             ): application_id
             for application_id in selected_assessments
         }

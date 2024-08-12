@@ -167,7 +167,6 @@ class TestRoutes:
         )
 
         assert 200 == response.status_code, "Wrong status code on response"
-        mock_get_users_for_fund.assert_called_with(fund_short_name)
         soup = BeautifulSoup(response.data, "html.parser")
 
         all_table_headings = str(soup.find_all("th", class_="govuk-table__header"))

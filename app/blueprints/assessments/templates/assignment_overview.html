@@ -36,7 +36,7 @@
             </p>
             {% else %}
             <p class="govuk-body">
-                You are about to assign <strong>{{ selected_user_names|join(', ') }} </strong> to {{ selected_assessments|length }} assessment{% if selected_assessments |length > 1 %}s{% endif %} as a {{ "lead" if assessor_role == "lead_assessor" else "general" }} assessor.
+                You are about to assign <strong>{{ selected_user_names|join(', ') }}</strong> to {{ selected_assessments|length }} assessment{% if selected_assessments |length > 1 %}s{% endif %} as a {{ "lead" if assessor_role == "lead_assessor" else "general" }} assessor.
                 {# You are about to remove <strong>{{ remove_user }}</strong> from <strong>{{ assessment_count }}</strong> assessment{% if assessment_count > 1 %}s{% endif %} and assign <strong>{{ assign_user }}</strong> to the same assessment{% if assessment_count > 1 %}s{% endif %} as a general assessor. #}
             </p>
             {% endif %}

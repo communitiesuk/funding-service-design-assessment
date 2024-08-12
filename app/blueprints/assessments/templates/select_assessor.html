@@ -34,7 +34,7 @@
                         fund_short_name=round_details.fund_short_name,
                         round_short_name=round_details.round_short_name) }}">
                 {{ form.csrf_token }}
-                <p class="govuk-body">Showing {{ users|length }} users</p>
+                <p class="govuk-body">Showing {{ users|length }} user{{ "s" if users|length > 2 else "" }}</p>
                 {% for assessment in selected_assessments %}
                     <input type="hidden" name="selected_assessments" value="{{ assessment }}">
                 {% endfor %}
