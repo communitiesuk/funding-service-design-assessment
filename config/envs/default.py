@@ -229,6 +229,11 @@ class DefaultConfig:
         ASSESSMENT_STORE_API_HOST + "/scoring-system/{round_id}"
     )
 
+    # Roles
+
+    LEAD_ASSESSOR = "LEAD_ASSESSOR"
+    ASSESSOR = "ASSESSOR"
+
     # Account store endpoints
     BULK_ACCOUNTS_ENDPOINT = ACCOUNT_STORE_API_HOST + "/bulk-accounts"
     USER_FUND_ENDPOINT = "/accounts/fund/{fund_short_name}"
@@ -326,7 +331,7 @@ class DefaultConfig:
     # Redis Feature Toggle Configuration
     REDIS_INSTANCE_URI = getenv("REDIS_INSTANCE_URI", "redis://localhost:6379")
     TOGGLES_URL = REDIS_INSTANCE_URI + "/0"
-    FEATURE_CONFIG = {"TAGGING": True}
+    FEATURE_CONFIG = {"TAGGING": True, "ASSESSMENT_ASSIGNMENT": False}
     ASSETS_AUTO_BUILD = False
 
     # LRU cache settings

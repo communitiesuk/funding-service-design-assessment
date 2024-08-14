@@ -23,6 +23,7 @@
     {% endif %}
     {% macro ApplicationsOverviewHtmlBase(heading_text) %}
     <header class="govuk-body ">
+            {% if user.highest_role_map[round_details.fund_short_name] == 'LEAD_ASSESSOR' and toggle_dict.get("ASSESSMENT_ASSIGNMENT") %}
             <section class="govuk-phase-banner govuk-grid-row">
                 <span id="empty-positioning-child" class="govuk-grid-column-two-thirds empty-positioning-child">&nbsp;</span>
                 <span class="govuk-grid-column-one-third">
@@ -33,6 +34,7 @@
                     </a>
                 </span>
             </section>
+            {% endif %}
         <h1 class="govuk-heading-l">{{ heading_text }}</h1>
     </header>
     {% endmacro -%}

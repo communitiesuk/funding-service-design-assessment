@@ -136,6 +136,8 @@ from config.display_value_mappings import joint_application_options
 from config.display_value_mappings import landing_filters
 from config.display_value_mappings import search_params_default
 
+ASSESSMENT_TOOL_DASHBOARD_PATH = "/assess/assessor_tool_dashboard/"
+
 assessment_bp = Blueprint(
     "assessment_bp",
     __name__,
@@ -232,6 +234,8 @@ def _get_fund_dashboard_data(fund: Fund, round: Round, request):
     application_overviews = future_application_overviews.result()
     active_fund_round_tags = future_active_fund_round_tags.result()
     tag_types = future_tag_types.result()
+
+    thread_executor.executor.shutdown()
 
     unfiltered_stats = process_assessments_stats(all_applications_metadata)
     all_application_locations = LocationData.from_json_blob(all_applications_metadata)
@@ -394,7 +398,7 @@ def _get_fund_dashboard_data(fund: Fund, round: Round, request):
 
 @assessment_bp.route("/fund_dashboard/", methods=["GET"])
 def old_landing():
-    return redirect("/assess/assessor_tool_dashboard/")
+    return redirect(ASSESSMENT_TOOL_DASHBOARD_PATH)
 
 
 @assessment_bp.route("/assessor_tool_dashboard/", methods=["GET"])
@@ -429,11 +433,18 @@ def landing():
     )
 
 
+"""
+Entry point (1/4) for assignment flow. This form checks the selected assessments
+and progresses to the assessor type view if successful.
+"""
+
+
 @assessment_bp.route(
     "/assign/<fund_short_name>/<round_short_name>/",
     methods=["GET", "POST"],
 )
 @check_access_fund_short_name_round_sn
+@check_access_fund_short_name_round_sn(roles_required=[Config.LEAD_ASSESSOR])
 def assign_assessments(fund_short_name: str, round_short_name: str):
 
     selected_assessments = request.form.getlist("selected_assessments")
@@ -456,7 +467,7 @@ def assign_assessments(fund_short_name: str, round_short_name: str):
         ttl_hash=get_ttl_hash(Config.LRU_CACHE_TIME),
     )
     if not fund:
-        return redirect("/assess/assessor_tool_dashboard/")
+        return redirect(ASSESSMENT_TOOL_DASHBOARD_PATH)
 
     round = get_round(
         fund_short_name,
@@ -465,7 +476,7 @@ def assign_assessments(fund_short_name: str, round_short_name: str):
         ttl_hash=get_ttl_hash(Config.LRU_CACHE_TIME),
     )
     if not round:
-        return redirect("/assess/assessor_tool_dashboard/")
+        return redirect(ASSESSMENT_TOOL_DASHBOARD_PATH)
 
     dashboard_data = _get_fund_dashboard_data(fund, round, request)
 
@@ -478,14 +489,25 @@ def assign_assessments(fund_short_name: str, round_short_name: str):
     )
 
 
+"""
+View 2/4 in the assignment flow. This form requests the type of
+assessor the user would like to assign to. Options are lead or
+general assessors. Successful submissions are routed to the
+assessor_type_list.
+"""
+
+
 @assessment_bp.route(
     "/assign/<fund_short_name>/<round_short_name>/type",
     methods=["POST"],
 )
 @check_access_fund_short_name_round_sn
+@check_access_fund_short_name_round_sn(roles_required=[Config.LEAD_ASSESSOR])
 def assessor_type(fund_short_name: str, round_short_name: str):
 
-    selected_assessments = request.form.getlist("selected_assessments")
+    if not (selected_assessments := request.form.getlist("selected_assessments")):
+        abort(500, "Required selected_assessments field to be populated")
+
     selected_assessor_role = (
         request.form.getlist("assessor_role")[0]
         if request.form.getlist("assessor_role")
@@ -510,7 +532,7 @@ def assessor_type(fund_short_name: str, round_short_name: str):
         ttl_hash=get_ttl_hash(Config.LRU_CACHE_TIME),
     )
     if not fund:
-        return redirect("/assess/assessor_tool_dashboard/")
+        return redirect(ASSESSMENT_TOOL_DASHBOARD_PATH)
 
     round = get_round(
         fund_short_name,
@@ -542,14 +564,29 @@ def assessor_type(fund_short_name: str, round_short_name: str):
     )
 
 
+"""
+View 3/4 in the assignment flow. This view displays a list of
+assessors of type chosen in the previous view. The user can
+select one or more assessors for assignment and is then routed
+to the assignment_overview page.
+"""
+
+
 @assessment_bp.route(
     "/assign/<fund_short_name>/<round_short_name>/assessors",
     methods=["POST"],
 )
 @check_access_fund_short_name_round_sn
+@check_access_fund_short_name_round_sn(roles_required=[Config.LEAD_ASSESSOR])
 def assessor_type_list(fund_short_name: str, round_short_name: str):
-    selected_assessments = request.form.getlist("selected_assessments")
-    assessor_role = request.form.getlist("assessor_role")[0]
+
+    if not (selected_assessments := request.form.getlist("selected_assessments")):
+        abort(500, "Required selected_assessments field to be populated")
+
+    if not (assessor_role := request.form.getlist("assessor_role")):
+        abort(500, "Required assessor_role field to be populated")
+
+    assessor_role = assessor_role[0]
     selected_users = request.form.getlist("selected_users")
 
     form = AssessorChoiceForm()
@@ -570,7 +607,7 @@ def assessor_type_list(fund_short_name: str, round_short_name: str):
         ttl_hash=get_ttl_hash(Config.LRU_CACHE_TIME),
     )
     if not fund:
-        return redirect("/assess/assessor_tool_dashboard/")
+        return redirect(ASSESSMENT_TOOL_DASHBOARD_PATH)
 
     round = get_round(
         fund_short_name,
@@ -613,18 +650,21 @@ def assessor_type_list(fund_short_name: str, round_short_name: str):
     all_applications_metadata = future_all_applications_metadata.result()
     users_for_fund = future_users_for_fund.result()
 
-    if assessor_role.lower() == "lead_assessor":
+    thread_executor.executor.shutdown()
+
+    # Filter out users that don't have the selected role
+    if assessor_role.lower() == Config.LEAD_ASSESSOR.lower():
         selectable_users = [
             user
             for user in users_for_fund
-            if any("LEAD_ASSESSOR" in role for role in user["roles"])
+            if any(Config.LEAD_ASSESSOR in role for role in user["roles"])
         ]
     else:
         selectable_users = [
             user
             for user in users_for_fund
             if any(
-                "ASSESSOR" in role and "LEAD_ASSESSOR" not in role
+                Config.ASSESSOR in role and Config.LEAD_ASSESSOR not in role
                 for role in user["roles"]
             )
         ]
@@ -643,12 +683,23 @@ def assessor_type_list(fund_short_name: str, round_short_name: str):
     )
 
 
+"""
+View 4/4 in the assignment flow. This view displays the choices
+selected by the user in an overview form. The user can navigate
+back to previous pages to change their selection, or they can submit
+the selection to create the assignments.
+"""
+
+
 @assessment_bp.route(
     "/assign/<fund_short_name>/<round_short_name>/overview",
     methods=["POST"],
 )
 @check_access_fund_short_name_round_sn
+@check_access_fund_short_name_round_sn(roles_required=[Config.LEAD_ASSESSOR])
 def assignment_overview(fund_short_name: str, round_short_name: str):
+
+    # Options to navigate back in the flow to change selections
     if "change_users" in request.form:
         return redirect(
             url_for(
@@ -679,15 +730,22 @@ def assignment_overview(fund_short_name: str, round_short_name: str):
             307,
         )
 
-    selected_assessments = request.form.getlist("selected_assessments")
-    assessor_role = request.form.getlist("assessor_role")[0]
-    selected_user_ids = request.form.getlist("selected_users")
+    if not (selected_assessments := request.form.getlist("selected_assessments")):
+        abort(500, "Required selected_assessments field to be populated")
+
+    if not (assessor_role := request.form.getlist("assessor_role")):
+        abort(500, "Required assessor_role field to be populated")
+
+    if not (selected_user_ids := request.form.getlist("selected_users")):
+        abort(500, "Required selected_users field to be populated")
+
+    assessor_role = assessor_role[0]
 
     form = AssignmentOverviewForm()
 
     thread_executor = ContextAwareExecutor(
         max_workers=4,
-        thread_name_prefix="fund-dashboard-request",
+        thread_name_prefix="assignment-overview-request",
         flask_app=current_app,
     )
 
@@ -700,6 +758,8 @@ def assignment_overview(fund_short_name: str, round_short_name: str):
             ): application_id
             for application_id in selected_assessments
         }
+
+        # Create set of assignments between users and assessments that already exist
         existing_assignments = set()
 
         for future in concurrent.futures.as_completed(future_to_app):
@@ -711,6 +771,9 @@ def assignment_overview(fund_short_name: str, round_short_name: str):
                 )
 
         future_assignments = {}
+
+        # Cartesian product over selected users and assessments. Check if the assignment already
+        # exists or is a new one to be created (PUT vs POST)
         for user_id, application_id in itertools.product(
             selected_user_ids, selected_assessments
         ):
@@ -724,6 +787,7 @@ def assignment_overview(fund_short_name: str, round_short_name: str):
             )
             future_assignments[future] = key
 
+        # Check for those assignments that could not be created and log them
         for future in concurrent.futures.as_completed(future_assignments):
             if future.result() is None:
                 user_id, application_id = future_assignments[future].split(",")
@@ -745,7 +809,7 @@ def assignment_overview(fund_short_name: str, round_short_name: str):
         ttl_hash=get_ttl_hash(Config.LRU_CACHE_TIME),
     )
     if not fund:
-        return redirect("/assess/assessor_tool_dashboard/")
+        return redirect(ASSESSMENT_TOOL_DASHBOARD_PATH)
 
     round = get_round(
         fund_short_name,
@@ -782,6 +846,9 @@ def assignment_overview(fund_short_name: str, round_short_name: str):
     all_applications_metadata = future_all_applications_metadata.result()
     users_for_fund = future_users_for_fund.result()
 
+    thread_executor.executor.shutdown()
+
+    # Get either name or email of those assessors that have been selected
     selected_user_names = (
         [
             user["full_name"] if user["full_name"] else user["email_address"]
@@ -792,6 +859,7 @@ def assignment_overview(fund_short_name: str, round_short_name: str):
         else []
     )
 
+    # Retain only those assessments that were selected by the user
     selected_assessment_overview = [
         assessment
         for assessment in all_applications_metadata
@@ -802,7 +870,6 @@ def assignment_overview(fund_short_name: str, round_short_name: str):
         selected_assessment_overview, fund.id, round.id
     )
 
-    # get and set application status
     post_processed_overviews = set_application_status_in_overview(
         post_processed_overviews
     )
@@ -835,7 +902,7 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
         ttl_hash=get_ttl_hash(Config.LRU_CACHE_TIME),
     )
     if not fund:
-        return redirect("/assess/assessor_tool_dashboard/")
+        return redirect(ASSESSMENT_TOOL_DASHBOARD_PATH)
     round = get_round(
         fund_short_name,
         round_short_name,
@@ -843,7 +910,7 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
         ttl_hash=get_ttl_hash(Config.LRU_CACHE_TIME),
     )
     if not round:
-        return redirect("/assess/assessor_tool_dashboard/")
+        return redirect(ASSESSMENT_TOOL_DASHBOARD_PATH)
 
     dashboard_data = _get_fund_dashboard_data(fund, round, request)
 
@@ -993,7 +1060,7 @@ def display_sub_criteria(
 
 
 @assessment_bp.route("/application/<application_id>/export", methods=["GET"])
-@check_access_application_id(roles_required=["LEAD_ASSESSOR"])
+@check_access_application_id(roles_required=[Config.LEAD_ASSESSOR])
 def generate_doc_list_for_download(application_id):
     current_app.logger.info(f"Generating docs for application id {application_id}")
     state = get_state_for_tasklist_banner(application_id)
@@ -1039,7 +1106,7 @@ def generate_doc_list_for_download(application_id):
 @assessment_bp.route(
     "/application/<application_id>/export/<short_id>/answers.<file_type>"
 )
-@check_access_application_id(roles_required=["LEAD_ASSESSOR"])
+@check_access_application_id(roles_required=[Config.LEAD_ASSESSOR])
 def download_application_answers(application_id: str, short_id: str, file_type: str):
     current_app.logger.info(
         f"Generating application Q+A download for application {application_id} in {file_type} format"
@@ -1356,7 +1423,7 @@ def activity_trail(application_id: str):
     "/assessor_export/<fund_short_name>/<round_short_name>/<report_type>",
     methods=["GET"],
 )
-@check_access_fund_short_name_round_sn(roles_required=["LEAD_ASSESSOR"])
+@check_access_fund_short_name_round_sn(roles_required=[Config.LEAD_ASSESSOR])
 def assessor_export(fund_short_name: str, round_short_name: str, report_type: str):
     _round = get_round(
         fund_short_name,
@@ -1383,7 +1450,7 @@ def assessor_export(fund_short_name: str, round_short_name: str, report_type: st
     "/feedback_export/<fund_short_name>/<round_short_name>",
     methods=["GET"],
 )
-@check_access_fund_short_name_round_sn(roles_required=["LEAD_ASSESSOR"])
+@check_access_fund_short_name_round_sn(roles_required=[Config.LEAD_ASSESSOR])
 def feedback_export(fund_short_name: str, round_short_name: str):
     _round = get_round(
         fund_short_name,
@@ -1408,7 +1475,7 @@ def feedback_export(fund_short_name: str, round_short_name: str):
 
 
 @assessment_bp.route("/qa_complete/<application_id>", methods=["GET", "POST"])
-@check_access_application_id(roles_required=["LEAD_ASSESSOR"])
+@check_access_application_id(roles_required=[Config.LEAD_ASSESSOR])
 def qa_complete(application_id):
     """
     QA complete form html page:
@@ -1441,7 +1508,7 @@ def qa_complete(application_id):
 
 
 @assessment_bp.route("/entire_application/<application_id>", methods=["GET", "POST"])
-@check_access_application_id(roles_required=["LEAD_ASSESSOR", "ASSESSOR"])
+@check_access_application_id(roles_required=[Config.LEAD_ASSESSOR, Config.ASSESSOR])
 def view_entire_application(application_id):
     """The entire application renders all the questions and answers ordered by
     themes as per the application sub_criteria/themes.
