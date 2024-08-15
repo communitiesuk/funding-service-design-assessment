@@ -115,6 +115,8 @@ funding-service-design-utils==2.0.52
     # via -r requirements.in
 govuk-frontend-jinja==2.8.0
     # via -r requirements.in
+greenlet==3.0.3
+    # via sqlalchemy
 gunicorn==20.1.0
     # via funding-service-design-utils
 html5lib==1.1
@@ -195,7 +197,9 @@ pyhanko-certvalidator==0.23.0
     #   pyhanko
     #   xhtml2pdf
 pyjwt[crypto]==2.6.0
-    # via funding-service-design-utils
+    # via
+    #   funding-service-design-utils
+    #   pyjwt
 pyopenssl==24.0.0
     # via -r requirements.in
 pypdf==3.17.0
@@ -298,7 +302,7 @@ tzlocal==5.0.1
     # via pyhanko
 uritools==4.0.1
     # via pyhanko-certvalidator
-urllib3==1.26.18
+urllib3==1.26.19
     # via
     #   botocore
     #   requests
