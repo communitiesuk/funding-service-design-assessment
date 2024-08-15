@@ -94,6 +94,16 @@ def call_search_applications(params: dict | str):
     return applications_response
 
 
+def get_application_assignments(application_id):
+    application_assignments_endpoint = Config.ASSESSMENT_ASSIGNED_USERS_ENDPOINT.format(
+        application_id=application_id
+    )
+    current_app.logger.info(f"Endpoint '{application_assignments_endpoint}'.")
+    response = get_data(application_assignments_endpoint)
+
+    return response
+
+
 def get_application_overviews(fund_id, round_id, search_params):
     overviews_endpoint = (
         Config.ASSESSMENT_STORE_API_HOST
@@ -106,13 +116,28 @@ def get_application_overviews(fund_id, round_id, search_params):
     return overviews_response
 
 
-def get_users_for_fund(fund_short_name):
+def get_users_for_fund(
+    fund_short_name,
+    round_short_name=None,
+    include_assessors=None,
+    include_commenters=None,
+):
+    query_params = {}
+    if round_short_name:
+        query_params["round_short_name"] = round_short_name
+
+    if include_assessors:
+        query_params["include_assessors"] = include_assessors
+
+    if include_commenters:
+        query_params["include_commenters"] = include_commenters
+
     users_for_fund = (Config.ACCOUNT_STORE_API_HOST) + Config.USER_FUND_ENDPOINT.format(
         fund_short_name=fund_short_name
     )
 
     current_app.logger.info(f"Endpoint '{users_for_fund}'.")
-    users_for_fund_response = get_data(users_for_fund)
+    users_for_fund_response = get_data(users_for_fund, query_params)
 
     return users_for_fund_response
 
@@ -829,3 +854,30 @@ def get_scoring_system(round_id: str) -> List[Flag]:
     current_app.logger.info(f"Calling endpoint '{scoring_endpoint}'.")
     scoring_system = get_data(scoring_endpoint)["scoring_system"]
     return scoring_system
+
+
+def assign_user_to_assessment(
+    application_id: str, user_id: str, assigner_id: str, update: Optional[bool] = False
+):
+    """Creates a user association between a user and an application.
+    Internally, this is how we assign a user to an assessment.
+
+    :param application_id: The application to be assigned
+    :param user_id: The id of the user to be assigned
+    :param assigner_id: The id of the user who is creating the assignment
+    :param update: update assignment if it already exists
+    """
+    assignment_endpoint = Config.ASSESSMENT_ASSOCIATE_USER_ENDPOINT.format(
+        application_id=application_id, user_id=user_id
+    )
+    if update:
+        response = requests.put(assignment_endpoint, json={"active": "true"})
+    else:
+        response = requests.post(assignment_endpoint, json={"assigner_id": assigner_id})
+    if not response.ok:
+        current_app.logger.error(
+            f"Could not get assign user {user_id} to application {application_id}"
+        )
+        return None
+
+    return response.json()

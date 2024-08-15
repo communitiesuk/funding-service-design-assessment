@@ -7,6 +7,7 @@ from unittest import mock
 
 import jwt as jwt
 import pytest
+import werkzeug.test
 from flask import template_rendered
 
 from app.blueprints.assessments.models.round_status import RoundStatus
@@ -145,6 +146,28 @@ def flask_test_client(app, user_token=None):
             user_token or create_valid_token(),
         )
         yield test_client
+
+
+def resolve_redirect_path(self, response, buffered=False):
+    # Custom logic here
+    response.request.environ["wsgi.input"].seek(0)
+
+    # Call the original resolve_redirect method
+    return self._original_resolve_redirect(response, buffered=buffered)
+
+
+@pytest.fixture
+def patch_resolve_redirect():
+    # Store the original resolve_redirect method
+    werkzeug.test.Client._original_resolve_redirect = (
+        werkzeug.test.Client.resolve_redirect
+    )
+
+    # Patch the resolve_redirect method with resolve_redirect_path
+    with mock.patch.object(
+        werkzeug.test.Client, "resolve_redirect", new=resolve_redirect_path
+    ):
+        yield
 
 
 @pytest.fixture(scope="function")

@@ -1,4 +1,4 @@
-{% macro filter_options(query_params, search_label, assessment_statuses, round_details, clear_search_config, tag_option_groups, users) %}
+{% macro filter_options(query_params, search_label, assessment_statuses, round_details, display_config, tag_option_groups, users) %}
 
 <fieldset class="govuk-fieldset">
     <div class="govuk-grid-row">
@@ -59,19 +59,17 @@
                     type="submit">
                     Search
                 </button>
-                {% if clear_search_config["show_clear_filters"] %}
+                {% if display_config["show_clear_filters"] %}
                 <p>
                     {# djlint:off #}
-                    <a class="govuk-link govuk-link--no-visited-state" href="{{ url_for('assessment_bp.fund_dashboard',
-                    fund_short_name=round_details.fund_short_name,
-                    round_short_name=round_details.round_short_name,
-                    clear_filters=true,
-                    _anchor=clear_search_config["tab_id"]) }}" aria-label="Clear Filters">
+                    {% set updated_url = request.url.replace(request.query_string.decode(), '') %}
+                    <a class="govuk-link govuk-link--no-visited-state" href="{{ updated_url }}?fund_short_name={{ round_details.fund_short_name }}&round_short_name={{ round_details.round_short_name }}&clear_filters=true{{ "#" + display_config["tab_id"] if "tab_id" in display_config else ""}}" aria-label="Clear Filters">
                     Clear search
                     </a>
                     {# djlint:on #}
                 </p>
                 {% endif %}
+
             </div>
         </div>
     </div>

@@ -7,3 +7,4 @@ from config.envs.default import DefaultConfig
 class TestConfig(DefaultConfig):
     # LRU cache settings
     LRU_CACHE_TIME = 300  # in seconds
+    FEATURE_CONFIG = {"TAGGING": True, "ASSESSMENT_ASSIGNMENT": True}

@@ -80,6 +80,10 @@ def all_caps_to_human(word):
         return result.capitalize()
 
 
+def add_to_dict(x, y):
+    return dict(x, **y)
+
+
 def format_project_ref(value: str):
     secions = value.split("-")
     return secions[len(secions) - 1]

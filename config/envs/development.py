@@ -82,7 +82,7 @@ class DevelopmentConfig(DefaultConfig):
     AWS_BUCKET_NAME = getenv("AWS_BUCKET_NAME")
     AWS_REGION = "eu-west-2"
 
-    FEATURE_CONFIG = {"TAGGING": True}
+    FEATURE_CONFIG = {"TAGGING": True, "ASSESSMENT_ASSIGNMENT": True}
     ASSETS_AUTO_BUILD = True
 
     # LRU cache settings

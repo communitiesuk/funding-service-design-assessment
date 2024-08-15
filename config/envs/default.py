@@ -187,6 +187,14 @@ class DefaultConfig:
     )
     ASSESSMENT_TAG_TYPES_ENDPOINT = ASSESSMENT_STORE_API_HOST + "/tag_types"
 
+    ASSESSMENT_ASSOCIATE_USER_ENDPOINT = (
+        ASSESSMENT_STORE_API_HOST + "/application/{application_id}/user/{user_id}"
+    )
+
+    ASSESSMENT_ASSIGNED_USERS_ENDPOINT = (
+        ASSESSMENT_STORE_API_HOST + "/application/{application_id}/users"
+    )
+
     APPLICANT_EXPORT_ENDPOINT = (
         ASSESSMENT_STORE_API_HOST
         + "/application_fields_export/{fund_id}/{round_id}/{report_type}"
@@ -220,6 +228,11 @@ class DefaultConfig:
     ASSESSMENT_SCORING_SYSTEM_ENDPOINT = (
         ASSESSMENT_STORE_API_HOST + "/scoring-system/{round_id}"
     )
+
+    # Roles
+
+    LEAD_ASSESSOR = "LEAD_ASSESSOR"
+    ASSESSOR = "ASSESSOR"
 
     # Account store endpoints
     BULK_ACCOUNTS_ENDPOINT = ACCOUNT_STORE_API_HOST + "/bulk-accounts"
@@ -318,7 +331,7 @@ class DefaultConfig:
     # Redis Feature Toggle Configuration
     REDIS_INSTANCE_URI = getenv("REDIS_INSTANCE_URI", "redis://localhost:6379")
     TOGGLES_URL = REDIS_INSTANCE_URI + "/0"
-    FEATURE_CONFIG = {"TAGGING": True}
+    FEATURE_CONFIG = {"TAGGING": True, "ASSESSMENT_ASSIGNMENT": False}
     ASSETS_AUTO_BUILD = False
 
     # LRU cache settings

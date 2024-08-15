@@ -28,6 +28,7 @@ from app.blueprints.assessments.routes import assessment_bp
 from app.blueprints.authentication.auth import auth_protect
 from app.blueprints.flagging.routes import flagging_bp
 from app.blueprints.scoring.routes import scoring_bp
+from app.blueprints.shared.filters import add_to_dict
 from app.blueprints.shared.filters import all_caps_to_human
 from app.blueprints.shared.filters import ast_literal_eval
 from app.blueprints.shared.filters import datetime_format
@@ -94,6 +95,7 @@ def create_app() -> Flask:
         flask_app.jinja_env.filters["ast_literal_eval"] = ast_literal_eval
         flask_app.jinja_env.filters["datetime_format"] = datetime_format
         flask_app.jinja_env.filters["utc_to_bst"] = utc_to_bst
+        flask_app.jinja_env.filters["add_to_dict"] = add_to_dict
         flask_app.jinja_env.filters["slash_separated_day_month_year"] = (
             slash_separated_day_month_year
         )
