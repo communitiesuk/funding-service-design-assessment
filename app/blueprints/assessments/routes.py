@@ -587,7 +587,6 @@ def assessor_type_list(fund_short_name: str, round_short_name: str):
         abort(500, "Required assessor_role field to be populated")
 
     assessor_role = assessor_role[0]
-    selected_users = request.form.getlist("selected_users")
 
     form = AssessorChoiceForm()
 
@@ -647,12 +646,23 @@ def assessor_type_list(fund_short_name: str, round_short_name: str):
         False,
     )
 
+    future_existing_assignments = thread_executor.submit(
+        get_application_assignments,
+        selected_assessments[0],
+    )
+
     all_applications_metadata = future_all_applications_metadata.result()
     users_for_fund = future_users_for_fund.result()
+    existing_assignments = future_existing_assignments.result()
+    all_assigned_users = set(
+        assignment["user_id"] for assignment in existing_assignments
+    )
 
     thread_executor.executor.shutdown()
 
-    # Filter out users that don't have the selected role
+    # Selectable users are the complete set of users who can be assigned the assessment
+    # Assigned users are the users who are already assigned to the assessment
+    # Selected users are those which have been selected via this form (defaults to assigned_users otherwise)
     if assessor_role.lower() == Config.LEAD_ASSESSOR.lower():
         selectable_users = [
             user
@@ -669,6 +679,17 @@ def assessor_type_list(fund_short_name: str, round_short_name: str):
             )
         ]
 
+    assigned_users = [
+        user["account_id"]
+        for user in selectable_users
+        if user["account_id"] in all_assigned_users
+    ]
+    selected_users = (
+        request.form.getlist("selected_users")
+        if request.form.getlist("selected_users")
+        else assigned_users
+    )
+
     unfiltered_stats = process_assessments_stats(all_applications_metadata)
 
     return render_template(
@@ -679,6 +700,7 @@ def assessor_type_list(fund_short_name: str, round_short_name: str):
         stats=unfiltered_stats,
         users=selectable_users,
         selected_users=selected_users,
+        assigned_users=assigned_users,
         form=form,
     )
 
