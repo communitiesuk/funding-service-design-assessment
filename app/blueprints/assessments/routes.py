@@ -1062,6 +1062,7 @@ def display_sub_criteria(
         "current_theme": current_theme,
         "flag_status": flag_status,
         "assessment_status": assessment_status,
+        "pagination": state.get_pagination_from_sub_criteria_id(sub_criteria_id),
     }
 
     theme_answers_response = get_sub_criteria_theme_answers_all(
