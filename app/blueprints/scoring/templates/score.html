@@ -7,6 +7,8 @@
 {% from "macros/comments_summary.html" import comment_summary %}
 {% from "macros/sub_criteria_heading.html" import sub_criteria_heading %}
 {% from "macros/migration_banner.html" import migration_banner %}
+{%- from "govuk_frontend_jinja/components/pagination/macro.html" import govukPagination -%}
+
 {% set pageHeading -%}
 {% if score_form.errors.get('score') or score_form.errors.get('justification') %}
 Error:
@@ -59,6 +61,22 @@ Score – {{ sub_criteria.name }} – {{ sub_criteria.project_name }}
             {{ scores_justification(score_form, rescore_form, is_rescore, latest_score, application_id,
             sub_criteria.id,state.fund_guidance_url, score_list) }}
             {{ comment_summary(comments, sub_criteria.themes) }}
+
+            <div class="govuk-grid-column-full govuk-!-margin-top-4">
+                {{ govukPagination({
+                    "previous": pagination.previous and {
+                        "labelText": pagination.previous.sub_section_name,
+                        "href": url_for("assessment_bp.display_sub_criteria", application_id=application_id, sub_criteria_id=pagination.previous.sub_section_id)
+                    },
+                    "next": {
+                        "labelText": pagination.next.sub_section_name,
+                        "href": url_for("assessment_bp.display_sub_criteria", application_id=application_id, sub_criteria_id=pagination.next.sub_section_id)
+                    } if pagination.next else {
+                        "labelText": "Back to assessment task list",
+                        "href": url_for("assessment_bp.application", application_id=application_id)
+                    }
+                }) }}
+            </div>
         </div>
 </div>
 {% endblock content %}
