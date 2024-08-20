@@ -628,7 +628,7 @@ mock_api_results = {
         "sections": [
             {
                 "name": "string",
-                "sub_criterias": [{"id": "string", "name": "string"}],
+                "sub_criterias": [{"id": "string", "name": "A fixed sub criteria"}],
             }
         ],
         "project_name": resolved_app["project_name"],
