@@ -168,3 +168,20 @@ class AssessorTaskList:
                 return item
 
         return None
+
+    def get_pagination_from_sub_criteria_id(self, sub_criteria_id):
+        sections = self.get_sub_sections_metadata()
+        index = {
+            section["sub_section_id"]: get_page(i, sections)
+            for i, section in enumerate(sections)
+        }
+        return index.get(sub_criteria_id)
+
+
+def get_page(index, sections):
+    has_previous_elements = index > 0
+    has_next_elements = index < len(sections) - 1
+    return dict(
+        previous=has_previous_elements and sections[index - 1],
+        next=has_next_elements and sections[index + 1],
+    )

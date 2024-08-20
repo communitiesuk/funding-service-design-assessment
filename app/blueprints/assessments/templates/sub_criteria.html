@@ -8,6 +8,7 @@
 {% from "macros/comments_box.html" import comment_box %}
 {% from "macros/sub_criteria_heading.html" import sub_criteria_heading %}
 {% from "macros/migration_banner.html" import migration_banner %}
+{%- from "govuk_frontend_jinja/components/pagination/macro.html" import govukPagination -%}
 
 {% set pageHeading -%}
 {% if comment_form.comment.errors %}
@@ -87,6 +88,20 @@ Error:
                 {% if display_comment_edit_box %}
                     {{ edit_comment_box(comments, comment_id, comment_form)}}
                 {% endif %}
+
+                {{ govukPagination({
+                    "previous": pagination.previous and {
+                        "labelText": pagination.previous.sub_section_name,
+                        "href": url_for("assessment_bp.display_sub_criteria", application_id=application_id, sub_criteria_id=pagination.previous.sub_section_id)
+                    },
+                    "next": {
+                        "labelText": pagination.next.sub_section_name,
+                        "href": url_for("assessment_bp.display_sub_criteria", application_id=application_id, sub_criteria_id=pagination.next.sub_section_id)
+                    } if pagination.next else {
+                        "labelText": "Back to assessment task list",
+                        "href": url_for("assessment_bp.application", application_id=application_id)
+                    }
+                }) }}
         </div>
 </div>
 {% endblock content %}
