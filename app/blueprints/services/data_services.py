@@ -101,7 +101,7 @@ def get_application_assignments(application_id):
     current_app.logger.info(f"Endpoint '{application_assignments_endpoint}'.")
     response = get_data(application_assignments_endpoint)
 
-    return response
+    return response if response is not None else []
 
 
 def get_application_overviews(fund_id, round_id, search_params):
@@ -857,7 +857,11 @@ def get_scoring_system(round_id: str) -> List[Flag]:
 
 
 def assign_user_to_assessment(
-    application_id: str, user_id: str, assigner_id: str, update: Optional[bool] = False
+    application_id: str,
+    user_id: str,
+    assigner_id: str,
+    update: Optional[bool] = False,
+    active: Optional[bool] = True,
 ):
     """Creates a user association between a user and an application.
     Internally, this is how we assign a user to an assessment.
@@ -866,12 +870,15 @@ def assign_user_to_assessment(
     :param user_id: The id of the user to be assigned
     :param assigner_id: The id of the user who is creating the assignment
     :param update: update assignment if it already exists
+    :param active: Whether or not to mark the assignment as active (only used if update is True)
     """
     assignment_endpoint = Config.ASSESSMENT_ASSOCIATE_USER_ENDPOINT.format(
         application_id=application_id, user_id=user_id
     )
     if update:
-        response = requests.put(assignment_endpoint, json={"active": "true"})
+        response = requests.put(
+            assignment_endpoint, json={"active": "true" if active else "false"}
+        )
     else:
         response = requests.post(assignment_endpoint, json={"assigner_id": assigner_id})
     if not response.ok:
