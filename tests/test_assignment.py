@@ -58,12 +58,6 @@ def test_assign_assessments_get(
 
     soup = BeautifulSoup(response.data, "html.parser")
 
-    # Check that there is a "select all" checkbox
-    select_all_checkbox = soup.find(
-        "input", {"type": "checkbox", "id": "select_all_for_assignment"}
-    )
-    assert select_all_checkbox is not None, "Select all checkbox is missing"
-
     # Check that there is a checkbox for each project
     project_checkboxes = soup.find_all(
         "input", {"type": "checkbox", "name": "selected_assessments"}
@@ -105,7 +99,7 @@ def test_assign_assessments_post(
     )
 
     form_data = {
-        "selected_assessments": ["assessment1", "assessment2"],
+        "selected_assessments": ["assessment1"],
     }
 
     headers = {
@@ -137,7 +131,6 @@ def test_assign_assessments_post(
         "input", {"type": "hidden", "name": "selected_assessments"}
     )
     assert hidden_fields[0].get("value") == "assessment1"
-    assert hidden_fields[1].get("value") == "assessment2"
 
     radio_buttons = soup.find_all("input", {"type": "radio"})
 
@@ -196,16 +189,21 @@ def test_assessor_type_post(
             _external=True,
         ),
     }
-    response = flask_test_client.post(
-        url_for(
-            "assessment_bp.assessor_type",
-            fund_short_name=fund_short_name,
-            round_short_name=round_short_name,
-        ),
-        headers=headers,
-        data=form_data,
-        follow_redirects=True,
-    )
+
+    with mock.patch(
+        "app.blueprints.assessments.routes.get_application_assignments",
+        return_value=[{"user_id": "user2"}],
+    ):
+        response = flask_test_client.post(
+            url_for(
+                "assessment_bp.assessor_type",
+                fund_short_name=fund_short_name,
+                round_short_name=round_short_name,
+            ),
+            headers=headers,
+            data=form_data,
+            follow_redirects=True,
+        )
 
     assert response.status_code == 200
 
@@ -252,6 +250,101 @@ def test_assessor_type_post(
     assert (
         checkbox is not None
     ), f"Checkbox for {fund_specific_claim_map[fund_short_name]['LEAD_ASSESSOR']['accountId']} not found"
+
+    assert not checkbox.has_attr("checked"), "Checkbox is not checked"
+
+
+@pytest.mark.mock_parameters(
+    {
+        "fund_short_name": "COF",
+        "round_short_name": "TR",
+        "expected_search_params": "",
+    }
+)
+def test_assessor_type_post_existing_assignment(
+    request,
+    flask_test_client,
+    mock_get_funds,
+    mock_get_round,
+    mock_get_fund,
+    mock_get_application_overviews,
+    mock_get_users_for_fund,
+    patch_resolve_redirect,
+):
+    params = request.node.get_closest_marker("mock_parameters").args[0]
+    fund_short_name = params["fund_short_name"]
+    round_short_name = params["round_short_name"]
+
+    flask_test_client.set_cookie(
+        "localhost",
+        "fsd_user_token",
+        create_valid_token(fund_specific_claim_map[fund_short_name]["LEAD_ASSESSOR"]),
+    )
+
+    form_data = {
+        "selected_assessments": ["assessment1"],
+        "assessor_role": ["lead_assessor"],
+    }
+
+    headers = {
+        "Referer": url_for(
+            "assessment_bp.assessor_type",
+            fund_short_name=fund_short_name,
+            round_short_name=round_short_name,
+            _external=True,
+        ),
+    }
+
+    with mock.patch(
+        "app.blueprints.assessments.routes.get_application_assignments",
+        return_value=[{"user_id": "cof-lead-assessor"}],
+    ):
+        response = flask_test_client.post(
+            url_for(
+                "assessment_bp.assessor_type",
+                fund_short_name=fund_short_name,
+                round_short_name=round_short_name,
+            ),
+            headers=headers,
+            data=form_data,
+            follow_redirects=True,
+        )
+
+    assert response.status_code == 200
+
+    soup = BeautifulSoup(response.data, "html.parser")
+
+    table_body = soup.find("tbody", class_="govuk-table__body")
+    assert table_body is not None, "Table body not found"
+
+    # Check there is only a single assignable user ("Lead Test User")
+    rows = table_body.find_all("tr", class_="govuk-table__row")
+    assert len(rows) == 1, f"Expected 1 row, found {len(rows)}"
+
+    row = rows[0]
+
+    name_cell = row.find_all("td", class_="govuk-table__cell")[1]
+    assert (
+        fund_specific_claim_map[fund_short_name]["LEAD_ASSESSOR"]["fullName"]
+        in name_cell.text.strip()
+    ), f"Expected 'Lead Test User', found {name_cell.text.strip()}"
+
+    # Check that there is a checkbox for this entry
+    checkbox = row.find(
+        "input",
+        {
+            "type": "checkbox",
+            "name": "selected_users",
+            "value": fund_specific_claim_map[fund_short_name]["LEAD_ASSESSOR"][
+                "accountId"
+            ],
+        },
+    )
+
+    assert checkbox is not None, "Checkbox not found"
+
+    # Check if the checkbox is checked
+    assert checkbox.has_attr("checked"), "Checkbox is not checked"
 
 
 @pytest.mark.mock_parameters(

@@ -9,11 +9,17 @@ class AssessmentAssignmentForm(FlaskForm):
                 # From a redirect, not a form post
                 return False
 
-            if not request.form.getlist("selected_assessments"):
+            if not (
+                selected_assessments := request.form.getlist("selected_assessments")
+            ):
                 self.form_errors.append("At least one assessment should be selected")
                 return False
-            else:
-                return True
+
+            if len(selected_assessments) > 1:
+                self.form_errors.append("At most one assessment should be selected")
+                return False
+
+            return True
 
         return False
 
@@ -28,8 +34,8 @@ class AssessorTypeForm(FlaskForm):
             if not request.form.getlist("assessor_role"):
                 self.form_errors.append("An assessor type should be selected")
                 return False
-            else:
-                return True
+
+            return True
 
         return False
 
@@ -41,11 +47,15 @@ class AssessorChoiceForm(FlaskForm):
                 # From a redirect, not a form post
                 return False
 
-            if not request.form.getlist("selected_users"):
-                self.form_errors.append("At least one assessor should be selected")
+            if set(request.form.getlist("assigned_users")) == set(
+                request.form.getlist("selected_users")
+            ):
+                self.form_errors.append(
+                    "No changes have been made to the current assignments for this application"
+                )
                 return False
-            else:
-                return True
+
+            return True
 
         return False
 

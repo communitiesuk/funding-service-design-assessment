@@ -27,6 +27,22 @@
         <header class="govuk-body">
             <h1 class="govuk-heading-l">Assign to lead assessor or general assessor</h1>
         </header>
+        {% if form.form_errors %}
+        <div class="govuk-error-summary" data-module="govuk-error-summary">
+        <div role="alert">
+            <h2 class="govuk-error-summary__title">
+            There is a problem
+            </h2>
+            <div class="govuk-error-summary__body">
+            <ul class="govuk-list govuk-error-summary__list">
+                {% for error in form.form_errors %}
+                <li><a href="#assessor-type-selection">{{ error }}</a></li>
+                {% endfor %}
+            </ul>
+            </div>
+        </div>
+        </div>
+        {% endif %}
         <div class="govuk-form-group {% if form.form_errors %} govuk-form-group--error {% endif %}">
             {% if form.form_errors %}
             <p class="govuk-error-message">
@@ -43,7 +59,7 @@
                 {% for assessment in selected_assessments %}
                 <input type="hidden" name="selected_assessments" value="{{ assessment }}">
                 {% endfor %}
-                <div class="govuk-radios">
+                <div class="govuk-radios" id="assessor-type-selection">
                     <div class="govuk-radios__item">
                         <input class="govuk-radios__input" id="lead_assessor" name="assessor_role" type="radio" value="lead_assessor" {% if selected_assessor_role == "lead_assessor" %}checked{% endif %}>
                         <label class="govuk-label govuk-radios__label" for="lead_assessor">

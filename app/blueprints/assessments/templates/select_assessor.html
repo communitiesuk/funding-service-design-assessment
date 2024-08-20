@@ -25,10 +25,26 @@
     {% endif %}
     <section id="select-assessors" class="govuk-width-container govuk-grid-column-full">
         <header class="govuk-body">
-            <h1 class="govuk-heading-l">Assign assessments to general assessor</h1>
+            <h1 class="govuk-heading-l">Assign assessment to {{ "lead" if assessor_role == "lead_assessor" else "general" }} assessor</h1>
         </header>
-        <div class="govuk-form-group {% if form.form_errors %} govuk-form-group--error {% endif %}">
-        <p class="govuk-body">Select the user/s you would like to assign these assessments to</p>
+        {% if form.form_errors %}
+        <div class="govuk-error-summary" data-module="govuk-error-summary">
+        <div role="alert">
+            <h2 class="govuk-error-summary__title">
+            There is a problem
+            </h2>
+            <div class="govuk-error-summary__body">
+            <ul class="govuk-list govuk-error-summary__list">
+                {% for error in form.form_errors %}
+                <li><a href="#assessor-selection">{{ error }}</a></li>
+                {% endfor %}
+            </ul>
+            </div>
+        </div>
+        </div>
+        {% endif %}
+        <div class="govuk-form-group">
+        <p class="govuk-body">Select the user/s you would like to assign this assessment to</p>
 
             <form method="post" action="{{ url_for('assessment_bp.assessor_type_list',
                         fund_short_name=round_details.fund_short_name,
@@ -37,6 +53,9 @@
                 <p class="govuk-body">Showing {{ users|length }} user{{ "s" if users|length > 2 else "" }}</p>
                 {% for assessment in selected_assessments %}
                     <input type="hidden" name="selected_assessments" value="{{ assessment }}">
+                {% endfor %}
+                {% for user_id in assigned_users %}
+                    <input type="hidden" name="assigned_users" value="{{ user_id }}">
                 {% endfor %}
                 <input type="hidden" name="assessor_role" value="{{ assessor_role }}">
                 {% if form.form_errors %}
@@ -48,7 +67,7 @@
                 {% endif %}
                 <input id="select_all_users" type="checkbox">
                 <label class="govuk-label govuk-checkboxes__label" for="select_all_users">Select all</label>
-                <table class="govuk-table">
+                <table class="govuk-table {% if form.form_errors %} govuk-form-group--error {% endif %}" id="assessor-selection">
                     <thead class="govuk-table__head">
                         <tr class="govuk-table__row">
                             <th scope="col" class="govuk-table__header">Select</th>
