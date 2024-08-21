@@ -21,7 +21,7 @@ def test_pagination_helper_should_parse_with_real_backend_data(
     pagination = state.get_pagination_from_sub_criteria_id("test_sub_criteria_id")
 
     assert pagination["previous"]["sub_section_name"] == "A fixed sub criteria"
-    assert pagination["next"] is False
+    assert pagination["next"] is None
 
 
 def test_pagination_should_be_none_for_missing_section_id():
@@ -39,8 +39,8 @@ def test_pagination_should_be_empty_with_only_one_section():
         ],
     )
     pagination = state.get_pagination_from_sub_criteria_id("first-section")
-    assert pagination["previous"] is False
-    assert pagination["next"] is False
+    assert pagination["previous"] is None
+    assert pagination["next"] is None
 
 
 multiple_sections_state = mock_task_list(
@@ -95,7 +95,7 @@ def test_pagination_should_have_empty_previous_when_loading_first_section():
     pagination = multiple_sections_state.get_pagination_from_sub_criteria_id(
         "first-section"
     )
-    assert pagination["previous"] is False
+    assert pagination["previous"] is None
     assert pagination["next"]["sub_section_id"] == "second-section"
 
 
@@ -104,7 +104,7 @@ def test_pagination_should_have_empty_next_when_loading_last_section():
         "second-criteria-id"
     )
     assert pagination["previous"]["sub_section_id"] == "criteria-id"
-    assert pagination["next"] is False
+    assert pagination["next"] is None
 
 
 def test_pagination_should_have_previous_next_when_loading_within_section_group():

@@ -119,4 +119,5 @@ def score(
         assessment_status=assessment_status,
         is_flaggable=False,  # Flag button is disabled in sub-criteria page
         migration_banner_enabled=Config.MIGRATION_BANNER_ENABLED,
+        pagination=state.get_pagination_from_sub_criteria_id(sub_criteria_id),
     )

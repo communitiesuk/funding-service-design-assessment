@@ -182,6 +182,6 @@ def get_page(index, sections):
     has_previous_elements = index > 0
     has_next_elements = index < len(sections) - 1
     return dict(
-        previous=has_previous_elements and sections[index - 1],
-        next=has_next_elements and sections[index + 1],
+        previous=sections[index - 1] if has_previous_elements else None,
+        next=sections[index + 1] if has_next_elements else None,
     )
