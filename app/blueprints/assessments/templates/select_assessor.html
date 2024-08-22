@@ -79,9 +79,9 @@
                         {% for user in users %}
                         <tr class="govuk-table__row">
                             <td class="govuk-table__cell">
-                                <input type="checkbox" name="selected_users" value="{{ user["account_id"] }}" {% if user["account_id"] in selected_users %}checked{% endif %}>
+                                <input type="checkbox" name="selected_users" aria-labelledby="user-{{ loop.index }}" value="{{ user["account_id"] }}" {% if user["account_id"] in selected_users %}checked{% endif %}>
                             </td>
-                            <td class="govuk-table__cell">{{ user["full_name"] }}</td>
+                            <td id="user-{{ loop.index }}" class="govuk-table__cell">{{ user["full_name"] }}</td>
                             <td class="govuk-table__cell">{{ user["email_address"] }}</td>
                         </tr>
                         {% endfor %}
