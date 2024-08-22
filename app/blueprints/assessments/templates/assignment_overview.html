@@ -36,8 +36,11 @@
             </p>
             {% else %}
             <p class="govuk-body">
-                You are about to assign <strong>{{ selected_user_names|join(', ') }}</strong> to {{ selected_assessments|length }} assessment{% if selected_assessments |length > 1 %}s{% endif %} as a {{ "lead" if assessor_role == "lead_assessor" else "general" }} assessor.
-                {# You are about to remove <strong>{{ remove_user }}</strong> from <strong>{{ assessment_count }}</strong> assessment{% if assessment_count > 1 %}s{% endif %} and assign <strong>{{ assign_user }}</strong> to the same assessment{% if assessment_count > 1 %}s{% endif %} as a general assessor. #}
+                You are about to {% if add_assign_user_names and not unassign_user_names %}assign <strong>{{ add_assign_user_names|join(', ') }}</strong> as a {{ "lead" if assessor_role == "lead_assessor" else "general" }} assessor to the selected assessment.{% endif %}{% if unassign_user_names and not add_assign_user_names %}remove <strong>{{ unassign_user_names|join(', ') }}</strong> as a {{ "lead" if assessor_role == "lead_assessor" else "general" }} assessor from the selected assessment.{% endif %}
+                {% if unassign_user_names and add_assign_user_names %}
+                <li class="govuk-body">assign <strong>{{ add_assign_user_names|join(', ') }}</strong> as a {{ "lead" if assessor_role == "lead_assessor" else "general" }} assessor to the assessment</li>
+                <li class="govuk-body">remove <strong>{{ unassign_user_names|join(', ') }}</strong> as a {{ "lead" if assessor_role == "lead_assessor" else "general" }} assessor from the assessment</li>
+                {% endif %}
             </p>
             {% endif %}
             <form method="post" action="{{ url_for('assessment_bp.assignment_overview',
@@ -57,6 +60,9 @@
             <input type="hidden" name="selected_assessments" value="{{ assessment }}">
             {% endfor %}
             <input type="hidden" name="assessor_role" value="{{ assessor_role }}">
+            {% for user_id in assigned_users %}
+            <input type="hidden" name="assigned_users" value="{{ user_id }}">
+            {% endfor %}
             {% for user in selected_users %}
             <input type="hidden" name="selected_users" value="{{ user }}">
             {% endfor %}

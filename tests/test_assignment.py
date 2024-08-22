@@ -422,7 +422,143 @@ def test_assessor_type_list_post(
     html_stripped_output = re.sub(strip_html_regx, "", str(response.data))
     assert (
         f"You are about to assign {fund_specific_claim_map[fund_short_name]['ASSESSOR']['fullName']}"
-        " to 1 assessment as a general assessor" in html_stripped_output
+        " as a general assessor to the selected assessment" in html_stripped_output
+    )
+
+
+@pytest.mark.mock_parameters(
+    {
+        "fund_short_name": "COF",
+        "round_short_name": "TR",
+        "expected_search_params": "",
+    }
+)
+def test_assignment_overview_remove_assessor(
+    request,
+    flask_test_client,
+    mock_get_funds,
+    mock_get_round,
+    mock_get_fund,
+    mock_get_application_overviews,
+    mock_get_users_for_fund,
+    mock_get_assessment_progress,
+    patch_resolve_redirect,
+):
+    params = request.node.get_closest_marker("mock_parameters").args[0]
+    fund_short_name = params["fund_short_name"]
+    round_short_name = params["round_short_name"]
+
+    flask_test_client.set_cookie(
+        "localhost",
+        "fsd_user_token",
+        create_valid_token(fund_specific_claim_map[fund_short_name]["LEAD_ASSESSOR"]),
+    )
+
+    headers = {
+        "Referer": url_for(
+            "assessment_bp.assessor_type_list",
+            fund_short_name=fund_short_name,
+            round_short_name=round_short_name,
+            _external=True,
+        ),
+    }
+
+    form_data = {
+        "selected_assessments": ["stopped_app"],
+        "assessor_role": ["general_assessor"],
+        "selected_users": [],
+        "assigned_users": [
+            fund_specific_claim_map[fund_short_name]["ASSESSOR"]["accountId"]
+        ],
+    }
+
+    response = flask_test_client.post(
+        url_for(
+            "assessment_bp.assessor_type_list",
+            fund_short_name=fund_short_name,
+            round_short_name=round_short_name,
+        ),
+        data=form_data,
+        headers=headers,
+        follow_redirects=True,
+    )
+    strip_html_regx = re.compile("<.*?>")
+    html_stripped_output = re.sub(strip_html_regx, "", str(response.data))
+    assert (
+        f"You are about to remove {fund_specific_claim_map[fund_short_name]['ASSESSOR']['fullName']}"
+        " as a general assessor from the selected assessment" in html_stripped_output
+    )
+
+
+@pytest.mark.mock_parameters(
+    {
+        "fund_short_name": "COF",
+        "round_short_name": "TR",
+        "expected_search_params": "",
+    }
+)
+def test_assignment_overview_add_and_remove_assessors(
+    request,
+    flask_test_client,
+    mock_get_funds,
+    mock_get_round,
+    mock_get_fund,
+    mock_get_application_overviews,
+    mock_get_users_for_fund,
+    mock_get_assessment_progress,
+    patch_resolve_redirect,
+):
+    params = request.node.get_closest_marker("mock_parameters").args[0]
+    fund_short_name = params["fund_short_name"]
+    round_short_name = params["round_short_name"]
+
+    flask_test_client.set_cookie(
+        "localhost",
+        "fsd_user_token",
+        create_valid_token(fund_specific_claim_map[fund_short_name]["LEAD_ASSESSOR"]),
+    )
+
+    headers = {
+        "Referer": url_for(
+            "assessment_bp.assessor_type_list",
+            fund_short_name=fund_short_name,
+            round_short_name=round_short_name,
+            _external=True,
+        ),
+    }
+
+    form_data = {
+        "selected_assessments": ["stopped_app"],
+        "assessor_role": ["general_assessor"],
+        "selected_users": [
+            fund_specific_claim_map[fund_short_name]["LEAD_ASSESSOR"]["accountId"],
+            fund_specific_claim_map[fund_short_name]["COMMENTER"]["accountId"],
+        ],
+        "assigned_users": [
+            fund_specific_claim_map[fund_short_name]["ASSESSOR"]["accountId"],
+            fund_specific_claim_map[fund_short_name]["COMMENTER"]["accountId"],
+        ],
+    }
+
+    response = flask_test_client.post(
+        url_for(
+            "assessment_bp.assessor_type_list",
+            fund_short_name=fund_short_name,
+            round_short_name=round_short_name,
+        ),
+        data=form_data,
+        headers=headers,
+        follow_redirects=True,
+    )
+    strip_html_regx = re.compile("<.*?>")
+    html_stripped_output = re.sub(strip_html_regx, "", str(response.data))
+    assert (
+        f"remove {fund_specific_claim_map[fund_short_name]['ASSESSOR']['fullName']}"
+        " as a general assessor from the assessment" in html_stripped_output
+    )
+    assert (
+        f"assign {fund_specific_claim_map[fund_short_name]['LEAD_ASSESSOR']['fullName']}"
+        " as a general assessor to the assessment" in html_stripped_output
     )
 
 
@@ -440,7 +576,7 @@ def test_assessor_type_list_post(
         },
     }
 )
-def test_assignment_overview_post(
+def test_assignment_overview_post_new_and_exising(
     request,
     flask_test_client,
     mock_get_funds,
@@ -535,5 +671,104 @@ def test_assignment_overview_post(
         )
 
         assert len(mock_assign_user_to_assessment_1.mock_calls) == 4
+
+    assert response.status_code == 200
+
+
+@pytest.mark.mock_parameters(
+    {
+        "fund_short_name": "COF",
+        "round_short_name": "TR",
+        "expected_search_params": {
+            "search_term": "",
+            "search_in": "project_name,short_id",
+            "asset_type": "ALL",
+            "status": "ALL",
+            "filter_by_tag": "ALL",
+            "assigned_to": "ALL",
+        },
+    }
+)
+def test_assignment_overview_post_add_and_remove(
+    request,
+    flask_test_client,
+    mock_get_funds,
+    mock_get_round,
+    mock_get_fund,
+    mock_get_application_overviews,
+    mock_get_users_for_fund,
+    mock_get_assessment_progress,
+    mock_get_application_metadata,
+    mock_get_active_tags_for_fund_round,
+    mock_get_tag_types,
+):
+
+    params = request.node.get_closest_marker("mock_parameters").args[0]
+    fund_short_name = params["fund_short_name"]
+    round_short_name = params["round_short_name"]
+
+    flask_test_client.set_cookie(
+        "localhost",
+        "fsd_user_token",
+        create_valid_token(fund_specific_claim_map[fund_short_name]["LEAD_ASSESSOR"]),
+    )
+
+    form_data = {
+        "selected_assessments": ["assessment1"],
+        "assessor_role": ["lead_assessor"],
+        "selected_users": ["user1", "user3"],
+        "assigned_users": ["user2", "user3"],
+    }
+
+    headers = {
+        "Referer": url_for(
+            "assessment_bp.assignment_overview",
+            fund_short_name=fund_short_name,
+            round_short_name=round_short_name,
+            _external=True,
+        ),
+    }
+    with mock.patch(
+        "app.blueprints.assessments.routes.get_application_assignments",
+        return_value=[{"user_id": "user2"}, {"user_id": "user3"}],
+    ), mock.patch(
+        "app.blueprints.assessments.routes.assign_user_to_assessment",
+    ) as mock_assign_user_to_assessment_1:
+        response = flask_test_client.post(
+            url_for(
+                "assessment_bp.assignment_overview",
+                fund_short_name=fund_short_name,
+                round_short_name=round_short_name,
+            ),
+            data=form_data,
+            headers=headers,
+            follow_redirects=True,
+        )
+
+        # For User 1 this is a new assignment, for User 2 the existing assignment should be deactivated.
+        mock_assign_user_to_assessment_1.assert_has_calls(
+            [
+                mock.call(
+                    "assessment1",
+                    "user1",
+                    fund_specific_claim_map[fund_short_name]["LEAD_ASSESSOR"][
+                        "accountId"
+                    ],
+                    False,
+                ),
+                mock.call(
+                    "assessment1",
+                    "user2",
+                    fund_specific_claim_map[fund_short_name]["LEAD_ASSESSOR"][
+                        "accountId"
+                    ],
+                    True,
+                    False,
+                ),
+            ],
+            any_order=True,
+        )
+
+        assert len(mock_assign_user_to_assessment_1.mock_calls) == 2
 
     assert response.status_code == 200

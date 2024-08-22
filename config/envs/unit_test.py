@@ -11,6 +11,7 @@ class UnitTestConfig(DefaultConfig):
     DefaultConfig.TALISMAN_SETTINGS["force_https"] = False
     FSD_USER_TOKEN_COOKIE_NAME = "fsd_user_token"
     WTF_CSRF_ENABLED = False
+    FEATURE_CONFIG = {"TAGGING": True, "ASSESSMENT_ASSIGNMENT": True}
 
     # RSA 256 KEYS
     RSA256_PUBLIC_KEY_BASE64 = getenv("RSA256_PUBLIC_KEY_BASE64")
