@@ -94,12 +94,13 @@ def call_search_applications(params: dict | str):
     return applications_response
 
 
-def get_application_assignments(application_id):
+def get_application_assignments(application_id, only_active=False):
     application_assignments_endpoint = Config.ASSESSMENT_ASSIGNED_USERS_ENDPOINT.format(
         application_id=application_id
     )
     current_app.logger.info(f"Endpoint '{application_assignments_endpoint}'.")
-    response = get_data(application_assignments_endpoint)
+    query_params = {"active": "true"} if only_active else {}
+    response = get_data(application_assignments_endpoint, query_params)
 
     return response if response is not None else []
 

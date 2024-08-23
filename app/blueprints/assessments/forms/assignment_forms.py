@@ -68,9 +68,13 @@ class AssignmentOverviewForm(FlaskForm):
                 return False
 
             passed_validation = True
-            if not request.form.getlist("selected_users"):
-                self.form_errors.append("At least one assessor should be selected")
-                passed_validation = False
+            if set(request.form.getlist("assigned_users")) == set(
+                request.form.getlist("selected_users")
+            ):
+                self.form_errors.append(
+                    "No changes have been made to the current assignments for this application"
+                )
+                return False
 
             if not request.form.getlist("assessor_role"):
                 self.form_errors.append("An assessor type should be selected")

@@ -647,8 +647,7 @@ def assessor_type_list(fund_short_name: str, round_short_name: str):
     )
 
     future_existing_assignments = thread_executor.submit(
-        get_application_assignments,
-        selected_assessments[0],
+        get_application_assignments, selected_assessments[0], True
     )
 
     all_applications_metadata = future_all_applications_metadata.result()
@@ -752,14 +751,20 @@ def assignment_overview(fund_short_name: str, round_short_name: str):
             307,
         )
 
+    assigned_user_set = set(request.form.getlist("assigned_users"))
+    selected_user_set = set(request.form.getlist("selected_users"))
+
     if not (selected_assessments := request.form.getlist("selected_assessments")):
         abort(500, "Required selected_assessments field to be populated")
 
     if not (assessor_role := request.form.getlist("assessor_role")):
         abort(500, "Required assessor_role field to be populated")
 
-    if not (selected_user_ids := request.form.getlist("selected_users")):
-        abort(500, "Required selected_users field to be populated")
+    if assigned_user_set == selected_user_set:
+        abort(500, "No change in assignments has been made")
+
+    add_user_assignments = selected_user_set - assigned_user_set
+    remove_user_assignments = assigned_user_set - selected_user_set
 
     assessor_role = assessor_role[0]
 
@@ -797,7 +802,7 @@ def assignment_overview(fund_short_name: str, round_short_name: str):
         # Cartesian product over selected users and assessments. Check if the assignment already
         # exists or is a new one to be created (PUT vs POST)
         for user_id, application_id in itertools.product(
-            selected_user_ids, selected_assessments
+            add_user_assignments, selected_assessments
         ):
             key = user_id + "," + application_id
             future = thread_executor.submit(
@@ -806,6 +811,21 @@ def assignment_overview(fund_short_name: str, round_short_name: str):
                 user_id,
                 g.account_id,
                 True if key in existing_assignments else False,
+            )
+            future_assignments[future] = key
+
+        # Deactive assignments for those users who have deselected.
+        for user_id, application_id in itertools.product(
+            remove_user_assignments, selected_assessments
+        ):
+            key = user_id + "," + application_id
+            future = thread_executor.submit(
+                assign_user_to_assessment,
+                application_id,
+                user_id,
+                g.account_id,
+                True,
+                False,
             )
             future_assignments[future] = key
 
@@ -871,11 +891,21 @@ def assignment_overview(fund_short_name: str, round_short_name: str):
     thread_executor.executor.shutdown()
 
     # Get either name or email of those assessors that have been selected
-    selected_user_names = (
+    add_assign_user_names = (
         [
             user["full_name"] if user["full_name"] else user["email_address"]
             for user in users_for_fund
-            if user["account_id"] in selected_user_ids
+            if user["account_id"] in add_user_assignments
+        ]
+        if users_for_fund
+        else []
+    )
+
+    unassign_user_names = (
+        [
+            user["full_name"] if user["full_name"] else user["email_address"]
+            for user in users_for_fund
+            if user["account_id"] in remove_user_assignments
         ]
         if users_for_fund
         else []
@@ -901,8 +931,10 @@ def assignment_overview(fund_short_name: str, round_short_name: str):
     return render_template(
         "assignment_overview.html",
         selected_assessments=selected_assessments,
-        selected_user_names=selected_user_names,
-        selected_users=selected_user_ids,
+        add_assign_user_names=add_assign_user_names,
+        unassign_user_names=unassign_user_names,
+        selected_users=selected_user_set,
+        assigned_users=assigned_user_set,
         assessor_role=assessor_role,
         round_details=round_details,
         stats=unfiltered_stats,
