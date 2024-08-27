@@ -2,6 +2,7 @@
 # There is config for any linked information shared across the mock api queries
 # General config
 from dataclasses import dataclass
+from app.blueprints.services.models.flag import FlagType
 
 test_fund_id = "test-fund"
 test_round_id = "test-round"
@@ -128,8 +129,8 @@ flagged_app = {
     "flags": [
         {
             "id": "1c5e8bea-f5ed-4b74-8823-e64fec27a7db",
-            "latest_status": "RAISED",
-            "latest_allocation": None,
+            "latest_status": FlagType.RAISED.value,
+            "latest_allocation": "test_team",
             "application_id": flagged_app_id,
             "sections_to_flag": ["Test section"],
             "updates": [
@@ -138,7 +139,7 @@ flagged_app = {
                     "user_id": test_user_id_lead_assessor,
                     "date_created": "2023-02-19 12:00:00",
                     "justification": "Test",
-                    "status": "RAISED",
+                    "status": FlagType.RAISED.value,
                     "allocation": None,
                 }
             ],
@@ -186,8 +187,8 @@ resolved_app = {
     "flags": [
         {
             "id": "1c5e8bea-f5ed-4b74-8823-e64fec27a7dc",
-            "latest_status": "RESOLVED",
-            "latest_allocation": None,
+            "latest_status": FlagType.RESOLVED.value,
+            "latest_allocation": "test_team",
             "application_id": resolved_app_id,
             "sections_to_flag": ["Test section"],
             "updates": [
@@ -196,7 +197,7 @@ resolved_app = {
                     "user_id": test_user_id_lead_assessor,
                     "date_created": "2023-02-20 12:00:00",
                     "justification": "Test",
-                    "status": "RAISED",
+                    "status": FlagType.RAISED.value,
                     "allocation": None,
                 },
                 {
@@ -204,7 +205,7 @@ resolved_app = {
                     "user_id": test_user_id_lead_assessor,
                     "date_created": "2023-02-20 12:00:00",
                     "justification": "Test",
-                    "status": "RESOLVED",
+                    "status": FlagType.RESOLVED.value,
                     "allocation": None,
                 },
             ],
@@ -255,8 +256,8 @@ stopped_app = {
     "flags": [
         {
             "id": "1c5e8bea-f5ed-4b74-8823-e64fec27a7bd",
-            "latest_status": "STOPPED",
-            "latest_allocation": None,
+            "latest_status": FlagType.STOPPED.value,
+            "latest_allocation": "test_team",
             "application_id": stopped_app_id,
             "sections_to_flag": ["Test section"],
             "updates": [
@@ -265,7 +266,7 @@ stopped_app = {
                     "user_id": test_user_id_lead_assessor,
                     "date_created": "2023-02-20 12:00:00",
                     "justification": "Test",
-                    "status": "STOPPED",
+                    "status": FlagType.STOPPED.value,
                     "allocation": None,
                 }
             ],
@@ -326,8 +327,8 @@ flagged_qa_completed_app = {
     "flags": [
         {
             "id": "1c5e8bea-f5ed-4b74-8823-e64fec27a7bd",
-            "latest_status": "RAISED",
-            "latest_allocation": None,
+            "latest_status": FlagType.RAISED.value,
+            "latest_allocation": "test_team",
             "application_id": flagged_qa_completed_app_id,
             "justification": "Test",
             "sections_to_flag": ["Test section"],
@@ -337,7 +338,7 @@ flagged_qa_completed_app = {
                     "user_id": test_user_id_lead_assessor,
                     "date_created": "2023-02-20 12:00:00",
                     "justification": "Test",
-                    "status": "RAISED",
+                    "status": FlagType.RAISED.value,
                     "allocation": None,
                 }
             ],

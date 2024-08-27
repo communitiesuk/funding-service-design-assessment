@@ -199,7 +199,7 @@ class TestRoutes:
             "Gallery",
             "England",
             "1 tag\n                            \n\n\n\n\n                                Tag one red",
-            "Flagged",
+            "Flagged for test_team",
             "-",
             "-",
             "-",
@@ -308,7 +308,7 @@ class TestRoutes:
             "Gallery",
             "England",
             "1 tag\n                            \n\n\n\n\n                                Tag one red",
-            "Flagged",
+            "Flagged for test_team",
             "-",
             "-",
             "-",
@@ -369,6 +369,54 @@ class TestRoutes:
 
         reporting_to_you_values = str(reporting_to_you_table.find_all("tr"))
         assert all(value in reporting_to_you_values for value in expected_values)
+
+    @pytest.mark.mock_parameters(
+        {
+            "fund_short_name": "COF",
+            "round_short_name": "TR",
+            "expected_search_params": {
+                "search_term": "",
+                "search_in": "project_name,short_id",
+                "asset_type": "ALL",
+                "assigned_to": "ALL",
+                "status": "QA_COMPLETE",
+                "filter_by_tag": "ALL",
+            },
+        }
+    )
+    @pytest.mark.application_id("resolved_app")
+    def test_dashboard_doesnt_change_when_filtered(
+            self,
+            request,
+            flask_test_client,
+            mock_get_funds,
+            mock_get_round,
+            mock_get_fund,
+            mock_get_application_overviews,
+            mock_get_users_for_fund,
+            mock_get_assessment_progress,
+            mock_get_application_metadata,
+            mock_get_active_tags_for_fund_round,
+            mock_get_tag_types,
+    ):
+        params = request.node.get_closest_marker("mock_parameters").args[0]
+        fund_short_name = params["fund_short_name"]
+        round_short_name = params["round_short_name"]
+
+        flask_test_client.set_cookie(
+            "localhost",
+            "fsd_user_token",
+            create_valid_token(fund_specific_claim_map[fund_short_name]["LEAD_ASSESSOR"]),
+        )
+
+        response = flask_test_client.get(
+            f"/assess/fund_dashboard/{fund_short_name}/{round_short_name}",
+            follow_redirects=True,
+            query_string={"status": "QA_COMPLETE"},
+        )
+
+        assert 200 == response.status_code, "Wrong status code on response"
+        assert b"Total flagged for test_team" in response.data
 
     @pytest.mark.mock_parameters(
         {
@@ -911,7 +959,7 @@ class TestRoutes:
         soup = BeautifulSoup(response.data, "html.parser")
         assert (
             soup.find("h1", class_="assessment-alert__heading").string.strip()
-            == "Flagged - Assessment stopped"
+            == "Flagged for test_team - Assessment stopped"
         )
         assert b"Lead User (Lead assessor) lead@test.com" in response.data
         assert b"20/02/2023 at 12:00" in response.data
@@ -942,7 +990,7 @@ class TestRoutes:
 
         assert response.status_code == 200
         assert b"Remove flag" not in response.data
-        assert b"Flagged resolved" in response.data
+        assert b"Flagged for test_team resolved" in response.data
         assert b"Resolve flag action" in response.data
         assert b"Reason" in response.data
 
