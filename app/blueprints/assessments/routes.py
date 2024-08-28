@@ -960,23 +960,7 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
         if session_key in session and session[session_key] is not None:
             filter_params = session[session_key]
             # Update the query arguments with the saved filter parameters
-            request.args = ImmutableMultiDict(
-                {
-                    **request.args,
-                    "search_term": filter_params.get(
-                        "search_term", request.args.get("search_term", "")
-                    ),
-                    "status": filter_params.get(
-                        "status", request.args.get("status", "All")
-                    ),
-                    "assigned_to": filter_params.get(
-                        "assigned_to", request.args.get("assigned_to", "All")
-                    ),
-                    "filter_by_tag": filter_params.get(
-                        "filter_by_tag", request.args.get("filter_by_tag", "ALL")
-                    ),
-                }
-            )
+            request.args = ImmutableMultiDict(list(filter_params.items()))
     # If the 'clear_filters' flag is set in the query arguments, clear the session
     elif "clear_filters" in request.args:
         session[session_key] = None
