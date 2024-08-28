@@ -12,6 +12,7 @@ requests
 Flask
 Babel
 flask-babel
+Flask-Session==0.8.0
 
 #-----------------------------------
 #   Security

@@ -26,7 +26,7 @@ class TestAuthorisation:
 
         """
         # Set user auth cookie to none
-        flask_test_client.set_cookie("localhost", "fsd_user_token", "")
+        flask_test_client.set_cookie("fsd_user_token", "")
         response = flask_test_client.get("/any-route")
 
         assert response.status_code == 302
@@ -47,7 +47,6 @@ class TestAuthorisation:
         """
         # Set user auth cookie to invalid token
         flask_test_client.set_cookie(
-            "localhost",
             "fsd_user_token",
             create_invalid_token(),
         )
@@ -70,7 +69,7 @@ class TestAuthorisation:
 
         """
         # Set user auth cookie to none
-        flask_test_client.set_cookie("localhost", "fsd_user_token", "")
+        flask_test_client.set_cookie("fsd_user_token", "")
         response = flask_test_client.get("/")
         assert response.status_code == 200
         assert b"Welcome to the assessment tool" in response.data
@@ -94,7 +93,6 @@ class TestAuthorisation:
 
         """
         flask_test_client.set_cookie(
-            "localhost",
             "fsd_user_token",
             create_valid_token(test_roleless_user_claims),
         )
@@ -102,8 +100,8 @@ class TestAuthorisation:
 
         assert response.status_code == 302
         assert response.location == (
-            "https://authenticator/service/user?roles_required=TF_COMMENTER|NSTF_COMMENTER"
-            + "|CYP_COMMENTER|COF_COMMENTER|DPIF_COMMENTER"
+            "https://authenticator/service/user?roles_required=TF_COMMENTER%7CNSTF_COMMENTER"
+            + "%7CCYP_COMMENTER%7CCOF_COMMENTER%7CDPIF_COMMENTER"
         )
 
     @pytest.mark.mock_parameters(
@@ -146,7 +144,6 @@ class TestAuthorisation:
 
         """
         flask_test_client.set_cookie(
-            "localhost",
             "fsd_user_token",
             create_valid_token(creds),
         )
@@ -189,7 +186,7 @@ class TestAuthorisation:
     ):
         # Mocking fsd-user-token cookie
         token = create_valid_token(claims)
-        flask_test_client.set_cookie("localhost", "fsd_user_token", token)
+        flask_test_client.set_cookie("fsd_user_token", token)
 
         # Send a request to the route you want to test
         application_id = request.node.get_closest_marker("application_id").args[0]
@@ -261,7 +258,6 @@ class TestAuthorisation:
 
         """
         flask_test_client.set_cookie(
-            "localhost",
             "fsd_user_token",
             create_valid_token(claim),
         )
@@ -346,7 +342,6 @@ class TestAuthorisation:
 
         """
         flask_test_client.set_cookie(
-            "localhost",
             "fsd_user_token",
             create_valid_token(claim),
         )
@@ -463,7 +458,6 @@ class TestAuthorisation:
         """
         application_id = request.node.get_closest_marker("application_id").args[0]
         flask_test_client.set_cookie(
-            "localhost",
             "fsd_user_token",
             create_valid_token(claim),
         )
@@ -501,7 +495,6 @@ class TestAuthorisation:
         application_id = request.node.get_closest_marker("application_id").args[0]
         flag_id = request.node.get_closest_marker("flag_id").args[0]
         flask_test_client.set_cookie(
-            "localhost",
             "fsd_user_token",
             create_valid_token(claim),
         )
@@ -550,7 +543,6 @@ class TestAuthorisation:
         application_id = request.node.get_closest_marker("application_id").args[0]
 
         flask_test_client.set_cookie(
-            "localhost",
             "fsd_user_token",
             create_valid_token(claim),
         )
@@ -611,7 +603,6 @@ class TestAuthorisation:
         flag_id = request.node.get_closest_marker("flag_id").args[0]
 
         flask_test_client.set_cookie(
-            "localhost",
             "fsd_user_token",
             create_valid_token(claim),
         )
@@ -664,7 +655,7 @@ class TestAuthorisation:
     ):
 
         token = create_valid_token(user_account)
-        flask_test_client.set_cookie("localhost", "fsd_user_token", token)
+        flask_test_client.set_cookie("fsd_user_token", token)
         application_id = request.node.get_closest_marker("application_id").args[0]
 
         response = flask_test_client.get(f"assess/application/{application_id}")

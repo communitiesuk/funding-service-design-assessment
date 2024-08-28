@@ -41,7 +41,7 @@ def application_args(mock_fund, mock_round):
     ],
 )
 def test_generate_file_content_supported_types(
-    file_type, expected_function, application_args, mocker, request_ctx
+    file_type, expected_function, application_args, mocker, app
 ):
     mocked_response = MagicMock()
     mocked_response.seek = lambda _: None
@@ -53,8 +53,9 @@ def test_generate_file_content_supported_types(
         "app.blueprints.assessments.models.file_factory.send_file",
         return_value=MagicMock(),
     )
-    result = generate_file_content(application_args, file_type)
-    assert result is not None
+    with app.test_request_context():
+        result = generate_file_content(application_args, file_type)
+        assert result is not None
 
 
 def test_generate_file_content_unsupported_type(application_args):

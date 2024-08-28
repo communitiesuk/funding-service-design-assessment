@@ -169,9 +169,7 @@ def test_has_access_to_fund(monkeypatch, short_name, roles, expected):
 def _dummy_function_check_access_application_id(): ...
 
 
-def test_check_access_application_id_throws_404_when_no_application_id(
-    request_ctx,
-):
+def test_check_access_application_id_throws_404_when_no_application_id(app):
     # GIVEN no application id in the request
     # WHEN the check_access_application_id decorator is applied to a function
     # THEN a 404 is thrown
@@ -180,7 +178,7 @@ def test_check_access_application_id_throws_404_when_no_application_id(
 
 
 def test_check_access_application_id_cant_access_application_when_no_country_role(
-    request_ctx, monkeypatch
+    app, monkeypatch
 ):
     # GIVEN an English COF application/assessment record
     # WHEN the user has no COF_ENGLAND role
@@ -222,7 +220,7 @@ def test_check_access_application_id_cant_access_application_when_no_country_rol
 
 
 def test_check_access_application_id_can_access_application_when_has_country_role(
-    request_ctx, monkeypatch
+    app, monkeypatch
 ):
     # GIVEN an English COF application/assessment record
     # WHEN the user has the COF_ENGLAND role
@@ -266,11 +264,12 @@ def test_check_access_application_id_can_access_application_when_has_country_rol
         _MockGlobal(roles=["COF_ENGLAND", "COF_COMMENTER"]),
     )
 
-    _dummy_function_check_access_application_id()  # no fail means pass
+    with app.test_request_context():
+        _dummy_function_check_access_application_id()  # no fail means pass
 
 
 def test_check_access_application_id_can_access_application_when_fund_has_no_devolved_authority_auth(
-    request_ctx, monkeypatch
+    app, monkeypatch
 ):
     # GIVEN an NSTF application/assessment record
     # WHEN the user doesn't have any country role
@@ -315,11 +314,12 @@ def test_check_access_application_id_can_access_application_when_fund_has_no_dev
         _MockGlobal(roles=["NSTF_COMMENTER"]),
     )
 
-    _dummy_function_check_access_application_id()  # no fail means pass
+    with app.test_request_context():
+        _dummy_function_check_access_application_id()  # no fail means pass
 
 
 def test_check_access_application_id_cant_access_application_when_no_relevant_fund_role(
-    request_ctx, monkeypatch
+    app, monkeypatch
 ):
     # GIVEN an COF application/assessment record
     # WHEN the user has no COF role
@@ -357,7 +357,8 @@ def test_check_access_application_id_cant_access_application_when_no_relevant_fu
     )
 
     with pytest.raises(werkzeug.exceptions.Forbidden):
-        _dummy_function_check_access_application_id()
+        with app.test_request_context():
+            _dummy_function_check_access_application_id()
 
 
 @check_access_fund_short_name_round_sn
@@ -371,7 +372,8 @@ def test_check_access_fund_short_name_round_sn_throws_404_when_no_fund_short_nam
     # WHEN the decorator is applied
     # THEN a 404 is thrown
     with pytest.raises(werkzeug.exceptions.NotFound):
-        _dummy_function_check_access_fund_short_name_round_sn()
+        with app.test_request_context():
+            _dummy_function_check_access_fund_short_name_round_sn()
 
 
 def test_check_access_fund_short_name_round_sn_cant_access(monkeypatch, mock_get_round):
