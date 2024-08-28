@@ -458,9 +458,15 @@ class TestJinjaMacros(object):
                 meta=meta,
             )
 
+            allowlist = [
+                "http://www.example.com",
+            ]
+
             assert "Test Question" in rendered_html, "Question not found"
             assert "Test Answer" in rendered_html, "Answer not found"
-            assert "http://www.example.com" in rendered_html, "Link href not found"
+            assert any(
+                href in rendered_html for href in allowlist
+            ), "Link href not found"
 
     def test_question_above_href_answer_list(self, app):
         with app.test_request_context():
