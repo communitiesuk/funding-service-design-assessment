@@ -959,31 +959,27 @@ def fund_dashboard(fund_short_name: str, round_short_name: str):
         # Check if there are saved filter parameters in the session
         if session_key in session and session[session_key] is not None:
             filter_params = session[session_key]
-            # If the 'clear_filters' flag is set, restore all saved filter parameters
-            if "clear_filters" in filter_params:
-                request.args = ImmutableMultiDict(session[session_key])
-            # Otherwise, merge saved filter parameters with existing query arguments
-            else:
-                request.args = ImmutableMultiDict(
-                    {
-                        **request.args,
-                        "search_term": filter_params.get(
-                            "search_term", request.args.get("search_term", "")
-                        ),
-                        "status": filter_params.get(
-                            "status", request.args.get("status", "All")
-                        ),
-                        "assigned_to": filter_params.get(
-                            "assigned_to", request.args.get("assigned_to", "All")
-                        ),
-                        "filter_by_tag": filter_params.get(
-                            "filter_by_tag", request.args.get("filter_by_tag", "ALL")
-                        ),
-                    }
-                )
-    # If the 'clear_filters' flag is set in the query arguments, save all query arguments to the session
+            # Update the query arguments with the saved filter parameters
+            request.args = ImmutableMultiDict(
+                {
+                    **request.args,
+                    "search_term": filter_params.get(
+                        "search_term", request.args.get("search_term", "")
+                    ),
+                    "status": filter_params.get(
+                        "status", request.args.get("status", "All")
+                    ),
+                    "assigned_to": filter_params.get(
+                        "assigned_to", request.args.get("assigned_to", "All")
+                    ),
+                    "filter_by_tag": filter_params.get(
+                        "filter_by_tag", request.args.get("filter_by_tag", "ALL")
+                    ),
+                }
+            )
+    # If the 'clear_filters' flag is set in the query arguments, clear the session
     elif "clear_filters" in request.args:
-        session[session_key] = dict(request.args)
+        session[session_key] = None
     # Otherwise, save only relevant filter parameters to the session
     else:
         filter_params = {

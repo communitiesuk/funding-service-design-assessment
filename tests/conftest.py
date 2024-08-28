@@ -140,14 +140,11 @@ def flask_test_client(app, user_token=None):
     :return: A flask test client.
     """
     with app.test_client() as test_client:
-        try:
-            test_client.set_cookie(
-                "fsd_user_token",
-                user_token or create_valid_token(),
-            )
-            yield test_client
-        finally:
-            test_client.set_cookie("fsd_user_token", "")
+        test_client.set_cookie(
+            "fsd_user_token",
+            user_token or create_valid_token(),
+        )
+        yield test_client
 
 
 def resolve_redirect_path(self, response, buffered=False):
