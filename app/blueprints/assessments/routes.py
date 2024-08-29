@@ -18,9 +18,11 @@ from flask import g
 from flask import redirect
 from flask import render_template
 from flask import request
+from flask import session
 from flask import url_for
 from fsd_utils import extract_questions_and_answers
 from fsd_utils.sqs_scheduler.context_aware_executor import ContextAwareExecutor
+from werkzeug.datastructures import ImmutableMultiDict
 
 from app.blueprints.assessments.activity_trail import AssociatedTags
 from app.blueprints.assessments.activity_trail import CheckboxForm
@@ -949,6 +951,27 @@ def assignment_overview(fund_short_name: str, round_short_name: str):
 )
 @check_access_fund_short_name_round_sn
 def fund_dashboard(fund_short_name: str, round_short_name: str):
+    # Create a unique key for the session based on the fund short name and round short name
+    session_key = f"filter_params_{fund_short_name.upper()}_{round_short_name.upper()}"
+
+    # If there are no query arguments in the request
+    if not request.args:
+        # Check if there are saved filter parameters in the session
+        if session_key in session and session[session_key] is not None:
+            filter_params = session[session_key]
+            # Update the query arguments with the saved filter parameters
+            request.args = ImmutableMultiDict(list(filter_params.items()))
+    # If the 'clear_filters' flag is set in the query arguments, clear the session
+    elif "clear_filters" in request.args:
+        session[session_key] = None
+    # Otherwise, save only relevant filter parameters to the session
+    else:
+        filter_params = {
+            key: value
+            for key, value in request.args.items()
+            if key in ["search_term", "status", "assigned_to", "filter_by_tag"]
+        }
+        session[session_key] = filter_params
 
     fund = get_fund(
         fund_short_name,

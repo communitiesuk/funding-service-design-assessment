@@ -43,7 +43,6 @@ def test_assign_assessments_get(
     round_short_name = params["round_short_name"]
 
     flask_test_client.set_cookie(
-        "localhost",
         "fsd_user_token",
         create_valid_token(fund_specific_claim_map[fund_short_name]["LEAD_ASSESSOR"]),
     )
@@ -93,7 +92,6 @@ def test_assign_assessments_post(
     round_short_name = params["round_short_name"]
 
     flask_test_client.set_cookie(
-        "localhost",
         "fsd_user_token",
         create_valid_token(fund_specific_claim_map[fund_short_name]["LEAD_ASSESSOR"]),
     )
@@ -171,7 +169,6 @@ def test_assessor_type_post(
     round_short_name = params["round_short_name"]
 
     flask_test_client.set_cookie(
-        "localhost",
         "fsd_user_token",
         create_valid_token(fund_specific_claim_map[fund_short_name]["LEAD_ASSESSOR"]),
     )
@@ -276,7 +273,6 @@ def test_assessor_type_post_existing_assignment(
     round_short_name = params["round_short_name"]
 
     flask_test_client.set_cookie(
-        "localhost",
         "fsd_user_token",
         create_valid_token(fund_specific_claim_map[fund_short_name]["LEAD_ASSESSOR"]),
     )
@@ -371,7 +367,6 @@ def test_assessor_type_list_post(
     round_short_name = params["round_short_name"]
 
     flask_test_client.set_cookie(
-        "localhost",
         "fsd_user_token",
         create_valid_token(fund_specific_claim_map[fund_short_name]["LEAD_ASSESSOR"]),
     )
@@ -449,7 +444,6 @@ def test_assignment_overview_remove_assessor(
     round_short_name = params["round_short_name"]
 
     flask_test_client.set_cookie(
-        "localhost",
         "fsd_user_token",
         create_valid_token(fund_specific_claim_map[fund_short_name]["LEAD_ASSESSOR"]),
     )
@@ -513,7 +507,6 @@ def test_assignment_overview_add_and_remove_assessors(
     round_short_name = params["round_short_name"]
 
     flask_test_client.set_cookie(
-        "localhost",
         "fsd_user_token",
         create_valid_token(fund_specific_claim_map[fund_short_name]["LEAD_ASSESSOR"]),
     )
@@ -595,7 +588,6 @@ def test_assignment_overview_post_new_and_exising(
     round_short_name = params["round_short_name"]
 
     flask_test_client.set_cookie(
-        "localhost",
         "fsd_user_token",
         create_valid_token(fund_specific_claim_map[fund_short_name]["LEAD_ASSESSOR"]),
     )
@@ -708,7 +700,6 @@ def test_assignment_overview_post_add_and_remove(
     round_short_name = params["round_short_name"]
 
     flask_test_client.set_cookie(
-        "localhost",
         "fsd_user_token",
         create_valid_token(fund_specific_claim_map[fund_short_name]["LEAD_ASSESSOR"]),
     )
