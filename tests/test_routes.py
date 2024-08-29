@@ -385,7 +385,7 @@ class TestRoutes:
         }
     )
     @pytest.mark.application_id("resolved_app")
-    def test_dashboard_doesnt_change_when_filtered(
+    def test_team_stats_are_present(
             self,
             request,
             flask_test_client,
