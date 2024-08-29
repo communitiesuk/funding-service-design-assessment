@@ -141,7 +141,6 @@ def flask_test_client(app, user_token=None):
     """
     with app.test_client() as test_client:
         test_client.set_cookie(
-            "localhost",
             "fsd_user_token",
             user_token or create_valid_token(),
         )
@@ -183,7 +182,6 @@ def flask_test_maintenance_client(request, user_token=None):
     app.config.update({"MAINTENANCE_MODE": strtobool(maintenance_mode)})
     with app.test_client() as test_client:
         test_client.set_cookie(
-            "localhost",
             "fsd_user_token",
             user_token or create_valid_token(),
         )
@@ -428,9 +426,9 @@ def mock_get_application_overviews(request, mocker):
             "search_term": "",
             "search_in": "project_name,short_id",
             "asset_type": "ALL",
-            "assigned_to": "ALL",
             "status": "ALL",
             "filter_by_tag": "ALL",
+            "assigned_to": "ALL",
         }
         path = func_path
         fund_id = "test-fund"
@@ -752,7 +750,7 @@ def mock_get_tasklist_state_for_banner(mocker):
 @pytest.fixture(scope="function")
 def client_with_valid_session(flask_test_client):
     token = create_valid_token(test_lead_assessor_claims)
-    flask_test_client.set_cookie("localhost", "fsd_user_token", token)
+    flask_test_client.set_cookie("fsd_user_token", token)
     yield flask_test_client
 
 
