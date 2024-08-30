@@ -385,18 +385,18 @@ class TestRoutes:
     )
     @pytest.mark.application_id("resolved_app")
     def test_team_stats_are_present(
-            self,
-            request,
-            flask_test_client,
-            mock_get_funds,
-            mock_get_round,
-            mock_get_fund,
-            mock_get_application_overviews,
-            mock_get_users_for_fund,
-            mock_get_assessment_progress,
-            mock_get_application_metadata,
-            mock_get_active_tags_for_fund_round,
-            mock_get_tag_types,
+        self,
+        request,
+        flask_test_client,
+        mock_get_funds,
+        mock_get_round,
+        mock_get_fund,
+        mock_get_application_overviews,
+        mock_get_users_for_fund,
+        mock_get_assessment_progress,
+        mock_get_application_metadata,
+        mock_get_active_tags_for_fund_round,
+        mock_get_tag_types,
     ):
         params = request.node.get_closest_marker("mock_parameters").args[0]
         fund_short_name = params["fund_short_name"]
@@ -404,7 +404,9 @@ class TestRoutes:
 
         flask_test_client.set_cookie(
             "fsd_user_token",
-            create_valid_token(fund_specific_claim_map[fund_short_name]["LEAD_ASSESSOR"]),
+            create_valid_token(
+                fund_specific_claim_map[fund_short_name]["LEAD_ASSESSOR"]
+            ),
         )
 
         response = flask_test_client.get(

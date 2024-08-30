@@ -2,6 +2,7 @@
 # There is config for any linked information shared across the mock api queries
 # General config
 from dataclasses import dataclass
+
 from app.blueprints.services.models.flag import FlagType
 
 test_fund_id = "test-fund"
