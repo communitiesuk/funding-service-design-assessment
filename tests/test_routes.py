@@ -198,7 +198,7 @@ class TestRoutes:
             "£7,000.00",
             "Gallery",
             "England",
-            "1 tag\n                            \n\n\n\n\n                                Tag one red",
+            "1 tag\n                                \n\n\n\n\n                                    Tag one red",
             "Flagged for test_team",
             "-",
             "-",
@@ -306,7 +306,7 @@ class TestRoutes:
             "£7,000.00",
             "Gallery",
             "England",
-            "1 tag\n                            \n\n\n\n\n                                Tag one red",
+            "1 tag\n                                \n\n\n\n\n                                    Tag one red",
             "Flagged for test_team",
             "-",
             "-",
@@ -403,7 +403,6 @@ class TestRoutes:
         round_short_name = params["round_short_name"]
 
         flask_test_client.set_cookie(
-            "localhost",
             "fsd_user_token",
             create_valid_token(fund_specific_claim_map[fund_short_name]["LEAD_ASSESSOR"]),
         )
