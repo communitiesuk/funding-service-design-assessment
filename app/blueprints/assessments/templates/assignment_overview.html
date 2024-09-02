@@ -68,6 +68,9 @@
             {% for user in selected_users %}
             <input type="hidden" name="selected_users" value="{{ user }}">
             {% endfor %}
+            {% for key, value in assessor_messages.items() %}
+            <input type="hidden" name="{{ key }}" value="{{ value }}">
+            {% endfor %}
             <p class="govuk-body">
                 <button type="submit" class="govuk-link btn-link" name="change_roles" value="change_roles">Change roles</button> or
                 <button type="submit" class="govuk-link btn-link" name="change_users" value="change_users">Change users</button>
@@ -111,6 +114,7 @@
             </table>
             <button type="submit" class="govuk-link btn-link" name="change_assessments" value="change_assessments">Add/remove assessments</button>
     </div>
+        <button type="submit" class="govuk-link btn-link" name="edit_messages" value="edit_messages">Add messages</button>
             {#
             <div class="govuk-form-group">
                 <label class="govuk-label" for="message">Message to assessors assigned (optional)</label>

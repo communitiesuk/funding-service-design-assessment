@@ -60,6 +60,26 @@ class AssessorChoiceForm(FlaskForm):
         return False
 
 
+class AssessorCommentForm(FlaskForm):
+    def validate(self, extra_validators=None):
+        if super().validate(extra_validators):
+            if request.referrer != request.url:
+                # From a redirect, not a form post
+                return False
+
+            # if set(request.form.getlist("assigned_users")) == set(
+            #     request.form.getlist("selected_users")
+            # ):
+            #     self.form_errors.append(
+            #         "No changes have been made to the current assignments for this application"
+            #     )
+            #     return False
+
+            return True
+
+        return False
+
+
 class AssignmentOverviewForm(FlaskForm):
     def validate(self, extra_validators=None):
         if super().validate(extra_validators):

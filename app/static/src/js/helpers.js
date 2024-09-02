@@ -87,3 +87,15 @@ if (select_all_users) {
     });
   });
 }
+
+const assessor_messages_checkbox = document.getElementById('assessor_messages_checkbox')
+if (assessor_messages_checkbox) {
+  assessor_messages_checkbox.addEventListener('change', function() {
+    var individualMessages = document.getElementById('assessor_messages');
+    if(this.checked) {
+      individualMessages.style.display = 'block';
+    } else {
+      individualMessages.style.display = 'none';
+    }
+  });
+}
