@@ -778,6 +778,71 @@ def assignment_overview(fund_short_name: str, round_short_name: str):
         flask_app=current_app,
     )
 
+    fund = get_fund(
+        fund_short_name,
+        use_short_name=True,
+        ttl_hash=get_ttl_hash(Config.LRU_CACHE_TIME),
+    )
+    if not fund:
+        return redirect(ASSESSMENT_TOOL_DASHBOARD_PATH)
+
+    round = get_round(
+        fund_short_name,
+        round_short_name,
+        use_short_name=True,
+        ttl_hash=get_ttl_hash(Config.LRU_CACHE_TIME),
+    )
+
+    round_details = {
+        "assessment_deadline": round.assessment_deadline,
+        "round_title": round.title,
+        "fund_name": fund.name,
+        "fund_short_name": fund_short_name,
+        "round_short_name": round_short_name,
+        "is_expression_of_interest": round.is_expression_of_interest,
+    }
+
+    # The first call is to get the location data such as country, region and local_authority
+    # from all the existing applications (i.e without search parameters as we don't want to filter
+    # the stats at all).  see https://dluhcdigital.atlassian.net/browse/FS-3249
+    future_all_applications_metadata = thread_executor.submit(
+        get_application_overviews, fund.id, round.id, ""
+    )
+
+    # Get all the users for the fund
+    future_users_for_fund = thread_executor.submit(
+        get_users_for_fund,
+        fund.short_name,
+        None,  # round_short_name,
+        True,
+        False,
+    )
+
+    all_applications_metadata = future_all_applications_metadata.result()
+    users_for_fund = future_users_for_fund.result()
+    all_applications_ids = set(
+        (application["application_id"] for application in all_applications_metadata)
+    )
+    all_user_ids = set((user["account_id"] for user in users_for_fund))
+
+    if not all(
+        user_id in all_user_ids
+        for user_id in selected_user_set.union(assigned_user_set)
+    ):
+        abort(
+            403,
+            "User does not have permission to make assignments for selected assessors",
+        )
+
+    if not all(
+        application_id in all_applications_ids
+        for application_id in selected_assessments
+    ):
+        abort(
+            403,
+            "User does not have permission to make assignments for selected assessments",
+        )
+
     if form.validate_on_submit():
         # Check for existing assignments between user and application
         future_to_app = {
@@ -846,49 +911,6 @@ def assignment_overview(fund_short_name: str, round_short_name: str):
                 round_short_name=round_short_name,
             )
         )
-
-    fund = get_fund(
-        fund_short_name,
-        use_short_name=True,
-        ttl_hash=get_ttl_hash(Config.LRU_CACHE_TIME),
-    )
-    if not fund:
-        return redirect(ASSESSMENT_TOOL_DASHBOARD_PATH)
-
-    round = get_round(
-        fund_short_name,
-        round_short_name,
-        use_short_name=True,
-        ttl_hash=get_ttl_hash(Config.LRU_CACHE_TIME),
-    )
-
-    round_details = {
-        "assessment_deadline": round.assessment_deadline,
-        "round_title": round.title,
-        "fund_name": fund.name,
-        "fund_short_name": fund_short_name,
-        "round_short_name": round_short_name,
-        "is_expression_of_interest": round.is_expression_of_interest,
-    }
-
-    # The first call is to get the location data such as country, region and local_authority
-    # from all the existing applications (i.e without search parameters as we don't want to filter
-    # the stats at all).  see https://dluhcdigital.atlassian.net/browse/FS-3249
-    future_all_applications_metadata = thread_executor.submit(
-        get_application_overviews, fund.id, round.id, ""
-    )
-
-    # Get all the users for the fund
-    future_users_for_fund = thread_executor.submit(
-        get_users_for_fund,
-        fund.short_name,
-        None,  # round_short_name,
-        True,
-        False,
-    )
-
-    all_applications_metadata = future_all_applications_metadata.result()
-    users_for_fund = future_users_for_fund.result()
 
     thread_executor.executor.shutdown()
 
