@@ -242,7 +242,7 @@ def _get_fund_dashboard_data(fund: Fund, round: Round, request):
     unfiltered_stats = process_assessments_stats(all_applications_metadata)
     all_application_locations = LocationData.from_json_blob(all_applications_metadata)
 
-    teams_flag_stats = get_team_flag_stats(application_overviews)
+    teams_flag_stats = get_team_flag_stats(all_applications_metadata)
 
     # this is only used for querying applications, so remove it from the search params,
     # so it's not reflected on the user interface
