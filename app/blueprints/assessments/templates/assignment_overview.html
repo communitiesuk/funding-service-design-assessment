@@ -38,8 +38,10 @@
             <p class="govuk-body">
                 You are about to {% if add_assign_user_names and not unassign_user_names %}assign <strong>{{ add_assign_user_names|join(', ') }}</strong> as a {{ "lead" if assessor_role == "lead_assessor" else "general" }} assessor to the selected assessment.{% endif %}{% if unassign_user_names and not add_assign_user_names %}remove <strong>{{ unassign_user_names|join(', ') }}</strong> as a {{ "lead" if assessor_role == "lead_assessor" else "general" }} assessor from the selected assessment.{% endif %}
                 {% if unassign_user_names and add_assign_user_names %}
+                <ul>
                 <li class="govuk-body">assign <strong>{{ add_assign_user_names|join(', ') }}</strong> as a {{ "lead" if assessor_role == "lead_assessor" else "general" }} assessor to the assessment</li>
                 <li class="govuk-body">remove <strong>{{ unassign_user_names|join(', ') }}</strong> as a {{ "lead" if assessor_role == "lead_assessor" else "general" }} assessor from the assessment</li>
+                </ul>
                 {% endif %}
             </p>
             {% endif %}
