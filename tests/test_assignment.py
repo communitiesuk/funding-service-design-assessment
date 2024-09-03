@@ -6,6 +6,8 @@ from bs4 import BeautifulSoup
 from flask import url_for
 
 from tests.api_data.test_data import fund_specific_claim_map
+from tests.api_data.test_data import resolved_app_id
+from tests.api_data.test_data import stopped_app_id
 from tests.conftest import create_valid_token
 
 
@@ -592,10 +594,15 @@ def test_assignment_overview_post_new_and_exising(
         create_valid_token(fund_specific_claim_map[fund_short_name]["LEAD_ASSESSOR"]),
     )
 
+    user_1 = fund_specific_claim_map[fund_short_name]["COMMENTER"]["accountId"]
+    user_2 = fund_specific_claim_map[fund_short_name]["ASSESSOR"]["accountId"]
+    assessment_1 = stopped_app_id
+    assessment_2 = resolved_app_id
+
     form_data = {
-        "selected_assessments": ["assessment1", "assessment2"],
+        "selected_assessments": [assessment_1, assessment_2],
         "assessor_role": ["lead_assessor"],
-        "selected_users": ["user1", "user2"],
+        "selected_users": [user_1, user_2],
     }
 
     headers = {
@@ -608,7 +615,7 @@ def test_assignment_overview_post_new_and_exising(
     }
     with mock.patch(
         "app.blueprints.assessments.routes.get_application_assignments",
-        return_value=[{"user_id": "user2"}],
+        return_value=[{"user_id": user_2}],
     ), mock.patch(
         "app.blueprints.assessments.routes.assign_user_to_assessment",
     ) as mock_assign_user_to_assessment_1:
@@ -627,32 +634,32 @@ def test_assignment_overview_post_new_and_exising(
         mock_assign_user_to_assessment_1.assert_has_calls(
             [
                 mock.call(
-                    "assessment1",
-                    "user1",
+                    assessment_1,
+                    user_1,
                     fund_specific_claim_map[fund_short_name]["LEAD_ASSESSOR"][
                         "accountId"
                     ],
                     False,
                 ),
                 mock.call(
-                    "assessment2",
-                    "user1",
+                    assessment_2,
+                    user_1,
                     fund_specific_claim_map[fund_short_name]["LEAD_ASSESSOR"][
                         "accountId"
                     ],
                     False,
                 ),
                 mock.call(
-                    "assessment1",
-                    "user2",
+                    assessment_1,
+                    user_2,
                     fund_specific_claim_map[fund_short_name]["LEAD_ASSESSOR"][
                         "accountId"
                     ],
                     True,
                 ),
                 mock.call(
-                    "assessment2",
-                    "user2",
+                    assessment_2,
+                    user_2,
                     fund_specific_claim_map[fund_short_name]["LEAD_ASSESSOR"][
                         "accountId"
                     ],
@@ -704,11 +711,16 @@ def test_assignment_overview_post_add_and_remove(
         create_valid_token(fund_specific_claim_map[fund_short_name]["LEAD_ASSESSOR"]),
     )
 
+    user_1 = fund_specific_claim_map[fund_short_name]["COMMENTER"]["accountId"]
+    user_2 = fund_specific_claim_map[fund_short_name]["ASSESSOR"]["accountId"]
+    user_3 = fund_specific_claim_map[fund_short_name]["LEAD_ASSESSOR"]["accountId"]
+    assessment_1 = stopped_app_id
+
     form_data = {
-        "selected_assessments": ["assessment1"],
+        "selected_assessments": [assessment_1],
         "assessor_role": ["lead_assessor"],
-        "selected_users": ["user1", "user3"],
-        "assigned_users": ["user2", "user3"],
+        "selected_users": [user_1, user_3],
+        "assigned_users": [user_2, user_3],
     }
 
     headers = {
@@ -721,7 +733,7 @@ def test_assignment_overview_post_add_and_remove(
     }
     with mock.patch(
         "app.blueprints.assessments.routes.get_application_assignments",
-        return_value=[{"user_id": "user2"}, {"user_id": "user3"}],
+        return_value=[{"user_id": user_2}, {"user_id": user_3}],
     ), mock.patch(
         "app.blueprints.assessments.routes.assign_user_to_assessment",
     ) as mock_assign_user_to_assessment_1:
@@ -740,16 +752,16 @@ def test_assignment_overview_post_add_and_remove(
         mock_assign_user_to_assessment_1.assert_has_calls(
             [
                 mock.call(
-                    "assessment1",
-                    "user1",
+                    assessment_1,
+                    user_1,
                     fund_specific_claim_map[fund_short_name]["LEAD_ASSESSOR"][
                         "accountId"
                     ],
                     False,
                 ),
                 mock.call(
-                    "assessment1",
-                    "user2",
+                    assessment_1,
+                    user_2,
                     fund_specific_claim_map[fund_short_name]["LEAD_ASSESSOR"][
                         "accountId"
                     ],
