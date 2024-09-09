@@ -434,3 +434,17 @@ a.govuk-link.deactivate {
     padding-top: 20px;
     padding-bottom: 20px
 }
+
+.logout_button {
+    color: #1d70b8;
+    cursor: pointer;
+    font-family: GDS Transport, arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-decoration: underline;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    font-size: medium;
+}
