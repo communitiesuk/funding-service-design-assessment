@@ -447,4 +447,5 @@ a.govuk-link.deactivate {
     cursor: pointer;
     padding: 0;
     font-size: medium;
+    width: 54px;
 }
