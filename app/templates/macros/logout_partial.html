@@ -10,8 +10,11 @@
        class="govuk-link govuk-link--no-underline govuk-!-margin-right-5">
         Get help</a>
     {% endif %}
-    <a href="{{ sso_logout_url }}" class="govuk-link govuk-link--no-underline">
-        Log out
-    </a>
+    <form method="post" action="{{ sso_logout_url }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button type="submit" class="govuk-link govuk-link--no-underline logout_button">
+            Log out
+        </button>
+    </form>
 </p>
 {% endmacro %}

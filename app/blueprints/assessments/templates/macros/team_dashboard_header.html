@@ -1,7 +1,7 @@
 {%- from 'govuk_frontend_jinja/components/back-link/macro.html' import govukBackLink -%}
 {% from "macros/logout_partial.html" import logout_partial %}
 
-{% macro render(round_details, stats, team_flag_stats, is_active_status) %}
+{% macro render(round_details, stats, team_flag_stats, is_active_status, sso_logout_url) %}
 
 <header role="banner" data-module="govuk-header">
     <nav class="govuk-width-container govuk-header__navigation">

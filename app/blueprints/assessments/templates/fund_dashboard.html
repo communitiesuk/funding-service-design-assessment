@@ -10,7 +10,7 @@
 {% set pageHeading %}Team dashboard{% endset %}
 
 {% block header %}
-    {{ team_dashboard_header.render(round_details, stats, team_flag_stats, is_active_status) }}
+    {{ team_dashboard_header.render(round_details, stats, team_flag_stats, is_active_status, sso_logout_url) }}
 {% endblock header %}
 
 {% block content %}
