@@ -736,9 +736,10 @@ def assessor_comments(fund_short_name: str, round_short_name: str):
     if not (assessor_role := request.form.getlist("assessor_role")):
         abort(500, "Required assessor_role field to be populated")
 
-    assessor_messages = {
-        key: value for key, value in request.form.items() if "message_" in key and value
-    }
+    assessor_messages = {}
+    for key, value in request.form.items():
+        if "message_" in key and value:
+            assessor_messages[key] = value
 
     assessor_role = assessor_role[0]
 
@@ -929,9 +930,10 @@ def assignment_overview(fund_short_name: str, round_short_name: str):
     if assigned_user_set == selected_user_set:
         abort(500, "No change in assignments has been made")
 
-    assessor_messages = {
-        key: value for key, value in request.form.items() if "message_" in key and value
-    }
+    assessor_messages = {}
+    for key, value in request.form.items():
+        if "message_" in key and value:
+            assessor_messages[key] = value
 
     add_user_assignments = selected_user_set - assigned_user_set
     remove_user_assignments = assigned_user_set - selected_user_set
@@ -1034,18 +1036,31 @@ def assignment_overview(fund_short_name: str, round_short_name: str):
 
         future_assignments = {}
 
+        default_email_message = (
+            assessor_messages["message_to_all"]
+            if "message_to_all" in assessor_messages
+            else ""
+        )
         # Cartesian product over selected users and assessments. Check if the assignment already
         # exists or is a new one to be created (PUT vs POST)
         for user_id, application_id in itertools.product(
             add_user_assignments, selected_assessments
         ):
             key = user_id + "," + application_id
+
             future = thread_executor.submit(
                 assign_user_to_assessment,
                 application_id,
                 user_id,
                 g.account_id,
                 True if key in existing_assignments else False,
+                True,
+                True,
+                (
+                    assessor_messages["message_" + user_id]
+                    if "message_" + user_id in assessor_messages
+                    else default_email_message
+                ),
             )
             future_assignments[future] = key
 
@@ -1054,6 +1069,7 @@ def assignment_overview(fund_short_name: str, round_short_name: str):
             remove_user_assignments, selected_assessments
         ):
             key = user_id + "," + application_id
+
             future = thread_executor.submit(
                 assign_user_to_assessment,
                 application_id,
@@ -1061,6 +1077,12 @@ def assignment_overview(fund_short_name: str, round_short_name: str):
                 g.account_id,
                 True,
                 False,
+                True,
+                (
+                    assessor_messages["message_" + user_id]
+                    if "message_" + user_id in assessor_messages
+                    else default_email_message
+                ),
             )
             future_assignments[future] = key
 
