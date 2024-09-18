@@ -61,21 +61,24 @@ class AssessorChoiceForm(FlaskForm):
 
 
 class AssessorCommentForm(FlaskForm):
+    def __init__(self):
+        super().__init__()
+        self.message_errors = {}
+
     def validate(self, extra_validators=None):
         if super().validate(extra_validators):
             if request.referrer != request.url:
-                # From a redirect, not a form post
                 return False
 
-            # if set(request.form.getlist("assigned_users")) == set(
-            #     request.form.getlist("selected_users")
-            # ):
-            #     self.form_errors.append(
-            #         "No changes have been made to the current assignments for this application"
-            #     )
-            #     return False
+            passed_validation = True
+            for key, value in request.form.items():
+                if "message_" in key and len(value) > 2000:
+                    self.message_errors[key] = (
+                        "The message must be 2000 characters or less"
+                    )
+                    passed_validation = False
 
-            return True
+            return passed_validation
 
         return False
 

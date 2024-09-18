@@ -15,6 +15,7 @@ from flask import Blueprint
 from flask import Response
 from flask import abort
 from flask import current_app
+from flask import escape
 from flask import g
 from flask import redirect
 from flask import render_template
@@ -739,7 +740,16 @@ def assessor_comments(fund_short_name: str, round_short_name: str):
     assessor_messages = {}
     for key, value in request.form.items():
         if "message_" in key and value:
-            assessor_messages[key] = value
+            assessor_messages[key] = escape(value)
+
+    old_assessor_messages = (
+        json.loads(request.form.get("old_assessor_messages"))
+        if "old_assessor_messages" in request.form
+        else assessor_messages
+    )
+    has_individual_messages = any(
+        key != "message_to_all" for key in assessor_messages.keys()
+    )
 
     assessor_role = assessor_role[0]
 
@@ -844,7 +854,9 @@ def assessor_comments(fund_short_name: str, round_short_name: str):
         selected_assessments=selected_assessments,
         selected_users=selected_user_set,
         assigned_users=assigned_user_set,
+        old_assessor_messages=old_assessor_messages,
         assessor_messages=assessor_messages,
+        has_individual_messages=has_individual_messages,
         form=form,
     )
 
@@ -933,7 +945,7 @@ def assignment_overview(fund_short_name: str, round_short_name: str):
     assessor_messages = {}
     for key, value in request.form.items():
         if "message_" in key and value:
-            assessor_messages[key] = value
+            assessor_messages[key] = escape(value)
 
     add_user_assignments = selected_user_set - assigned_user_set
     remove_user_assignments = assigned_user_set - selected_user_set
