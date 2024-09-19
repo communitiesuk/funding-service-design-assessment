@@ -87,3 +87,17 @@ if (select_all_users) {
     });
   });
 }
+
+const assessor_messages_checkbox = document.getElementById('assessor_messages_checkbox')
+if (assessor_messages_checkbox) {
+  assessor_messages_checkbox.addEventListener('change', function() {
+    const messagesDiv = document.getElementById('assessor_messages');
+    if (assessor_messages_checkbox.checked) {
+      messagesDiv.classList.remove('govuk-!-display-none');
+      messagesDiv.classList.add('govuk-!-display-block');
+  } else {
+      messagesDiv.classList.add('govuk-!-display-none');
+      messagesDiv.classList.remove('govuk-!-display-block');
+  }
+  });
+}

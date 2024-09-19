@@ -863,6 +863,8 @@ def assign_user_to_assessment(
     assigner_id: str,
     update: Optional[bool] = False,
     active: Optional[bool] = True,
+    send_email: Optional[bool] = False,
+    email_content: Optional[str] = None,
 ):
     """Creates a user association between a user and an application.
     Internally, this is how we assign a user to an assessment.
@@ -872,16 +874,19 @@ def assign_user_to_assessment(
     :param assigner_id: The id of the user who is creating the assignment
     :param update: update assignment if it already exists
     :param active: Whether or not to mark the assignment as active (only used if update is True)
+    :param send_email: If an email notification should be sent when the (un)assignment is processed
+    :param email_content: Custom message to be sent by email (only applicable if send_email is True)
     """
     assignment_endpoint = Config.ASSESSMENT_ASSOCIATE_USER_ENDPOINT.format(
         application_id=application_id, user_id=user_id
     )
+    json_body = {"active": active, "send_email": send_email, "assigner_id": assigner_id}
+    if email_content:
+        json_body["email_content"] = email_content
     if update:
-        response = requests.put(
-            assignment_endpoint, json={"active": "true" if active else "false"}
-        )
+        response = requests.put(assignment_endpoint, json=json_body)
     else:
-        response = requests.post(assignment_endpoint, json={"assigner_id": assigner_id})
+        response = requests.post(assignment_endpoint, json=json_body)
     if not response.ok:
         current_app.logger.error(
             f"Could not get assign user {user_id} to application {application_id}"

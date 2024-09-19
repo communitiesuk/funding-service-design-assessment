@@ -3,6 +3,7 @@ import contextvars
 import functools
 import io
 import itertools
+import json
 import time
 import zipfile
 from collections import OrderedDict
@@ -14,6 +15,7 @@ from flask import Blueprint
 from flask import Response
 from flask import abort
 from flask import current_app
+from flask import escape
 from flask import g
 from flask import redirect
 from flask import render_template
@@ -23,6 +25,7 @@ from flask import url_for
 from fsd_utils import extract_questions_and_answers
 from fsd_utils.sqs_scheduler.context_aware_executor import ContextAwareExecutor
 from werkzeug.datastructures import ImmutableMultiDict
+from werkzeug.datastructures import MultiDict
 
 from app.blueprints.assessments.activity_trail import AssociatedTags
 from app.blueprints.assessments.activity_trail import CheckboxForm
@@ -36,6 +39,7 @@ from app.blueprints.assessments.activity_trail import select_filters
 from app.blueprints.assessments.forms.assessment_form import AssessmentCompleteForm
 from app.blueprints.assessments.forms.assignment_forms import AssessmentAssignmentForm
 from app.blueprints.assessments.forms.assignment_forms import AssessorChoiceForm
+from app.blueprints.assessments.forms.assignment_forms import AssessorCommentForm
 from app.blueprints.assessments.forms.assignment_forms import AssessorTypeForm
 from app.blueprints.assessments.forms.assignment_forms import AssignmentOverviewForm
 from app.blueprints.assessments.forms.comments_form import CommentsForm
@@ -706,6 +710,157 @@ def assessor_type_list(fund_short_name: str, round_short_name: str):
     )
 
 
+@assessment_bp.route(
+    "/assign/<fund_short_name>/<round_short_name>/assessors/comment",
+    methods=["GET", "POST"],
+)
+@check_access_fund_short_name_round_sn
+@check_access_fund_short_name_round_sn(roles_required=[Config.LEAD_ASSESSOR])
+def assessor_comments(fund_short_name: str, round_short_name: str):
+
+    if "cancel_messages" in request.form:
+        return redirect(
+            url_for(
+                "assessment_bp.assignment_overview",
+                fund_short_name=fund_short_name,
+                round_short_name=round_short_name,
+            ),
+            307,
+        )
+
+    assigned_user_set = set(request.form.getlist("assigned_users"))
+    selected_user_set = set(request.form.getlist("selected_users"))
+
+    if not (selected_assessments := request.form.getlist("selected_assessments")):
+        abort(500, "Required selected_assessments field to be populated")
+
+    if not (assessor_role := request.form.getlist("assessor_role")):
+        abort(500, "Required assessor_role field to be populated")
+
+    assessor_messages = {}
+    for key, value in request.form.items():
+        if "message_" in key and value:
+            assessor_messages[key] = escape(value)
+
+    old_assessor_messages = (
+        json.loads(request.form.get("old_assessor_messages"))
+        if "old_assessor_messages" in request.form
+        else assessor_messages
+    )
+    has_individual_messages = any(
+        key != "message_to_all" for key in assessor_messages.keys()
+    )
+
+    assessor_role = assessor_role[0]
+
+    form = AssessorCommentForm()
+
+    if form.validate_on_submit():
+        return redirect(
+            url_for(
+                "assessment_bp.assignment_overview",
+                fund_short_name=fund_short_name,
+                round_short_name=round_short_name,
+            ),
+            307,
+        )
+
+    add_user_assignments = selected_user_set - assigned_user_set
+    remove_user_assignments = assigned_user_set - selected_user_set
+
+    fund = get_fund(
+        fund_short_name,
+        use_short_name=True,
+        ttl_hash=get_ttl_hash(Config.LRU_CACHE_TIME),
+    )
+    if not fund:
+        return redirect(ASSESSMENT_TOOL_DASHBOARD_PATH)
+
+    round = get_round(
+        fund_short_name,
+        round_short_name,
+        use_short_name=True,
+        ttl_hash=get_ttl_hash(Config.LRU_CACHE_TIME),
+    )
+
+    round_details = {
+        "assessment_deadline": round.assessment_deadline,
+        "round_title": round.title,
+        "fund_name": fund.name,
+        "fund_short_name": fund_short_name,
+        "round_short_name": round_short_name,
+        "is_expression_of_interest": round.is_expression_of_interest,
+    }
+
+    thread_executor = ContextAwareExecutor(
+        max_workers=4,
+        thread_name_prefix="assignment-overview-request",
+        flask_app=current_app,
+    )
+
+    future_all_applications_metadata = thread_executor.submit(
+        get_application_overviews, fund.id, round.id, ""
+    )
+
+    # Get all the users for the fund
+    future_users_for_fund = thread_executor.submit(
+        get_users_for_fund,
+        fund.short_name,
+        None,  # round_short_name,
+        True,
+        False,
+    )
+
+    all_applications_metadata = future_all_applications_metadata.result()
+    users_for_fund = future_users_for_fund.result()
+
+    thread_executor.executor.shutdown()
+
+    # Get either name or email of those assessors that have been selected
+    add_assign_users = (
+        [user for user in users_for_fund if user["account_id"] in add_user_assignments]
+        if users_for_fund
+        else []
+    )
+    add_assign_user_names = [
+        user["full_name"] if user["full_name"] else user["email_address"]
+        for user in add_assign_users
+    ]
+
+    unassign_users = (
+        [
+            user
+            for user in users_for_fund
+            if user["account_id"] in remove_user_assignments
+        ]
+        if users_for_fund
+        else []
+    )
+
+    unassign_user_names = [
+        user["full_name"] if user["full_name"] else user["email_address"]
+        for user in unassign_users
+    ]
+
+    unfiltered_stats = process_assessments_stats(all_applications_metadata)
+    return render_template(
+        "assessor_comments.html",
+        round_details=round_details,
+        stats=unfiltered_stats,
+        assessor_role=assessor_role,
+        add_assign_user_names=add_assign_user_names,
+        unassign_user_names=unassign_user_names,
+        changed_users=add_assign_users + unassign_users,
+        selected_assessments=selected_assessments,
+        selected_users=selected_user_set,
+        assigned_users=assigned_user_set,
+        old_assessor_messages=old_assessor_messages,
+        assessor_messages=assessor_messages,
+        has_individual_messages=has_individual_messages,
+        form=form,
+    )
+
+
 """
 View 4/4 in the assignment flow. This view displays the choices
 selected by the user in an overview form. The user can navigate
@@ -753,6 +908,28 @@ def assignment_overview(fund_short_name: str, round_short_name: str):
             307,
         )
 
+    if "edit_messages" in request.form:
+        return redirect(
+            url_for(
+                "assessment_bp.assessor_comments",
+                fund_short_name=fund_short_name,
+                round_short_name=round_short_name,
+            ),
+            307,
+        )
+
+    if "cancel_messages" in request.form:
+        original_messages = json.loads(request.form["old_assessor_messages"])
+        new_request_form = MultiDict(request.form)
+        for key in request.form.keys():
+            if "message_" in key:
+                new_request_form.pop(key)
+
+        for key, value in original_messages.items():
+            new_request_form[key] = value
+
+        request.form = ImmutableMultiDict(new_request_form)
+
     assigned_user_set = set(request.form.getlist("assigned_users"))
     selected_user_set = set(request.form.getlist("selected_users"))
 
@@ -764,6 +941,11 @@ def assignment_overview(fund_short_name: str, round_short_name: str):
 
     if assigned_user_set == selected_user_set:
         abort(500, "No change in assignments has been made")
+
+    assessor_messages = {}
+    for key, value in request.form.items():
+        if "message_" in key and value:
+            assessor_messages[key] = escape(value)
 
     add_user_assignments = selected_user_set - assigned_user_set
     remove_user_assignments = assigned_user_set - selected_user_set
@@ -866,18 +1048,31 @@ def assignment_overview(fund_short_name: str, round_short_name: str):
 
         future_assignments = {}
 
+        default_email_message = (
+            assessor_messages["message_to_all"]
+            if "message_to_all" in assessor_messages
+            else ""
+        )
         # Cartesian product over selected users and assessments. Check if the assignment already
         # exists or is a new one to be created (PUT vs POST)
         for user_id, application_id in itertools.product(
             add_user_assignments, selected_assessments
         ):
             key = user_id + "," + application_id
+
             future = thread_executor.submit(
                 assign_user_to_assessment,
                 application_id,
                 user_id,
                 g.account_id,
                 True if key in existing_assignments else False,
+                True,
+                True,
+                (
+                    assessor_messages["message_" + user_id]
+                    if "message_" + user_id in assessor_messages
+                    else default_email_message
+                ),
             )
             future_assignments[future] = key
 
@@ -886,6 +1081,7 @@ def assignment_overview(fund_short_name: str, round_short_name: str):
             remove_user_assignments, selected_assessments
         ):
             key = user_id + "," + application_id
+
             future = thread_executor.submit(
                 assign_user_to_assessment,
                 application_id,
@@ -893,6 +1089,12 @@ def assignment_overview(fund_short_name: str, round_short_name: str):
                 g.account_id,
                 True,
                 False,
+                True,
+                (
+                    assessor_messages["message_" + user_id]
+                    if "message_" + user_id in assessor_messages
+                    else default_email_message
+                ),
             )
             future_assignments[future] = key
 
@@ -960,6 +1162,7 @@ def assignment_overview(fund_short_name: str, round_short_name: str):
         selected_users=selected_user_set,
         assigned_users=assigned_user_set,
         assessor_role=assessor_role,
+        assessor_messages=assessor_messages,
         round_details=round_details,
         stats=unfiltered_stats,
         assessments=post_processed_overviews,

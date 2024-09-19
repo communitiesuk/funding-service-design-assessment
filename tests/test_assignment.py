@@ -603,6 +603,8 @@ def test_assignment_overview_post_new_and_exising(
         "selected_assessments": [assessment_1, assessment_2],
         "assessor_role": ["lead_assessor"],
         "selected_users": [user_1, user_2],
+        "message_to_all": "Hi, how are you?",
+        f"message_{user_1}": "This is a message to user1",
     }
 
     headers = {
@@ -640,6 +642,9 @@ def test_assignment_overview_post_new_and_exising(
                         "accountId"
                     ],
                     False,
+                    True,
+                    True,
+                    "This is a message to user1",
                 ),
                 mock.call(
                     assessment_2,
@@ -648,6 +653,9 @@ def test_assignment_overview_post_new_and_exising(
                         "accountId"
                     ],
                     False,
+                    True,
+                    True,
+                    "This is a message to user1",
                 ),
                 mock.call(
                     assessment_1,
@@ -656,6 +664,9 @@ def test_assignment_overview_post_new_and_exising(
                         "accountId"
                     ],
                     True,
+                    True,
+                    True,
+                    "Hi, how are you?",
                 ),
                 mock.call(
                     assessment_2,
@@ -664,6 +675,9 @@ def test_assignment_overview_post_new_and_exising(
                         "accountId"
                     ],
                     True,
+                    True,
+                    True,
+                    "Hi, how are you?",
                 ),
             ],
             any_order=True,
@@ -758,6 +772,9 @@ def test_assignment_overview_post_add_and_remove(
                         "accountId"
                     ],
                     False,
+                    True,
+                    True,
+                    "",
                 ),
                 mock.call(
                     assessment_1,
@@ -767,6 +784,8 @@ def test_assignment_overview_post_add_and_remove(
                     ],
                     True,
                     False,
+                    True,
+                    "",
                 ),
             ],
             any_order=True,
@@ -775,3 +794,139 @@ def test_assignment_overview_post_add_and_remove(
         assert len(mock_assign_user_to_assessment_1.mock_calls) == 2
 
     assert response.status_code == 200
+
+
+@pytest.mark.mock_parameters(
+    {
+        "fund_short_name": "COF",
+        "round_short_name": "TR",
+        "expected_search_params": "",
+    }
+)
+def test_assignment_multiple_users_multiple_messages(
+    request,
+    flask_test_client,
+    mock_get_funds,
+    mock_get_round,
+    mock_get_fund,
+    mock_get_application_overviews,
+    mock_get_users_for_fund,
+    patch_resolve_redirect,
+):
+
+    params = request.node.get_closest_marker("mock_parameters").args[0]
+    fund_short_name = params["fund_short_name"]
+    round_short_name = params["round_short_name"]
+
+    flask_test_client.set_cookie(
+        "fsd_user_token",
+        create_valid_token(fund_specific_claim_map[fund_short_name]["LEAD_ASSESSOR"]),
+    )
+
+    user_1 = fund_specific_claim_map[fund_short_name]["COMMENTER"]["accountId"]
+    user_2 = fund_specific_claim_map[fund_short_name]["ASSESSOR"]["accountId"]
+
+    assessment_1 = stopped_app_id
+
+    form_data = {
+        "selected_assessments": [assessment_1],
+        "assessor_role": ["lead_assessor"],
+        "selected_users": [user_1, user_2],
+        "edit_messages": "",
+    }
+
+    headers = {
+        "Referer": url_for(
+            "assessment_bp.assignment_overview",
+            fund_short_name=fund_short_name,
+            round_short_name=round_short_name,
+            _external=True,
+        ),
+    }
+
+    response = flask_test_client.post(
+        url_for(
+            "assessment_bp.assignment_overview",
+            fund_short_name=fund_short_name,
+            round_short_name=round_short_name,
+        ),
+        data=form_data,
+        headers=headers,
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+
+    soup = BeautifulSoup(response.data, "html.parser")
+
+    text_field_1 = soup.find("textarea", {"id": "message_to_all"})
+    text_field_2 = soup.find("textarea", {"id": f"message_{user_1}"})
+    text_field_3 = soup.find("textarea", {"id": f"message_{user_2}"})
+
+    assert bool(text_field_1 and text_field_2 and text_field_3)
+
+    assert soup.find("input", {"type": "checkbox", "id": "assessor_messages_checkbox"})
+
+
+@pytest.mark.mock_parameters(
+    {
+        "fund_short_name": "COF",
+        "round_short_name": "TR",
+        "expected_search_params": "",
+    }
+)
+def test_assignment_overview_cancel_messages(
+    request,
+    flask_test_client,
+    mock_get_funds,
+    mock_get_round,
+    mock_get_fund,
+    mock_get_application_overviews,
+    mock_get_users_for_fund,
+    mock_get_assessment_progress,
+    patch_resolve_redirect,
+):
+
+    params = request.node.get_closest_marker("mock_parameters").args[0]
+    fund_short_name = params["fund_short_name"]
+    round_short_name = params["round_short_name"]
+
+    flask_test_client.set_cookie(
+        "fsd_user_token",
+        create_valid_token(fund_specific_claim_map[fund_short_name]["LEAD_ASSESSOR"]),
+    )
+
+    user_1 = fund_specific_claim_map[fund_short_name]["COMMENTER"]["accountId"]
+    assessment_1 = stopped_app_id
+
+    form_data = {
+        "selected_assessments": [assessment_1],
+        "assessor_role": ["lead_assessor"],
+        "selected_users": [user_1],
+        "old_assessor_messages": '{"message_to_all": "This is the original message"}',
+        "message_to_all": "This is the new message",
+        "cancel_messages": "",
+    }
+
+    headers = {
+        "Referer": url_for(
+            "assessment_bp.assessor_comments",
+            fund_short_name=fund_short_name,
+            round_short_name=round_short_name,
+            _external=True,
+        ),
+    }
+
+    response = flask_test_client.post(
+        url_for(
+            "assessment_bp.assessor_comments",
+            fund_short_name=fund_short_name,
+            round_short_name=round_short_name,
+        ),
+        data=form_data,
+        headers=headers,
+        follow_redirects=True,
+    )
+
+    assert "This is the original message" in str(response.data)
+    assert "This is the new message" not in str(response.data)
