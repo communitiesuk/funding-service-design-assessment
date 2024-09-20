@@ -87,3 +87,4 @@ class DevelopmentConfig(DefaultConfig):
 
     # LRU cache settings
     LRU_CACHE_TIME = 30  # in seconds
+    SECRET_KEY = "dev"  # pragma: allowlist secret
