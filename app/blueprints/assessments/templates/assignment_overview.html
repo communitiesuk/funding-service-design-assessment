@@ -8,6 +8,7 @@
 {% from "macros/banner_summary.html" import banner_summary %}
 {% from "macros/logout_partial.html" import logout_partial %}
 {% from "macros/migration_banner.html" import migration_banner %}
+{% from "macros/application_status_column.html" import application_status_column %}
 
 {% set pageHeading %}Team dashboard{% endset %}
 
@@ -97,7 +98,7 @@
                             overview.project_name }}</a></td>
                         <td class="govuk-table__cell">£{{ "{:,.2f}".format(overview.funding_amount_requested|int|round) }}</td>
                         <td class="govuk-table__cell">{{ overview.location_json_blob.get('country') or "Not found" }}</td>
-                        <td class="govuk-table__cell">{{ "TODO" }}</td>
+                        {{ application_status_column(overview.application_status, overview.get("progress", ""), assessment_statuses) }}
                         <td class="govuk-table__cell">
                             {% if overview.assigned_to_names %}
                             {% for name in overview.assigned_to_names %}
@@ -114,13 +115,10 @@
             </table>
             <button type="submit" class="govuk-link btn-link" name="change_assessments" value="change_assessments">Add/remove assessments</button>
     </div>
-        <button type="submit" class="govuk-link btn-link" name="edit_messages" value="edit_messages">Add messages</button>
-            {#
-            <div class="govuk-form-group">
-                <label class="govuk-label" for="message">Message to assessors assigned (optional)</label>
-                <textarea class="govuk-textarea" id="message" name="message" rows="3">{{ message }}</textarea>
-            </div>
-            #}
+    <div class="govuk-form-group">
+        <p class="govuk-body"> {{ "Your message will be emailed to the assessor." if assessor_messages else "You have not added a message for this assignment change." }} </p>
+             <button type="submit" class="govuk-link btn-link" name="edit_messages" value="edit_messages">{{ "View or change message" if assessor_messages else "Add a message" }}</button>
+    </div>
             <button class="govuk-button" type="submit">Assign assessments</button>
         </form>
     </section>
