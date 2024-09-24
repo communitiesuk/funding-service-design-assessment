@@ -1167,6 +1167,7 @@ def assignment_overview(fund_short_name: str, round_short_name: str):
         stats=unfiltered_stats,
         assessments=post_processed_overviews,
         form=form,
+        assessment_statuses=assessment_statuses,
     )
 
 
