@@ -459,6 +459,7 @@ mock_api_results = {
             "short_id": flagged_qa_completed_app["short_id"],
             "type_of_application": "COF",
             "workflow_status": flagged_qa_completed_app["workflow_status"],
+            "date_submitted": "2024-01-04T15:54:30.373564",
         },
         {
             "fund_id": test_fund_id,
@@ -485,6 +486,7 @@ mock_api_results = {
             "short_id": assigned_app["short_id"],
             "type_of_application": "COF",
             "workflow_status": assigned_app["workflow_status"],
+            "date_submitted": "2024-01-04T15:54:30.373564",
         },
         {
             "fund_id": test_fund_id,
@@ -511,6 +513,7 @@ mock_api_results = {
             "short_id": stopped_app["short_id"],
             "type_of_application": "COF",
             "workflow_status": stopped_app["workflow_status"],
+            "date_submitted": "2024-01-04T15:54:30.373564",
         },
         {
             "fund_id": test_fund_id,
@@ -537,6 +540,7 @@ mock_api_results = {
             "short_id": resolved_app["short_id"],
             "type_of_application": "COF",
             "workflow_status": resolved_app["workflow_status"],
+            "date_submitted": "2024-01-04T15:54:30.373564",
         },
     ],
     "assessment_store/application_overviews/{fund_id}/{round_id}?search_term=Project+S&search_in=project_name%2Cshort_id&asset_type=gallery&local_authority=wokefield&status=STOPPED": [
@@ -564,6 +568,7 @@ mock_api_results = {
             "short_id": stopped_app["short_id"],
             "type_of_application": "COF",
             "workflow_status": stopped_app["workflow_status"],
+            "date_submitted": "2024-01-04T15:54:30.373564",
         }
     ],
     "assessment_store/assessments/get-stats/{fund_id}": {

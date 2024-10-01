@@ -178,8 +178,7 @@ class TestRoutes:
             "Location",
             "Status",
             "Assigned to",
-            "Last action",
-            "Time since last action",
+            "Date submitted",
         ]
         assert all(title in all_table_headings for title in expected_titles)
 
@@ -201,8 +200,7 @@ class TestRoutes:
             "1 tag\n                                \n\n\n\n\n                                    Tag one red",
             "Flagged for test_team",
             "-",
-            "-",
-            "-",
+            "04/01/2024 at 15:54",
         ]
         # Check each cell against the expected answers
         for i, cell in enumerate(first_row.find_all("td")):
@@ -286,8 +284,7 @@ class TestRoutes:
             "Location",
             "Status",
             "Assigned to",
-            "Last action",
-            "Time since last action",
+            "Date submitted",
         ]
         assert all(title in all_table_headings for title in expected_titles)
 
@@ -309,8 +306,7 @@ class TestRoutes:
             "1 tag\n                                \n\n\n\n\n                                    Tag one red",
             "Flagged for test_team",
             "-",
-            "-",
-            "-",
+            "04/01/2024 at 15:54",
         ]
         # Check each cell against the expected answers
         for i, cell in enumerate(first_row.find_all("td")):
