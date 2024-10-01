@@ -78,9 +78,10 @@ sort_column, sort_order, tag_option_groups, tags, tagging_purpose_config, users)
         {{ sortable_table_header('status', 'Status', sort_order, sort_column, round_details, query_params) }}
         {% endif %}
         {{ sortable_table_header('assigned_to', 'Assigned to', sort_order, sort_column, round_details, query_params) }}
-        {{ sortable_table_header('last_action', 'Last action', sort_order, sort_column, round_details, query_params) }}
+        {{ sortable_table_header('date_submitted', 'Date submitted', sort_order, sort_column, round_details, query_params) }}
+        {# {{ sortable_table_header('last_action', 'Last action', sort_order, sort_column, round_details, query_params) }}
         {{ sortable_table_header('time_since_last_action', 'Time since last action', sort_order, sort_column,
-        round_details, query_params) }}
+        round_details, query_params) }} #}
       </tr>
     </thead>
   <tbody class="govuk-table__body">
@@ -110,8 +111,7 @@ sort_column, sort_order, tag_option_groups, tags, tagging_purpose_config, users)
       {% else %}
         -
       {% endif %}</td>
-      <td class="govuk-table__cell">-</td>
-      <td class="govuk-table__cell">-</td>
+      <td class="govuk-table__cell">{{ overview.date_submitted|datetime_format_24hr }}</td>
     </tr>
     {% endfor %}
   </tbody>
