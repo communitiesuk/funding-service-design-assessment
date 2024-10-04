@@ -29,12 +29,10 @@ class Fund:
             owner_organisation_logo_uri=data.get("owner_organisation_logo_uri"),
         )
 
-    # TODO: Move this config to database
+    # TODO: Move fund_type to a property on fund_store
     @property
     def fund_types(self) -> set[str]:
-        if self.short_name in ("COF", "NSTF", "CYP", "DPIF", "COF-EOI", "HSRA"):
-            return {ALL_VALUE, "competitive"}
-        return {ALL_VALUE}
+        return {ALL_VALUE, "competitive"}
 
     def add_round(self, fund_round: Round):
         if not self.rounds:
