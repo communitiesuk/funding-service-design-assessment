@@ -200,3 +200,55 @@ def test_create_round_summaries_no_results(
 
         mock_live_stats.assert_not_called()
         mock_assessment_stats.assert_not_called()
+
+
+@pytest.mark.parametrize(
+    "is_application_open,is_expression_of_interest,num_results",
+    [
+        (True, False, 1),
+        (False, True, 1),
+        (True, True, 1),
+    ],
+)
+def test_create_round_summaries_eoi(
+    mocker,
+    mock_live_stats,
+    mock_assessment_stats,
+    is_application_open,
+    is_expression_of_interest,
+    num_results,
+):
+
+    mocker.patch(
+        "app.blueprints.assessments.models.round_summary.determine_round_status",
+        return_value=RoundStatus(
+            False, is_application_open, False, False, False, False
+        ),
+    )
+    mocker.patch(
+        "app.blueprints.assessments.models.round_summary.get_rounds",
+        return_value=[
+            Round.from_dict(
+                {
+                    "assessment_deadline": ASSESSMENT_DEADLINE,
+                    "deadline": APPLICATION_DEADLINE,
+                    "is_expression_of_interest": is_expression_of_interest,
+                    "is_application_open": is_application_open,
+                    **default_round,
+                }
+            )
+        ],
+    )
+
+    mock_fund = MagicMock()
+    mock_landing_filters = MagicMock()
+    mock_landing_filters.filter_status = ALL_VALUE
+    with patch(
+        "app.blueprints.assessments.models.round_summary.AssessmentAccessController"
+    ) as mock:
+        instance = mock.return_value
+        instance.has_any_assessor_role = True
+        results = create_round_summaries(mock_fund, mock_landing_filters)
+        assert len(results) == num_results
+
+        mock_live_stats.assert_called_once()

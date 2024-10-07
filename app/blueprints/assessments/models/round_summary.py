@@ -190,6 +190,8 @@ def create_round_summaries(fund: Fund, filters: LandingFilters) -> list[RoundSum
 
         if round_status.is_application_open:
             live_rounds.append(round)
+        elif round.is_expression_of_interest:
+            live_rounds.append(round)
 
         if round_status.is_application_not_yet_open:
             sorting_date = round.assessment_deadline
