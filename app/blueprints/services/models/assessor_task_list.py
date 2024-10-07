@@ -51,6 +51,7 @@ class AssessorTaskList:
     fund_id: str
     round_id: str
     fund_guidance_url: str
+    is_eoi_round: str
 
     @classmethod
     def from_json(cls, json: dict):
@@ -102,6 +103,7 @@ class AssessorTaskList:
                 )
                 for criteria in json["criterias"]
             ],
+            is_eoi_round=json.get("is_eoi_round"),
         )
 
     def get_sub_sections_metadata(self) -> List[Dict]:

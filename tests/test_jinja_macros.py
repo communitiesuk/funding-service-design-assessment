@@ -616,12 +616,16 @@ class TestJinjaMacros(object):
             assert expected_unique_id in rendered_html, "Unique ID not found"
 
     @pytest.mark.parametrize(
-        "fund_short_name, show_funding_amount_requested, project_name_caption,show_assessment_status",
+        "fund_short_name, show_funding_amount_requested, project_name_caption,show_assessment_status,"
+        "is_eoi_round,display_status",
         [
-            ("TFID", True, "Project name:", True),
-            ("DPIF", False, "Project name:", True),
-            ("COF-EOI", False, "Organisation name:", False),
-            ("HSRA", True, "Project name:", True),
+            ("TFID", True, "Project name:", True, False, True),
+            ("TFID", True, "Project name:", True, False, False),
+            ("DPIF", False, "Project name:", True, False, True),
+            ("COF-EOI", False, "Organisation name:", False, True, True),
+            ("AnotherEOIRound", False, "Organisation name:", False, True, True),
+            ("AnotherEOIRound", False, "Organisation name:", False, True, False),
+            ("HSRA", True, "Project name:", True, False, True),
         ],
     )
     def test_banner_summary_macro(
@@ -631,6 +635,8 @@ class TestJinjaMacros(object):
         show_funding_amount_requested,
         project_name_caption,
         show_assessment_status,
+        is_eoi_round,
+        display_status,
     ):
         fund_name = "Test Fund"
         project_reference = "TEST123"
@@ -642,7 +648,7 @@ class TestJinjaMacros(object):
             rendered_html = render_template_string(
                 "{{ banner_summary(fund_name, fund_short_name, project_reference,"
                 " project_name, funding_amount_requested, assessment_status,"
-                " flag_status) }}",
+                " flag_status, display_status, is_eoi_round) }}",
                 banner_summary=get_template_attribute(
                     "macros/banner_summary.html", "banner_summary"
                 ),
@@ -653,6 +659,8 @@ class TestJinjaMacros(object):
                 funding_amount_requested=funding_amount_requested,
                 assessment_status=assessment_status,
                 flag_status=flag_status,
+                is_eoi_round=is_eoi_round,
+                display_status=display_status,
                 g=default_flask_g(),
             )
 
@@ -668,6 +676,7 @@ class TestJinjaMacros(object):
                 soup.find("p", class_="govuk-heading-l fsd-banner-content").text.strip()
                 == "Project reference: TEST123"
             ), "Project reference not found"
+
             assert soup.find(
                 "p",
                 class_="govuk-body-l fsd-banner-content fsd-banner-collapse-padding",
@@ -689,15 +698,20 @@ class TestJinjaMacros(object):
                 class_="govuk-tag",
                 text="Submitted",
             )
-            if show_assessment_status:
+            if show_assessment_status and display_status:
                 assert assessment_status_element, "Assessment status not found"
             else:
                 assert (
                     not assessment_status_element
                 ), "Assessment status found when not expected"
-            assert soup.find(
+
+            flag_status_element = soup.find(
                 "p", class_="fsd-banner-content", text="Flagged"
-            ), "Flag status not found"
+            )
+            if display_status:
+                assert flag_status_element, "Flag status not found"
+            else:
+                assert not flag_status_element
 
     def test_stopped_flag_macro(self, app):
         fund_name = "Test Fund"

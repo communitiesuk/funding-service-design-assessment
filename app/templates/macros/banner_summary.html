@@ -1,4 +1,4 @@
-{% macro banner_summary(fund_name, fund_shortname, project_reference, project_name, funding_amount_requested, assessment_status, flag_status, display_status=True) %}
+{% macro banner_summary(fund_name, fund_shortname, project_reference, project_name, funding_amount_requested, assessment_status, flag_status, display_status=True, is_eoi_round=False) %}
 
 <div class="fsd-banner-background">
 <div class="govuk-width-container">
@@ -7,14 +7,14 @@
                 <div class="govuk-grid-column-two-thirds govuk-!-padding-0">
                     <p class="govuk-heading-xl fsd-banner-content">Fund: <span class="govuk-!-font-weight-regular">{{ fund_name }}</span></p>
                     <p class="govuk-heading-l fsd-banner-content">Project reference: <span class="govuk-!-font-weight-regular">{{ project_reference | format_project_ref }}</span></p>
-                    {% set project_name_caption = "Project name:" if fund_shortname not in ["COF-EOI"] else "Organisation name:" %}
+                    {% set project_name_caption = "Project name:" if not is_eoi_round else "Organisation name:" %}
                     <p class="govuk-body-l fsd-banner-content fsd-banner-collapse-padding">{{ project_name_caption }}&nbsp;{{ project_name }}</p>
-                    {% if fund_shortname not in ["DPIF", "COF-EOI"] %} {# Funds that should hide total funding requested. #}
+                    {% if fund_shortname not in ["DPIF"] and not is_eoi_round %} {# Funds that should hide total funding requested. #}
                         <p class="govuk-body-l fsd-banner-content ">Total funding requested: £{{ "{:,.2f}".format(funding_amount_requested | float) }}</p>
                     {% endif %}
 
                     {% if g.access_controller.has_any_assessor_role and display_status %}
-                        {% if fund_shortname.upper() != "COF-EOI" %}<strong class="govuk-tag govuk-tag--grey govuk-!-margin-top-4">{{ assessment_status }}</strong>{% endif %}
+                        {% if not is_eoi_round %}<strong class="govuk-tag govuk-tag--grey govuk-!-margin-top-4">{{ assessment_status }}</strong>{% endif %}
                         {% if "Flagged" in flag_status or flag_status in ["Multiple flags to resolve", "Stopped", "Flagged"] %}
                             <p class="govuk-body-l fsd-banner-content fsd-banner-collapse-padding govuk-!-margin-top-3">{{ flag_status or "" }}</p>
                         {% endif %}
