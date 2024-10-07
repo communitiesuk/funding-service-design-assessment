@@ -106,7 +106,7 @@ commonmark==0.9.1
     #   rich
 connexion==3.1.0
     # via -r requirements.txt
-cryptography==43.0.0
+cryptography==43.0.1
     # via
     #   -r requirements.txt
     #   pyhanko
@@ -192,6 +192,10 @@ funding-service-design-utils==2.0.52
     # via -r requirements.txt
 govuk-frontend-jinja==3.2.0
     # via -r requirements.txt
+greenlet==3.0.3
+    # via
+    #   -r requirements.txt
+    #   sqlalchemy
 gunicorn==20.1.0
     # via
     #   -r requirements.txt
@@ -221,8 +225,6 @@ idna==3.8
     #   email-validator
     #   httpx
     #   requests
-importlib-metadata==8.4.0
-    # via build
 inflection==0.5.1
     # via
     #   -r requirements.txt
@@ -582,8 +584,6 @@ wtforms==3.1.2
     #   flask-wtf
 xhtml2pdf==0.2.16
     # via -r requirements.txt
-zipp==3.20.1
-    # via importlib-metadata
 zstandard==0.23.0
     # via
     #   -r requirements.txt
