@@ -1629,6 +1629,50 @@ def application(application_id):
             )
         )
 
+    thread_executor = ContextAwareExecutor(
+        max_workers=4,
+        thread_name_prefix="application-request",
+        flask_app=current_app,
+    )
+
+    # Get all the users for the fund
+    future_users_for_fund = thread_executor.submit(
+        get_users_for_fund,
+        state.fund_short_name,
+        None,  # round_short_name,
+        True,
+        False,
+    )
+
+    future_existing_assignments = thread_executor.submit(
+        get_application_assignments, application_id, True
+    )
+
+    users_for_fund = future_users_for_fund.result()
+    existing_assignments = future_existing_assignments.result()
+    all_assigned_users = set(
+        assignment["user_id"] for assignment in existing_assignments
+    )
+    assigned_lead_assessors = [
+        user
+        for user in users_for_fund
+        if user["account_id"] in all_assigned_users
+        and any(Config.LEAD_ASSESSOR in role for role in user["roles"])
+    ]
+    assigned_assessors = [
+        user
+        for user in users_for_fund
+        if user["account_id"] in all_assigned_users
+        and any(Config.ASSESSOR in role for role in user["roles"])
+    ]
+
+    thread_executor.executor.shutdown()
+
+    assigner_account = get_bulk_accounts_dict(
+        [existing_assignments[-1]["assigner_id"]],
+        state.fund_short_name,
+    )
+
     return render_template(
         "assessor_tasklist.html",
         sub_criteria_status_completed=sub_criteria_status_completed,
@@ -1654,6 +1698,12 @@ def application(application_id):
         comment_id=comment_id,
         comment_form=comment_form,
         comments=theme_matched_comments,
+        assigned_lead_assessors=assigned_lead_assessors,
+        assigned_assessors=assigned_assessors,
+        assignment_date=existing_assignments[-1]["created_at"],
+        assigner_name=next(iter(assigner_account.values()))["full_name"],
+        round_short_name=fund_round.short_name,
+        fund_short_name=state.fund_short_name,
     )
 
 
