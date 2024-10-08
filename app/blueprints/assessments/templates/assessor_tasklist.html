@@ -19,6 +19,7 @@
 {% from "macros/migration_banner.html" import migration_banner %}
 {% from "macros/link_to_download_contract_docs.html" import link_to_download_contract_docs %}
 {% from "macros/assessment_actions.html" import assessment_actions %}
+{% from "macros/assigned_to.html" import assigned_to %}
 
 {% set pageHeading = state.project_name %}
 
@@ -51,6 +52,8 @@
 <div class="govuk-grid-row">
 {# djlint:on #}
     <div class="govuk-grid-column-one-quarter">
+        {{ assigned_to(assigned_assessors, assignment_date, assigner_name, form, application_id, fund_short_name, round_short_name) }}
+
         {% if g.access_controller.is_assessor %}
             {{ assessment_actions(application_id) }}
         {% endif %}
