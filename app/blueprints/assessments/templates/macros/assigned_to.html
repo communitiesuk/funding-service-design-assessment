@@ -1,0 +1,30 @@
+{% macro assigned_to(assigned_assessors, assignment_date, assigner_name, form, application_id, fund_short_name, round_short_name) %}
+    <h3 class="govuk-heading-m">Assigned to you</h3>
+    <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible section_break_blue">
+
+    <p class="govuk-body">
+        <strong>{{ assigner_name}}</strong> assigned the assessors:
+    </p>
+    <ul class="govuk-list">
+        {%for assessor in assigned_assessors%}
+            <li>{{ assessor.full_name }}</li>
+        {%endfor%}
+    </ul>
+    <p class="govuk-body">
+        {{ assignment_date | utc_to_bst }}
+    </p>
+
+    <!-- TODO: breadcrumb trail? -->
+    {% if g.user.highest_role_map[fund_short_name] == 'LEAD_ASSESSOR' %}
+        <form method="post" action="{{ url_for('assessment_bp.assign_assessments', fund_short_name=fund_short_name, round_short_name=round_short_name) }}">
+            {{ form.csrf_token }}
+            <input type="hidden" id="selected_assessments" name="selected_assessments" value={{ application_id }} />
+            <input type="hidden" id="from_application" name="from_application" value="True" />
+            <button type="submit" class="govuk-button secondary-button govuk-!-margin-top-2 govuk-!-margin-bottom-6">
+                Reassign assessment
+            </button>
+        </form>
+    {% endif %}
+
+    {{g.user}}
+{% endmacro %}
