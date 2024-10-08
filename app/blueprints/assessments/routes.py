@@ -1668,6 +1668,11 @@ def application(application_id):
 
     thread_executor.executor.shutdown()
 
+    assigner_account = get_bulk_accounts_dict(
+        [existing_assignments[-1]["assigner_id"]],
+        state.fund_short_name,
+    )
+
     return render_template(
         "assessor_tasklist.html",
         sub_criteria_status_completed=sub_criteria_status_completed,
@@ -1695,6 +1700,10 @@ def application(application_id):
         comments=theme_matched_comments,
         assigned_lead_assessors=assigned_lead_assessors,
         assigned_assessors=assigned_assessors,
+        assignment_date=existing_assignments[-1]["created_at"],
+        assigner_name=next(iter(assigner_account.values()))["full_name"],
+        round_short_name=fund_round.short_name,
+        fund_short_name=state.fund_short_name,
     )
 
 

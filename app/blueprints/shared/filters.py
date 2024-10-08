@@ -27,6 +27,7 @@ def utc_to_bst(value, tz="Europe/London", export_format=False):
         "%Y-%m-%dT%H:%M:%S",
         "%Y-%m-%d %H:%M:%S.%f%z",
         "%d/%m/%Y %H:%M:%S",
+        "%Y-%m-%dT%H:%M:%S.%f%z",
     ]
     for dt_format in dt_formats:
         try:
