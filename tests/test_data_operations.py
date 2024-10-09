@@ -1,9 +1,12 @@
+import pytest
 from flask import Flask
 
+from app.blueprints.services.data_services import get_all_fund_short_codes
 from app.blueprints.services.data_services import get_application_overviews
 from app.blueprints.services.data_services import get_comments
 from app.blueprints.services.data_services import get_fund
 from app.blueprints.services.data_services import get_round
+from app.blueprints.services.models.fund import Fund
 from tests.api_data.test_data import mock_api_results
 
 
@@ -100,3 +103,29 @@ class TestDataOperations:
             comments = get_comments(*args)
         assert 5 == len(comments), "wrong number of comments"
         assert all(arg in get_data_mock.call_args.args[0] for arg in args)
+
+
+@pytest.mark.parametrize(
+    "mock_get_all_funds_response,exp_result",
+    [
+        (
+            [Fund(short_name="F1", id="id", description="hello fund", name="Fund 1")],
+            {"F1"},
+        ),
+        (
+            [
+                Fund(short_name="F1", id="id", description="hello fund", name="Fund 1"),
+                Fund(short_name="F2", id="id", description="hello fund", name="Fund 2"),
+            ],
+            {"F1", "F2"},
+        ),
+        ({}, {}),
+    ],
+)
+def test_get_all_fund_short_codes(mock_get_all_funds_response, exp_result, mocker):
+    mocker.patch(
+        "app.blueprints.services.data_services.get_funds",
+        return_value=mock_get_all_funds_response,
+    )
+    result = get_all_fund_short_codes()
+    assert result == exp_result

@@ -19,6 +19,7 @@
         sub_criteria.project_name if sub_criteria else state.project_name,
         sub_criteria.funding_amount_requested if sub_criteria else state.funding_amount_requested,
         assessment_status,
-        flag_status
+        flag_status,
+        is_eoi_round=state.is_eoi_round
     ) }}
 </header>

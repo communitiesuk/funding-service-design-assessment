@@ -32,7 +32,6 @@
             {{ logout_partial(sso_logout_url) }}
         </div>
     </nav>
-
     {{ banner_summary(
         state.fund_name,
         state.fund_short_name,
@@ -40,7 +39,8 @@
         state.project_name,
         state.funding_amount_requested,
         assessment_status,
-        flag_status
+        flag_status,
+        is_eoi_round=state.is_eoi_round
     ) }}
 </header>
 {% endblock header %}

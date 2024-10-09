@@ -723,6 +723,7 @@ def mock_get_tasklist_state_for_banner(mocker):
         project_reference="ABGCDF",
         sections=[],
         criterias=[],
+        is_eoi_round=False,
     )
     mocker.patch(
         "app.blueprints.assessments.routes.get_state_for_tasklist_banner",

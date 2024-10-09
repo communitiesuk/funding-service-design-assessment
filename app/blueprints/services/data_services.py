@@ -5,6 +5,7 @@ from typing import Collection
 from typing import Dict
 from typing import List
 from typing import Optional
+from typing import Set
 from typing import Union
 from urllib.parse import urlencode
 
@@ -23,6 +24,7 @@ from app.blueprints.services.models.flag import FlagType
 from app.blueprints.services.models.fund import Fund
 from app.blueprints.services.models.round import Round
 from app.blueprints.services.models.sub_criteria import SubCriteria
+from app.blueprints.shared.helpers import get_ttl_hash
 from app.blueprints.tagging.models.tag import AssociatedTag
 from app.blueprints.tagging.models.tag import Tag
 from app.blueprints.tagging.models.tag import TagType
@@ -292,6 +294,11 @@ def get_funds(ttl_hash=None) -> Union[List[Fund], None]:
         "Error retrieving funds from fund store, please check this."
     )
     return []
+
+
+def get_all_fund_short_codes() -> Set[str]:
+    all_funds = get_funds(get_ttl_hash(seconds=Config.LRU_CACHE_TIME))
+    return {fund.short_name for fund in all_funds} if all_funds else {}
 
 
 @lru_cache(maxsize=1)
