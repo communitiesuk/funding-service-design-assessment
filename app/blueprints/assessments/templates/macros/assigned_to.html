@@ -14,17 +14,14 @@
         {{ assignment_date | utc_to_bst }}
     </p>
 
-    <!-- TODO: breadcrumb trail? -->
     {% if g.user.highest_role_map[fund_short_name] == 'LEAD_ASSESSOR' %}
         <form method="post" action="{{ url_for('assessment_bp.assign_assessments', fund_short_name=fund_short_name, round_short_name=round_short_name) }}">
             {{ form.csrf_token }}
             <input type="hidden" id="selected_assessments" name="selected_assessments" value={{ application_id }} />
-            <input type="hidden" id="from_application" name="from_application" value="True" />
+            <input type="hidden" id="from_form" name="from_form" value="True" />
             <button type="submit" class="govuk-button secondary-button govuk-!-margin-top-2 govuk-!-margin-bottom-6">
                 Reassign assessment
             </button>
         </form>
     {% endif %}
-
-    {{g.user}}
 {% endmacro %}

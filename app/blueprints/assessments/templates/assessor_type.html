@@ -12,7 +12,7 @@
 {% set pageHeading %}Team dashboard{% endset %}
 
 {% block header %}
-    {{ team_dashboard_header.render(round_details, stats, team_flag_stats, is_active_status) }}
+    {{ team_dashboard_header.render(round_details, stats, team_flag_stats, is_active_status, selected_assessments, from_form) }}
 {% endblock header %}
 
 {% block content %}
@@ -57,6 +57,7 @@
                         round_short_name=round_details.round_short_name) }}">
                 {{ form.csrf_token }}
                 {% for assessment in selected_assessments %}
+                <input type="hidden" name="from_form" value="{{ from_form }}">
                 <input type="hidden" name="selected_assessments" value="{{ assessment }}">
                 {% endfor %}
                 <div class="govuk-radios" id="assessor-type-selection">

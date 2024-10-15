@@ -12,7 +12,7 @@
 {% set pageHeading %}Team dashboard{% endset %}
 
 {% block header %}
-    {{ team_dashboard_header.render(round_details, stats, team_flag_stats, is_active_status) }}
+    {{ team_dashboard_header.render(round_details, stats, team_flag_stats, is_active_status, selected_assessments, from_form) }}
 {% endblock header %}
 
 {% block content %}
@@ -58,6 +58,7 @@
                     <input type="hidden" name="assigned_users" value="{{ user_id }}">
                 {% endfor %}
                 <input type="hidden" name="assessor_role" value="{{ assessor_role }}">
+                <input type="hidden" name="from_form" value="{{ from_form }}">
                 {% if form.form_errors %}
                 <p class="govuk-error-message">
                 {% for error in form.form_errors %}

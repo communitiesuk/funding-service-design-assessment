@@ -1,14 +1,19 @@
 {%- from 'govuk_frontend_jinja/components/back-link/macro.html' import govukBackLink -%}
 {% from "macros/logout_partial.html" import logout_partial %}
 
-{% macro render(round_details, stats, team_flag_stats, is_active_status, sso_logout_url) %}
+{% macro render(round_details, stats, team_flag_stats, is_active_status, selected_assessments, from_form, sso_logout_url ) %}
 
 <header role="banner" data-module="govuk-header">
     <nav class="govuk-width-container govuk-header__navigation">
         <div class="govuk-phase-banner flex-parent-element">
             <p class="govuk-!-text-align-left govuk-!-margin-left-3 flex-parent-element flexed-element-margins-collapse">
-                {{ govukBackLink({'href': url_for("assessment_bp.landing"), 'html': 'Back to <b>assessment landing</b>',
-                'attributes': {'data-qa': 'back-to-assessment-overview-link'} }) }}
+                {% if from_form == 'True' %}
+                    {{ govukBackLink({'href': url_for("assessment_bp.application", application_id=selected_assessments[0]), 'html': 'Back to <b>assessment</b>',
+                    'attributes': {'data-qa': 'back-to-assessment-overview-link'} }) }}
+                {% else %}
+                    {{ govukBackLink({'href': url_for("assessment_bp.landing"), 'html': 'Back to <b>assessment landing</b>',
+                    'attributes': {'data-qa': 'back-to-assessment-overview-link'} }) }}
+                {% endif %}
             </p>
             {{ logout_partial(sso_logout_url) }}
         </div>
