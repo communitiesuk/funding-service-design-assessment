@@ -514,6 +514,8 @@ def assessor_type(fund_short_name: str, round_short_name: str):
     if not (selected_assessments := request.form.getlist("selected_assessments")):
         abort(500, "Required selected_assessments field to be populated")
 
+    from_form=request.form.get("from_form")
+
     selected_assessor_role = (
         request.form.getlist("assessor_role")[0]
         if request.form.getlist("assessor_role")
@@ -567,6 +569,7 @@ def assessor_type(fund_short_name: str, round_short_name: str):
         round_details=round_details,
         stats=unfiltered_stats,
         form=form,
+        from_form=from_form,
     )
 
 
@@ -588,6 +591,8 @@ def assessor_type_list(fund_short_name: str, round_short_name: str):
 
     if not (selected_assessments := request.form.getlist("selected_assessments")):
         abort(500, "Required selected_assessments field to be populated")
+
+    from_form=request.form.get("from_form")
 
     if not (assessor_role := request.form.getlist("assessor_role")):
         abort(500, "Required assessor_role field to be populated")
@@ -707,6 +712,7 @@ def assessor_type_list(fund_short_name: str, round_short_name: str):
         selected_users=selected_users,
         assigned_users=assigned_users,
         form=form,
+        from_form=from_form,
     )
 
 
@@ -929,6 +935,8 @@ def assignment_overview(fund_short_name: str, round_short_name: str):
             new_request_form[key] = value
 
         request.form = ImmutableMultiDict(new_request_form)
+
+    from_form = request.form.get("from_form")
 
     assigned_user_set = set(request.form.getlist("assigned_users"))
     selected_user_set = set(request.form.getlist("selected_users"))
@@ -1168,6 +1176,7 @@ def assignment_overview(fund_short_name: str, round_short_name: str):
         assessments=post_processed_overviews,
         form=form,
         assessment_statuses=assessment_statuses,
+        from_form=from_form,
     )
 
 

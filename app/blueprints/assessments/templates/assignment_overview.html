@@ -13,7 +13,7 @@
 {% set pageHeading %}Team dashboard{% endset %}
 
 {% block header %}
-    {{ team_dashboard_header.render(round_details, stats, team_flag_stats, is_active_status) }}
+    {{ team_dashboard_header.render(round_details, stats, team_flag_stats, is_active_status, selected_assessments, from_form) }}
 {% endblock header %}
 
 {% block content %}
@@ -46,9 +46,16 @@
                 {% endif %}
             </p>
             {% endif %}
-            <form method="post" action="{{ url_for('assessment_bp.assignment_overview',
-            fund_short_name=round_details.fund_short_name,
-            round_short_name=round_details.round_short_name) }}">
+
+            <form method="post" action="
+                {% if from_form == 'True' %}
+                    {{ url_for('assessment_bp.application', application_id=selected_assessments[0]) }}
+                {% else %}
+                    {{ url_for('assessment_bp.assignment_overview',
+                    fund_short_name=round_details.fund_short_name,
+                    round_short_name=round_details.round_short_name) }}
+                {% endif %}
+            ">
             {{ form.csrf_token }}
             {% if form.form_errors %}
             <ul class="errors">
