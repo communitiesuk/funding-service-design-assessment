@@ -514,6 +514,8 @@ def assessor_type(fund_short_name: str, round_short_name: str):
     if not (selected_assessments := request.form.getlist("selected_assessments")):
         abort(500, "Required selected_assessments field to be populated")
 
+    from_form = request.form.get("from_form")
+
     selected_assessor_role = (
         request.form.getlist("assessor_role")[0]
         if request.form.getlist("assessor_role")
@@ -567,6 +569,7 @@ def assessor_type(fund_short_name: str, round_short_name: str):
         round_details=round_details,
         stats=unfiltered_stats,
         form=form,
+        from_form=from_form,
     )
 
 
@@ -588,6 +591,8 @@ def assessor_type_list(fund_short_name: str, round_short_name: str):
 
     if not (selected_assessments := request.form.getlist("selected_assessments")):
         abort(500, "Required selected_assessments field to be populated")
+
+    from_form = request.form.get("from_form")
 
     if not (assessor_role := request.form.getlist("assessor_role")):
         abort(500, "Required assessor_role field to be populated")
@@ -707,6 +712,7 @@ def assessor_type_list(fund_short_name: str, round_short_name: str):
         selected_users=selected_users,
         assigned_users=assigned_users,
         form=form,
+        from_form=from_form,
     )
 
 
@@ -930,6 +936,8 @@ def assignment_overview(fund_short_name: str, round_short_name: str):
 
         request.form = ImmutableMultiDict(new_request_form)
 
+    from_form = request.form.get("from_form")
+
     assigned_user_set = set(request.form.getlist("assigned_users"))
     selected_user_set = set(request.form.getlist("selected_users"))
 
@@ -1106,13 +1114,21 @@ def assignment_overview(fund_short_name: str, round_short_name: str):
                     f"Could not create assignment for user {user_id} and application {application_id}"
                 )
 
-        return redirect(
-            url_for(
-                "assessment_bp.fund_dashboard",
-                fund_short_name=fund_short_name,
-                round_short_name=round_short_name,
+        if from_form == "True":
+            return redirect(
+                url_for(
+                    "assessment_bp.application",
+                    application_id=application_id,
+                )
             )
-        )
+        else:
+            return redirect(
+                url_for(
+                    "assessment_bp.fund_dashboard",
+                    fund_short_name=fund_short_name,
+                    round_short_name=round_short_name,
+                )
+            )
 
     thread_executor.executor.shutdown()
 
@@ -1168,6 +1184,7 @@ def assignment_overview(fund_short_name: str, round_short_name: str):
         assessments=post_processed_overviews,
         form=form,
         assessment_statuses=assessment_statuses,
+        from_form=from_form,
     )
 
 
@@ -1629,6 +1646,54 @@ def application(application_id):
             )
         )
 
+    thread_executor = ContextAwareExecutor(
+        max_workers=4,
+        thread_name_prefix="application-request",
+        flask_app=current_app,
+    )
+
+    # Get all the users for the fund
+    future_users_for_fund = thread_executor.submit(
+        get_users_for_fund,
+        state.fund_short_name,
+        None,  # round_short_name,
+        True,
+        False,
+    )
+
+    future_existing_assignments = thread_executor.submit(
+        get_application_assignments, application_id, True
+    )
+
+    users_for_fund = future_users_for_fund.result()
+    existing_assignments = future_existing_assignments.result()
+    all_assigned_users = set(
+        assignment["user_id"] for assignment in existing_assignments
+    )
+    assigned_lead_assessors = [
+        user
+        for user in users_for_fund
+        if user["account_id"] in all_assigned_users
+        and any(Config.LEAD_ASSESSOR in role for role in user["roles"])
+    ]
+    assigned_assessors = [
+        user
+        for user in users_for_fund
+        if user["account_id"] in all_assigned_users
+        and any(Config.ASSESSOR in role for role in user["roles"])
+    ]
+
+    thread_executor.executor.shutdown()
+
+    assigner_account, assignment_date, assigner_name = None, None, None
+    if len(existing_assignments) > 0:
+        assigner_account = get_bulk_accounts_dict(
+            [existing_assignments[-1]["assigner_id"]],
+            state.fund_short_name,
+        )
+        assigner_name = next(iter(assigner_account.values()))["full_name"]
+        assignment_date = existing_assignments[-1]["created_at"]
+
     return render_template(
         "assessor_tasklist.html",
         sub_criteria_status_completed=sub_criteria_status_completed,
@@ -1654,6 +1719,12 @@ def application(application_id):
         comment_id=comment_id,
         comment_form=comment_form,
         comments=theme_matched_comments,
+        assigned_lead_assessors=assigned_lead_assessors,
+        assigned_assessors=assigned_assessors,
+        assignment_date=assignment_date,
+        assigner_name=assigner_name,
+        round_short_name=fund_round.short_name,
+        fund_short_name=state.fund_short_name,
     )
 
 
