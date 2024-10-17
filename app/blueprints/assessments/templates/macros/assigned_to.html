@@ -2,17 +2,19 @@
     <h3 class="govuk-heading-m">Assigned to you</h3>
     <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible section_break_blue">
 
-    <p class="govuk-body">
-        <strong>{{ assigner_name}}</strong> assigned the assessors:
-    </p>
-    <ul class="govuk-list">
-        {%for assessor in assigned_assessors%}
-            <li>{{ assessor.full_name }}</li>
-        {%endfor%}
-    </ul>
-    <p class="govuk-body">
-        {{ assignment_date | utc_to_bst }}
-    </p>
+    {% if assigner_name is not none %}
+        <p class="govuk-body">
+            <strong>{{ assigner_name }}</strong> assigned the assessors:
+        </p>
+        <ul class="govuk-list">
+            {%for assessor in assigned_assessors%}
+                <li>{{ assessor.full_name }}</li>
+            {%endfor%}
+        </ul>
+        <p class="govuk-body">
+            {{ assignment_date | utc_to_bst }}
+        </p>
+    {% endif %}
 
     {% if g.user.highest_role_map[fund_short_name] == 'LEAD_ASSESSOR' %}
         <form method="post" action="{{ url_for('assessment_bp.assign_assessments', fund_short_name=fund_short_name, round_short_name=round_short_name) }}">

@@ -1114,13 +1114,18 @@ def assignment_overview(fund_short_name: str, round_short_name: str):
                     f"Could not create assignment for user {user_id} and application {application_id}"
                 )
 
-        return redirect(
-            url_for(
+        if from_form == 'True':
+            return redirect(url_for(
+                "assessment_bp.application",
+                application_id=application_id,
+            ))
+        else:
+            return redirect(url_for(
                 "assessment_bp.fund_dashboard",
                 fund_short_name=fund_short_name,
                 round_short_name=round_short_name,
-            )
-        )
+            ))
+        
 
     thread_executor.executor.shutdown()
 
@@ -1677,10 +1682,14 @@ def application(application_id):
 
     thread_executor.executor.shutdown()
 
-    assigner_account = get_bulk_accounts_dict(
-        [existing_assignments[-1]["assigner_id"]],
-        state.fund_short_name,
-    )
+    assigner_account, assignment_date, assigner_name = None, None, None
+    if len(existing_assignments) > 0:
+        assigner_account = get_bulk_accounts_dict(
+            [existing_assignments[-1]["assigner_id"]],
+            state.fund_short_name,
+        )
+        assigner_name=(next(iter(assigner_account.values()))["full_name"])
+        assignment_date=existing_assignments[-1]["created_at"]
 
     return render_template(
         "assessor_tasklist.html",
@@ -1709,8 +1718,8 @@ def application(application_id):
         comments=theme_matched_comments,
         assigned_lead_assessors=assigned_lead_assessors,
         assigned_assessors=assigned_assessors,
-        assignment_date=existing_assignments[-1]["created_at"],
-        assigner_name=next(iter(assigner_account.values()))["full_name"],
+        assignment_date=assignment_date,
+        assigner_name=assigner_name,
         round_short_name=fund_round.short_name,
         fund_short_name=state.fund_short_name,
     )

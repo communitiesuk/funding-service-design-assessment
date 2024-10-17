@@ -46,16 +46,9 @@
                 {% endif %}
             </p>
             {% endif %}
-
-            <form method="post" action="
-                {% if from_form == 'True' %}
-                    {{ url_for('assessment_bp.application', application_id=selected_assessments[0]) }}
-                {% else %}
-                    {{ url_for('assessment_bp.assignment_overview',
-                    fund_short_name=round_details.fund_short_name,
-                    round_short_name=round_details.round_short_name) }}
-                {% endif %}
-            ">
+            <form method="post" action="{{ url_for('assessment_bp.assignment_overview',
+            fund_short_name=round_details.fund_short_name,
+            round_short_name=round_details.round_short_name) }}">
             {{ form.csrf_token }}
             {% if form.form_errors %}
             <ul class="errors">
@@ -79,6 +72,7 @@
             {% for key, value in assessor_messages.items() %}
             <input type="hidden" name="{{ key }}" value="{{ value }}">
             {% endfor %}
+            <input type="hidden" name="from_form" value="{{ from_form }}">
             <p class="govuk-body">
                 <button type="submit" class="govuk-link btn-link" name="change_roles" value="change_roles">Change roles</button> or
                 <button type="submit" class="govuk-link btn-link" name="change_users" value="change_users">Change users</button>
