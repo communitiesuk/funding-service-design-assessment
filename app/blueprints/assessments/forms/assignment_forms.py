@@ -5,9 +5,9 @@ from flask_wtf import FlaskForm
 class AssessmentAssignmentForm(FlaskForm):
     def validate(self, extra_validators=None):
         if super().validate(extra_validators):
-            if request.referrer != request.url:
-                # From a redirect, not a form post
-                return False
+            # if request.referrer != request.url:
+            #     # From a redirect, not a form post
+            #     return False
 
             if not (
                 selected_assessments := request.form.getlist("selected_assessments")
