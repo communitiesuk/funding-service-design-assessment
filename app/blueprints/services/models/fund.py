@@ -15,12 +15,14 @@ class Fund:
     owner_organisation_name: str = ""
     owner_organisation_shortname: str = ""
     owner_organisation_logo_uri: str = ""
+    funding_type: str = ""
     rounds: List[Round] = field(default_factory=list)
 
     @staticmethod
     def from_json(data: dict):
         return Fund(
-            name=data.get("name"),
+            name=decorate_fund_name(data),
+            funding_type=data.get("funding_type"),
             id=data.get("id"),
             description=data.get("description"),
             short_name=data.get("short_name"),
@@ -38,3 +40,9 @@ class Fund:
         if not self.rounds:
             self.rounds = []
         self.rounds.append(fund_round)
+
+
+def decorate_fund_name(data: dict):
+    return data.get("name") + (
+        " - Expression of interest" if data.get("funding_type") == "EOI" else ""
+    )
