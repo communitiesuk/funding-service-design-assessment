@@ -514,7 +514,7 @@ def assessor_type(fund_short_name: str, round_short_name: str):
     if not (selected_assessments := request.form.getlist("selected_assessments")):
         abort(500, "Required selected_assessments field to be populated")
 
-    from_form=request.form.get("from_form")
+    from_form = request.form.get("from_form")
 
     selected_assessor_role = (
         request.form.getlist("assessor_role")[0]
@@ -592,7 +592,7 @@ def assessor_type_list(fund_short_name: str, round_short_name: str):
     if not (selected_assessments := request.form.getlist("selected_assessments")):
         abort(500, "Required selected_assessments field to be populated")
 
-    from_form=request.form.get("from_form")
+    from_form = request.form.get("from_form")
 
     if not (assessor_role := request.form.getlist("assessor_role")):
         abort(500, "Required assessor_role field to be populated")
@@ -1114,18 +1114,21 @@ def assignment_overview(fund_short_name: str, round_short_name: str):
                     f"Could not create assignment for user {user_id} and application {application_id}"
                 )
 
-        if from_form == 'True':
-            return redirect(url_for(
-                "assessment_bp.application",
-                application_id=application_id,
-            ))
+        if from_form == "True":
+            return redirect(
+                url_for(
+                    "assessment_bp.application",
+                    application_id=application_id,
+                )
+            )
         else:
-            return redirect(url_for(
-                "assessment_bp.fund_dashboard",
-                fund_short_name=fund_short_name,
-                round_short_name=round_short_name,
-            ))
-        
+            return redirect(
+                url_for(
+                    "assessment_bp.fund_dashboard",
+                    fund_short_name=fund_short_name,
+                    round_short_name=round_short_name,
+                )
+            )
 
     thread_executor.executor.shutdown()
 
@@ -1664,7 +1667,11 @@ def application(application_id):
 
     existing_assignments = get_application_assignments(application_id, True)
 
-    users_for_fund = future_users_for_fund.result() if future_users_for_fund.result() is not None else []
+    users_for_fund = (
+        future_users_for_fund.result()
+        if future_users_for_fund.result() is not None
+        else []
+    )
     # existing_assignments = future_existing_assignments.result()
     all_assigned_users = set(
         assignment["user_id"] for assignment in existing_assignments
@@ -1690,8 +1697,8 @@ def application(application_id):
             [existing_assignments[-1]["assigner_id"]],
             state.fund_short_name,
         )
-        assigner_name=(next(iter(assigner_account.values()))["full_name"])
-        assignment_date=existing_assignments[-1]["created_at"]
+        assigner_name = next(iter(assigner_account.values()))["full_name"]
+        assignment_date = existing_assignments[-1]["created_at"]
 
     return render_template(
         "assessor_tasklist.html",

@@ -11,10 +11,10 @@ from app.blueprints.assessments.models.round_summary import RoundSummary
 from app.blueprints.assessments.models.round_summary import Stats
 from app.blueprints.services.models.flag import Flag
 from tests.api_data.test_data import fund_specific_claim_map
+from tests.api_data.test_data import stopped_app_id
 from tests.conftest import create_valid_token
 from tests.conftest import test_commenter_claims
 from tests.conftest import test_lead_assessor_claims
-from tests.api_data.test_data import stopped_app_id
 
 
 class TestRoutes:
@@ -30,7 +30,6 @@ class TestRoutes:
             "round_id": "test-round",
         }
     )
-
     @pytest.mark.application_id("stopped_app")
     def test_assign_to_you_section_for_lead_with_no_assignees(
         self,
@@ -97,7 +96,7 @@ class TestRoutes:
             == "Assigned to you"
         )
 
-       #TODO: test there is no button
+    # TODO: test there is no button
 
     @pytest.mark.application_id("stopped_app")
     def test_assign_to_you_section_for_lead_with_assignees(
