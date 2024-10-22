@@ -1658,12 +1658,14 @@ def application(application_id):
         False,
     )
 
-    future_existing_assignments = thread_executor.submit(
-        get_application_assignments, application_id, True
-    )
+    # future_existing_assignments = thread_executor.submit(
+    #     get_application_assignments, application_id, True
+    # )
 
-    users_for_fund = future_users_for_fund.result()
-    existing_assignments = future_existing_assignments.result()
+    existing_assignments = get_application_assignments(application_id, True)
+
+    users_for_fund = future_users_for_fund.result() if future_users_for_fund.result() is not None else []
+    # existing_assignments = future_existing_assignments.result()
     all_assigned_users = set(
         assignment["user_id"] for assignment in existing_assignments
     )

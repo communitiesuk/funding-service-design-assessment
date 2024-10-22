@@ -873,6 +873,14 @@ def mock_get_scoring_system(request, mocker):
 
     yield
 
+@pytest.fixture(scope="function")
+def mock_get_application_assignments(request, mocker):
+    mocker.patch(
+        "app.blueprints.services.data_services.get_application_assignments",
+        return_value=[{'log': "{'2024-10-17T10:56:52.402683+00:00': 'activated', '2024-10-17T13:58:48.793385+00:00': 'activated'}", 'application_id': '17f92fd3-af98-4184-853e-a1ea5cf6e650', 'user_id': 'a1f564e4-2d8b-47ab-b3d8-0e2bda8474f3', 'assigner_id': '00000000-0000-0000-0000-000000000000', 'created_at': '2024-10-17T10:56:52.405436+00:00', 'active': True}, {'log': "{'2024-10-17T13:32:30.403813+00:00': 'activated', '2024-10-17T15:37:19.229188+00:00': 'activated'}", 'application_id': '17f92fd3-af98-4184-853e-a1ea5cf6e650', 'user_id': 'b3e8b788-1735-4d63-ae5b-2db50769fd74', 'assigner_id': '00000000-0000-0000-0000-000000000000', 'created_at': '2024-10-17T13:32:30.406833+00:00', 'active': True}]
+    )
+    yield
+
 
 COF_R2_W2_FORM_NAME_TO_TITLE_MAP = OrderedDict(
     [
