@@ -106,7 +106,7 @@ commonmark==0.9.1
     #   rich
 connexion==3.1.0
     # via -r requirements.txt
-cryptography==43.0.0
+cryptography==43.0.1
     # via
     #   -r requirements.txt
     #   pyhanko
@@ -192,6 +192,10 @@ funding-service-design-utils==2.0.52
     # via -r requirements.txt
 govuk-frontend-jinja==3.2.0
     # via -r requirements.txt
+greenlet==3.0.3
+    # via
+    #   -r requirements.txt
+    #   sqlalchemy
 gunicorn==20.1.0
     # via
     #   -r requirements.txt
