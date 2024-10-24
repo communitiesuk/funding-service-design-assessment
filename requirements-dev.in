@@ -2,7 +2,7 @@
 deepdiff
 invoke
 pip-tools>=6.13.0
-pre-commit
+pre-commit~=4.0.0
 pytest
 pytest-env
 pytest-flask
