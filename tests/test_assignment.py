@@ -615,12 +615,15 @@ def test_assignment_overview_post_new_and_exising(
             _external=True,
         ),
     }
-    with mock.patch(
-        "app.blueprints.assessments.routes.get_application_assignments",
-        return_value=[{"user_id": user_2}],
-    ), mock.patch(
-        "app.blueprints.assessments.routes.assign_user_to_assessment",
-    ) as mock_assign_user_to_assessment_1:
+    with (
+        mock.patch(
+            "app.blueprints.assessments.routes.get_application_assignments",
+            return_value=[{"user_id": user_2}],
+        ),
+        mock.patch(
+            "app.blueprints.assessments.routes.assign_user_to_assessment",
+        ) as mock_assign_user_to_assessment_1,
+    ):
         response = flask_test_client.post(
             url_for(
                 "assessment_bp.assignment_overview",
@@ -745,12 +748,15 @@ def test_assignment_overview_post_add_and_remove(
             _external=True,
         ),
     }
-    with mock.patch(
-        "app.blueprints.assessments.routes.get_application_assignments",
-        return_value=[{"user_id": user_2}, {"user_id": user_3}],
-    ), mock.patch(
-        "app.blueprints.assessments.routes.assign_user_to_assessment",
-    ) as mock_assign_user_to_assessment_1:
+    with (
+        mock.patch(
+            "app.blueprints.assessments.routes.get_application_assignments",
+            return_value=[{"user_id": user_2}, {"user_id": user_3}],
+        ),
+        mock.patch(
+            "app.blueprints.assessments.routes.assign_user_to_assessment",
+        ) as mock_assign_user_to_assessment_1,
+    ):
         response = flask_test_client.post(
             url_for(
                 "assessment_bp.assignment_overview",
