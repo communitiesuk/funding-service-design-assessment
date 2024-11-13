@@ -125,7 +125,7 @@ funding-service-design-utils==2.0.52
     # via -r requirements.in
 govuk-frontend-jinja==3.2.0
     # via -r requirements.in
-gunicorn==20.1.0
+gunicorn==22.0.0
     # via funding-service-design-utils
 h11==0.14.0
     # via httpcore
