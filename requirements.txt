@@ -301,7 +301,7 @@ sqlalchemy==2.0.32
     #   sqlalchemy-utils
 sqlalchemy-utils==0.41.2
     # via funding-service-design-utils
-starlette==0.38.2
+starlette==0.40.0
     # via connexion
 svglib==1.5.1
     # via xhtml2pdf
