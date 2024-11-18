@@ -54,8 +54,11 @@ class DevelopmentConfig(DefaultConfig):
             "HSRA_LEAD_ASSESSOR",
             "HSRA_ASSESSOR",
             "HSRA_COMMENTER",
+            "CTDF_LEAD_ASSESSOR",
+            "CTDF_ASSESSOR",
         ],
         "highest_role_map": {
+            "CTDF": DEBUG_USER_ROLE,
             "COF": DEBUG_USER_ROLE,
             "NSTF": DEBUG_USER_ROLE,
             "CYP": DEBUG_USER_ROLE,
