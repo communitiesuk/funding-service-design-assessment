@@ -8,6 +8,13 @@
             >
                 Flag application
             </a>
+            <a href="{{ url_for('flagging_bp.request_changes', application_id=application_id) }}"
+               class="govuk-button primary-button"
+               data-module="govuk-button"
+               data-qa="request-changes-button"
+            >
+                Request changes
+            </a>
         </div>
     </div>
 {% endmacro %}

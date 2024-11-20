@@ -96,6 +96,69 @@ def flag(application_id):
     )
 
 
+@flagging_bp.route(
+    "/request-changes/<application_id>",
+    methods=["GET", "POST"],
+)
+@check_access_application_id(roles_required=["ASSESSOR"])
+def request_changes(application_id):
+    # Get assessor tasks list
+    state = get_state_for_tasklist_banner(application_id)
+    choices = [
+        (item["sub_section_id"], item["sub_section_name"])
+        for item in state.get_sub_sections_metadata()
+    ]
+
+    teams_available = get_available_teams(
+        state.fund_id,
+        state.round_id,
+        ttl_hash=get_ttl_hash(Config.LRU_CACHE_TIME),
+    )
+
+    form = FlagApplicationForm(
+        section_choices=choices,
+        team_choices=[team["value"] for team in teams_available],
+    )
+
+    if request.method == "POST" and form.validate_on_submit():
+        # change make change_request kind of flag
+        # submit_flag(
+        #     application_id,
+        #     FlagType.RAISED.name,
+        #     g.account_id,
+        #     form.justification.data,
+        #     form.section.data,
+        #     form.teams_available.data,
+        # )
+        return redirect(
+            url_for(
+                "assessment_bp.application",
+                application_id=application_id,
+            )
+        )
+
+    sub_criteria_banner_state = get_sub_criteria_banner_state(application_id)
+
+    flags_list = get_flags(application_id)
+    assessment_status = determine_assessment_status(
+        state.workflow_status, state.is_qa_complete
+    )
+    flag_status = determine_flag_status(flags_list)
+    return render_template(
+        "request_changes.html",
+        application_id=application_id,
+        flag=flag,
+        sub_criteria=sub_criteria_banner_state,
+        form=form,
+        assessment_status=assessment_status,
+        flag_status=flag_status,
+        referrer=request.referrer,
+        state=state,
+        teams_available=teams_available,
+        migration_banner_enabled=Config.MIGRATION_BANNER_ENABLED,
+    )
+
+
 @flagging_bp.route("/resolve_flag/<application_id>", methods=["GET", "POST"])
 @check_access_application_id(roles_required=["LEAD_ASSESSOR"])
 def resolve_flag(application_id):

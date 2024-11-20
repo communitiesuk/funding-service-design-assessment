@@ -639,6 +639,46 @@ def submit_flag(
         return Flag.from_dict(flag_json)
 
 
+def submit_change_request(
+    application_id: str,
+    flag_type: str,
+    user_id: str,
+    justification: str = None,
+    section: str = None,
+    allocation: str = None,
+    flag_id: str = None,
+) -> Flag | None:
+    flag_type = FlagType[flag_type]
+    if flag_id:
+        flag = requests.put(
+            Config.ASSESSMENT_FLAGS_POST_ENDPOINT,
+            json={
+                "assessment_flag_id": flag_id,
+                "justification": justification,
+                "user_id": user_id,
+                "allocation": allocation,
+                "status": flag_type.value,
+            },
+        )
+    else:
+        flag = requests.post(
+            Config.ASSESSMENT_FLAGS_POST_ENDPOINT,
+            json={
+                "application_id": application_id,
+                "justification": justification,
+                "sections_to_flag": section,
+                "user_id": user_id,
+                "allocation": allocation,
+                "status": flag_type.value,
+            },
+        )
+    if flag:
+        flag_json = flag.json()
+        return Flag.from_dict(flag_json)
+
+    return None
+
+
 def get_all_uploaded_documents_theme_answers(
     application_id: str,
 ) -> Union[list, None]:
