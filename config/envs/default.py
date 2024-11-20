@@ -178,6 +178,9 @@ class DefaultConfig:
     APPLICATION_ASSOCIATED_ALL_TAGS_ENDPOINT = (
         ASSESSMENT_STORE_API_HOST + "/application/{application_id}/tags"
     )
+    APPLICATION_REQUEST_CHANGES = (
+        APPLICATION_STORE_API_HOST + "/application/{application_id}/request_changes"
+    )
     ASSESSMENT_GET_TAG_ENDPOINT = (
         ASSESSMENT_STORE_API_HOST + "/funds/{fund_id}/rounds/{round_id}/tags/{tag_id}"
     )
