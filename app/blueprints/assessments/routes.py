@@ -452,7 +452,6 @@ and progresses to the assessor type view if successful.
 @check_access_fund_short_name_round_sn
 @check_access_fund_short_name_round_sn(roles_required=[Config.LEAD_ASSESSOR])
 def assign_assessments(fund_short_name: str, round_short_name: str):
-
     selected_assessments = request.form.getlist("selected_assessments")
 
     form = AssessmentAssignmentForm()
@@ -510,7 +509,6 @@ assessor_type_list.
 @check_access_fund_short_name_round_sn
 @check_access_fund_short_name_round_sn(roles_required=[Config.LEAD_ASSESSOR])
 def assessor_type(fund_short_name: str, round_short_name: str):
-
     if not (selected_assessments := request.form.getlist("selected_assessments")):
         abort(500, "Required selected_assessments field to be populated")
 
@@ -585,7 +583,6 @@ to the assignment_overview page.
 @check_access_fund_short_name_round_sn
 @check_access_fund_short_name_round_sn(roles_required=[Config.LEAD_ASSESSOR])
 def assessor_type_list(fund_short_name: str, round_short_name: str):
-
     if not (selected_assessments := request.form.getlist("selected_assessments")):
         abort(500, "Required selected_assessments field to be populated")
 
@@ -717,7 +714,6 @@ def assessor_type_list(fund_short_name: str, round_short_name: str):
 @check_access_fund_short_name_round_sn
 @check_access_fund_short_name_round_sn(roles_required=[Config.LEAD_ASSESSOR])
 def assessor_comments(fund_short_name: str, round_short_name: str):
-
     if "cancel_messages" in request.form:
         return redirect(
             url_for(
@@ -876,7 +872,6 @@ the selection to create the assignments.
 @check_access_fund_short_name_round_sn
 @check_access_fund_short_name_round_sn(roles_required=[Config.LEAD_ASSESSOR])
 def assignment_overview(fund_short_name: str, round_short_name: str):
-
     # Options to navigate back in the flow to change selections
     if "change_users" in request.form:
         return redirect(
@@ -1237,6 +1232,8 @@ def display_sub_criteria(
     """
     current_app.logger.info(f"Processing GET to {request.path}.")
     sub_criteria = get_sub_criteria(application_id, sub_criteria_id)
+
+    print("\n\n\n\n eurika", sub_criteria, "\n\n\n\n")
     theme_id = request.args.get("theme_id", sub_criteria.themes[0].id)
     comment_form = CommentsForm()
     try:

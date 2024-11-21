@@ -17,7 +17,9 @@ from app.blueprints.flagging.helpers import resolve_application
 from app.blueprints.services.data_services import get_available_teams
 from app.blueprints.services.data_services import get_flag
 from app.blueprints.services.data_services import get_flags
+from app.blueprints.services.data_services import get_sub_criteria
 from app.blueprints.services.data_services import get_sub_criteria_banner_state
+from app.blueprints.services.data_services import post_application_request_changes
 from app.blueprints.services.data_services import submit_flag
 from app.blueprints.services.models.flag import FlagType
 from app.blueprints.services.shared_data_helpers import get_state_for_tasklist_banner
@@ -60,12 +62,12 @@ def flag(application_id):
 
     if request.method == "POST" and form.validate_on_submit():
         submit_flag(
-            application_id,
-            FlagType.RAISED.name,
-            g.account_id,
-            form.justification.data,
-            form.section.data,
-            form.teams_available.data,
+            application_id=application_id,
+            flag_type=FlagType.RAISED.name,
+            user_id=g.account_id,
+            justification=form.justification.data,
+            section=form.section.data,
+            allocation=form.teams_available.data,
         )
         return redirect(
             url_for(
@@ -121,15 +123,31 @@ def request_changes(application_id):
     )
 
     if request.method == "POST" and form.validate_on_submit():
-        # change make change_request kind of flag
-        # submit_flag(
-        #     application_id,
-        #     FlagType.RAISED.name,
-        #     g.account_id,
-        #     form.justification.data,
-        #     form.section.data,
-        #     form.teams_available.data,
-        # )
+        # these isn't a less efficient way to do this
+        field_ids = []
+        for sub_criteria_id in form.section.data:
+            sub_criteria = get_sub_criteria(application_id, sub_criteria_id)
+            for theme in sub_criteria.themes:
+                for answer in theme.answers:
+                    field_ids.append(answer["field_id"])
+
+        submit_flag(
+            application_id=application_id,
+            flag_type=FlagType.RAISED.name,
+            user_id=g.account_id,
+            justification=form.justification.data,
+            section=form.section.data,
+            allocation=form.teams_available.data,
+            field_ids=field_ids,
+            is_change_request=True,
+        )
+
+        post_application_request_changes(
+            application_id,
+            field_ids,
+            form.justification.data,
+        )
+
         return redirect(
             url_for(
                 "assessment_bp.application",

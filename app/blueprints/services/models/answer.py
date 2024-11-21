@@ -1,14 +1,14 @@
 import inspect
 from dataclasses import dataclass
 
-from app.blueprints.services.models.answer import Answer
-
 
 @dataclass
-class Theme:
-    id: str
-    name: str
-    answers: list[Answer]
+class Answer:
+    field_id: str
+    form_name: str
+    field_type: str
+    presentation_type: str
+    question: str
 
     @classmethod
     def from_filtered_dict(cls, d: dict):

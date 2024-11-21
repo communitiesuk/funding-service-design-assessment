@@ -463,6 +463,16 @@ def get_application_stats(fund_ids: List = None, round_ids: List = None):
     return get_data(url)
 
 
+def post_application_request_changes(
+    application_id: str, field_ids: List[str], feedback_message: str
+) -> None:
+    url = Config.APPLICATION_REQUEST_CHANGES.format(application_id=application_id)
+    print(f"\n\nPosting request changes to '{url}'.{field_ids}, {feedback_message}\n\n")
+    requests.post(
+        url, json={"field_ids": field_ids, "feedback_message": feedback_message}
+    )
+
+
 def get_assessments_stats(
     fund_id: str, round_ids: Collection[str], search_params: dict = {}
 ) -> dict | None:
@@ -596,10 +606,12 @@ def submit_flag(
     application_id: str,
     flag_type: str,
     user_id: str,
-    justification: str = None,
-    section: str = None,
-    allocation: str = None,
-    flag_id: str = None,
+    justification: str = "",
+    section: str = "",
+    allocation: str = "",
+    flag_id: str = "",
+    field_ids: str = "",
+    is_change_request: bool = False,
 ) -> Flag | None:
     """Submits a new flag to the assessment store for an application.
     Returns Flag if a flag is created
@@ -610,7 +622,7 @@ def submit_flag(
     :param justification: The justification for raising the flag
     :param section: The assessment section the flag has been raised for.
     """
-    flag_type = FlagType[flag_type]
+
     if flag_id:
         flag = requests.put(
             Config.ASSESSMENT_FLAGS_POST_ENDPOINT,
@@ -619,7 +631,9 @@ def submit_flag(
                 "justification": justification,
                 "user_id": user_id,
                 "allocation": allocation,
-                "status": flag_type.value,
+                "status": FlagType[flag_type].value,
+                "is_change_request": is_change_request,
+                "field_ids": field_ids,
             },
         )
     else:
@@ -631,45 +645,9 @@ def submit_flag(
                 "sections_to_flag": section,
                 "user_id": user_id,
                 "allocation": allocation,
-                "status": flag_type.value,
-            },
-        )
-    if flag:
-        flag_json = flag.json()
-        return Flag.from_dict(flag_json)
-
-
-def submit_change_request(
-    application_id: str,
-    flag_type: str,
-    user_id: str,
-    justification: str = None,
-    section: str = None,
-    allocation: str = None,
-    flag_id: str = None,
-) -> Flag | None:
-    flag_type = FlagType[flag_type]
-    if flag_id:
-        flag = requests.put(
-            Config.ASSESSMENT_FLAGS_POST_ENDPOINT,
-            json={
-                "assessment_flag_id": flag_id,
-                "justification": justification,
-                "user_id": user_id,
-                "allocation": allocation,
-                "status": flag_type.value,
-            },
-        )
-    else:
-        flag = requests.post(
-            Config.ASSESSMENT_FLAGS_POST_ENDPOINT,
-            json={
-                "application_id": application_id,
-                "justification": justification,
-                "sections_to_flag": section,
-                "user_id": user_id,
-                "allocation": allocation,
-                "status": flag_type.value,
+                "status": FlagType[flag_type].value,
+                "is_change_request": is_change_request,
+                "field_ids": field_ids,
             },
         )
     if flag:
