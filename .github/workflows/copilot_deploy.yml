@@ -44,7 +44,6 @@ jobs:
 
   paketo_build:
     needs: [ setup ]
-    concurrency: build-assessment-pack
     permissions:
       packages: write
     uses: communitiesuk/funding-service-design-workflows/.github/workflows/package.yml@main
