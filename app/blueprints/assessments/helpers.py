@@ -88,6 +88,11 @@ def set_application_status_in_overview(application_overviews):
         )
         status = ""
         for key, val in assessment_statuses.items():
+
+            # whyy
+            # a "display value" is set in the code which is human readable and then its
+            # _reverse_ mapped back to a key here so that can then be turned back into something human readbale in the templatej
+            # that human readable end result _might actually_ be splitting the key by _ and doing some capitlisation stuff
             if val == display_status:
                 status = key
                 break

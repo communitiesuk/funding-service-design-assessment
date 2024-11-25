@@ -82,6 +82,7 @@ def determine_display_status(
     return display_status
 
 
+# whyy - does this not use the value that comes back from the assessment store
 def determine_flag_status(Flags: List[Flag]) -> str:
     flag_status = ""
     flags_list = (
@@ -91,8 +92,16 @@ def determine_flag_status(Flags: List[Flag]) -> str:
     )
     all_latest_status = [flag.latest_status for flag in flags_list]
 
+    # changes_requested = False
+    for flag in flags_list:
+        if flag.latest_status == FlagType.RAISED and flag.is_change_request:
+            changes_requested = True
+    # changes_requested = True in [flag.is_change_request for flag in flags_list]
+
     if FlagType.STOPPED in all_latest_status:
         flag_status = "Stopped"
+    # elif changes_requested:
+    # flag_status = "Waiting for applicant"
     elif all_latest_status.count(FlagType.RAISED) > 1:
         flag_status = "Multiple flags to resolve"
     elif all_latest_status.count(FlagType.RAISED) == 1:

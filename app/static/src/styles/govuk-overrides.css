@@ -225,6 +225,12 @@
     margin: 10px 0 30px;
 }
 
+.requested {
+    border: 2px solid #f47738;
+    border-left: 10px solid #f47738;
+    background-color: #fcd6c3;
+}
+
 .fsd-login-banner-background {
     background-color: #1d70b8;
     margin: 0 0 30px;

@@ -11,6 +11,10 @@
     <span class="flagged-tag">
         {{ assessment_statuses[application_status] }}
     </span>
+    {% elif application_status == "CHANGES_REQUESTED" %}
+    <span class="govuk-tag govuk-tag--orange">
+        {{ assessment_statuses[application_status] }}
+    </span>
     {% elif "Flagged" in application_status %}
     <span class="flagged-tag">
         {{ application_status }}

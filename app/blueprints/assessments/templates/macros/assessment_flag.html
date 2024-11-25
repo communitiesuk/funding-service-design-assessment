@@ -44,7 +44,9 @@
             {% endif %}
         {% endif %}
         <br>
+        {% if user_info %}
         <p class="govuk-body-s">{{ user_info["full_name"] or "N/A" }} ({{ user_info["highest_role"] | all_caps_to_human }}) {{ user_info["email_address"] }}</p>
+        {% endif %}
         <p class="govuk-body-s">{{ flag.updates[-1]["date_created"] | utc_to_bst }}</p>
     </div>
 {% endmacro %}
@@ -61,7 +63,9 @@
             {% endif %}
         {% endfor %}
         <br>
+        {% if user_info %}
         <p class="govuk-body-s">{{ user_info["full_name"] or "N/A" }} ({{ user_info["highest_role"] | all_caps_to_human }}) {{ user_info["email_address"] }}</p>
+        {% endif %}
         <p class="govuk-body-s">{{ flag.date_created | utc_to_bst }}</p>
         {% if g.access_controller.is_lead_assessor %}
             <p class="govuk-body"><a class="govuk-link govuk-link--no-visited-state" href="{{ url_for('flagging_bp.continue_assessment',application_id=application_id)}}?flag_id={{ flag.id }}">Remove flag and continue assessment</a></p>

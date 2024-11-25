@@ -22,6 +22,17 @@
 
 {% set pageHeading = state.project_name %}
 
+{% block head %}
+<style>
+    .requested {
+        border: 2px solid #f47738;
+        border-left: 10px solid #f47738;
+        background-color: #fcd6c3;
+    }
+</style>
+{{ super() }}
+{% endblock head %}
+
 {% block header %}
 <header role="banner" data-module="govuk-header">
     <nav class="govuk-width-container govuk-header__navigation">
@@ -105,7 +116,7 @@
             <!--Flag history is diabled for EOI fund types -->
             {% if not is_expression_of_interest %}
                 <div class="govuk-grid-column-one-half">
-                    {{ flag_tabs(state, application_id, teams_flag_stats, flags_list, accounts_list) }}
+                    {# {{ flag_tabs(state, application_id, teams_flag_stats, flags_list, accounts_list) }} #}
                 </div>
             {% endif %}
 
@@ -147,14 +158,46 @@
 
         {# only show stopped banner, if flag_status=="Stopped" and hide all other banners #}
         {% for flag in flags_list %}
-            {% if g.access_controller.has_any_assessor_role and (flag_status != "Stopped") and (flag.latest_status.name == "RESOLVED") %}
-                {{ assessment_resolved(flag, accounts_list[flag.latest_user_id], application_id) }}
-            {% elif g.access_controller.has_any_assessor_role and (flag_status != "Stopped") and (flag.latest_status.name == "RAISED") %}
-                {{ assessment_flagged(state, flag, accounts_list[flag.latest_user_id], application_id) }}
-            {% elif g.access_controller.has_any_assessor_role and flag_status == "Stopped" and (flag.latest_status.name == "STOPPED")%}
-                {{ assessment_stopped(flag, accounts_list[flag.latest_user_id], application_id) }}
+            {% if not flag.is_change_request %}
+                {% if g.access_controller.has_any_assessor_role and (flag_status != "Stopped") and (flag.latest_status.name == "RESOLVED") %}
+                    {{ assessment_resolved(flag, accounts_list[flag.latest_user_id], application_id) }}
+                {% elif g.access_controller.has_any_assessor_role and (flag_status != "Stopped") and (flag.latest_status.name == "RAISED") %}
+                    {{ assessment_flagged(state, flag, accounts_list[flag.latest_user_id], application_id) }}
+                {% elif g.access_controller.has_any_assessor_role and flag_status == "Stopped" and (flag.latest_status.name == "STOPPED")%}
+                    {{ assessment_stopped(flag, accounts_list[flag.latest_user_id], application_id) }}
+                {% endif %}
             {% endif %}
         {% endfor %}
+
+        {% if changes_requested %}
+        <div style="background-color: #fcd6c3;" class="assessment-alert requested" role="alert">
+            <h1 class="assessment-alert__heading govuk-heading-l">
+                Changes requested
+            </h1>
+            <ul class="govuk-list">
+            {% for flag in flags_list %}
+                {% if flag.latest_status.name == "RAISED" %}
+                <li>{{ flag.sections_to_flag | length }} sections at {{ flag.date_created | utc_to_bst }}
+                    <ul class="govuk-list">
+                        <li>
+                            <details class="govuk-details">
+                                <summary class="govuk-details__summary">
+                                    <span class="govuk-details__summary-text">
+                                    Feedback
+                                    </span>
+                                </summary>
+                                <div class="govuk-details__text">
+                                    {{ flag.updates[0]["justification"] }}
+                                </div>
+                            </details>
+                        </li>
+                    </ul>
+                </li>
+                {% endif %}
+            {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
 
     {% if sub_criteria_status_completed and g.access_controller.has_any_assessor_role and (not is_qa_complete) and (not flag_status) and not is_expression_of_interest %}
         {{ assessment_complete(state, form.csrf_token, application_id)}}

@@ -1637,6 +1637,7 @@ def application(application_id):
         accounts_list=accounts_list,
         teams_flag_stats=teams_flag_stats,
         flags_list=flags_list,
+        changes_requested="RAISED" in [flag.latest_status.name for flag in flags_list],
         is_flaggable=is_flaggable(flag_status),
         is_qa_complete=state.is_qa_complete,
         qa_complete=qa_complete,

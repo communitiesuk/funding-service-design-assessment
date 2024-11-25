@@ -29,6 +29,8 @@ assessment_statuses = {
     "FLAGGED": "Flagged",
     "STOPPED": "Stopped",
     "MULTIPLE_FLAGS": "Multiple flags to resolve",
+    "CHANGES_REQUESTED": "Waiting for applicant",
+    "APPLICANT_UPDATED": "Updated by applicant",
 }
 
 funding_types = {

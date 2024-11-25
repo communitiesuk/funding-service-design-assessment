@@ -14,8 +14,10 @@
                     {% endif %}
 
                     {% if g.access_controller.has_any_assessor_role and display_status %}
+                        {# @sfount need to look into the eoi round behaviour as we added eoi as a funding type - make sure things are at least consistent #}
+                        {# this is as an area that needs set aside analysis/ rationalisation #}
                         {% if not is_eoi_round %}<strong class="govuk-tag govuk-tag--grey govuk-!-margin-top-4">{{ assessment_status }}</strong>{% endif %}
-                        {% if "Flagged" in flag_status or flag_status in ["Multiple flags to resolve", "Stopped", "Flagged"] %}
+                        {% if "Flagged" in flag_status or flag_status in ["Multiple flags to resolve", "Stopped", "Flagged", "Waiting for applicant"] %}
                             <p class="govuk-body-l fsd-banner-content fsd-banner-collapse-padding govuk-!-margin-top-3">{{ flag_status or "" }}</p>
                         {% endif %}
                     {% endif %}

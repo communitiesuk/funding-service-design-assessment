@@ -18,6 +18,7 @@ class Flag:
     latest_allocation: str
     application_id: str
     updates: list
+    is_change_request: bool
 
     def __post_init__(self):
         self.latest_status = self.get_enum_status(self.latest_status)
