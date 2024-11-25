@@ -10,9 +10,9 @@ type: Load Balanced Web Service
 http:
   # Requests to this path will be forwarded to your service.
   # To match all requests you can use the "/" path.
-  path: '/'
+  path: "/"
   # You can specify a custom health check path. The default is "/".
-  healthcheck: '/healthcheck'
+  healthcheck: "/healthcheck"
   alias: assessment.${COPILOT_ENVIRONMENT_NAME}.access-funding.test.levellingup.gov.uk
 
 # Configuration for your containers and service.
@@ -49,7 +49,6 @@ variables:
   FLASK_ENV: ${COPILOT_ENVIRONMENT_NAME}
   ASSESSMENT_STORE_API_HOST: "http://fsd-assessment-store:8080"
   ACCOUNT_STORE_API_HOST: "http://fsd-account-store:8080"
-  APPLICATION_STORE_API_HOST: "http://fsd-application-store:8080"
   COPILOT_AWS_BUCKET_NAME:
     from_cfn: ${COPILOT_APPLICATION_NAME}-${COPILOT_ENVIRONMENT_NAME}-FormUploadsBucket
   REDIS_INSTANCE_URI:
@@ -57,6 +56,7 @@ variables:
 
 secrets:
   FUND_STORE_API_HOST: /copilot/${COPILOT_APPLICATION_NAME}/${COPILOT_ENVIRONMENT_NAME}/secrets/FUND_STORE_API_HOST
+  APPLICATION_STORE_API_HOST: /copilot/${COPILOT_APPLICATION_NAME}/${COPILOT_ENVIRONMENT_NAME}/secrets/APPLICATION_STORE_API_HOST
   RSA256_PUBLIC_KEY_BASE64: /copilot/${COPILOT_APPLICATION_NAME}/${COPILOT_ENVIRONMENT_NAME}/secrets/RSA256_PUBLIC_KEY_BASE64
   AUTHENTICATOR_HOST: /copilot/${COPILOT_APPLICATION_NAME}/${COPILOT_ENVIRONMENT_NAME}/secrets/AUTHENTICATOR_HOST
   SECRET_KEY: /copilot/${COPILOT_APPLICATION_NAME}/${COPILOT_ENVIRONMENT_NAME}/secrets/SECRET_KEY
@@ -86,7 +86,7 @@ environments:
         port: 8080
   test:
     deployment:
-      rolling: 'recreate'
+      rolling: "recreate"
     count:
       spot: 2
     sidecars:
