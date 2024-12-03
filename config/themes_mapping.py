@@ -161,3 +161,5 @@ def ordered_themes(fund_round_short_name):
             "designated_area_details",
             "milestones",
         ]
+    if fund_round_short_name == "CTDFCR1":
+        return ["project_name", "organisation_name"]
