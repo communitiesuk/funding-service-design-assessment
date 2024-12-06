@@ -1,6 +1,3 @@
-$govuk-focus-colour: #ffdd00;
-$govuk-focus-text-colour: #0b0c0c;
-
 [aria-sort] button,
 [aria-sort] button:hover {
   background-color: transparent;
@@ -21,9 +18,9 @@ $govuk-focus-text-colour: #0b0c0c;
 }
 
 [aria-sort] button:focus {
-  background-color: $govuk-focus-colour;
-  color: $govuk-focus-text-colour;
-  box-shadow: 0 -2px $govuk-focus-colour, 0 4px $govuk-focus-text-colour;
+  background-color: #ffdd00;
+  color: #0b0c0c;
+  box-shadow: 0 -2px #ffdd00, 0 4px #0b0c0c;
   outline: none;
 }
 
