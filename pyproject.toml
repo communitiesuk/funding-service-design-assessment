@@ -24,8 +24,6 @@ dependencies = [
     "jsmin==3.0.1",
     "num2words==0.5.13",
     "openapi-spec-validator==0.7.1",
-    "pyopenssl==24.2.1",
-    "pyscss==1.4.0",
     "requests==2.32.3",
     "swagger-ui-bundle==1.1.0",
     "xhtml2pdf==0.2.16",
