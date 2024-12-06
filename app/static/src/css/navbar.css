@@ -1,17 +1,12 @@
-$govuk-border-colour: #b1b4b6;
-$govuk-link-colour: #1d70b8;
-$govuk-text-colour:	#0b0c0c;
-$govuk-colour-white: #ffffff;
-
 .assessment-navigation {
     margin-top: 8px;
-    border-top: 3px $govuk-link-colour solid ;
+    border-top: 3px #1d70b8 solid ;
     ul:first-of-type {
       border-top: none;
       margin-top: 20px;
     }
     ul:last-of-type {
-        border-top: 2px $govuk-border-colour solid;
+        border-top: 2px #b1b4b6 solid;
         padding-top: 20px;
     }
     ul:first-of-type:last-of-type {
@@ -23,26 +18,26 @@ $govuk-colour-white: #ffffff;
 .theme {
     margin-top: 8px;
     padding-top: 20px;
-    border-top: 3px $govuk-border-colour solid;
+    border-top: 3px #b1b4b6 solid;
 }
 
 .response-title {
     margin-bottom: 0;
     padding: 5px 5px 5px 20px;
-    background-color: $govuk-border-colour;
-    color: $govuk-text-colour;
+    background-color: #b1b4b6;
+    color: #0b0c0c;
   }
 
 .template-answer {
-    border: 3px $govuk-border-colour solid;
+    border: 3px #b1b4b6 solid;
     padding: 25px 25px 4px;
-    background-color: $govuk-colour-white;
+    background-color: #ffffff;
   }
 
 .template-answer--dashboard-container {
   border: 4px solid #505a5f;
   padding: 25px 25px 4px;
-  background-color: $govuk-colour-white;
+  background-color: #ffffff;
 }
 
 .scoring-heading {
@@ -76,11 +71,11 @@ $govuk-colour-white: #ffffff;
   }
 
 .headline-container {
-    background-color: $govuk-link-colour;
+    background-color: #1d70b8;
     margin: 0 0 30px;
     padding: 40px 0;
     * {
-      color: $govuk-colour-white;
+      color: #ffffff;
     }
 
     .lead-dashboard-heading {
