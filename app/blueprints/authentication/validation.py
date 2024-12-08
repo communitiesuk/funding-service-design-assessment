@@ -88,7 +88,9 @@ def has_access_to_fund(short_name: str) -> bool:
     return any(role in all_roles for role in access_roles)
 
 
-def check_access_application_id(func: Callable = None, roles_required: List[str] = []) -> Callable:
+def check_access_application_id(func: Callable = None, roles_required: List[str] | None = None) -> Callable:
+    if roles_required is None:
+        roles_required = []
     if func is None:
         return lambda f: check_access_application_id(func=f, roles_required=roles_required)
 
@@ -135,10 +137,12 @@ def check_access_application_id(func: Callable = None, roles_required: List[str]
 
 def _check_access_fund_common(
     func: Callable = None,
-    roles_required: List[str] = [],
+    roles_required: List[str] | None = None,
     fund_key: str = "fund_short_name",
     round_key: str = "round_short_name",
 ) -> Callable:
+    if roles_required is None:
+        roles_required = []
     if func is None:  # if used as a partial function
         return lambda f: _check_access_fund_common(
             func=f,

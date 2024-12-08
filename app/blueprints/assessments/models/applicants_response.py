@@ -172,7 +172,7 @@ class NewAddAnotherTable(ApplicantResponseComponent):
         num_columns = len(answer[0][1])  # Assuming all rows have the same number of values
         for j in range(num_columns):
             columns = []
-            for i, (_, values, fmt) in enumerate(answer):
+            for _i, (_, values, fmt) in enumerate(answer):
                 render_type = "html" if fmt == "html" else "text"
                 render_val = values[j]
                 format_val = ""

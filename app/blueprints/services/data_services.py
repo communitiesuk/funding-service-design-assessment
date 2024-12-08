@@ -120,7 +120,9 @@ def get_users_for_fund(
     return users_for_fund_response
 
 
-def get_tags_for_fund_round(fund_id, round_id, search_params: dict = {}) -> List[Tag]:
+def get_tags_for_fund_round(fund_id, round_id, search_params: dict | None = None) -> List[Tag]:
+    if search_params is None:
+        search_params = {}
     endpoint = Config.ASSESSMENT_TAGS_ENDPOINT.format(
         fund_id=fund_id, round_id=round_id, params=urlencode(search_params)
     )
@@ -394,7 +396,9 @@ def get_application_stats(fund_ids: List = None, round_ids: List = None):
     return get_data(url)
 
 
-def get_assessments_stats(fund_id: str, round_ids: Collection[str], search_params: dict = {}) -> dict | None:
+def get_assessments_stats(fund_id: str, round_ids: Collection[str], search_params: dict | None = None) -> dict | None:
+    if search_params is None:
+        search_params = {}
     assessments_stats_endpoint = (Config.ASSESSMENT_STORE_API_HOST) + Config.ASSESSMENTS_STATS_ENDPOINT.format(
         fund_id=fund_id, params=urlencode(search_params)
     )

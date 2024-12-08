@@ -28,7 +28,9 @@ class _MockUser:
 
 
 class _MockGlobal:
-    def __init__(self, roles=[]):
+    def __init__(self, roles=None):
+        if roles is None:
+            roles = []
         self.user = _MockUser(roles)
 
 

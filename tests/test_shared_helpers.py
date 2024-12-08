@@ -4,7 +4,11 @@ from app.blueprints.services.models.assessor_task_list import AssessorTaskList
 from app.blueprints.services.shared_data_helpers import get_state_for_tasklist_banner
 
 
-def mock_task_list(sections=[], criterias=[]):
+def mock_task_list(sections=None, criterias=None):
+    if criterias is None:
+        criterias = []
+    if sections is None:
+        sections = []
     return AssessorTaskList.from_json({"sections": sections, "criterias": criterias})
 
 
