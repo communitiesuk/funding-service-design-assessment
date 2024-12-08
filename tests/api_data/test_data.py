@@ -1,4 +1,4 @@
-# flake8: noqa
+
 # There is config for any linked information shared across the mock api queries
 # General config
 from dataclasses import dataclass

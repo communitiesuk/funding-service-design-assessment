@@ -1,4 +1,4 @@
-# flake8: noqa
+
 import re
 from abc import ABC
 from abc import abstractmethod
