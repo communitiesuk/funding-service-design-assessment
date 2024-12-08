@@ -1,3 +1,5 @@
+# ruff: noqa
+
 test_application_answers = {
     "feasibility": {
         "Tell us about the feasibility studies you have carried out for your project": "lots of surveys",

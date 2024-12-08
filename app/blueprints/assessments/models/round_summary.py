@@ -139,7 +139,7 @@ def _populate_live_round_stats(round_id_to_summary_map, live_rounds, fund) -> di
     return round_id_to_summary_map
 
 
-def create_round_summaries(fund: Fund, filters: LandingFilters) -> list[RoundSummary]:
+def create_round_summaries(fund: Fund, filters: LandingFilters) -> list[RoundSummary]:  # noqa: C901
     """Get all the round stats in a fund."""
     access_controller = AssessmentAccessController(fund.short_name)
 

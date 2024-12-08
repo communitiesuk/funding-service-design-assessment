@@ -1,5 +1,6 @@
 # There is config for any linked information shared across the mock api queries
 # General config
+# ruff: noqa
 from dataclasses import dataclass
 
 from app.blueprints.services.models.flag import FlagType

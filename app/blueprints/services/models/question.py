@@ -31,7 +31,7 @@ class Question:
         for question_field in self.fields:
             answer = question_field.answer
             try:
-                if type(ast.literal_eval(answer)) == list:
+                if type(ast.literal_eval(answer)) is list:
                     answers_per_question_field[question_field.title] = ast.literal_eval(answer)
                     continue
             except (ValueError, SyntaxError):

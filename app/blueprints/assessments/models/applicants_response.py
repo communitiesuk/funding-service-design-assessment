@@ -214,7 +214,7 @@ def _convert_to_month_year(input_date):
     return str(date_object.strftime("%B %Y"))
 
 
-def _ui_component_from_factory(item: dict, application_id: str):
+def _ui_component_from_factory(item: dict, application_id: str):  # noqa: C901
     """
     :param item: dict
     A dictionary representing the UI component to create. It must contain the following keys:
@@ -439,14 +439,14 @@ def _get_item_by_presentation_type_index(response: list[dict], presentation_type
             for idx, item in enumerate((item for item in response if item["presentation_type"] == presentation_type))
             if idx == index
         )
-    except StopIteration:
+    except StopIteration as e:
         raise ValueError(
             "Could not find item with presentation_type:"
             f" {presentation_type} at index: {index}\nThis probably means"
             " there is an uneven number of 'heading', 'description' and"
             " 'amount' items\nThere should be an equal number of each of"
             " these items"
-        )
+        ) from e
 
 
 def _convert_checkbox_items(

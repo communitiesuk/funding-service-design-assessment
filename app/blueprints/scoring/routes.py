@@ -48,7 +48,7 @@ def score(
     is_rescore = rescore_form.validate_on_submit()
     if not is_rescore and request.method == "POST":
         if score_form.validate_on_submit():
-            current_app.logger.info(f"Processing POST to {request.path}.")
+            current_app.logger.info("Processing POST to {request_path}.", extra=dict(rqeuest_path=request.path))
             score = int(score_form.score.data)
             user_id = g.account_id
             justification = score_form.justification.data

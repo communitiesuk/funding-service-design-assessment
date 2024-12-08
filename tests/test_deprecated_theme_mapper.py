@@ -213,4 +213,6 @@ def test_deprecated_sort_add_another_component_contents_log_when_no_answer(
 
     deprecated_sort_add_another_component_contents(themes_answers)
 
-    current_app.logger.debug.assert_called_with("Answer not provided for field_id: 123")
+    current_app.logger.debug.assert_called_with(
+        "Answer not provided for field_id: {field_id}", extra=dict(field_id="123")
+    )

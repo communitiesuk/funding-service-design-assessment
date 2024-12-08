@@ -66,4 +66,4 @@ def compile_static_assets(assets, flask_app):
             f" ({flask_app.static_folder}). Please check the static folder"
             " exists and expected static files exist at the relative paths,"
             f" defined here in the contents of the bundle object -> {e}."
-        )
+        ) from e

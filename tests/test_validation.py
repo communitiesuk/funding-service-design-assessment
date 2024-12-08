@@ -50,7 +50,7 @@ def test__normalise_country(country, expected):
 
 
 def test__get_all_country_roles():
-    _get_all_country_roles("COF") == {
+    assert _get_all_country_roles("COF") == {
         "cof_england",
         "cof_scotland",
         "cof_wales",

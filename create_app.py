@@ -139,8 +139,8 @@ def create_app() -> Flask:
                 request.path.endswith("js") or request.path.endswith("css") or request.path.endswith("/healthcheck")
             ):
                 current_app.logger.warning(
-                    f"""Application is in the Maintenance mode
-                    reach url: {request.url}"""
+                    "Application is in the Maintenance mode reach url: {request_url}",
+                    extra=dict(request_url=request.url),
                 )
                 return (
                     render_template(

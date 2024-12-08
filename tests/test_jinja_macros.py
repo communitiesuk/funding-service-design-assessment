@@ -1070,4 +1070,4 @@ class TestJinjaMacros(object):
             found_links = soup.find_all("a", class_="govuk-link")
             assert len(found_links) == len(exp_links_text)
             for text in exp_links_text:
-                assert soup.find("a", class_="govuk-link", string=lambda str: text in str)
+                assert soup.find("a", class_="govuk-link", string=lambda str: text in str)  # noqa: B023
