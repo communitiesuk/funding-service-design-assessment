@@ -13,7 +13,7 @@
 {% set pageHeading %}Team dashboard{% endset %}
 
 {% block header %}
-    {{ team_dashboard_header.render(round_details, stats, team_flag_stats, is_active_status) }}
+    {{ team_dashboard_header.render(round_details, stats, team_flag_stats, is_active_status, selected_assessments, from_form) }}
 {% endblock header %}
 
 {% block content %}
@@ -72,6 +72,7 @@
             {% for key, value in assessor_messages.items() %}
             <input type="hidden" name="{{ key }}" value="{{ value }}">
             {% endfor %}
+            <input type="hidden" name="from_form" value="{{ from_form }}">
             <p class="govuk-body">
                 <button type="submit" class="govuk-link btn-link" name="change_roles" value="change_roles">Change roles</button> or
                 <button type="submit" class="govuk-link btn-link" name="change_users" value="change_users">Change users</button>
