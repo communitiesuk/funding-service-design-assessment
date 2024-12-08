@@ -1,22 +1,14 @@
 import functools
 from collections import defaultdict
 from functools import wraps
-from typing import Callable
-from typing import List
-from typing import Mapping
-from typing import Sequence
+from typing import Callable, List, Mapping, Sequence
 
-from flask import abort
-from flask import g
+from flask import abort, g
 from fsd_utils.authentication.decorators import login_required
 
-from app.blueprints.assessments.models.round_status import RoundStatus
-from app.blueprints.assessments.models.round_status import determine_round_status
-from app.blueprints.services.data_services import get_application_metadata
-from app.blueprints.services.data_services import get_fund
-from app.blueprints.services.data_services import get_round
-from app.blueprints.shared.helpers import get_ttl_hash
-from app.blueprints.shared.helpers import get_value_from_request
+from app.blueprints.assessments.models.round_status import RoundStatus, determine_round_status
+from app.blueprints.services.data_services import get_application_metadata, get_fund, get_round
+from app.blueprints.shared.helpers import get_ttl_hash, get_value_from_request
 from config import Config
 
 _UK_COUNTRIES: list[str] = [
@@ -82,9 +74,7 @@ def _get_roles_by_fund_short_name(short_name: str, roles: Sequence[str]) -> list
     return [f"{short_name.upper()}_{role.upper()}" for role in roles]
 
 
-def has_devolved_authority_validation(
-    *, fund_id: str = None, short_name: str = None
-) -> bool:
+def has_devolved_authority_validation(*, fund_id: str = None, short_name: str = None) -> bool:
     identifier = fund_id or short_name
     if not identifier:
         return False
@@ -98,14 +88,9 @@ def has_access_to_fund(short_name: str) -> bool:
     return any(role in all_roles for role in access_roles)
 
 
-def check_access_application_id(
-    func: Callable = None, roles_required: List[str] = []
-) -> Callable:
-
+def check_access_application_id(func: Callable = None, roles_required: List[str] = []) -> Callable:
     if func is None:
-        return lambda f: check_access_application_id(
-            func=f, roles_required=roles_required
-        )
+        return lambda f: check_access_application_id(func=f, roles_required=roles_required)
 
     @wraps(func)
     def decorated_function(*args, **kwargs):
@@ -135,17 +120,11 @@ def check_access_application_id(
             abort(403)
 
         fund_roles_required = _get_roles_by_fund_short_name(short_name, roles_required)
-        login_required_function = login_required(
-            func, roles_required=fund_roles_required
-        )
+        login_required_function = login_required(func, roles_required=fund_roles_required)
 
         if has_devolved_authority_validation(fund_id=application_metadata["fund_id"]):
-            if country := application_metadata.get("location_json_blob", {}).get(
-                "country"
-            ):
-                if not has_relevant_country_role(
-                    _normalise_country(country), short_name
-                ):
+            if country := application_metadata.get("location_json_blob", {}).get("country"):
+                if not has_relevant_country_role(_normalise_country(country), short_name):
                     abort(403)
 
         g.access_controller = AssessmentAccessController(short_name)
@@ -160,7 +139,6 @@ def _check_access_fund_common(
     fund_key: str = "fund_short_name",
     round_key: str = "round_short_name",
 ) -> Callable:
-
     if func is None:  # if used as a partial function
         return lambda f: _check_access_fund_common(
             func=f,
@@ -181,9 +159,7 @@ def _check_access_fund_common(
         short_name = (
             fund_value
             if using_short_name
-            else get_fund(
-                fund_value, ttl_hash=get_ttl_hash(Config.LRU_CACHE_TIME)
-            ).short_name
+            else get_fund(fund_value, ttl_hash=get_ttl_hash(Config.LRU_CACHE_TIME)).short_name
         )
 
         round_details = get_round(fund_value, round_value, using_short_name)
@@ -192,9 +168,7 @@ def _check_access_fund_common(
             abort(403, "This assessment is not yet live.")
 
         fund_roles_required = _get_roles_by_fund_short_name(short_name, roles_required)
-        login_required_function = login_required(
-            func, roles_required=fund_roles_required
-        )
+        login_required_function = login_required(func, roles_required=fund_roles_required)
 
         if not has_access_to_fund(short_name):
             abort(403)
@@ -205,9 +179,7 @@ def _check_access_fund_common(
     return decorated_function
 
 
-check_access_fund_id_round_id = functools.partial(
-    _check_access_fund_common, fund_key="fund_id", round_key="round_id"
-)
+check_access_fund_id_round_id = functools.partial(_check_access_fund_common, fund_key="fund_id", round_key="round_id")
 check_access_fund_short_name_round_sn = functools.partial(
     _check_access_fund_common,
     fund_key="fund_short_name",

@@ -8,139 +8,140 @@ import time
 import zipfile
 from collections import OrderedDict
 from datetime import datetime
-from urllib.parse import quote_plus
-from urllib.parse import unquote_plus
+from urllib.parse import quote_plus, unquote_plus
 
-from flask import Blueprint
-from flask import Response
-from flask import abort
-from flask import current_app
-from flask import escape
-from flask import g
-from flask import redirect
-from flask import render_template
-from flask import request
-from flask import session
-from flask import url_for
+from flask import (
+    Blueprint,
+    Response,
+    abort,
+    current_app,
+    escape,
+    g,
+    redirect,
+    render_template,
+    request,
+    session,
+    url_for,
+)
 from fsd_utils import extract_questions_and_answers
 from fsd_utils.sqs_scheduler.context_aware_executor import ContextAwareExecutor
-from werkzeug.datastructures import ImmutableMultiDict
-from werkzeug.datastructures import MultiDict
+from werkzeug.datastructures import ImmutableMultiDict, MultiDict
 
-from app.blueprints.assessments.activity_trail import AssociatedTags
-from app.blueprints.assessments.activity_trail import CheckboxForm
-from app.blueprints.assessments.activity_trail import Comments
-from app.blueprints.assessments.activity_trail import Flags
-from app.blueprints.assessments.activity_trail import Scores
-from app.blueprints.assessments.activity_trail import SearchForm
-from app.blueprints.assessments.activity_trail import add_user_info
-from app.blueprints.assessments.activity_trail import filter_all_activities
-from app.blueprints.assessments.activity_trail import select_filters
+from app.blueprints.assessments.activity_trail import (
+    AssociatedTags,
+    CheckboxForm,
+    Comments,
+    Flags,
+    Scores,
+    SearchForm,
+    add_user_info,
+    filter_all_activities,
+    select_filters,
+)
 from app.blueprints.assessments.forms.assessment_form import AssessmentCompleteForm
-from app.blueprints.assessments.forms.assignment_forms import AssessmentAssignmentForm
-from app.blueprints.assessments.forms.assignment_forms import AssessorChoiceForm
-from app.blueprints.assessments.forms.assignment_forms import AssessorCommentForm
-from app.blueprints.assessments.forms.assignment_forms import AssessorTypeForm
-from app.blueprints.assessments.forms.assignment_forms import AssignmentOverviewForm
+from app.blueprints.assessments.forms.assignment_forms import (
+    AssessmentAssignmentForm,
+    AssessorChoiceForm,
+    AssessorCommentForm,
+    AssessorTypeForm,
+    AssignmentOverviewForm,
+)
 from app.blueprints.assessments.forms.comments_form import CommentsForm
 from app.blueprints.assessments.forms.mark_qa_complete_form import MarkQaCompleteForm
-from app.blueprints.assessments.helpers import convert_datetime_to_bst
-from app.blueprints.assessments.helpers import determine_display_status
-from app.blueprints.assessments.helpers import download_file
-from app.blueprints.assessments.helpers import generate_assessment_info_csv
-from app.blueprints.assessments.helpers import generate_maps_from_form_names
-from app.blueprints.assessments.helpers import get_files_for_application_upload_fields
-from app.blueprints.assessments.helpers import get_tag_map_and_tag_options
-from app.blueprints.assessments.helpers import get_team_flag_stats
-from app.blueprints.assessments.helpers import sanitise_export_data
-from app.blueprints.assessments.helpers import set_application_status_in_overview
-from app.blueprints.assessments.helpers import set_assigned_info_in_overview
-from app.blueprints.assessments.helpers import sort_assigned_column
-from app.blueprints.assessments.models import applicants_response
-from app.blueprints.assessments.models.file_factory import FILE_GENERATORS
-from app.blueprints.assessments.models.file_factory import (
-    ApplicationFileRepresentationArgs,
+from app.blueprints.assessments.helpers import (
+    convert_datetime_to_bst,
+    determine_display_status,
+    download_file,
+    generate_assessment_info_csv,
+    generate_maps_from_form_names,
+    get_files_for_application_upload_fields,
+    get_tag_map_and_tag_options,
+    get_team_flag_stats,
+    sanitise_export_data,
+    set_application_status_in_overview,
+    set_assigned_info_in_overview,
+    sort_assigned_column,
 )
-from app.blueprints.assessments.models.file_factory import generate_file_content
+from app.blueprints.assessments.models import applicants_response
+from app.blueprints.assessments.models.file_factory import (
+    FILE_GENERATORS,
+    ApplicationFileRepresentationArgs,
+    generate_file_content,
+)
 from app.blueprints.assessments.models.flag_teams import TeamsFlagData
 from app.blueprints.assessments.models.location_data import LocationData
-from app.blueprints.assessments.models.round_summary import create_round_summaries
-from app.blueprints.assessments.models.round_summary import is_after_today
-from app.blueprints.assessments.status import all_status_completed
-from app.blueprints.assessments.status import update_ar_status_to_completed
-from app.blueprints.assessments.status import update_ar_status_to_qa_completed
-from app.blueprints.authentication.validation import check_access_application_id
-from app.blueprints.authentication.validation import (
-    check_access_fund_short_name_round_sn,
+from app.blueprints.assessments.models.round_summary import create_round_summaries, is_after_today
+from app.blueprints.assessments.status import (
+    all_status_completed,
+    update_ar_status_to_completed,
+    update_ar_status_to_qa_completed,
 )
-from app.blueprints.authentication.validation import has_access_to_fund
+from app.blueprints.authentication.validation import (
+    check_access_application_id,
+    check_access_fund_short_name_round_sn,
+    has_access_to_fund,
+)
 from app.blueprints.scoring.helpers import get_scoring_class
 from app.blueprints.services.aws import get_file_for_download_from_aws
-from app.blueprints.services.data_services import assign_user_to_assessment
 from app.blueprints.services.data_services import (
+    assign_user_to_assessment,
     get_all_associated_tags_for_application,
-)
-from app.blueprints.services.data_services import (
     get_all_sub_criterias_with_application_json,
-)
-from app.blueprints.services.data_services import (
     get_all_uploaded_documents_theme_answers,
-)
-from app.blueprints.services.data_services import get_applicant_export
-from app.blueprints.services.data_services import (
+    get_applicant_export,
     get_applicant_feedback_and_survey_report,
-)
-from app.blueprints.services.data_services import get_application_assignments
-from app.blueprints.services.data_services import get_application_json
-from app.blueprints.services.data_services import get_application_overviews
-from app.blueprints.services.data_services import (
+    get_application_assignments,
+    get_application_json,
+    get_application_overviews,
     get_application_sections_display_config,
+    get_assessment_progress,
+    get_associated_tags_for_application,
+    get_bulk_accounts_dict,
+    get_comments,
+    get_flags,
+    get_fund,
+    get_funds,
+    get_qa_complete,
+    get_round,
+    get_score_and_justification,
+    get_sub_criteria,
+    get_sub_criteria_theme_answers_all,
+    get_tag_types,
+    get_tags_for_fund_round,
+    get_users_for_fund,
+    match_comment_to_theme,
+    submit_comment,
 )
-from app.blueprints.services.data_services import get_assessment_progress
-from app.blueprints.services.data_services import get_associated_tags_for_application
-from app.blueprints.services.data_services import get_bulk_accounts_dict
-from app.blueprints.services.data_services import get_comments
-from app.blueprints.services.data_services import get_flags
-from app.blueprints.services.data_services import get_fund
-from app.blueprints.services.data_services import get_funds
-from app.blueprints.services.data_services import get_qa_complete
-from app.blueprints.services.data_services import get_round
-from app.blueprints.services.data_services import get_score_and_justification
-from app.blueprints.services.data_services import get_sub_criteria
-from app.blueprints.services.data_services import get_sub_criteria_theme_answers_all
-from app.blueprints.services.data_services import get_tag_types
-from app.blueprints.services.data_services import get_tags_for_fund_round
-from app.blueprints.services.data_services import get_users_for_fund
-from app.blueprints.services.data_services import match_comment_to_theme
-from app.blueprints.services.data_services import submit_comment
 from app.blueprints.services.models.comment import CommentType
 from app.blueprints.services.models.fund import Fund
 from app.blueprints.services.models.round import Round
 from app.blueprints.services.models.theme import Theme
 from app.blueprints.services.shared_data_helpers import get_state_for_tasklist_banner
 from app.blueprints.shared.filters import utc_to_bst
-from app.blueprints.shared.helpers import determine_assessment_status
-from app.blueprints.shared.helpers import determine_flag_status
-from app.blueprints.shared.helpers import fund_matches_filters
-from app.blueprints.shared.helpers import get_ttl_hash
-from app.blueprints.shared.helpers import is_flaggable
-from app.blueprints.shared.helpers import match_search_params
-from app.blueprints.shared.helpers import process_assessments_stats
-from app.blueprints.themes.deprecated_theme_mapper import (
-    map_application_with_sub_criterias_and_themes,
+from app.blueprints.shared.helpers import (
+    determine_assessment_status,
+    determine_flag_status,
+    fund_matches_filters,
+    get_ttl_hash,
+    is_flaggable,
+    match_search_params,
+    process_assessments_stats,
 )
 from app.blueprints.themes.deprecated_theme_mapper import (
+    map_application_with_sub_criterias_and_themes,
     order_entire_application_by_themes,
 )
 from config import Config
-from config.display_value_mappings import assessment_statuses
-from config.display_value_mappings import asset_types
-from config.display_value_mappings import cohort
-from config.display_value_mappings import dpi_filters
-from config.display_value_mappings import funding_types
-from config.display_value_mappings import joint_application_options
-from config.display_value_mappings import landing_filters
-from config.display_value_mappings import search_params_default
+from config.display_value_mappings import (
+    assessment_statuses,
+    asset_types,
+    cohort,
+    dpi_filters,
+    funding_types,
+    joint_application_options,
+    landing_filters,
+    search_params_default,
+)
 
 ASSESSMENT_TOOL_DASHBOARD_PATH = "/assess/assessor_tool_dashboard/"
 
@@ -172,14 +173,10 @@ def _handle_all_uploaded_documents(application_id):
     flag_status = determine_flag_status(flags_list)
 
     theme_answers_response = get_all_uploaded_documents_theme_answers(application_id)
-    answers_meta = applicants_response.create_ui_components(
-        theme_answers_response, application_id
-    )
+    answers_meta = applicants_response.create_ui_components(theme_answers_response, application_id)
 
     state = get_state_for_tasklist_banner(application_id)
-    assessment_status = determine_assessment_status(
-        state.workflow_status, state.is_qa_complete
-    )
+    assessment_status = determine_assessment_status(state.workflow_status, state.is_qa_complete)
     return render_template(
         "all_uploaded_documents.html",
         state=state,
@@ -208,9 +205,7 @@ def _get_fund_dashboard_data(fund: Fund, round: Round, request):
     # The first call is to get the location data such as country, region and local_authority
     # from all the existing applications (i.e without search parameters as we don't want to filter
     # the stats at all).  see https://dluhcdigital.atlassian.net/browse/FS-3249
-    future_all_applications_metadata = thread_executor.submit(
-        get_application_overviews, fund_id, round_id, ""
-    )
+    future_all_applications_metadata = thread_executor.submit(get_application_overviews, fund_id, round_id, "")
 
     # The second call is with the search parameters
     future_application_overviews = thread_executor.submit(
@@ -264,18 +259,12 @@ def _get_fund_dashboard_data(fund: Fund, round: Round, request):
 
     is_active_status = is_after_today(round.assessment_deadline)
     post_processed_overviews = (
-        get_assessment_progress(application_overviews, fund_id, round_id)
-        if application_overviews
-        else []
+        get_assessment_progress(application_overviews, fund_id, round_id) if application_overviews else []
     )
 
     # get and set application status
-    post_processed_overviews = set_application_status_in_overview(
-        post_processed_overviews
-    )
-    post_processed_overviews, users_not_mapped = set_assigned_info_in_overview(
-        post_processed_overviews, users_for_fund
-    )
+    post_processed_overviews = set_application_status_in_overview(post_processed_overviews)
+    post_processed_overviews, users_not_mapped = set_assigned_info_in_overview(post_processed_overviews, users_for_fund)
 
     if users_not_mapped:
         current_app.logger.warning(
@@ -299,17 +288,13 @@ def _get_fund_dashboard_data(fund: Fund, round: Round, request):
             "organisation_name": lambda x: x["organisation_name"],
             "funding_type": lambda x: x["funding_type"],
             "status": lambda x: x["application_status"],
-            "tags": lambda x: len(
-                tags_in_application_map.get(x["application_id"]) or []
-            ),
+            "tags": lambda x: len(tags_in_application_map.get(x["application_id"]) or []),
             "team_in_place": lambda x: x["team_in_place"],
             "datasets": lambda x: x["datasets"],
             "date_submitted": lambda x: x["date_submitted"],
             "lead_contact_email": lambda x: x["lead_contact_email"],
             "publish_datasets": lambda x: (
-                x["publish_datasets"]
-                if x["publish_datasets"]
-                else str(x["publish_datasets"])
+                x["publish_datasets"] if x["publish_datasets"] else str(x["publish_datasets"])
             ),
             "assigned_to": functools.cmp_to_key(sort_assigned_column),
         }
@@ -330,16 +315,11 @@ def _get_fund_dashboard_data(fund: Fund, round: Round, request):
             reverse=sort_order != "asc",
         )
     assigned_applications = [
-        application
-        for application in post_processed_overviews
-        if g.account_id in application["assigned_to_ids"]
+        application for application in post_processed_overviews if g.account_id in application["assigned_to_ids"]
     ]
 
     fund_user_aliases = (
-        [
-            user["full_name"] if user["full_name"] else user["email_address"]
-            for user in users_for_fund
-        ]
+        [user["full_name"] if user["full_name"] else user["email_address"] for user in users_for_fund]
         if users_for_fund
         else []
     )
@@ -349,10 +329,7 @@ def _get_fund_dashboard_data(fund: Fund, round: Round, request):
         for overview in post_processed_overviews
         if "user_associations" in overview
         and overview["user_associations"]
-        and any(
-            assoc["assigner_id"] == g.account_id and assoc["active"]
-            for assoc in overview["user_associations"]
-        )
+        and any(assoc["assigner_id"] == g.account_id and assoc["active"] for assoc in overview["user_associations"])
     ]
 
     # Filter by assigned to here as it's not a searchable parameter on assessment store
@@ -361,9 +338,7 @@ def _get_fund_dashboard_data(fund: Fund, round: Round, request):
             pass
         elif search_params["assigned_to"].upper() == "NOT ASSIGNED":
             post_processed_overviews = [
-                overview
-                for overview in post_processed_overviews
-                if len(overview["assigned_to_names"]) == 0
+                overview for overview in post_processed_overviews if len(overview["assigned_to_names"]) == 0
             ]
         else:
             post_processed_overviews = [
@@ -409,17 +384,13 @@ def old_landing():
 
 @assessment_bp.route("/assessor_tool_dashboard/", methods=["GET"])
 def landing():
-    filters = landing_filters._replace(
-        **{k: v for k, v in request.args.items() if k in landing_filters._fields}
-    )  # noqa
+    filters = landing_filters._replace(**{k: v for k, v in request.args.items() if k in landing_filters._fields})  # noqa
     funds = [
         f
         for f in get_funds(get_ttl_hash(seconds=Config.LRU_CACHE_TIME))
         if has_access_to_fund(f.short_name) and fund_matches_filters(f, filters)
     ]
-    sorted_funds_map = OrderedDict(
-        (fund.id, fund) for fund in sorted(funds, key=lambda f: f.name)
-    )
+    sorted_funds_map = OrderedDict((fund.id, fund) for fund in sorted(funds, key=lambda f: f.name))
 
     round_summaries = {fund.id: create_round_summaries(fund, filters) for fund in funds}
 
@@ -431,9 +402,7 @@ def landing():
         todays_date=utc_to_bst(datetime.now().strftime("%Y-%m-%dT%H:%M:%S")),
         landing_filters=filters,
         has_any_assessor_role=any(
-            rs.access_controller.has_any_assessor_role
-            for rsl in round_summaries.values()
-            for rs in rsl
+            rs.access_controller.has_any_assessor_role for rsl in round_summaries.values() for rs in rsl
         ),
         migration_banner_enabled=Config.MIGRATION_BANNER_ENABLED,
     )
@@ -452,7 +421,6 @@ and progresses to the assessor type view if successful.
 @check_access_fund_short_name_round_sn
 @check_access_fund_short_name_round_sn(roles_required=[Config.LEAD_ASSESSOR])
 def assign_assessments(fund_short_name: str, round_short_name: str):
-
     selected_assessments = request.form.getlist("selected_assessments")
 
     form = AssessmentAssignmentForm()
@@ -510,15 +478,10 @@ assessor_type_list.
 @check_access_fund_short_name_round_sn
 @check_access_fund_short_name_round_sn(roles_required=[Config.LEAD_ASSESSOR])
 def assessor_type(fund_short_name: str, round_short_name: str):
-
     if not (selected_assessments := request.form.getlist("selected_assessments")):
         abort(500, "Required selected_assessments field to be populated")
 
-    selected_assessor_role = (
-        request.form.getlist("assessor_role")[0]
-        if request.form.getlist("assessor_role")
-        else ""
-    )
+    selected_assessor_role = request.form.getlist("assessor_role")[0] if request.form.getlist("assessor_role") else ""
 
     form = AssessorTypeForm()
 
@@ -585,7 +548,6 @@ to the assignment_overview page.
 @check_access_fund_short_name_round_sn
 @check_access_fund_short_name_round_sn(roles_required=[Config.LEAD_ASSESSOR])
 def assessor_type_list(fund_short_name: str, round_short_name: str):
-
     if not (selected_assessments := request.form.getlist("selected_assessments")):
         abort(500, "Required selected_assessments field to be populated")
 
@@ -639,9 +601,7 @@ def assessor_type_list(fund_short_name: str, round_short_name: str):
     # The first call is to get the location data such as country, region and local_authority
     # from all the existing applications (i.e without search parameters as we don't want to filter
     # the stats at all).  see https://dluhcdigital.atlassian.net/browse/FS-3249
-    future_all_applications_metadata = thread_executor.submit(
-        get_application_overviews, fund.id, round.id, ""
-    )
+    future_all_applications_metadata = thread_executor.submit(get_application_overviews, fund.id, round.id, "")
 
     # Get all the users for the fund
     future_users_for_fund = thread_executor.submit(
@@ -652,16 +612,12 @@ def assessor_type_list(fund_short_name: str, round_short_name: str):
         False,
     )
 
-    future_existing_assignments = thread_executor.submit(
-        get_application_assignments, selected_assessments[0], True
-    )
+    future_existing_assignments = thread_executor.submit(get_application_assignments, selected_assessments[0], True)
 
     all_applications_metadata = future_all_applications_metadata.result()
     users_for_fund = future_users_for_fund.result()
     existing_assignments = future_existing_assignments.result()
-    all_assigned_users = set(
-        assignment["user_id"] for assignment in existing_assignments
-    )
+    all_assigned_users = set(assignment["user_id"] for assignment in existing_assignments)
 
     thread_executor.executor.shutdown()
 
@@ -670,29 +626,18 @@ def assessor_type_list(fund_short_name: str, round_short_name: str):
     # Selected users are those which have been selected via this form (defaults to assigned_users otherwise)
     if assessor_role.lower() == Config.LEAD_ASSESSOR.lower():
         selectable_users = [
-            user
-            for user in users_for_fund
-            if any(Config.LEAD_ASSESSOR in role for role in user["roles"])
+            user for user in users_for_fund if any(Config.LEAD_ASSESSOR in role for role in user["roles"])
         ]
     else:
         selectable_users = [
             user
             for user in users_for_fund
-            if any(
-                Config.ASSESSOR in role and Config.LEAD_ASSESSOR not in role
-                for role in user["roles"]
-            )
+            if any(Config.ASSESSOR in role and Config.LEAD_ASSESSOR not in role for role in user["roles"])
         ]
 
-    assigned_users = [
-        user["account_id"]
-        for user in selectable_users
-        if user["account_id"] in all_assigned_users
-    ]
+    assigned_users = [user["account_id"] for user in selectable_users if user["account_id"] in all_assigned_users]
     selected_users = (
-        request.form.getlist("selected_users")
-        if request.form.getlist("selected_users")
-        else assigned_users
+        request.form.getlist("selected_users") if request.form.getlist("selected_users") else assigned_users
     )
 
     unfiltered_stats = process_assessments_stats(all_applications_metadata)
@@ -717,7 +662,6 @@ def assessor_type_list(fund_short_name: str, round_short_name: str):
 @check_access_fund_short_name_round_sn
 @check_access_fund_short_name_round_sn(roles_required=[Config.LEAD_ASSESSOR])
 def assessor_comments(fund_short_name: str, round_short_name: str):
-
     if "cancel_messages" in request.form:
         return redirect(
             url_for(
@@ -747,9 +691,7 @@ def assessor_comments(fund_short_name: str, round_short_name: str):
         if "old_assessor_messages" in request.form
         else assessor_messages
     )
-    has_individual_messages = any(
-        key != "message_to_all" for key in assessor_messages.keys()
-    )
+    has_individual_messages = any(key != "message_to_all" for key in assessor_messages.keys())
 
     assessor_role = assessor_role[0]
 
@@ -798,9 +740,7 @@ def assessor_comments(fund_short_name: str, round_short_name: str):
         flask_app=current_app,
     )
 
-    future_all_applications_metadata = thread_executor.submit(
-        get_application_overviews, fund.id, round.id, ""
-    )
+    future_all_applications_metadata = thread_executor.submit(get_application_overviews, fund.id, round.id, "")
 
     # Get all the users for the fund
     future_users_for_fund = thread_executor.submit(
@@ -818,29 +758,17 @@ def assessor_comments(fund_short_name: str, round_short_name: str):
 
     # Get either name or email of those assessors that have been selected
     add_assign_users = (
-        [user for user in users_for_fund if user["account_id"] in add_user_assignments]
-        if users_for_fund
-        else []
+        [user for user in users_for_fund if user["account_id"] in add_user_assignments] if users_for_fund else []
     )
     add_assign_user_names = [
-        user["full_name"] if user["full_name"] else user["email_address"]
-        for user in add_assign_users
+        user["full_name"] if user["full_name"] else user["email_address"] for user in add_assign_users
     ]
 
     unassign_users = (
-        [
-            user
-            for user in users_for_fund
-            if user["account_id"] in remove_user_assignments
-        ]
-        if users_for_fund
-        else []
+        [user for user in users_for_fund if user["account_id"] in remove_user_assignments] if users_for_fund else []
     )
 
-    unassign_user_names = [
-        user["full_name"] if user["full_name"] else user["email_address"]
-        for user in unassign_users
-    ]
+    unassign_user_names = [user["full_name"] if user["full_name"] else user["email_address"] for user in unassign_users]
 
     unfiltered_stats = process_assessments_stats(all_applications_metadata)
     return render_template(
@@ -876,7 +804,6 @@ the selection to create the assignments.
 @check_access_fund_short_name_round_sn
 @check_access_fund_short_name_round_sn(roles_required=[Config.LEAD_ASSESSOR])
 def assignment_overview(fund_short_name: str, round_short_name: str):
-
     # Options to navigate back in the flow to change selections
     if "change_users" in request.form:
         return redirect(
@@ -987,9 +914,7 @@ def assignment_overview(fund_short_name: str, round_short_name: str):
     # The first call is to get the location data such as country, region and local_authority
     # from all the existing applications (i.e without search parameters as we don't want to filter
     # the stats at all).  see https://dluhcdigital.atlassian.net/browse/FS-3249
-    future_all_applications_metadata = thread_executor.submit(
-        get_application_overviews, fund.id, round.id, ""
-    )
+    future_all_applications_metadata = thread_executor.submit(get_application_overviews, fund.id, round.id, "")
 
     # Get all the users for the fund
     future_users_for_fund = thread_executor.submit(
@@ -1002,24 +927,16 @@ def assignment_overview(fund_short_name: str, round_short_name: str):
 
     all_applications_metadata = future_all_applications_metadata.result()
     users_for_fund = future_users_for_fund.result()
-    all_applications_ids = set(
-        (application["application_id"] for application in all_applications_metadata)
-    )
+    all_applications_ids = set((application["application_id"] for application in all_applications_metadata))
     all_user_ids = set((user["account_id"] for user in users_for_fund))
 
-    if not all(
-        user_id in all_user_ids
-        for user_id in selected_user_set.union(assigned_user_set)
-    ):
+    if not all(user_id in all_user_ids for user_id in selected_user_set.union(assigned_user_set)):
         abort(
             403,
             "User does not have permission to make assignments for selected assessors",
         )
 
-    if not all(
-        application_id in all_applications_ids
-        for application_id in selected_assessments
-    ):
+    if not all(application_id in all_applications_ids for application_id in selected_assessments):
         abort(
             403,
             "User does not have permission to make assignments for selected assessments",
@@ -1042,22 +959,14 @@ def assignment_overview(fund_short_name: str, round_short_name: str):
             application_id = future_to_app[future]
             data = future.result()
             if data:
-                existing_assignments.update(
-                    assignment["user_id"] + "," + application_id for assignment in data
-                )
+                existing_assignments.update(assignment["user_id"] + "," + application_id for assignment in data)
 
         future_assignments = {}
 
-        default_email_message = (
-            assessor_messages["message_to_all"]
-            if "message_to_all" in assessor_messages
-            else ""
-        )
+        default_email_message = assessor_messages["message_to_all"] if "message_to_all" in assessor_messages else ""
         # Cartesian product over selected users and assessments. Check if the assignment already
         # exists or is a new one to be created (PUT vs POST)
-        for user_id, application_id in itertools.product(
-            add_user_assignments, selected_assessments
-        ):
+        for user_id, application_id in itertools.product(add_user_assignments, selected_assessments):
             key = user_id + "," + application_id
 
             future = thread_executor.submit(
@@ -1077,9 +986,7 @@ def assignment_overview(fund_short_name: str, round_short_name: str):
             future_assignments[future] = key
 
         # Deactive assignments for those users who have deselected.
-        for user_id, application_id in itertools.product(
-            remove_user_assignments, selected_assessments
-        ):
+        for user_id, application_id in itertools.product(remove_user_assignments, selected_assessments):
             key = user_id + "," + application_id
 
             future = thread_executor.submit(
@@ -1139,18 +1046,12 @@ def assignment_overview(fund_short_name: str, round_short_name: str):
 
     # Retain only those assessments that were selected by the user
     selected_assessment_overview = [
-        assessment
-        for assessment in all_applications_metadata
-        if assessment["application_id"] in selected_assessments
+        assessment for assessment in all_applications_metadata if assessment["application_id"] in selected_assessments
     ]
 
-    post_processed_overviews = get_assessment_progress(
-        selected_assessment_overview, fund.id, round.id
-    )
+    post_processed_overviews = get_assessment_progress(selected_assessment_overview, fund.id, round.id)
 
-    post_processed_overviews = set_application_status_in_overview(
-        post_processed_overviews
-    )
+    post_processed_overviews = set_application_status_in_overview(post_processed_overviews)
 
     unfiltered_stats = process_assessments_stats(all_applications_metadata)
 
@@ -1240,11 +1141,9 @@ def display_sub_criteria(
     theme_id = request.args.get("theme_id", sub_criteria.themes[0].id)
     comment_form = CommentsForm()
     try:
-        current_theme: Theme = next(
-            iter(t for t in sub_criteria.themes if t.id == theme_id)
-        )
+        current_theme: Theme = next(iter(t for t in sub_criteria.themes if t.id == theme_id))
     except StopIteration:
-        current_app.logger.warn("Unknown theme ID requested: " + theme_id)
+        current_app.logger.warning("Unknown theme ID requested: " + theme_id)
         abort(404)
     add_comment_argument = request.args.get("add_comment") == "1"
     if add_comment_argument and comment_form.validate_on_submit():
@@ -1280,16 +1179,12 @@ def display_sub_criteria(
 
     # TODO add test for this function in data_operations
     theme_matched_comments = (
-        match_comment_to_theme(
-            comment_response, sub_criteria.themes, state.fund_short_name
-        )
+        match_comment_to_theme(comment_response, sub_criteria.themes, state.fund_short_name)
         if comment_response
         else None
     )
 
-    assessment_status = determine_assessment_status(
-        sub_criteria.workflow_status, state.is_qa_complete
-    )
+    assessment_status = determine_assessment_status(sub_criteria.workflow_status, state.is_qa_complete)
     flag_status = determine_flag_status(flags_list)
 
     edit_comment_argument = request.args.get("edit_comment")
@@ -1346,13 +1241,9 @@ def display_sub_criteria(
         "pagination": state.get_pagination_from_sub_criteria_id(sub_criteria_id),
     }
 
-    theme_answers_response = get_sub_criteria_theme_answers_all(
-        application_id, theme_id
-    )
+    theme_answers_response = get_sub_criteria_theme_answers_all(application_id, theme_id)
 
-    answers_meta = applicants_response.create_ui_components(
-        theme_answers_response, application_id
-    )
+    answers_meta = applicants_response.create_ui_components(theme_answers_response, application_id)
 
     return render_template(
         "sub_criteria.html",
@@ -1391,9 +1282,7 @@ def generate_doc_list_for_download(application_id):
         )
         for file_type in FILE_GENERATORS.keys()
     ]
-    assessment_status = determine_assessment_status(
-        state.workflow_status, state.is_qa_complete
-    )
+    assessment_status = determine_assessment_status(state.workflow_status, state.is_qa_complete)
 
     return render_template(
         "contract_downloads.html",
@@ -1407,9 +1296,7 @@ def generate_doc_list_for_download(application_id):
     )
 
 
-@assessment_bp.route(
-    "/application/<application_id>/export/<short_id>/answers.<file_type>"
-)
+@assessment_bp.route("/application/<application_id>/export/<short_id>/answers.<file_type>")
 @check_access_application_id(roles_required=[Config.LEAD_ASSESSOR])
 def download_application_answers(application_id: str, short_id: str, file_type: str):
     current_app.logger.info(
@@ -1439,15 +1326,11 @@ def download_application_answers(application_id: str, short_id: str, file_type: 
         form_name_to_path_map,
     ) = generate_maps_from_form_names(application_sections_display_config)
 
-    qanda_dict = {
-        key: qanda_dict[key] for key in form_name_to_title_map if key in qanda_dict
-    }
+    qanda_dict = {key: qanda_dict[key] for key in form_name_to_title_map if key in qanda_dict}
 
     all_uploaded_documents = []
     if file_type == "pdf":
-        all_uploaded_documents = get_all_uploaded_documents_theme_answers(
-            application_id
-        )
+        all_uploaded_documents = get_all_uploaded_documents_theme_answers(application_id)
 
     args = ApplicationFileRepresentationArgs(
         fund=fund,
@@ -1470,9 +1353,7 @@ def get_file(application_id: str, file_name: str):
     if request.args.get("quoted"):
         file_name = unquote_plus(file_name)
     short_id = request.args.get("short_id")
-    data, mimetype = get_file_for_download_from_aws(
-        application_id=application_id, file_name=file_name
-    )
+    data, mimetype = get_file_for_download_from_aws(application_id=application_id, file_name=file_name)
     if short_id:
         return download_file(data, mimetype, f"{short_id}_{file_name}")
 
@@ -1491,9 +1372,7 @@ def download_multiple_files(files, folder_name):
     return Response(
         zip_buffer.read(),
         mimetype="application/zip",
-        headers={
-            "Content-Disposition": f"attachment;filename={quote_plus(f'{folder_name}.zip')}"
-        },
+        headers={"Content-Disposition": f"attachment;filename={quote_plus(f'{folder_name}.zip')}"},
     )
 
 
@@ -1526,9 +1405,7 @@ def application(application_id):
     if qa_complete:
         user_id_list.append(qa_complete["user_id"])
 
-    assessment_status = determine_assessment_status(
-        state.workflow_status, state.is_qa_complete
-    )
+    assessment_status = determine_assessment_status(state.workflow_status, state.is_qa_complete)
     flag_status = determine_flag_status(flags_list)
 
     if flags_list:
@@ -1675,9 +1552,7 @@ def activity_trail(application_id: str):
     all_comments = Comments.from_list(comments_list)
 
     # ALL SCORES
-    scores = get_score_and_justification(
-        application_id=application_id, score_history=True
-    )
+    scores = get_score_and_justification(application_id=application_id, score_history=True)
     all_scores = Scores.from_list(scores)
 
     # ALL TAGS
@@ -1697,9 +1572,7 @@ def activity_trail(application_id: str):
     all_activities = all_scores + all_comments + all_tags + all_flags
 
     update_user_info = add_user_info(all_activities, state)
-    _all_activities = filter_all_activities(
-        update_user_info, search_keyword, checkbox_filters
-    )
+    _all_activities = filter_all_activities(update_user_info, search_keyword, checkbox_filters)
 
     display_status = determine_display_status(
         state.workflow_status,
@@ -1839,9 +1712,7 @@ def view_entire_application(application_id):
     order_application_by_themes = order_entire_application_by_themes(
         fund_round_name, map_appli_with_sub_cris_and_themes
     )
-    map_answers = applicants_response.create_ui_componenets_for_list_data(
-        application_id, order_application_by_themes
-    )
+    map_answers = applicants_response.create_ui_componenets_for_list_data(application_id, order_application_by_themes)
 
     return render_template(
         "view_entire_application.html",

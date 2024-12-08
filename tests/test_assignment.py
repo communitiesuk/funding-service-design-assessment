@@ -5,9 +5,7 @@ import pytest
 from bs4 import BeautifulSoup
 from flask import url_for
 
-from tests.api_data.test_data import fund_specific_claim_map
-from tests.api_data.test_data import resolved_app_id
-from tests.api_data.test_data import stopped_app_id
+from tests.api_data.test_data import fund_specific_claim_map, resolved_app_id, stopped_app_id
 from tests.conftest import create_valid_token
 
 
@@ -39,7 +37,6 @@ def test_assign_assessments_get(
     mock_get_active_tags_for_fund_round,
     mock_get_tag_types,
 ):
-
     params = request.node.get_closest_marker("mock_parameters").args[0]
     fund_short_name = params["fund_short_name"]
     round_short_name = params["round_short_name"]
@@ -60,12 +57,8 @@ def test_assign_assessments_get(
     soup = BeautifulSoup(response.data, "html.parser")
 
     # Check that there is a checkbox for each project
-    project_checkboxes = soup.find_all(
-        "input", {"type": "checkbox", "name": "selected_assessments"}
-    )
-    assert (
-        len(project_checkboxes) == 4
-    ), f"Expected 4 project checkboxes, found {len(project_checkboxes)}"
+    project_checkboxes = soup.find_all("input", {"type": "checkbox", "name": "selected_assessments"})
+    assert len(project_checkboxes) == 4, f"Expected 4 project checkboxes, found {len(project_checkboxes)}"
 
     assert response.status_code == 200
     assert b"Assign assessments" in response.data
@@ -88,7 +81,6 @@ def test_assign_assessments_post(
     mock_get_users_for_fund,
     patch_resolve_redirect,
 ):
-
     params = request.node.get_closest_marker("mock_parameters").args[0]
     fund_short_name = params["fund_short_name"]
     round_short_name = params["round_short_name"]
@@ -127,21 +119,15 @@ def test_assign_assessments_post(
     soup = BeautifulSoup(response.data, "html.parser")
 
     # Check form data has been processed and stored as hidden fields.
-    hidden_fields = soup.find_all(
-        "input", {"type": "hidden", "name": "selected_assessments"}
-    )
+    hidden_fields = soup.find_all("input", {"type": "hidden", "name": "selected_assessments"})
     assert hidden_fields[0].get("value") == "assessment1"
 
     radio_buttons = soup.find_all("input", {"type": "radio"})
 
-    assert (
-        len(radio_buttons) == 2
-    ), f"Expected 2 radio buttons, found {len(radio_buttons)}"
+    assert len(radio_buttons) == 2, f"Expected 2 radio buttons, found {len(radio_buttons)}"
 
     radio_values = [radio.get("value") for radio in radio_buttons]
-    assert (
-        "general_assessor" in radio_values
-    ), "Radio button for 'general_assessor' not found"
+    assert "general_assessor" in radio_values, "Radio button for 'general_assessor' not found"
     assert "lead_assessor" in radio_values, "Radio button for 'lead_assessor' not found"
 
     assert response.status_code == 200
@@ -165,7 +151,6 @@ def test_assessor_type_post(
     mock_get_users_for_fund,
     patch_resolve_redirect,
 ):
-
     params = request.node.get_closest_marker("mock_parameters").args[0]
     fund_short_name = params["fund_short_name"]
     round_short_name = params["round_short_name"]
@@ -215,9 +200,7 @@ def test_assessor_type_post(
         assert hidden_field.get("value") == value[0]
 
     # Check for the "select all" checkbox
-    select_all_checkbox = soup.find(
-        "input", {"id": "select_all_users", "type": "checkbox"}
-    )
+    select_all_checkbox = soup.find("input", {"id": "select_all_users", "type": "checkbox"})
     assert select_all_checkbox is not None, "Select all checkbox not found"
 
     table_body = soup.find("tbody", class_="govuk-table__body")
@@ -231,8 +214,7 @@ def test_assessor_type_post(
 
     name_cell = row.find_all("td", class_="govuk-table__cell")[1]
     assert (
-        fund_specific_claim_map[fund_short_name]["LEAD_ASSESSOR"]["fullName"]
-        in name_cell.text.strip()
+        fund_specific_claim_map[fund_short_name]["LEAD_ASSESSOR"]["fullName"] in name_cell.text.strip()
     ), f"Expected 'Lead Test User', found {name_cell.text.strip()}"
 
     # Check that there is a checkbox for this entry
@@ -241,9 +223,7 @@ def test_assessor_type_post(
         {
             "type": "checkbox",
             "name": "selected_users",
-            "value": fund_specific_claim_map[fund_short_name]["LEAD_ASSESSOR"][
-                "accountId"
-            ],
+            "value": fund_specific_claim_map[fund_short_name]["LEAD_ASSESSOR"]["accountId"],
         },
     )
     assert (
@@ -323,8 +303,7 @@ def test_assessor_type_post_existing_assignment(
 
     name_cell = row.find_all("td", class_="govuk-table__cell")[1]
     assert (
-        fund_specific_claim_map[fund_short_name]["LEAD_ASSESSOR"]["fullName"]
-        in name_cell.text.strip()
+        fund_specific_claim_map[fund_short_name]["LEAD_ASSESSOR"]["fullName"] in name_cell.text.strip()
     ), f"Expected 'Lead Test User', found {name_cell.text.strip()}"
 
     # Check that there is a checkbox for this entry
@@ -333,9 +312,7 @@ def test_assessor_type_post_existing_assignment(
         {
             "type": "checkbox",
             "name": "selected_users",
-            "value": fund_specific_claim_map[fund_short_name]["LEAD_ASSESSOR"][
-                "accountId"
-            ],
+            "value": fund_specific_claim_map[fund_short_name]["LEAD_ASSESSOR"]["accountId"],
         },
     )
 
@@ -363,7 +340,6 @@ def test_assessor_type_list_post(
     mock_get_assessment_progress,
     patch_resolve_redirect,
 ):
-
     params = request.node.get_closest_marker("mock_parameters").args[0]
     fund_short_name = params["fund_short_name"]
     round_short_name = params["round_short_name"]
@@ -376,9 +352,7 @@ def test_assessor_type_list_post(
     form_data = {
         "selected_assessments": ["stopped_app"],
         "assessor_role": ["general_assessor"],
-        "selected_users": [
-            fund_specific_claim_map[fund_short_name]["ASSESSOR"]["accountId"]
-        ],
+        "selected_users": [fund_specific_claim_map[fund_short_name]["ASSESSOR"]["accountId"]],
     }
     headers = {
         "Referer": url_for(
@@ -411,10 +385,7 @@ def test_assessor_type_list_post(
 
     # Check get_assessment_progress() is only called for the selected assessments
     assert len(mock_get_assessment_progress.call_args[0][0]) == 1
-    assert (
-        mock_get_assessment_progress.call_args[0][0][0]["application_id"]
-        == form_data["selected_assessments"][0]
-    )
+    assert mock_get_assessment_progress.call_args[0][0][0]["application_id"] == form_data["selected_assessments"][0]
     strip_html_regx = re.compile("<.*?>")
     html_stripped_output = re.sub(strip_html_regx, "", str(response.data))
     assert (
@@ -463,9 +434,7 @@ def test_assignment_overview_remove_assessor(
         "selected_assessments": ["stopped_app"],
         "assessor_role": ["general_assessor"],
         "selected_users": [],
-        "assigned_users": [
-            fund_specific_claim_map[fund_short_name]["ASSESSOR"]["accountId"]
-        ],
+        "assigned_users": [fund_specific_claim_map[fund_short_name]["ASSESSOR"]["accountId"]],
     }
 
     response = flask_test_client.post(
@@ -584,7 +553,6 @@ def test_assignment_overview_post_new_and_exising(
     mock_get_active_tags_for_fund_round,
     mock_get_tag_types,
 ):
-
     params = request.node.get_closest_marker("mock_parameters").args[0]
     fund_short_name = params["fund_short_name"]
     round_short_name = params["round_short_name"]
@@ -641,9 +609,7 @@ def test_assignment_overview_post_new_and_exising(
                 mock.call(
                     assessment_1,
                     user_1,
-                    fund_specific_claim_map[fund_short_name]["LEAD_ASSESSOR"][
-                        "accountId"
-                    ],
+                    fund_specific_claim_map[fund_short_name]["LEAD_ASSESSOR"]["accountId"],
                     False,
                     True,
                     True,
@@ -652,9 +618,7 @@ def test_assignment_overview_post_new_and_exising(
                 mock.call(
                     assessment_2,
                     user_1,
-                    fund_specific_claim_map[fund_short_name]["LEAD_ASSESSOR"][
-                        "accountId"
-                    ],
+                    fund_specific_claim_map[fund_short_name]["LEAD_ASSESSOR"]["accountId"],
                     False,
                     True,
                     True,
@@ -663,9 +627,7 @@ def test_assignment_overview_post_new_and_exising(
                 mock.call(
                     assessment_1,
                     user_2,
-                    fund_specific_claim_map[fund_short_name]["LEAD_ASSESSOR"][
-                        "accountId"
-                    ],
+                    fund_specific_claim_map[fund_short_name]["LEAD_ASSESSOR"]["accountId"],
                     True,
                     True,
                     True,
@@ -674,9 +636,7 @@ def test_assignment_overview_post_new_and_exising(
                 mock.call(
                     assessment_2,
                     user_2,
-                    fund_specific_claim_map[fund_short_name]["LEAD_ASSESSOR"][
-                        "accountId"
-                    ],
+                    fund_specific_claim_map[fund_short_name]["LEAD_ASSESSOR"]["accountId"],
                     True,
                     True,
                     True,
@@ -718,7 +678,6 @@ def test_assignment_overview_post_add_and_remove(
     mock_get_active_tags_for_fund_round,
     mock_get_tag_types,
 ):
-
     params = request.node.get_closest_marker("mock_parameters").args[0]
     fund_short_name = params["fund_short_name"]
     round_short_name = params["round_short_name"]
@@ -774,9 +733,7 @@ def test_assignment_overview_post_add_and_remove(
                 mock.call(
                     assessment_1,
                     user_1,
-                    fund_specific_claim_map[fund_short_name]["LEAD_ASSESSOR"][
-                        "accountId"
-                    ],
+                    fund_specific_claim_map[fund_short_name]["LEAD_ASSESSOR"]["accountId"],
                     False,
                     True,
                     True,
@@ -785,9 +742,7 @@ def test_assignment_overview_post_add_and_remove(
                 mock.call(
                     assessment_1,
                     user_2,
-                    fund_specific_claim_map[fund_short_name]["LEAD_ASSESSOR"][
-                        "accountId"
-                    ],
+                    fund_specific_claim_map[fund_short_name]["LEAD_ASSESSOR"]["accountId"],
                     True,
                     False,
                     True,
@@ -819,7 +774,6 @@ def test_assignment_multiple_users_multiple_messages(
     mock_get_users_for_fund,
     patch_resolve_redirect,
 ):
-
     params = request.node.get_closest_marker("mock_parameters").args[0]
     fund_short_name = params["fund_short_name"]
     round_short_name = params["round_short_name"]
@@ -892,7 +846,6 @@ def test_assignment_overview_cancel_messages(
     mock_get_assessment_progress,
     patch_resolve_redirect,
 ):
-
     params = request.node.get_closest_marker("mock_parameters").args[0]
     fund_short_name = params["fund_short_name"]
     round_short_name = params["round_short_name"]

@@ -54,15 +54,12 @@ def test_from_data(
     mock_args.round.all_uploaded_documents_section_available = all_docs_available
     mock_args.round.display_logo_on_pdf_exports = display_logo
     with app.test_request_context():
-
         context = FullApplicationPdfContext.from_data(mock_args)
 
         assert context.title == "Fund Name"
         assert context.response_id == "12345"
         assert context.submission_to == "Fund Name Round Title"
-        assert (
-            context.submitted_on == "06/06/2023 at 14:38"
-        )  # Timestamp is converted to bst
+        assert context.submitted_on == "06/06/2023 at 14:38"  # Timestamp is converted to bst
         assert context.organisation_name == "Organisation Name"
         assert context.organisation_shortname == "Short Name"
         assert context.organisation_logo_uri == expected_logo_uri

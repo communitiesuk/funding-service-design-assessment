@@ -4,8 +4,7 @@ from urllib.parse import quote
 
 from boto3 import client
 from botocore.exceptions import ClientError
-from flask import current_app
-from flask import url_for
+from flask import current_app, url_for
 
 from config import Config
 
@@ -33,9 +32,7 @@ def get_file_for_download_from_aws(file_name: str, application_id: str):
 
     try:
         current_app.logger.info(f"Retrieving file {prefixed_file_name} from AWS")
-        obj = _S3_CLIENT.get_object(
-            Bucket=Config.AWS_BUCKET_NAME, Key=prefixed_file_name
-        )
+        obj = _S3_CLIENT.get_object(Bucket=Config.AWS_BUCKET_NAME, Key=prefixed_file_name)
 
         mimetype = obj["ResponseMetadata"]["HTTPHeaders"]["content-type"]
         data = obj["Body"].read()

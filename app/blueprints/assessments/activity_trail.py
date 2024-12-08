@@ -1,18 +1,14 @@
 import inspect
-from dataclasses import asdict
-from dataclasses import dataclass
-from dataclasses import field
+from dataclasses import asdict, dataclass, field
 from datetime import datetime
 
 from flask import current_app
 from flask_wtf import FlaskForm
-from wtforms import BooleanField
-from wtforms import StringField
+from wtforms import BooleanField, StringField
 
 from app.blueprints.services.data_services import get_bulk_accounts_dict
 from app.blueprints.services.models.assessor_task_list import AssessorTaskList
-from app.blueprints.services.models.flag import Flag
-from app.blueprints.services.models.flag import FlagType
+from app.blueprints.services.models.flag import Flag, FlagType
 from app.blueprints.tagging.models.tag import AssociatedTag
 
 
@@ -22,11 +18,7 @@ class BaseModel:
     def from_list(cls, data_list: list[dict]):
         return [
             cls(
-                **{
-                    k: v
-                    for k, v in d.items()
-                    if k in inspect.signature(cls).parameters and k != "date_created"
-                },
+                **{k: v for k, v in d.items() if k in inspect.signature(cls).parameters and k != "date_created"},
                 date_created=cls._format_date(d.get("date_created")),
             )
             for d in data_list
@@ -50,10 +42,7 @@ class AssociatedTags(AssociatedTag):
     @classmethod
     def from_associated_tags_list(cls, associated_tags_list):
         """Change the  attribute 'created_at' to 'date_created'"""
-        return [
-            cls(**asdict(tag), date_created=tag.created_at)
-            for tag in associated_tags_list
-        ]
+        return [cls(**asdict(tag), date_created=tag.created_at) for tag in associated_tags_list]
 
 
 @dataclass
@@ -176,7 +165,6 @@ class Scores(BaseModel):
 
 
 def get_user_info(lst: list, state: AssessorTaskList) -> dict:
-
     if lst is None:
         return []
 
@@ -242,9 +230,7 @@ def map_activities_classes_with_checkbox_filters(filters):
     return _filters
 
 
-def filter_all_activities(
-    all_activities: list, search_keyword: str = "", filters: list = None
-):
+def filter_all_activities(all_activities: list, search_keyword: str = "", filters: list = None):
     all_activities = order_by_dates(all_activities)
     filtered_classes = map_activities_classes_with_checkbox_filters(filters)
 
@@ -255,34 +241,22 @@ def filter_all_activities(
         return [
             activity
             for activity in all_activities
-            if any(
-                search_keyword.lower() in str(attr).lower()
-                for attr in asdict(activity).values()
-            )
-            and any(
-                class_name.lower() == activity.__class__.__name__.lower()
-                for class_name in filtered_classes
-            )
+            if any(search_keyword.lower() in str(attr).lower() for attr in asdict(activity).values())
+            and any(class_name.lower() == activity.__class__.__name__.lower() for class_name in filtered_classes)
         ]
 
     if not search_keyword and filters:
         return [
             activity
             for activity in all_activities
-            if any(
-                class_name.lower() == activity.__class__.__name__.lower()
-                for class_name in filtered_classes
-            )
+            if any(class_name.lower() == activity.__class__.__name__.lower() for class_name in filtered_classes)
         ]
 
     if search_keyword and not filtered_classes:
         return [
             activity
             for activity in all_activities
-            if any(
-                search_keyword.lower() in str(attr).lower()
-                for attr in asdict(activity).values()
-            )
+            if any(search_keyword.lower() in str(attr).lower() for attr in asdict(activity).values())
         ]
 
     else:

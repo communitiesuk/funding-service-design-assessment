@@ -1,7 +1,6 @@
 from unittest import mock
 
-from fsd_utils import extract_questions_and_answers
-from fsd_utils import generate_text_of_application
+from fsd_utils import extract_questions_and_answers, generate_text_of_application
 
 import app as flask_app
 from app.blueprints.assessments.helpers import get_files_for_application_upload_fields
@@ -15,14 +14,9 @@ class TestExport:
         assert "sample1.doc" == result["upload-business-plan"]["Upload business plan"]
         assert (
             "lots of surveys"
-            == result["feasibility"][
-                "Tell us about the feasibility studies you have carried out for your project"
-            ]
+            == result["feasibility"]["Tell us about the feasibility studies you have carried out for your project"]
         )
-        assert (
-            "No"
-            == result["feasibility"]["Do you need to do any further feasibility work?"]
-        )
+        assert "No" == result["feasibility"]["Do you need to do any further feasibility work?"]
         assert (
             "Yes"
             == result["declarations"][

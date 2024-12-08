@@ -16,11 +16,7 @@ def map_application_with_sub_criteria_themes_fields(
     sub_criterias,
     theme_id: str,
 ):
-    questions = [
-        questions
-        for forms in application_json["jsonb_blob"]["forms"]
-        for questions in forms["questions"]
-    ]
+    questions = [questions for forms in application_json["jsonb_blob"]["forms"] for questions in forms["questions"]]
     themes_fields = get_themes_fields(
         sub_criterias,
         theme_id,
@@ -53,9 +49,7 @@ def map_application_with_sub_criterias_and_themes(
     for theme_id in theme_ids:
         _sub_cri_with_theme_id = map_sub_cri_with_theme_id(sub_criterias, theme_id)
 
-        map_data = map_application_with_sub_criteria_themes_fields(
-            application_json, sub_criterias, theme_id
-        )
+        map_data = map_application_with_sub_criteria_themes_fields(application_json, sub_criterias, theme_id)
 
         sub_and_theme = {**_sub_cri_with_theme_id}
 
@@ -153,25 +147,18 @@ def deprecated_sort_add_another_component_contents(
 
             field["answer"] = field["question"]
             for theme in themes_fields:
-                if not field["field_id"] in theme.values():
+                if field["field_id"] not in theme.values():
                     continue
 
                 if theme["presentation_type"] == "description":
-                    description_answer = [
-                        description.rsplit(": ", 1)[0]
-                        for description in theme["answer"]
-                    ]
+                    description_answer = [description.rsplit(": ", 1)[0] for description in theme["answer"]]
                     theme["answer"] = description_answer
 
                 if theme["presentation_type"] == "amount":
-                    amount_answer = [
-                        amount.rsplit(": ", 1)[1] for amount in theme["answer"]
-                    ]
+                    amount_answer = [amount.rsplit(": ", 1)[1] for amount in theme["answer"]]
                     theme["answer"] = amount_answer
         except (KeyError, IndexError):
-            current_app.logger.debug(
-                f"Answer not provided for field_id: {field['field_id']}"
-            )
+            current_app.logger.debug(f"Answer not provided for field_id: {field['field_id']}")
 
 
 def format_add_another_component_contents(
@@ -206,9 +193,7 @@ def format_add_another_component_contents(
             if frontend_format is None:
                 frontend_format = "text"
 
-            pre_frontend_formatter = _MULTI_INPUT_FRE_FRONTEND_FORMATTERS.get(
-                column_config["type"], lambda x: x
-            )
+            pre_frontend_formatter = _MULTI_INPUT_FRE_FRONTEND_FORMATTERS.get(column_config["type"], lambda x: x)
 
             formatted_answers = (
                 [
@@ -225,10 +210,7 @@ def format_add_another_component_contents(
 
             if frontend_format == "monthYearField":
                 formatted_answers = (
-                    [
-                        f"{answer[component_id + '__month']}-{answer[component_id + '__year']}"
-                        for answer in answers
-                    ]
+                    [f"{answer[component_id + '__month']}-{answer[component_id + '__year']}" for answer in answers]
                     if answers
                     else None
                 )
@@ -250,9 +232,7 @@ def format_add_another_component_contents(
                                 + answer["town"]
                             ).replace(" ,", "")
                         except Exception:
-                            formatted_answers[ind] = ", ".join(
-                                list(filter(None, answer.values()))
-                            )
+                            formatted_answers[ind] = ", ".join(list(filter(None, answer.values())))
 
             if formatted_answers:
                 table.append([title, formatted_answers, frontend_format])
@@ -290,9 +270,7 @@ def order_entire_application_by_themes(fund_round_name, sub_criteria):
 
     for ordered_theme_id in ordered_theme:
         if ordered_theme_id:
-            ordered_theme_id = (
-                ordered_theme_id.replace("-", " ").replace("_", " ").capitalize()
-            )
+            ordered_theme_id = ordered_theme_id.replace("-", " ").replace("_", " ").capitalize()
             for sub in sub_criteria:
                 for theme_id in sub:
                     if theme_id.get("theme_id"):

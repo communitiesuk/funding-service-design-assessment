@@ -1,6 +1,4 @@
-from flask import Blueprint
-from flask import current_app
-from flask import render_template
+from flask import Blueprint, current_app, render_template
 
 from app.blueprints.services.data_services import get_default_round_data
 from config import Config

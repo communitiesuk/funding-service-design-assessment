@@ -2,11 +2,7 @@ import os
 import re
 from gettext import ngettext
 
-from flask import Flask
-from flask import current_app
-from flask import g
-from flask import render_template
-from flask import request
+from flask import Flask, current_app, g, render_template, request
 from flask_assets import Environment
 from flask_compress import Compress
 from flask_talisman import Talisman
@@ -16,44 +12,36 @@ from fsd_utils.authentication.decorators import login_requested
 from fsd_utils.healthchecks.checkers import FlaskRunningChecker
 from fsd_utils.healthchecks.healthcheck import Healthcheck
 from fsd_utils.logging import logging
-from fsd_utils.toggles.toggles import create_toggles_client
-from fsd_utils.toggles.toggles import initialise_toggles_redis_store
-from fsd_utils.toggles.toggles import load_toggles
-from jinja2 import ChoiceLoader
-from jinja2 import PackageLoader
-from jinja2 import PrefixLoader
+from fsd_utils.toggles.toggles import create_toggles_client, initialise_toggles_redis_store, load_toggles
+from jinja2 import ChoiceLoader, PackageLoader, PrefixLoader
 
 import static_assets
 from app.blueprints.assessments.routes import assessment_bp
 from app.blueprints.authentication.auth import auth_protect
 from app.blueprints.flagging.routes import flagging_bp
 from app.blueprints.scoring.routes import scoring_bp
-from app.blueprints.shared.filters import add_to_dict
-from app.blueprints.shared.filters import all_caps_to_human
-from app.blueprints.shared.filters import ast_literal_eval
-from app.blueprints.shared.filters import datetime_format
-from app.blueprints.shared.filters import datetime_format_24hr
-from app.blueprints.shared.filters import format_address
-from app.blueprints.shared.filters import format_project_ref
-from app.blueprints.shared.filters import remove_dashes_underscores_capitalize
 from app.blueprints.shared.filters import (
+    add_to_dict,
+    all_caps_to_human,
+    ast_literal_eval,
+    datetime_format,
+    datetime_format_24hr,
+    format_address,
+    format_project_ref,
+    remove_dashes_underscores_capitalize,
     remove_dashes_underscores_capitalize_keep_uppercase,
+    slash_separated_day_month_year,
+    utc_to_bst,
 )
-from app.blueprints.shared.filters import slash_separated_day_month_year
-from app.blueprints.shared.filters import utc_to_bst
 from app.blueprints.shared.routes import shared_bp
 from app.blueprints.tagging.routes import tagging_bp
-from app.error_handlers import error_503
-from app.error_handlers import forbidden
-from app.error_handlers import internal_server_error
-from app.error_handlers import not_found
+from app.error_handlers import error_503, forbidden, internal_server_error, not_found
 from config import Config
 
 
 def create_app() -> Flask:
     flask_app = Flask("Assessment Frontend")
     with flask_app.app_context():
-
         init_sentry()
         flask_app.config.from_object("config.Config")
 
@@ -83,9 +71,7 @@ def create_app() -> Flask:
             PackageLoader("app.blueprints.flagging"),
             PackageLoader("app.blueprints.tagging"),
             PackageLoader("app.blueprints.scoring"),
-            PrefixLoader(
-                {"govuk_frontend_jinja": PackageLoader("govuk_frontend_jinja")}
-            ),
+            PrefixLoader({"govuk_frontend_jinja": PackageLoader("govuk_frontend_jinja")}),
         ]
 
         flask_app.jinja_loader = ChoiceLoader(template_loaders)
@@ -96,18 +82,14 @@ def create_app() -> Flask:
         flask_app.jinja_env.filters["datetime_format"] = datetime_format
         flask_app.jinja_env.filters["utc_to_bst"] = utc_to_bst
         flask_app.jinja_env.filters["add_to_dict"] = add_to_dict
-        flask_app.jinja_env.filters["slash_separated_day_month_year"] = (
-            slash_separated_day_month_year
-        )
+        flask_app.jinja_env.filters["slash_separated_day_month_year"] = slash_separated_day_month_year
         flask_app.jinja_env.filters["all_caps_to_human"] = all_caps_to_human
         flask_app.jinja_env.filters["datetime_format_24hr"] = datetime_format_24hr
         flask_app.jinja_env.filters["format_project_ref"] = format_project_ref
-        flask_app.jinja_env.filters["remove_dashes_underscores_capitalize"] = (
-            remove_dashes_underscores_capitalize
+        flask_app.jinja_env.filters["remove_dashes_underscores_capitalize"] = remove_dashes_underscores_capitalize
+        flask_app.jinja_env.filters["remove_dashes_underscores_capitalize_keep_uppercase"] = (
+            remove_dashes_underscores_capitalize_keep_uppercase
         )
-        flask_app.jinja_env.filters[
-            "remove_dashes_underscores_capitalize_keep_uppercase"
-        ] = remove_dashes_underscores_capitalize_keep_uppercase
         flask_app.jinja_env.filters["format_address"] = format_address
         flask_app.jinja_env.add_extension("jinja2.ext.i18n")
         flask_app.jinja_env.globals["ngettext"] = ngettext
@@ -135,12 +117,7 @@ def create_app() -> Flask:
                 sso_logout_url=flask_app.config.get("SSO_LOGOUT_URL"),
                 g=g,
                 toggle_dict=(
-                    {
-                        feature.name: feature.is_enabled()
-                        for feature in toggle_client.list()
-                    }
-                    if toggle_client
-                    else {}
+                    {feature.name: feature.is_enabled() for feature in toggle_client.list()} if toggle_client else {}
                 ),
             )
 
@@ -159,9 +136,7 @@ def create_app() -> Flask:
         @flask_app.before_request
         def check_for_maintenance():
             if flask_app.config.get("MAINTENANCE_MODE") and not (
-                request.path.endswith("js")
-                or request.path.endswith("css")
-                or request.path.endswith("/healthcheck")
+                request.path.endswith("js") or request.path.endswith("css") or request.path.endswith("/healthcheck")
             ):
                 current_app.logger.warning(
                     f"""Application is in the Maintenance mode
@@ -170,9 +145,7 @@ def create_app() -> Flask:
                 return (
                     render_template(
                         "maintenance.html",
-                        maintenance_end_time=flask_app.config.get(
-                            "MAINTENANCE_END_TIME"
-                        ),
+                        maintenance_end_time=flask_app.config.get("MAINTENANCE_END_TIME"),
                     ),
                     503,
                 )
@@ -203,9 +176,7 @@ def create_app() -> Flask:
             if filename in static_files_list:
                 response.headers["Cache-Control"] = "public, max-age=3600"
             else:
-                response.headers["Cache-Control"] = (
-                    "no-cache, no-store, must-revalidate"
-                )
+                response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
                 response.headers["Pragma"] = "no-cache"
                 response.headers["Expires"] = "0"
             return response

@@ -1,11 +1,4 @@
-from flask import Blueprint
-from flask import abort
-from flask import current_app
-from flask import g
-from flask import redirect
-from flask import render_template
-from flask import request
-from flask import url_for
+from flask import Blueprint, abort, current_app, g, redirect, render_template, request, url_for
 
 from app.blueprints.authentication.validation import check_access_application_id
 from app.blueprints.flagging.forms.continue_application_form import (
@@ -14,16 +7,16 @@ from app.blueprints.flagging.forms.continue_application_form import (
 from app.blueprints.flagging.forms.flag_form import FlagApplicationForm
 from app.blueprints.flagging.forms.resolve_flag_form import ResolveFlagForm
 from app.blueprints.flagging.helpers import resolve_application
-from app.blueprints.services.data_services import get_available_teams
-from app.blueprints.services.data_services import get_flag
-from app.blueprints.services.data_services import get_flags
-from app.blueprints.services.data_services import get_sub_criteria_banner_state
-from app.blueprints.services.data_services import submit_flag
+from app.blueprints.services.data_services import (
+    get_available_teams,
+    get_flag,
+    get_flags,
+    get_sub_criteria_banner_state,
+    submit_flag,
+)
 from app.blueprints.services.models.flag import FlagType
 from app.blueprints.services.shared_data_helpers import get_state_for_tasklist_banner
-from app.blueprints.shared.helpers import determine_assessment_status
-from app.blueprints.shared.helpers import determine_flag_status
-from app.blueprints.shared.helpers import get_ttl_hash
+from app.blueprints.shared.helpers import determine_assessment_status, determine_flag_status, get_ttl_hash
 from config import Config
 
 flagging_bp = Blueprint(
@@ -42,10 +35,7 @@ flagging_bp = Blueprint(
 def flag(application_id):
     # Get assessor tasks list
     state = get_state_for_tasklist_banner(application_id)
-    choices = [
-        (item["sub_section_id"], item["sub_section_name"])
-        for item in state.get_sub_sections_metadata()
-    ]
+    choices = [(item["sub_section_id"], item["sub_section_name"]) for item in state.get_sub_sections_metadata()]
 
     teams_available = get_available_teams(
         state.fund_id,
@@ -77,9 +67,7 @@ def flag(application_id):
     sub_criteria_banner_state = get_sub_criteria_banner_state(application_id)
 
     flags_list = get_flags(application_id)
-    assessment_status = determine_assessment_status(
-        state.workflow_status, state.is_qa_complete
-    )
+    assessment_status = determine_assessment_status(state.workflow_status, state.is_qa_complete)
     flag_status = determine_flag_status(flags_list)
     return render_template(
         "flag_application.html",

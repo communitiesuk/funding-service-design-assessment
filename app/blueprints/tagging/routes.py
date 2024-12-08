@@ -1,37 +1,31 @@
 import copy
 from typing import Dict
 
-from flask import Blueprint
-from flask import current_app
-from flask import flash
-from flask import g
-from flask import redirect
-from flask import render_template
-from flask import request
-from flask import url_for
+from flask import Blueprint, current_app, flash, g, redirect, render_template, request, url_for
 
-from app.blueprints.authentication.validation import check_access_application_id
-from app.blueprints.authentication.validation import check_access_fund_id_round_id
-from app.blueprints.services.data_services import get_associated_tags_for_application
-from app.blueprints.services.data_services import get_fund
-from app.blueprints.services.data_services import get_round
-from app.blueprints.services.data_services import get_tag
-from app.blueprints.services.data_services import get_tag_for_fund_round
-from app.blueprints.services.data_services import get_tag_types
-from app.blueprints.services.data_services import get_tags_for_fund_round
-from app.blueprints.services.data_services import post_new_tag_for_fund_round
-from app.blueprints.services.data_services import update_associated_tags
-from app.blueprints.services.data_services import update_tag
-from app.blueprints.services.data_services import update_tags
+from app.blueprints.authentication.validation import check_access_application_id, check_access_fund_id_round_id
+from app.blueprints.services.data_services import (
+    get_associated_tags_for_application,
+    get_fund,
+    get_round,
+    get_tag,
+    get_tag_for_fund_round,
+    get_tag_types,
+    get_tags_for_fund_round,
+    post_new_tag_for_fund_round,
+    update_associated_tags,
+    update_tag,
+    update_tags,
+)
 from app.blueprints.services.shared_data_helpers import get_state_for_tasklist_banner
-from app.blueprints.shared.helpers import determine_assessment_status
-from app.blueprints.shared.helpers import get_ttl_hash
-from app.blueprints.shared.helpers import match_search_params
-from app.blueprints.tagging.forms.tags import DeactivateTagForm
-from app.blueprints.tagging.forms.tags import EditTagForm
-from app.blueprints.tagging.forms.tags import NewTagForm
-from app.blueprints.tagging.forms.tags import ReactivateTagForm
-from app.blueprints.tagging.forms.tags import TagAssociationForm
+from app.blueprints.shared.helpers import determine_assessment_status, get_ttl_hash, match_search_params
+from app.blueprints.tagging.forms.tags import (
+    DeactivateTagForm,
+    EditTagForm,
+    NewTagForm,
+    ReactivateTagForm,
+    TagAssociationForm,
+)
 from app.blueprints.tagging.models.tag import TagType
 from config import Config
 from config.display_value_mappings import search_params_tag
@@ -51,7 +45,6 @@ tagging_bp = Blueprint(
 @tagging_bp.route("/application/<application_id>/tags", methods=["GET", "POST"])
 @check_access_application_id(roles_required=["ASSESSOR"])
 def load_change_tags(application_id):
-
     tag_association_form = TagAssociationForm()
     if request.method == "POST":
         associated_tags = get_associated_tags_for_application(application_id)
@@ -60,18 +53,12 @@ def load_change_tags(application_id):
 
         if associated_tags and len(associated_tags) > len(association_form_data):
             # Create a list of dictionaries with tag_id and user_id
-            updated_tags = [
-                {"tag_id": tag_id, "user_id": g.account_id}
-                for tag_id in association_form_data
-            ]
+            updated_tags = [{"tag_id": tag_id, "user_id": g.account_id} for tag_id in association_form_data]
             # Fill remaining with a empty tag_id and current user account_id
             updated_tags.extend([{"tag_id": "", "user_id": g.account_id}])
         else:
             # If associated_tags is zero or null, or not greater than association_form_data
-            updated_tags = [
-                {"tag_id": tag_id, "user_id": g.account_id}
-                for tag_id in association_form_data
-            ]
+            updated_tags = [{"tag_id": tag_id, "user_id": g.account_id} for tag_id in association_form_data]
 
         update_associated_tags(application_id, updated_tags)
         return redirect(
@@ -96,9 +83,7 @@ def load_change_tags(application_id):
             tag.associated = True
         if tag.active:
             active_tags.append(tag)
-    assessment_status = determine_assessment_status(
-        state.workflow_status, state.is_qa_complete
-    )
+    assessment_status = determine_assessment_status(state.workflow_status, state.is_qa_complete)
     return render_template(
         "change_tags.html",
         form=tag_association_form,
@@ -136,9 +121,7 @@ def get_fund_round(fund_id, round_id) -> Dict:
 @check_access_fund_id_round_id(roles_required=["ASSESSOR"])
 def load_fund_round_tags(fund_id, round_id):
     fund_round = get_fund_round(fund_id, round_id)
-    search_params, show_clear_filters = match_search_params(
-        copy.deepcopy(search_params_tag), request.args
-    )
+    search_params, show_clear_filters = match_search_params(copy.deepcopy(search_params_tag), request.args)
     tags = get_tags_for_fund_round(fund_id, round_id, search_params)
     tag_types = get_tag_types()
     tag_types.insert(0, TagType(id="all", purpose="All", description="all"))
@@ -183,11 +166,7 @@ def create_tag(fund_id, round_id):
         # check if tag already exits for fund-round TODO: Move logic to the datastore to reduce calls?
         for tag_item in fund_round_tags:
             if tag["value"] == tag_item.value:
-                errors = {
-                    "value": [
-                        "Tag already exists for this round. Please ensure that the tag is unique."
-                    ]
-                }
+                errors = {"value": ["Tag already exists for this round. Please ensure that the tag is unique."]}
                 return render_template(
                     "create_tag.html",
                     form=new_tag_form,
@@ -225,14 +204,10 @@ def create_tag(fund_id, round_id):
                 )
             )
 
-        return redirect(
-            url_for("tagging_bp.create_tag", fund_id=fund_id, round_id=round_id)
-        )
+        return redirect(url_for("tagging_bp.create_tag", fund_id=fund_id, round_id=round_id))
 
     elif request.method == "POST":
-        current_app.logger.info(
-            f"Tag creation form failed validation: {new_tag_form.errors}"
-        )
+        current_app.logger.info(f"Tag creation form failed validation: {new_tag_form.errors}")
         errors = new_tag_form.errors
 
     return render_template(
@@ -246,9 +221,7 @@ def create_tag(fund_id, round_id):
     )
 
 
-@tagging_bp.route(
-    "/tags/deactivate/<fund_id>/<round_id>/<tag_id>", methods=["GET", "POST"]
-)
+@tagging_bp.route("/tags/deactivate/<fund_id>/<round_id>/<tag_id>", methods=["GET", "POST"])
 @check_access_fund_id_round_id(roles_required=["ASSESSOR"])
 def deactivate_tag(fund_id, round_id, tag_id):
     deactivate_tag_form = DeactivateTagForm()
@@ -271,9 +244,7 @@ def deactivate_tag(fund_id, round_id, tag_id):
         "round_id": round_id,
     }
     if deactivate_tag_form.validate_on_submit():
-        current_app.logger.info(
-            f"Tag deactivation form validated, deactivating tag_id: {tag_id}."
-        )
+        current_app.logger.info(f"Tag deactivation form validated, deactivating tag_id: {tag_id}.")
         tag_update_to_deactivate = [{"id": tag_id, "active": False}]
         tag_deactivated = update_tags(fund_id, round_id, tag_update_to_deactivate)
         if tag_deactivated:
@@ -287,9 +258,7 @@ def deactivate_tag(fund_id, round_id, tag_id):
         flash(TAG_DEACTIVATE_ERROR_MESSAGE)
 
     elif request.method == "POST":
-        current_app.logger.info(
-            f"Tag deactivation form failed validation: {deactivate_tag_form.errors}"
-        )
+        current_app.logger.info(f"Tag deactivation form failed validation: {deactivate_tag_form.errors}")
         flash(TAG_DEACTIVATE_ERROR_MESSAGE)
     return render_template(
         "deactivate_tag.html",
@@ -301,9 +270,7 @@ def deactivate_tag(fund_id, round_id, tag_id):
     )
 
 
-@tagging_bp.route(
-    "/tags/reactivate/<fund_id>/<round_id>/<tag_id>", methods=["GET", "POST"]
-)
+@tagging_bp.route("/tags/reactivate/<fund_id>/<round_id>/<tag_id>", methods=["GET", "POST"])
 @check_access_fund_id_round_id(roles_required=["ASSESSOR"])
 def reactivate_tag(fund_id, round_id, tag_id):
     reactivate_tag_form = ReactivateTagForm()
@@ -326,9 +293,7 @@ def reactivate_tag(fund_id, round_id, tag_id):
         "round_id": round_id,
     }
     if reactivate_tag_form.validate_on_submit():
-        current_app.logger.info(
-            f"Tag reactivation form validated, reactivating tag_id: {tag_id}."
-        )
+        current_app.logger.info(f"Tag reactivation form validated, reactivating tag_id: {tag_id}.")
         tag_to_reactivate = [{"id": tag_id, "active": True}]
         tag_reactivated = update_tags(fund_id, round_id, tag_to_reactivate)
         if tag_reactivated:
@@ -341,9 +306,7 @@ def reactivate_tag(fund_id, round_id, tag_id):
             )
         flash(TAG_REACTIVATE_ERROR_MESSAGE)
     elif request.method == "POST":
-        current_app.logger.info(
-            f"Tag reactivation form failed validation: {reactivate_tag_form.errors}"
-        )
+        current_app.logger.info(f"Tag reactivation form failed validation: {reactivate_tag_form.errors}")
         flash(TAG_REACTIVATE_ERROR_MESSAGE)
     return render_template(
         "reactivate_tag.html",
@@ -378,13 +341,9 @@ def edit_tag(fund_id, round_id, tag_id):
                     )
                 )
             else:
-                flash(
-                    "An error occurred and your changes were not saved. Please try again later."
-                )
+                flash("An error occurred and your changes were not saved. Please try again later.")
         else:
-            current_app.logger.info(
-                f"Edit tag form failed validation: {edit_tag_form.errors}"
-            )
+            current_app.logger.info(f"Edit tag form failed validation: {edit_tag_form.errors}")
             flash(FLAG_ERROR_MESSAGE)
 
     return render_template(

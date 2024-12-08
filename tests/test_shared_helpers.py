@@ -92,33 +92,25 @@ multiple_sections_state = mock_task_list(
 
 
 def test_pagination_should_have_empty_previous_when_loading_first_section():
-    pagination = multiple_sections_state.get_pagination_from_sub_criteria_id(
-        "first-section"
-    )
+    pagination = multiple_sections_state.get_pagination_from_sub_criteria_id("first-section")
     assert pagination["previous"] is None
     assert pagination["next"]["sub_section_id"] == "second-section"
 
 
 def test_pagination_should_have_empty_next_when_loading_last_section():
-    pagination = multiple_sections_state.get_pagination_from_sub_criteria_id(
-        "second-criteria-id"
-    )
+    pagination = multiple_sections_state.get_pagination_from_sub_criteria_id("second-criteria-id")
     assert pagination["previous"]["sub_section_id"] == "criteria-id"
     assert pagination["next"] is None
 
 
 def test_pagination_should_have_previous_next_when_loading_within_section_group():
-    pagination = multiple_sections_state.get_pagination_from_sub_criteria_id(
-        "second-section"
-    )
+    pagination = multiple_sections_state.get_pagination_from_sub_criteria_id("second-section")
     assert pagination["previous"]["sub_section_id"] == "first-section"
     assert pagination["next"]["sub_section_id"] == "third-section"
 
 
 def test_pagination_should_have_previous_next_when_loading_across_section_groups():
     # This should get the last section from the first group and the first section from the critereas group
-    pagination = multiple_sections_state.get_pagination_from_sub_criteria_id(
-        "first-section-second-group"
-    )
+    pagination = multiple_sections_state.get_pagination_from_sub_criteria_id("first-section-second-group")
     assert pagination["previous"]["sub_section_id"] == "third-section"
     assert pagination["next"]["sub_section_id"] == "criteria-id"

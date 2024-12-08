@@ -233,9 +233,7 @@ class TestApplicantResponseComponentConcreteSubclasses:
             "Burgers": "https://burgers.com",
             "Tacos": "https://tacos.com",
         }
-        question_answer_list = QuestionAboveHrefAnswerList.from_dict(
-            data, key_to_url_dict
-        )
+        question_answer_list = QuestionAboveHrefAnswerList.from_dict(data, key_to_url_dict)
         assert question_answer_list.question == "What are your favorite foods?"
         assert question_answer_list.key_to_url_dict == key_to_url_dict
         assert question_answer_list.should_render is True
@@ -478,9 +476,7 @@ class TestConvertHeadingDescriptionAmountToGroupedFields:
             ),
         ],
     )
-    def test__convert_heading_description_amount(
-        self, response, expected_grouped_fields_items, expected_field_ids
-    ):
+    def test__convert_heading_description_amount(self, response, expected_grouped_fields_items, expected_field_ids):
         result, field_ids = _convert_heading_description_amount(response)
         assert result == expected_grouped_fields_items
         assert field_ids == expected_field_ids
@@ -517,8 +513,7 @@ class TestConvertHeadingDescriptionAmountToGroupedFields:
             _convert_heading_description_amount(response)
 
         assert (
-            str(exc_info.value)
-            == "Could not find item with presentation_type: description at"
+            str(exc_info.value) == "Could not find item with presentation_type: description at"
             " index: 1\nThis probably means there is an uneven number of"
             " 'heading', 'description' and 'amount' items\nThere should be"
             " an equal number of each of these items"
@@ -643,9 +638,7 @@ class TestConvertCheckboxItems:
             ),
         ],
     )
-    def test__convert_checkbox_items(
-        self, response, expected_text_items, expected_field_ids
-    ):
+    def test__convert_checkbox_items(self, response, expected_text_items, expected_field_ids):
         result, field_ids = _convert_checkbox_items(response)
         assert result == expected_text_items
         assert field_ids == expected_field_ids
@@ -761,9 +754,7 @@ class TestConvertNonNumberGroupedFields:
             ),
         ],
     )
-    def test__convert_non_number_grouped_fields(
-        self, response, expected_text_items, expected_field_ids
-    ):
+    def test__convert_non_number_grouped_fields(self, response, expected_text_items, expected_field_ids):
         result, field_ids = _convert_non_number_grouped_fields(response)
         assert result == expected_text_items
         assert field_ids == expected_field_ids
@@ -899,10 +890,7 @@ def test_create_ui_components_retains_order(monkeypatch):
     with test_app.app_context():
         ui_components = create_ui_components(response_with_unhashable_fields, "app_123")
 
-    assert all(
-        isinstance(ui_component, ApplicantResponseComponent)
-        for ui_component in ui_components
-    )
+    assert all(isinstance(ui_component, ApplicantResponseComponent) for ui_component in ui_components)
 
     assert len(ui_components) == 13
 

@@ -13,10 +13,7 @@ def __gather_lists(directory, language_code):
             for item in data.get("lists", []):
                 name = item.get("name").strip()
                 all_lists.setdefault(name, {"EN": [], "CY": []})[language_code].extend(
-                    [
-                        {"value": item.get("value").strip()}
-                        for item in item.get("items", [])
-                    ]
+                    [{"value": item.get("value").strip()} for item in item.get("items", [])]
                 )
     return all_lists
 
@@ -28,24 +25,19 @@ def __combine_rounds(rounds):
             path = os.path.join(r, sub_dir)
             lists = __gather_lists(path, lang_code)
             for name, items in lists.items():
-                round_lists.setdefault(name, {"EN": [], "CY": []})[lang_code].extend(
-                    items[lang_code]
-                )
+                round_lists.setdefault(name, {"EN": [], "CY": []})[lang_code].extend(items[lang_code])
     return round_lists
 
 
 def __extract_translations(round_lists):
     translation_dict, duplicates = {}, set()
     for content in round_lists.values():
-        for welsh, english in zip(content["CY"], content["EN"]):
+        for welsh, english in zip(content["CY"], content["EN"], strict=False):
             welsh_value, english_value = (
                 welsh["value"].strip(),
                 english["value"].strip(),
             )
-            if (
-                welsh_value in translation_dict
-                and translation_dict[welsh_value] != english_value
-            ):
+            if welsh_value in translation_dict and translation_dict[welsh_value] != english_value:
                 duplicates.add(welsh_value)
             translation_dict[welsh_value] = english_value
     return translation_dict, duplicates
@@ -78,9 +70,7 @@ if __name__ == "__main__":
     )}"""
 
     lines = content.split("\n")
-    processed_lines = [
-        line + " # noqa" if len(line) > 118 else line for line in lines
-    ]  # for long lines we noqa
+    processed_lines = [line + " # noqa" if len(line) > 118 else line for line in lines]  # for long lines we noqa
     processed_lines[-2] += ","  # add trailing comma to avoid pre-commit failures
     content = "\n".join(processed_lines)
 

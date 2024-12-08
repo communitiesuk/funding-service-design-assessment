@@ -1,9 +1,10 @@
-from flask import abort
-from flask import current_app
+from flask import abort, current_app
 
-from app.blueprints.scoring.forms.scores_and_justifications import OneToFiveScoreForm
-from app.blueprints.scoring.forms.scores_and_justifications import ZeroToOneScoreForm
-from app.blueprints.scoring.forms.scores_and_justifications import ZeroToThreeScoreForm
+from app.blueprints.scoring.forms.scores_and_justifications import (
+    OneToFiveScoreForm,
+    ZeroToOneScoreForm,
+    ZeroToThreeScoreForm,
+)
 from app.blueprints.services.data_services import get_scoring_system  # noqa
 
 

@@ -1,7 +1,5 @@
 import app
-from app.blueprints.services.aws import FileData
-from app.blueprints.services.aws import generate_url
-from app.blueprints.services.aws import list_files_in_folder
+from app.blueprints.services.aws import FileData, generate_url, list_files_in_folder
 
 
 def test_generate_url_short_id(app):
@@ -15,8 +13,7 @@ def test_generate_url_short_id(app):
 def test_generate_url(app):
     file_data = FileData("app1", "form1", "path1", "comp1", "file1.txt")
     assert (
-        generate_url(file_data)
-        == "/assess/application/app1/export/form1%252Fpath1%252Fcomp1%252Ffile1.txt?quoted=True"
+        generate_url(file_data) == "/assess/application/app1/export/form1%252Fpath1%252Fcomp1%252Ffile1.txt?quoted=True"
     )
 
 

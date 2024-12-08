@@ -1,8 +1,6 @@
 import traceback
 
-from flask import current_app
-from flask import render_template
-from flask import request
+from flask import current_app, render_template, request
 
 from app.blueprints.assessments.routes import assessment_bp
 from app.blueprints.flagging.routes import flagging_bp
@@ -20,8 +18,7 @@ def forbidden(error):
     # Override the default message to match design if no custom message is provided
     error.description = (
         "You do not have permission to access this page."
-        if "It is either read-protected or not readable by the server."
-        in error.description
+        if "It is either read-protected or not readable by the server." in error.description
         else error.description
     )
 

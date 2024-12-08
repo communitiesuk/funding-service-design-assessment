@@ -18,9 +18,7 @@ def build_govuk_assets(static_dist_root="app/static/dist"):
 
     # Checks if GovUK Frontend Assets already built
     if os.path.exists(DIST_PATH):
-        print(
-            "GovUK Frontend assets already built.If you require a rebuild manually run build.build_govuk_assets"
-        )
+        print("GovUK Frontend assets already built.If you require a rebuild manually run build.build_govuk_assets")
         return True
 
     # Download zips from GOVUK_URL
@@ -58,7 +56,6 @@ def build_govuk_assets(static_dist_root="app/static/dist"):
     cwd = os.getcwd()
     os.chdir(DIST_PATH)
     for css_file in glob.glob("*.css"):
-
         # Read in the file
         with open(css_file, "r") as file:
             filedata = file.read()
@@ -88,9 +85,7 @@ def build_govuk_assets(static_dist_root="app/static/dist"):
 
     # Copy over JS source
     os.makedirs("./app/static/dist/js")
-    shutil.copyfile(
-        "app/static/src/js/fsd_cookies.js", "./app/static/dist/js/fsd_cookies.js"
-    )
+    shutil.copyfile("app/static/src/js/fsd_cookies.js", "./app/static/dist/js/fsd_cookies.js")
 
     # Delete temp files
     print("Deleting " + ASSETS_PATH)

@@ -432,8 +432,7 @@ single_application_json_blob = {
                             "type": "text",
                         },
                         {
-                            "answer": "testemailfundingservice@"
-                            + "testemailfundingservice.com",
+                            "answer": "testemailfundingservice@" + "testemailfundingservice.com",
                             "key": "LZBrEj",
                             "title": "Lead contact email address",
                             "type": "text",
