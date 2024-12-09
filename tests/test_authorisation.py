@@ -3,18 +3,18 @@ from bs4 import BeautifulSoup
 from flask import g
 
 from config import Config
-from tests.conftest import create_invalid_token
-from tests.conftest import create_valid_token
-from tests.conftest import test_assessor_claims
-from tests.conftest import test_commenter_claims
-from tests.conftest import test_lead_assessor_claims
-from tests.conftest import test_roleless_user_claims
+from tests.conftest import (
+    create_invalid_token,
+    create_valid_token,
+    test_assessor_claims,
+    test_commenter_claims,
+    test_lead_assessor_claims,
+    test_roleless_user_claims,
+)
 
 
 class TestAuthorisation:
-    def test_any_unauthorised_route_redirects_to_home(
-        self, flask_test_client, mock_get_funds
-    ):
+    def test_any_unauthorised_route_redirects_to_home(self, flask_test_client, mock_get_funds):
         """
         GIVEN an unauthorised user
         WHEN the user tries to access any route
@@ -32,9 +32,7 @@ class TestAuthorisation:
         assert response.status_code == 302
         assert response.location == "/"
 
-    def test_any_invalid_token_route_redirects_to_home(
-        self, flask_test_client, mock_get_funds
-    ):
+    def test_any_invalid_token_route_redirects_to_home(self, flask_test_client, mock_get_funds):
         """
         GIVEN an unauthorised user
         WHEN the user tries to access any route
@@ -55,9 +53,7 @@ class TestAuthorisation:
         assert response.status_code == 302
         assert response.location == "/"
 
-    def test_any_unauthorised_visit_to_route_prompts_user_to_sign_in(
-        self, flask_test_client, mock_get_funds
-    ):
+    def test_any_unauthorised_visit_to_route_prompts_user_to_sign_in(self, flask_test_client, mock_get_funds):
         """
         GIVEN an unauthorised user
         WHEN the user visits the homepage "/"
@@ -79,9 +75,7 @@ class TestAuthorisation:
             b' data-module="govuk-button">' in response.data
         )
 
-    def test_roleless_user_redirected_to_roles_error(
-        self, flask_test_client, mock_get_funds
-    ):
+    def test_roleless_user_redirected_to_roles_error(self, flask_test_client, mock_get_funds):
         """
         GIVEN an authorised user with no roles
         WHEN the user tries to access any route
@@ -109,9 +103,7 @@ class TestAuthorisation:
             "get_assessment_stats_path": [
                 "app.blueprints.assessments.models.round_summary.get_assessments_stats",
             ],
-            "get_rounds_path": [
-                "app.blueprints.assessments.models.round_summary.get_rounds"
-            ],
+            "get_rounds_path": ["app.blueprints.assessments.models.round_summary.get_rounds"],
             "fund_id": "test-fund",
             "round_id": "test-round",
         }
@@ -206,13 +198,11 @@ class TestAuthorisation:
         )
         if ability_to_score:
             assert (
-                b"score-subcriteria-link" in response.data
-                and b"Score the subcriteria" in response.data
+                b"score-subcriteria-link" in response.data and b"Score the subcriteria" in response.data
             ), f"Sidebar should contain score subcriteria link or link to score subcriteria: {response.data}"
         else:
             assert (
-                b"score-subcriteria-link" not in response.data
-                and b"Score the subcriteria" not in response.data
+                b"score-subcriteria-link" not in response.data and b"Score the subcriteria" not in response.data
             ), f"Sidebar should not contain score subcriteria link or link to score subcriteria: {response.data}"
 
     @pytest.mark.parametrize(
@@ -350,48 +340,50 @@ class TestAuthorisation:
         application_id = request.node.get_closest_marker("application_id").args[0]
         sub_criteria_id = request.node.get_closest_marker("sub_criteria_id").args[0]
 
-        mocker.patch(
-            "app.blueprints.assessments.routes.get_comments",
-            return_value=[
-                {
-                    "id": "test_id_1",
-                    "user_id": claim["accountId"],
-                    "date_created": "2022-12-08T08:00:01.748170",
-                    "theme_id": "test_theme_id",
-                    "sub_criteria_id": sub_criteria_id,
-                    "application_id": application_id,
-                    "comment_type": "WHOLE_APPLICATION",
-                    "updates": [
-                        {
-                            "comment": "This is old comment",
-                            "comment_id": "test_id_1",
-                            "date_created": "2022-12-08T08:00:01.748170",
-                        },
-                        {
-                            "comment": "This is comment has history",
-                            "comment_id": "test_id_1",
-                            "date_created": "2022-12-09T08:00:01.748170",
-                        },
-                    ],
-                },
-                {
-                    "id": "test_id_2",
-                    "user_id": claim["accountId"],
-                    "date_created": "2022-10-27T08:00:02.748170",
-                    "theme_id": "test_theme_id",
-                    "sub_criteria_id": sub_criteria_id,
-                    "application_id": application_id,
-                    "comment_type": "WHOLE_APPLICATION",
-                    "updates": [
-                        {
-                            "comment": "This is comment has no history",
-                            "comment_id": "test_id_2",
-                            "date_created": "2022-10-27T08:00:02.748170",
-                        }
-                    ],
-                },
-            ],
-        ),
+        (
+            mocker.patch(
+                "app.blueprints.assessments.routes.get_comments",
+                return_value=[
+                    {
+                        "id": "test_id_1",
+                        "user_id": claim["accountId"],
+                        "date_created": "2022-12-08T08:00:01.748170",
+                        "theme_id": "test_theme_id",
+                        "sub_criteria_id": sub_criteria_id,
+                        "application_id": application_id,
+                        "comment_type": "WHOLE_APPLICATION",
+                        "updates": [
+                            {
+                                "comment": "This is old comment",
+                                "comment_id": "test_id_1",
+                                "date_created": "2022-12-08T08:00:01.748170",
+                            },
+                            {
+                                "comment": "This is comment has history",
+                                "comment_id": "test_id_1",
+                                "date_created": "2022-12-09T08:00:01.748170",
+                            },
+                        ],
+                    },
+                    {
+                        "id": "test_id_2",
+                        "user_id": claim["accountId"],
+                        "date_created": "2022-10-27T08:00:02.748170",
+                        "theme_id": "test_theme_id",
+                        "sub_criteria_id": sub_criteria_id,
+                        "application_id": application_id,
+                        "comment_type": "WHOLE_APPLICATION",
+                        "updates": [
+                            {
+                                "comment": "This is comment has no history",
+                                "comment_id": "test_id_2",
+                                "date_created": "2022-10-27T08:00:02.748170",
+                            }
+                        ],
+                    },
+                ],
+            ),
+        )
 
         response = flask_test_client.get(
             f"/assess/application_id/{application_id}/sub_criteria_id/{sub_criteria_id}",  # noqa
@@ -554,9 +546,7 @@ class TestAuthorisation:
                     follow_redirects=True,
                 )
             # Tries to redirect to authenticator
-            assert (
-                str(exec_info.value) == "Following external redirects is not supported."
-            )
+            assert str(exec_info.value) == "Following external redirects is not supported."
         else:
             response = flask_test_client.get(
                 f"assess/flag/{application_id}",
@@ -613,9 +603,7 @@ class TestAuthorisation:
                     follow_redirects=True,
                 )
             # Tries to redirect to authenticator
-            assert (
-                str(exec_info.value) == "Following external redirects is not supported."
-            )
+            assert str(exec_info.value) == "Following external redirects is not supported."
         else:
             response = flask_test_client.get(
                 f"assess/resolve_flag/{application_id}?flag_id={flag_id}",
@@ -653,7 +641,6 @@ class TestAuthorisation:
         mocker,
         mock_get_scoring_system,
     ):
-
         token = create_valid_token(user_account)
         flask_test_client.set_cookie("fsd_user_token", token)
         application_id = request.node.get_closest_marker("application_id").args[0]

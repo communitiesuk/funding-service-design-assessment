@@ -2,17 +2,15 @@ import datetime
 from dataclasses import dataclass
 
 import pytz
-from flask import current_app
-from flask import url_for
+from flask import current_app, url_for
 
-from app.blueprints.assessments.models.round_status import RoundStatus
-from app.blueprints.assessments.models.round_status import determine_round_status
-from app.blueprints.authentication.validation import AssessmentAccessController
-from app.blueprints.authentication.validation import get_countries_from_roles
-from app.blueprints.authentication.validation import has_devolved_authority_validation
-from app.blueprints.services.data_services import get_application_stats
-from app.blueprints.services.data_services import get_assessments_stats
-from app.blueprints.services.data_services import get_rounds
+from app.blueprints.assessments.models.round_status import RoundStatus, determine_round_status
+from app.blueprints.authentication.validation import (
+    AssessmentAccessController,
+    get_countries_from_roles,
+    has_devolved_authority_validation,
+)
+from app.blueprints.services.data_services import get_application_stats, get_assessments_stats, get_rounds
 from app.blueprints.services.models.fund import Fund
 from app.blueprints.shared.helpers import get_ttl_hash
 from config import Config
@@ -85,10 +83,7 @@ def _add_links_to_summary(summary, fund_short_name, round) -> RoundSummary:
             fund_short_name=fund_short_name,
             round_short_name=round.short_name.lower(),
         )
-        if (
-            round.feedback_survey_config.has_feedback_survey
-            or round.feedback_survey_config.has_section_feedback
-        )
+        if (round.feedback_survey_config.has_feedback_survey or round.feedback_survey_config.has_section_feedback)
         else ""
     )
     return summary
@@ -97,9 +92,7 @@ def _add_links_to_summary(summary, fund_short_name, round) -> RoundSummary:
 def _populate_assessment_stats(
     fund_id, round_ids_to_fetch_assessment_stats, search_params, round_id_to_summary_map
 ) -> dict:
-    round_id_to_round_stats = get_assessments_stats(
-        fund_id, round_ids_to_fetch_assessment_stats, search_params
-    )
+    round_id_to_round_stats = get_assessments_stats(fund_id, round_ids_to_fetch_assessment_stats, search_params)
     for round_id, round_stats in round_id_to_round_stats.items():
         summary = round_id_to_summary_map[round_id]
         summary.assessment_stats = Stats(
@@ -117,9 +110,7 @@ def _populate_live_round_stats(round_id_to_summary_map, live_rounds, fund) -> di
     live_rounds_map = {r.id: r for r in live_rounds}
     round_stats = get_application_stats([fund.id], [r.id for r in live_rounds])
     if not round_stats:
-        current_app.logger.warn(
-            "Error retrieving round stats, application-store may be down."
-        )
+        current_app.logger.warning("Error retrieving round stats, application-store may be down.")
         for live_round_id in live_rounds_map:
             live_round = live_rounds_map[live_round_id]
             round_id_to_summary_map[live_round_id].live_round_stats = LiveRoundStats(
@@ -130,9 +121,7 @@ def _populate_live_round_stats(round_id_to_summary_map, live_rounds, fund) -> di
                 submitted=None,
             )
     else:
-        this_fund_stats = next(
-            f for f in round_stats["metrics"] if f["fund_id"] == fund.id
-        )
+        this_fund_stats = next(f for f in round_stats["metrics"] if f["fund_id"] == fund.id)
         for this_round_stats in this_fund_stats["rounds"]:
             current_round_id = this_round_stats["round_id"]
             if current_round_id not in live_rounds_map:
@@ -150,7 +139,7 @@ def _populate_live_round_stats(round_id_to_summary_map, live_rounds, fund) -> di
     return round_id_to_summary_map
 
 
-def create_round_summaries(fund: Fund, filters: LandingFilters) -> list[RoundSummary]:
+def create_round_summaries(fund: Fund, filters: LandingFilters) -> list[RoundSummary]:  # noqa: C901
     """Get all the round stats in a fund."""
     access_controller = AssessmentAccessController(fund.short_name)
 
@@ -164,7 +153,6 @@ def create_round_summaries(fund: Fund, filters: LandingFilters) -> list[RoundSum
     round_id_to_summary_map = {}
     round_ids_to_fetch_assessment_stats = set()
     for round in get_rounds(fund.id, ttl_hash=get_ttl_hash(Config.LRU_CACHE_TIME)):
-
         round_status: RoundStatus = determine_round_status(round=round)
 
         # Filter for closed assessments
@@ -180,10 +168,7 @@ def create_round_summaries(fund: Fund, filters: LandingFilters) -> list[RoundSum
             continue
 
         # Commenters can't see rounds that haven't started assessment yet
-        if (
-            not round_status.has_assessment_opened
-            and not access_controller.has_any_assessor_role
-        ):
+        if not round_status.has_assessment_opened and not access_controller.has_any_assessor_role:
             continue
 
         sorting_date = round.deadline
@@ -212,9 +197,7 @@ def create_round_summaries(fund: Fund, filters: LandingFilters) -> list[RoundSum
             sorting_date=sorting_date,
             is_expression_of_interest=round.is_expression_of_interest,
         )
-        round_id_to_summary_map[round.id] = _add_links_to_summary(
-            summary, fund.short_name, round
-        )
+        round_id_to_summary_map[round.id] = _add_links_to_summary(summary, fund.short_name, round)
         summaries.append(summary)
 
     if round_ids_to_fetch_assessment_stats:
@@ -226,9 +209,7 @@ def create_round_summaries(fund: Fund, filters: LandingFilters) -> list[RoundSum
         )
 
     if live_rounds:
-        round_id_to_summary_map = _populate_live_round_stats(
-            round_id_to_summary_map, live_rounds, fund
-        )
+        round_id_to_summary_map = _populate_live_round_stats(round_id_to_summary_map, live_rounds, fund)
 
     return sorted(summaries, key=lambda s: s.sorting_date, reverse=True)
 

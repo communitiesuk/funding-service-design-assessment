@@ -1,10 +1,7 @@
 import pytest
 from flask import Flask
 
-from app.blueprints.assessments.activity_trail import AssociatedTags
-from app.blueprints.assessments.activity_trail import BaseModel
-from app.blueprints.assessments.activity_trail import add_user_info
-from app.blueprints.assessments.activity_trail import get_user_info
+from app.blueprints.assessments.activity_trail import AssociatedTags, BaseModel, add_user_info, get_user_info
 
 
 class TestActivityTrail:
@@ -27,7 +24,6 @@ class TestActivityTrail:
         [(list_data_class)],
     )
     def test_get_user_info(self, list_data, mocker):
-
         # Patching the get_bulk_accounts_dict function
         mocker.patch(
             "app.blueprints.assessments.activity_trail.get_bulk_accounts_dict",

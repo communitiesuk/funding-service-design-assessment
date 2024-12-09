@@ -1,5 +1,4 @@
 def ordered_themes(fund_round_short_name):
-
     if fund_round_short_name == "COF-EOIR1":
         return [
             "organisation-details",
@@ -18,11 +17,7 @@ def ordered_themes(fund_round_short_name):
         "COFR4W2",
     ]:
         return [
-            (
-                "general_info"
-                if fund_round_short_name in ["COFR2W3", "COFR2W2"]
-                else "general_information"
-            ),
+            ("general_info" if fund_round_short_name in ["COFR2W3", "COFR2W2"] else "general_information"),
             "activities",
             "partnerships",
             "contact_information",
@@ -34,41 +29,17 @@ def ordered_themes(fund_round_short_name):
             "asset_location",
             "business_plan",
             "declarations",
-            (
-                "project_qualification"
-                if fund_round_short_name in ["COFR2W3", "COFR2W2"]
-                else None
-            ),
-            (
-                None
-                if fund_round_short_name in ["COFR4W1", "COFR4W2"]
-                else "subsidy_control_and_state_aid"
-            ),
-            (
-                "community_use/significance"
-                if fund_round_short_name in ["COFR4W1", "COFR4W2"]
-                else "community_use"
-            ),
+            ("project_qualification" if fund_round_short_name in ["COFR2W3", "COFR2W2"] else None),
+            (None if fund_round_short_name in ["COFR4W1", "COFR4W2"] else "subsidy_control_and_state_aid"),
+            ("community_use/significance" if fund_round_short_name in ["COFR4W1", "COFR4W2"] else "community_use"),
             "risk_and_impact_of_loss",
             "engaging-the-community",
             "local-support",
-            (
-                None
-                if fund_round_short_name in ["COFR2W3", "COFR2W2"]
-                else "delivering_and_sustaining_benefits"
-            ),
-            (
-                None
-                if fund_round_short_name in ["COFR2W3", "COFR2W2"]
-                else "benefitting_the_whole_community"
-            ),
+            (None if fund_round_short_name in ["COFR2W3", "COFR2W2"] else "delivering_and_sustaining_benefits"),
+            (None if fund_round_short_name in ["COFR2W3", "COFR2W2"] else "benefitting_the_whole_community"),
             "environmental-considerations",
             "funding_requested",
-            (
-                "feasibility"
-                if fund_round_short_name in ["COFR2W3", "COFR2W2"]
-                else "feasiblilty"
-            ),
+            ("feasibility" if fund_round_short_name in ["COFR2W3", "COFR2W2"] else "feasiblilty"),
             "risk",
             (
                 "income_and_running_costs"
@@ -80,21 +51,9 @@ def ordered_themes(fund_round_short_name):
             "recruitment",
             "representing_community_views",
             "accessibility_and_inclusivity",
-            (
-                "delivering_and_sustaining_benefits"
-                if fund_round_short_name in ["COFR2W3", "COFR2W2"]
-                else None
-            ),
-            (
-                "benefitting_the_whole_community"
-                if fund_round_short_name in ["COFR2W3", "COFR2W2"]
-                else None
-            ),
-            (
-                "addressing_community_challenges"
-                if fund_round_short_name in ["COFR2W3", "COFR2W2"]
-                else None
-            ),
+            ("delivering_and_sustaining_benefits" if fund_round_short_name in ["COFR2W3", "COFR2W2"] else None),
+            ("benefitting_the_whole_community" if fund_round_short_name in ["COFR2W3", "COFR2W2"] else None),
+            ("addressing_community_challenges" if fund_round_short_name in ["COFR2W3", "COFR2W2"] else None),
         ]
 
     if fund_round_short_name == "DPIFR2":

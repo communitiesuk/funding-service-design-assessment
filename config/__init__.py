@@ -1,4 +1,3 @@
-# flake8: noqa
 import os
 
 FLASK_ENV = os.getenv("FLASK_ENV")

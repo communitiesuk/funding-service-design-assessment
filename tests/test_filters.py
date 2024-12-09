@@ -1,16 +1,16 @@
 import pytest
 
-from app.blueprints.shared.filters import all_caps_to_human
-from app.blueprints.shared.filters import datetime_format
-from app.blueprints.shared.filters import datetime_format_24hr
-from app.blueprints.shared.filters import format_address
-from app.blueprints.shared.filters import format_date
-from app.blueprints.shared.filters import format_project_ref
-from app.blueprints.shared.filters import remove_dashes_underscores_capitalize
 from app.blueprints.shared.filters import (
+    all_caps_to_human,
+    datetime_format,
+    datetime_format_24hr,
+    format_address,
+    format_date,
+    format_project_ref,
+    remove_dashes_underscores_capitalize,
     remove_dashes_underscores_capitalize_keep_uppercase,
+    slash_separated_day_month_year,
 )
-from app.blueprints.shared.filters import slash_separated_day_month_year
 
 
 class TestFilters(object):
@@ -110,9 +110,7 @@ class TestFilters(object):
             ),
         ],
     )
-    def test_remove_dashes_underscores_capitalize_keep_uppercase(
-        self, address, expected
-    ):
+    def test_remove_dashes_underscores_capitalize_keep_uppercase(self, address, expected):
         assert remove_dashes_underscores_capitalize_keep_uppercase(address) == expected
 
 

@@ -1,15 +1,7 @@
-from flask import redirect
-from flask import render_template
-from flask import request
-from flask import url_for
+from flask import redirect, render_template, request, url_for
 
-from app.blueprints.services.data_services import get_flags
-from app.blueprints.services.data_services import get_fund
-from app.blueprints.services.data_services import get_sub_criteria_banner_state
-from app.blueprints.services.data_services import submit_flag
-from app.blueprints.shared.helpers import determine_assessment_status
-from app.blueprints.shared.helpers import determine_flag_status
-from app.blueprints.shared.helpers import get_ttl_hash
+from app.blueprints.services.data_services import get_flags, get_fund, get_sub_criteria_banner_state, submit_flag
+from app.blueprints.shared.helpers import determine_assessment_status, determine_flag_status, get_ttl_hash
 from config import Config
 
 

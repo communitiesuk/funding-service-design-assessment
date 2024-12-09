@@ -1,7 +1,5 @@
 from dataclasses import dataclass
-from typing import Dict
-from typing import List
-from typing import Union
+from typing import Dict, List, Union
 
 
 @dataclass
@@ -86,9 +84,7 @@ class AssessorTaskList:
                 _Criteria(
                     name=criteria["name"],
                     total_criteria_score=criteria["total_criteria_score"],
-                    number_of_scored_sub_criteria=criteria[
-                        "number_of_scored_sub_criteria"
-                    ],
+                    number_of_scored_sub_criteria=criteria["number_of_scored_sub_criteria"],
                     weighting=criteria["weighting"],
                     sub_criterias=[
                         _CriteriaSubCriteria(
@@ -147,9 +143,7 @@ class AssessorTaskList:
         # Return the final metadata list for sub-sections.
         return sub_sections_list
 
-    def get_section_from_sub_criteria_id(
-        self, sub_criteria_id: str
-    ) -> Union[None, Dict]:
+    def get_section_from_sub_criteria_id(self, sub_criteria_id: str) -> Union[None, Dict]:
         """Retrieve metadata for a specific sub-section using its unique identifier.
 
         Return
@@ -173,10 +167,7 @@ class AssessorTaskList:
 
     def get_pagination_from_sub_criteria_id(self, sub_criteria_id):
         sections = self.get_sub_sections_metadata()
-        index = {
-            section["sub_section_id"]: get_page(i, sections)
-            for i, section in enumerate(sections)
-        }
+        index = {section["sub_section_id"]: get_page(i, sections) for i, section in enumerate(sections)}
         return index.get(sub_criteria_id)
 
 

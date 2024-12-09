@@ -1,5 +1,4 @@
-from dataclasses import dataclass
-from dataclasses import field
+from dataclasses import dataclass, field
 from typing import List
 
 from app.blueprints.services.models.round import Round
@@ -43,6 +42,4 @@ class Fund:
 
 
 def decorate_fund_name(data: dict):
-    return data.get("name") + (
-        " - Expression of interest" if data.get("funding_type") == "EOI" else ""
-    )
+    return data.get("name") + (" - Expression of interest" if data.get("funding_type") == "EOI" else "")

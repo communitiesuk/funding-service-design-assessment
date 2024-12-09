@@ -1,8 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import RadioField
-from wtforms import TextAreaField
-from wtforms.validators import InputRequired
-from wtforms.validators import length
+from wtforms import RadioField, TextAreaField
+from wtforms.validators import InputRequired, length
 
 from config import Config
 

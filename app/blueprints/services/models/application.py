@@ -1,7 +1,6 @@
 from dataclasses import dataclass
 from datetime import datetime
-from typing import List
-from typing import Union
+from typing import List, Union
 
 from ..models.question import Question
 
@@ -31,9 +30,7 @@ class Application:
             fund_id=data.get("fund_id"),
             round_id=data.get("round_id"),
             status=data.get("status"),
-            assessment_deadline=datetime.fromisoformat(
-                data.get("assessment_deadline", "1970-01-01")
-            ),
+            assessment_deadline=datetime.fromisoformat(data.get("assessment_deadline", "1970-01-01")),
         )
         if "questions" in data:
             for question_data in data["questions"]:

@@ -1,6 +1,4 @@
-from app.blueprints.services.data_services import get_assessor_task_list_state
-from app.blueprints.services.data_services import get_fund
-from app.blueprints.services.data_services import get_round
+from app.blueprints.services.data_services import get_assessor_task_list_state, get_fund, get_round
 from app.blueprints.services.models.assessor_task_list import AssessorTaskList
 from app.blueprints.shared.helpers import get_ttl_hash
 from config import Config

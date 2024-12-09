@@ -14,9 +14,7 @@ class Tag:
 
     @classmethod
     def from_dict(cls, d: dict):
-        return cls(
-            **{k: v for k, v in d.items() if k in inspect.signature(cls).parameters}
-        )
+        return cls(**{k: v for k, v in d.items() if k in inspect.signature(cls).parameters})
 
 
 @dataclass
@@ -27,9 +25,7 @@ class TagType:
 
     @classmethod
     def from_dict(cls, d: dict):
-        return cls(
-            **{k: v for k, v in d.items() if k in inspect.signature(cls).parameters}
-        )
+        return cls(**{k: v for k, v in d.items() if k in inspect.signature(cls).parameters})
 
 
 @dataclass
@@ -44,6 +40,4 @@ class AssociatedTag:
 
     @classmethod
     def from_dict(cls, d: dict):
-        return cls(
-            **{k: v for k, v in d.items() if k in inspect.signature(cls).parameters}
-        )
+        return cls(**{k: v for k, v in d.items() if k in inspect.signature(cls).parameters})

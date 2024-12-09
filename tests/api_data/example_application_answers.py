@@ -1,4 +1,4 @@
-# flake8: noqa
+# ruff: noqa
 
 test_application_answers = {
     "feasibility": {
@@ -7,9 +7,7 @@ test_application_answers = {
     },
     "risk": {"Risks to your project (document upload)": "sample1.doc"},
     "community-use": {
-        "What policy aims will your project deliver against?": [
-            "support-local-community"
-        ],
+        "What policy aims will your project deliver against?": ["support-local-community"],
         "Who in the community uses the asset, or has used it in the past, and who benefits from it?": "Test",
         "Tell us how losing the asset would affect, or has already affected, people in the community": "Test",
         "Why will the asset be lost without community intervention?": "Test",
@@ -17,12 +15,8 @@ test_application_answers = {
     "environmental-sustainability": {
         "Tell us how you have considered the environmental sustainability of your project": "Test"
     },
-    "local-support": {
-        "Are you confident there is local support for your project?": False
-    },
-    "project-qualification": {
-        "Does your project meet the definition of a subsidy?": False
-    },
+    "local-support": {"Are you confident there is local support for your project?": False},
+    "project-qualification": {"Does your project meet the definition of a subsidy?": False},
     "skills-and-resources": {
         "Do you have experience of managing a community asset?": False,
         "Do you have any plans to recruit people to help you manage the asset?": False,
@@ -96,9 +90,7 @@ test_application_answers = {
         "Asset value": "2300",
     },
     "community-benefits": {
-        "What community benefits do you expect to deliver with this project? ": [
-            "community-pride"
-        ],
+        "What community benefits do you expect to deliver with this project? ": ["community-pride"],
         "Tell us about these benefits in detail, and explain how you'll measure the benefits it'll bring for the community": (
             "Test"
         ),

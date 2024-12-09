@@ -1,5 +1,4 @@
-from unittest.mock import MagicMock
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 import pytest
 
@@ -55,17 +54,12 @@ def mock_get_round(mocker):
     )
 
 
-def test_create_round_summaries_no_rounds(
-    mocker, mock_live_stats, mock_assessment_stats
-):
-
+def test_create_round_summaries_no_rounds(mocker, mock_live_stats, mock_assessment_stats):
     mocker.patch(
         "app.blueprints.assessments.models.round_summary.determine_round_status",
         return_value=RoundStatus(False, False, False, False, False, False),
     )
-    mocker.patch(
-        "app.blueprints.assessments.models.round_summary.get_rounds", return_value=[]
-    )
+    mocker.patch("app.blueprints.assessments.models.round_summary.get_rounds", return_value=[])
 
     mock_fund = MagicMock()
     results = create_round_summaries(mock_fund, [])
@@ -95,9 +89,7 @@ def test_create_round_summaries_assessment_closed(
     mock_fund = MagicMock()
     mock_landing_filters = MagicMock()
     mock_landing_filters.filter_status = filter_status
-    with patch(
-        "app.blueprints.assessments.models.round_summary.AssessmentAccessController"
-    ) as mock:
+    with patch("app.blueprints.assessments.models.round_summary.AssessmentAccessController") as mock:
         instance = mock.return_value
         instance.has_any_assessor_role = True
         results = create_round_summaries(mock_fund, mock_landing_filters)
@@ -119,9 +111,7 @@ def test_create_round_summaries_live_round(
     mock_fund = MagicMock()
     mock_landing_filters = MagicMock()
     mock_landing_filters.filter_status = filter_status
-    with patch(
-        "app.blueprints.assessments.models.round_summary.AssessmentAccessController"
-    ) as mock:
+    with patch("app.blueprints.assessments.models.round_summary.AssessmentAccessController") as mock:
         instance = mock.return_value
         instance.has_any_assessor_role = True
         results = create_round_summaries(mock_fund, mock_landing_filters)
@@ -143,9 +133,7 @@ def test_create_round_summaries_assess_active_and_round_live(
     mock_fund = MagicMock()
     mock_landing_filters = MagicMock()
     mock_landing_filters.filter_status = filter_status
-    with patch(
-        "app.blueprints.assessments.models.round_summary.AssessmentAccessController"
-    ) as mock:
+    with patch("app.blueprints.assessments.models.round_summary.AssessmentAccessController") as mock:
         instance = mock.return_value
         instance.has_any_assessor_role = True
         results = create_round_summaries(mock_fund, mock_landing_filters)
@@ -190,9 +178,7 @@ def test_create_round_summaries_no_results(
     mock_fund = MagicMock()
     mock_landing_filters = MagicMock()
     mock_landing_filters.filter_status = filter_value
-    with patch(
-        "app.blueprints.assessments.models.round_summary.AssessmentAccessController"
-    ) as mock:
+    with patch("app.blueprints.assessments.models.round_summary.AssessmentAccessController") as mock:
         instance = mock.return_value
         instance.has_any_assessor_role = has_assessor_roles
         results = create_round_summaries(mock_fund, mock_landing_filters)
@@ -218,12 +204,9 @@ def test_create_round_summaries_eoi(
     is_expression_of_interest,
     num_results,
 ):
-
     mocker.patch(
         "app.blueprints.assessments.models.round_summary.determine_round_status",
-        return_value=RoundStatus(
-            False, is_application_open, False, False, False, False
-        ),
+        return_value=RoundStatus(False, is_application_open, False, False, False, False),
     )
     mocker.patch(
         "app.blueprints.assessments.models.round_summary.get_rounds",
@@ -243,9 +226,7 @@ def test_create_round_summaries_eoi(
     mock_fund = MagicMock()
     mock_landing_filters = MagicMock()
     mock_landing_filters.filter_status = ALL_VALUE
-    with patch(
-        "app.blueprints.assessments.models.round_summary.AssessmentAccessController"
-    ) as mock:
+    with patch("app.blueprints.assessments.models.round_summary.AssessmentAccessController") as mock:
         instance = mock.return_value
         instance.has_any_assessor_role = True
         results = create_round_summaries(mock_fund, mock_landing_filters)

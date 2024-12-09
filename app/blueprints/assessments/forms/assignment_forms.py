@@ -9,9 +9,7 @@ class AssessmentAssignmentForm(FlaskForm):
                 # From a redirect, not a form post
                 return False
 
-            if not (
-                selected_assessments := request.form.getlist("selected_assessments")
-            ):
+            if not (selected_assessments := request.form.getlist("selected_assessments")):
                 self.form_errors.append("At least one assessment should be selected")
                 return False
 
@@ -47,12 +45,8 @@ class AssessorChoiceForm(FlaskForm):
                 # From a redirect, not a form post
                 return False
 
-            if set(request.form.getlist("assigned_users")) == set(
-                request.form.getlist("selected_users")
-            ):
-                self.form_errors.append(
-                    "No changes have been made to the current assignments for this application"
-                )
+            if set(request.form.getlist("assigned_users")) == set(request.form.getlist("selected_users")):
+                self.form_errors.append("No changes have been made to the current assignments for this application")
                 return False
 
             return True
@@ -73,9 +67,7 @@ class AssessorCommentForm(FlaskForm):
             passed_validation = True
             for key, value in request.form.items():
                 if "message_" in key and len(value) > 2000:
-                    self.message_errors[key] = (
-                        "The message must be 2000 characters or less"
-                    )
+                    self.message_errors[key] = "The message must be 2000 characters or less"
                     passed_validation = False
 
             return passed_validation
@@ -91,12 +83,8 @@ class AssignmentOverviewForm(FlaskForm):
                 return False
 
             passed_validation = True
-            if set(request.form.getlist("assigned_users")) == set(
-                request.form.getlist("selected_users")
-            ):
-                self.form_errors.append(
-                    "No changes have been made to the current assignments for this application"
-                )
+            if set(request.form.getlist("assigned_users")) == set(request.form.getlist("selected_users")):
+                self.form_errors.append("No changes have been made to the current assignments for this application")
                 return False
 
             if not request.form.getlist("assessor_role"):

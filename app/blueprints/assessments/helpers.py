@@ -1,21 +1,16 @@
 import csv
 from collections import OrderedDict
 from io import StringIO
-from typing import Dict
-from typing import List
+from typing import Dict, List
 from urllib.parse import quote_plus
 
 from bs4 import BeautifulSoup
-from flask import Response
-from flask import url_for
+from flask import Response, url_for
 from fsd_utils import NotifyConstants
-from fsd_utils.mapping.application.application_utils import format_answer
-from fsd_utils.mapping.application.application_utils import simplify_title
+from fsd_utils.mapping.application.application_utils import format_answer, simplify_title
 
-from app.blueprints.assessments.models.common import Option
-from app.blueprints.assessments.models.common import OptionGroup
-from app.blueprints.services.aws import generate_url
-from app.blueprints.services.aws import list_files_by_prefix
+from app.blueprints.assessments.models.common import Option, OptionGroup
+from app.blueprints.services.aws import generate_url, list_files_by_prefix
 from app.blueprints.services.models.flag import FlagType
 from app.blueprints.services.models.fund import Fund
 from app.blueprints.shared.filters import utc_to_bst
@@ -99,9 +94,7 @@ def set_application_status_in_overview(application_overviews):
 
 
 def set_assigned_info_in_overview(application_overviews, users_for_fund):
-    users_for_fund_dict = (
-        {user["account_id"]: user for user in users_for_fund} if users_for_fund else {}
-    )
+    users_for_fund_dict = {user["account_id"]: user for user in users_for_fund} if users_for_fund else {}
     users_not_found = []
     for overview in application_overviews:
         overview["assigned_to_names"] = []
@@ -114,9 +107,7 @@ def set_assigned_info_in_overview(application_overviews, users_for_fund):
                     try:
                         user_details = users_for_fund_dict[user_id]
                         overview["assigned_to_names"].append(
-                            user_details["full_name"]
-                            if user_details["full_name"]
-                            else user_details["email_address"]
+                            user_details["full_name"] if user_details["full_name"] else user_details["email_address"]
                         )
                     except KeyError:
                         users_not_found.append(user_id)
@@ -132,12 +123,7 @@ def get_tag_map_and_tag_options(tag_types, fund_round_tags, post_processed_overv
                 [
                     Option(value=tag.id, text_content=tag.value)
                     for tag in fund_round_tags
-                    if tag.type_id
-                    in {
-                        tag_type.id
-                        for tag_type in tag_types
-                        if tag_type.purpose in purposes
-                    }
+                    if tag.type_id in {tag_type.id for tag_type in tag_types if tag_type.purpose in purposes}
                 ],
                 key=lambda option: option.text_content,
             ),
@@ -166,9 +152,7 @@ def get_tag_map_and_tag_options(tag_types, fund_round_tags, post_processed_overv
     return tags_in_application_map, tag_option_groups
 
 
-def generate_csv_of_application(
-    q_and_a: dict, fund: Fund, application_json, fund_round_name=None
-):
+def generate_csv_of_application(q_and_a: dict, fund: Fund, application_json, fund_round_name=None):
     output = StringIO()
     writer = csv.writer(output)
     writer.writerow(["Fund", fund_round_name, fund.id])
@@ -190,9 +174,7 @@ def generate_csv_of_application(
             if not answers:
                 answers = "Not provided"
 
-            writer.writerow(
-                [section_title, questions, format_answer(answer=answers, language="en")]
-            )
+            writer.writerow([section_title, questions, format_answer(answer=answers, language="en")])
     return output.getvalue()
 
 
@@ -207,11 +189,7 @@ _EXCLUDED_HEADERS = (
 
 def generate_assessment_info_csv(data: dict):
     output = StringIO()
-    headers = list(
-        OrderedDict.fromkeys(
-            key for d in data for key in d.keys() if key not in _EXCLUDED_HEADERS
-        )
-    )
+    headers = list(OrderedDict.fromkeys(key for d in data for key in d.keys() if key not in _EXCLUDED_HEADERS))
     csv_writer = csv.writer(output)
 
     if len(data) == 0:
@@ -234,9 +212,7 @@ def download_file(data, mimetype, file_name):
     )
 
 
-def get_files_for_application_upload_fields(
-    application_id: str, short_id: str, application_json: dict
-) -> List[tuple]:
+def get_files_for_application_upload_fields(application_id: str, short_id: str, application_json: dict) -> List[tuple]:
     """
     This function retrieves the file names from an application_json
     then uses this to create a lsit of tuples containing the file name
@@ -276,10 +252,7 @@ def get_files_for_application_upload_fields(
 
     # files which used the client side file upload component
     client_side_upload_files = list_files_by_prefix(application_id)
-    files = [
-        (file.filename, generate_url(file, short_id))
-        for file in client_side_upload_files
-    ]
+    files = [(file.filename, generate_url(file, short_id)) for file in client_side_upload_files]
 
     return legacy_files + files
 
@@ -309,7 +282,6 @@ def _sanitise_data(data, language=None):
         data = [_sanitise_data(d, language) for d in data]
 
     if isinstance(data, bool):
-
         data = convert_bool_value(data, language)
     if isinstance(data, str):
         data = strip_tags(data)
@@ -332,9 +304,7 @@ def convert_datetime_to_bst(data):
         for _date in _data:
             date_submitted = _date.get("Date Submitted")
             if date_submitted:
-                _date["Date Submitted"] = utc_to_bst(
-                    value=date_submitted, export_format=True
-                )
+                _date["Date Submitted"] = utc_to_bst(value=date_submitted, export_format=True)
     return data
 
 
@@ -377,8 +347,4 @@ def sort_assigned_column(first, second):
     else:
         sorted_first = sorted(first["assigned_to_names"])
         sorted_second = sorted(second["assigned_to_names"])
-        return (
-            -1
-            if sorted_first < sorted_second
-            else 1 if sorted_first > sorted_second else 0
-        )
+        return -1 if sorted_first < sorted_second else 1 if sorted_first > sorted_second else 0

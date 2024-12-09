@@ -20,9 +20,7 @@ input_data_list = [
 @pytest.mark.parametrize("input_data", [input_data_list])
 def test_location_data(app, input_data):
     location_data = LocationData.from_json_blob(input_data)
-    assert location_data.countries == OrderedDict(
-        [("ALL", "All"), ("Scotland", "Scotland"), ("Wales", "Wales")]
-    )
+    assert location_data.countries == OrderedDict([("ALL", "All"), ("Scotland", "Scotland"), ("Wales", "Wales")])
     assert location_data.regions == OrderedDict(
         [
             ("ALL", "All"),
@@ -30,6 +28,4 @@ def test_location_data(app, input_data):
             ("South Wales", "South Wales"),
         ]
     )
-    assert location_data._local_authorities == OrderedDict(
-        [("ALL", "All"), ("White Horse", "White Horse")]
-    )
+    assert location_data._local_authorities == OrderedDict([("ALL", "All"), ("White Horse", "White Horse")])

@@ -1,4 +1,3 @@
-# flake8: noqa
 mock_full_application_json = {
     "application_id": "1b43e6c2-581a-4e35-b88b-26e212db64cf",
     "application_json_md5": "f5e70b95e16d1b58c79c70aabb7f1fd7",

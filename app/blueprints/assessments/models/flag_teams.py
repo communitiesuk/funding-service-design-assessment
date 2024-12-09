@@ -3,8 +3,7 @@ from typing import List
 
 from num2words import num2words
 
-from app.blueprints.services.models.flag import Flag
-from app.blueprints.services.models.flag import FlagType
+from app.blueprints.services.models.flag import Flag, FlagType
 
 # TODO : Check if there is better way to do it?
 
@@ -38,20 +37,11 @@ class TeamsFlagData:
         for team in teams_list:
             team_flags = [f for f in flags_list if f.latest_allocation == team]
             num_of_flags = len(team_flags)
-            num_of_raised = len(
-                [f for f in team_flags if f.latest_status == FlagType.RAISED]
-            )
-            num_of_resolved = len(
-                [f for f in team_flags if f.latest_status == FlagType.RESOLVED]
-            )
-            num_of_stopped = len(
-                [f for f in team_flags if f.latest_status == FlagType.STOPPED]
-            )
+            num_of_raised = len([f for f in team_flags if f.latest_status == FlagType.RAISED])
+            num_of_resolved = len([f for f in team_flags if f.latest_status == FlagType.RESOLVED])
+            num_of_stopped = len([f for f in team_flags if f.latest_status == FlagType.STOPPED])
 
-            ordinal_list = [
-                num2words(index, to="ordinal").capitalize()
-                for index, _ in enumerate(team_flags, start=1)
-            ]
+            ordinal_list = [num2words(index, to="ordinal").capitalize() for index, _ in enumerate(team_flags, start=1)]
 
             teams_stats[team] = TeamFlagStats(
                 team_name=team,

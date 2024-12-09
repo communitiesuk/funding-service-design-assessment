@@ -6,13 +6,10 @@ from bs4 import BeautifulSoup
 from flask import session
 
 from app.blueprints.assessments.models.round_status import RoundStatus
-from app.blueprints.assessments.models.round_summary import RoundSummary
-from app.blueprints.assessments.models.round_summary import Stats
+from app.blueprints.assessments.models.round_summary import RoundSummary, Stats
 from app.blueprints.services.models.flag import Flag
 from tests.api_data.test_data import fund_specific_claim_map
-from tests.conftest import create_valid_token
-from tests.conftest import test_commenter_claims
-from tests.conftest import test_lead_assessor_claims
+from tests.conftest import create_valid_token, test_commenter_claims, test_lead_assessor_claims
 
 
 class TestRoutes:
@@ -155,7 +152,6 @@ class TestRoutes:
         fund_short_name,
         round_short_name,
     ):
-
         flask_test_client.set_cookie(
             "fsd_user_token",
             create_valid_token(fund_specific_claim_map[fund_short_name]["ASSESSOR"]),
@@ -205,9 +201,7 @@ class TestRoutes:
         # Check each cell against the expected answers
         for i, cell in enumerate(first_row.find_all("td")):
             expected_answer = expected_answers[i]
-            actual_answer = (
-                cell.text.strip()
-            )  # Get the text content of the cell, stripping any whitespace
+            actual_answer = cell.text.strip()  # Get the text content of the cell, stripping any whitespace
             assert (
                 actual_answer == expected_answer
             ), f"Cell {i+1} does not match! Expected: {expected_answer}, Actual: {actual_answer}"
@@ -223,9 +217,7 @@ class TestRoutes:
 
         # Check the 'assigned to you' tab
         assigned_to_you_table = (
-            soup.find("div", id="assigned-to-you")
-            .find("table", id="application_overviews_table")
-            .find("tbody")
+            soup.find("div", id="assigned-to-you").find("table", id="application_overviews_table").find("tbody")
         )
 
         expected_values = [
@@ -260,12 +252,9 @@ class TestRoutes:
         fund_short_name,
         round_short_name,
     ):
-
         flask_test_client.set_cookie(
             "fsd_user_token",
-            create_valid_token(
-                fund_specific_claim_map[fund_short_name]["LEAD_ASSESSOR"]
-            ),
+            create_valid_token(fund_specific_claim_map[fund_short_name]["LEAD_ASSESSOR"]),
         )
         response = flask_test_client.get(
             f"/assess/fund_dashboard/{fund_short_name}/{round_short_name}",
@@ -311,9 +300,7 @@ class TestRoutes:
         # Check each cell against the expected answers
         for i, cell in enumerate(first_row.find_all("td")):
             expected_answer = expected_answers[i]
-            actual_answer = (
-                cell.text.strip()
-            )  # Get the text content of the cell, stripping any whitespace
+            actual_answer = cell.text.strip()  # Get the text content of the cell, stripping any whitespace
             assert (
                 actual_answer == expected_answer
             ), f"Cell {i+1} does not match! Expected: {expected_answer}, Actual: {actual_answer}"
@@ -329,9 +316,7 @@ class TestRoutes:
 
         # Check the 'assigned to you' tab
         assigned_to_you_table = (
-            soup.find("div", id="assigned-to-you")
-            .find("table", id="application_overviews_table")
-            .find("tbody")
+            soup.find("div", id="assigned-to-you").find("table", id="application_overviews_table").find("tbody")
         )
 
         expected_values = [
@@ -348,9 +333,7 @@ class TestRoutes:
 
         # Check the 'reporting to you' tab
         reporting_to_you_table = (
-            soup.find("div", id="reporting-to-you")
-            .find("table", id="application_overviews_table")
-            .find("tbody")
+            soup.find("div", id="reporting-to-you").find("table", id="application_overviews_table").find("tbody")
         )
 
         expected_values = [
@@ -400,9 +383,7 @@ class TestRoutes:
 
         flask_test_client.set_cookie(
             "fsd_user_token",
-            create_valid_token(
-                fund_specific_claim_map[fund_short_name]["LEAD_ASSESSOR"]
-            ),
+            create_valid_token(fund_specific_claim_map[fund_short_name]["LEAD_ASSESSOR"]),
         )
 
         response = flask_test_client.get(
@@ -448,9 +429,7 @@ class TestRoutes:
 
         flask_test_client.set_cookie(
             "fsd_user_token",
-            create_valid_token(
-                fund_specific_claim_map[fund_short_name]["LEAD_ASSESSOR"]
-            ),
+            create_valid_token(fund_specific_claim_map[fund_short_name]["LEAD_ASSESSOR"]),
         )
 
         response = flask_test_client.get(
@@ -462,21 +441,15 @@ class TestRoutes:
         assert 200 == response.status_code, "Wrong status code on response"
         soup = BeautifulSoup(response.data, "html.parser")
 
-        all_applications_section = soup.find(
-            "h1", class_="govuk-heading-l", string="All applications"
-        )
-        table = all_applications_section.find_next(
-            "table", {"id": "application_overviews_table"}
-        )
+        all_applications_section = soup.find("h1", class_="govuk-heading-l", string="All applications")
+        table = all_applications_section.find_next("table", {"id": "application_overviews_table"})
         rows = table.find_all("tr", class_="govuk-table__row")
 
         reference_values = []
         for row in rows:
             cells = row.find_all("td", class_="govuk-table__cell")
             if cells:
-                reference_values.append(
-                    cells[0].text.strip()
-                )  # Assuming reference is the first column
+                reference_values.append(cells[0].text.strip())  # Assuming reference is the first column
 
         expected_values = ["FQAC", "FS", "INP"]
 
@@ -524,9 +497,7 @@ class TestRoutes:
 
         flask_test_client.set_cookie(
             "fsd_user_token",
-            create_valid_token(
-                fund_specific_claim_map[fund_short_name]["LEAD_ASSESSOR"]
-            ),
+            create_valid_token(fund_specific_claim_map[fund_short_name]["LEAD_ASSESSOR"]),
         )
 
         response = flask_test_client.get(
@@ -539,9 +510,7 @@ class TestRoutes:
 
         with flask_test_client.session_transaction() as sess:
             assert sess is not None
-            assert sess.get(
-                f"filter_params_{fund_short_name.upper()}_{round_short_name.upper()}"
-            ) == {
+            assert sess.get(f"filter_params_{fund_short_name.upper()}_{round_short_name.upper()}") == {
                 "search_term": "",
                 "assigned_to": "ALL",
                 "status": "QA_COMPLETE",
@@ -793,10 +762,7 @@ class TestRoutes:
         tbody = soup.find("tbody", {"class": "govuk-table__body"})
 
         # Find all the elements in the column
-        column_data = [
-            row.find_all("td")[column_id].text
-            for idx, row in enumerate(tbody.find_all("tr"))
-        ]
+        column_data = [row.find_all("td")[column_id].text for idx, row in enumerate(tbody.find_all("tr"))]
 
         if sort_order == "asc":
             all_table_data_elements = str(
@@ -811,10 +777,7 @@ class TestRoutes:
             assert 'aria-sort="ascending"' in all_table_data_elements
             assert sort_column in all_table_data_elements
             # check if the data is in ascending order
-            assert all(
-                column_data[i] <= column_data[i + 1]
-                for i in range(len(column_data) - 1)
-            )
+            assert all(column_data[i] <= column_data[i + 1] for i in range(len(column_data) - 1))
         elif sort_order == "desc":
             all_table_data_elements = str(
                 soup.find_all(
@@ -828,10 +791,7 @@ class TestRoutes:
             assert 'aria-sort="descending"' in all_table_data_elements
             assert sort_column in all_table_data_elements
             # check if the data is in descending order
-            assert all(
-                column_data[i] >= column_data[i + 1]
-                for i in range(len(column_data) - 1)
-            )
+            assert all(column_data[i] >= column_data[i + 1] for i in range(len(column_data) - 1))
         else:
             all_table_data_elements = str(
                 soup.find_all(
@@ -877,10 +837,7 @@ class TestRoutes:
         # Assert that the response has the expected status code
         assert 200 == response.status_code, "Wrong status code on response"
         soup = BeautifulSoup(response.data, "html.parser")
-        assert (
-            soup.title.string
-            == "Score – test_sub_criteria – Project In prog and Res – Assessment Hub – GOV.UK"
-        )
+        assert soup.title.string == "Score – test_sub_criteria – Project In prog and Res – Assessment Hub – GOV.UK"
         assert b"Current score: 3" in response.data
         assert b"Rescore" in response.data
         assert b"Lead assessor" in response.data
@@ -899,9 +856,7 @@ class TestRoutes:
         flask_test_client.set_cookie("fsd_user_token", token)
 
         # Send a request to the route you want to test
-        response = flask_test_client.get(
-            "/assess/application_id/app_123/sub_criteria_id/1a2b3c4d/score"
-        )  # noqa
+        response = flask_test_client.get("/assess/application_id/app_123/sub_criteria_id/1a2b3c4d/score")  # noqa
 
         # Assert that the response has the expected status code
         assert (
@@ -910,8 +865,7 @@ class TestRoutes:
         params = {"roles_required": "TF_LEAD_ASSESSOR|TF_ASSESSOR"}
         encoded_params = urllib.parse.urlencode(params)
         assert (
-            response.location
-            == f"https://authenticator/service/user?{encoded_params}"  # noqa
+            response.location == f"https://authenticator/service/user?{encoded_params}"  # noqa
         )
 
     def test_homepage_route_accessible(self, flask_test_client, mock_get_funds):
@@ -1358,9 +1312,7 @@ class TestRoutes:
 
         assert b"flagged-tag" in response.data, "Flagged Flag is not displaying"
 
-        assert (
-            b"Resolved" not in response.data
-        ), "Resolved Flag is displaying and should not"
+        assert b"Resolved" not in response.data, "Resolved Flag is displaying and should not"
 
         assert 200 == response.status_code, "Wrong status code on response"
         soup = BeautifulSoup(response.data, "html.parser")
@@ -1432,9 +1384,7 @@ class TestRoutes:
                 ("sample2.doc", "mock/url/for/get/file"),
             ],
         ):
-            response = flask_test_client.get(
-                f"/assess/application/{application_id}/export"
-            )
+            response = flask_test_client.get(f"/assess/application/{application_id}/export")
             assert 200 == response.status_code
             assert 1 == len(templates_rendered)
             rendered_template = templates_rendered[0]
@@ -1455,9 +1405,7 @@ class TestRoutes:
     ):
         token = create_valid_token(test_lead_assessor_claims)
         flask_test_client.set_cookie("fsd_user_token", token)
-        response = flask_test_client.get(
-            "/assess/application/test_app_id/export/test_short_id/answers.txt"
-        )
+        response = flask_test_client.get("/assess/application/test_app_id/export/test_short_id/answers.txt")
         sample_1 = "Project information"
         sample_2 = "Q) Have you been given"
         assert response.status_code == 200
@@ -1478,12 +1426,8 @@ class TestRoutes:
             "app.blueprints.assessments.routes.get_file_for_download_from_aws",
             return_value=("some file contents", "mock_mimetype"),
         )
-        with mock.patch(
-            "app.blueprints.assessments.routes.download_file", return_value=""
-        ) as mock_download_file:
-            flask_test_client.get(
-                "/assess/application/abc123/export/business_plan.txt?short_id=QWERTY"
-            )  # noqa
+        with mock.patch("app.blueprints.assessments.routes.download_file", return_value="") as mock_download_file:
+            flask_test_client.get("/assess/application/abc123/export/business_plan.txt?short_id=QWERTY")  # noqa
             mock_download_file.assert_called_once_with(
                 "some file contents",
                 "mock_mimetype",
@@ -1504,22 +1448,16 @@ class TestRoutes:
             "app.blueprints.assessments.routes.get_file_for_download_from_aws",
             return_value=("some file contents", "mock_mimetype"),
         )
-        with mock.patch(
-            "app.blueprints.assessments.routes.download_file", return_value=""
-        ) as mock_download_file:
+        with mock.patch("app.blueprints.assessments.routes.download_file", return_value="") as mock_download_file:
             flask_test_client.get("/assess/application/abc123/export/business_plan.txt")
-            mock_download_file.assert_called_once_with(
-                "some file contents", "mock_mimetype", "business_plan.txt"
-            )
+            mock_download_file.assert_called_once_with("some file contents", "mock_mimetype", "business_plan.txt")
 
     def test_get_file(self, flask_test_client):
         from app.blueprints.assessments.routes import download_file
 
         response = download_file("file_data", "text/plain", "file_name.abc")
         assert "text/plain" in response.content_type
-        assert "attachment;filename=file_name.abc" == response.headers.get(
-            "Content-Disposition"
-        )
+        assert "attachment;filename=file_name.abc" == response.headers.get("Content-Disposition")
 
 
 @pytest.mark.parametrize(
@@ -1548,10 +1486,7 @@ def test_download_application_answers(
     assert response.status_code == 200
 
     assert response.headers["Content-Type"] == content_type
-    assert (
-        response.headers["Content-Disposition"]
-        == f"attachment;filename=456_answers.{file_extension}"
-    )
+    assert response.headers["Content-Disposition"] == f"attachment;filename=456_answers.{file_extension}"
 
 
 def test_download_application_answers_invalid_file_type(
@@ -1565,7 +1500,5 @@ def test_download_application_answers_invalid_file_type(
 ):
     token = create_valid_token(test_lead_assessor_claims)
     flask_test_client.set_cookie("fsd_user_token", token)
-    response = flask_test_client.get(
-        "/assess/application/123/export/456/answers.invalid"
-    )
+    response = flask_test_client.get("/assess/application/123/export/456/answers.invalid")
     assert response.status_code == 404

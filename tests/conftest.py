@@ -13,18 +13,12 @@ from flask import template_rendered
 from app.blueprints.assessments.models.round_status import RoundStatus
 from app.blueprints.services.models.assessor_task_list import AssessorTaskList
 from app.blueprints.shared.helpers import get_ttl_hash
-from app.blueprints.tagging.models.tag import AssociatedTag
-from app.blueprints.tagging.models.tag import Tag
-from app.blueprints.tagging.models.tag import TagType
+from app.blueprints.tagging.models.tag import AssociatedTag, Tag, TagType
 from config import Config
 from create_app import create_app
 from tests.api_data.example_get_full_application import mock_full_application_json
-from tests.api_data.test_data import fund_specific_claim_map
-from tests.api_data.test_data import mock_api_results
-from tests.test_tags import associated_tag
-from tests.test_tags import test_get_tag
-from tests.test_tags import test_tags_active
-from tests.test_tags import test_tags_inactive
+from tests.api_data.test_data import fund_specific_claim_map, mock_api_results
+from tests.test_tags import associated_tag, test_get_tag, test_tags_active, test_tags_inactive
 
 if platform.system() == "Darwin":
     multiprocessing.set_start_method("fork")  # Required on macOSX
@@ -67,9 +61,7 @@ def create_valid_token(payload=test_assessor_claims):
 
 
 def create_invalid_token():
-    _test_private_key_path = (
-        str(Path(__file__).parent) + "/keys/rsa256/private_invalid.pem"
-    )
+    _test_private_key_path = str(Path(__file__).parent) + "/keys/rsa256/private_invalid.pem"
     with open(_test_private_key_path, mode="rb") as private_key_file:
         rsa256_private_key = private_key_file.read()
 
@@ -158,14 +150,10 @@ def resolve_redirect_path(self, response, buffered=False):
 @pytest.fixture
 def patch_resolve_redirect():
     # Store the original resolve_redirect method
-    werkzeug.test.Client._original_resolve_redirect = (
-        werkzeug.test.Client.resolve_redirect
-    )
+    werkzeug.test.Client._original_resolve_redirect = werkzeug.test.Client.resolve_redirect
 
     # Patch the resolve_redirect method with resolve_redirect_path
-    with mock.patch.object(
-        werkzeug.test.Client, "resolve_redirect", new=resolve_redirect_path
-    ):
+    with mock.patch.object(werkzeug.test.Client, "resolve_redirect", new=resolve_redirect_path):
         yield
 
 
@@ -196,9 +184,7 @@ def mock_get_sub_criteria_banner_state(request):
     application_id = marker.args[0]
 
     mock_banner_info = Banner.from_filtered_dict(
-        mock_api_results[
-            f"assessment_store/sub_criteria_overview/banner_state/{application_id}"
-        ]
+        mock_api_results[f"assessment_store/sub_criteria_overview/banner_state/{application_id}"]
     )
 
     with (
@@ -229,7 +215,7 @@ def mock_get_fund(mocker):
     ]
 
     for mock_func in mock_funcs:
-        mocker.patch(mock_func, return_value=mock_fund_info),
+        (mocker.patch(mock_func, return_value=mock_fund_info),)
 
     mocker.patch(
         "app.blueprints.authentication.validation.determine_round_status",
@@ -303,9 +289,7 @@ def mock_get_round(mocker):
         "app.blueprints.authentication.validation.get_round",
     ]
 
-    mock_round_info = Round.from_dict(
-        mock_api_results["fund_store/funds/{fund_id}/rounds/{round_id}"]
-    )
+    mock_round_info = Round.from_dict(mock_api_results["fund_store/funds/{fund_id}/rounds/{round_id}"])
 
     mocked_rounds = []
     for mock_func in mock_funcs:
@@ -331,11 +315,7 @@ def mock_get_rounds(request, mocker):
         mock_funcs = func_calls
         fund_id = "test-fund"
 
-    mock_round_info = [
-        Round.from_dict(
-            mock_api_results["fund_store/funds/{fund_id}/rounds/{round_id}"]
-        )
-    ]
+    mock_round_info = [Round.from_dict(mock_api_results["fund_store/funds/{fund_id}/rounds/{round_id}"])]
     mocked_get_rounds = []
     for mock_func in mock_funcs:
         mocked_round = mocker.patch(mock_func, return_value=mock_round_info)
@@ -344,9 +324,7 @@ def mock_get_rounds(request, mocker):
     yield mocked_get_rounds
 
     for mocked_round in mocked_get_rounds:
-        mocked_round.assert_called_with(
-            fund_id, ttl_hash=get_ttl_hash(Config.LRU_CACHE_TIME)
-        )
+        mocked_round.assert_called_with(fund_id, ttl_hash=get_ttl_hash(Config.LRU_CACHE_TIME))
 
 
 @pytest.fixture(scope="function")
@@ -436,9 +414,7 @@ def mock_get_application_overviews(request, mocker):
 
     mocked_apps_overview = mocker.patch(
         path,
-        return_value=mock_api_results[
-            "assessment_store/application_overviews/{fund_id}/{round_id}?"
-        ],
+        return_value=mock_api_results["assessment_store/application_overviews/{fund_id}/{round_id}?"],
     )
     yield mocked_apps_overview
 
@@ -454,9 +430,7 @@ def mock_get_assessor_tasklist_state(request, mocker):
         expect_flagging = True
 
     application_id = marker.args[0]
-    mock_tasklist_state = mock_api_results[
-        f"assessment_store/application_overviews/{application_id}"
-    ]
+    mock_tasklist_state = mock_api_results[f"assessment_store/application_overviews/{application_id}"]
     mocked_tasklist_state = mocker.patch(
         "app.blueprints.services.shared_data_helpers.get_assessor_task_list_state",
         return_value=mock_tasklist_state,
@@ -498,9 +472,7 @@ def mock_get_assessment_stats(request, mocker):
 def mock_get_assessment_progress(mocker):
     mocked_progress_func = mocker.patch(
         "app.blueprints.assessments.routes.get_assessment_progress",
-        return_value=mock_api_results[
-            "assessment_store/application_overviews/{fund_id}/{round_id}?"
-        ],
+        return_value=mock_api_results["assessment_store/application_overviews/{fund_id}/{round_id}?"],
     )
     yield mocked_progress_func
 
@@ -511,9 +483,7 @@ def mock_get_assessment_progress(mocker):
 def mock_get_teams_flag_stats(mocker):
     mocked_progress_func = mocker.patch(
         "app.blueprints.assessments.routes.get_team_flag_stats",
-        return_value=mock_api_results[
-            "assessment_store/assessments/get-team-flag-stats/{fund_id}/{round_id}"
-        ],
+        return_value=mock_api_results["assessment_store/assessments/get-team-flag-stats/{fund_id}/{round_id}"],
     )
     yield mocked_progress_func
 
@@ -527,9 +497,7 @@ def mock_get_flags(request, mocker):
     marker = request.node.get_closest_marker("application_id")
     application_id = marker.args[0]
 
-    mock_flag_info = Flag.from_list(
-        mock_api_results[f"assessment_store/flags?application_id={application_id}"]
-    )
+    mock_flag_info = Flag.from_list(mock_api_results[f"assessment_store/flags?application_id={application_id}"])
 
     mock_funcs = [
         "app.blueprints.assessments.routes.get_flags",
@@ -546,15 +514,9 @@ def mock_get_flags(request, mocker):
 
 @pytest.fixture(scope="function")
 def mock_submit_flag(request, mocker):
-    all_submit_flag_funcs = [
-        "app.blueprints.flagging.helpers.submit_flagapp.blueprints.flagging.routes.submit_flag"
-    ]
+    all_submit_flag_funcs = ["app.blueprints.flagging.helpers.submit_flagapp.blueprints.flagging.routes.submit_flag"]
     marker_submit_flag_paths = request.node.get_closest_marker("submit_flag_paths")
-    submit_flag_paths = (
-        marker_submit_flag_paths.args[0]
-        if marker_submit_flag_paths
-        else all_submit_flag_funcs
-    )
+    submit_flag_paths = marker_submit_flag_paths.args[0] if marker_submit_flag_paths else all_submit_flag_funcs
 
     marker_flag = request.node.get_closest_marker("flag")
     flag = marker_flag.args[0] if marker_flag else None
@@ -599,9 +561,7 @@ def mock_get_flag(request, mocker):
     marker = request.node.get_closest_marker("flag_id")
     flag_id = marker.args[0]
 
-    mock_flag_info = Flag.from_dict(
-        mock_api_results[f"assessment_store/flag_data?flag_id={flag_id}"]
-    )
+    mock_flag_info = Flag.from_dict(mock_api_results[f"assessment_store/flag_data?flag_id={flag_id}"])
 
     mock_funcs = ["app.blueprints.flagging.routes.get_flag"]
 
@@ -647,9 +607,7 @@ def mock_get_sub_criteria(request, mocker):
         "app.blueprints.scoring.routes.get_sub_criteria",
     ]
     mock_sub_crit = SubCriteria.from_filtered_dict(
-        mock_api_results[
-            f"assessment_store/sub_criteria_overview/{application_id}/{sub_criteria_id}"
-        ]
+        mock_api_results[f"assessment_store/sub_criteria_overview/{application_id}/{sub_criteria_id}"]
     )
     mocked_sub_crits = []
     for mock_func in mock_funcs:
@@ -661,9 +619,7 @@ def mock_get_sub_criteria(request, mocker):
 @pytest.fixture(scope="function")
 def mock_get_sub_criteria_theme(request, mocker):
     application_id = request.node.get_closest_marker("application_id").args[0]
-    mock_theme = mock_api_results[
-        f"assessment_store/sub_criteria_themes/{application_id}/test_theme_id"
-    ]
+    mock_theme = mock_api_results[f"assessment_store/sub_criteria_themes/{application_id}/test_theme_id"]
     mocker.patch(
         "app.blueprints.assessments.routes.get_sub_criteria_theme_answers_all",
         return_value=mock_theme,
@@ -674,14 +630,18 @@ def mock_get_sub_criteria_theme(request, mocker):
 @pytest.fixture(scope="function")
 def mock_get_comments(mocker):
     mock_comments = mock_api_results["assessment_store/comment?"]
-    mocker.patch(
-        "app.blueprints.assessments.routes.get_comments",
-        return_value=mock_comments,
-    ),
-    mocker.patch(
-        "app.blueprints.scoring.routes.get_comments",
-        return_value=mock_comments,
-    ),
+    (
+        mocker.patch(
+            "app.blueprints.assessments.routes.get_comments",
+            return_value=mock_comments,
+        ),
+    )
+    (
+        mocker.patch(
+            "app.blueprints.scoring.routes.get_comments",
+            return_value=mock_comments,
+        ),
+    )
     yield
 
 
