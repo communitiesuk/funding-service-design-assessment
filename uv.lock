@@ -615,14 +615,12 @@ dependencies = [
     { name = "jsmin" },
     { name = "num2words" },
     { name = "openapi-spec-validator" },
-    { name = "pyopenssl" },
-    { name = "pyscss" },
     { name = "requests" },
     { name = "swagger-ui-bundle" },
     { name = "xhtml2pdf" },
 ]
 
-[package.dev-dependencies]
+[package.dependency-groups]
 dev = [
     { name = "beautifulsoup4" },
     { name = "boto3" },
@@ -656,14 +654,12 @@ requires-dist = [
     { name = "jsmin", specifier = "==3.0.1" },
     { name = "num2words", specifier = "==0.5.13" },
     { name = "openapi-spec-validator", specifier = "==0.7.1" },
-    { name = "pyopenssl", specifier = "==24.2.1" },
-    { name = "pyscss", specifier = "==1.4.0" },
     { name = "requests", specifier = "==2.32.3" },
     { name = "swagger-ui-bundle", specifier = "==1.1.0" },
     { name = "xhtml2pdf", specifier = "==0.2.16" },
 ]
 
-[package.metadata.requires-dev]
+[package.metadata.dependency-groups]
 dev = [
     { name = "beautifulsoup4", specifier = "==4.12.2" },
     { name = "boto3", specifier = "==1.35.7" },
@@ -1224,18 +1220,6 @@ crypto = [
 ]
 
 [[package]]
-name = "pyopenssl"
-version = "24.2.1"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "cryptography" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/5d/70/ff56a63248562e77c0c8ee4aefc3224258f1856977e0c1472672b62dadb8/pyopenssl-24.2.1.tar.gz", hash = "sha256:4247f0dbe3748d560dcbb2ff3ea01af0f9a1a001ef5f7c4c647956ed8cbf0e95", size = 184323 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/d9/dd/e0aa7ebef5168c75b772eda64978c597a9129b46be17779054652a7999e4/pyOpenSSL-24.2.1-py3-none-any.whl", hash = "sha256:967d5719b12b243588573f39b0c677637145c7a1ffedcd495a487e58177fbb8d", size = 58390 },
-]
-
-[[package]]
 name = "pypdf"
 version = "4.3.1"
 source = { registry = "https://pypi.org/simple" }
@@ -1255,15 +1239,6 @@ sdist = { url = "https://files.pythonhosted.org/packages/93/cd/112f092ec27cca83e
 wheels = [
     { url = "https://files.pythonhosted.org/packages/3e/b9/3766cc361d93edb2ce81e2e1f87dd98f314d7d513877a342d31b30741680/pypng-0.20220715.0-py3-none-any.whl", hash = "sha256:4a43e969b8f5aaafb2a415536c1a8ec7e341cd6a3f957fd5b5f32a4cfeed902c", size = 58057 },
 ]
-
-[[package]]
-name = "pyscss"
-version = "1.4.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "six" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/92/30/64c818fd317e03138f98ca67800edb6a916f59fc07b3d7e535e84c3c333a/pyScss-1.4.0.tar.gz", hash = "sha256:8f35521ffe36afa8b34c7d6f3195088a7057c185c2b8f15ee459ab19748669ff", size = 122100 }
 
 [[package]]
 name = "pytest"

@@ -29,8 +29,8 @@ def init_assets(app=None, auto_build=False, static_folder="app/static/dist"):
             output="js/main.min.js",
         )
         css = Bundle(
-            "./scss/*.scss",
-            filters="pyscss,cssmin",
+            "./css/*.css",
+            filters="cssmin",
             output="css/main.min.css",
             extra={"rel": "stylesheet/css"},
         )
