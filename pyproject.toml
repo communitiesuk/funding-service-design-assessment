@@ -47,7 +47,7 @@ dev = [
     "black==24.8.0",
     "boto3==1.35.7",
     "debugpy==1.8.5",
-    "deepdiff==8.0.0",
+    "deepdiff==8.0.1",
     "flake8-pyproject==1.2.3",
     "invoke==2.2.0",
     "pre-commit==4.0.1",
