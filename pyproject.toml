@@ -9,7 +9,7 @@ requires-python = "~=3.10.0"
 dependencies = [
     "babel==2.16.0",
     "beautifulsoup4==4.12.2",
-    "boto3==1.35.7",
+    "boto3==1.35.77",
     "connexion==3.1.0",
     "cssmin==0.2.0",
     "email-validator==2.2.0",
@@ -58,7 +58,7 @@ mccabe.max-complexity = 12
 [dependency-groups]
 dev = [
     "beautifulsoup4==4.12.2",
-    "boto3==1.35.7",
+    "boto3==1.35.77",
     "debugpy==1.8.5",
     "deepdiff==8.0.0",
     "invoke==2.2.0",
