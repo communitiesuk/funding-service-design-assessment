@@ -620,7 +620,7 @@ dependencies = [
     { name = "xhtml2pdf" },
 ]
 
-[package.dependency-groups]
+[package.dev-dependencies]
 dev = [
     { name = "beautifulsoup4" },
     { name = "boto3" },
@@ -659,7 +659,7 @@ requires-dist = [
     { name = "xhtml2pdf", specifier = "==0.2.16" },
 ]
 
-[package.metadata.dependency-groups]
+[package.metadata.requires-dev]
 dev = [
     { name = "beautifulsoup4", specifier = "==4.12.2" },
     { name = "boto3", specifier = "==1.35.7" },
@@ -667,7 +667,7 @@ dev = [
     { name = "deepdiff", specifier = "==8.0.0" },
     { name = "invoke", specifier = "==2.2.0" },
     { name = "pre-commit", specifier = "==4.0.1" },
-    { name = "pytest", specifier = "==8.3.2" },
+    { name = "pytest", specifier = "==8.3.4" },
     { name = "pytest-env", specifier = "==1.1.3" },
     { name = "pytest-flask", specifier = "==1.3.0" },
     { name = "pytest-mock", specifier = "==3.14.0" },
@@ -1242,7 +1242,7 @@ wheels = [
 
 [[package]]
 name = "pytest"
-version = "8.3.2"
+version = "8.3.4"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "colorama", marker = "sys_platform == 'win32'" },
@@ -1252,9 +1252,9 @@ dependencies = [
     { name = "pluggy" },
     { name = "tomli", marker = "python_full_version == '3.10.*'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/b4/8c/9862305bdcd6020bc7b45b1b5e7397a6caf1a33d3025b9a003b39075ffb2/pytest-8.3.2.tar.gz", hash = "sha256:c132345d12ce551242c87269de812483f5bcc87cdbb4722e48487ba194f9fdce", size = 1439314 }
+sdist = { url = "https://files.pythonhosted.org/packages/05/35/30e0d83068951d90a01852cb1cef56e5d8a09d20c7f511634cc2f7e0372a/pytest-8.3.4.tar.gz", hash = "sha256:965370d062bce11e73868e0335abac31b4d3de0e82f4007408d242b4f8610761", size = 1445919 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/0f/f9/cf155cf32ca7d6fa3601bc4c5dd19086af4b320b706919d48a4c79081cf9/pytest-8.3.2-py3-none-any.whl", hash = "sha256:4ba08f9ae7dcf84ded419494d229b48d0903ea6407b030eaec46df5e6a73bba5", size = 341802 },
+    { url = "https://files.pythonhosted.org/packages/11/92/76a1c94d3afee238333bc0a42b82935dd8f9cf8ce9e336ff87ee14d9e1cf/pytest-8.3.4-py3-none-any.whl", hash = "sha256:50e16d954148559c9a74109af1eaf0c945ba2d8f30f0a3d3335edde19788b6f6", size = 343083 },
 ]
 
 [[package]]
