@@ -114,30 +114,30 @@ wheels = [
 
 [[package]]
 name = "boto3"
-version = "1.35.7"
+version = "1.35.77"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "botocore" },
     { name = "jmespath" },
     { name = "s3transfer" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/59/d2/95729dcca737eccb19bfefdd9a2fa89beb9263e84e9543163349f7007090/boto3-1.35.7.tar.gz", hash = "sha256:05bd349cf260ba177924f38d721e427e2b3a6dd0fa8a18fa4ffc1b889633b181", size = 108623 }
+sdist = { url = "https://files.pythonhosted.org/packages/cb/6c/348c086e61acf1bbe76fa31050a8beffc2fcbedde33b74581ac895b45e54/boto3-1.35.77.tar.gz", hash = "sha256:cc819cdbccbc2d0dc185f1dcfe74cf3809489c4cae63c2e5d6a557aa0c5ab928", size = 111073 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/91/56/2b0c6e700c0ecf658399f78a9bdf3c5edb6be096c5e7ec13ed1bdbfd074c/boto3-1.35.7-py3-none-any.whl", hash = "sha256:bfbdf7c8f2e3eb70e4309cdcf5c9c7940e1fed4f645cdfb52581e7e67d3c8cab", size = 139143 },
+    { url = "https://files.pythonhosted.org/packages/00/17/26e23ef6bb3c8abdd393d17333c1b9ecfa9155d1595ab8b9b95d5d0e2420/boto3-1.35.77-py3-none-any.whl", hash = "sha256:a09871805f8e462349a1c33c23eb413668df0bf68424e61d53518e1a7d883b2f", size = 139177 },
 ]
 
 [[package]]
 name = "botocore"
-version = "1.35.7"
+version = "1.35.77"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "jmespath" },
     { name = "python-dateutil" },
     { name = "urllib3", marker = "python_full_version == '3.10.*'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/d1/2f/9da463c355b1f744223383c8efc817a6db1789341a842cfdbf1522840684/botocore-1.35.7.tar.gz", hash = "sha256:85e4b58f2c6e54dfbf52eaee72ebc9b70188fd1716d47f626874abadcee45512", size = 12687742 }
+sdist = { url = "https://files.pythonhosted.org/packages/23/74/a84fbf17defad94bfbb7b3b49b3f64915e022230bd6aa649321044067768/botocore-1.35.77.tar.gz", hash = "sha256:17b778016644e9342ca3ff2f430c1d1db0c6126e9b41a57cff52ac58e7a455e0", size = 13444861 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/d2/eb/ebe5bc70c3ab95f973410374c6a7c29e47d780f22185c21f13f2dad2e660/botocore-1.35.7-py3-none-any.whl", hash = "sha256:324e58518a92f2946bc6653e5e1272bc88d4b6313413f938bdc51cb90d34cbba", size = 12478086 },
+    { url = "https://files.pythonhosted.org/packages/0b/2a/588c4b888a08f0ed9d0b4a4bdc465e89bf9508ed7bcb46fd1a8d9fa474c6/botocore-1.35.77-py3-none-any.whl", hash = "sha256:3faa27d65841499762228902d7e215fa99a4c2fdc76c9113e1c3f339bdf685b8", size = 13246240 },
 ]
 
 [[package]]
@@ -620,7 +620,7 @@ dependencies = [
     { name = "xhtml2pdf" },
 ]
 
-[package.dependency-groups]
+[package.dev-dependencies]
 dev = [
     { name = "beautifulsoup4" },
     { name = "boto3" },
@@ -639,7 +639,7 @@ dev = [
 requires-dist = [
     { name = "babel", specifier = "==2.16.0" },
     { name = "beautifulsoup4", specifier = "==4.12.2" },
-    { name = "boto3", specifier = "==1.35.7" },
+    { name = "boto3", specifier = "==1.35.77" },
     { name = "connexion", specifier = "==3.1.0" },
     { name = "cssmin", specifier = "==0.2.0" },
     { name = "email-validator", specifier = "==2.2.0" },
@@ -659,10 +659,10 @@ requires-dist = [
     { name = "xhtml2pdf", specifier = "==0.2.16" },
 ]
 
-[package.metadata.dependency-groups]
+[package.metadata.requires-dev]
 dev = [
     { name = "beautifulsoup4", specifier = "==4.12.2" },
-    { name = "boto3", specifier = "==1.35.7" },
+    { name = "boto3", specifier = "==1.35.77" },
     { name = "debugpy", specifier = "==1.8.5" },
     { name = "deepdiff", specifier = "==8.0.0" },
     { name = "invoke", specifier = "==2.2.0" },
