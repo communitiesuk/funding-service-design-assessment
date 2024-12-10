@@ -18,7 +18,7 @@ dependencies = [
     "flask-babel==2.0.0",
     "flask-compress==1.15",
     "flask-talisman==1.1.0",
-    "flask-wtf==1.2.1",
+    "flask-wtf==1.2.2",
     "funding-service-design-utils==2.0.52",
     "govuk-frontend-jinja==3.2.0",
     "jsmin==3.0.1",
